@@ -1,0 +1,11 @@
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\bin\Release\AxTools.exe
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\obj\Release\AxTools_CSharp.AppSettings.resources
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\obj\Release\AxTools_CSharp.InputBox.resources
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\obj\Release\AxTools_CSharp.MainForm.resources
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\obj\Release\AxTools_CSharp.PingWidget.resources
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\obj\Release\AxTools_CSharp.Properties.Resources.resources
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\obj\Release\AxTools_CSharp.WowAccountManager.resources
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\obj\Release\GenerateResource.read.1.tlog
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\obj\Release\GenerateResource.write.1.tlog
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\AxTools_CSharp\obj\Release\AxTools.exe

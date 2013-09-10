@@ -1,0 +1,62 @@
+﻿## AxTools settings file
+
+## General settings ##
+Location={X=98,Y=552}
+GameServer=World of Warcraft - Blackscar
+regname=Axio-5GDMJHD20R
+LastUsedVersion=11.13.4.0
+NewStyleColor=6
+
+WowPluginsShowIngameNotifications=True
+del_wow_log=True
+creature_cache=True
+clicker.key=D7
+clicker.hotkey=Insert
+clicker.interval=250
+wasd=True
+wow_wnd.auto_accept=True
+wow_wnd.noframe=True
+WowWindowLocation={X=0,Y=64}
+WowWindowSize={X=1920,Y=1016}
+WidgetLocation={X=1808,Y=897}
+widget.show=True
+widget.transparent=False
+ax_tools=True
+WowLoginHotkey=Delete
+LuaTimerHotkey=F11
+PrecompiledModulesHotkey=F10
+
+## Paths ##
+
+## VoIP settings ##
+StartVentriloWithWow=True
+StartTS3WithWow=False
+StartRaidcallWithWow=False
+StartMumbleWithWow=False
+
+## Lua console settings ##
+LuaConsole.Size.Width=650
+LuaConsole.Size.Height=354
+LuaConsole.TimerInterval=500
+LuaConsole.RandomizeTimer=True
+LuaConsole.IgnoreGameState=True
+LuaConsole.ShowIngameNotifications=True
+
+## Radar settings ##
+RadarLocation={X=1458,Y=147}
+RadarShowPlayersClasses=True
+RadarShowNpcsNames=False
+RadarShowObjectsNames=False
+RadarShow=2199040033025
+RadarFriendColor=-8323328
+RadarEnemyColor=-65536
+RadarNpcColor=-16711681
+RadarObjectColor=-10496
+
+## Backup settings ##
+AddonsBackupPath=D:\Dropbox\Backup\Addons
+AddonsBackup=True
+AddonsBackupNum=7
+AddonsBackupTimer=24
+BackupCompressionLevel=6
+addons_backup_lastdate=03.09.2013 13:20:20

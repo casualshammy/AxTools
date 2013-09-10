@@ -1,0 +1,413 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3B13B631-EB14-47F8-BEC2-13AF48235C4F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AxTools</RootNamespace>
+    <AssemblyName>AxTools</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="fasmdll_managed">
+      <HintPath>..\..\.NET libs\fasmdll_managed.dll</HintPath>
+    </Reference>
+    <Reference Include="GreyMagic">
+      <HintPath>..\..\.NET libs\GreyMagic.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.TextEditor">
+      <HintPath>..\..\.NET libs\ICSharpCode.TextEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\..\.NET libs\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\.NET libs\MetroFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="MouseKeyboardActivityMonitor">
+      <HintPath>..\..\.NET libs\MouseKeyboardActivityMonitor.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsFormsAero">
+      <HintPath>..\..\.NET libs\WindowsFormsAero.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\Enums.cs" />
+    <Compile Include="Classes\Globals.cs" />
+    <Compile Include="Classes\NamedTask.cs" />
+    <Compile Include="Classes\WoW\HookResult.cs" />
+    <Compile Include="Components\CheckBoxExt.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\CheckBoxExt.Designer.cs">
+      <DependentUpon>CheckBoxExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\DataGridViewExt.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\DataGridViewExt.Designer.cs">
+      <DependentUpon>DataGridViewExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\MetroToggleExt.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\MetroToggleExt.Designer.cs">
+      <DependentUpon>MetroToggleExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AppSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AppSettings.Designer.cs">
+      <DependentUpon>AppSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BlackMarket.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BlackMarket.Designer.cs">
+      <DependentUpon>BlackMarket.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Changes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Changes.Designer.cs">
+      <DependentUpon>Changes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\WinAPI\FlashWindowFlags.cs" />
+    <Compile Include="Classes\WinAPI\SetWindowPosFlags.cs" />
+    <Compile Include="Classes\WinAPI\SpecialWindowHandles.cs" />
+    <Compile Include="Classes\WinAPI\FLASHWINFO.cs" />
+    <Compile Include="Classes\WinAPI\NativeMethods.cs" />
+    <Compile Include="Classes\WinAPI\WM_MESSAGE.cs" />
+    <Compile Include="Classes\WoW\BMItem.cs" />
+    <Compile Include="Classes\WoW\ObjectToFind.cs" />
+    <Compile Include="Components\PictureBoxExt.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\PictureBoxExt.Designer.cs">
+      <DependentUpon>PictureBoxExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Forms\PingWidget.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PingWidget.designer.cs">
+      <DependentUpon>PingWidget.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\WoW\WowRaidClassColors.cs" />
+    <Compile Include="Classes\WoW\DX\D3D11Device.cs" />
+    <Compile Include="Classes\WoW\DX\D3D9Device.cs" />
+    <Compile Include="Classes\WoW\DX\D3DDevice.cs" />
+    <Compile Include="Classes\WoW\DX\Dirext3D.cs" />
+    <Compile Include="Classes\Utils.cs" />
+    <Compile Include="Classes\Log.cs" />
+    <Compile Include="Classes\Settings.cs" />
+    <Compile Include="Classes\WoW\WowAccount.cs" />
+    <Compile Include="Classes\WoW\WowNpc.cs" />
+    <Compile Include="Classes\WoW\WowObject.cs" />
+    <Compile Include="Classes\WoW\WowPointF.cs" />
+    <Compile Include="Classes\WoW\WowProcess.cs" />
+    <Compile Include="Classes\Crypt.cs" />
+    <Compile Include="Classes\WoW\WowPlayer.cs" />
+    <Compile Include="Forms\WaitingOverlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WaitingOverlay.Designer.cs">
+      <DependentUpon>WaitingOverlay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\SrvAddress.cs" />
+    <Compile Include="Forms\LuaConsole.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LuaConsole.Designer.cs">
+      <DependentUpon>LuaConsole.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\InputBox.Designer.cs">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Forms\ProcessSelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ProcessSelection.Designer.cs">
+      <DependentUpon>ProcessSelection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WowRadar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WowRadar.Designer.cs">
+      <DependentUpon>WowRadar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WowRadarOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WowRadarOptions.Designer.cs">
+      <DependentUpon>WowRadarOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\WoW\WoW.cs" />
+    <Compile Include="Classes\WoW\WowBuildInfo.cs" />
+    <Compile Include="Classes\WoW\WowPlayerClass.cs" />
+    <EmbeddedResource Include="Forms\AppSettings.resx">
+      <DependentUpon>AppSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BlackMarket.resx">
+      <DependentUpon>BlackMarket.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Changes.resx">
+      <DependentUpon>Changes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PingWidget.resx">
+      <DependentUpon>PingWidget.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WaitingOverlay.resx">
+      <DependentUpon>WaitingOverlay.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LuaConsole.resx">
+      <DependentUpon>LuaConsole.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ProcessSelection.resx">
+      <DependentUpon>ProcessSelection.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WowRadar.resx">
+      <DependentUpon>WowRadar.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WowRadarOptions.resx">
+      <DependentUpon>WowRadarOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\repeat_7959.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\emesene_1915.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\epiphany_1183.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\old-go-next_8616.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\old-go-previous_6961.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AppIcon.ico" />
+    <None Include="Resources\go_next.png" />
+    <None Include="Resources\AppIcon1.png" />
+    <None Include="Resources\AppIconPluginOnLuaOff1.png" />
+    <None Include="Resources\application-supported_7771.png" />
+    <None Include="Resources\BlackMarket.png" />
+    <None Include="Resources\AppIconPluginOnLuaOn.png" />
+    <None Include="Resources\AppIconPluginOnLuaOff.png" />
+    <None Include="Resources\AppIconPluginOffLuaOn.png" />
+    <None Include="Resources\SettingsLight20px.png" />
+    <None Include="Resources\Settings20px.png" />
+    <None Include="Resources\PlusLight.png" />
+    <None Include="Resources\MinusLight.png" />
+    <None Include="Resources\cSettingsLight.png" />
+    <None Include="Resources\DeleteLineLight.png" />
+    <None Include="Resources\DocumentSaveLight.png" />
+    <None Include="Resources\DocumentOpenLight.png" />
+    <None Include="Resources\trade_fishing.png" />
+    <None Include="Resources\inv_misc_gem_bloodgem_01.png" />
+    <None Include="Resources\achievement_bg_winwsg.png" />
+    <None Include="Resources\green_dialbut_611.png" />
+    <None Include="Resources\tab_c_74.png" />
+    <None Include="Resources\tab_c_73.png" />
+    <None Include="Resources\delete_line.png" />
+    <None Include="Resources\file_delete.png" />
+    <None Include="Resources\modules.png" />
+    <None Include="Resources\lua.png" />
+    <None Include="Resources\radar.png" />
+    <None Include="Resources\pumpkin_84413.ico" />
+    <None Include="Resources\diagram_16_6052.png" />
+    <None Include="Resources\close_41741.png" />
+    <None Include="Resources\minus.png" />
+    <None Include="Resources\plus.png" />
+    <None Include="Resources\lua.ico" />
+    <None Include="Resources\luaReset.png" />
+    <None Include="Resources\document_save.png" />
+    <None Include="Resources\document_open.png" />
+    <None Include="Resources\alarm.wav" />
+    <None Include="Resources\kwikdisk_9043.ico" />
+    <None Include="Resources\kwikdisk_commandLink.ico" />
+    <None Include="Resources\uploadAddonsBackup.png" />
+    <None Include="Resources\log.png" />
+    <None Include="Resources\loader.gif" />
+    <None Include="Resources\folder.ico" />
+    <None Include="Resources\downloadAddonsBackup.png" />
+    <None Include="Resources\cWow.png" />
+    <None Include="Resources\cWol.png" />
+    <None Include="Resources\cVentrilo16.png" />
+    <None Include="Resources\cTeamspeak16.png" />
+    <None Include="Resources\cSettings.png" />
+    <None Include="Resources\cRaidcall16.png" />
+    <None Include="Resources\cMumble16.png" />
+    <None Include="Resources\cMisc.png" />
+    <None Include="Resources\cAxExec.png" />
+    <None Include="Resources\AppIcon.ico" />
+    <None Include="Resources\voip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

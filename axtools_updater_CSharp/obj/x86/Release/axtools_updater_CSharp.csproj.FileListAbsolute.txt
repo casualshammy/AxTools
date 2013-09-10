@@ -1,0 +1,9 @@
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\GenerateResource.read.1.tlog
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\GenerateResource.write.1.tlog
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\axtools_updater_CSharp\bin\Release\updater.exe
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\axtools_updater_CSharp\bin\Release\updater.pdb
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.exe
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.pdb
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\axtools_updater.main.resources
+C:\Users\Axio\Documents\Visual Studio 2010\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\axtools_updater.Properties.Resources.resources

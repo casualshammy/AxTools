@@ -1,0 +1,27 @@
+﻿True#Ящик кор'кронской древесины#True#True
+True#Яунгольский факел#True#True
+True#Ундаста#False#True
+True#Сундучок с тканями духов#True#True
+True#Сокровища Властелина Грома#True#True
+True#Скрижаль Жэнь Юнь#True#True
+True#Свистящий колун Ка'роза#True#True
+True#Прочное копье Малика#True#True
+True#Противобогомолья заточка Водина#True#True
+True#Призрачный пандарен-рыбак#True#True
+True#Призрачный пандарен-ремесленник#True#True
+True#Посох мутации Разрезателя#True#True
+True#Пандаренская острога#True#True
+True#Окровавленный хитиновый фрагмент#True#True
+True#Ожерелье в сгустке янтаря#True#True
+True#Нефритовая статуя воина#True#True
+True#Мерцающая рапана#True#True
+True#Медальон Хранителя Роя#True#True
+True#Кор'кронская древесина#True#True
+True#Клинок Первейшего#True#True
+True#Клинок Отравленного Разума#True#True
+True#Зандаларский завоеватель#True#True
+True#Зандаларский военный разведчик#False#True
+True#Замерзший проводник-носильщик#True#True
+True#Древний посох цзинь-юй#True#True
+True#Груда украденных товаров#True#True
+True#Верткий кинжал Рассекающего Ветер#True#True
