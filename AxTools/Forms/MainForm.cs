@@ -411,13 +411,11 @@ namespace AxTools.Forms
                         Log.Print(String.Format("{0}:{1} :: [Process watcher] 64bit WoW processes aren't supported", processName, processId), true);
                         break;
                     case "wow.exe":
-                        WowProcess pProcess = new WowProcess(processId);
-                        wowProcesses.Add(pProcess);
-                        Log.Print(
-                            String.Format("{0}:{1} :: [Process watcher] Process started, {2} total", pProcess.ProcessName, pProcess.ProcessID, wowProcesses.Count),
-                            false);
+                        WowProcess wowProcess = new WowProcess(processId);
+                        wowProcesses.Add(wowProcess);
+                        Log.Print(String.Format("{0}:{1} :: [Process watcher] Process started, {2} total", wowProcess.ProcessName, wowProcess.ProcessID, wowProcesses.Count), false);
                         wowKillerCountdown = Environment.TickCount;
-                        Task.Factory.StartNew(OnWowProcessStartup, pProcess);
+                        Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
                         if (Settings.AutoPingWidget)
                         {
                             Invoke(new Action(() =>
@@ -482,16 +480,14 @@ namespace AxTools.Forms
                     }
                     if (wowProcesses.Count == 0)
                     {
-                        PingWidget pPingWidget = Utils.FindForm<PingWidget>();
-                        if (pPingWidget != null) pPingWidget.Close();
+                        PingWidget pingWidget = Utils.FindForm<PingWidget>();
+                        if (pingWidget != null) pingWidget.Close();
                     }
                 }
             }
             catch (Exception ex)
             {
-                Log.Print(
-                    String.Format("{0}:{1} :: [Process watcher] Process stopped with error: {2}", e.NewEvent["ProcessName"], e.NewEvent["ProcessID"], ex.Message),
-                    true);
+                Log.Print(string.Format("{0}:{1} :: [Process watcher] Process stopped with error: {2}", e.NewEvent["ProcessName"], e.NewEvent["ProcessID"], ex.Message), true);
             }
             finally
             {
@@ -2274,18 +2270,20 @@ namespace AxTools.Forms
 
         private void TileShowLogClick(object sender, EventArgs e)
         {
-            if (!File.Exists(Globals.LogFileName))
+            if (File.Exists(Globals.LogFileName))
             {
-                this.ShowTaskDialog("Error", "Cannot open log file: it doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                return;
+                try
+                {
+                    Process.Start(Globals.LogFileName);
+                }
+                catch (Exception ex)
+                {
+                    this.ShowTaskDialog("Cannot open log file", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                }
             }
-            try
+            else
             {
-                Process.Start(Globals.LogFileName);
-            }
-            catch (Exception ex)
-            {
-                this.ShowTaskDialog("Error", "Cannot open log file: " + ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                this.ShowTaskDialog("Cannot open log file", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
         }
 
