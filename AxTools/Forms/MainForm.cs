@@ -1449,6 +1449,11 @@ namespace AxTools.Forms
                         TaskDialogButton.OK, TaskDialogIcon.Stop);
                     return;
                 }
+                if (File.Exists(Settings.WowExe + "\\Wow-64.exe"))
+                {
+                    File.Delete(Settings.WowExe + "\\Wow-64.exe");
+                    Log.Print("File Wow-64.exe was deleted", false);
+                }
                 Process.Start(new ProcessStartInfo
                 {
                     WorkingDirectory = Settings.WowExe,
@@ -1504,6 +1509,11 @@ namespace AxTools.Forms
             {
                 this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 return;
+            }
+            if (File.Exists(Settings.WowExe + "\\Wow-64.exe"))
+            {
+                File.Delete(Settings.WowExe + "\\Wow-64.exe");
+                Log.Print("File Wow-64.exe was deleted", false);
             }
             Process.Start(new ProcessStartInfo {
                 WorkingDirectory = Settings.WowExe,
