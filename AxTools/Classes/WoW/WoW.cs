@@ -557,7 +557,7 @@ namespace AxTools.Classes.WoW
                 }
             }
         }
-
+        
         #endregion
 
         internal static class LocalPlayer

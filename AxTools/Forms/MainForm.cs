@@ -1080,13 +1080,6 @@ namespace AxTools.Forms
         private void PictureBoxExtSettingsClick(object sender, EventArgs e)
         {
             new AppSettings().Show();
-
-            //XmlSerializer xmlSerializer = new XmlSerializer(WowRadar.RadarKOSGeneral.GetType());
-            //XmlWriterSettings settings = new XmlWriterSettings {Indent = true, Encoding = Encoding.UTF8};
-            //using (XmlWriter xmlWriter = XmlWriter.Create("1.xml", settings))
-            //{
-            //    xmlSerializer.Serialize(xmlWriter, WowRadar.RadarKOSGeneral);
-            //}
         }
 
         private void LabelPingNumMouseClick(object sender, MouseEventArgs e)

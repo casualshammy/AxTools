@@ -1,4 +1,5 @@
-﻿using AxTools.Classes;
+﻿using System.Media;
+using AxTools.Classes;
 using AxTools.Classes.WoW;
 using AxTools.Properties;
 using System;
@@ -40,7 +41,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(string.Format("{0}:{1} :: [Radar] Can't load the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Can't load the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
             checkBoxFriends.CheckedChanged += SaveCheckBoxes;
             checkBoxEnemies.CheckedChanged += SaveCheckBoxes;
@@ -68,9 +69,9 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(string.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
-            Log.Print(string.Format("{0}:{1} :: [Radar] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+            Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
         }
 
         private static List<ObjectToFind> _radarKOS =
@@ -124,6 +125,7 @@ namespace AxTools.Forms
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private readonly List<WowPlayer> wowPlayers = new List<WowPlayer>();
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
+         
         private readonly Dictionary<ulong, Point> objectsPointsInRadarCoords = new Dictionary<ulong, Point>();
 
         private void Timer1Tick(object sender, EventArgs e)
@@ -140,7 +142,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(string.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
                 needToDraw = false;
                 pictureBoxMain.Invalidate();
                 return;
@@ -156,15 +158,15 @@ namespace AxTools.Forms
             {
                 WowPlayer[] friends = wowPlayers.Where(i => i.IsAlliance == WoW.LocalPlayer.IsAlliance).ToArray();
                 int friendsCountAlive = friends.Count(i => i.Health > 0);
-                checkBoxFriends.Text = string.Concat("F: ", friendsCountAlive, "/", friends.Length);
+                checkBoxFriends.Text = String.Concat("F: ", friendsCountAlive, "/", friends.Length);
                 WowPlayer[] enemies = wowPlayers.Except(friends).ToArray();
                 int enemiesCountAlive = enemies.Count(i => i.Health > 0);
-                checkBoxEnemies.Text = string.Concat("E: ", enemiesCountAlive, "/", enemies.Length);
+                checkBoxEnemies.Text = String.Concat("E: ", enemiesCountAlive, "/", enemies.Length);
                 WowObject[] objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
                 checkBoxObjects.Text = "Objects: " + objects.Length;
                 WowNpc[] npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
                 int npcsCountAlive = npcs.Count(i => i.Health > 0);
-                checkBoxNpcs.Text = string.Concat("N: ", npcsCountAlive, "/", npcs.Length);
+                checkBoxNpcs.Text = String.Concat("N: ", npcsCountAlive, "/", npcs.Length);
 
                 #region Sound alarm
 
@@ -180,20 +182,17 @@ namespace AxTools.Forms
                 
                 #region Interacting
 
-                if (!WoW.WProc.PlayerIsLooting && WoW.LocalPlayer.CastingSpellID == 0)
+                if (interactCount < 16 && !WoW.WProc.PlayerIsLooting && WoW.LocalPlayer.CastingSpellID == 0)
                 {
-                    foreach (
-                        WowObject i in objects.Where(i => i.Location.Distance(WoW.LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
+                    foreach (WowObject i in objects.Where(i => i.Location.Distance(WoW.LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
                     {
-                        WoW.Interact(i.GUID);
-                        Log.Print(string.Format("{0}:{1} :: [Radar] Interacting with {2} (0x{3:X})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID),
-                                  false, false);
+                        Task.Factory.StartNew(Interact, i.GUID);
+                        Log.Print(String.Format("{0}:{1} :: [Radar] Interacting with {2} (0x{3:X}) (Total tasks: {4})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID, interactCount), false, false);
                     }
                     foreach (WowNpc i in npcs.Where(i => i.Location.Distance(WoW.LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
                     {
-                        WoW.Interact(i.GUID);
-                        Log.Print(string.Format("{0}:{1} :: [Radar] Interacting with {2} (0x{3:X})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID),
-                                  false, false);
+                        Task.Factory.StartNew(Interact, i.GUID);
+                        Log.Print(String.Format("{0}:{1} :: [Radar] Interacting with {2} (0x{3:X}) (Total tasks: {4})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID, interactCount), false, false);
                     }
                 }
 
@@ -279,11 +278,11 @@ namespace AxTools.Forms
                             }
                             else if (i.Level > WoW.LocalPlayer.Level)
                             {
-                                graphics.DrawString(string.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
+                                graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
                             }
                             else
                             {
-                                graphics.DrawString(string.Concat(i.Class, "-"), DefaultFont, solidBrush, point);
+                                graphics.DrawString(String.Concat(i.Class, "-"), DefaultFont, solidBrush, point);
                             }
                         }
                     }
@@ -346,11 +345,11 @@ namespace AxTools.Forms
                             }
                             else if (i.Level > WoW.LocalPlayer.Level)
                             {
-                                graphics.DrawString(string.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
+                                graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
                             }
                             else
                             {
-                                graphics.DrawString(string.Concat(i.Class, "-"), DefaultFont, solidBrush, point);
+                                graphics.DrawString(String.Concat(i.Class, "-"), DefaultFont, solidBrush, point);
                             }
                         }
                     }
@@ -455,7 +454,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(string.Format("{0}:{1} :: Radar: Drawing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                Log.Print(String.Format("{0}:{1} :: Radar: Drawing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
         }
 
@@ -463,7 +462,7 @@ namespace AxTools.Forms
         {
             if (File.Exists(Globals.UserfilesPath + "\\alarm.wav"))
             {
-                using (System.Media.SoundPlayer pPlayer = new System.Media.SoundPlayer(Globals.UserfilesPath + "\\alarm.wav"))
+                using (SoundPlayer pPlayer = new SoundPlayer(Globals.UserfilesPath + "\\alarm.wav"))
                 {
                     pPlayer.PlaySync();
                 }
@@ -522,9 +521,9 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(string.Format("{0}:{1} :: [Radar] Can't save the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Can't save the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
-            Log.Print(string.Format("{0}:{1} :: [Radar] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+            Log.Print(String.Format("{0}:{1} :: [Radar] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
         }
 
         private void PictureBoxZoomOutClick(object sender, EventArgs e)
@@ -577,7 +576,15 @@ namespace AxTools.Forms
             p[5] = (byte) (zoomR/0.25F);
             Settings.RadarShow = BitConverter.ToUInt64(p, 0);
         }
-        
+
+        private int interactCount;
+        private void Interact(object guid)
+        {
+            interactCount++;
+            WoW.Interact((ulong) guid);
+            interactCount--;
+        }
+
         private void MeasureTooltip(Point mousePosition)
         {
             foreach (KeyValuePair<ulong, Point> pair in objectsPointsInRadarCoords)
@@ -588,21 +595,21 @@ namespace AxTools.Forms
                     if (unit != null)
                     {
                         DrawTooltip(mousePosition,
-                                    string.Concat("   ", unit.Name, "  \r\n   (", unit.Class, "*", unit.Level, ") ",
+                                    String.Concat("   ", unit.Name, "  \r\n   (", unit.Class, "*", unit.Level, ") ",
                                                   (uint) (unit.Health/(float) unit.HealthMax*100), "%"), unit.Class);
                         return;
                     }
                     WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
                     if (npc != null)
                     {
-                        DrawTooltip(mousePosition, string.Concat("   ", npc.Name, "  \r\n   ", (uint) (npc.Health/(float) npc.HealthMax*100), "%"),
+                        DrawTooltip(mousePosition, String.Concat("   ", npc.Name, "  \r\n   ", (uint) (npc.Health/(float) npc.HealthMax*100), "%"),
                                     WowPlayerClass.War);
                         return;
                     }
                     WowObject _object = wowObjects.FirstOrDefault(i => i.GUID == pair.Key);
                     if (_object != null)
                     {
-                        DrawTooltip(mousePosition, string.Concat("   ", _object.Name, "  "), WowPlayerClass.Rog);
+                        DrawTooltip(mousePosition, String.Concat("   ", _object.Name, "  "), WowPlayerClass.Rog);
                         return;
                     }
                 }
