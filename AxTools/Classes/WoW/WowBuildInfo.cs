@@ -4,7 +4,7 @@
     {
         #region Build info
 
-        internal static readonly int WowBuild = 17359;
+        internal static readonly int WowBuild = 17399;
         internal static readonly int WowBuildAddress = 0xB8020C;
 
         #endregion
@@ -24,12 +24,12 @@
 
         #region Injected methods
 
-        internal static readonly int ClntObjMgrGetActivePlayerObjAddress = 0x4ED4; // ClntObjMgrGetActivePlayerObj
-        internal static readonly int LuaDoStringAddress = 0x4FFA0; // FrameScript_ExecuteBuffer
-        internal static readonly int LuaGetLocalizedTextAddress = 0x40C69A; // FrameScript_GetLocalizedText
+        internal static readonly int ClntObjMgrGetActivePlayerObjAddress = 0x4E9C; // ClntObjMgrGetActivePlayerObj
+        internal static readonly int LuaDoStringAddress = 0x4FE8C; // FrameScript_ExecuteBuffer
+        internal static readonly int LuaGetLocalizedTextAddress = 0x40C6E2; // FrameScript_GetLocalizedText
         //internal static readonly int ClickToMove = 0x3E240B; // CGUnit_C::InitializeTrackingState // INCORRECT
-        internal static readonly int SelectTarget = 0x8B8A29; // CGGameUI::Target
-        internal static readonly int Interact = 0x8BA907; // CGGameUI::Interact
+        internal static readonly int SelectTarget = 0x8B8A77; // CGGameUI::Target
+        internal static readonly int Interact = 0x8BA953; // CGGameUI::Interact
 
         #endregion
 

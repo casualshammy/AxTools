@@ -251,19 +251,19 @@ namespace AxTools.Forms
         {
             Select();
             Utils.CheckCreateDir();
-            using (var p = new OpenFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = Globals.UserfilesPath })
+            using (OpenFileDialog p = new OpenFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = Globals.UserfilesPath })
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
                     string text = File.ReadAllText(p.FileName, Encoding.UTF8);
-                    if (text.Contains("### Interval="))
+                    if (text.Contains("### Interval=") || text.Contains("----- Interval="))
                     {
                         using (StringReader cStringReader = new StringReader(text))
                         {
-                            var readLine = cStringReader.ReadLine();
+                            string readLine = cStringReader.ReadLine();
                             if (readLine != null)
                             {
-                                Settings.LuaConsoleTimerInterval = Convert.ToInt32(readLine.Split(Convert.ToChar("="))[1]);
+                                Settings.LuaConsoleTimerInterval = Convert.ToInt32(readLine.Split('=')[1]);
                                 metroTextBoxTimerInterval.Text = Settings.LuaConsoleTimerInterval.ToString();
                             }
                             textBoxLuaCode.Text = cStringReader.ReadToEnd();
@@ -282,11 +282,11 @@ namespace AxTools.Forms
         {
             Select();
             Utils.CheckCreateDir();
-            using (var p = new SaveFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = Globals.UserfilesPath })
+            using (SaveFileDialog p = new SaveFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = Globals.UserfilesPath })
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
-                    File.WriteAllText(p.FileName, string.Format("### Interval={0}\r\n{1}", Settings.LuaConsoleTimerInterval, textBoxLuaCode.Text), Encoding.UTF8);
+                    File.WriteAllText(p.FileName, string.Format("----- Interval={0}\r\n{1}", Settings.LuaConsoleTimerInterval, textBoxLuaCode.Text), Encoding.UTF8);
                 }
             }
         }

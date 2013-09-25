@@ -98,6 +98,7 @@ namespace AxTools.Forms
             this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
             this.metroTabPage6 = new MetroFramework.Controls.MetroTabPage();
+            this.metroTileSendLogToDev = new MetroFramework.Controls.MetroTile();
             this.tileShowLog = new MetroFramework.Controls.MetroTile();
             this.tileBackupAddons = new MetroFramework.Controls.MetroTile();
             this.tileOpenBackupsFolder = new MetroFramework.Controls.MetroTile();
@@ -247,7 +248,7 @@ namespace AxTools.Forms
             this.metroTabControl1.HotTrack = true;
             this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
+            this.metroTabControl1.SelectedIndex = 4;
             this.metroTabControl1.Size = new System.Drawing.Size(429, 185);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.StyleManager = this.metroStyleManager1;
@@ -890,6 +891,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage6
             // 
+            this.metroTabPage6.Controls.Add(this.metroTileSendLogToDev);
             this.metroTabPage6.Controls.Add(this.tileShowLog);
             this.metroTabPage6.Controls.Add(this.tileBackupAddons);
             this.metroTabPage6.Controls.Add(this.tileOpenBackupsFolder);
@@ -911,15 +913,32 @@ namespace AxTools.Forms
             this.metroTabPage6.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage6.VerticalScrollbarSize = 10;
             // 
+            // metroTileSendLogToDev
+            // 
+            this.metroTileSendLogToDev.ActiveControl = null;
+            this.metroTileSendLogToDev.CustomBackground = false;
+            this.metroTileSendLogToDev.CustomForeColor = false;
+            this.metroTileSendLogToDev.Location = new System.Drawing.Point(251, 86);
+            this.metroTileSendLogToDev.Name = "metroTileSendLogToDev";
+            this.metroTileSendLogToDev.PaintTileCount = true;
+            this.metroTileSendLogToDev.Size = new System.Drawing.Size(167, 60);
+            this.metroTileSendLogToDev.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroTileSendLogToDev.StyleManager = this.metroStyleManager1;
+            this.metroTileSendLogToDev.TabIndex = 13;
+            this.metroTileSendLogToDev.Text = "Send log to developer";
+            this.metroTileSendLogToDev.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroTileSendLogToDev.TileCount = 0;
+            this.metroTileSendLogToDev.Click += new System.EventHandler(this.metroTile1_Click);
+            // 
             // tileShowLog
             // 
             this.tileShowLog.ActiveControl = null;
             this.tileShowLog.CustomBackground = false;
             this.tileShowLog.CustomForeColor = false;
-            this.tileShowLog.Location = new System.Drawing.Point(283, 20);
+            this.tileShowLog.Location = new System.Drawing.Point(251, 20);
             this.tileShowLog.Name = "tileShowLog";
             this.tileShowLog.PaintTileCount = true;
-            this.tileShowLog.Size = new System.Drawing.Size(135, 126);
+            this.tileShowLog.Size = new System.Drawing.Size(167, 60);
             this.tileShowLog.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileShowLog.StyleManager = this.metroStyleManager1;
             this.tileShowLog.TabIndex = 12;
@@ -936,7 +955,7 @@ namespace AxTools.Forms
             this.tileBackupAddons.Location = new System.Drawing.Point(3, 20);
             this.tileBackupAddons.Name = "tileBackupAddons";
             this.tileBackupAddons.PaintTileCount = true;
-            this.tileBackupAddons.Size = new System.Drawing.Size(274, 60);
+            this.tileBackupAddons.Size = new System.Drawing.Size(242, 60);
             this.tileBackupAddons.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileBackupAddons.StyleManager = this.metroStyleManager1;
             this.tileBackupAddons.TabIndex = 10;
@@ -953,7 +972,7 @@ namespace AxTools.Forms
             this.tileOpenBackupsFolder.Location = new System.Drawing.Point(3, 86);
             this.tileOpenBackupsFolder.Name = "tileOpenBackupsFolder";
             this.tileOpenBackupsFolder.PaintTileCount = true;
-            this.tileOpenBackupsFolder.Size = new System.Drawing.Size(274, 60);
+            this.tileOpenBackupsFolder.Size = new System.Drawing.Size(242, 60);
             this.tileOpenBackupsFolder.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileOpenBackupsFolder.StyleManager = this.metroStyleManager1;
             this.tileOpenBackupsFolder.TabIndex = 9;
@@ -1131,6 +1150,7 @@ namespace AxTools.Forms
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem blackMarketTrackerToolStripMenuItem;
         private MetroCheckBox metroCheckBoxPluginShowIngameNotification;
+        private MetroTile metroTileSendLogToDev;
     }
 }
 

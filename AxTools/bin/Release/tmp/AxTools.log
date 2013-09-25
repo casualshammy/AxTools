@@ -1,32 +1,9 @@
-﻿03.09.2013 13:20:15.108 // Launching... (11.13.4.0)
-03.09.2013 13:20:15.126 // Settings are loaded
-03.09.2013 13:20:15.129 // WoW accounts was loaded
-03.09.2013 13:20:15.163 // Registered for: Axio-5GDMJHD20R
-03.09.2013 13:20:15.167 // Wow:3964 :: [Process watcher] Process added
-03.09.2013 13:20:15.170 // Wow:3964 :: [WoW hook] Attaching...
-03.09.2013 13:20:15.173 // AxTools :: preparation completed
-03.09.2013 13:20:15.174 // [Pinger] Thread was started successfully
-03.09.2013 13:20:16.747 // Wow:3964 :: [WoW hook] Window style is changed
-03.09.2013 13:20:16.758 // Wow:3964 :: [WoW hook] Memory manager initialized, base address 0x2F0000
-03.09.2013 13:20:18.145 // AxTools started succesfully
-03.09.2013 13:20:18.146 // [Updater] Checking for updates...
-03.09.2013 13:20:20.187 // Backup error: WTF directory isn't found
-03.09.2013 13:20:41.531 // Wow:3964 :: [WoW hook] DX version: 11
-03.09.2013 13:20:41.531 // Wow:3964 :: [WoW hook] Original bytes: A1-00-30-1A-68, address: 0x68191BDC
-03.09.2013 13:20:41.531 // Wow:3964 :: [WoW hook] Loop code address: 0x1890000
-03.09.2013 13:20:41.534 // Wow:3964 :: [WoW hook] User code address: 0x2E20000
-03.09.2013 13:20:41.535 // Wow:3964 :: [WoW hook] Return value code address: 0x2E30000
-03.09.2013 13:20:41.540 // Wow:3964 :: [WoW hook] Successfully hooked, bytes: E9-1F-E4-6F-99
-03.09.2013 13:20:41.541 // Wow:3964 :: [WoW hook] Injector loaded
-03.09.2013 13:20:41.653 // Wow:3964 :: [Radar] Loaded
-03.09.2013 13:20:53.137 // Wow:3964 :: [Radar] Closed
-03.09.2013 13:20:53.167 // Starting processes trace watching is stopped
-03.09.2013 13:20:53.168 // Stopping processes trace watching is stopped
-03.09.2013 13:20:53.170 // Wow:3964 :: [WoW hook] Hook is deleted, bytes: A1-00-30-1A-68
-03.09.2013 13:20:53.171 // Wow:3964 :: [WoW hook] Total objects cached: 29
-03.09.2013 13:20:53.171 // Wow:3964 :: [WoW hook] Total players cached: 0
-03.09.2013 13:20:53.171 // Wow:3964 :: [WoW hook] Total NPC cached: 72
-03.09.2013 13:20:53.173 // Wow:3964 :: [WoW hook] Injector unloaded
-03.09.2013 13:20:53.175 // Wow:3964 :: [WoW hook] Memory manager disposed
-03.09.2013 13:20:53.176 // Keyboard hook disposed
-03.09.2013 13:20:53.176 // AxTools closed
+﻿21.09.2013 12:26:13.023 // Launching... (11.13.12.0)
+21.09.2013 12:26:13.297 // Legacy :: .radar2 has been successfully converted to .radar3
+21.09.2013 12:26:13.335 // Legacy :: .wowaccounts has been successfully converted to .wowaccounts2
+21.09.2013 12:26:13.339 // Settings are loaded
+21.09.2013 12:26:13.342 // WoW accounts was loaded
+21.09.2013 12:26:13.381 // Registered for: Axio-5GDMJHD20R
+21.09.2013 12:26:13.384 // Wow:408 :: [Process watcher] Process added
+21.09.2013 12:26:13.385 // AxTools :: preparation completed
+21.09.2013 12:26:13.393 // Wow:408 :: [WoW hook] Attaching...

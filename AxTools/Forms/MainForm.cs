@@ -41,7 +41,9 @@ namespace AxTools.Forms
             //File.WriteAllLines("1.txt", new[] { BitConverter.ToString(Encoding.UTF8.GetBytes("Ugh9HG*(rh9hR*(h9")), BitConverter.ToString(Encoding.UTF8.GetBytes("XC#%SC54SC%$sc5s4c%$sc46S")) });
             InitializeComponent();
             AccessibleName = "MainForm";
+            pingCallback = WoWPingerCallback;
             timerNotifyIcon.Elapsed += TimerNiElapsed;
+            timerPinger.Elapsed += timerPinger_Elapsed;
             Resize += MainResize;
             Closing += MainFormClosing;
             notifyIconMain.Icon = Resources.AppIcon;
@@ -157,7 +159,18 @@ namespace AxTools.Forms
         #region Variables
         
         //List of WoW processes
-        private readonly List<WowProcess> wowProcesses = new List<WowProcess>();
+        private readonly List<WowProcess> wowProcessesPrivateList = new List<WowProcess>();
+        private readonly object wowProcessesLock = new object();
+        private List<WowProcess> WowProcesses
+        {
+            get
+            {
+                lock (wowProcessesLock)
+                {
+                    return wowProcessesPrivateList;
+                }
+            }
+        } 
         private ManagementEventWatcher wowWatcherStart;
         private ManagementEventWatcher wowWatcherStop;
         private int wowKillerCountdown = Environment.TickCount;
@@ -165,6 +178,7 @@ namespace AxTools.Forms
         private IntPtr clickerWindow = IntPtr.Zero;
         //timers
         private readonly Timer timerNotifyIcon = new Timer(1000);
+        private readonly Timer timerPinger = new Timer(2000);
         //another
         private bool isClosing;
         // wow accounts
@@ -187,7 +201,7 @@ namespace AxTools.Forms
 
             if (Settings.Wasd)
             {
-                foreach (WowProcess i in wowProcesses.Where(i => i.IsValidBuild && i.IsInGame))
+                foreach (WowProcess i in WowProcesses.Where(i => i.IsValidBuild && i.IsInGame))
                 {
                     try
                     {
@@ -214,7 +228,7 @@ namespace AxTools.Forms
             {
                 try
                 {
-                    foreach (var i in wowProcesses.Where(i => i.MainWindowTitle.ToLower() != "world of warcraft"))
+                    foreach (var i in WowProcesses.Where(i => i.MainWindowTitle.ToLower() != "world of warcraft"))
                     {
                         Process.GetProcessById(i.ProcessID).Kill();
                         Log.Print(String.Format("{0}:{1} :: Process killed (reason: haven't window)", i.ProcessName, i.ProcessID), false);
@@ -282,65 +296,47 @@ namespace AxTools.Forms
             //}
         }
 
+        private void timerPinger_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            {
+                try
+                {
+                    lock (pingLock)
+                    {
+                        Stopwatch stopwatch = Stopwatch.StartNew();
+                        bool result = pSocket.BeginConnect(Settings.GameServer.Ip, Settings.GameServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
+                        long ping = stopwatch.ElapsedMilliseconds;
+                        if (pingList.Count == 100)
+                        {
+                            pingList.RemoveAt(0);
+                        }
+                        pingList.Add((int)(!result || !pSocket.Connected ? -1 : ping));
+                        pingPing = pingList.GetRange(pingList.Count - 10, 10).Max();
+                        pingPacketLoss = pingList.Count(x => x == -1);
+                        Invoke(pingCallback);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Print("[Pinger] Thread error: " + ex.Message, true);
+                }
+            }
+        }
+
         #endregion
 
         #region Pinger
 
-        private bool pingTaskLock;
+        private readonly Action pingCallback;
         private List<int> pingList = new List<int>(100) {-2, -2, -2, -2, -2, -2, -2, -2, -2, -2};
         private readonly object pingLock = new object();
         private int pingPing;
         private int pingPacketLoss;
 
-        private void PingFunc()
-        {
-            Stopwatch stopWatch = new Stopwatch();
-            Action callback = WoWPingerCallback;
-            Log.Print("[Pinger] Thread was started successfully", false);
-            while (pingTaskLock)
-            {
-                int startTime = Environment.TickCount;
-                using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-                {
-                    try
-                    {
-                        lock (pingLock)
-                        {
-                            stopWatch.Start();
-                            bool result = pSocket.BeginConnect(Settings.GameServer.Ip, Settings.GameServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
-                            long ping = stopWatch.ElapsedMilliseconds;
-                            stopWatch.Reset();
-                            if (pingList.Count == 100)
-                            {
-                                pingList.RemoveAt(0);
-                            }
-                            pingList.Add((int) (!result || !pSocket.Connected ? -1 : ping));
-                            pingPing = pingList.GetRange(pingList.Count - 10, 10).Max();
-                            pingPacketLoss = pingList.Count(x => x == -1);
-                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                            if (pingTaskLock)
-                            {
-                                Invoke(callback);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Print("[Pinger] Thread error: " + ex.Message, true);
-                    }
-                }
-                int counter = 2000 - Environment.TickCount + startTime;
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (counter > 0 && pingTaskLock)
-                {
-                    Thread.Sleep(counter);
-                }
-            }
-        }
-
         private void WoWPingerCallback()
         {
-            labelPingNum.Text = String.Format("[{0}]::[{1}%]", pingPing == -1 || pingPing == -2 ? "n/a" : pingPing.ToString(), pingPacketLoss);
+            labelPingNum.Text = string.Format("[{0}]::[{1}%]", pingPing == -1 || pingPing == -2 ? "n/a" : pingPing.ToString(), pingPacketLoss);
             if (PingStatisticsChanged != null)
             {
                 PingStatisticsChanged(pingPing, pingPacketLoss);
@@ -412,8 +408,8 @@ namespace AxTools.Forms
                         break;
                     case "wow.exe":
                         WowProcess wowProcess = new WowProcess(processId);
-                        wowProcesses.Add(wowProcess);
-                        Log.Print(String.Format("{0}:{1} :: [Process watcher] Process started, {2} total", wowProcess.ProcessName, wowProcess.ProcessID, wowProcesses.Count), false);
+                        WowProcesses.Add(wowProcess);
+                        Log.Print(String.Format("{0}:{1} :: [Process watcher] Process started, {2} total", wowProcess.ProcessName, wowProcess.ProcessID, WowProcesses.Count), false);
                         wowKillerCountdown = Environment.TickCount;
                         Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
                         if (Settings.AutoPingWidget)
@@ -447,7 +443,7 @@ namespace AxTools.Forms
                 {
                     int pid = Convert.ToInt32(e.NewEvent["ProcessID"]);
                     string name = e.NewEvent["ProcessName"].ToString().Substring(0, e.NewEvent["ProcessName"].ToString().Length - 4);
-                    WowProcess pWowProcess = wowProcesses.FirstOrDefault(x => x.ProcessID == pid);
+                    WowProcess pWowProcess = WowProcesses.FirstOrDefault(x => x.ProcessID == pid);
                     if (pWowProcess != null)
                     {
                         if (WoW.Hooked && WoW.WProc.ProcessID == pWowProcess.ProcessID)
@@ -457,9 +453,9 @@ namespace AxTools.Forms
                         }
                         pWowProcess.Dispose();
                         Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, pid), false);
-                        if (wowProcesses.Remove(pWowProcess))
+                        if (WowProcesses.Remove(pWowProcess))
                         {
-                            Log.Print(String.Format("{0}:{1} :: [Process watcher] Process closed, {2} total", name, pid, wowProcesses.Count), false);
+                            Log.Print(String.Format("{0}:{1} :: [Process watcher] Process closed, {2} total", name, pid, WowProcesses.Count), false);
                         }
                         else
                         {
@@ -478,7 +474,7 @@ namespace AxTools.Forms
                             Log.Print("[Cache cleaner] " + i.FullName + "\\creaturecache.wdb was deleted", false);
                         }
                     }
-                    if (wowProcesses.Count == 0)
+                    if (WowProcesses.Count == 0)
                     {
                         PingWidget pingWidget = Utils.FindForm<PingWidget>();
                         if (pingWidget != null) pingWidget.Close();
@@ -568,7 +564,7 @@ namespace AxTools.Forms
                 if (wowAccountSelected != -1)
                 {
                     IntPtr cHWND = NativeMethods.GetForegroundWindow();
-                    WowProcess process = wowProcesses.FirstOrDefault(x => x.MainWindowHandle == cHWND);
+                    WowProcess process = WowProcesses.FirstOrDefault(x => x.MainWindowHandle == cHWND);
                     if (process != null)
                     {
                         Log.Print(
@@ -606,14 +602,14 @@ namespace AxTools.Forms
                 {
                     timerClicker.Enabled = false;
                     notifyIconMain.Icon = appIconNormal;
-                    WowProcess cProcess = wowProcesses.FirstOrDefault(i => i.MainWindowHandle == clickerWindow);
+                    WowProcess cProcess = WowProcesses.FirstOrDefault(i => i.MainWindowHandle == clickerWindow);
                     Log.Print(cProcess != null
                                   ? String.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
                                   : "UNKNOWN:null :: [Clicker] Disabled", false);
                 }
                 else
                 {
-                    var cProcess = wowProcesses.FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
+                    var cProcess = WowProcesses.FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
                     if (cProcess != null)
                     {
                         clickerWindow = cProcess.MainWindowHandle;
@@ -628,7 +624,7 @@ namespace AxTools.Forms
             }
             else if (e.KeyCode == Settings.PrecompiledModulesHotkey)
             {
-                if (!toggleWowPlugins.Checked && wowProcesses.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+                if (!toggleWowPlugins.Checked && WowProcesses.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
                 {
                     InvokeOnClick(toggleWowPlugins, EventArgs.Empty);
                 }
@@ -642,7 +638,7 @@ namespace AxTools.Forms
                 LuaConsole pForm = Utils.FindForm<LuaConsole>();
                 if (pForm != null)
                 {
-                    if (!pForm.TimerEnabled && wowProcesses.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+                    if (!pForm.TimerEnabled && WowProcesses.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
                     {
                         pForm.SwitchTimer();
                     }
@@ -771,8 +767,7 @@ namespace AxTools.Forms
             timerAntiAfk.Enabled = false;
             timerClicker.Enabled = false;
             timerNotifyIcon.Enabled = false;
-            //stop ping watcher
-            pingTaskLock = false;
+            timerPinger.Enabled = false;
             //stop watching process trace
             if (wowWatcherStart != null)
             {
@@ -792,7 +787,7 @@ namespace AxTools.Forms
                 UnloadInjector();
                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
             }
-            foreach (WowProcess i in wowProcesses)
+            foreach (WowProcess i in WowProcesses)
             {
                 string name = i.ProcessName;
                 i.Dispose();
@@ -815,19 +810,7 @@ namespace AxTools.Forms
             {
                 try
                 {
-                    using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587))
-                    {
-                        smtpClient.EnableSsl = true;
-                        smtpClient.Credentials = new NetworkCredential("axtoolslogsender@gmail.com", "abrakadabra!pushpush");
-                        using (MailMessage mailMessage = new MailMessage("axtoolslogsender@gmail.com", "axio@axio.name"))
-                        {
-                            mailMessage.SubjectEncoding = Encoding.UTF8;
-                            mailMessage.Subject = String.Format("Error log from {0}", Settings.Regname);
-                            mailMessage.BodyEncoding = Encoding.UTF8;
-                            mailMessage.Body = File.ReadAllText(Globals.LogFileName, Encoding.UTF8) + "\r\n\r\n" + File.ReadAllText(Globals.SettingsFilePath, Encoding.UTF8);
-                            smtpClient.Send(mailMessage);
-                        }
-                    }
+                    Log.SendViaEmail(null);
                 }
                 catch (Exception ex)
                 {
@@ -891,7 +874,7 @@ namespace AxTools.Forms
                         break;
                     case "wow":
                         WowProcess process = new WowProcess(i.Id);
-                        wowProcesses.Add(process);
+                        WowProcesses.Add(process);
                         Log.Print(String.Format("{0}:{1} :: [Process watcher] Process added", i.ProcessName, i.Id), false);
                         Task.Factory.StartNew(OnWowProcessStartup, process);
                         break;
@@ -902,7 +885,7 @@ namespace AxTools.Forms
 
             #region Backup and delete wow logs
 
-            if (Settings.DelWowLog && Directory.Exists(Settings.WowExe + "\\Logs") && wowProcesses.Count == 0)
+            if (Settings.DelWowLog && Directory.Exists(Settings.WowExe + "\\Logs") && WowProcesses.Count == 0)
             {
                 if (File.Exists(Settings.WowExe + "\\Logs\\WoWCombatLog.txt") || Utils.CalcDirectorySize(Settings.WowExe + "\\Logs") > 104857600)
                 {
@@ -977,9 +960,6 @@ namespace AxTools.Forms
 
             #endregion
 
-            //run ping watcher
-            pingTaskLock = true;
-            Task.Factory.StartNew(PingFunc, TaskCreationOptions.LongRunning);
             //continue starting...
             BeginInvoke(new Action(LoadingStepSync));
             Log.Print("AxTools :: preparation completed", false);
@@ -991,6 +971,7 @@ namespace AxTools.Forms
 
             timerAntiAfk.Enabled = true;
             timerNotifyIcon.Enabled = true;
+            timerPinger.Enabled = true;
 
             #endregion
 
@@ -1015,7 +996,7 @@ namespace AxTools.Forms
 
             #region Show ping widget if we have WoW client launched
 
-            if (Settings.AutoPingWidget && wowProcesses.Any())
+            if (Settings.AutoPingWidget && WowProcesses.Any())
             {
                 try
                 {
@@ -1296,7 +1277,7 @@ namespace AxTools.Forms
                 updaterAddonComponentLock = false;
                 Log.Print("[Updater] Update for addon component is available", false);
                 DownloadAddon();
-                string text = wowProcesses.Count > 0 ? "It's recommended to restart WoW client" : "...and it's ready to work!";
+                string text = WowProcesses.Count > 0 ? "It's recommended to restart WoW client" : "...and it's ready to work!";
                 if (NativeMethods.GetForegroundWindow() == Handle)
                 {
                     this.ShowTaskDialog("Addon component has been updated", text, TaskDialogButton.OK, TaskDialogIcon.Information);
@@ -1365,7 +1346,7 @@ namespace AxTools.Forms
         private void FishingToolStripMenuItemClick(object sender, EventArgs e)
         {
             comboBoxWowPlugins.SelectedIndex = 0;
-            if (!WoW.Hooked && wowProcesses.Count != 1)
+            if (!WoW.Hooked && WowProcesses.Count != 1)
             {
                 Activate();
             }
@@ -1375,7 +1356,7 @@ namespace AxTools.Forms
         private void CaptureFlagsorbsOnTheBattlefieldsToolStripMenuItemClick(object sender, EventArgs e)
         {
             comboBoxWowPlugins.SelectedIndex = 1;
-            if (!WoW.Hooked && wowProcesses.Count != 1)
+            if (!WoW.Hooked && WowProcesses.Count != 1)
             {
                 Activate();
             }
@@ -1385,7 +1366,7 @@ namespace AxTools.Forms
         private void MillingdisenchantingprospectingToolStripMenuItemClick(object sender, EventArgs e)
         {
             comboBoxWowPlugins.SelectedIndex = 2;
-            if (!WoW.Hooked && wowProcesses.Count != 1)
+            if (!WoW.Hooked && WowProcesses.Count != 1)
             {
                 Activate();
             }
@@ -2140,21 +2121,21 @@ namespace AxTools.Forms
         private bool LoadInjector()
         {
             int index;
-            if (wowProcesses.Count == 1)
+            if (WowProcesses.Count == 1)
             {
                 index = 0;
             }
             else
             {
-                ProcessSelection.SelectProcess(wowProcesses, out index);
+                ProcessSelection.SelectProcess(WowProcesses, out index);
             }
             if (index != -1)
             {
-                if (wowProcesses[index].IsValidBuild)
+                if (WowProcesses[index].IsValidBuild)
                 {
-                    if (wowProcesses[index].IsInGame)
+                    if (WowProcesses[index].IsInGame)
                     {
-                        switch (WoW.Hook(wowProcesses[index]))
+                        switch (WoW.Hook(WowProcesses[index]))
                         {
                             case HookResult.Successful:
                                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
@@ -2287,6 +2268,23 @@ namespace AxTools.Forms
             else
             {
                 this.ShowTaskDialog("Cannot open log file", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
+        }
+
+        private void metroTile1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string subject;
+                InputBox.Input("Any comment? (optional)", out subject);
+                WaitingOverlay waitingOverlay = new WaitingOverlay(this);
+                waitingOverlay.Show();
+                Log.SendViaEmail(subject);
+                waitingOverlay.Close();
+            }
+            catch (Exception ex)
+            {
+                this.ShowTaskDialog("Log file sending error", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
         }
 

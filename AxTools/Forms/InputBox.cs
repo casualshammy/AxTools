@@ -35,7 +35,7 @@ namespace AxTools.Forms
  
         public static bool Input(string blabel, out string s)
         {
-            InputBox bform = new InputBox {Text = blabel};
+            InputBox bform = new InputBox {metroLabel1 = {Text = blabel}};
             bform.ShowDialog();
             s = bform.temp;
             return bform.t;

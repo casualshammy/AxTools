@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Net;
+using System.Net.Mail;
 using System.Text;
 using AxTools.Forms;
 using WindowsFormsAero.TaskDialog;
@@ -44,6 +46,23 @@ namespace AxTools.Classes
                 }
             }
         }
-        
+
+        internal static void SendViaEmail(string subject)
+        {
+            using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587))
+            {
+                smtpClient.EnableSsl = true;
+                smtpClient.Credentials = new NetworkCredential("axtoolslogsender@gmail.com", "abrakadabra!pushpush");
+                using (MailMessage mailMessage = new MailMessage("axtoolslogsender@gmail.com", "axio@axio.name"))
+                {
+                    mailMessage.SubjectEncoding = Encoding.UTF8;
+                    mailMessage.Subject = string.IsNullOrWhiteSpace(subject) ? String.Format("Error log from {0}", Settings.Regname) : String.Format("Error log from {0} ({1})", Settings.Regname, subject);
+                    mailMessage.BodyEncoding = Encoding.UTF8;
+                    mailMessage.Body = File.ReadAllText(Globals.LogFileName, Encoding.UTF8) + "\r\n\r\n" + File.ReadAllText(Globals.SettingsFilePath, Encoding.UTF8);
+                    smtpClient.Send(mailMessage);
+                }
+            }
+        }
+
     }
 }

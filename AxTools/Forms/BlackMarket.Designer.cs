@@ -1,4 +1,6 @@
-﻿namespace AxTools.Forms
+﻿using AxTools.Components;
+
+namespace AxTools.Forms
 {
     partial class BlackMarket
     {
@@ -28,13 +30,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listView1 = new ListViewDoubleBuffered();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.metroLinkRefresh = new MetroFramework.Controls.MetroLink();
+            this.timerUpdateList = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // metroStyleManager1
@@ -96,6 +100,11 @@
             this.metroLinkRefresh.UseStyleColors = true;
             this.metroLinkRefresh.Click += new System.EventHandler(this.MetroLinkRefreshClick);
             // 
+            // timerUpdateList
+            // 
+            this.timerUpdateList.Interval = 500;
+            this.timerUpdateList.Tick += new System.EventHandler(this.timerUpdateList_Tick);
+            // 
             // BlackMarket
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -115,11 +124,12 @@
         #endregion
 
         private MetroFramework.Components.MetroStyleManager metroStyleManager1;
-        private System.Windows.Forms.ListView listView1;
+        private ListViewDoubleBuffered listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private MetroFramework.Controls.MetroLink metroLinkRefresh;
+        private System.Windows.Forms.Timer timerUpdateList;
     }
 }

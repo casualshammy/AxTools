@@ -133,6 +133,9 @@
     <Compile Include="Components\DataGridViewExt.Designer.cs">
       <DependentUpon>DataGridViewExt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\ListBoxDoubleBuffered.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\MetroToggleExt.cs">
       <SubType>Component</SubType>
     </Compile>

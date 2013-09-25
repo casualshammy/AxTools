@@ -4,7 +4,6 @@ using AxTools.Properties;
 using MetroFramework.Drawing;
 using System;
 using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using Settings = AxTools.Classes.Settings;
@@ -18,7 +17,7 @@ namespace AxTools.Forms
             InitializeComponent();
             Icon = Resources.AppIcon;
             metroStyleManager1.Style = Settings.NewStyleColor;
-            Task.Factory.StartNew(UpdateCountownThread, TaskCreationOptions.LongRunning);
+            timerUpdateList.Enabled = true;
             Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Opened", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
         }
 
@@ -36,36 +35,13 @@ namespace AxTools.Forms
             }
         }
 
-        private void BlackMarketFormClosing(object sender, FormClosingEventArgs e)
-        {
-            Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
-        }
-
-        private DateTime mLastRefresh = DateTime.Now;
+        private DateTime lastRefresh = DateTime.UtcNow;
         private readonly object lockListView = new object();
 
-        private void UpdateCountownThread()
+        private void BlackMarketFormClosing(object sender, FormClosingEventArgs e)
         {
-            while (!IsDisposed)
-            {
-                if (!IsHandleCreated || !WoW.Hooked || !WoW.WProc.IsInGame)
-                {
-                    System.Threading.Thread.Sleep(100);
-                    continue;
-                }
-                Invoke(new Action(() =>
-                    {
-                        foreach (ListViewItem itm in listView1.Items)
-                        {
-                            BlackMarketItem bmi = (BlackMarketItem) itm.Tag;
-                            TimeSpan diff = DateTime.Now - mLastRefresh;
-                            TimeSpan ts = TimeSpan.FromSeconds(bmi.TimeLeft) - diff;
-                            itm.SubItems[1].Text = ts.TotalSeconds <= 0 ? "Finished" : ts.ToString("hh\\:mm\\:ss");
-                        }
-                    }));
-                System.Threading.Thread.Sleep(1000);
-            }
-            Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Update thread was finished", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+            timerUpdateList.Enabled = false;
+            Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
         }
 
         private unsafe void MetroLinkRefreshClick(object sender, EventArgs e)
@@ -76,7 +52,7 @@ namespace AxTools.Forms
                 return;
             }
             int startTime = Environment.TickCount;
-            mLastRefresh = DateTime.Now;
+            lastRefresh = DateTime.UtcNow;
             listView1.Items.Clear();
             uint numItems = WoW.WProc.Memory.Read<uint>(WoW.WProc.Memory.ImageBase + WowBuildInfo.BlackMarketNumItems);
             if (numItems != 0)
@@ -89,12 +65,11 @@ namespace AxTools.Forms
                 {
                     int finalAddr = (int)(baseAddr + i * structSize);
                     BlackMarketItem item = WoW.WProc.Memory.Read<BlackMarketItem>(new IntPtr(finalAddr));
-                    float gold = item.NumBids > 0 ? (uint) (item.currBid/10000) : (uint) (item.minBid/10000);
-                    //WoW.LuaDoString("AxTools_BMData = GetItemInfo(" + item.Entry.ToString() + ")");
+                    uint gold = item.NumBids > 0 ? (uint) (item.currBid/10000) : (uint) (item.minBid/10000);
                     ListViewItem lvi = new ListViewItem(
-                        new[] {
-                            //WoW.GetLocalizedText("AxTools_BMData"),
-                            WoW.GetFunctionReturn("GetItemInfo(" + item.Entry.ToString() + ")"),
+                        new[]
+                        {
+                            WoW.GetFunctionReturn("GetItemInfo(" + item.Entry + ")"),
                             TimeSpan.FromSeconds(item.TimeLeft).ToString("hh\\:mm\\:ss"),
                             gold + " g",
                             item.NumBids.ToString()
@@ -106,9 +81,18 @@ namespace AxTools.Forms
                 }
                 waitingOverlay.Close();
             }
-            Log.Print(
-                string.Format("{0}:{1} :: [BlackMarket tracker] Refresh time: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, Environment.TickCount - startTime),
-                false);
+            Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Refresh time: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, Environment.TickCount - startTime), false);
+        }
+
+        private void timerUpdateList_Tick(object sender, EventArgs e)
+        {
+            foreach (ListViewItem i in listView1.Items)
+            {
+                BlackMarketItem item = (BlackMarketItem) i.Tag;
+                TimeSpan diff = DateTime.UtcNow - lastRefresh;
+                TimeSpan ts = TimeSpan.FromSeconds(item.TimeLeft) - diff;
+                i.SubItems[1].Text = ts.TotalSeconds <= 0 ? "Finished" : ts.ToString("hh\\:mm\\:ss");
+            }
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using System.Media;
+using System.Threading;
 using AxTools.Classes;
 using AxTools.Classes.WoW;
 using AxTools.Properties;
@@ -22,7 +23,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             AccessibleName = "Radar";
-            timer1.Enabled = true;
+            //timer1.Enabled = true;
             Icon = Resources.AppIcon;
             string filename = Globals.CfgPath + "\\.radar3";
             try
@@ -71,6 +72,8 @@ namespace AxTools.Forms
             {
                 Log.Print(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
+            redrawTaskCancellationTokenSource = new CancellationTokenSource();
+            redrawTask = new Task(Redraw, redrawTaskCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
             Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
         }
 
@@ -125,336 +128,374 @@ namespace AxTools.Forms
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private readonly List<WowPlayer> wowPlayers = new List<WowPlayer>();
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
-         
         private readonly Dictionary<ulong, Point> objectsPointsInRadarCoords = new Dictionary<ulong, Point>();
 
-        private void Timer1Tick(object sender, EventArgs e)
+        private WowPlayer[] friends;
+        private WowPlayer[] enemies;
+        private WowObject[] objects;
+        private WowNpc[] npcs;
+        private readonly Task redrawTask;
+        private readonly CancellationTokenSource redrawTaskCancellationTokenSource;
+        
+        private void Redraw()
         {
-            if (!WoW.Hooked || !WoW.WProc.IsInGame)
+            Action invalidateAction = pictureBoxMain.Invalidate;
+            Action resetCheckboxes = () =>
             {
-                needToDraw = false;
-                pictureBoxMain.Invalidate();
-                return;
-            }
-            try
+                checkBoxFriends.Text = "F: 0/0";
+                checkBoxEnemies.Text = "E: 0/0";
+                checkBoxObjects.Text = "Objects: 0";
+                checkBoxNpcs.Text = "N: 0/0";
+            };
+            while (!redrawTaskCancellationTokenSource.IsCancellationRequested)
             {
-                WoW.Pulse(wowObjects, wowPlayers, wowNpcs);
+                int startTime = Environment.TickCount;
+                if (!WoW.Hooked || !WoW.WProc.IsInGame)
+                {
+                    try
+                    {
+                        needToDraw = false;
+                        Invoke(invalidateAction);
+                        Invoke(resetCheckboxes);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Print(String.Format("{0}:{1} :: [Radar] OOG drawing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
+                    }
+                    Thread.Sleep(100);
+                    continue;
+                }
+                try
+                {
+                    WoW.Pulse(wowObjects, wowPlayers, wowNpcs);
+                }
+                catch (Exception ex)
+                {
+                    Log.Print(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
+                    needToDraw = false;
+                    Invoke(invalidateAction);
+                    Invoke(resetCheckboxes);
+                    Thread.Sleep(100);
+                    continue;
+                }
+                try
+                {
+                    friends = wowPlayers.Where(i => i.IsAlliance == WoW.LocalPlayer.IsAlliance).ToArray();
+                    enemies = wowPlayers.Except(friends).ToArray();
+                    objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
+                    npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
+                    if (!WoW.WProc.PlayerIsLooting && WoW.LocalPlayer.CastingSpellID == 0)
+                    {
+                        foreach (WowObject i in objects.Where(i => i.Location.Distance(WoW.LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
+                        {
+                            WoW.Interact(i.GUID);
+                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID), false, false);
+                        }
+                        foreach (WowNpc i in npcs.Where(i => i.Location.Distance(WoW.LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
+                        {
+                            WoW.Interact(i.GUID);
+                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID), false, false);
+                        }
+                    }
+                    bool alarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);
+                    if (!findAlarmPrevCount && alarm)
+                    {
+                        Task.Factory.StartNew(PlayAlarmFile);
+                    }
+                    findAlarmPrevCount = alarm;
+                    needToDraw = true;
+                    Invoke(invalidateAction);
+                }
+                catch (Exception ex)
+                {
+                    Log.Print(String.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
+                    needToDraw = false;
+                    Invoke(invalidateAction);
+                    Invoke(resetCheckboxes);
+                    Thread.Sleep(100);
+                    continue;
+                }
+                int counter = 100 - Environment.TickCount + startTime;
+                if (counter > 0 && !redrawTaskCancellationTokenSource.IsCancellationRequested)
+                {
+                    Thread.Sleep(counter);
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
-                needToDraw = false;
-                pictureBoxMain.Invalidate();
-                return;
-            }
-            needToDraw = true;
-            pictureBoxMain.Invalidate();
+            redrawTaskCancellationTokenSource.Token.ThrowIfCancellationRequested();
         }
 
         private void PictureBox1Paint(object sender, PaintEventArgs e)
         {
-            if (!needToDraw) return;
-            try
+            if (needToDraw)
             {
-                WowPlayer[] friends = wowPlayers.Where(i => i.IsAlliance == WoW.LocalPlayer.IsAlliance).ToArray();
-                int friendsCountAlive = friends.Count(i => i.Health > 0);
-                checkBoxFriends.Text = String.Concat("F: ", friendsCountAlive, "/", friends.Length);
-                WowPlayer[] enemies = wowPlayers.Except(friends).ToArray();
-                int enemiesCountAlive = enemies.Count(i => i.Health > 0);
-                checkBoxEnemies.Text = String.Concat("E: ", enemiesCountAlive, "/", enemies.Length);
-                WowObject[] objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                checkBoxObjects.Text = "Objects: " + objects.Length;
-                WowNpc[] npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                int npcsCountAlive = npcs.Count(i => i.Health > 0);
-                checkBoxNpcs.Text = String.Concat("N: ", npcsCountAlive, "/", npcs.Length);
-
-                #region Sound alarm
-
-                bool alarmObjects = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name));
-                bool alarmNpcs = npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);
-                if (!findAlarmPrevCount && (alarmObjects || alarmNpcs))
+                try
                 {
-                    Task.Factory.StartNew(PlayAlarmFile);
-                }
-                findAlarmPrevCount = alarmObjects || alarmNpcs;
+                    int friendsCountAlive = friends.Count(i => i.Health > 0);
+                    checkBoxFriends.Text = String.Concat("F: ", friendsCountAlive, "/", friends.Length);
+                    int enemiesCountAlive = enemies.Count(i => i.Health > 0);
+                    checkBoxEnemies.Text = String.Concat("E: ", enemiesCountAlive, "/", enemies.Length);
+                    checkBoxObjects.Text = "Objects: " + objects.Length;
+                    int npcsCountAlive = npcs.Count(i => i.Health > 0);
+                    checkBoxNpcs.Text = String.Concat("N: ", npcsCountAlive, "/", npcs.Length);
+                    
+                    objectsPointsInRadarCoords.Clear();
 
-                #endregion
-                
-                #region Interacting
+                    Point point = new Point();
+                    Point point2 = new Point();
+                    Graphics graphics = e.Graphics;
+                    graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    double localPlayerLocationX = WoW.LocalPlayer.Location.X;
+                    double localPlayerLocationY = WoW.LocalPlayer.Location.Y;
+                    double var2X;
+                    double var2Y;
+                    double num2;
 
-                if (interactCount < 16 && !WoW.WProc.PlayerIsLooting && WoW.LocalPlayer.CastingSpellID == 0)
-                {
-                    foreach (WowObject i in objects.Where(i => i.Location.Distance(WoW.LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
+                    #region Draw local player
+
+                    double d = -WoW.LocalPlayer.Rotation + 4.71238898038469;
+                    point.X = halfOfPictureboxSize;
+                    point.Y = halfOfPictureboxSize;
+                    graphics.FillRectangle(whiteBrush, point.X - 2, point.Y - 2, 4, 4);
+                    point2.X = point.X + ((int) (15.0*Math.Cos(d)));
+                    point2.Y = point.Y + ((int) (15.0*Math.Sin(d)));
+                    graphics.DrawLine(whitePen, point, point2);
+                    graphics.DrawEllipse(whitePen, point.X - (40*zoomR), point.Y - (40*zoomR), 80*zoomR, 80*zoomR);
+
+                    #endregion
+
+                    #region Draw friends
+
+                    if (checkBoxFriends.Checked)
                     {
-                        Task.Factory.StartNew(Interact, i.GUID);
-                        Log.Print(String.Format("{0}:{1} :: [Radar] Interacting with {2} (0x{3:X}) (Total tasks: {4})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID, interactCount), false, false);
-                    }
-                    foreach (WowNpc i in npcs.Where(i => i.Location.Distance(WoW.LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
-                    {
-                        Task.Factory.StartNew(Interact, i.GUID);
-                        Log.Print(String.Format("{0}:{1} :: [Radar] Interacting with {2} (0x{3:X}) (Total tasks: {4})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID, interactCount), false, false);
-                    }
-                }
-
-                #endregion
-                
-                objectsPointsInRadarCoords.Clear();
-
-                Point point = new Point();
-                Point point2 = new Point();
-                Graphics graphics = e.Graphics;
-                graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                double localPlayerLocationX = WoW.LocalPlayer.Location.X;
-                double localPlayerLocationY = WoW.LocalPlayer.Location.Y;
-                double var2X;
-                double var2Y;
-                double num2;
-
-                #region Draw local player
-
-                double d = -WoW.LocalPlayer.Rotation + 4.71238898038469;
-                point.X = halfOfPictureboxSize;
-                point.Y = halfOfPictureboxSize;
-                graphics.FillRectangle(whiteBrush, point.X - 2, point.Y - 2, 4, 4);
-                point2.X = point.X + ((int)(15.0 * Math.Cos(d)));
-                point2.Y = point.Y + ((int)(15.0 * Math.Sin(d)));
-                graphics.DrawLine(whitePen, point, point2);
-                graphics.DrawEllipse(whitePen, point.X - (40 * zoomR), point.Y - (40 * zoomR), 80 * zoomR, 80 * zoomR);
-
-                #endregion
-                
-                #region Draw friends
-
-                if (checkBoxFriends.Checked)
-                {
-                    foreach (WowPlayer i in friends)
-                    {
-                        if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
-                        var2X = i.Location.X;
-                        var2Y = i.Location.Y;
-                        num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
-                        var2X = localPlayerLocationX - var2X;
-                        var2Y = localPlayerLocationY - var2Y;
-                        var2X = (int)(zoomR * var2X);
-                        var2Y = (int)(zoomR * var2Y);
-                        double num3 = Math.Sqrt((var2X * var2X) + (var2Y * var2Y));
-                        point.X = (int)Math.Round(halfOfPictureboxSize + (Math.Abs(num3) * Math.Cos(num2 + 3.1415926535897931)));
-                        point.Y = (int)Math.Round(halfOfPictureboxSize + (Math.Abs(num3) * Math.Sin(num2)));
-                        Pen pen;
-                        SolidBrush solidBrush;
-                        if (i.Health > 0)
+                        foreach (WowPlayer i in friends)
                         {
-                            pen = friendPen;
-                            solidBrush = friendBrush;
-                        }
-                        else
-                        {
-                            pen = grayPen;
-                            solidBrush = grayBrush;
-                        }
-                        Point[] pts;
-                        if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
-                        {
-                            pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
-                        }
-                        else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
-                        {
-                            pts = new[] { new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2) };
-                        }
-                        else
-                        {
-                            pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y) };
-                        }
-                        graphics.FillPolygon(solidBrush, pts);
-                        graphics.DrawPolygon(i.TargetGUID == WoW.LocalPlayer.GUID ? whitePen : pen, pts);
-                        objectsPointsInRadarCoords.Add(i.GUID, point);
-                        point.X += 3;
-                        point.Y += 3;
-                        if (Settings.RadarShowPlayersClasses)
-                        {
-                            if (i.Level == WoW.LocalPlayer.Level)
+                            if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
+                            var2X = i.Location.X;
+                            var2Y = i.Location.Y;
+                            num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
+                            var2X = localPlayerLocationX - var2X;
+                            var2Y = localPlayerLocationY - var2Y;
+                            var2X = (int) (zoomR*var2X);
+                            var2Y = (int) (zoomR*var2Y);
+                            double num3 = Math.Sqrt((var2X*var2X) + (var2Y*var2Y));
+                            point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931)));
+                            point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num3)*Math.Sin(num2)));
+                            Pen pen;
+                            SolidBrush solidBrush;
+                            if (i.Health > 0)
                             {
-                                graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
-                            }
-                            else if (i.Level > WoW.LocalPlayer.Level)
-                            {
-                                graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
+                                pen = friendPen;
+                                solidBrush = friendBrush;
                             }
                             else
                             {
-                                graphics.DrawString(String.Concat(i.Class, "-"), DefaultFont, solidBrush, point);
+                                pen = grayPen;
+                                solidBrush = grayBrush;
                             }
-                        }
-                    }
-                }
-
-                #endregion
-
-                #region Draw enemies
-
-                if (checkBoxEnemies.Checked)
-                {
-                    foreach (WowPlayer i in enemies)
-                    {
-                        if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
-                        var2X = i.Location.X;
-                        var2Y = i.Location.Y;
-                        num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
-                        var2X = localPlayerLocationX - var2X;
-                        var2Y = localPlayerLocationY - var2Y;
-                        var2X = (int)(zoomR * var2X);
-                        var2Y = (int)(zoomR * var2Y);
-                        double num3 = Math.Sqrt((var2X * var2X) + (var2Y * var2Y));
-                        point.X = (int)Math.Round(halfOfPictureboxSize + (Math.Abs(num3) * Math.Cos(num2 + 3.1415926535897931)));
-                        point.Y = (int)Math.Round(halfOfPictureboxSize + (Math.Abs(num3) * Math.Sin(num2)));
-                        Pen pen;
-                        SolidBrush solidBrush;
-                        if (i.Health > 0)
-                        {
-                            pen = enemyPen;
-                            solidBrush = enemyBrush;
-                        }
-                        else
-                        {
-                            pen = grayPen;
-                            solidBrush = grayBrush;
-                        }
-                        Point[] pts;
-                        if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
-                        {
-                            pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
-                        }
-                        else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
-                        {
-                            pts = new[] { new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2) };
-                        }
-                        else
-                        {
-                            pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
-                        }
-                        graphics.FillPolygon(solidBrush, pts);
-                        graphics.DrawPolygon(i.TargetGUID == WoW.LocalPlayer.GUID ? whitePen : pen, pts);
-                        objectsPointsInRadarCoords.Add(i.GUID, point);
-                        point.X += 3;
-                        point.Y += 3;
-                        if (Settings.RadarShowPlayersClasses)
-                        {
-                            if (i.Level == WoW.LocalPlayer.Level)
+                            Point[] pts;
+                            if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
                             {
-                                graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
+                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
                             }
-                            else if (i.Level > WoW.LocalPlayer.Level)
+                            else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
                             {
-                                graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
+                                pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
                             }
                             else
                             {
-                                graphics.DrawString(String.Concat(i.Class, "-"), DefaultFont, solidBrush, point);
+                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                            }
+                            graphics.FillPolygon(solidBrush, pts);
+                            graphics.DrawPolygon(i.TargetGUID == WoW.LocalPlayer.GUID ? whitePen : pen, pts);
+                            objectsPointsInRadarCoords.Add(i.GUID, point);
+                            point.X += 3;
+                            point.Y += 3;
+                            if (Settings.RadarShowPlayersClasses)
+                            {
+                                if (i.Level == WoW.LocalPlayer.Level)
+                                {
+                                    graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
+                                }
+                                else if (i.Level > WoW.LocalPlayer.Level)
+                                {
+                                    graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
+                                }
+                                else
+                                {
+                                    graphics.DrawString(String.Concat(i.Class, "-"), DefaultFont, solidBrush, point);
+                                }
                             }
                         }
                     }
-                }
 
-                #endregion
+                    #endregion
 
-                #region Draw objects
+                    #region Draw enemies
 
-                if (checkBoxObjects.Checked)
-                {
-                    foreach (WowObject i in objects)
+                    if (checkBoxEnemies.Checked)
                     {
-                        var2X = i.Location.X;
-                        var2Y = i.Location.Y;
-                        num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
-                        var2X = localPlayerLocationX - var2X;
-                        var2Y = localPlayerLocationY - var2Y;
-                        var2X = (int)(zoomR * var2X);
-                        var2Y = (int)(zoomR * var2Y);
-                        double num4 = Math.Sqrt((var2X * var2X) + (var2Y * var2Y));
-                        point.X = (int)Math.Round(halfOfPictureboxSize + (Math.Abs(num4) * Math.Cos(num2 + 3.1415926535897931)));
-                        point.Y = (int)Math.Round(halfOfPictureboxSize + (Math.Abs(num4) * Math.Sin(num2)));
-                        Point[] pts;
-                        if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
+                        foreach (WowPlayer i in enemies)
                         {
-                            pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
-                        }
-                        else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
-                        {
-                            pts = new[] { new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2) };
-                        }
-                        else
-                        {
-                            pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
-                        }
-                        graphics.DrawPolygon(objectPen, pts);
-                        graphics.FillPolygon(objectBrush, pts);
-                        objectsPointsInRadarCoords.Add(i.GUID, point);
-                        if (Settings.RadarShowObjectsNames)
-                        {
+                            if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
+                            var2X = i.Location.X;
+                            var2Y = i.Location.Y;
+                            num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
+                            var2X = localPlayerLocationX - var2X;
+                            var2Y = localPlayerLocationY - var2Y;
+                            var2X = (int) (zoomR*var2X);
+                            var2Y = (int) (zoomR*var2Y);
+                            double num3 = Math.Sqrt((var2X*var2X) + (var2Y*var2Y));
+                            point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931)));
+                            point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num3)*Math.Sin(num2)));
+                            Pen pen;
+                            SolidBrush solidBrush;
+                            if (i.Health > 0)
+                            {
+                                pen = enemyPen;
+                                solidBrush = enemyBrush;
+                            }
+                            else
+                            {
+                                pen = grayPen;
+                                solidBrush = grayBrush;
+                            }
+                            Point[] pts;
+                            if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
+                            {
+                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
+                            }
+                            else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            {
+                                pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
+                            }
+                            else
+                            {
+                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                            }
+                            graphics.FillPolygon(solidBrush, pts);
+                            graphics.DrawPolygon(i.TargetGUID == WoW.LocalPlayer.GUID ? whitePen : pen, pts);
+                            objectsPointsInRadarCoords.Add(i.GUID, point);
                             point.X += 3;
                             point.Y += 3;
-                            graphics.DrawString(i.Name, DefaultFont, objectBrush, point);
+                            if (Settings.RadarShowPlayersClasses)
+                            {
+                                if (i.Level == WoW.LocalPlayer.Level)
+                                {
+                                    graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
+                                }
+                                else if (i.Level > WoW.LocalPlayer.Level)
+                                {
+                                    graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
+                                }
+                                else
+                                {
+                                    graphics.DrawString(String.Concat(i.Class, "-"), DefaultFont, solidBrush, point);
+                                }
+                            }
                         }
                     }
-                }
 
-                #endregion
+                    #endregion
 
-                #region Draw NPCs
+                    #region Draw objects
 
-                if (checkBoxNpcs.Checked)
-                {
-                    foreach (WowNpc i in npcs)
+                    if (checkBoxObjects.Checked)
                     {
-                        if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
-                        var2X = i.Location.X;
-                        var2Y = i.Location.Y;
-                        num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
-                        var2X = localPlayerLocationX - var2X;
-                        var2Y = localPlayerLocationY - var2Y;
-                        var2X = (int)(zoomR * var2X);
-                        var2Y = (int)(zoomR * var2Y);
-                        double num4 = Math.Sqrt((var2X * var2X) + (var2Y * var2Y));
-                        point.X = (int)Math.Round(halfOfPictureboxSize + (Math.Abs(num4) * Math.Cos(num2 + 3.1415926535897931)));
-                        point.Y = (int)Math.Round(halfOfPictureboxSize + (Math.Abs(num4) * Math.Sin(num2)));
-                        Point[] pts;
-                        if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
+                        foreach (WowObject i in objects)
                         {
-                            pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
-                        }
-                        else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
-                        {
-                            pts = new[] { new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2) };
-                        }
-                        else
-                        {
-                            pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
-                        }
-                        graphics.DrawPolygon(i.Health > 0 ? npcPen : grayPen, pts);
-                        graphics.FillPolygon(i.Health > 0 ? npcBrush : grayBrush, pts);
-                        objectsPointsInRadarCoords.Add(i.GUID, point);
-                        if (Settings.RadarShowNpcsNames)
-                        {
-                            point.X += 3;
-                            point.Y += 3;
-                            graphics.DrawString(i.Name, DefaultFont, i.Health > 0 ? npcBrush : grayBrush, point);
+                            var2X = i.Location.X;
+                            var2Y = i.Location.Y;
+                            num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
+                            var2X = localPlayerLocationX - var2X;
+                            var2Y = localPlayerLocationY - var2Y;
+                            var2X = (int) (zoomR*var2X);
+                            var2Y = (int) (zoomR*var2Y);
+                            double num4 = Math.Sqrt((var2X*var2X) + (var2Y*var2Y));
+                            point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931)));
+                            point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Sin(num2)));
+                            Point[] pts;
+                            if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
+                            {
+                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
+                            }
+                            else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            {
+                                pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
+                            }
+                            else
+                            {
+                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                            }
+                            graphics.DrawPolygon(objectPen, pts);
+                            graphics.FillPolygon(objectBrush, pts);
+                            objectsPointsInRadarCoords.Add(i.GUID, point);
+                            if (Settings.RadarShowObjectsNames)
+                            {
+                                point.X += 3;
+                                point.Y += 3;
+                                graphics.DrawString(i.Name, DefaultFont, objectBrush, point);
+                            }
                         }
                     }
+
+                    #endregion
+
+                    #region Draw NPCs
+
+                    if (checkBoxNpcs.Checked)
+                    {
+                        foreach (WowNpc i in npcs)
+                        {
+                            if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
+                            var2X = i.Location.X;
+                            var2Y = i.Location.Y;
+                            num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
+                            var2X = localPlayerLocationX - var2X;
+                            var2Y = localPlayerLocationY - var2Y;
+                            var2X = (int) (zoomR*var2X);
+                            var2Y = (int) (zoomR*var2Y);
+                            double num4 = Math.Sqrt((var2X*var2X) + (var2Y*var2Y));
+                            point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931)));
+                            point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Sin(num2)));
+                            Point[] pts;
+                            if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
+                            {
+                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
+                            }
+                            else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            {
+                                pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
+                            }
+                            else
+                            {
+                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                            }
+                            graphics.DrawPolygon(i.Health > 0 ? npcPen : grayPen, pts);
+                            graphics.FillPolygon(i.Health > 0 ? npcBrush : grayBrush, pts);
+                            objectsPointsInRadarCoords.Add(i.GUID, point);
+                            if (Settings.RadarShowNpcsNames)
+                            {
+                                point.X += 3;
+                                point.Y += 3;
+                                graphics.DrawString(i.Name, DefaultFont, i.Health > 0 ? npcBrush : grayBrush, point);
+                            }
+                        }
+                    }
+
+                    #endregion
+
+                    point = MousePosition;
+                    point.X -= Location.X;
+                    point.Y -= Location.Y;
+                    if (point.X >= 0 && point.Y > 0 && point.X <= pictureBoxMain.Width && point.Y <= pictureBoxMain.Height)
+                    {
+                        MeasureTooltip(point);
+                    }
                 }
-
-                #endregion
-
-                point = MousePosition;
-                point.X -= Location.X;
-                point.Y -= Location.Y;
-                if (point.X >= 0 && point.Y > 0 && point.X <= pictureBoxMain.Width && point.Y <= pictureBoxMain.Height)
+                catch (Exception ex)
                 {
-                    MeasureTooltip(point);
+                    Log.Print(String.Format("{0}:{1} :: Radar: Drawing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.Print(String.Format("{0}:{1} :: Radar: Drawing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
         }
 
@@ -497,7 +538,7 @@ namespace AxTools.Forms
 
         private void RadarFormClosing(object sender, FormClosingEventArgs e)
         {
-            timer1.Enabled = false;
+            needToDraw = false;
             whitePen.Dispose();
             enemyPen.Dispose();
             friendPen.Dispose();
@@ -510,6 +551,29 @@ namespace AxTools.Forms
             npcBrush.Dispose();
             enemyBrush.Dispose();
             grayBrush.Dispose();
+
+            redrawTaskCancellationTokenSource.Cancel();
+            // ReSharper disable EmptyGeneralCatchClause
+            try
+            {
+                redrawTask.Wait(5000);
+            }
+            catch
+            {
+                // Successful
+            }
+            // ReSharper restore EmptyGeneralCatchClause
+            if (redrawTask.Status == TaskStatus.Canceled || redrawTask.Status == TaskStatus.RanToCompletion || redrawTask.Status == TaskStatus.Faulted)
+            {
+                redrawTask.Dispose();
+                redrawTaskCancellationTokenSource.Dispose();
+                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+            }
+            else
+            {
+                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task termination error", WoW.WProc.ProcessName, WoW.WProc.ProcessID), true);
+            }
+
             try
             {
                 Utils.CheckCreateDir();
@@ -547,16 +611,17 @@ namespace AxTools.Forms
         private void RadarLoad(object sender, EventArgs e)
         {
             Location = Settings.RadarLocation;
+            redrawTask.Start();
             if (!File.Exists(Globals.UserfilesPath + "\\alarm.wav"))
             {
                 Utils.CheckCreateDir();
                 Task.Factory.StartNew(() =>
+                {
+                    using (WebClient pWebClient = new WebClient())
                     {
-                        using (WebClient pWebClient = new WebClient())
-                        {
-                            pWebClient.DownloadFile(Globals.DropboxPath + "/alarm.wav", Globals.UserfilesPath + "\\alarm.wav");
-                        }
-                    });
+                        pWebClient.DownloadFile(Globals.DropboxPath + "/alarm.wav", Globals.UserfilesPath + "\\alarm.wav");
+                    }
+                });
             }
         }
 
@@ -575,14 +640,6 @@ namespace AxTools.Forms
             p[4] = (byte) (checkBoxCorpses.Checked ? 1 : 0);
             p[5] = (byte) (zoomR/0.25F);
             Settings.RadarShow = BitConverter.ToUInt64(p, 0);
-        }
-
-        private int interactCount;
-        private void Interact(object guid)
-        {
-            interactCount++;
-            WoW.Interact((ulong) guid);
-            interactCount--;
         }
 
         private void MeasureTooltip(Point mousePosition)
@@ -619,11 +676,12 @@ namespace AxTools.Forms
         private void DrawTooltip(Point e, string text, WowPlayerClass _class)
         {
             textBoxDetailedInfo.Text = text;
-            using (Graphics graphics = Graphics.FromHwnd(textBoxDetailedInfo.Handle))
-            {
-                SizeF size = graphics.MeasureString(textBoxDetailedInfo.Text, textBoxDetailedInfo.Font);
-                textBoxDetailedInfo.Width = (int)size.Width;
-            }
+            textBoxDetailedInfo.Width = TextRenderer.MeasureText(text, textBoxDetailedInfo.Font).Width;
+            //using (Graphics graphics = Graphics.FromHwnd(textBoxDetailedInfo.Handle))
+            //{
+            //    SizeF size = graphics.MeasureString(textBoxDetailedInfo.Text, textBoxDetailedInfo.Font);
+            //    textBoxDetailedInfo.Width = (int)size.Width;
+            //}
             if (e.X < 112)
             {
                 textBoxDetailedInfo.Location = new Point(e.X + 5, e.Y);
