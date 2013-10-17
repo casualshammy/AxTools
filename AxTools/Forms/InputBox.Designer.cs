@@ -111,6 +111,8 @@
             this.Controls.Add(this.button1);
             this.DisplayHeader = false;
             this.Location = new System.Drawing.Point(0, 0);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "InputBox";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.Resizable = false;

@@ -571,7 +571,7 @@ namespace AxTools.Forms
             }
             else
             {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task termination error", WoW.WProc.ProcessName, WoW.WProc.ProcessID), true);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, redrawTask.Status), true);
             }
 
             try

@@ -1,4 +1,5 @@
-﻿using AxTools.Classes;
+﻿using WindowsFormsAero.TaskDialog;
+using AxTools.Classes;
 using AxTools.Classes.WoW;
 using MetroFramework.Drawing;
 using System;
@@ -65,20 +66,34 @@ namespace AxTools.Forms
         
         private void ButtonAddObjectOrNpcToListClick(object sender, EventArgs e)
         {
-            dataGridViewObjects.Rows.Add(true, comboBoxSelectObjectOrNpc.SelectedItem.ToString(),
-                                         comboBoxSelectObjectOrNpc.SelectedIndex + 1 <= wowObjects.Count, true);
-            if (dataGridViewObjects.Rows.Count > 0)
+            if (comboBoxSelectObjectOrNpc.SelectedIndex != -1 && comboBoxSelectObjectOrNpc.SelectedItem != null && !string.IsNullOrWhiteSpace(comboBoxSelectObjectOrNpc.SelectedItem.ToString()))
             {
-                dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
+                dataGridViewObjects.Rows.Add(true, comboBoxSelectObjectOrNpc.SelectedItem.ToString(),
+                    comboBoxSelectObjectOrNpc.SelectedIndex + 1 <= wowObjects.Count, true);
+                if (dataGridViewObjects.Rows.Count > 0)
+                {
+                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
+                }
+            }
+            else
+            {
+                this.ShowTaskDialog("Object name cannot be empty!", "Please select an object from the combobox", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
         }
 
         private void MetroButtonAddNewClick(object sender, EventArgs e)
         {
-            dataGridViewObjects.Rows.Add(true, metroTextBoxAddNew.Text, true, true);
-            if (dataGridViewObjects.Rows.Count > 0)
+            if (!string.IsNullOrWhiteSpace(metroTextBoxAddNew.Text))
             {
-                dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
+                dataGridViewObjects.Rows.Add(true, metroTextBoxAddNew.Text, true, true);
+                if (dataGridViewObjects.Rows.Count > 0)
+                {
+                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
+                }
+            }
+            else
+            {
+                this.ShowTaskDialog("Object name cannot be empty!", "Please enter an object name in the textbox", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
         }
 

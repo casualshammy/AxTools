@@ -4,7 +4,7 @@
 Location={X=98,Y=552}
 GameServer=World of Warcraft - Blackscar
 regname=Axio-5GDMJHD20R
-LastUsedVersion=11.13.4.0
+LastUsedVersion=11.13.13.0
 NewStyleColor=6
 
 WowPluginsShowIngameNotifications=True
@@ -59,4 +59,4 @@ AddonsBackup=True
 AddonsBackupNum=7
 AddonsBackupTimer=24
 BackupCompressionLevel=6
-addons_backup_lastdate=03.09.2013 13:20:20
+addons_backup_lastdate=03.10.2013 7:18:05

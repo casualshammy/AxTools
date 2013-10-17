@@ -1,9 +1,12 @@
-﻿21.09.2013 12:26:13.023 // Launching... (11.13.12.0)
-21.09.2013 12:26:13.297 // Legacy :: .radar2 has been successfully converted to .radar3
-21.09.2013 12:26:13.335 // Legacy :: .wowaccounts has been successfully converted to .wowaccounts2
-21.09.2013 12:26:13.339 // Settings are loaded
-21.09.2013 12:26:13.342 // WoW accounts was loaded
-21.09.2013 12:26:13.381 // Registered for: Axio-5GDMJHD20R
-21.09.2013 12:26:13.384 // Wow:408 :: [Process watcher] Process added
-21.09.2013 12:26:13.385 // AxTools :: preparation completed
-21.09.2013 12:26:13.393 // Wow:408 :: [WoW hook] Attaching...
+﻿03.10.2013 07:18:00.436 // Launching... (11.13.13.0)
+03.10.2013 07:18:00.475 // Settings are loaded
+03.10.2013 07:18:00.483 // WoW accounts was loaded
+03.10.2013 07:18:00.536 // Registered for: Axio-5GDMJHD20R
+03.10.2013 07:18:00.538 // AxTools :: preparation completed
+03.10.2013 07:18:05.557 // Backup error: WTF directory isn't found
+03.10.2013 07:18:08.788 // AxTools started succesfully
+03.10.2013 07:18:08.789 // [Updater] Checking for updates...
+03.10.2013 07:18:10.020 // Starting processes trace watching is stopped
+03.10.2013 07:18:10.021 // Stopping processes trace watching is stopped
+03.10.2013 07:18:10.022 // Keyboard hook disposed
+03.10.2013 07:18:10.022 // AxTools closed

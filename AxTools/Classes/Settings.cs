@@ -321,7 +321,7 @@ namespace AxTools.Classes
                                 }
                                 catch (Exception ex)
                                 {
-                                    Log.Print("Settings reading error (" + strArray.CastToString() + "): " + ex.Message, true);
+                                    Log.Print("Settings reading error (" + strArray.AsString() + "): " + ex.Message, true);
                                 }
                             }
                         }

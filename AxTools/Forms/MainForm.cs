@@ -17,7 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Net;
-using System.Net.Mail;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
@@ -93,7 +92,6 @@ namespace AxTools.Forms
             LoadWowAccounts();
             OnSettingsLoaded();
             HotkeysChanged();
-            //ServicePointManager.ServerCertificateValidationCallback = (o, certificate, chain, errors) => true;
             WebRequest.DefaultWebProxy = null;
             Task.Factory.StartNew(LoadingStepAsync);
         }
@@ -1048,7 +1046,7 @@ namespace AxTools.Forms
 
             if (Settings.Regname == "Axio-5GDMJHD20R")
             {
-                this.ShowTaskDialog("VPN", "Don't forget to connect to VPN", TaskDialogButton.OK, TaskDialogIcon.Warning);
+                Process.Start("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-noexit \"-file\" \"C:\\Users\\Axioma\\Desktop\\vpn.ps1\"");
             }
 
             #endregion
@@ -1749,7 +1747,7 @@ namespace AxTools.Forms
             }
             List<WowObject> wowObjects = new List<WowObject>();
             Log.Print(String.Format("{0}:{1} :: [Battlefield outlaw] Plugin is started, let's take away their {2} in {3} ({4})!",
-                                    WoW.WProc.ProcessName, WoW.WProc.ProcessID, searchingObjects.CastToString(), WoW.WProc.PlayerZoneText, searchingZone), false);
+                                    WoW.WProc.ProcessName, WoW.WProc.ProcessID, searchingObjects.AsString(), WoW.WProc.PlayerZoneText, searchingZone), false);
             while (!moduleToken.IsCancellationRequested)
             {
                 int startTime = Environment.TickCount;
@@ -1814,8 +1812,8 @@ namespace AxTools.Forms
             }
             Log.Print(WoW.WProc != null
                           ? String.Format("{0}:{1} :: [Battlefield outlaw] Plugin is stopped ({2})",
-                                          WoW.WProc.ProcessName, WoW.WProc.ProcessID, searchingObjects.CastToString())
-                          : String.Format("UNKNOWN:null :: [Battlefield outlaw] Plugin is stopped ({0})", searchingObjects.CastToString()), false);
+                                          WoW.WProc.ProcessName, WoW.WProc.ProcessID, searchingObjects.AsString())
+                          : String.Format("UNKNOWN:null :: [Battlefield outlaw] Plugin is stopped ({0})", searchingObjects.AsString()), false);
             moduleToken.Token.ThrowIfCancellationRequested();
         }
 
@@ -2271,7 +2269,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void metroTile1_Click(object sender, EventArgs e)
+        private void metroTileSendLogToDev_Click(object sender, EventArgs e)
         {
             try
             {
@@ -2279,8 +2277,22 @@ namespace AxTools.Forms
                 InputBox.Input("Any comment? (optional)", out subject);
                 WaitingOverlay waitingOverlay = new WaitingOverlay(this);
                 waitingOverlay.Show();
-                Log.SendViaEmail(subject);
-                waitingOverlay.Close();
+                Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        Log.SendViaEmail(subject);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Print("Can't send log: " + ex.Message, true);
+                        this.ShowTaskDialog("Can't send log", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                    }
+                    finally
+                    {
+                        Invoke(new Action(waitingOverlay.Close));
+                    }
+                });
             }
             catch (Exception ex)
             {

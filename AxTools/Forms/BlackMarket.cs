@@ -1,4 +1,5 @@
-﻿using AxTools.Classes;
+﻿using System.Threading.Tasks;
+using AxTools.Classes;
 using AxTools.Classes.WoW;
 using AxTools.Properties;
 using MetroFramework.Drawing;
@@ -36,7 +37,7 @@ namespace AxTools.Forms
         }
 
         private DateTime lastRefresh = DateTime.UtcNow;
-        private readonly object lockListView = new object();
+        private readonly unsafe int bmStructSize = sizeof(BlackMarketItem);
 
         private void BlackMarketFormClosing(object sender, FormClosingEventArgs e)
         {
@@ -44,7 +45,7 @@ namespace AxTools.Forms
             Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
         }
 
-        private unsafe void MetroLinkRefreshClick(object sender, EventArgs e)
+        private void MetroLinkRefreshClick(object sender, EventArgs e)
         {
             if (!WoW.Hooked || !WoW.WProc.IsInGame)
             {
@@ -59,29 +60,43 @@ namespace AxTools.Forms
             {
                 WaitingOverlay waitingOverlay = new WaitingOverlay(this);
                 waitingOverlay.Show();
-                int structSize = sizeof (BlackMarketItem);
                 int baseAddr = WoW.WProc.Memory.Read<int>(WoW.WProc.Memory.ImageBase + WowBuildInfo.BlackMarketItems);
-                for (uint i = 0; i < numItems; ++i)
+                Task.Factory.StartNew(() =>
                 {
-                    int finalAddr = (int)(baseAddr + i * structSize);
-                    BlackMarketItem item = WoW.WProc.Memory.Read<BlackMarketItem>(new IntPtr(finalAddr));
-                    uint gold = item.NumBids > 0 ? (uint) (item.currBid/10000) : (uint) (item.minBid/10000);
-                    ListViewItem lvi = new ListViewItem(
-                        new[]
-                        {
-                            WoW.GetFunctionReturn("GetItemInfo(" + item.Entry + ")"),
-                            TimeSpan.FromSeconds(item.TimeLeft).ToString("hh\\:mm\\:ss"),
-                            gold + " g",
-                            item.NumBids.ToString()
-                        }) {Tag = item};
-                    lock (lockListView)
+                    try
                     {
-                        listView1.Items.Add(lvi);
-                    }  
-                }
-                waitingOverlay.Close();
+                        for (uint i = 0; i < numItems; ++i)
+                        {
+                            int finalAddr = (int) (baseAddr + i*bmStructSize);
+                            BlackMarketItem item = WoW.WProc.Memory.Read<BlackMarketItem>(new IntPtr(finalAddr));
+                            uint gold = item.NumBids > 0 ? (uint) (item.currBid/10000) : (uint) (item.minBid/10000);
+                            ListViewItem lvi = new ListViewItem(
+                                new[]
+                                {
+                                    WoW.GetFunctionReturn("GetItemInfo(" + item.Entry + ")"),
+                                    TimeSpan.FromSeconds(item.TimeLeft).ToString("hh\\:mm\\:ss"),
+                                    gold + " g",
+                                    item.NumBids.ToString()
+                                }) {Tag = item};
+                            Invoke(new Action(() => listView1.Items.Add(lvi)));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Refresh error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                    }
+                    finally
+                    {
+                        Invoke(new Action(waitingOverlay.Close));
+                        Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Refresh time: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, Environment.TickCount - startTime), false);
+                    }
+                });
             }
-            Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Refresh time: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, Environment.TickCount - startTime), false);
+            else
+            {
+                Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Nothing to scan!", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+                this.ShowTaskDialog("Items are zero", "Are you sure the black market window open?", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
         }
 
         private void timerUpdateList_Tick(object sender, EventArgs e)

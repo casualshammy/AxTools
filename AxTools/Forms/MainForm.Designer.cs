@@ -928,7 +928,7 @@ namespace AxTools.Forms
             this.metroTileSendLogToDev.Text = "Send log to developer";
             this.metroTileSendLogToDev.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTileSendLogToDev.TileCount = 0;
-            this.metroTileSendLogToDev.Click += new System.EventHandler(this.metroTile1_Click);
+            this.metroTileSendLogToDev.Click += new System.EventHandler(this.metroTileSendLogToDev_Click);
             // 
             // tileShowLog
             // 
