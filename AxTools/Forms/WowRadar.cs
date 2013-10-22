@@ -72,8 +72,8 @@ namespace AxTools.Forms
             {
                 Log.Print(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
-            redrawTaskCancellationTokenSource = new CancellationTokenSource();
-            redrawTask = new Task(Redraw, redrawTaskCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+            redrawTaskCTS = new CancellationTokenSource();
+            redrawTask = new Task(Redraw, redrawTaskCTS.Token, TaskCreationOptions.LongRunning);
             Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
         }
 
@@ -135,19 +135,20 @@ namespace AxTools.Forms
         private WowObject[] objects;
         private WowNpc[] npcs;
         private readonly Task redrawTask;
-        private readonly CancellationTokenSource redrawTaskCancellationTokenSource;
-        
+        private readonly CancellationTokenSource redrawTaskCTS;
+
         private void Redraw()
         {
-            Action invalidateAction = pictureBoxMain.Invalidate;
-            Action resetCheckboxes = () =>
+            Action refreshRadar = pictureBoxMain.Invalidate;
+            Action clearRadar = () =>
             {
+                pictureBoxMain.Invalidate();
                 checkBoxFriends.Text = "F: 0/0";
                 checkBoxEnemies.Text = "E: 0/0";
                 checkBoxObjects.Text = "Objects: 0";
                 checkBoxNpcs.Text = "N: 0/0";
             };
-            while (!redrawTaskCancellationTokenSource.IsCancellationRequested)
+            while (!redrawTaskCTS.IsCancellationRequested)
             {
                 int startTime = Environment.TickCount;
                 if (!WoW.Hooked || !WoW.WProc.IsInGame)
@@ -155,8 +156,7 @@ namespace AxTools.Forms
                     try
                     {
                         needToDraw = false;
-                        Invoke(invalidateAction);
-                        Invoke(resetCheckboxes);
+                        Invoke(clearRadar);
                     }
                     catch (Exception ex)
                     {
@@ -173,8 +173,7 @@ namespace AxTools.Forms
                 {
                     Log.Print(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
                     needToDraw = false;
-                    Invoke(invalidateAction);
-                    Invoke(resetCheckboxes);
+                    Invoke(clearRadar);
                     Thread.Sleep(100);
                     continue;
                 }
@@ -204,24 +203,24 @@ namespace AxTools.Forms
                     }
                     findAlarmPrevCount = alarm;
                     needToDraw = true;
-                    Invoke(invalidateAction);
+                    Invoke(refreshRadar);
                 }
                 catch (Exception ex)
                 {
                     Log.Print(String.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
                     needToDraw = false;
-                    Invoke(invalidateAction);
-                    Invoke(resetCheckboxes);
+                    Invoke(clearRadar);
                     Thread.Sleep(100);
                     continue;
                 }
                 int counter = 100 - Environment.TickCount + startTime;
-                if (counter > 0 && !redrawTaskCancellationTokenSource.IsCancellationRequested)
+                if (counter > 0 && !redrawTaskCTS.IsCancellationRequested)
                 {
                     Thread.Sleep(counter);
                 }
             }
-            redrawTaskCancellationTokenSource.Token.ThrowIfCancellationRequested();
+            Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+            redrawTaskCTS.Token.ThrowIfCancellationRequested();
         }
 
         private void PictureBox1Paint(object sender, PaintEventArgs e)
@@ -552,21 +551,19 @@ namespace AxTools.Forms
             enemyBrush.Dispose();
             grayBrush.Dispose();
 
-            redrawTaskCancellationTokenSource.Cancel();
-            // ReSharper disable EmptyGeneralCatchClause
-            try
+            redrawTaskCTS.Cancel();
+            int counter = 0;
+            while (redrawTask.Status == TaskStatus.Running && counter < 100)
             {
-                redrawTask.Wait(5000);
+                // avoiding deadlock, grrr, bad practice I know
+                Application.DoEvents();
+                Thread.Sleep(50);
+                counter++;
             }
-            catch
-            {
-                // Successful
-            }
-            // ReSharper restore EmptyGeneralCatchClause
             if (redrawTask.Status == TaskStatus.Canceled || redrawTask.Status == TaskStatus.RanToCompletion || redrawTask.Status == TaskStatus.Faulted)
             {
                 redrawTask.Dispose();
-                redrawTaskCancellationTokenSource.Dispose();
+                redrawTaskCTS.Dispose();
                 Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
             }
             else
@@ -587,6 +584,7 @@ namespace AxTools.Forms
             {
                 Log.Print(String.Format("{0}:{1} :: [Radar] Can't save the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
+
             Log.Print(String.Format("{0}:{1} :: [Radar] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
         }
 
