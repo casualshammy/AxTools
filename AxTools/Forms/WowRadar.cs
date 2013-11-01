@@ -106,7 +106,6 @@ namespace AxTools.Forms
         private static readonly HashSet<string> RadarKOSFindAlarm = new HashSet<string>();
         private static readonly HashSet<string> RadarKOSFindInteract = new HashSet<string>(); 
 
-        private bool findAlarmPrevCount;
         private Pen friendPen = new Pen(Settings.RadarFriendColor, 1f);
         private Pen enemyPen = new Pen(Settings.RadarEnemyColor, 1f);
         private Pen npcPen = new Pen(Settings.RadarNpcColor, 1f);
@@ -124,7 +123,6 @@ namespace AxTools.Forms
         bool isDragging;
         float zoomR = 0.5F;
         private readonly int halfOfPictureboxSize;
-        private bool needToDraw;
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private readonly List<WowPlayer> wowPlayers = new List<WowPlayer>();
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
@@ -136,6 +134,7 @@ namespace AxTools.Forms
         private WowNpc[] npcs;
         private readonly Task redrawTask;
         private readonly CancellationTokenSource redrawTaskCTS;
+        private bool readyToDraw;
 
         private void Redraw()
         {
@@ -148,15 +147,16 @@ namespace AxTools.Forms
                 checkBoxObjects.Text = "Objects: 0";
                 checkBoxNpcs.Text = "N: 0/0";
             };
+            bool soundAlarmPrevState = false;
             while (!redrawTaskCTS.IsCancellationRequested)
             {
                 int startTime = Environment.TickCount;
+                readyToDraw = false;
                 if (!WoW.Hooked || !WoW.WProc.IsInGame)
                 {
                     try
                     {
-                        needToDraw = false;
-                        Invoke(clearRadar);
+                        BeginInvoke(clearRadar);
                     }
                     catch (Exception ex)
                     {
@@ -172,8 +172,7 @@ namespace AxTools.Forms
                 catch (Exception ex)
                 {
                     Log.Print(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
-                    needToDraw = false;
-                    Invoke(clearRadar);
+                    BeginInvoke(clearRadar);
                     Thread.Sleep(100);
                     continue;
                 }
@@ -196,20 +195,19 @@ namespace AxTools.Forms
                             Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID), false, false);
                         }
                     }
-                    bool alarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);
-                    if (!findAlarmPrevCount && alarm)
+                    bool soundAlarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);
+                    if (!soundAlarmPrevState && soundAlarm)
                     {
                         Task.Factory.StartNew(PlayAlarmFile);
                     }
-                    findAlarmPrevCount = alarm;
-                    needToDraw = true;
-                    Invoke(refreshRadar);
+                    soundAlarmPrevState = soundAlarm;
+                    readyToDraw = true;
+                    BeginInvoke(refreshRadar);
                 }
                 catch (Exception ex)
                 {
                     Log.Print(String.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
-                    needToDraw = false;
-                    Invoke(clearRadar);
+                    BeginInvoke(clearRadar);
                     Thread.Sleep(100);
                     continue;
                 }
@@ -225,7 +223,7 @@ namespace AxTools.Forms
 
         private void PictureBox1Paint(object sender, PaintEventArgs e)
         {
-            if (needToDraw)
+            if (readyToDraw)
             {
                 try
                 {
@@ -516,17 +514,21 @@ namespace AxTools.Forms
 
         private void RadarMouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button != MouseButtons.Left) return;
-            isDragging = true;
-            oldPoint = e.Location;
+            if (e.Button == MouseButtons.Left)
+            {
+                isDragging = true;
+                oldPoint = e.Location;
+            }
         }
 
         private void RadarMouseMove(object sender, MouseEventArgs e)
         {
-            if (!isDragging) return;
-            tmpPoint.X += e.X - oldPoint.X;
-            tmpPoint.Y += e.Y - oldPoint.Y;
-            Location = tmpPoint;
+            if (isDragging)
+            {
+                tmpPoint.X += e.X - oldPoint.X;
+                tmpPoint.Y += e.Y - oldPoint.Y;
+                Location = tmpPoint;
+            }
         }
 
         private void RadarMouseUp(object sender, MouseEventArgs e)
@@ -537,7 +539,7 @@ namespace AxTools.Forms
 
         private void RadarFormClosing(object sender, FormClosingEventArgs e)
         {
-            needToDraw = false;
+            readyToDraw = false;
             whitePen.Dispose();
             enemyPen.Dispose();
             friendPen.Dispose();
@@ -552,13 +554,14 @@ namespace AxTools.Forms
             grayBrush.Dispose();
 
             redrawTaskCTS.Cancel();
-            int counter = 0;
-            while (redrawTask.Status == TaskStatus.Running && counter < 100)
+            try
             {
-                // avoiding deadlock, grrr, bad practice I know
-                Application.DoEvents();
-                Thread.Sleep(50);
-                counter++;
+                redrawTask.Wait(5000);
+            }
+            // ReSharper disable once EmptyGeneralCatchClause
+            catch
+            {
+                // It's OK
             }
             if (redrawTask.Status == TaskStatus.Canceled || redrawTask.Status == TaskStatus.RanToCompletion || redrawTask.Status == TaskStatus.Faulted)
             {
@@ -675,11 +678,6 @@ namespace AxTools.Forms
         {
             textBoxDetailedInfo.Text = text;
             textBoxDetailedInfo.Width = TextRenderer.MeasureText(text, textBoxDetailedInfo.Font).Width;
-            //using (Graphics graphics = Graphics.FromHwnd(textBoxDetailedInfo.Handle))
-            //{
-            //    SizeF size = graphics.MeasureString(textBoxDetailedInfo.Text, textBoxDetailedInfo.Font);
-            //    textBoxDetailedInfo.Width = (int)size.Width;
-            //}
             if (e.X < 112)
             {
                 textBoxDetailedInfo.Location = new Point(e.X + 5, e.Y);

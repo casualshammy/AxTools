@@ -247,7 +247,7 @@ namespace AxTools.Forms
             if (pTimeSpan.TotalHours > Settings.AddonsBackupTimer)
             {
                 Settings.AddonsBackupLastdate = DateTime.UtcNow;
-                Task.Factory.StartNew(BackupAddons, true);
+                Task.Factory.StartNew(() => BackupAddons(true, true));
             }
 
             #endregion
@@ -274,24 +274,6 @@ namespace AxTools.Forms
             BeginInvoke(new Action(() => SetIcon(false)));
             Thread.Sleep(500);
             BeginInvoke(new Action(() => SetIcon(true)));
-
-            //if (timerClicker.Enabled)
-            //{
-            //    notifyIconMain.Icon = Utils.EmptyIcon;
-            //}
-            //if (moduleEnabled)
-            //{
-            //    notifyIconModule.Icon = Utils.EmptyIcon;
-            //}
-
-            //if (timerClicker.Enabled)
-            //{
-            //    notifyIconMain.Icon = Resources.AppIcon;
-            //}
-            //if (moduleEnabled)
-            //{
-            //    notifyIconModule.Icon = wowPluginIcon;
-            //}
         }
 
         private void timerPinger_Elapsed(object sender, ElapsedEventArgs e)
@@ -652,12 +634,12 @@ namespace AxTools.Forms
 
         #region Backup Add-ons
 
-        private void BackupAddons(object trayMode)
+        private void BackupAddons(bool trayMode, bool useOneCore)
         {
             if (!Directory.Exists(Settings.WowExe + "\\WTF"))
             {
                 Log.Print("Backup error: WTF directory isn't found", false);
-                if ((bool) trayMode)
+                if (trayMode)
                 {
                     ShowNotifyIconMessage("Backup error", "\"WTF\" folder isn't found", ToolTipIcon.Error);
                 }
@@ -670,7 +652,7 @@ namespace AxTools.Forms
             if (Utils.CalcDirectorySize(Settings.WowExe + "\\WTF") > 1048576000)
             {
                 Log.Print("Backup error: WTF directory is too large", true);
-                if ((bool) trayMode)
+                if (trayMode)
                 {
                     ShowNotifyIconMessage("Backup error", "WTF directory is too large", ToolTipIcon.Error);
                 }
@@ -710,7 +692,7 @@ namespace AxTools.Forms
             }
             try
             {
-                if ((bool) trayMode)
+                if (trayMode)
                 {
                     ShowNotifyIconMessage("Performing backup operation", "Please don't close AxTools until the operation is completed", ToolTipIcon.Info);
                 }
@@ -718,13 +700,17 @@ namespace AxTools.Forms
                 Log.Print("BackupAddons :: Zipping to file: " + zipPath, false);
                 using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
                 {
+                    if (useOneCore)
+                    {
+                        zip.ParallelDeflateThreshold = -1;
+                    }
                     zip.CompressionLevel = (CompressionLevel) Settings.BackupCompressionLevel;
                     zip.AddDirectory(Settings.WowExe + "\\WTF", "\\WTF");
                     zip.AddDirectory(Settings.WowExe + "\\Interface", "\\Interface");
                     zip.Save();
                 }
                 Log.Print("BackupAddons :: Backup successfully created: " + zipPath, false);
-                if ((bool) trayMode)
+                if (trayMode)
                 {
                     ShowNotifyIconMessage("AddOns backup operation was successfully completed", "Backup file was stored in " + Settings.AddonsBackupPath,
                                           ToolTipIcon.Info);
@@ -2235,7 +2221,7 @@ namespace AxTools.Forms
         {
             WaitingOverlay waitingOverlay = new WaitingOverlay(this);
             waitingOverlay.Show();
-            Task.Factory.StartNew(BackupAddons, false).ContinueWith(l => Invoke(new Action(waitingOverlay.Close)));
+            Task.Factory.StartNew(() => BackupAddons(false, false)).ContinueWith(l => Invoke(new Action(waitingOverlay.Close)));
         }
 
         private void TileOpenBackupsFolderClick(object sender, EventArgs e)

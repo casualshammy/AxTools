@@ -4,45 +4,45 @@
     {
         #region Build info
 
-        internal static readonly int WowBuild = 17399;
-        internal static readonly int WowBuildAddress = 0xB8020C;
+        internal static readonly int WowBuild = 17538;
+        internal static readonly int WowBuildAddress = 0xB7680C;
 
         #endregion
         
         #region Static infos
 
-        internal static readonly int LastHardwareAction = 0xB9E044; // CGGameUI::UpdatePlayerAFK / WRITE
-        internal static readonly int IsInGame = 0xD4D3FE; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2))
-        internal static readonly int IsBattlegroundFinished = 0xDAA910; // Script_GetBattlefieldWinner (2)
-        internal static readonly int PlayerName = 0xEABE58; // ClientServices::GetCharacterName (or Script_UnitName)
-        internal static readonly int PlayerRealm = 0xEABFEE;
-        internal static readonly int PlayerZoneText = 0xD4D3F4; // Script_GetZoneText (4)
-        internal static readonly int PlayerZoneID = 0xD4D49C; // CGGameUI::NewZoneFeedback (16) (or Script_GetRaidRosterInfo (101))
-        internal static readonly int PlayerIsLooting = 0xDBA970; // CGPlayer_C::IsLooting (17) (or Script_SetLootPortrait (32))
+        internal static readonly int LastHardwareAction = 0xB94604; // CGGameUI::UpdatePlayerAFK / WRITE
+        internal static readonly int IsInGame = 0xD43ACE; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound)
+        internal static readonly int IsBattlegroundFinished = 0xDA0FE0; // Script_GetBattlefieldWinner (2)
+        internal static readonly int PlayerName = 0xEA23C8; // ClientServices::GetCharacterName (or Script_UnitName)
+        internal static readonly int PlayerRealm = 0xEA255E;
+        internal static readonly int PlayerZoneText = 0xD43AC4; // Script_GetZoneText (4)
+        internal static readonly int PlayerZoneID = 0xD43B6C; // CGGameUI::NewZoneFeedback (16) (or Script_GetRaidRosterInfo (101))
+        internal static readonly int PlayerIsLooting = 0xDB1038; // CGPlayer_C::IsLooting (17) (or Script_SetLootPortrait (32))
 
         #endregion
 
         #region Injected methods
 
-        internal static readonly int ClntObjMgrGetActivePlayerObjAddress = 0x4E9C; // ClntObjMgrGetActivePlayerObj
-        internal static readonly int LuaDoStringAddress = 0x4FE8C; // FrameScript_ExecuteBuffer
-        internal static readonly int LuaGetLocalizedTextAddress = 0x40C6E2; // FrameScript_GetLocalizedText
+        internal static readonly int ClntObjMgrGetActivePlayerObjAddress = 0x4E5A; // ClntObjMgrGetActivePlayerObj
+        internal static readonly int LuaDoStringAddress = 0x4F9EC; // FrameScript_ExecuteBuffer
+        internal static readonly int LuaGetLocalizedTextAddress = 0x40B6E2; // FrameScript_GetLocalizedText
         //internal static readonly int ClickToMove = 0x3E240B; // CGUnit_C::InitializeTrackingState // INCORRECT
-        internal static readonly int SelectTarget = 0x8B8A77; // CGGameUI::Target
-        internal static readonly int Interact = 0x8BA953; // CGGameUI::Interact
+        internal static readonly int SelectTarget = 0x8B5B9F; // CGGameUI::Target
+        internal static readonly int Interact = 0x8B9953; // CGGameUI::Interact
 
         #endregion
 
         #region Black Market
 
-        internal static readonly int BlackMarketNumItems = 0xDF7E38;
-        internal static readonly int BlackMarketItems = 0xDF7E3C;
+        internal static readonly int BlackMarketNumItems = 0xDEE4C8;
+        internal static readonly int BlackMarketItems = 0xDEE4CC;
 
         #endregion
 
         #region Object manager
 
-        internal static readonly int ObjectManager = 0xC9F38C; // ClntObjMgrPush (7)
+        internal static readonly int ObjectManager = 0xC95744; // ClntObjMgrPush (7)
         internal static readonly int ObjectManagerFirstObject = 0xCC;
         internal static readonly int ObjectManagerNextObject = 0x34;
 
@@ -82,7 +82,7 @@
         internal static readonly int UnitLocationY = UnitLocationX + 0x4;
         internal static readonly int UnitLocationZ = UnitLocationX + 0x8;
         internal static readonly int UnitRotation = UnitLocationX + 0x10;
-        internal static readonly int UnitNameCachePointer = 0xC71680 + 0x8;
+        internal static readonly int UnitNameCachePointer = 0xC67BD0 + 0x8;
         internal static readonly int UnitNameMaskOffset = 0x024;
         internal static readonly int UnitNameBaseOffset = 0x18;
         internal static readonly int UnitNameStringOffset = 0x21;

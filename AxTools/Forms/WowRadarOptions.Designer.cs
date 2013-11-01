@@ -36,7 +36,7 @@ namespace AxTools.Forms
             this.components = new System.ComponentModel.Container();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             this.toolTip1 = new MetroFramework.Components.MetroToolTip();
-            this.dataGridViewObjects = new DataGridViewExt();
+            this.dataGridViewObjects = new AxTools.Components.DataGridViewExt();
             this.ObjectToFindEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ObjectName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Interact = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -291,7 +291,7 @@ namespace AxTools.Forms
             this.metroButtonAddNew.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroButtonAddNew.StyleManager = this.metroStyleManager1;
             this.metroButtonAddNew.TabIndex = 55;
-            this.metroButtonAddNew.Text = "Add new";
+            this.metroButtonAddNew.Text = "Add";
             this.metroButtonAddNew.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroButtonAddNew.Click += new System.EventHandler(this.MetroButtonAddNewClick);
             // 

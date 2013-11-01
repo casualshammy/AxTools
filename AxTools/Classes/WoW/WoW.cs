@@ -125,10 +125,7 @@ namespace AxTools.Classes.WoW
         
         private static readonly object FASMLock = new object();
         private static readonly string RandomVariableName = Utils.GetRandomString(10);
-        private static readonly string[] RegisterNames = {
-            "ah", "al", "bh", "bl", "ch", "cl", "dh", "dl", "eax",
-            "ebx", "ecx", "edx"
-        };
+        private static readonly string[] RegisterNames = { "ah", "al", "bh", "bl", "ch", "cl", "dh", "dl", "eax", "ebx", "ecx", "edx" };
         #region Ingame overlay initialization string
         private static readonly string InitializeIngameOverlay = "if (AxToolsMainOverlayChildren == nil) then\r\n" +
                                                                  "   AxToolsMainOverlay = CreateFrame(\"Frame\", \"AxToolsMainOverlay\", UIParent);\r\n" +
@@ -193,6 +190,11 @@ namespace AxTools.Classes.WoW
 
         private static void DeleteDXHook()
         {
+            if (WProc.Memory.Process.HasExited)
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't delete hook: WoW client has been finished", WProc.ProcessName, WProc.ProcessID), false);
+                return;
+            }
             try
             {
                 uint offset = (uint) (_dxAddress.UsingDirectX11 ? 0xB : 0x5);
