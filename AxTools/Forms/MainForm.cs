@@ -171,7 +171,7 @@ namespace AxTools.Forms
         } 
         private ManagementEventWatcher wowWatcherStart;
         private ManagementEventWatcher wowWatcherStop;
-        private int wowKillerCountdown = Environment.TickCount;
+        //private int wowKillerCountdown = Environment.TickCount;
         //clicker
         private IntPtr clickerWindow = IntPtr.Zero;
         //timers
@@ -222,22 +222,22 @@ namespace AxTools.Forms
 
             #region WoW killer
 
-            if (Environment.TickCount - wowKillerCountdown > 180000)
-            {
-                try
-                {
-                    foreach (var i in WowProcesses.Where(i => i.MainWindowTitle.ToLower() != "world of warcraft"))
-                    {
-                        Process.GetProcessById(i.ProcessID).Kill();
-                        Log.Print(String.Format("{0}:{1} :: Process killed (reason: haven't window)", i.ProcessName, i.ProcessID), false);
-                    }
-                    wowKillerCountdown = Environment.TickCount;
-                }
-                catch (Exception ex)
-                {
-                    Log.Print("Search for incorrect WoW process failed: " + ex.Message, true);
-                }
-            }
+            //if (Environment.TickCount - wowKillerCountdown > 180000)
+            //{
+            //    try
+            //    {
+            //        foreach (var i in WowProcesses.Where(i => i.MainWindowHandle.ToInt32() == 0))
+            //        {
+            //            Process.GetProcessById(i.ProcessID).Kill();
+            //            Log.Print(String.Format("{0}:{1} :: Process killed (reason: haven't window)", i.ProcessName, i.ProcessID), false);
+            //        }
+            //        wowKillerCountdown = Environment.TickCount;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Log.Print("Search for incorrect WoW process failed: " + ex.Message, true);
+            //    }
+            //}
 
             #endregion
 
@@ -390,7 +390,7 @@ namespace AxTools.Forms
                         WowProcess wowProcess = new WowProcess(processId);
                         WowProcesses.Add(wowProcess);
                         Log.Print(String.Format("{0}:{1} :: [Process watcher] Process started, {2} total", wowProcess.ProcessName, wowProcess.ProcessID, WowProcesses.Count), false);
-                        wowKillerCountdown = Environment.TickCount;
+                        //wowKillerCountdown = Environment.TickCount;
                         Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
                         if (Settings.AutoPingWidget)
                         {
@@ -547,9 +547,6 @@ namespace AxTools.Forms
                     WowProcess process = WowProcesses.FirstOrDefault(x => x.MainWindowHandle == cHWND);
                     if (process != null)
                     {
-                        Log.Print(
-                            String.Format("{0}:{1} :: [Account manager] Logging in with pre-entered credentials [{2}]", process.ProcessName, process.ProcessID,
-                                          wowAccounts[wowAccountSelected].Login), false);
                         foreach (char i in wowAccounts[wowAccountSelected].Login)
                         {
                             NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
@@ -565,8 +562,7 @@ namespace AxTools.Forms
                         }
                         NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, (IntPtr) 0x0D, IntPtr.Zero);
                         NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, (IntPtr) 0x0D, IntPtr.Zero);
-                        Log.Print(String.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", process.ProcessName, process.ProcessID,
-                                                wowAccounts[wowAccountSelected].Login), false);
+                        Log.Print(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", process.ProcessName, process.ProcessID, wowAccounts[wowAccountSelected].Login), false);
                         wowAccountSelected = -1;
                     }
                 }
@@ -669,25 +665,23 @@ namespace AxTools.Forms
                 backupDirectory.Create();
                 Log.Print("BackupAddons :: Backup directory created", false);
             }
-            FileInfo[] backupFiles =
-                backupDirectory.GetFileSystemInfos().Where(i => i.Name.Contains("AddonsBackup_") && i is FileInfo).Cast<FileInfo>().ToArray();
-            Log.Print("BackupAddons :: Total backup files: " + backupFiles.Length, false);
-            if (backupFiles.Length >= Settings.AddonsBackupNum)
+            List<FileInfo> backupFiles = backupDirectory.GetFileSystemInfos().Where(i => i.Name.Contains("AddonsBackup_") && i is FileInfo).Cast<FileInfo>().ToList();
+            Log.Print("BackupAddons :: Total backup files: " + backupFiles.Count, false);
+            if (backupFiles.Count >= Settings.AddonsBackupNum)
             {
-                FileInfo oldestFile = null;
-                DateTime oldestFileCreationTimeUtc = DateTime.UtcNow;
-                foreach (FileInfo i in backupFiles)
+                // I place newest file to the end of list
+                backupFiles.Sort((first, second) =>
                 {
-                    if (i.CreationTimeUtc < oldestFileCreationTimeUtc)
+                    if (first.CreationTimeUtc > second.CreationTimeUtc)
                     {
-                        oldestFileCreationTimeUtc = i.CreationTimeUtc;
-                        oldestFile = i;
+                        return 1;
                     }
-                }
-                if (oldestFile != null)
+                    return -1;
+                });
+                for (int i = 0; i < backupFiles.Count - Settings.AddonsBackupNum + 1; i++)
                 {
-                    oldestFile.Delete();
-                    Log.Print("BackupAddons :: Old backup file is deleted: " + oldestFile.Name, false);
+                    backupFiles[i].Delete();
+                    Log.Print("BackupAddons :: Old backup file is deleted: " + backupFiles[i].Name, false);
                 }
             }
             try
@@ -1148,9 +1142,14 @@ namespace AxTools.Forms
                     updateString = webClient.DownloadString(Globals.UpdateFilePath);
                 }
             }
+            catch (WebException webException)
+            {
+                Log.Print("[Updater] Fetching error: " + webException.Message, false);
+                return result;
+            }
             catch (Exception ex)
             {
-                Log.Print("[Updater] Fetching error: " + ex.Message, true);
+                Log.Print("[Updater] Fetching error: " + ex.Message + " :: " + ex.GetType(), true);
                 return result;
             }
             if (!String.IsNullOrWhiteSpace(updateString))
@@ -1700,6 +1699,7 @@ namespace AxTools.Forms
         private void FlagReturnFunc()
         {
             uint searchingZone = WoW.WProc.PlayerZoneID;
+            string zoneText = WoW.GetFunctionReturn("GetZoneText()");
             string[] searchingObjects;
             switch (searchingZone)
             {
@@ -1733,7 +1733,7 @@ namespace AxTools.Forms
             }
             List<WowObject> wowObjects = new List<WowObject>();
             Log.Print(String.Format("{0}:{1} :: [Battlefield outlaw] Plugin is started, let's take away their {2} in {3} ({4})!",
-                                    WoW.WProc.ProcessName, WoW.WProc.ProcessID, searchingObjects.AsString(), WoW.WProc.PlayerZoneText, searchingZone), false);
+                                    WoW.WProc.ProcessName, WoW.WProc.ProcessID, searchingObjects.AsString(), zoneText, searchingZone), false);
             while (!moduleToken.IsCancellationRequested)
             {
                 int startTime = Environment.TickCount;
@@ -1764,10 +1764,10 @@ namespace AxTools.Forms
                 if (zone != searchingZone)
                 {
                     Log.Print(String.Format("{0}:{1} :: [Battlefield outlaw] Plugin is stopped: zone changed to {2} ({3})", WoW.WProc.ProcessName,
-                                            WoW.WProc.ProcessID, WoW.WProc.PlayerZoneText, zone), false);
+                                            WoW.WProc.ProcessID, zoneText, zone), false);
                     BeginInvoke(new Action(() =>
                                            notifyIconMain.ShowBalloonTip(10000, "[Battlefield outlaw] Plugin is stopped",
-                                                                         String.Format("Zone changed to {0} ({1})", WoW.WProc.PlayerZoneText, zone),
+                                                                         String.Format("Zone changed to {0} ({1})", zoneText, zone),
                                                                          ToolTipIcon.Info)));
                     BeginInvoke(new Action(() => InvokeOnClick(toggleWowPlugins, EventArgs.Empty)));
                     moduleToken.Token.ThrowIfCancellationRequested();

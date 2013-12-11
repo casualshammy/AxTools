@@ -1,4 +1,5 @@
-﻿using AxTools.Classes.WoW.DX;
+﻿using System.Windows.Forms;
+using AxTools.Classes.WoW.DX;
 using Fasm;
 using GreyMagic;
 using System;
@@ -46,9 +47,8 @@ namespace AxTools.Classes.WoW
                 offset = 0x5;
                 _endSceneOriginalBytes = WProc.Memory.ReadBytes(_dxAddress.HookPtr + (int)offset, 7);
             }
-            Log.Print(
-                string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}", WProc.ProcessName, WProc.ProcessID,
-                              BitConverter.ToString(_endSceneOriginalBytes), (uint)_dxAddress.HookPtr + offset), false, false);
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}", WProc.ProcessName, WProc.ProcessID,
+                BitConverter.ToString(_endSceneOriginalBytes), (uint) _dxAddress.HookPtr + offset), false, false);
             // allocate memory to store injected code:
             _injectedCode = WProc.Memory.AllocateMemory(2048);
             Log.Print(

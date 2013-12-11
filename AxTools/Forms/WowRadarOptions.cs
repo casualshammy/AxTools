@@ -186,7 +186,7 @@ namespace AxTools.Forms
 
         private void DataGridViewObjectsOnCellMouseClick(object sender, DataGridViewCellMouseEventArgs dataGridViewCellMouseEventArgs)
         {
-            if (dataGridViewCellMouseEventArgs.Button == MouseButtons.Right)
+            if (dataGridViewCellMouseEventArgs.Button == MouseButtons.Right && dataGridViewCellMouseEventArgs.RowIndex >= 0)
             {
                 dataGridViewObjects.Rows.RemoveAt(dataGridViewCellMouseEventArgs.RowIndex);
             }

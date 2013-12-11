@@ -93,6 +93,7 @@ namespace AxTools.Classes.WoW
                 }
             }
         }
+
         internal uint IsBattlegroundFinished
         {
             get
@@ -100,20 +101,7 @@ namespace AxTools.Classes.WoW
                 return Memory.Read<uint>(Memory.ImageBase + WowBuildInfo.IsBattlegroundFinished);
             }
         }
-        internal string PlayerZoneText
-        {
-            get
-            {
-                IntPtr intZoneText = Memory.Read<IntPtr>(Memory.ImageBase + WowBuildInfo.PlayerZoneText);
-                var textZoneText = Encoding.UTF8.GetString(Memory.ReadBytes(intZoneText, 60));
-                if (textZoneText.Contains("\0"))
-                {
-                    textZoneText = textZoneText.Split(Convert.ToChar("\0"))[0];
-                }
-                return textZoneText;
-            }
-        }
-        internal uint PlayerPreviousZoneID = 0;
+
         internal uint PlayerZoneID
         {
             get
@@ -121,6 +109,7 @@ namespace AxTools.Classes.WoW
                 return Memory.Read<uint>(Memory.ImageBase + WowBuildInfo.PlayerZoneID);
             }
         }
+
         internal string PlayerRealm
         {
             get
@@ -133,6 +122,7 @@ namespace AxTools.Classes.WoW
                 return textRealmName;
             }
         }
+
         internal string PlayerName
         {
             get
@@ -149,7 +139,7 @@ namespace AxTools.Classes.WoW
         {
             get
             {
-                return Memory.Read<ulong>(Memory.ImageBase + WowBuildInfo.PlayerIsLooting) != 0;
+                return Memory.Read<byte>(Memory.ImageBase + WowBuildInfo.PlayerIsLooting) != 0;
             }
         }
     }

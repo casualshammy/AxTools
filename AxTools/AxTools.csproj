@@ -85,6 +85,9 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="fasmdll_managed">
       <HintPath>..\..\.NET libs\fasmdll_managed.dll</HintPath>
@@ -299,6 +302,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

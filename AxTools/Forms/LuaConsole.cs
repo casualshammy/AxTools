@@ -91,6 +91,28 @@ namespace AxTools.Forms
 
         private void ButtonDumpClick(object sender, EventArgs e)
         {
+            //byte[] ethalonBytes = {0xCC, 0xCC, 0xCC, 0xCC, 0xCC};
+            //int counter = 0;
+            //Parallel.For((int)WoW.WProc.Memory.ImageBase + 0x480818, (int)WoW.WProc.Memory.ImageBase + 0x901030, i =>
+            //{
+            //    byte[] bytes = WoW.WProc.Memory.ReadBytes((IntPtr) i, 5);
+            //    if (bytes.SequenceEqual(ethalonBytes))
+            //    {
+            //        Log.Print(i.ToString(), false);
+            //    }
+            //    counter++;
+            //});
+            //MessageBox.Show(counter.ToString());
+
+
+            //uint testInt32 = 0;
+            //int counter = Environment.TickCount;
+            //for (int i = 0; i < 1000000; i++)
+            //{
+            //    testInt32 = WoW.WProc.Memory.Read<uint>(WoW.WProc.Memory.ImageBase + WowBuildInfo.LastHardwareAction);
+            //}
+            //Log.Print(string.Format("1M read Int32 ({1}): {0}ms", Environment.TickCount - counter, testInt32), false);
+
             List<WowPlayer> wowUnits = new List<WowPlayer>();
             List<WowObject> wowObjects = new List<WowObject>();
             List<WowNpc> wowNpcs = new List<WowNpc>();
@@ -105,12 +127,12 @@ namespace AxTools.Forms
             var sb = new StringBuilder("\r\nLocal player-----------------------------------------\r\n");
             sb.AppendFormat("GUID: 0x{0:X}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; Realm: {5}; BgExit: {6}; IsLooting: {7}; Name: {8}\r\n",
                             WoW.LocalPlayer.GUID, (uint)WoW.LocalPlayer.Address, WoW.LocalPlayer.Location, WoW.WProc.PlayerZoneID,
-                            WoW.WProc.PlayerZoneText, WoW.WProc.PlayerRealm, WoW.WProc.IsBattlegroundFinished, WoW.WProc.PlayerIsLooting, WoW.WProc.PlayerName);
+                            "dummy", WoW.WProc.PlayerRealm, WoW.WProc.IsBattlegroundFinished, WoW.WProc.PlayerIsLooting, WoW.WProc.PlayerName);
             sb.AppendLine("Objects-----------------------------------------");
             foreach (var i in wowObjects)
             {
                 sb.AppendFormat("{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4:X}; Address: 0x{5:X}; EntryID: {6}\r\n", i.Name, i.GUID,
-                                i.Location, (int) i.Location.Distance(WoW.LocalPlayer.Location), i.OwnerGUID, (uint) i.Address, i.EntryID);
+                                i.Location, (int)i.Location.Distance(WoW.LocalPlayer.Location), i.OwnerGUID, (uint)i.Address, i.EntryID);
             }
             sb.AppendLine("Npcs-----------------------------------------");
             foreach (var i in wowNpcs)
@@ -126,6 +148,9 @@ namespace AxTools.Forms
                     i.Name, i.GUID, i.Location, (int)i.Location.Distance(WoW.LocalPlayer.Location), (uint)i.Address, i.Class, i.Level, i.Health, i.HealthMax,
                     i.TargetGUID, i.IsAlliance);
             }
+            Log.Print(sb.ToString(), false);
+
+
             //sb.AppendLine("Test-----------------------------------------");
             //WowObject nomi = wowObjects.FirstOrDefault(i => i.Name == "Хранилище гильдии");
             //if (nomi != null)
@@ -157,7 +182,9 @@ namespace AxTools.Forms
             //            }
             //        });
             //}
-            Log.Print(sb.ToString(), false);
+
+
+
         }
         
         private void WowModulesFormClosing(object sender, FormClosingEventArgs e)
