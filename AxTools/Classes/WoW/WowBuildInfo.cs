@@ -4,7 +4,7 @@
     {
         #region Build info
 
-        internal static readonly int WowBuild = 17658;
+        internal static readonly int WowBuild = 17688;
         internal static readonly int WowBuildAddress = 0xB8FEAC;
 
         #endregion
