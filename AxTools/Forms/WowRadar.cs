@@ -74,7 +74,7 @@ namespace AxTools.Forms
             }
             redrawTaskCTS = new CancellationTokenSource();
             redrawTask = new Task(Redraw, redrawTaskCTS.Token, TaskCreationOptions.LongRunning);
-            Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+            Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
         }
 
         private static List<ObjectToFind> _radarKOS =
@@ -178,18 +178,18 @@ namespace AxTools.Forms
                 }
                 try
                 {
-                    friends = wowPlayers.Where(i => i.IsAlliance == WoW.LocalPlayer.IsAlliance).ToArray();
+                    friends = wowPlayers.Where(i => i.IsAlliance == LocalPlayer.IsAlliance).ToArray();
                     enemies = wowPlayers.Except(friends).ToArray();
                     objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
                     npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                    if (!WoW.WProc.PlayerIsLooting && WoW.LocalPlayer.CastingSpellID == 0)
+                    if (!WoW.WProc.PlayerIsLooting && LocalPlayer.CastingSpellID == 0)
                     {
-                        foreach (WowObject i in objects.Where(i => i.Location.Distance(WoW.LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
+                        foreach (WowObject i in objects.Where(i => i.Location.Distance(LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
                         {
                             WoW.Interact(i.GUID);
                             Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID), false, false);
                         }
-                        foreach (WowNpc i in npcs.Where(i => i.Location.Distance(WoW.LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
+                        foreach (WowNpc i in npcs.Where(i => i.Location.Distance(LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
                         {
                             WoW.Interact(i.GUID);
                             Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID), false, false);
@@ -217,7 +217,7 @@ namespace AxTools.Forms
                     Thread.Sleep(counter);
                 }
             }
-            Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+            Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
             redrawTaskCTS.Token.ThrowIfCancellationRequested();
         }
 
@@ -241,15 +241,15 @@ namespace AxTools.Forms
                     Point point2 = new Point();
                     Graphics graphics = e.Graphics;
                     graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                    double localPlayerLocationX = WoW.LocalPlayer.Location.X;
-                    double localPlayerLocationY = WoW.LocalPlayer.Location.Y;
+                    double localPlayerLocationX = LocalPlayer.Location.X;
+                    double localPlayerLocationY = LocalPlayer.Location.Y;
                     double var2X;
                     double var2Y;
                     double num2;
 
                     #region Draw local player
 
-                    double d = -WoW.LocalPlayer.Rotation + 4.71238898038469;
+                    double d = -LocalPlayer.Rotation + 4.71238898038469;
                     point.X = halfOfPictureboxSize;
                     point.Y = halfOfPictureboxSize;
                     graphics.FillRectangle(whiteBrush, point.X - 2, point.Y - 2, 4, 4);
@@ -290,11 +290,11 @@ namespace AxTools.Forms
                                 solidBrush = grayBrush;
                             }
                             Point[] pts;
-                            if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
+                            if (i.Location.Z - LocalPlayer.Location.Z >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
                             }
-                            else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            else if (LocalPlayer.Location.Z - i.Location.Z >= 10)
                             {
                                 pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
                             }
@@ -303,17 +303,17 @@ namespace AxTools.Forms
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
                             }
                             graphics.FillPolygon(solidBrush, pts);
-                            graphics.DrawPolygon(i.TargetGUID == WoW.LocalPlayer.GUID ? whitePen : pen, pts);
+                            graphics.DrawPolygon(i.TargetGUID == LocalPlayer.GUID ? whitePen : pen, pts);
                             objectsPointsInRadarCoords.Add(i.GUID, point);
                             point.X += 3;
                             point.Y += 3;
                             if (Settings.RadarShowPlayersClasses)
                             {
-                                if (i.Level == WoW.LocalPlayer.Level)
+                                if (i.Level == LocalPlayer.Level)
                                 {
                                     graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
                                 }
-                                else if (i.Level > WoW.LocalPlayer.Level)
+                                else if (i.Level > LocalPlayer.Level)
                                 {
                                     graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
                                 }
@@ -357,11 +357,11 @@ namespace AxTools.Forms
                                 solidBrush = grayBrush;
                             }
                             Point[] pts;
-                            if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
+                            if (i.Location.Z - LocalPlayer.Location.Z >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
                             }
-                            else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            else if (LocalPlayer.Location.Z - i.Location.Z >= 10)
                             {
                                 pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
                             }
@@ -370,17 +370,17 @@ namespace AxTools.Forms
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
                             }
                             graphics.FillPolygon(solidBrush, pts);
-                            graphics.DrawPolygon(i.TargetGUID == WoW.LocalPlayer.GUID ? whitePen : pen, pts);
+                            graphics.DrawPolygon(i.TargetGUID == LocalPlayer.GUID ? whitePen : pen, pts);
                             objectsPointsInRadarCoords.Add(i.GUID, point);
                             point.X += 3;
                             point.Y += 3;
                             if (Settings.RadarShowPlayersClasses)
                             {
-                                if (i.Level == WoW.LocalPlayer.Level)
+                                if (i.Level == LocalPlayer.Level)
                                 {
                                     graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
                                 }
-                                else if (i.Level > WoW.LocalPlayer.Level)
+                                else if (i.Level > LocalPlayer.Level)
                                 {
                                     graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
                                 }
@@ -411,11 +411,11 @@ namespace AxTools.Forms
                             point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931)));
                             point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Sin(num2)));
                             Point[] pts;
-                            if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
+                            if (i.Location.Z - LocalPlayer.Location.Z >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
                             }
-                            else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            else if (LocalPlayer.Location.Z - i.Location.Z >= 10)
                             {
                                 pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
                             }
@@ -455,11 +455,11 @@ namespace AxTools.Forms
                             point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931)));
                             point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Sin(num2)));
                             Point[] pts;
-                            if (i.Location.Z - WoW.LocalPlayer.Location.Z >= 10)
+                            if (i.Location.Z - LocalPlayer.Location.Z >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
                             }
-                            else if (WoW.LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            else if (LocalPlayer.Location.Z - i.Location.Z >= 10)
                             {
                                 pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
                             }
@@ -567,7 +567,7 @@ namespace AxTools.Forms
             {
                 redrawTask.Dispose();
                 redrawTaskCTS.Dispose();
-                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
             }
             else
             {
@@ -588,7 +588,7 @@ namespace AxTools.Forms
                 Log.Print(String.Format("{0}:{1} :: [Radar] Can't save the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
 
-            Log.Print(String.Format("{0}:{1} :: [Radar] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+            Log.Print(String.Format("{0}:{1} :: [Radar] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
         }
 
         private void PictureBoxZoomOutClick(object sender, EventArgs e)

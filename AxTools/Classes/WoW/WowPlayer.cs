@@ -9,13 +9,32 @@ namespace AxTools.Classes.WoW
         internal WowPlayer(IntPtr pAddress)
         {
             Address = pAddress;
-            Descriptors = WoW.WProc.Memory.Read<IntPtr>(pAddress + WowBuildInfo.UnitDescriptors);
+            IntPtr desc = WoW.WProc.Memory.Read<IntPtr>(pAddress + WowBuildInfo.UnitDescriptors);
+            WowPlayerInfo info = WoW.WProc.Memory.Read<WowPlayerInfo>(desc + WowBuildInfo.UnitTargetGUID);
+            TargetGUID = info.TargetGUID;
+            Health = info.Health;
+            HealthMax = info.HealthMax;
+            Level = info.Level;
+            IsAlliance = info.FactionTemplate == 0x89b || info.FactionTemplate == 0x65d || info.FactionTemplate == 0x73 || info.FactionTemplate == 4 || info.FactionTemplate == 3 || info.FactionTemplate == 1 ||
+                         info.FactionTemplate == 2401;
+            Class = (WowPlayerClass) info.Class;
         }
 
         internal static readonly Dictionary<ulong, string> Names = new Dictionary<ulong, string>();
 
-        internal IntPtr Address;
-        internal IntPtr Descriptors;
+        internal readonly IntPtr Address;
+
+        internal readonly ulong TargetGUID;
+
+        internal readonly bool IsAlliance;
+
+        internal readonly uint Level;
+
+        internal readonly uint Health;
+
+        internal readonly uint HealthMax;
+
+        internal readonly WowPlayerClass Class;
 
         private ulong mGUID;
         internal ulong GUID
@@ -71,101 +90,16 @@ namespace AxTools.Classes.WoW
             }
         }
 
-        private int mIsAlliance = -1;
-        internal bool IsAlliance
+        private WowPoint? mLocation;
+        internal WowPoint Location
         {
             get
             {
-                if (mIsAlliance == -1)
+                if (!mLocation.HasValue)
                 {
-                    uint mFactionTemplate = WoW.WProc.Memory.Read<uint>(Descriptors + WowBuildInfo.UnitFactionTemplate);
-                    if (mFactionTemplate == 0x89b || mFactionTemplate == 0x65d || mFactionTemplate == 0x73 || mFactionTemplate == 4 || mFactionTemplate == 3 || mFactionTemplate == 1 || mFactionTemplate == 2401)
-                    {
-                        mIsAlliance = 1;
-                    }
-                    else
-                    {
-                        mIsAlliance = 2;
-                    }
+                    mLocation = WoW.WProc.Memory.Read<WowPoint>(Address + WowBuildInfo.UnitLocation);
                 }
-                return mIsAlliance == 1;
-            }
-        }
-
-        private uint mLevel;
-        internal uint Level
-        {
-            get
-            {
-                if (mLevel == 0)
-                {
-                    mLevel = WoW.WProc.Memory.Read<uint>(Descriptors + WowBuildInfo.UnitLevel);
-                }
-                return mLevel;
-            }
-        }
-
-        private byte mClass;
-        internal WowPlayerClass Class
-        {
-            get
-            {
-                if (mClass == 0)
-                {
-                    IntPtr tempOwner = WoW.WProc.Memory.Read<IntPtr>(Address + WowBuildInfo.UnitDescriptorsBig);
-                    mClass = WoW.WProc.Memory.Read<byte>(tempOwner + WowBuildInfo.UnitClass);
-                }
-                return (WowPlayerClass) mClass;
-            }
-        }
-
-        private ulong mTargetGUID = ulong.MaxValue;
-        internal ulong TargetGUID
-        {
-            get
-            {
-                if (mTargetGUID == UInt64.MaxValue)
-                {
-                    mTargetGUID = WoW.WProc.Memory.Read<ulong>(Descriptors + WowBuildInfo.UnitTargetGUID);
-                }
-                return mTargetGUID;
-            }
-        }
-
-        private uint mHealth = UInt32.MaxValue;
-        internal uint Health
-        {
-            get
-            {
-                if (mHealth == UInt32.MaxValue)
-                {
-                    mHealth = WoW.WProc.Memory.Read<uint>(Descriptors + WowBuildInfo.UnitHealth);
-                }
-                return mHealth;
-            }
-        }
-
-        private uint mHealthMax = UInt32.MaxValue;
-        internal uint HealthMax
-        {
-            get
-            {
-                if (mHealthMax == UInt32.MaxValue)
-                {
-                    mHealthMax = WoW.WProc.Memory.Read<uint>(Descriptors + WowBuildInfo.UnitHealthMax);
-                }
-                return mHealthMax;
-            }
-        }
-
-        private WowPointF mLocation;
-        internal WowPointF Location
-        {
-            get
-            {
-                return mLocation ?? (mLocation = new WowPointF(WoW.WProc.Memory.Read<float>(Address + WowBuildInfo.UnitLocationX),
-                                                               WoW.WProc.Memory.Read<float>(Address + WowBuildInfo.UnitLocationY),
-                                                               WoW.WProc.Memory.Read<float>(Address + WowBuildInfo.UnitLocationZ)));
+                return mLocation.Value;
             }
         }
         

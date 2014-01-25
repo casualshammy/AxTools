@@ -47,7 +47,7 @@ namespace axtools_updater
         {
             string[] filesToDelete =
             {
-                "MetroFramework.dll", "GreyMagic.dll", "WindowsFormsAero.dll", "MouseKeyboardActivityMonitor.dll", "Ionic.Zip.Reduced.dll", "ICSharpCode.TextEditor.dll",
+                "MetroFramework.dll", "GreyMagic.dll", "WindowsFormsAero.dll", "MouseKeyboardActivityMonitor.dll", "ICSharpCode.TextEditor.dll",
                 "fasmdll_managed.dll", "EQATEC.Profiler.RuntimeFullNet.dll", "app.eqconfig", "axtools_updater.exe", "ICSharpCode.SharpZipLib.dll", "wol.jnlp"
             };
             foreach (string i in filesToDelete)

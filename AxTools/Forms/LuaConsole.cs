@@ -1,8 +1,8 @@
 ﻿using AxTools.Classes;
 using AxTools.Classes.WoW;
+using AxTools.Components;
 using AxTools.Properties;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -14,7 +14,7 @@ using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms
 {
-    internal partial class LuaConsole : MetroFramework.Forms.MetroForm
+    internal partial class LuaConsole : BorderedMetroForm
     {
         internal LuaConsole()
         {
@@ -45,21 +45,7 @@ namespace AxTools.Forms
             {
                 Log.Print(string.Format("{0}:{1} :: [Lua console] Can't load the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
-            Log.Print(string.Format("{0}:{1} :: [Lua console] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(Style))
-            {
-                Rectangle rectRight = new Rectangle(Width - 1, 0, 1, Height);
-                e.Graphics.FillRectangle(styleBrush, rectRight);
-                Rectangle rectLeft = new Rectangle(0, 0, 1, Height);
-                e.Graphics.FillRectangle(styleBrush, rectLeft);
-                Rectangle rectBottom = new Rectangle(0, Height - 1, Width, 1);
-                e.Graphics.FillRectangle(styleBrush, rectBottom);
-            }
+            Log.Print(string.Format("{0}:{1} :: [Lua console] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
         }
 
         private readonly System.Timers.Timer timerLua = new System.Timers.Timer(1000);
@@ -71,7 +57,7 @@ namespace AxTools.Forms
                 if (!Settings.LuaConsoleIgnoreGameState)
                 {
                     Log.Print(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoW.WProc.ProcessName,
-                                            WoW.WProc.ProcessID), false);
+                                            WoW.WProc.ProcessID));
                     MainForm main = Utils.FindForm<MainForm>();
                     if (main != null)
                     {
@@ -91,19 +77,50 @@ namespace AxTools.Forms
 
         private void ButtonDumpClick(object sender, EventArgs e)
         {
-            //byte[] ethalonBytes = {0xCC, 0xCC, 0xCC, 0xCC, 0xCC};
-            //int counter = 0;
-            //Parallel.For((int)WoW.WProc.Memory.ImageBase + 0x480818, (int)WoW.WProc.Memory.ImageBase + 0x901030, i =>
-            //{
-            //    byte[] bytes = WoW.WProc.Memory.ReadBytes((IntPtr) i, 5);
-            //    if (bytes.SequenceEqual(ethalonBytes))
-            //    {
-            //        Log.Print(i.ToString(), false);
-            //    }
-            //    counter++;
-            //});
-            //MessageBox.Show(counter.ToString());
+            //List<WowPlayer> wowUnits = new List<WowPlayer>();
+            //List<WowObject> wowObjects = new List<WowObject>();
+            //List<WowNpc> wowNpcs = new List<WowNpc>();
+            //WoW.Pulse(wowObjects, wowUnits, wowNpcs);
+            //IntPtr address = WoW.LocalPlayer.Address;
+            //IntPtr desc = WoW.WProc.Memory.Read<IntPtr>(address + WowBuildInfo.UnitDescriptors);
+            //Log.Print("1:" + address);
+            //ushort field = WoW.WProc.Memory.Read<ushort>(desc + 0x1F);
+            //uint health = WoW.WProc.Memory.Read<uint>(desc + 0x84);
+            //Log.Print("1:" + health + "//" + field);
 
+            //WowPlayer taline = wowUnits.FirstOrDefault(i => i.Name == "Тэлин");
+            //Log.Print("2:" + taline.Address + "//" + taline.Health);
+            //int temp = (field >> 8);
+            //Log.Print(temp);
+            //int p = temp & 0xFF;
+            //Log.Print(p);
+
+            //WoW.Pulse();
+            //IntPtr address = WoW.LocalPlayer.Address;
+            //int start = Environment.TickCount;
+            //for (int i = 0; i < 1000000; i++)
+            //{
+            //    IntPtr desc = WoW.WProc.Memory.Read<IntPtr>(address + WowBuildInfo.UnitDescriptors);
+            //    uint faction = WoW.WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitFactionTemplate);
+            //    ulong target = WoW.WProc.Memory.Read<ulong>(desc + WowBuildInfo.UnitTargetGUID);
+            //    uint level = WoW.WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitLevel);
+            //    uint _class = WoW.WProc.Memory.Read<uint>(desc + 0x72);
+            //    if (i == 999999)
+            //    {
+            //        Log.Print(faction + "//" + target + "//" + level + "//" + _class);
+            //    }
+            //}
+            //Log.Print(Environment.TickCount - start);
+            //start = Environment.TickCount;
+            //for (int i = 0; i < 1000000; i++)
+            //{
+            //    WowPlayer p = new WowPlayer(address);
+            //    if (i == 999999)
+            //    {
+            //        Log.Print(p.IsAlliance + "//" + p.TargetGUID + "//" + p.Level + "//" + p.Class);
+            //    }
+            //}
+            //Log.Print(Environment.TickCount - start);
 
             //uint testInt32 = 0;
             //int counter = Environment.TickCount;
@@ -113,42 +130,42 @@ namespace AxTools.Forms
             //}
             //Log.Print(string.Format("1M read Int32 ({1}): {0}ms", Environment.TickCount - counter, testInt32), false);
 
-            List<WowPlayer> wowUnits = new List<WowPlayer>();
-            List<WowObject> wowObjects = new List<WowObject>();
-            List<WowNpc> wowNpcs = new List<WowNpc>();
-            try
-            {
-                WoW.Pulse(wowObjects, wowUnits, wowNpcs);
-            }
-            catch (Exception ex)
-            {
-                Log.Print("Dump error: " + ex.Message, true);
-            }
-            var sb = new StringBuilder("\r\nLocal player-----------------------------------------\r\n");
-            sb.AppendFormat("GUID: 0x{0:X}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; Realm: {5}; BgExit: {6}; IsLooting: {7}; Name: {8}\r\n",
-                            WoW.LocalPlayer.GUID, (uint)WoW.LocalPlayer.Address, WoW.LocalPlayer.Location, WoW.WProc.PlayerZoneID,
-                            "dummy", WoW.WProc.PlayerRealm, WoW.WProc.IsBattlegroundFinished, WoW.WProc.PlayerIsLooting, WoW.WProc.PlayerName);
-            sb.AppendLine("Objects-----------------------------------------");
-            foreach (var i in wowObjects)
-            {
-                sb.AppendFormat("{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4:X}; Address: 0x{5:X}; EntryID: {6}\r\n", i.Name, i.GUID,
-                                i.Location, (int)i.Location.Distance(WoW.LocalPlayer.Location), i.OwnerGUID, (uint)i.Address, i.EntryID);
-            }
-            sb.AppendLine("Npcs-----------------------------------------");
-            foreach (var i in wowNpcs)
-            {
-                sb.AppendFormat("{0}; Location: {1}; Distance: {2}; HP:{3}; MaxHP:{4}; Address:0x{5:X}\r\n", i.Name, i.Location,
-                                (int)i.Location.Distance(WoW.LocalPlayer.Location), i.Health, i.HealthMax, (uint)i.Address);
-            }
-            sb.AppendLine("Players-----------------------------------------");
-            foreach (var i in wowUnits)
-            {
-                sb.AppendFormat(
-                    "{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; Address:{4:X}; Class:{5}; Level:{6}; HP:{7}; MaxHP:{8}; TargetGUID: 0x{9:X}; IsAlliance:{10}\r\n",
-                    i.Name, i.GUID, i.Location, (int)i.Location.Distance(WoW.LocalPlayer.Location), (uint)i.Address, i.Class, i.Level, i.Health, i.HealthMax,
-                    i.TargetGUID, i.IsAlliance);
-            }
-            Log.Print(sb.ToString(), false);
+            //List<WowPlayer> wowUnits = new List<WowPlayer>();
+            //List<WowObject> wowObjects = new List<WowObject>();
+            //List<WowNpc> wowNpcs = new List<WowNpc>();
+            //try
+            //{
+            //    WoW.Pulse(wowObjects, wowUnits, wowNpcs);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log.Print("Dump error: " + ex.Message, true);
+            //}
+            //var sb = new StringBuilder("\r\nLocal player-----------------------------------------\r\n");
+            //sb.AppendFormat("GUID: 0x{0:X}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; Realm: {5}; BgExit: {6}; IsLooting: {7}; Name: {8}\r\n",
+            //                WoW.LocalPlayer.GUID, (uint)WoW.LocalPlayer.Address, WoW.LocalPlayer.Location, WoW.WProc.PlayerZoneID,
+            //                "dummy", WoW.WProc.PlayerRealm, WoW.WProc.IsBattlegroundFinished, WoW.WProc.PlayerIsLooting, WoW.WProc.PlayerName);
+            //sb.AppendLine("Objects-----------------------------------------");
+            //foreach (var i in wowObjects)
+            //{
+            //    sb.AppendFormat("{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4:X}; Address: 0x{5:X}; EntryID: {6}\r\n", i.Name, i.GUID,
+            //                    i.Location, (int)i.Location.Distance(WoW.LocalPlayer.Location), i.OwnerGUID, (uint)i.Address, i.EntryID);
+            //}
+            //sb.AppendLine("Npcs-----------------------------------------");
+            //foreach (var i in wowNpcs)
+            //{
+            //    sb.AppendFormat("{0}; Location: {1}; Distance: {2}; HP:{3}; MaxHP:{4}; Address:0x{5:X}\r\n", i.Name, i.Location,
+            //                    (int)i.Location.Distance(WoW.LocalPlayer.Location), i.Health, i.HealthMax, (uint)i.Address);
+            //}
+            //sb.AppendLine("Players-----------------------------------------");
+            //foreach (var i in wowUnits)
+            //{
+            //    sb.AppendFormat(
+            //        "{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; Address:{4:X}; Class:{5}; Level:{6}; HP:{7}; MaxHP:{8}; TargetGUID: 0x{9:X}; IsAlliance:{10}\r\n",
+            //        i.Name, i.GUID, i.Location, (int)i.Location.Distance(WoW.LocalPlayer.Location), (uint)i.Address, i.Class, i.Level, i.Health, i.HealthMax,
+            //        i.TargetGUID, i.IsAlliance);
+            //}
+            //Log.Print(sb.ToString(), false);
 
 
             //sb.AppendLine("Test-----------------------------------------");
@@ -202,7 +219,7 @@ namespace AxTools.Forms
             {
                 Log.Print(string.Format("{0}:{1} :: [Lua console] Can't save the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
-            Log.Print(string.Format("{0}:{1} :: [Lua console] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+            Log.Print(string.Format("{0}:{1} :: [Lua console] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
         }
 
         private void MetroLinkRunClick(object sender, EventArgs e)
@@ -254,14 +271,14 @@ namespace AxTools.Forms
                     WoW.ShowOverlayText("LTimer is started", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 102, 0));
                     //WoW.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is started\", 0.0, 1.0, 0.0)");
                 }
-                Log.Print(string.Format("{0}:{1} :: [Lua console] Lua timer enabled", WoW.WProc.ProcessName, WoW.WProc.ProcessID), false);
+                Log.Print(string.Format("{0}:{1} :: [Lua console] Lua timer enabled", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
             }
             else
             {
                 timerLua.Enabled = false;
                 Log.Print(WoW.WProc != null
                               ? string.Format("{0}:{1} :: [Lua console] Lua timer disabled", WoW.WProc.ProcessName, WoW.WProc.ProcessID)
-                              : "UNKNOWN:null :: Lua timer disabled", false);
+                              : "UNKNOWN:null :: Lua timer disabled");
                 TimerHotkeyChanged();
                 if (Settings.LuaConsoleShowIngameNotifications && WoW.Hooked && WoW.WProc != null && WoW.WProc.IsInGame)
                 {

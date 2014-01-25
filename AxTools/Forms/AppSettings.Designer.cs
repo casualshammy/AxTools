@@ -30,13 +30,10 @@ namespace AxTools.Forms
         {
             this.components = new System.ComponentModel.Container();
             this.checkBox_AntiAFK = new MetroFramework.Controls.MetroCheckBox();
-            this.CheckBox4 = new MetroFramework.Controls.MetroCheckBox();
             this.CheckBox5 = new MetroFramework.Controls.MetroCheckBox();
             this.textBoxVentriloPath = new System.Windows.Forms.TextBox();
             this.buttonVentriloPath = new MetroFramework.Controls.MetroButton();
             this.CheckBoxStartAxToolsWithWindows = new MetroFramework.Controls.MetroCheckBox();
-            this.ComboBox_server_ip = new MetroFramework.Controls.MetroComboBox();
-            this.Label3 = new MetroFramework.Controls.MetroLabel();
             this.CheckBox3 = new MetroFramework.Controls.MetroCheckBox();
             this.CheckBox7 = new MetroFramework.Controls.MetroCheckBox();
             this.GroupBox2 = new System.Windows.Forms.GroupBox();
@@ -50,7 +47,6 @@ namespace AxTools.Forms
             this.Label7 = new MetroFramework.Controls.MetroLabel();
             this.Label8 = new MetroFramework.Controls.MetroLabel();
             this.CheckBox6 = new MetroFramework.Controls.MetroCheckBox();
-            this.CheckBoxTransparentPingWidget = new MetroFramework.Controls.MetroCheckBox();
             this.labelClickerHotkey = new MetroFramework.Controls.MetroLabel();
             this.comboBoxClickerHotkey = new MetroFramework.Controls.MetroComboBox();
             this.comboBoxWExecModule = new MetroFramework.Controls.MetroComboBox();
@@ -66,6 +62,8 @@ namespace AxTools.Forms
             this.checkBoxAddonsBackup = new MetroFramework.Controls.MetroCheckBox();
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
+            this.linkSendLogToDev = new MetroFramework.Controls.MetroLink();
+            this.linkShowLog = new MetroFramework.Controls.MetroLink();
             this.metroLabel10 = new MetroFramework.Controls.MetroLabel();
             this.metroComboBoxStyle = new MetroFramework.Controls.MetroComboBox();
             this.metroTabPage5 = new MetroFramework.Controls.MetroTabPage();
@@ -97,8 +95,19 @@ namespace AxTools.Forms
             this.comboBoxClickerKey = new MetroFramework.Controls.MetroComboBox();
             this.metroLabel7 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel8 = new MetroFramework.Controls.MetroLabel();
+            this.metroTabPage7 = new MetroFramework.Controls.MetroTabPage();
+            this.comboBoxVeryBadNetworkStatusPing = new MetroFramework.Controls.MetroComboBox();
+            this.comboBoxBadNetworkStatusPing = new MetroFramework.Controls.MetroComboBox();
+            this.comboBoxVeryBadNetworkStatusProcent = new MetroFramework.Controls.MetroComboBox();
+            this.comboBoxBadNetworkStatusProcent = new MetroFramework.Controls.MetroComboBox();
+            this.metroLabel12 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel11 = new MetroFramework.Controls.MetroLabel();
+            this.ComboBox_server_ip = new MetroFramework.Controls.MetroComboBox();
+            this.Label3 = new MetroFramework.Controls.MetroLabel();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.metroLabel13 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
             this.GroupBox2.SuspendLayout();
             this.GroupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupTimer)).BeginInit();
@@ -111,6 +120,7 @@ namespace AxTools.Forms
             this.metroTabPage2.SuspendLayout();
             this.metroTabPage6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_clicker_interval)).BeginInit();
+            this.metroTabPage7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -121,7 +131,7 @@ namespace AxTools.Forms
             this.checkBox_AntiAFK.CustomForeColor = false;
             this.checkBox_AntiAFK.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBox_AntiAFK.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBox_AntiAFK.Location = new System.Drawing.Point(262, 45);
+            this.checkBox_AntiAFK.Location = new System.Drawing.Point(309, 45);
             this.checkBox_AntiAFK.Name = "checkBox_AntiAFK";
             this.checkBox_AntiAFK.Size = new System.Drawing.Size(74, 19);
             this.checkBox_AntiAFK.Style = MetroFramework.MetroColorStyle.Blue;
@@ -133,24 +143,6 @@ namespace AxTools.Forms
             this.checkBox_AntiAFK.UseVisualStyleBackColor = true;
             this.checkBox_AntiAFK.CheckedChanged += new System.EventHandler(this.CheckBox1CheckedChanged);
             // 
-            // CheckBox4
-            // 
-            this.CheckBox4.AutoSize = true;
-            this.CheckBox4.CustomBackground = false;
-            this.CheckBox4.CustomForeColor = false;
-            this.CheckBox4.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.CheckBox4.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBox4.Location = new System.Drawing.Point(3, 45);
-            this.CheckBox4.Name = "CheckBox4";
-            this.CheckBox4.Size = new System.Drawing.Size(240, 19);
-            this.CheckBox4.Style = MetroFramework.MetroColorStyle.Blue;
-            this.CheckBox4.StyleManager = null;
-            this.CheckBox4.TabIndex = 17;
-            this.CheckBox4.Text = "Show ping widget on WoW startup";
-            this.CheckBox4.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.CheckBox4.UseStyleColors = true;
-            this.CheckBox4.UseVisualStyleBackColor = true;
-            // 
             // CheckBox5
             // 
             this.CheckBox5.AutoSize = true;
@@ -158,7 +150,7 @@ namespace AxTools.Forms
             this.CheckBox5.CustomForeColor = false;
             this.CheckBox5.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.CheckBox5.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBox5.Location = new System.Drawing.Point(262, 20);
+            this.CheckBox5.Location = new System.Drawing.Point(309, 20);
             this.CheckBox5.Name = "CheckBox5";
             this.CheckBox5.Size = new System.Drawing.Size(225, 19);
             this.CheckBox5.Style = MetroFramework.MetroColorStyle.Blue;
@@ -174,13 +166,13 @@ namespace AxTools.Forms
             this.textBoxVentriloPath.Location = new System.Drawing.Point(128, 67);
             this.textBoxVentriloPath.Name = "textBoxVentriloPath";
             this.textBoxVentriloPath.ReadOnly = true;
-            this.textBoxVentriloPath.Size = new System.Drawing.Size(317, 20);
+            this.textBoxVentriloPath.Size = new System.Drawing.Size(384, 20);
             this.textBoxVentriloPath.TabIndex = 27;
             // 
             // buttonVentriloPath
             // 
             this.buttonVentriloPath.Highlight = true;
-            this.buttonVentriloPath.Location = new System.Drawing.Point(451, 67);
+            this.buttonVentriloPath.Location = new System.Drawing.Point(518, 67);
             this.buttonVentriloPath.Name = "buttonVentriloPath";
             this.buttonVentriloPath.Size = new System.Drawing.Size(36, 20);
             this.buttonVentriloPath.Style = MetroFramework.MetroColorStyle.Blue;
@@ -207,41 +199,6 @@ namespace AxTools.Forms
             this.CheckBoxStartAxToolsWithWindows.Theme = MetroFramework.MetroThemeStyle.Light;
             this.CheckBoxStartAxToolsWithWindows.UseStyleColors = true;
             this.CheckBoxStartAxToolsWithWindows.UseVisualStyleBackColor = true;
-            // 
-            // ComboBox_server_ip
-            // 
-            this.ComboBox_server_ip.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.ComboBox_server_ip.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ComboBox_server_ip.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.ComboBox_server_ip.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.ComboBox_server_ip.FormattingEnabled = true;
-            this.ComboBox_server_ip.ItemHeight = 23;
-            this.ComboBox_server_ip.Location = new System.Drawing.Point(104, 120);
-            this.ComboBox_server_ip.Name = "ComboBox_server_ip";
-            this.ComboBox_server_ip.Size = new System.Drawing.Size(293, 29);
-            this.ComboBox_server_ip.Style = MetroFramework.MetroColorStyle.Blue;
-            this.ComboBox_server_ip.StyleManager = null;
-            this.ComboBox_server_ip.TabIndex = 39;
-            this.ComboBox_server_ip.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.ComboBox_server_ip.SelectedIndexChanged += new System.EventHandler(this.ComboBoxServerIpSelectedIndexChanged);
-            // 
-            // Label3
-            // 
-            this.Label3.AutoSize = true;
-            this.Label3.CustomBackground = false;
-            this.Label3.CustomForeColor = false;
-            this.Label3.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.Label3.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.Label3.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.Label3.Location = new System.Drawing.Point(3, 124);
-            this.Label3.Name = "Label3";
-            this.Label3.Size = new System.Drawing.Size(95, 19);
-            this.Label3.Style = MetroFramework.MetroColorStyle.Blue;
-            this.Label3.StyleManager = null;
-            this.Label3.TabIndex = 40;
-            this.Label3.Text = "Server to ping:";
-            this.Label3.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.Label3.UseStyleColors = true;
             // 
             // CheckBox3
             // 
@@ -424,24 +381,6 @@ namespace AxTools.Forms
             this.CheckBox6.Theme = MetroFramework.MetroThemeStyle.Light;
             this.CheckBox6.UseStyleColors = true;
             this.CheckBox6.UseVisualStyleBackColor = true;
-            // 
-            // CheckBoxTransparentPingWidget
-            // 
-            this.CheckBoxTransparentPingWidget.AutoSize = true;
-            this.CheckBoxTransparentPingWidget.CustomBackground = false;
-            this.CheckBoxTransparentPingWidget.CustomForeColor = false;
-            this.CheckBoxTransparentPingWidget.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.CheckBoxTransparentPingWidget.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBoxTransparentPingWidget.Location = new System.Drawing.Point(262, 20);
-            this.CheckBoxTransparentPingWidget.Name = "CheckBoxTransparentPingWidget";
-            this.CheckBoxTransparentPingWidget.Size = new System.Drawing.Size(187, 19);
-            this.CheckBoxTransparentPingWidget.Style = MetroFramework.MetroColorStyle.Blue;
-            this.CheckBoxTransparentPingWidget.StyleManager = null;
-            this.CheckBoxTransparentPingWidget.TabIndex = 43;
-            this.CheckBoxTransparentPingWidget.Text = "Click-Through ping widget";
-            this.CheckBoxTransparentPingWidget.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.CheckBoxTransparentPingWidget.UseStyleColors = true;
-            this.CheckBoxTransparentPingWidget.UseVisualStyleBackColor = true;
             // 
             // labelClickerHotkey
             // 
@@ -689,14 +628,15 @@ namespace AxTools.Forms
             this.metroTabControl1.Controls.Add(this.metroTabPage4);
             this.metroTabControl1.Controls.Add(this.metroTabPage2);
             this.metroTabControl1.Controls.Add(this.metroTabPage6);
+            this.metroTabControl1.Controls.Add(this.metroTabPage7);
             this.metroTabControl1.CustomBackground = false;
             this.metroTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroTabControl1.FontSize = MetroFramework.MetroTabControlSize.Medium;
             this.metroTabControl1.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
-            this.metroTabControl1.Size = new System.Drawing.Size(502, 220);
+            this.metroTabControl1.SelectedIndex = 6;
+            this.metroTabControl1.Size = new System.Drawing.Size(565, 220);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.StyleManager = this.metroStyleManager1;
             this.metroTabControl1.TabIndex = 65;
@@ -706,11 +646,10 @@ namespace AxTools.Forms
             // 
             // metroTabPage1
             // 
+            this.metroTabPage1.Controls.Add(this.linkSendLogToDev);
+            this.metroTabPage1.Controls.Add(this.linkShowLog);
             this.metroTabPage1.Controls.Add(this.metroLabel10);
             this.metroTabPage1.Controls.Add(this.metroComboBoxStyle);
-            this.metroTabPage1.Controls.Add(this.ComboBox_server_ip);
-            this.metroTabPage1.Controls.Add(this.Label3);
-            this.metroTabPage1.Controls.Add(this.CheckBoxTransparentPingWidget);
             this.metroTabPage1.Controls.Add(this.CheckBoxStartAxToolsWithWindows);
             this.metroTabPage1.CustomBackground = false;
             this.metroTabPage1.HorizontalScrollbar = false;
@@ -719,7 +658,7 @@ namespace AxTools.Forms
             this.metroTabPage1.HorizontalScrollbarSize = 10;
             this.metroTabPage1.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage1.Name = "metroTabPage1";
-            this.metroTabPage1.Size = new System.Drawing.Size(494, 181);
+            this.metroTabPage1.Size = new System.Drawing.Size(557, 181);
             this.metroTabPage1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage1.StyleManager = null;
             this.metroTabPage1.TabIndex = 0;
@@ -729,6 +668,41 @@ namespace AxTools.Forms
             this.metroTabPage1.VerticalScrollbarBarColor = true;
             this.metroTabPage1.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage1.VerticalScrollbarSize = 10;
+            // 
+            // linkSendLogToDev
+            // 
+            this.linkSendLogToDev.AutoSize = true;
+            this.linkSendLogToDev.CustomBackground = false;
+            this.linkSendLogToDev.CustomForeColor = false;
+            this.linkSendLogToDev.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkSendLogToDev.FontWeight = MetroFramework.MetroLinkWeight.Bold;
+            this.linkSendLogToDev.Location = new System.Drawing.Point(424, 162);
+            this.linkSendLogToDev.Name = "linkSendLogToDev";
+            this.linkSendLogToDev.Size = new System.Drawing.Size(130, 23);
+            this.linkSendLogToDev.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkSendLogToDev.StyleManager = null;
+            this.linkSendLogToDev.TabIndex = 47;
+            this.linkSendLogToDev.Text = "Send log to developer";
+            this.linkSendLogToDev.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkSendLogToDev.UseStyleColors = true;
+            this.linkSendLogToDev.Click += new System.EventHandler(this.linkSendLogToDev_Click);
+            // 
+            // linkShowLog
+            // 
+            this.linkShowLog.CustomBackground = false;
+            this.linkShowLog.CustomForeColor = false;
+            this.linkShowLog.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkShowLog.FontWeight = MetroFramework.MetroLinkWeight.Bold;
+            this.linkShowLog.Location = new System.Drawing.Point(343, 162);
+            this.linkShowLog.Name = "linkShowLog";
+            this.linkShowLog.Size = new System.Drawing.Size(75, 23);
+            this.linkShowLog.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkShowLog.StyleManager = null;
+            this.linkShowLog.TabIndex = 46;
+            this.linkShowLog.Text = "Show log";
+            this.linkShowLog.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkShowLog.UseStyleColors = true;
+            this.linkShowLog.Click += new System.EventHandler(this.linkShowLog_Click);
             // 
             // metroLabel10
             // 
@@ -803,7 +777,7 @@ namespace AxTools.Forms
             this.metroTabPage5.HorizontalScrollbarSize = 10;
             this.metroTabPage5.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage5.Name = "metroTabPage5";
-            this.metroTabPage5.Size = new System.Drawing.Size(494, 181);
+            this.metroTabPage5.Size = new System.Drawing.Size(557, 181);
             this.metroTabPage5.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage5.StyleManager = null;
             this.metroTabPage5.TabIndex = 4;
@@ -835,7 +809,7 @@ namespace AxTools.Forms
             // buttonWowPath
             // 
             this.buttonWowPath.Highlight = true;
-            this.buttonWowPath.Location = new System.Drawing.Point(451, 21);
+            this.buttonWowPath.Location = new System.Drawing.Point(518, 21);
             this.buttonWowPath.Name = "buttonWowPath";
             this.buttonWowPath.Size = new System.Drawing.Size(36, 20);
             this.buttonWowPath.Style = MetroFramework.MetroColorStyle.Blue;
@@ -850,13 +824,13 @@ namespace AxTools.Forms
             this.textBoxWowPath.Location = new System.Drawing.Point(85, 21);
             this.textBoxWowPath.Name = "textBoxWowPath";
             this.textBoxWowPath.ReadOnly = true;
-            this.textBoxWowPath.Size = new System.Drawing.Size(360, 20);
+            this.textBoxWowPath.Size = new System.Drawing.Size(427, 20);
             this.textBoxWowPath.TabIndex = 56;
             // 
             // buttonRaidcallPath
             // 
             this.buttonRaidcallPath.Highlight = true;
-            this.buttonRaidcallPath.Location = new System.Drawing.Point(451, 93);
+            this.buttonRaidcallPath.Location = new System.Drawing.Point(518, 93);
             this.buttonRaidcallPath.Name = "buttonRaidcallPath";
             this.buttonRaidcallPath.Size = new System.Drawing.Size(36, 20);
             this.buttonRaidcallPath.Style = MetroFramework.MetroColorStyle.Blue;
@@ -871,13 +845,13 @@ namespace AxTools.Forms
             this.textBoxRaidcallPath.Location = new System.Drawing.Point(128, 93);
             this.textBoxRaidcallPath.Name = "textBoxRaidcallPath";
             this.textBoxRaidcallPath.ReadOnly = true;
-            this.textBoxRaidcallPath.Size = new System.Drawing.Size(317, 20);
+            this.textBoxRaidcallPath.Size = new System.Drawing.Size(384, 20);
             this.textBoxRaidcallPath.TabIndex = 54;
             // 
             // buttonMumblePath
             // 
             this.buttonMumblePath.Highlight = true;
-            this.buttonMumblePath.Location = new System.Drawing.Point(451, 120);
+            this.buttonMumblePath.Location = new System.Drawing.Point(518, 120);
             this.buttonMumblePath.Name = "buttonMumblePath";
             this.buttonMumblePath.Size = new System.Drawing.Size(36, 20);
             this.buttonMumblePath.Style = MetroFramework.MetroColorStyle.Blue;
@@ -892,13 +866,13 @@ namespace AxTools.Forms
             this.textBoxMumblePath.Location = new System.Drawing.Point(128, 120);
             this.textBoxMumblePath.Name = "textBoxMumblePath";
             this.textBoxMumblePath.ReadOnly = true;
-            this.textBoxMumblePath.Size = new System.Drawing.Size(317, 20);
+            this.textBoxMumblePath.Size = new System.Drawing.Size(384, 20);
             this.textBoxMumblePath.TabIndex = 52;
             // 
             // buttonTeamspeak3Path
             // 
             this.buttonTeamspeak3Path.Highlight = true;
-            this.buttonTeamspeak3Path.Location = new System.Drawing.Point(451, 146);
+            this.buttonTeamspeak3Path.Location = new System.Drawing.Point(518, 146);
             this.buttonTeamspeak3Path.Name = "buttonTeamspeak3Path";
             this.buttonTeamspeak3Path.Size = new System.Drawing.Size(36, 20);
             this.buttonTeamspeak3Path.Style = MetroFramework.MetroColorStyle.Blue;
@@ -913,7 +887,7 @@ namespace AxTools.Forms
             this.textBoxTeamspeak3Path.Location = new System.Drawing.Point(128, 146);
             this.textBoxTeamspeak3Path.Name = "textBoxTeamspeak3Path";
             this.textBoxTeamspeak3Path.ReadOnly = true;
-            this.textBoxTeamspeak3Path.Size = new System.Drawing.Size(317, 20);
+            this.textBoxTeamspeak3Path.Size = new System.Drawing.Size(384, 20);
             this.textBoxTeamspeak3Path.TabIndex = 50;
             // 
             // metroLabel4
@@ -994,7 +968,6 @@ namespace AxTools.Forms
             this.metroTabPage3.Controls.Add(this.CheckBox3);
             this.metroTabPage3.Controls.Add(this.CheckBox5);
             this.metroTabPage3.Controls.Add(this.GroupBox2);
-            this.metroTabPage3.Controls.Add(this.CheckBox4);
             this.metroTabPage3.Controls.Add(this.CheckBox6);
             this.metroTabPage3.Controls.Add(this.CheckBox7);
             this.metroTabPage3.Controls.Add(this.GroupBox1);
@@ -1006,7 +979,7 @@ namespace AxTools.Forms
             this.metroTabPage3.HorizontalScrollbarSize = 10;
             this.metroTabPage3.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage3.Name = "metroTabPage3";
-            this.metroTabPage3.Size = new System.Drawing.Size(494, 181);
+            this.metroTabPage3.Size = new System.Drawing.Size(557, 181);
             this.metroTabPage3.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage3.StyleManager = null;
             this.metroTabPage3.TabIndex = 2;
@@ -1024,7 +997,7 @@ namespace AxTools.Forms
             this.CheckBoxAxToolsAddon.CustomForeColor = false;
             this.CheckBoxAxToolsAddon.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.CheckBoxAxToolsAddon.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBoxAxToolsAddon.Location = new System.Drawing.Point(3, 70);
+            this.CheckBoxAxToolsAddon.Location = new System.Drawing.Point(3, 45);
             this.CheckBoxAxToolsAddon.Name = "CheckBoxAxToolsAddon";
             this.CheckBoxAxToolsAddon.Size = new System.Drawing.Size(234, 19);
             this.CheckBoxAxToolsAddon.Style = MetroFramework.MetroColorStyle.Blue;
@@ -1054,7 +1027,7 @@ namespace AxTools.Forms
             this.metroTabPage4.HorizontalScrollbarSize = 10;
             this.metroTabPage4.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage4.Name = "metroTabPage4";
-            this.metroTabPage4.Size = new System.Drawing.Size(494, 181);
+            this.metroTabPage4.Size = new System.Drawing.Size(557, 181);
             this.metroTabPage4.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage4.StyleManager = null;
             this.metroTabPage4.TabIndex = 3;
@@ -1138,7 +1111,7 @@ namespace AxTools.Forms
             // buttonBackupPath
             // 
             this.buttonBackupPath.Highlight = true;
-            this.buttonBackupPath.Location = new System.Drawing.Point(451, 69);
+            this.buttonBackupPath.Location = new System.Drawing.Point(518, 69);
             this.buttonBackupPath.Name = "buttonBackupPath";
             this.buttonBackupPath.Size = new System.Drawing.Size(36, 20);
             this.buttonBackupPath.Style = MetroFramework.MetroColorStyle.Blue;
@@ -1153,7 +1126,7 @@ namespace AxTools.Forms
             this.textBoxBackupPath.Location = new System.Drawing.Point(128, 69);
             this.textBoxBackupPath.Name = "textBoxBackupPath";
             this.textBoxBackupPath.ReadOnly = true;
-            this.textBoxBackupPath.Size = new System.Drawing.Size(317, 20);
+            this.textBoxBackupPath.Size = new System.Drawing.Size(384, 20);
             this.textBoxBackupPath.TabIndex = 48;
             // 
             // metroTabPage2
@@ -1173,7 +1146,7 @@ namespace AxTools.Forms
             this.metroTabPage2.HorizontalScrollbarSize = 10;
             this.metroTabPage2.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage2.Name = "metroTabPage2";
-            this.metroTabPage2.Size = new System.Drawing.Size(494, 181);
+            this.metroTabPage2.Size = new System.Drawing.Size(557, 181);
             this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage2.StyleManager = null;
             this.metroTabPage2.TabIndex = 1;
@@ -1197,7 +1170,7 @@ namespace AxTools.Forms
             this.metroTabPage6.HorizontalScrollbarSize = 10;
             this.metroTabPage6.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage6.Name = "metroTabPage6";
-            this.metroTabPage6.Size = new System.Drawing.Size(494, 181);
+            this.metroTabPage6.Size = new System.Drawing.Size(557, 181);
             this.metroTabPage6.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage6.StyleManager = null;
             this.metroTabPage6.TabIndex = 5;
@@ -1291,6 +1264,171 @@ namespace AxTools.Forms
             this.metroLabel8.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLabel8.UseStyleColors = true;
             // 
+            // metroTabPage7
+            // 
+            this.metroTabPage7.Controls.Add(this.metroLabel14);
+            this.metroTabPage7.Controls.Add(this.metroLabel13);
+            this.metroTabPage7.Controls.Add(this.comboBoxVeryBadNetworkStatusPing);
+            this.metroTabPage7.Controls.Add(this.comboBoxBadNetworkStatusPing);
+            this.metroTabPage7.Controls.Add(this.comboBoxVeryBadNetworkStatusProcent);
+            this.metroTabPage7.Controls.Add(this.comboBoxBadNetworkStatusProcent);
+            this.metroTabPage7.Controls.Add(this.metroLabel12);
+            this.metroTabPage7.Controls.Add(this.metroLabel11);
+            this.metroTabPage7.Controls.Add(this.ComboBox_server_ip);
+            this.metroTabPage7.Controls.Add(this.Label3);
+            this.metroTabPage7.CustomBackground = false;
+            this.metroTabPage7.HorizontalScrollbar = false;
+            this.metroTabPage7.HorizontalScrollbarBarColor = true;
+            this.metroTabPage7.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage7.HorizontalScrollbarSize = 10;
+            this.metroTabPage7.Location = new System.Drawing.Point(4, 35);
+            this.metroTabPage7.Name = "metroTabPage7";
+            this.metroTabPage7.Size = new System.Drawing.Size(557, 181);
+            this.metroTabPage7.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroTabPage7.StyleManager = null;
+            this.metroTabPage7.TabIndex = 6;
+            this.metroTabPage7.Text = "  Pinger";
+            this.metroTabPage7.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroTabPage7.VerticalScrollbar = false;
+            this.metroTabPage7.VerticalScrollbarBarColor = true;
+            this.metroTabPage7.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage7.VerticalScrollbarSize = 10;
+            // 
+            // comboBoxVeryBadNetworkStatusPing
+            // 
+            this.comboBoxVeryBadNetworkStatusPing.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.comboBoxVeryBadNetworkStatusPing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxVeryBadNetworkStatusPing.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.comboBoxVeryBadNetworkStatusPing.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.comboBoxVeryBadNetworkStatusPing.FormattingEnabled = true;
+            this.comboBoxVeryBadNetworkStatusPing.ItemHeight = 19;
+            this.comboBoxVeryBadNetworkStatusPing.Location = new System.Drawing.Point(412, 96);
+            this.comboBoxVeryBadNetworkStatusPing.Name = "comboBoxVeryBadNetworkStatusPing";
+            this.comboBoxVeryBadNetworkStatusPing.Size = new System.Drawing.Size(98, 25);
+            this.comboBoxVeryBadNetworkStatusPing.Style = MetroFramework.MetroColorStyle.Blue;
+            this.comboBoxVeryBadNetworkStatusPing.StyleManager = null;
+            this.comboBoxVeryBadNetworkStatusPing.TabIndex = 48;
+            this.comboBoxVeryBadNetworkStatusPing.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // comboBoxBadNetworkStatusPing
+            // 
+            this.comboBoxBadNetworkStatusPing.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.comboBoxBadNetworkStatusPing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxBadNetworkStatusPing.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.comboBoxBadNetworkStatusPing.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.comboBoxBadNetworkStatusPing.FormattingEnabled = true;
+            this.comboBoxBadNetworkStatusPing.ItemHeight = 19;
+            this.comboBoxBadNetworkStatusPing.Location = new System.Drawing.Point(412, 65);
+            this.comboBoxBadNetworkStatusPing.Name = "comboBoxBadNetworkStatusPing";
+            this.comboBoxBadNetworkStatusPing.Size = new System.Drawing.Size(98, 25);
+            this.comboBoxBadNetworkStatusPing.Style = MetroFramework.MetroColorStyle.Blue;
+            this.comboBoxBadNetworkStatusPing.StyleManager = null;
+            this.comboBoxBadNetworkStatusPing.TabIndex = 47;
+            this.comboBoxBadNetworkStatusPing.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // comboBoxVeryBadNetworkStatusProcent
+            // 
+            this.comboBoxVeryBadNetworkStatusProcent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.comboBoxVeryBadNetworkStatusProcent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxVeryBadNetworkStatusProcent.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.comboBoxVeryBadNetworkStatusProcent.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.comboBoxVeryBadNetworkStatusProcent.FormattingEnabled = true;
+            this.comboBoxVeryBadNetworkStatusProcent.ItemHeight = 19;
+            this.comboBoxVeryBadNetworkStatusProcent.Location = new System.Drawing.Point(280, 96);
+            this.comboBoxVeryBadNetworkStatusProcent.Name = "comboBoxVeryBadNetworkStatusProcent";
+            this.comboBoxVeryBadNetworkStatusProcent.Size = new System.Drawing.Size(98, 25);
+            this.comboBoxVeryBadNetworkStatusProcent.Style = MetroFramework.MetroColorStyle.Blue;
+            this.comboBoxVeryBadNetworkStatusProcent.StyleManager = null;
+            this.comboBoxVeryBadNetworkStatusProcent.TabIndex = 46;
+            this.comboBoxVeryBadNetworkStatusProcent.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // comboBoxBadNetworkStatusProcent
+            // 
+            this.comboBoxBadNetworkStatusProcent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.comboBoxBadNetworkStatusProcent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxBadNetworkStatusProcent.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.comboBoxBadNetworkStatusProcent.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.comboBoxBadNetworkStatusProcent.FormattingEnabled = true;
+            this.comboBoxBadNetworkStatusProcent.ItemHeight = 19;
+            this.comboBoxBadNetworkStatusProcent.Location = new System.Drawing.Point(280, 65);
+            this.comboBoxBadNetworkStatusProcent.Name = "comboBoxBadNetworkStatusProcent";
+            this.comboBoxBadNetworkStatusProcent.Size = new System.Drawing.Size(98, 25);
+            this.comboBoxBadNetworkStatusProcent.Style = MetroFramework.MetroColorStyle.Blue;
+            this.comboBoxBadNetworkStatusProcent.StyleManager = null;
+            this.comboBoxBadNetworkStatusProcent.TabIndex = 45;
+            this.comboBoxBadNetworkStatusProcent.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // metroLabel12
+            // 
+            this.metroLabel12.AutoSize = true;
+            this.metroLabel12.CustomBackground = false;
+            this.metroLabel12.CustomForeColor = false;
+            this.metroLabel12.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.metroLabel12.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.metroLabel12.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.metroLabel12.Location = new System.Drawing.Point(3, 99);
+            this.metroLabel12.Name = "metroLabel12";
+            this.metroLabel12.Size = new System.Drawing.Size(271, 19);
+            this.metroLabel12.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroLabel12.StyleManager = null;
+            this.metroLabel12.TabIndex = 44;
+            this.metroLabel12.Text = "Very bad network status (red icon in taskbar):";
+            this.metroLabel12.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroLabel12.UseStyleColors = true;
+            // 
+            // metroLabel11
+            // 
+            this.metroLabel11.AutoSize = true;
+            this.metroLabel11.CustomBackground = false;
+            this.metroLabel11.CustomForeColor = false;
+            this.metroLabel11.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.metroLabel11.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.metroLabel11.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.metroLabel11.Location = new System.Drawing.Point(3, 68);
+            this.metroLabel11.Name = "metroLabel11";
+            this.metroLabel11.Size = new System.Drawing.Size(257, 19);
+            this.metroLabel11.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroLabel11.StyleManager = null;
+            this.metroLabel11.TabIndex = 43;
+            this.metroLabel11.Text = "Bad network status (yellow icon in taskbar):";
+            this.metroLabel11.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroLabel11.UseStyleColors = true;
+            // 
+            // ComboBox_server_ip
+            // 
+            this.ComboBox_server_ip.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.ComboBox_server_ip.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ComboBox_server_ip.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.ComboBox_server_ip.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.ComboBox_server_ip.FormattingEnabled = true;
+            this.ComboBox_server_ip.ItemHeight = 23;
+            this.ComboBox_server_ip.Location = new System.Drawing.Point(104, 15);
+            this.ComboBox_server_ip.Name = "ComboBox_server_ip";
+            this.ComboBox_server_ip.Size = new System.Drawing.Size(293, 29);
+            this.ComboBox_server_ip.Style = MetroFramework.MetroColorStyle.Blue;
+            this.ComboBox_server_ip.StyleManager = null;
+            this.ComboBox_server_ip.TabIndex = 41;
+            this.ComboBox_server_ip.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.ComboBox_server_ip.SelectedIndexChanged += new System.EventHandler(this.ComboBox_server_ip_SelectedIndexChanged);
+            // 
+            // Label3
+            // 
+            this.Label3.AutoSize = true;
+            this.Label3.CustomBackground = false;
+            this.Label3.CustomForeColor = false;
+            this.Label3.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.Label3.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.Label3.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.Label3.Location = new System.Drawing.Point(3, 20);
+            this.Label3.Name = "Label3";
+            this.Label3.Size = new System.Drawing.Size(95, 19);
+            this.Label3.Style = MetroFramework.MetroColorStyle.Blue;
+            this.Label3.StyleManager = null;
+            this.Label3.TabIndex = 42;
+            this.Label3.Text = "Server to ping:";
+            this.Label3.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.Label3.UseStyleColors = true;
+            // 
             // metroToolTip1
             // 
             this.metroToolTip1.AutoPopDelay = 10000;
@@ -1304,11 +1442,47 @@ namespace AxTools.Forms
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // metroLabel13
+            // 
+            this.metroLabel13.AutoSize = true;
+            this.metroLabel13.CustomBackground = false;
+            this.metroLabel13.CustomForeColor = false;
+            this.metroLabel13.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.metroLabel13.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.metroLabel13.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.metroLabel13.Location = new System.Drawing.Point(384, 68);
+            this.metroLabel13.Name = "metroLabel13";
+            this.metroLabel13.Size = new System.Drawing.Size(22, 19);
+            this.metroLabel13.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroLabel13.StyleManager = null;
+            this.metroLabel13.TabIndex = 49;
+            this.metroLabel13.Text = "or";
+            this.metroLabel13.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroLabel13.UseStyleColors = true;
+            // 
+            // metroLabel14
+            // 
+            this.metroLabel14.AutoSize = true;
+            this.metroLabel14.CustomBackground = false;
+            this.metroLabel14.CustomForeColor = false;
+            this.metroLabel14.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.metroLabel14.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.metroLabel14.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.metroLabel14.Location = new System.Drawing.Point(384, 99);
+            this.metroLabel14.Name = "metroLabel14";
+            this.metroLabel14.Size = new System.Drawing.Size(22, 19);
+            this.metroLabel14.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroLabel14.StyleManager = null;
+            this.metroLabel14.TabIndex = 50;
+            this.metroLabel14.Text = "or";
+            this.metroLabel14.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroLabel14.UseStyleColors = true;
+            // 
             // AppSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(542, 300);
+            this.ClientSize = new System.Drawing.Size(605, 300);
             this.Controls.Add(this.metroTabControl1);
             this.Location = new System.Drawing.Point(0, 0);
             this.MaximizeBox = false;
@@ -1336,18 +1510,17 @@ namespace AxTools.Forms
             this.metroTabPage6.ResumeLayout(false);
             this.metroTabPage6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_clicker_interval)).EndInit();
+            this.metroTabPage7.ResumeLayout(false);
+            this.metroTabPage7.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
 
         }
         private MetroCheckBox checkBox_AntiAFK;
-        private MetroCheckBox CheckBox4;
         private MetroCheckBox CheckBox5;
         private System.Windows.Forms.TextBox textBoxVentriloPath;
         private MetroButton buttonVentriloPath;
         private MetroCheckBox CheckBoxStartAxToolsWithWindows;
-        private MetroComboBox ComboBox_server_ip;
-        private MetroLabel Label3;
         private MetroCheckBox CheckBox3;
         private MetroCheckBox CheckBox7;
         private System.Windows.Forms.GroupBox GroupBox2;
@@ -1361,7 +1534,6 @@ namespace AxTools.Forms
         private MetroLabel Label7;
         private MetroLabel Label8;
         private MetroCheckBox CheckBox6;
-        private MetroCheckBox CheckBoxTransparentPingWidget;
 
 
         #endregion
@@ -1414,5 +1586,18 @@ namespace AxTools.Forms
         private MetroCheckBox CheckBoxAxToolsAddon;
         private MetroLabel metroLabel10;
         private MetroComboBox metroComboBoxStyle;
+        private MetroLink linkShowLog;
+        private MetroLink linkSendLogToDev;
+        private MetroTabPage metroTabPage7;
+        private MetroComboBox ComboBox_server_ip;
+        private MetroLabel Label3;
+        private MetroComboBox comboBoxBadNetworkStatusProcent;
+        private MetroLabel metroLabel12;
+        private MetroLabel metroLabel11;
+        private MetroComboBox comboBoxVeryBadNetworkStatusPing;
+        private MetroComboBox comboBoxBadNetworkStatusPing;
+        private MetroComboBox comboBoxVeryBadNetworkStatusProcent;
+        private MetroLabel metroLabel14;
+        private MetroLabel metroLabel13;
     }
 }

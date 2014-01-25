@@ -56,28 +56,20 @@
         internal static readonly int GameObjectEntryID = 0x28;
         internal static readonly int GameObjectNameBase = 0x1C0;
         internal static readonly int GameObjectNameOffset = 0xB0;
-        internal static readonly int GameObjectLocationX = 0x1F4;
-        internal static readonly int GameObjectLocationY = GameObjectLocationX + 0x4;
-        internal static readonly int GameObjectLocationZ = GameObjectLocationX + 0x8;
+        internal static readonly int GameObjectLocation = 0x1F4;
 
         #endregion
 
         #region Player unit
 
         internal static readonly int UnitDescriptors = 0x4;
-        internal static readonly int UnitDescriptorsBig = 228; // GetDisplayClassName
-        internal static readonly int UnitClass = 89; // GetDisplayClassName
-        internal static readonly int UnitLevel = 0xDC; // use CE
         internal static readonly int UnitHealth = 0x84;
         internal static readonly int UnitHealthMax = 0x9C;
-        internal static readonly int UnitFactionTemplate = 0xE4;
         internal static readonly int UnitTargetGUID = 0x58;
         internal static readonly int UnitCastingID = 3256; // Script_UnitCastingInfo //
         internal static readonly int UnitChannelingID = 3280; // Script_UnitChannelInfo //
-        internal static readonly int UnitLocationX = 0x838;
-        internal static readonly int UnitLocationY = UnitLocationX + 0x4;
-        internal static readonly int UnitLocationZ = UnitLocationX + 0x8;
-        internal static readonly int UnitRotation = UnitLocationX + 0x10;
+        internal static readonly int UnitLocation = 0x838;
+        internal static readonly int UnitRotation = UnitLocation + 0x10;
         internal static readonly int UnitNameMaskOffset = 0x024;
         internal static readonly int UnitNameBaseOffset = 0x18;
         internal static readonly int UnitNameStringOffset = 0x21;

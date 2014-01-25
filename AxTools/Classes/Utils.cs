@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net.NetworkInformation;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Json;
-using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
-using AxTools.Classes.WoW;
 
 namespace AxTools.Classes
 {
@@ -81,18 +75,6 @@ namespace AxTools.Classes
             return builder.ToString();
         }
         
-        //internal static void GetFileInfoFromExtension(string extension, out Icon pIcon, out string type)
-        //{
-        //    WinAPI.SHFILEINFO psfi = new WinAPI.SHFILEINFO();
-        //    WinAPI.SHGetFileInfo(extension, 0x80, ref psfi, Marshal.SizeOf(psfi), 0x111 | 0x410);
-        //    pIcon = Icon.FromHandle(psfi.HIcon);
-        //    type = psfi.TypeName;
-        //    if (!IconHandlers.Contains(psfi.HIcon))
-        //    {
-        //        IconHandlers.Add(psfi.HIcon);
-        //    }
-        //}
-
         internal static bool InternetAvailable
         {
             get

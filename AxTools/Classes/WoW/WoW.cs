@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using AxTools.Classes.WoW.DX;
+﻿using AxTools.Classes.WoW.DX;
 using Fasm;
 using GreyMagic;
 using System;
@@ -51,20 +50,15 @@ namespace AxTools.Classes.WoW
                 BitConverter.ToString(_endSceneOriginalBytes), (uint) _dxAddress.HookPtr + offset), false, false);
             // allocate memory to store injected code:
             _injectedCode = WProc.Memory.AllocateMemory(2048);
-            Log.Print(
-                string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", WProc.ProcessName, WProc.ProcessID, (uint)_injectedCode),
-                false);
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", WProc.ProcessName, WProc.ProcessID, (uint)_injectedCode));
             // allocate memory the new injection code pointer:
             _addresseInjection = WProc.Memory.AllocateMemory(0x4);
             WProc.Memory.Write(_addresseInjection, 0);
-            Log.Print(
-                string.Format("{0}:{1} :: [WoW hook] User code address: 0x{2:X}", WProc.ProcessName, WProc.ProcessID, (uint)_addresseInjection),
-                false);
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] User code address: 0x{2:X}", WProc.ProcessName, WProc.ProcessID, (uint)_addresseInjection));
             // allocate memory the pointer return value:
             _retnInjectionAsm = WProc.Memory.AllocateMemory(0x4);
             WProc.Memory.Write(_retnInjectionAsm, 0);
-            Log.Print(
-                string.Format("{0}:{1} :: [WoW hook] Return value code address: 0x{2:X}", WProc.ProcessName, WProc.ProcessID, (uint)_retnInjectionAsm), false);
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] Return value code address: 0x{2:X}", WProc.ProcessName, WProc.ProcessID, (uint)_retnInjectionAsm));
             // injecting loop
             List<string> asm = new List<string>();
             RandomizeOpcode(asm, "pushad");
@@ -92,9 +86,8 @@ namespace AxTools.Classes.WoW
             asm.Clear();
             asm.Add("jmp " + (_injectedCode));
             InjectAsm(asm, (uint)_dxAddress.HookPtr + offset);
-            Log.Print(
-                string.Format("{0}:{1} :: [WoW hook] Successfully hooked, bytes: {2}", WProc.ProcessName, WProc.ProcessID,
-                              BitConverter.ToString(WProc.Memory.ReadBytes(_dxAddress.HookPtr + (int)offset, _dxAddress.UsingDirectX11 ? 5 : 7))), false);
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] Successfully hooked, bytes: {2}", WProc.ProcessName, WProc.ProcessID,
+                BitConverter.ToString(WProc.Memory.ReadBytes(_dxAddress.HookPtr + (int) offset, _dxAddress.UsingDirectX11 ? 5 : 7))));
 
             #endregion
 
@@ -108,7 +101,7 @@ namespace AxTools.Classes.WoW
             WowObject.Names.Clear();
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Total players cached: {2}", WProc.ProcessName, WProc.ProcessID, WowPlayer.Names.Count), false, false);
             WowPlayer.Names.Clear();
-            Log.Print(string.Format("{0}:{1} :: [WoW hook] Total NPC cached: {2}", WProc.ProcessName, WProc.ProcessID, WowNpc.Names.Count), false);
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] Total NPC cached: {2}", WProc.ProcessName, WProc.ProcessID, WowNpc.Names.Count));
             WowNpc.Names.Clear();
             Hooked = false;
         }
@@ -192,7 +185,7 @@ namespace AxTools.Classes.WoW
         {
             if (WProc.Memory.Process.HasExited)
             {
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't delete hook: WoW client has been finished", WProc.ProcessName, WProc.ProcessID), false);
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't delete hook: WoW client has been finished", WProc.ProcessName, WProc.ProcessID));
                 return;
             }
             try
@@ -201,12 +194,12 @@ namespace AxTools.Classes.WoW
                 WProc.Memory.WriteBytes(_dxAddress.HookPtr + (int) offset, _endSceneOriginalBytes);
                 Log.Print(
                     string.Format("{0}:{1} :: [WoW hook] Hook is deleted, bytes: {2}", WProc.ProcessName, WProc.ProcessID,
-                                  BitConverter.ToString(WProc.Memory.ReadBytes(_dxAddress.HookPtr + (int) offset, _dxAddress.UsingDirectX11 ? 5 : 7))), false);
+                                  BitConverter.ToString(WProc.Memory.ReadBytes(_dxAddress.HookPtr + (int) offset, _dxAddress.UsingDirectX11 ? 5 : 7))));
             }
             catch (Exception ex)
             {
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't delete hook, WoW client is closed? ({2})", WProc.ProcessName, WProc.ProcessID,
-                                        ex.Message), false);
+                                        ex.Message));
             }
             // ReSharper disable EmptyGeneralCatchClause
             try
@@ -562,20 +555,24 @@ namespace AxTools.Classes.WoW
         
         #endregion
 
-        internal static class LocalPlayer
+        private static void UpdateLocalPlayerInfo(IntPtr address, ulong guid)
         {
-            internal static ulong GUID;
-            internal static WowPointF Location;
-            internal static IntPtr Address;
-            internal static uint Health;
-            internal static uint HealthMax;
-            internal static uint CastingSpellID;
-            internal static uint ChannelSpellID;
-            internal static float Rotation;
-            internal static uint Level;
-            internal static ulong TargetGUID;
-            internal static bool IsAlliance;
+            LocalPlayer.Address = address;
+            LocalPlayer.GUID = guid;
+            LocalPlayer.Location = WProc.Memory.Read<WowPoint>(address + WowBuildInfo.UnitLocation);
+            LocalPlayer.Rotation = WProc.Memory.Read<float>(address + WowBuildInfo.UnitRotation);
+            LocalPlayer.CastingSpellID = WProc.Memory.Read<uint>(address + WowBuildInfo.UnitCastingID);
+            LocalPlayer.ChannelSpellID = WProc.Memory.Read<uint>(address + WowBuildInfo.UnitChannelingID);
+            IntPtr descriptors = WProc.Memory.Read<IntPtr>(address + WowBuildInfo.UnitDescriptors);
+            WowPlayerInfo info = WProc.Memory.Read<WowPlayerInfo>(descriptors + WowBuildInfo.UnitTargetGUID);
+            LocalPlayer.Health = info.Health;
+            LocalPlayer.HealthMax = info.HealthMax;
+            LocalPlayer.Level = info.Level;
+            LocalPlayer.TargetGUID = info.TargetGUID;
+            LocalPlayer.IsAlliance = info.FactionTemplate == 0x89b || info.FactionTemplate == 0x65d || info.FactionTemplate == 0x73 ||
+                                     info.FactionTemplate == 4 || info.FactionTemplate == 3 || info.FactionTemplate == 1 || info.FactionTemplate == 2401;
         }
+
         internal static void Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
         {
             lock (PulseLock)
@@ -599,22 +596,7 @@ namespace AxTools.Classes.WoW
                             ulong objectGUID = WProc.Memory.Read<ulong>(currObject + WowBuildInfo.ObjectGUID);
                             if (objectGUID == playerGUID)
                             {
-                                LocalPlayer.Address = currObject;
-                                LocalPlayer.GUID = playerGUID;
-                                LocalPlayer.Location = new WowPointF(WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationX),
-                                                                     WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationY),
-                                                                     WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationZ));
-                                IntPtr desc = WProc.Memory.Read<IntPtr>(LocalPlayer.Address + WowBuildInfo.UnitDescriptors);
-                                LocalPlayer.Health = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitHealth);
-                                LocalPlayer.HealthMax = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitHealthMax);
-                                LocalPlayer.CastingSpellID = WProc.Memory.Read<uint>(LocalPlayer.Address + WowBuildInfo.UnitCastingID);
-                                LocalPlayer.ChannelSpellID = WProc.Memory.Read<uint>(LocalPlayer.Address + WowBuildInfo.UnitChannelingID);
-                                LocalPlayer.Rotation = WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitRotation);
-                                LocalPlayer.Level = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitLevel);
-                                LocalPlayer.TargetGUID = WProc.Memory.Read<ulong>(desc + 0x50);
-                                uint factionTemplate = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitFactionTemplate);
-                                LocalPlayer.IsAlliance = factionTemplate == 0x89b || factionTemplate == 0x65d || factionTemplate == 0x73 ||
-                                                         factionTemplate == 4 || factionTemplate == 3 || factionTemplate == 1 || factionTemplate == 2401;
+                                UpdateLocalPlayerInfo(currObject, playerGUID);
                             }
                             else
                             {
@@ -650,22 +632,7 @@ namespace AxTools.Classes.WoW
                         case 4:
                             if (WProc.Memory.Read<ulong>(currObject + WowBuildInfo.ObjectGUID) == playerGUID)
                             {
-                                LocalPlayer.Address = currObject;
-                                LocalPlayer.GUID = playerGUID;
-                                LocalPlayer.Location = new WowPointF(WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationX),
-                                                                     WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationY),
-                                                                     WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationZ));
-                                IntPtr desc = WProc.Memory.Read<IntPtr>(LocalPlayer.Address + WowBuildInfo.UnitDescriptors);
-                                LocalPlayer.Health = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitHealth);
-                                LocalPlayer.HealthMax = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitHealthMax);
-                                LocalPlayer.CastingSpellID = WProc.Memory.Read<uint>(LocalPlayer.Address + WowBuildInfo.UnitCastingID);
-                                LocalPlayer.ChannelSpellID = WProc.Memory.Read<uint>(LocalPlayer.Address + WowBuildInfo.UnitChannelingID);
-                                LocalPlayer.Rotation = WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitRotation);
-                                LocalPlayer.Level = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitLevel);
-                                LocalPlayer.TargetGUID = WProc.Memory.Read<ulong>(desc + 0x50);
-                                uint mFactionTemplate = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitFactionTemplate);
-                                LocalPlayer.IsAlliance = mFactionTemplate == 0x89b || mFactionTemplate == 0x65d || mFactionTemplate == 0x73 ||
-                                                         mFactionTemplate == 4 || mFactionTemplate == 3 || mFactionTemplate == 1 || mFactionTemplate == 2401;
+                                UpdateLocalPlayerInfo(currObject, playerGUID);
                             }
                             break;
                         case 5:
@@ -694,25 +661,10 @@ namespace AxTools.Classes.WoW
                         case 4:
                             if (!localPlayerFound)
                             {
-                                var objectGUID = WProc.Memory.Read<ulong>(currObject + WowBuildInfo.ObjectGUID);
+                                ulong objectGUID = WProc.Memory.Read<ulong>(currObject + WowBuildInfo.ObjectGUID);
                                 if (objectGUID == playerGUID)
                                 {
-                                    LocalPlayer.Address = currObject;
-                                    LocalPlayer.GUID = playerGUID;
-                                    LocalPlayer.Location = new WowPointF(WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationX),
-                                                                         WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationY),
-                                                                         WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationZ));
-                                    IntPtr desc = WProc.Memory.Read<IntPtr>(currObject + WowBuildInfo.UnitDescriptors);
-                                    LocalPlayer.Health = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitHealth);
-                                    LocalPlayer.HealthMax = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitHealthMax);
-                                    LocalPlayer.CastingSpellID = WProc.Memory.Read<uint>(LocalPlayer.Address + WowBuildInfo.UnitCastingID);
-                                    LocalPlayer.ChannelSpellID = WProc.Memory.Read<uint>(LocalPlayer.Address + WowBuildInfo.UnitChannelingID);
-                                    LocalPlayer.Rotation = WProc.Memory.Read<float>(currObject + WowBuildInfo.UnitRotation);
-                                    LocalPlayer.Level = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitLevel);
-                                    LocalPlayer.TargetGUID = WProc.Memory.Read<ulong>(desc + 0x50);
-                                    uint mFactionTemplate = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitFactionTemplate);
-                                    LocalPlayer.IsAlliance = mFactionTemplate == 0x89b || mFactionTemplate == 0x65d || mFactionTemplate == 0x73 ||
-                                                             mFactionTemplate == 4 || mFactionTemplate == 3 || mFactionTemplate == 1 || mFactionTemplate == 2401;
+                                    UpdateLocalPlayerInfo(currObject, playerGUID);
                                     localPlayerFound = true;
                                 }
                             }
@@ -738,22 +690,7 @@ namespace AxTools.Classes.WoW
                 {
                     if (i == 4 && WProc.Memory.Read<ulong>(currObject + WowBuildInfo.ObjectGUID) == playerGUID)
                     {
-                        LocalPlayer.Address = currObject;
-                        LocalPlayer.GUID = playerGUID;
-                        LocalPlayer.Location = new WowPointF(WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationX),
-                                                             WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationY),
-                                                             WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitLocationZ));
-                        IntPtr desc = WProc.Memory.Read<IntPtr>(LocalPlayer.Address + WowBuildInfo.UnitDescriptors);
-                        LocalPlayer.Health = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitHealth);
-                        LocalPlayer.HealthMax = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitHealthMax);
-                        LocalPlayer.CastingSpellID = WProc.Memory.Read<uint>(LocalPlayer.Address + WowBuildInfo.UnitCastingID);
-                        LocalPlayer.ChannelSpellID = WProc.Memory.Read<uint>(LocalPlayer.Address + WowBuildInfo.UnitChannelingID);
-                        LocalPlayer.Rotation = WProc.Memory.Read<float>(LocalPlayer.Address + WowBuildInfo.UnitRotation);
-                        LocalPlayer.Level = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitLevel);
-                        LocalPlayer.TargetGUID = WProc.Memory.Read<ulong>(desc + 0x50);
-                        uint mFactionTemplate = WProc.Memory.Read<uint>(desc + WowBuildInfo.UnitFactionTemplate);
-                        LocalPlayer.IsAlliance = mFactionTemplate == 0x89b || mFactionTemplate == 0x65d || mFactionTemplate == 0x73 ||
-                                                 mFactionTemplate == 4 || mFactionTemplate == 3 || mFactionTemplate == 1 || mFactionTemplate == 2401;
+                        UpdateLocalPlayerInfo(currObject, playerGUID);
                         return;
                     }
                     currObject = WProc.Memory.Read<IntPtr>(currObject + WowBuildInfo.ObjectManagerNextObject);

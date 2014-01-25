@@ -17,3 +17,11 @@ D:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\axtools_updat
 D:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.csproj.GenerateResource.Cache
 D:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.exe
 D:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.pdb
+F:\Dropbox\Projects\AxTools\AxTools\bin\Release\updater.exe
+F:\Dropbox\Projects\AxTools\AxTools\bin\Release\updater.pdb
+F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.csprojResolveAssemblyReference.cache
+F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\axtools_updater.Main.resources
+F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\axtools_updater.Properties.Resources.resources
+F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.csproj.GenerateResource.Cache
+F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.exe
+F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.pdb

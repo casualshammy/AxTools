@@ -35,7 +35,6 @@ namespace AxTools.Classes.WoW
             }
         }
 
-        //private string mName;
         internal string Name
         {
             get
@@ -59,14 +58,16 @@ namespace AxTools.Classes.WoW
             }
         }
 
-        private WowPointF mLocation;
-        internal WowPointF Location
+        private WowPoint? mLocation;
+        internal WowPoint Location
         {
             get
             {
-                return mLocation ?? (mLocation = new WowPointF(WoW.WProc.Memory.Read<float>(Address + WowBuildInfo.GameObjectLocationX),
-                                                               WoW.WProc.Memory.Read<float>(Address + WowBuildInfo.GameObjectLocationY),
-                                                               WoW.WProc.Memory.Read<float>(Address + WowBuildInfo.GameObjectLocationZ)));
+                if (!mLocation.HasValue)
+                {
+                    mLocation = WoW.WProc.Memory.Read<WowPoint>(Address + WowBuildInfo.GameObjectLocation);
+                }
+                return mLocation.Value;
             }
         }
 
@@ -106,8 +107,8 @@ namespace AxTools.Classes.WoW
 
         internal static int SortByDistance(WowObject one, WowObject two)
         {
-            double distance1 = one.Location.Distance(WoW.LocalPlayer.Location);
-            double distance2 = two.Location.Distance(WoW.LocalPlayer.Location);
+            double distance1 = one.Location.Distance(LocalPlayer.Location);
+            double distance2 = two.Location.Distance(LocalPlayer.Location);
             if (distance1 > distance2)
             {
                 return 1;

@@ -1,10 +1,10 @@
 ﻿## AxTools settings file
 
 ## General settings ##
-Location={X=98,Y=552}
+Location={X=577,Y=493}
 GameServer=World of Warcraft - Blackscar
 regname=Axio-5GDMJHD20R
-LastUsedVersion=11.13.13.0
+LastUsedVersion=11.13.26.0
 NewStyleColor=6
 
 WowPluginsShowIngameNotifications=True
@@ -18,8 +18,6 @@ wow_wnd.auto_accept=True
 wow_wnd.noframe=True
 WowWindowLocation={X=0,Y=64}
 WowWindowSize={X=1920,Y=1016}
-WidgetLocation={X=1808,Y=897}
-widget.show=True
 widget.transparent=False
 ax_tools=True
 WowLoginHotkey=Delete
@@ -59,4 +57,4 @@ AddonsBackup=True
 AddonsBackupNum=7
 AddonsBackupTimer=24
 BackupCompressionLevel=6
-addons_backup_lastdate=03.10.2013 7:18:05
+addons_backup_lastdate=17.01.2014 20:42:26

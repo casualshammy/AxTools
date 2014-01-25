@@ -1,6 +1,7 @@
 ﻿using WindowsFormsAero.TaskDialog;
 using AxTools.Classes;
 using AxTools.Classes.WoW;
+using AxTools.Components;
 using MetroFramework.Drawing;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Windows.Forms;
 
 namespace AxTools.Forms
 {
-    internal partial class WowRadarOptions : MetroFramework.Forms.MetroForm
+    internal partial class WowRadarOptions : BorderedMetroForm
     {
         internal WowRadarOptions()
         {
@@ -33,20 +34,6 @@ namespace AxTools.Forms
             metroCheckBoxShowNpcsNames.Checked = Settings.RadarShowNpcsNames;
             metroCheckBoxShowObjectsNames.Checked = Settings.RadarShowObjectsNames;
             metroStyleManager1.Style = Settings.NewStyleColor;
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(Style))
-            {
-                Rectangle rectRight = new Rectangle(Width - 1, 0, 1, Height);
-                e.Graphics.FillRectangle(styleBrush, rectRight);
-                Rectangle rectLeft = new Rectangle(0, 0, 1, Height);
-                e.Graphics.FillRectangle(styleBrush, rectLeft);
-                Rectangle rectBottom = new Rectangle(0, Height - 1, Width, 1);
-                e.Graphics.FillRectangle(styleBrush, rectBottom);
-            }
         }
 
         private readonly List<WowObject> wowObjects = new List<WowObject>();

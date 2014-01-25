@@ -1,5 +1,5 @@
 <SmartAssemblyProject ProjectId="{bfd42bab-4a21-4c3a-9dd7-d72d6bd2393a}" Version="2.0">
-    <MainAssemblyFileName>D:\Dropbox\Projects\AxTools\AxTools\bin\Release\updater.exe</MainAssemblyFileName>
+    <MainAssemblyFileName>.\Updater.exe</MainAssemblyFileName>
     <Configuration Name="Release">
         <Options>
             <ExceptionReporting Template="res:{SmartExceptions}.1033.dll" />
@@ -12,7 +12,7 @@
             <Debugging />
         </Options>
         <ApplicationName />
-        <Destination DestinationFileName="D:\Dropbox\Public\axtools\Updater.exe" />
+        <Destination DestinationFileName="..\..\..\..\..\Public\axtools\Updater.exe" />
         <Assemblies>
             <Assembly AssemblyName="updater, Culture=neutral, PublicKeyToken=null">
                 <Merging>

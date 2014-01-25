@@ -101,7 +101,6 @@ F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.BlackMarket.re
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.Changes.resources
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.InputBox.resources
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.MainForm.resources
-F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.PingWidget.resources
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.WaitingOverlay.resources
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Properties.Resources.resources
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.LuaConsole.resources
@@ -109,3 +108,6 @@ F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.ProcessSelecti
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.WowRadar.resources
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.WowRadarOptions.resources
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.csproj.GenerateResource.Cache
+F:\Dropbox\Projects\AxTools\AxTools\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll
+F:\Dropbox\Projects\AxTools\AxTools\bin\Release\Microsoft.WindowsAPICodePack.dll
+F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.WowAccountsManager.resources

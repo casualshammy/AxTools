@@ -1,17 +1,20 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using WindowsFormsAero.TaskDialog;
 using AxTools.Classes;
+using AxTools.Components;
 using AxTools.Properties;
 using System;
 using System.Windows.Forms;
 using MetroFramework;
-using MetroFramework.Drawing;
 using MetroFramework.Forms;
 using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms
 {
-    internal partial class AppSettings : MetroForm
+    internal partial class AppSettings : BorderedMetroForm
     {
         public AppSettings()
         {
@@ -20,7 +23,6 @@ namespace AxTools.Forms
             CheckBoxStartAxToolsWithWindows.CheckedChanged += CheckBox9CheckedChanged;
             CheckBox5.CheckedChanged += CheckBox5CheckedChanged;
             CheckBoxAxToolsAddon.CheckedChanged += CheckBox10CheckedChanged;
-            CheckBox4.CheckedChanged += CheckBox4CheckedChanged;
             CheckBox7.CheckedChanged += CheckBox7CheckedChanged;
             CheckBox6.CheckedChanged += CheckBox6CheckedChanged;
             TextBox7.TextChanged += TextBox7TextChanged;
@@ -28,7 +30,6 @@ namespace AxTools.Forms
             TextBox5.TextChanged += TextBox5TextChanged;
             TextBox4.TextChanged += TextBox4TextChanged;
             CheckBox3.CheckedChanged += CheckBox3CheckedChanged;
-            CheckBoxTransparentPingWidget.CheckedChanged += CheckBox11CheckedChanged;
 
             foreach (Keys i in new[] {
                 Keys.None, Keys.F1, Keys.F2, Keys.F3, Keys.F4, Keys.F5, Keys.F6, Keys.F7, Keys.F8, Keys.F9, Keys.F10, Keys.F11,
@@ -42,6 +43,23 @@ namespace AxTools.Forms
                 comboBoxWExecLuaTimer.Items.Add(i.ToString());
                 comboBoxWExecModule.Items.Add(i.ToString());
             }
+
+            for (int i = 0; i <= 30; i++)
+            {
+                comboBoxBadNetworkStatusProcent.Items.Add(i + "%");
+            }
+            for (int i = 0; i <= 50; i++)
+            {
+                comboBoxVeryBadNetworkStatusProcent.Items.Add(i + "%");
+            }
+            int counter = 25;
+            while (counter <= 750)
+            {
+                comboBoxBadNetworkStatusPing.Items.Add(counter + "ms");
+                comboBoxVeryBadNetworkStatusPing.Items.Add(counter + "ms");
+                counter += 25;
+            }
+
             comboBoxClickerKey.Text = Settings.ClickerKey.ToString();
             num_clicker_interval.Value = Settings.ClickerInterval;
             //ComboBox_server_ip
@@ -68,12 +86,10 @@ namespace AxTools.Forms
 
             Icon = Resources.AppIcon;
             checkBox_AntiAFK.Checked = Settings.Wasd;
-            CheckBox4.Checked = Settings.AutoPingWidget;
             CheckBox5.Checked = Settings.DelWowLog;
             CheckBoxAxToolsAddon.Checked = Settings.AxToolsAddon;
             CheckBox7.Checked = Settings.Noframe;
             CheckBox6.Checked = Settings.AutoAcceptWndSetts;
-            CheckBoxTransparentPingWidget.Checked = Settings.PingWidgetTransparent;
             foreach (var i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
             {
                 i.Enabled = CheckBox6.Checked;
@@ -114,26 +130,9 @@ namespace AxTools.Forms
             metroToolTip1.SetToolTip(CheckBox3, "Deletes creature cache file when possible");
             metroToolTip1.SetToolTip(CheckBox5,
                                      "Moves WoW log files to temporary folder\r\non AxTools' startup\r\nand deletes it on AxTools' shutdown");
-            metroToolTip1.SetToolTip(CheckBox4, "Shows a small overlay frame with ping and\r\npacket loss info on WoW client's startup");
-            metroToolTip1.SetToolTip(CheckBoxTransparentPingWidget,
-                                     "Makes ping widget transparent for mouse clicks.\r\nPing widget should be reopen\r\nif this option changes");
             metroToolTip1.SetToolTip(CheckBoxAxToolsAddon, "Checks ax_tools version and updates it if needed\r\non AxTools' startup");
             metroToolTip1.SetToolTip(checkBox_AntiAFK,
                                      "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(Style))
-            {
-                Rectangle rectRight = new Rectangle(Width - 1, 0, 1, Height);
-                e.Graphics.FillRectangle(styleBrush, rectRight);
-                Rectangle rectLeft = new Rectangle(0, 0, 1, Height);
-                e.Graphics.FillRectangle(styleBrush, rectLeft);
-                Rectangle rectBottom = new Rectangle(0, Height - 1, Width, 1);
-                e.Graphics.FillRectangle(styleBrush, rectBottom);
-            }
         }
 
         private void CheckBox9CheckedChanged(Object sender, EventArgs e)
@@ -185,11 +184,6 @@ namespace AxTools.Forms
         private void CheckBox10CheckedChanged(Object sender, EventArgs e)
         {
             Settings.AxToolsAddon = CheckBoxAxToolsAddon.Checked;
-        }
-
-        private void CheckBox4CheckedChanged(Object sender, EventArgs e)
-        {
-            Settings.AutoPingWidget = CheckBox4.Checked;
         }
 
         private void CheckBox7CheckedChanged(Object sender, EventArgs e)
@@ -263,11 +257,6 @@ namespace AxTools.Forms
             Settings.CreatureCache = CheckBox3.Checked;
         }
 
-        private void CheckBox11CheckedChanged(Object sender, EventArgs e)
-        {
-            Settings.PingWidgetTransparent = CheckBoxTransparentPingWidget.Checked;
-        }
-
         private void Button9Click(object sender, EventArgs e)
         {
             using (FolderBrowserDialog p = new FolderBrowserDialog { ShowNewFolderButton = false, SelectedPath = string.Empty })
@@ -313,14 +302,6 @@ namespace AxTools.Forms
             if (main != null)
             {
                 main.HotkeysChanged();
-            }
-        }
-
-        private void ComboBoxServerIpSelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (ComboBox_server_ip.SelectedIndex != -1)
-            {
-                Settings.GameServer = Globals.GameServers.First(i => i.Description == ComboBox_server_ip.Text);
             }
         }
 
@@ -435,5 +416,62 @@ namespace AxTools.Forms
             }
         }
 
+        private void linkShowLog_Click(object sender, EventArgs e)
+        {
+            if (File.Exists(Globals.LogFileName))
+            {
+                try
+                {
+                    Process.Start(Globals.LogFileName);
+                }
+                catch (Exception ex)
+                {
+                    this.ShowTaskDialog("Cannot open log file", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                }
+            }
+            else
+            {
+                this.ShowTaskDialog("Cannot open log file", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
+        }
+
+        private void linkSendLogToDev_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string subject;
+                InputBox.Input("Any comment? (optional)", out subject);
+                WaitingOverlay waitingOverlay = new WaitingOverlay(this);
+                waitingOverlay.Show();
+                Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        Log.SendViaEmail(subject);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Print("Can't send log: " + ex.Message, true);
+                        this.ShowTaskDialog("Can't send log", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                    }
+                    finally
+                    {
+                        Invoke(new Action(waitingOverlay.Close));
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                this.ShowTaskDialog("Log file sending error", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
+        }
+
+        private void ComboBox_server_ip_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ComboBox_server_ip.SelectedIndex != -1)
+            {
+                Settings.GameServer = Globals.GameServers.First(i => i.Description == ComboBox_server_ip.Text);
+            }
+        }
     }
 }

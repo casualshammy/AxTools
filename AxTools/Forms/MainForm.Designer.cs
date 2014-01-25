@@ -45,6 +45,7 @@ namespace AxTools.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.notifyIconMain = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.woWRadarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,16 +58,18 @@ namespace AxTools.Forms
             this.millingdisenchantingprospectingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopActivePluginorPresshotkeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.customizeWoTWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.launchWoWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.woWPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timerClicker = new System.Windows.Forms.Timer(this.components);
             this.timerAntiAfk = new System.Windows.Forms.Timer(this.components);
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
-            this.tileLuaConsole = new MetroFramework.Controls.MetroTile();
-            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
-            this.tileRadar = new MetroFramework.Controls.MetroTile();
+            this.linkOpenBackupFolder = new MetroFramework.Controls.MetroLink();
+            this.buttonBackupAddons = new MetroFramework.Controls.MetroButton();
+            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.labelAccSelect = new MetroFramework.Controls.MetroLabel();
+            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             this.cmbboxAccSelect = new MetroFramework.Controls.MetroComboBox();
             this.tileWowUpdater = new MetroFramework.Controls.MetroTile();
             this.tileWow = new MetroFramework.Controls.MetroTile();
@@ -89,19 +92,6 @@ namespace AxTools.Forms
             this.tileTeamspeak3 = new MetroFramework.Controls.MetroTile();
             this.tileMumble = new MetroFramework.Controls.MetroTile();
             this.tileVentrilo = new MetroFramework.Controls.MetroTile();
-            this.metroTabPage5 = new MetroFramework.Controls.MetroTabPage();
-            this.metroButtonWowAccountDelete = new MetroFramework.Controls.MetroButton();
-            this.metroButtonWowAccountSaveUpdate = new MetroFramework.Controls.MetroButton();
-            this.textBoxWowAccountPassword = new MetroFramework.Controls.MetroTextBox();
-            this.textBoxWowAccountLogin = new MetroFramework.Controls.MetroTextBox();
-            this.comboBoxWowAccounts = new MetroFramework.Controls.MetroComboBox();
-            this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
-            this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
-            this.metroTabPage6 = new MetroFramework.Controls.MetroTabPage();
-            this.metroTileSendLogToDev = new MetroFramework.Controls.MetroTile();
-            this.tileShowLog = new MetroFramework.Controls.MetroTile();
-            this.tileBackupAddons = new MetroFramework.Controls.MetroTile();
-            this.tileOpenBackupsFolder = new MetroFramework.Controls.MetroTile();
             this.progressBarLoading = new MetroFramework.Controls.MetroProgressBar();
             this.labelLoading = new MetroFramework.Controls.MetroLabel();
             this.labelPingNum = new MetroFramework.Controls.MetroLabel();
@@ -112,8 +102,6 @@ namespace AxTools.Forms
             this.metroTabPage1.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
             this.metroTabPage2.SuspendLayout();
-            this.metroTabPage5.SuspendLayout();
-            this.metroTabPage6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxExtSettings)).BeginInit();
             this.SuspendLayout();
             // 
@@ -137,13 +125,14 @@ namespace AxTools.Forms
             this.millingdisenchantingprospectingToolStripMenuItem,
             this.stopActivePluginorPresshotkeyToolStripMenuItem,
             this.toolStripSeparator1,
+            this.customizeWoTWindowToolStripMenuItem,
             this.launchWoWToolStripMenuItem});
             this.contextMenuStripMain.Name = "contextMenuStripMain";
-            this.contextMenuStripMain.Size = new System.Drawing.Size(282, 198);
+            this.contextMenuStripMain.Size = new System.Drawing.Size(282, 220);
             // 
             // woWRadarToolStripMenuItem
             // 
-            this.woWRadarToolStripMenuItem.Image = global::AxTools.Properties.Resources.radar;
+            this.woWRadarToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("woWRadarToolStripMenuItem.Image")));
             this.woWRadarToolStripMenuItem.Name = "woWRadarToolStripMenuItem";
             this.woWRadarToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
             this.woWRadarToolStripMenuItem.Text = "WoW Radar";
@@ -156,7 +145,7 @@ namespace AxTools.Forms
             // 
             // luaConsoleToolStripMenuItem
             // 
-            this.luaConsoleToolStripMenuItem.Image = global::AxTools.Properties.Resources.lua1;
+            this.luaConsoleToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("luaConsoleToolStripMenuItem.Image")));
             this.luaConsoleToolStripMenuItem.Name = "luaConsoleToolStripMenuItem";
             this.luaConsoleToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
             this.luaConsoleToolStripMenuItem.Text = "Lua console";
@@ -164,7 +153,7 @@ namespace AxTools.Forms
             // 
             // blackMarketTrackerToolStripMenuItem
             // 
-            this.blackMarketTrackerToolStripMenuItem.Image = global::AxTools.Properties.Resources.BlackMarket;
+            this.blackMarketTrackerToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("blackMarketTrackerToolStripMenuItem.Image")));
             this.blackMarketTrackerToolStripMenuItem.Name = "blackMarketTrackerToolStripMenuItem";
             this.blackMarketTrackerToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
             this.blackMarketTrackerToolStripMenuItem.Text = "Black Market tracker";
@@ -177,7 +166,7 @@ namespace AxTools.Forms
             // 
             // fishingToolStripMenuItem
             // 
-            this.fishingToolStripMenuItem.Image = global::AxTools.Properties.Resources.trade_fishing;
+            this.fishingToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("fishingToolStripMenuItem.Image")));
             this.fishingToolStripMenuItem.Name = "fishingToolStripMenuItem";
             this.fishingToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
             this.fishingToolStripMenuItem.Text = "Fishing";
@@ -185,7 +174,7 @@ namespace AxTools.Forms
             // 
             // captureFlagsorbsOnTheBattlefieldsToolStripMenuItem
             // 
-            this.captureFlagsorbsOnTheBattlefieldsToolStripMenuItem.Image = global::AxTools.Properties.Resources.achievement_bg_winwsg;
+            this.captureFlagsorbsOnTheBattlefieldsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("captureFlagsorbsOnTheBattlefieldsToolStripMenuItem.Image")));
             this.captureFlagsorbsOnTheBattlefieldsToolStripMenuItem.Name = "captureFlagsorbsOnTheBattlefieldsToolStripMenuItem";
             this.captureFlagsorbsOnTheBattlefieldsToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
             this.captureFlagsorbsOnTheBattlefieldsToolStripMenuItem.Text = "Capture flags/orbs on the battlefields";
@@ -193,7 +182,7 @@ namespace AxTools.Forms
             // 
             // millingdisenchantingprospectingToolStripMenuItem
             // 
-            this.millingdisenchantingprospectingToolStripMenuItem.Image = global::AxTools.Properties.Resources.inv_misc_gem_bloodgem_01;
+            this.millingdisenchantingprospectingToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("millingdisenchantingprospectingToolStripMenuItem.Image")));
             this.millingdisenchantingprospectingToolStripMenuItem.Name = "millingdisenchantingprospectingToolStripMenuItem";
             this.millingdisenchantingprospectingToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
             this.millingdisenchantingprospectingToolStripMenuItem.Text = "Milling/disenchanting/prospecting";
@@ -212,9 +201,16 @@ namespace AxTools.Forms
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(278, 6);
             // 
+            // customizeWoTWindowToolStripMenuItem
+            // 
+            this.customizeWoTWindowToolStripMenuItem.Name = "customizeWoTWindowToolStripMenuItem";
+            this.customizeWoTWindowToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
+            this.customizeWoTWindowToolStripMenuItem.Text = "Customize WoT window";
+            this.customizeWoTWindowToolStripMenuItem.Click += new System.EventHandler(this.customizeWoTWindowToolStripMenuItem_Click);
+            // 
             // launchWoWToolStripMenuItem
             // 
-            this.launchWoWToolStripMenuItem.Image = global::AxTools.Properties.Resources.close_41741;
+            this.launchWoWToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("launchWoWToolStripMenuItem.Image")));
             this.launchWoWToolStripMenuItem.Name = "launchWoWToolStripMenuItem";
             this.launchWoWToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
             this.launchWoWToolStripMenuItem.Text = "Exit";
@@ -239,8 +235,6 @@ namespace AxTools.Forms
             this.metroTabControl1.Controls.Add(this.metroTabPage1);
             this.metroTabControl1.Controls.Add(this.metroTabPage3);
             this.metroTabControl1.Controls.Add(this.metroTabPage2);
-            this.metroTabControl1.Controls.Add(this.metroTabPage5);
-            this.metroTabControl1.Controls.Add(this.metroTabPage6);
             this.metroTabControl1.CustomBackground = false;
             this.metroTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroTabControl1.FontSize = MetroFramework.MetroTabControlSize.Medium;
@@ -248,7 +242,7 @@ namespace AxTools.Forms
             this.metroTabControl1.HotTrack = true;
             this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 4;
+            this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Size = new System.Drawing.Size(429, 185);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.StyleManager = this.metroStyleManager1;
@@ -259,8 +253,9 @@ namespace AxTools.Forms
             // 
             // metroTabPage1
             // 
-            this.metroTabPage1.Controls.Add(this.tileLuaConsole);
-            this.metroTabPage1.Controls.Add(this.tileRadar);
+            this.metroTabPage1.Controls.Add(this.linkOpenBackupFolder);
+            this.metroTabPage1.Controls.Add(this.buttonBackupAddons);
+            this.metroTabPage1.Controls.Add(this.metroButton1);
             this.metroTabPage1.Controls.Add(this.labelAccSelect);
             this.metroTabPage1.Controls.Add(this.cmbboxAccSelect);
             this.metroTabPage1.Controls.Add(this.tileWowUpdater);
@@ -277,52 +272,55 @@ namespace AxTools.Forms
             this.metroTabPage1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage1.StyleManager = this.metroStyleManager1;
             this.metroTabPage1.TabIndex = 0;
-            this.metroTabPage1.Text = "   WoW  ";
+            this.metroTabPage1.Text = "       Launch WoW     ";
             this.metroTabPage1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage1.VerticalScrollbar = false;
             this.metroTabPage1.VerticalScrollbarBarColor = true;
             this.metroTabPage1.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage1.VerticalScrollbarSize = 10;
             // 
-            // tileLuaConsole
+            // linkOpenBackupFolder
             // 
-            this.tileLuaConsole.ActiveControl = null;
-            this.tileLuaConsole.CustomBackground = false;
-            this.tileLuaConsole.CustomForeColor = false;
-            this.tileLuaConsole.Location = new System.Drawing.Point(316, 86);
-            this.tileLuaConsole.Name = "tileLuaConsole";
-            this.tileLuaConsole.PaintTileCount = true;
-            this.tileLuaConsole.Size = new System.Drawing.Size(102, 60);
-            this.tileLuaConsole.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileLuaConsole.StyleManager = this.metroStyleManager1;
-            this.tileLuaConsole.TabIndex = 15;
-            this.tileLuaConsole.Text = "Lua console";
-            this.tileLuaConsole.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileLuaConsole.TileCount = 0;
-            this.tileLuaConsole.Click += new System.EventHandler(this.TileLuaConsoleClick);
+            this.linkOpenBackupFolder.CustomBackground = false;
+            this.linkOpenBackupFolder.CustomForeColor = false;
+            this.linkOpenBackupFolder.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkOpenBackupFolder.FontWeight = MetroFramework.MetroLinkWeight.Bold;
+            this.linkOpenBackupFolder.Location = new System.Drawing.Point(300, 117);
+            this.linkOpenBackupFolder.Name = "linkOpenBackupFolder";
+            this.linkOpenBackupFolder.Size = new System.Drawing.Size(118, 23);
+            this.linkOpenBackupFolder.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkOpenBackupFolder.StyleManager = null;
+            this.linkOpenBackupFolder.TabIndex = 48;
+            this.linkOpenBackupFolder.Text = "Open backup folder";
+            this.linkOpenBackupFolder.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkOpenBackupFolder.UseStyleColors = true;
+            this.linkOpenBackupFolder.Click += new System.EventHandler(this.linkOpenBackupFolder_Click);
             // 
-            // metroStyleManager1
+            // buttonBackupAddons
             // 
-            this.metroStyleManager1.OwnerForm = this;
-            this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.buttonBackupAddons.Highlight = true;
+            this.buttonBackupAddons.Location = new System.Drawing.Point(300, 86);
+            this.buttonBackupAddons.Name = "buttonBackupAddons";
+            this.buttonBackupAddons.Size = new System.Drawing.Size(118, 25);
+            this.buttonBackupAddons.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonBackupAddons.StyleManager = null;
+            this.buttonBackupAddons.TabIndex = 8;
+            this.buttonBackupAddons.Text = "Backup addons";
+            this.buttonBackupAddons.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.buttonBackupAddons.Click += new System.EventHandler(this.buttonBackupAddons_Click);
             // 
-            // tileRadar
+            // metroButton1
             // 
-            this.tileRadar.ActiveControl = null;
-            this.tileRadar.CustomBackground = false;
-            this.tileRadar.CustomForeColor = false;
-            this.tileRadar.Location = new System.Drawing.Point(316, 20);
-            this.tileRadar.Name = "tileRadar";
-            this.tileRadar.PaintTileCount = true;
-            this.tileRadar.Size = new System.Drawing.Size(102, 60);
-            this.tileRadar.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileRadar.StyleManager = this.metroStyleManager1;
-            this.tileRadar.TabIndex = 14;
-            this.tileRadar.Text = "Radar";
-            this.tileRadar.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileRadar.TileCount = 0;
-            this.tileRadar.Click += new System.EventHandler(this.TileRadarClick);
+            this.metroButton1.Highlight = true;
+            this.metroButton1.Location = new System.Drawing.Point(300, 20);
+            this.metroButton1.Name = "metroButton1";
+            this.metroButton1.Size = new System.Drawing.Size(118, 25);
+            this.metroButton1.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroButton1.StyleManager = null;
+            this.metroButton1.TabIndex = 7;
+            this.metroButton1.Text = "Edit accounts";
+            this.metroButton1.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
             // 
             // labelAccSelect
             // 
@@ -334,13 +332,21 @@ namespace AxTools.Forms
             this.labelAccSelect.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
             this.labelAccSelect.Location = new System.Drawing.Point(109, -6);
             this.labelAccSelect.Name = "labelAccSelect";
-            this.labelAccSelect.Size = new System.Drawing.Size(95, 19);
+            this.labelAccSelect.Size = new System.Drawing.Size(223, 19);
             this.labelAccSelect.Style = MetroFramework.MetroColorStyle.Blue;
             this.labelAccSelect.StyleManager = this.metroStyleManager1;
             this.labelAccSelect.TabIndex = 6;
-            this.labelAccSelect.Text = "Select account:";
+            this.labelAccSelect.Text = "Click to select account (Esc to cancel)";
+            this.labelAccSelect.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.labelAccSelect.Theme = MetroFramework.MetroThemeStyle.Light;
             this.labelAccSelect.UseStyleColors = true;
+            this.labelAccSelect.MouseClick += new System.Windows.Forms.MouseEventHandler(this.labelAccSelect_MouseClick);
+            // 
+            // metroStyleManager1
+            // 
+            this.metroStyleManager1.OwnerForm = this;
+            this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // cmbboxAccSelect
             // 
@@ -350,7 +356,7 @@ namespace AxTools.Forms
             this.cmbboxAccSelect.FontWeight = MetroFramework.MetroLinkWeight.Regular;
             this.cmbboxAccSelect.FormattingEnabled = true;
             this.cmbboxAccSelect.ItemHeight = 23;
-            this.cmbboxAccSelect.Location = new System.Drawing.Point(142, -6);
+            this.cmbboxAccSelect.Location = new System.Drawing.Point(201, -6);
             this.cmbboxAccSelect.Name = "cmbboxAccSelect";
             this.cmbboxAccSelect.Size = new System.Drawing.Size(283, 29);
             this.cmbboxAccSelect.Style = MetroFramework.MetroColorStyle.Blue;
@@ -358,7 +364,7 @@ namespace AxTools.Forms
             this.cmbboxAccSelect.TabIndex = 5;
             this.cmbboxAccSelect.Theme = MetroFramework.MetroThemeStyle.Light;
             this.cmbboxAccSelect.SelectedIndexChanged += new System.EventHandler(this.CmbboxAccSelectSelectedIndexChanged);
-            this.cmbboxAccSelect.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CmbboxAccSelectKeyDown);
+            this.cmbboxAccSelect.MouseClick += new System.Windows.Forms.MouseEventHandler(this.cmbboxAccSelect_MouseClick);
             // 
             // tileWowUpdater
             // 
@@ -432,7 +438,7 @@ namespace AxTools.Forms
             this.metroTabPage3.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage3.StyleManager = this.metroStyleManager1;
             this.metroTabPage3.TabIndex = 2;
-            this.metroTabPage3.Text = "   WoW plug-ins";
+            this.metroTabPage3.Text = "        WoW plug-ins      ";
             this.metroTabPage3.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage3.VerticalScrollbar = false;
             this.metroTabPage3.VerticalScrollbarBarColor = true;
@@ -593,7 +599,7 @@ namespace AxTools.Forms
             this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage2.StyleManager = this.metroStyleManager1;
             this.metroTabPage2.TabIndex = 1;
-            this.metroTabPage2.Text = "   VoIP ";
+            this.metroTabPage2.Text = "          VoIP        ";
             this.metroTabPage2.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage2.VerticalScrollbar = false;
             this.metroTabPage2.VerticalScrollbarBarColor = true;
@@ -744,243 +750,6 @@ namespace AxTools.Forms
             this.tileVentrilo.TileCount = 0;
             this.tileVentrilo.Click += new System.EventHandler(this.TileVentriloClick);
             // 
-            // metroTabPage5
-            // 
-            this.metroTabPage5.Controls.Add(this.metroButtonWowAccountDelete);
-            this.metroTabPage5.Controls.Add(this.metroButtonWowAccountSaveUpdate);
-            this.metroTabPage5.Controls.Add(this.textBoxWowAccountPassword);
-            this.metroTabPage5.Controls.Add(this.textBoxWowAccountLogin);
-            this.metroTabPage5.Controls.Add(this.comboBoxWowAccounts);
-            this.metroTabPage5.Controls.Add(this.metroLabel3);
-            this.metroTabPage5.Controls.Add(this.metroLabel4);
-            this.metroTabPage5.CustomBackground = false;
-            this.metroTabPage5.HorizontalScrollbar = false;
-            this.metroTabPage5.HorizontalScrollbarBarColor = true;
-            this.metroTabPage5.HorizontalScrollbarHighlightOnWheel = false;
-            this.metroTabPage5.HorizontalScrollbarSize = 10;
-            this.metroTabPage5.Location = new System.Drawing.Point(4, 35);
-            this.metroTabPage5.Name = "metroTabPage5";
-            this.metroTabPage5.Size = new System.Drawing.Size(421, 146);
-            this.metroTabPage5.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTabPage5.StyleManager = this.metroStyleManager1;
-            this.metroTabPage5.TabIndex = 4;
-            this.metroTabPage5.Text = "   WoW accounts";
-            this.metroTabPage5.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTabPage5.VerticalScrollbar = false;
-            this.metroTabPage5.VerticalScrollbarBarColor = true;
-            this.metroTabPage5.VerticalScrollbarHighlightOnWheel = false;
-            this.metroTabPage5.VerticalScrollbarSize = 10;
-            // 
-            // metroButtonWowAccountDelete
-            // 
-            this.metroButtonWowAccountDelete.Enabled = false;
-            this.metroButtonWowAccountDelete.Highlight = true;
-            this.metroButtonWowAccountDelete.Location = new System.Drawing.Point(312, 123);
-            this.metroButtonWowAccountDelete.Name = "metroButtonWowAccountDelete";
-            this.metroButtonWowAccountDelete.Size = new System.Drawing.Size(106, 23);
-            this.metroButtonWowAccountDelete.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroButtonWowAccountDelete.StyleManager = this.metroStyleManager1;
-            this.metroButtonWowAccountDelete.TabIndex = 36;
-            this.metroButtonWowAccountDelete.Text = "Delete";
-            this.metroButtonWowAccountDelete.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroButtonWowAccountDelete.Click += new System.EventHandler(this.MetroButtonWowAccountDeleteClick);
-            // 
-            // metroButtonWowAccountSaveUpdate
-            // 
-            this.metroButtonWowAccountSaveUpdate.Enabled = false;
-            this.metroButtonWowAccountSaveUpdate.Highlight = true;
-            this.metroButtonWowAccountSaveUpdate.Location = new System.Drawing.Point(312, 94);
-            this.metroButtonWowAccountSaveUpdate.Name = "metroButtonWowAccountSaveUpdate";
-            this.metroButtonWowAccountSaveUpdate.Size = new System.Drawing.Size(106, 23);
-            this.metroButtonWowAccountSaveUpdate.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroButtonWowAccountSaveUpdate.StyleManager = this.metroStyleManager1;
-            this.metroButtonWowAccountSaveUpdate.TabIndex = 35;
-            this.metroButtonWowAccountSaveUpdate.Text = "Add";
-            this.metroButtonWowAccountSaveUpdate.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroButtonWowAccountSaveUpdate.Click += new System.EventHandler(this.MetroButtonWowAccountSaveUpdateClick);
-            // 
-            // textBoxWowAccountPassword
-            // 
-            this.textBoxWowAccountPassword.CustomBackground = false;
-            this.textBoxWowAccountPassword.CustomForeColor = false;
-            this.textBoxWowAccountPassword.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxWowAccountPassword.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxWowAccountPassword.Location = new System.Drawing.Point(3, 123);
-            this.textBoxWowAccountPassword.Multiline = false;
-            this.textBoxWowAccountPassword.Name = "textBoxWowAccountPassword";
-            this.textBoxWowAccountPassword.SelectedText = "";
-            this.textBoxWowAccountPassword.Size = new System.Drawing.Size(303, 23);
-            this.textBoxWowAccountPassword.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxWowAccountPassword.StyleManager = this.metroStyleManager1;
-            this.textBoxWowAccountPassword.TabIndex = 32;
-            this.textBoxWowAccountPassword.Text = "Password";
-            this.textBoxWowAccountPassword.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxWowAccountPassword.UseStyleColors = true;
-            // 
-            // textBoxWowAccountLogin
-            // 
-            this.textBoxWowAccountLogin.CustomBackground = false;
-            this.textBoxWowAccountLogin.CustomForeColor = false;
-            this.textBoxWowAccountLogin.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxWowAccountLogin.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxWowAccountLogin.Location = new System.Drawing.Point(3, 94);
-            this.textBoxWowAccountLogin.Multiline = false;
-            this.textBoxWowAccountLogin.Name = "textBoxWowAccountLogin";
-            this.textBoxWowAccountLogin.SelectedText = "";
-            this.textBoxWowAccountLogin.Size = new System.Drawing.Size(303, 23);
-            this.textBoxWowAccountLogin.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxWowAccountLogin.StyleManager = this.metroStyleManager1;
-            this.textBoxWowAccountLogin.TabIndex = 31;
-            this.textBoxWowAccountLogin.Text = "Login";
-            this.textBoxWowAccountLogin.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxWowAccountLogin.UseStyleColors = true;
-            this.textBoxWowAccountLogin.TextChanged += new System.EventHandler(this.TextBoxWowAccountLoginTextChanged);
-            // 
-            // comboBoxWowAccounts
-            // 
-            this.comboBoxWowAccounts.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxWowAccounts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxWowAccounts.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.comboBoxWowAccounts.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxWowAccounts.FormattingEnabled = true;
-            this.comboBoxWowAccounts.ItemHeight = 23;
-            this.comboBoxWowAccounts.Location = new System.Drawing.Point(3, 42);
-            this.comboBoxWowAccounts.Name = "comboBoxWowAccounts";
-            this.comboBoxWowAccounts.Size = new System.Drawing.Size(415, 29);
-            this.comboBoxWowAccounts.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxWowAccounts.StyleManager = this.metroStyleManager1;
-            this.comboBoxWowAccounts.TabIndex = 30;
-            this.comboBoxWowAccounts.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboBoxWowAccounts.SelectedIndexChanged += new System.EventHandler(this.ComboBoxWowAccountsSelectedIndexChanged);
-            // 
-            // metroLabel3
-            // 
-            this.metroLabel3.AutoSize = true;
-            this.metroLabel3.CustomBackground = false;
-            this.metroLabel3.CustomForeColor = false;
-            this.metroLabel3.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel3.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel3.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel3.Location = new System.Drawing.Point(3, 74);
-            this.metroLabel3.Name = "metroLabel3";
-            this.metroLabel3.Size = new System.Drawing.Size(185, 19);
-            this.metroLabel3.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel3.StyleManager = this.metroStyleManager1;
-            this.metroLabel3.TabIndex = 29;
-            this.metroLabel3.Text = "...or just enter a new one here:";
-            this.metroLabel3.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel3.UseStyleColors = true;
-            // 
-            // metroLabel4
-            // 
-            this.metroLabel4.AutoSize = true;
-            this.metroLabel4.CustomBackground = false;
-            this.metroLabel4.CustomForeColor = false;
-            this.metroLabel4.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel4.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel4.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel4.Location = new System.Drawing.Point(3, 20);
-            this.metroLabel4.Name = "metroLabel4";
-            this.metroLabel4.Size = new System.Drawing.Size(161, 19);
-            this.metroLabel4.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel4.StyleManager = this.metroStyleManager1;
-            this.metroLabel4.TabIndex = 28;
-            this.metroLabel4.Text = "Select an account to edit...";
-            this.metroLabel4.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel4.UseStyleColors = true;
-            // 
-            // metroTabPage6
-            // 
-            this.metroTabPage6.Controls.Add(this.metroTileSendLogToDev);
-            this.metroTabPage6.Controls.Add(this.tileShowLog);
-            this.metroTabPage6.Controls.Add(this.tileBackupAddons);
-            this.metroTabPage6.Controls.Add(this.tileOpenBackupsFolder);
-            this.metroTabPage6.CustomBackground = false;
-            this.metroTabPage6.HorizontalScrollbar = false;
-            this.metroTabPage6.HorizontalScrollbarBarColor = true;
-            this.metroTabPage6.HorizontalScrollbarHighlightOnWheel = false;
-            this.metroTabPage6.HorizontalScrollbarSize = 10;
-            this.metroTabPage6.Location = new System.Drawing.Point(4, 35);
-            this.metroTabPage6.Name = "metroTabPage6";
-            this.metroTabPage6.Size = new System.Drawing.Size(421, 146);
-            this.metroTabPage6.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTabPage6.StyleManager = this.metroStyleManager1;
-            this.metroTabPage6.TabIndex = 5;
-            this.metroTabPage6.Text = "   Misc ";
-            this.metroTabPage6.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTabPage6.VerticalScrollbar = false;
-            this.metroTabPage6.VerticalScrollbarBarColor = true;
-            this.metroTabPage6.VerticalScrollbarHighlightOnWheel = false;
-            this.metroTabPage6.VerticalScrollbarSize = 10;
-            // 
-            // metroTileSendLogToDev
-            // 
-            this.metroTileSendLogToDev.ActiveControl = null;
-            this.metroTileSendLogToDev.CustomBackground = false;
-            this.metroTileSendLogToDev.CustomForeColor = false;
-            this.metroTileSendLogToDev.Location = new System.Drawing.Point(251, 86);
-            this.metroTileSendLogToDev.Name = "metroTileSendLogToDev";
-            this.metroTileSendLogToDev.PaintTileCount = true;
-            this.metroTileSendLogToDev.Size = new System.Drawing.Size(167, 60);
-            this.metroTileSendLogToDev.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTileSendLogToDev.StyleManager = this.metroStyleManager1;
-            this.metroTileSendLogToDev.TabIndex = 13;
-            this.metroTileSendLogToDev.Text = "Send log to developer";
-            this.metroTileSendLogToDev.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTileSendLogToDev.TileCount = 0;
-            this.metroTileSendLogToDev.Click += new System.EventHandler(this.metroTileSendLogToDev_Click);
-            // 
-            // tileShowLog
-            // 
-            this.tileShowLog.ActiveControl = null;
-            this.tileShowLog.CustomBackground = false;
-            this.tileShowLog.CustomForeColor = false;
-            this.tileShowLog.Location = new System.Drawing.Point(251, 20);
-            this.tileShowLog.Name = "tileShowLog";
-            this.tileShowLog.PaintTileCount = true;
-            this.tileShowLog.Size = new System.Drawing.Size(167, 60);
-            this.tileShowLog.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileShowLog.StyleManager = this.metroStyleManager1;
-            this.tileShowLog.TabIndex = 12;
-            this.tileShowLog.Text = "Show log";
-            this.tileShowLog.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileShowLog.TileCount = 0;
-            this.tileShowLog.Click += new System.EventHandler(this.TileShowLogClick);
-            // 
-            // tileBackupAddons
-            // 
-            this.tileBackupAddons.ActiveControl = null;
-            this.tileBackupAddons.CustomBackground = false;
-            this.tileBackupAddons.CustomForeColor = false;
-            this.tileBackupAddons.Location = new System.Drawing.Point(3, 20);
-            this.tileBackupAddons.Name = "tileBackupAddons";
-            this.tileBackupAddons.PaintTileCount = true;
-            this.tileBackupAddons.Size = new System.Drawing.Size(242, 60);
-            this.tileBackupAddons.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileBackupAddons.StyleManager = this.metroStyleManager1;
-            this.tileBackupAddons.TabIndex = 10;
-            this.tileBackupAddons.Text = "Backup addons";
-            this.tileBackupAddons.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileBackupAddons.TileCount = 0;
-            this.tileBackupAddons.Click += new System.EventHandler(this.TileBackupAddonsClick);
-            // 
-            // tileOpenBackupsFolder
-            // 
-            this.tileOpenBackupsFolder.ActiveControl = null;
-            this.tileOpenBackupsFolder.CustomBackground = false;
-            this.tileOpenBackupsFolder.CustomForeColor = false;
-            this.tileOpenBackupsFolder.Location = new System.Drawing.Point(3, 86);
-            this.tileOpenBackupsFolder.Name = "tileOpenBackupsFolder";
-            this.tileOpenBackupsFolder.PaintTileCount = true;
-            this.tileOpenBackupsFolder.Size = new System.Drawing.Size(242, 60);
-            this.tileOpenBackupsFolder.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileOpenBackupsFolder.StyleManager = this.metroStyleManager1;
-            this.tileOpenBackupsFolder.TabIndex = 9;
-            this.tileOpenBackupsFolder.Text = "Open backup folder";
-            this.tileOpenBackupsFolder.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileOpenBackupsFolder.TileCount = 0;
-            this.tileOpenBackupsFolder.Click += new System.EventHandler(this.TileOpenBackupsFolderClick);
-            // 
             // progressBarLoading
             // 
             this.progressBarLoading.FontSize = MetroFramework.MetroProgressBarSize.Medium;
@@ -1046,8 +815,8 @@ namespace AxTools.Forms
             // 
             // pictureBoxExtSettings
             // 
-            this.pictureBoxExtSettings.Image = global::AxTools.Properties.Resources.Settings20px;
-            this.pictureBoxExtSettings.ImageOnHover = global::AxTools.Properties.Resources.SettingsLight20px;
+            this.pictureBoxExtSettings.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxExtSettings.Image")));
+            this.pictureBoxExtSettings.ImageOnHover = ((System.Drawing.Image)(resources.GetObject("pictureBoxExtSettings.ImageOnHover")));
             this.pictureBoxExtSettings.Location = new System.Drawing.Point(379, 5);
             this.pictureBoxExtSettings.Name = "pictureBoxExtSettings";
             this.pictureBoxExtSettings.Size = new System.Drawing.Size(20, 20);
@@ -1079,9 +848,6 @@ namespace AxTools.Forms
             this.metroTabPage3.PerformLayout();
             this.metroTabPage2.ResumeLayout(false);
             this.metroTabPage2.PerformLayout();
-            this.metroTabPage5.ResumeLayout(false);
-            this.metroTabPage5.PerformLayout();
-            this.metroTabPage6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxExtSettings)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1103,27 +869,15 @@ namespace AxTools.Forms
         private MetroTile tileMumble;
         private MetroTile tileVentrilo;
         private MetroTabPage metroTabPage3;
-        private MetroTabPage metroTabPage5;
-        private MetroTextBox textBoxWowAccountLogin;
-        private MetroComboBox comboBoxWowAccounts;
-        private MetroLabel metroLabel3;
-        private MetroLabel metroLabel4;
-        private MetroTextBox textBoxWowAccountPassword;
         private MetroComboBox comboBoxWowPlugins;
         private MetroComboBox cmbboxAccSelect;
         private MetroLabel labelAccSelect;
-        private MetroTabPage metroTabPage6;
-        private MetroTile tileShowLog;
-        private MetroTile tileBackupAddons;
-        private MetroTile tileOpenBackupsFolder;
         private MetroButton buttonUnloadInjector;
         private MetroProgressBar progressBarLoading;
         private MetroLabel labelLoading;
         private MetroLabel labelPingNum;
         private MetroToolTip metroToolTip1;
         private MetroStyleManager metroStyleManager1;
-        private MetroTile tileLuaConsole;
-        private MetroTile tileRadar;
         private ContextMenuStrip contextMenuStripMain;
         private ToolStripMenuItem woWRadarToolStripMenuItem;
         private ToolStripMenuItem woWPluginsToolStripMenuItem;
@@ -1135,8 +889,6 @@ namespace AxTools.Forms
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripMenuItem luaConsoleToolStripMenuItem;
         private MetroButton metroButtonBlackMarketTracker;
-        private MetroButton metroButtonWowAccountSaveUpdate;
-        private MetroButton metroButtonWowAccountDelete;
         private MetroLabel metroLabelSelectPlugin;
         private MetroButton metroButtonLuaConsole;
         private MetroButton metroButtonRadar;
@@ -1150,7 +902,10 @@ namespace AxTools.Forms
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem blackMarketTrackerToolStripMenuItem;
         private MetroCheckBox metroCheckBoxPluginShowIngameNotification;
-        private MetroTile metroTileSendLogToDev;
+        private ToolStripMenuItem customizeWoTWindowToolStripMenuItem;
+        private MetroButton buttonBackupAddons;
+        private MetroButton metroButton1;
+        private MetroLink linkOpenBackupFolder;
     }
 }
 

@@ -2,11 +2,12 @@
 using System.Drawing;
 using System.Windows.Forms;
 using AxTools.Classes;
+using AxTools.Components;
 using MetroFramework.Drawing;
 
 namespace AxTools.Forms
 {
-    internal partial class InputBox : MetroFramework.Forms.MetroForm
+    internal partial class InputBox : BorderedMetroForm
     {
         public InputBox()
         {
@@ -14,20 +15,6 @@ namespace AxTools.Forms
             button1.Click += Button1Click;
             button2.Click += Button2Click;
             metroStyleManager1.Style = Settings.NewStyleColor;
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(Style))
-            {
-                Rectangle rectRight = new Rectangle(Width - 1, 0, 1, Height);
-                e.Graphics.FillRectangle(styleBrush, rectRight);
-                Rectangle rectLeft = new Rectangle(0, 0, 1, Height);
-                e.Graphics.FillRectangle(styleBrush, rectLeft);
-                Rectangle rectBottom = new Rectangle(0, Height - 1, Width, 1);
-                e.Graphics.FillRectangle(styleBrush, rectBottom);
-            }
         }
 
         bool t;

@@ -1,12 +1,11 @@
-﻿03.10.2013 07:18:00.436 // Launching... (11.13.13.0)
-03.10.2013 07:18:00.475 // Settings are loaded
-03.10.2013 07:18:00.483 // WoW accounts was loaded
-03.10.2013 07:18:00.536 // Registered for: Axio-5GDMJHD20R
-03.10.2013 07:18:00.538 // AxTools :: preparation completed
-03.10.2013 07:18:05.557 // Backup error: WTF directory isn't found
-03.10.2013 07:18:08.788 // AxTools started succesfully
-03.10.2013 07:18:08.789 // [Updater] Checking for updates...
-03.10.2013 07:18:10.020 // Starting processes trace watching is stopped
-03.10.2013 07:18:10.021 // Stopping processes trace watching is stopped
-03.10.2013 07:18:10.022 // Keyboard hook disposed
-03.10.2013 07:18:10.022 // AxTools closed
+﻿18.01.2014 11:43:40.829 // Launching... (11.13.26.0)
+18.01.2014 11:43:40.960 // Settings are loaded
+18.01.2014 11:43:40.969 // WoW accounts was loaded
+18.01.2014 11:43:41.027 // Registered for: Axio-5GDMJHD20R
+18.01.2014 11:43:41.032 // Wow:3384 :: [Process watcher] Process added
+18.01.2014 11:43:41.034 // AxTools :: preparation completed
+18.01.2014 11:43:41.036 // Wow:3384 :: [WoW hook] Attaching...
+18.01.2014 11:43:43.067 // Wow:3384 :: [WoW hook] Window style is changed
+18.01.2014 11:43:43.080 // Wow:3384 :: [WoW hook] Memory manager initialized, base address 0xA30000
+18.01.2014 11:44:01.746 // Wow:3384 :: [WoW hook] Memory manager disposed
+18.01.2014 11:44:01.748 // AxTools closed

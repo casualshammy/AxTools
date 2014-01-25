@@ -15,7 +15,9 @@ namespace AxTools.Classes
 
         internal static readonly SrvAddress[] GameServers =
         {
-            new SrvAddress("195.12.246.207", 3724, "World of Warcraft - Blackscar"),
+            new SrvAddress("google.com", 80, "Google"),
+            new SrvAddress("195.12.246.208", 3724, "World of Warcraft - Blackscar"),
+            new SrvAddress("195.12.246.212", 3724, "World of Warcraft - Gordunni"),
             new SrvAddress("109.105.134.173", 7777, "Lineage 2 - Athebaldt"),
             new SrvAddress("195.12.240.179", 3724, "World of Warcraft - Ravencrest (Frankfurt)"),
             new SrvAddress("199.107.24.244", 3724, "World of Warcraft - Area 52 (New York)"),

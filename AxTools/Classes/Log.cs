@@ -14,7 +14,7 @@ namespace AxTools.Classes
         private static readonly object PLock = new object();
         private static readonly StringBuilder PStringBuilder = new StringBuilder();
 
-        internal static void Print(string text, bool isError, bool flush = true)
+        internal static void Print(string text, bool isError = false, bool flush = true)
         {
             try
             {
@@ -45,6 +45,11 @@ namespace AxTools.Classes
                     new TaskDialog("Log file writing error", "AxTools", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop).Show();
                 }
             }
+        }
+
+        internal static void Print(object text, bool isError = false, bool flush = true)
+        {
+            Print(text.ToString(), isError, flush);
         }
 
         internal static void SendViaEmail(string subject)

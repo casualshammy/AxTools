@@ -98,32 +98,43 @@
     <Reference Include="ICSharpCode.TextEditor">
       <HintPath>..\..\.NET libs\ICSharpCode.TextEditor.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip.Reduced">
+    <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\.NET libs\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
     <Reference Include="MetroFramework, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\.NET libs\MetroFramework.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\.NET libs\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="MouseKeyboardActivityMonitor">
       <HintPath>..\..\.NET libs\MouseKeyboardActivityMonitor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.XML" />
     <Reference Include="WindowsFormsAero">
       <HintPath>..\..\.NET libs\WindowsFormsAero.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Enums.cs" />
+    <Compile Include="Classes\Updater.cs" />
+    <Compile Include="Components\BorderedMetroForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Classes\Globals.cs" />
     <Compile Include="Classes\NamedTask.cs" />
     <Compile Include="Classes\WoW\HookResult.cs" />
+    <Compile Include="Classes\WoW\WowLocalPlayer.cs" />
+    <Compile Include="Classes\WoW\WowPlayerInfo.cs" />
     <Compile Include="Components\CheckBoxExt.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -184,12 +195,6 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\Extensions.cs" />
-    <Compile Include="Forms\PingWidget.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PingWidget.designer.cs">
-      <DependentUpon>PingWidget.cs</DependentUpon>
-    </Compile>
     <Compile Include="Classes\WoW\WowRaidClassColors.cs" />
     <Compile Include="Classes\WoW\DX\D3D11Device.cs" />
     <Compile Include="Classes\WoW\DX\D3D9Device.cs" />
@@ -201,7 +206,7 @@
     <Compile Include="Classes\WoW\WowAccount.cs" />
     <Compile Include="Classes\WoW\WowNpc.cs" />
     <Compile Include="Classes\WoW\WowObject.cs" />
-    <Compile Include="Classes\WoW\WowPointF.cs" />
+    <Compile Include="Classes\WoW\WowPoint.cs" />
     <Compile Include="Classes\WoW\WowProcess.cs" />
     <Compile Include="Classes\Crypt.cs" />
     <Compile Include="Classes\WoW\WowPlayer.cs" />
@@ -210,6 +215,12 @@
     </Compile>
     <Compile Include="Forms\WaitingOverlay.Designer.cs">
       <DependentUpon>WaitingOverlay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WowAccountsManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WowAccountsManager.Designer.cs">
+      <DependentUpon>WowAccountsManager.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -272,13 +283,12 @@
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PingWidget.resx">
-      <DependentUpon>PingWidget.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WaitingOverlay.resx">
       <DependentUpon>WaitingOverlay.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WowAccountsManager.resx">
+      <DependentUpon>WowAccountsManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -330,6 +340,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
+    <None Include="Resources\networkWarning.ico" />
+    <None Include="Resources\zip.ico" />
     <None Include="Resources\go_next.png" />
     <None Include="Resources\AppIcon1.png" />
     <None Include="Resources\AppIconPluginOnLuaOff1.png" />
