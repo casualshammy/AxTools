@@ -26,7 +26,7 @@ namespace axtools_updater
             }
         }
 
-        internal static void NonUIUpdate()
+        private static void NonUIUpdate()
         {
             DirectoryInfo directory = new DirectoryInfo(Application.StartupPath + "\\update");
             foreach (FileInfo i in directory.GetFileSystemInfos().Where(i => i is FileInfo).Cast<FileInfo>())
@@ -47,8 +47,8 @@ namespace axtools_updater
         {
             string[] filesToDelete =
             {
-                "MetroFramework.dll", "GreyMagic.dll", "WindowsFormsAero.dll", "MouseKeyboardActivityMonitor.dll", "ICSharpCode.TextEditor.dll",
-                "fasmdll_managed.dll", "EQATEC.Profiler.RuntimeFullNet.dll", "app.eqconfig", "axtools_updater.exe", "ICSharpCode.SharpZipLib.dll", "wol.jnlp"
+                "GreyMagic.dll", "WindowsFormsAero.dll", "MouseKeyboardActivityMonitor.dll", "EQATEC.Profiler.RuntimeFullNet.dll", "app.eqconfig", "axtools_updater.exe", "ICSharpCode.SharpZipLib.dll",
+                "wol.jnlp", "Microsoft.WindowsAPICodePack.dll", "Microsoft.WindowsAPICodePack.Shell.dll"
             };
             foreach (string i in filesToDelete)
             {

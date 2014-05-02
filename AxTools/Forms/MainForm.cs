@@ -1,14 +1,13 @@
 ﻿using AxTools.Classes;
+using AxTools.Classes.TaskbarProgressbar;
 using AxTools.Classes.WinAPI;
 using AxTools.Classes.WoW;
+using AxTools.Classes.WoW.PluginSystem;
 using AxTools.Components;
 using AxTools.Properties;
 using GreyMagic;
 using Ionic.Zip;
-using Microsoft.WindowsAPICodePack.Shell.Taskbar;
-using Microsoft.WindowsAPICodePack.Taskbar;
 using MouseKeyboardActivityMonitor;
-using MouseKeyboardActivityMonitor.WinApi;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +16,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Media;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -36,35 +36,26 @@ namespace AxTools.Forms
 {
     internal partial class MainForm : BorderedMetroForm
     {
-        public MainForm()
+        internal MainForm()
         {
             InitializeComponent();
-            AccessibleName = "MainForm";
+            Instance = this;
             pingCallback = WoWPingerCallback;
+            pingCallbackOnDisabled = WoWPingerCallbackOnDisabled;
             timerNotifyIcon.Elapsed += TimerNiElapsed;
             timerPinger.Elapsed += timerPinger_Elapsed;
-            Resize += MainResize;
             Closing += MainFormClosing;
             notifyIconMain.Icon = Resources.AppIcon;
 
-            cmbboxAccSelect.Location = new Point(tileWowAutopass.Location.X, tileWowAutopass.Location.Y + tileWowAutopass.Size.Height/2 - cmbboxAccSelect.Size.Height/2);
-            cmbboxAccSelect.Visible = false;
-            labelAccSelect.Location = new Point(cmbboxAccSelect.Location.X + 2, cmbboxAccSelect.Location.Y + cmbboxAccSelect.Size.Height/2 - labelAccSelect.Size.Height/2);
-            labelAccSelect.Visible = false;
-
-            labelLoading.Location = new Point(Convert.ToInt32(Size.Width/2) - Convert.ToInt32(labelLoading.Size.Width/2),
-                                              Convert.ToInt32(Size.Height/2) - Convert.ToInt32(labelLoading.Size.Height/2) - 20);
-            labelLoading.Visible = false;
-            progressBarLoading.Location = new Point(Convert.ToInt32(Size.Width/2) - Convert.ToInt32(progressBarLoading.Size.Width/2) - 5,
-                                                    Convert.ToInt32(Size.Height/2) - Convert.ToInt32(progressBarLoading.Size.Height/2) + 10);
-            progressBarLoading.Visible = false;
+            cmbboxAccSelect.MouseWheel += delegate(object sender, MouseEventArgs args) { ((HandledMouseEventArgs) args).Handled = true; };
+            linkOpenBackupFolder.Location = new Point(metroTabPage1.Size.Width/2 - linkOpenBackupFolder.Size.Width/2, linkOpenBackupFolder.Location.Y);
+            cmbboxAccSelect.Location = new Point(metroTabPage1.Size.Width/2 - cmbboxAccSelect.Size.Width/2, cmbboxAccSelect.Location.Y);
+            linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width / 2 - linkEditWowAccounts.Size.Width / 2, linkEditWowAccounts.Location.Y);
 
             metroTabControl1.SelectedIndex = 0;
-            toggleWowPlugins.Tag = true;
             metroToolTip1.SetToolTip(labelPingNum, "This is ingame connection info. It's formatted as\r\n" +
                                                    "  [worst ping of the last 10]::[packet loss in the last 200 seconds]  \r\n" +
                                                    "Click to clear statistics");
-            metroLabelSelectPlugin.Text = "Select a plugin...";
             if (Directory.Exists(Globals.TempPath))
             {
                 try
@@ -80,28 +71,20 @@ namespace AxTools.Forms
             Log.Print(String.Format("Launching... ({0})", version));
             base.Text = "AxTools " + version.Major;
             Icon = Resources.AppIcon;
-            foreach (Control i in Controls)
-            {
-                i.Visible = false;
-            }
-            labelLoading.Visible = true;
-            progressBarLoading.Visible = true;
             Utils.Legacy();
             Settings.Load();
             LoadWowAccounts();
             OnSettingsLoaded();
-            HotkeysChanged();
+            WowPluginHotkeyChanged();
             WebRequest.DefaultWebProxy = null;
-            if (Handle != IntPtr.Zero)
-            {
-                tbManager = TaskbarManager.Instance;
-                tbManager.OwnerHandle = Handle;
-            }
-            else
-            {
-                Log.Print("Can't initialize taskbar manager", true);
-            }
             Task.Factory.StartNew(LoadingStepAsync);
+            BeginInvoke((MethodInvoker) delegate
+            {
+                Location = Settings.Location;
+                OnActivated(EventArgs.Empty);
+                startupOverlay = new WaitingOverlay(this);
+                startupOverlay.Show();
+            });
         }
 
         protected override void WndProc(ref Message m)
@@ -124,56 +107,45 @@ namespace AxTools.Forms
 
         #region Internals
 
-        internal void HotkeysChanged()
+        internal void WowPluginHotkeyChanged()
         {
-            toggleWowPlugins.ExtraText = Settings.PrecompiledModulesHotkey.ToString();
-            foreach (ToolStripItem i in from ToolStripItem i in contextMenuStripMain.Items where i.Text.Contains("Stop active plug-in") select i)
+            BeginInvoke((MethodInvoker) delegate
             {
-                i.Text = "Stop active plug-in (or press <" + Settings.PrecompiledModulesHotkey + ">)";
-            }
+                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugin == null ? "Start" : "Stop", Settings.PrecompiledModulesHotkey);
+                comboBoxWowPlugins.Enabled = PluginManager.ActivePlugin == null;
+                UpdatePluginsShortcutsInTrayContextMenu();
+            });
         }
 
         internal void ShowNotifyIconMessage(string title, string text, ToolTipIcon icon)
         {
             if (InvokeRequired)
-                Invoke(new Action(() => notifyIconMain.ShowBalloonTip(30000, title, text, icon)));
+                BeginInvoke((MethodInvoker) (() => notifyIconMain.ShowBalloonTip(30000, title, text, icon)));
             else
                 notifyIconMain.ShowBalloonTip(30000, title, text, icon);
         }
 
         internal static bool LuaTimerEnabled = false;
 
+        internal static MainForm Instance;
+
         #endregion
         
         #region Variables
-        
-        //List of WoW processes
-        private readonly List<WowProcess> wowProcessesPrivateList = new List<WowProcess>();
-        private readonly object wowProcessesLock = new object();
-        private List<WowProcess> WowProcesses
-        {
-            get
-            {
-                lock (wowProcessesLock)
-                {
-                    return wowProcessesPrivateList;
-                }
-            }
-        } 
+
         private ManagementEventWatcher wowWatcherStart;
         private ManagementEventWatcher wowWatcherStop;
         //clicker
-        private IntPtr clickerWindow = IntPtr.Zero;
+        private readonly Clicker clicker = new Clicker();
         //timers
         private readonly Timer timerNotifyIcon = new Timer(1000);
         private readonly Timer timerPinger = new Timer(2000);
         //another
         private bool isClosing;
+        private WaitingOverlay startupOverlay;
         // wow accounts
         private List<WowAccount> wowAccounts = new List<WowAccount>();
         private int wowAccountSelected = -1;
-
-        private readonly TaskbarManager tbManager;
 
         // notifyicon's Icons
         private readonly Icon appIconPluginOnLuaOn = Icon.FromHandle(Resources.AppIconPluginOnLuaOn.GetHicon());
@@ -187,11 +159,12 @@ namespace AxTools.Forms
 
         private void Timer2000Tick(object sender, EventArgs e)
         {
+
             #region AntiAFK
 
             if (Settings.Wasd)
             {
-                foreach (WowProcess i in WowProcesses.Where(i => i.IsValidBuild && i.IsInGame))
+                foreach (WowProcess i in WowProcess.Shared.Where(i => i.IsValidBuild && i.IsInGame))
                 {
                     try
                     {
@@ -212,34 +185,21 @@ namespace AxTools.Forms
 
             #endregion
 
-            #region WoW killer
-
-            //if (Environment.TickCount - wowKillerCountdown > 180000)
-            //{
-            //    try
-            //    {
-            //        foreach (var i in WowProcesses.Where(i => i.MainWindowHandle.ToInt32() == 0))
-            //        {
-            //            Process.GetProcessById(i.ProcessID).Kill();
-            //            Log.Print(String.Format("{0}:{1} :: Process killed (reason: haven't window)", i.ProcessName, i.ProcessID), false);
-            //        }
-            //        wowKillerCountdown = Environment.TickCount;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Log.Print("Search for incorrect WoW process failed: " + ex.Message, true);
-            //    }
-            //}
-
-            #endregion
-
             #region AddOns backup
 
             TimeSpan pTimeSpan = DateTime.UtcNow - Settings.AddonsBackupLastdate;
             if (pTimeSpan.TotalHours > Settings.AddonsBackupTimer)
             {
                 Settings.AddonsBackupLastdate = DateTime.UtcNow;
-                Task.Factory.StartNew(() => BackupAddons(true, true));
+                ProcessPriorityClass defaultProcessPriorityClass = Process.GetCurrentProcess().PriorityClass;
+                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
+                AddonsBackup addonsBackup = new AddonsBackup();
+                addonsBackup.Show(this);
+                Task.Factory.StartNew(() => addonsBackup.Start(true)).ContinueWith(l =>
+                {
+                    addonsBackup.Invoke((MethodInvoker) addonsBackup.Close);
+                    Process.GetCurrentProcess().PriorityClass = defaultProcessPriorityClass;
+                });
             }
 
             #endregion
@@ -249,16 +209,14 @@ namespace AxTools.Forms
             if (Environment.TickCount - updaterLastTimeChecked >= 900000)
             {
                 updaterLastTimeChecked = Environment.TickCount;
-                Task.Factory.StartNew(CheckAndInstallUpdates);
+                if (!updaterShouldSkipUpdateCheck)
+                {
+                    Task.Factory.StartNew(CheckAndInstallUpdates);
+                }
             }
 
             #endregion
-        }
 
-        private void TimerClickerTick(object sender, EventArgs e)
-        {
-            NativeMethods.PostMessage(clickerWindow, WM_MESSAGE.WM_KEYDOWN, (IntPtr) Settings.ClickerKey, IntPtr.Zero);
-            NativeMethods.PostMessage(clickerWindow, WM_MESSAGE.WM_KEYUP, (IntPtr) Settings.ClickerKey, IntPtr.Zero);
         }
 
         private void TimerNiElapsed(object sender, ElapsedEventArgs e)
@@ -270,28 +228,35 @@ namespace AxTools.Forms
 
         private void timerPinger_Elapsed(object sender, ElapsedEventArgs e)
         {
-            using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            if (Settings.GameServer.Port == 0)
             {
-                try
+                Invoke(pingCallbackOnDisabled);
+            }
+            else
+            {
+                using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                 {
-                    lock (pingLock)
+                    try
                     {
-                        Stopwatch stopwatch = Stopwatch.StartNew();
-                        bool result = pSocket.BeginConnect(Settings.GameServer.Ip, Settings.GameServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
-                        long ping = stopwatch.ElapsedMilliseconds;
-                        if (pingList.Count == 100)
+                        lock (pingLock)
                         {
-                            pingList.RemoveAt(0);
+                            Stopwatch stopwatch = Stopwatch.StartNew();
+                            bool result = pSocket.BeginConnect(Settings.GameServer.Ip, Settings.GameServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
+                            long ping = stopwatch.ElapsedMilliseconds;
+                            if (pingList.Count == 100)
+                            {
+                                pingList.RemoveAt(0);
+                            }
+                            pingList.Add((int)(!result || !pSocket.Connected ? -1 : ping));
+                            pingPing = pingList.GetRange(pingList.Count - 10, 10).Max();
+                            pingPacketLoss = pingList.Count(x => x == -1);
+                            Invoke(pingCallback);
                         }
-                        pingList.Add((int)(!result || !pSocket.Connected ? -1 : ping));
-                        pingPing = pingList.GetRange(pingList.Count - 10, 10).Max();
-                        pingPacketLoss = pingList.Count(x => x == -1);
-                        Invoke(pingCallback);
                     }
-                }
-                catch (Exception ex)
-                {
-                    Log.Print("[Pinger] " + ex.Message, true);
+                    catch (Exception ex)
+                    {
+                        Log.Print("[Pinger] " + ex.Message, true);
+                    }
                 }
             }
         }
@@ -301,6 +266,7 @@ namespace AxTools.Forms
         #region Pinger
 
         private readonly Action pingCallback;
+        private readonly Action pingCallbackOnDisabled;
         private List<int> pingList = new List<int>(100) {-2, -2, -2, -2, -2, -2, -2, -2, -2, -2};
         private readonly object pingLock = new object();
         private int pingPing;
@@ -309,22 +275,26 @@ namespace AxTools.Forms
         private void WoWPingerCallback()
         {
             labelPingNum.Text = string.Format("[{0}]::[{1}%]", pingPing == -1 || pingPing == -2 ? "n/a" : pingPing.ToString(), pingPacketLoss);
-            if (tbManager != null)
+            TBProgressBar.SetProgressValue(Handle, 1, 1);
+            if (pingPacketLoss >= Settings.PingerVeryBadNetworkProcent || pingPing >= Settings.PingerVeryBadNetworkPing)
             {
-                tbManager.SetProgressValue(1, 1);
-                if (pingPing >= 250 || pingPacketLoss >= 10)
-                {
-                    tbManager.SetProgressState(TaskbarProgressBarState.Error);
-                }
-                else if (pingPing >= 100 || pingPacketLoss >= 5)
-                {
-                    tbManager.SetProgressState(TaskbarProgressBarState.Paused);
-                }
-                else
-                {
-                    tbManager.SetProgressState(TaskbarProgressBarState.NoProgress);
-                }
+                TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
             }
+            else if (pingPacketLoss >= Settings.PingerBadNetworkProcent || pingPing >= Settings.PingerBadNetworkPing)
+            {
+                TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
+            }
+            else
+            {
+                TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
+            }
+        }
+
+        private void WoWPingerCallbackOnDisabled()
+        {
+            labelPingNum.Text = "[n/a]::[n/a]";
+            TBProgressBar.SetProgressValue(Handle, 1, 1);
+            TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
         }
 
         #endregion
@@ -392,8 +362,8 @@ namespace AxTools.Forms
                         break;
                     case "wow.exe":
                         WowProcess wowProcess = new WowProcess(processId);
-                        WowProcesses.Add(wowProcess);
-                        Log.Print(String.Format("{0}:{1} :: [Process watcher] Process started, {2} total", wowProcess.ProcessName, wowProcess.ProcessID, WowProcesses.Count));
+                        WowProcess.Shared.Add(wowProcess);
+                        Log.Print(String.Format("{0}:{1} :: [Process watcher] Process started, {2} total", wowProcess.ProcessName, wowProcess.ProcessID, WowProcess.Shared.Count));
                         Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
                         break;
                 }
@@ -416,7 +386,7 @@ namespace AxTools.Forms
                 {
                     int pid = Convert.ToInt32(e.NewEvent["ProcessID"]);
                     string name = e.NewEvent["ProcessName"].ToString().Substring(0, e.NewEvent["ProcessName"].ToString().Length - 4);
-                    WowProcess pWowProcess = WowProcesses.FirstOrDefault(x => x.ProcessID == pid);
+                    WowProcess pWowProcess = WowProcess.Shared.FirstOrDefault(x => x.ProcessID == pid);
                     if (pWowProcess != null)
                     {
                         if (WoW.Hooked && WoW.WProc.ProcessID == pWowProcess.ProcessID)
@@ -426,9 +396,9 @@ namespace AxTools.Forms
                         }
                         pWowProcess.Dispose();
                         Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, pid));
-                        if (WowProcesses.Remove(pWowProcess))
+                        if (WowProcess.Shared.Remove(pWowProcess))
                         {
-                            Log.Print(String.Format("{0}:{1} :: [Process watcher] Process closed, {2} total", name, pid, WowProcesses.Count));
+                            Log.Print(String.Format("{0}:{1} :: [Process watcher] Process closed, {2} total", name, pid, WowProcess.Shared.Count));
                         }
                         else
                         {
@@ -468,7 +438,7 @@ namespace AxTools.Forms
                 for (int i = 0; i < 40; i++)
                 {
                     Thread.Sleep(1500);
-                    if (process.MainWindowHandle != IntPtr.Zero) // && p.MainWindowTitle.ToLower() == "world of warcraft"
+                    if (process.MainWindowHandle != IntPtr.Zero)
                     {
                         if (Settings.AutoAcceptWndSetts)
                         {
@@ -476,38 +446,32 @@ namespace AxTools.Forms
                             {
                                 if (Settings.Noframe)
                                 {
-                                    int styleWow = NativeMethods.GetWindowLong(process.MainWindowHandle, NativeMethods.GWL_STYLE);
-                                    styleWow = styleWow & ~(NativeMethods.WS_CAPTION | NativeMethods.WS_THICKFRAME);
+                                    int styleWow = NativeMethods.GetWindowLong(process.MainWindowHandle, NativeMethods.GWL_STYLE) & ~(NativeMethods.WS_CAPTION | NativeMethods.WS_THICKFRAME);
                                     NativeMethods.SetWindowLong(process.MainWindowHandle, NativeMethods.GWL_STYLE, styleWow);
                                 }
-                                NativeMethods.SetWindowPos(process.MainWindowHandle, (IntPtr) SpecialWindowHandles.HWND_NOTOPMOST, Settings.WowWindowLocation.X,
-                                                           Settings.WowWindowLocation.Y, Settings.WowWindowSize.X, Settings.WowWindowSize.Y,
-                                                           SetWindowPosFlags.SWP_SHOWWINDOW);
+                                NativeMethods.SetWindowPos(process.MainWindowHandle, (IntPtr) SpecialWindowHandles.HWND_NOTOPMOST,
+                                    Settings.WowWindowLocation.X, Settings.WowWindowLocation.Y, Settings.WowWindowSize.X, Settings.WowWindowSize.Y,
+                                    SetWindowPosFlags.SWP_SHOWWINDOW);
                                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Window style is changed", process.ProcessName, process.ProcessID));
                             }
                             catch (Exception ex)
                             {
-                                Log.Print(String.Format("{0}:{1} :: [WoW hook] Window changing failed with error: {2}",
-                                                        process.ProcessName, process.ProcessID, ex.Message), true);
+                                Log.Print(String.Format("{0}:{1} :: [WoW hook] Window changing failed with error: {2}", process.ProcessName, process.ProcessID, ex.Message), true);
                             }
                         }
                         try
                         {
                             process.Memory = new ExternalProcessReader(Process.GetProcessById(process.ProcessID));
-                            Log.Print(
-                                String.Format("{0}:{1} :: [WoW hook] Memory manager initialized, base address 0x{2:X}", process.ProcessName, process.ProcessID,
-                                              (uint) process.Memory.ImageBase));
+                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager initialized, base address 0x{2:X}", process.ProcessName, process.ProcessID, (uint) process.Memory.ImageBase));
                             if (!process.IsValidBuild)
                             {
-                                Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager: invalid WoW executable", process.ProcessName, process.ProcessID),
-                                          true);
+                                Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager: invalid WoW executable", process.ProcessName, process.ProcessID), true);
                                 this.ShowTaskDialog("Injector is locked", "Invalid WoW executable", TaskDialogButton.OK, TaskDialogIcon.SecurityError);
                             }
                         }
                         catch (Exception ex)
                         {
-                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager initialization failed with error: {2}",
-                                                    process.ProcessName, process.ProcessID, ex.Message), true);
+                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager initialization failed with error: {2}", process.ProcessName, process.ProcessID, ex.Message), true);
                         }
                         break;
                     }
@@ -529,208 +493,148 @@ namespace AxTools.Forms
         {
             if (e.KeyCode == Settings.WowLoginHotkey)
             {
-                if (wowAccountSelected != -1)
-                {
-                    IntPtr cHWND = NativeMethods.GetForegroundWindow();
-                    WowProcess process = WowProcesses.FirstOrDefault(x => x.MainWindowHandle == cHWND);
-                    if (process != null)
-                    {
-                        foreach (char i in wowAccounts[wowAccountSelected].Login)
-                        {
-                            NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
-                            Thread.Sleep(5);
-                        }
-                        IntPtr tabCode = new IntPtr(0x09);
-                        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, tabCode, IntPtr.Zero);
-                        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, tabCode, IntPtr.Zero);
-                        Thread.Sleep(5);
-                        foreach (char i in wowAccounts[wowAccountSelected].Password)
-                        {
-                            NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
-                            Thread.Sleep(5);
-                        }
-                        IntPtr enterCode = new IntPtr(0x0D);
-                        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, enterCode, IntPtr.Zero);
-                        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, enterCode, IntPtr.Zero);
-                        Log.Print(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", process.ProcessName, process.ProcessID, wowAccounts[wowAccountSelected].Login));
-                        wowAccountSelected = -1;
-                    }
-                }
+                KeyboardHook_WowLoginHotkey();
             }
             else if (e.KeyCode == Settings.ClickerHotkey)
             {
-                if (Settings.ClickerKey == Keys.None)
-                {
-                    this.ShowTaskDialog("Incorrect input!", "Please select key to be pressed", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                    return;
-                }
-                if (timerClicker.Enabled)
-                {
-                    timerClicker.Enabled = false;
-                    notifyIconMain.Icon = appIconNormal;
-                    WowProcess cProcess = WowProcesses.FirstOrDefault(i => i.MainWindowHandle == clickerWindow);
-                    Log.Print(cProcess != null
-                                  ? String.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
-                                  : "UNKNOWN:null :: [Clicker] Disabled");
-                }
-                else
-                {
-                    var cProcess = WowProcesses.FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
-                    if (cProcess != null)
-                    {
-                        clickerWindow = cProcess.MainWindowHandle;
-                        timerClicker.Interval = Settings.ClickerInterval;
-                        timerClicker.Enabled = true;
-                        TimerClickerTick(null, null);
-                        Log.Print(string.Format("{0}:{1} :: [Clicker] Enabled, interval {2}ms, window handle 0x{3:X}", cProcess.ProcessName, cProcess.ProcessID,
-                                          Settings.ClickerInterval, (uint) clickerWindow));
-                    }
-                }
+                KeyboardHook_ClickerHotkey();
             }
             else if (e.KeyCode == Settings.PrecompiledModulesHotkey)
             {
-                if (!toggleWowPlugins.Checked && WowProcesses.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
-                {
-                    InvokeOnClick(toggleWowPlugins, EventArgs.Empty);
-                }
-                else if (toggleWowPlugins.Checked)
-                {
-                    InvokeOnClick(toggleWowPlugins, EventArgs.Empty);
-                }
+                KeyboardHook_PrecompiledModulesHotkey();
             }
             else if (e.KeyCode == Settings.LuaTimerHotkey)
             {
-                LuaConsole pForm = Utils.FindForm<LuaConsole>();
-                if (pForm != null)
-                {
-                    if (!pForm.TimerEnabled && WowProcesses.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
-                    {
-                        pForm.SwitchTimer();
-                    }
-                    else if (pForm.TimerEnabled)
-                    {
-                        pForm.SwitchTimer();
-                    }
-                }
+                KeyboardHook_LuaTimerHotkey();
             }
-            else if (e.KeyCode == Keys.Escape && NativeMethods.GetForegroundWindow() == Handle && cmbboxAccSelect.Visible)
+            else if (e.KeyCode == Keys.Escape)
             {
-                cmbboxAccSelect.Visible = false;
-                labelAccSelect.Visible = false;
-                tileWowAutopass.Visible = true;
+                KeyboardHook_Escape();
+            }
+            else if (e.KeyCode == Keys.L)
+            {
+                KeyboardHook_L();
             }
         }
 
-        #endregion
-
-        #region Backup Add-ons
-
-        private void BackupAddons(bool trayMode, bool useOneCore)
+        private void KeyboardHook_WowLoginHotkey()
         {
-            if (!Directory.Exists(Settings.WowExe + "\\WTF"))
+            if (wowAccountSelected != -1)
             {
-                Log.Print("Backup error: WTF directory isn't found");
-                if (trayMode)
+                IntPtr cHWND = NativeMethods.GetForegroundWindow();
+                WowProcess process = WowProcess.Shared.FirstOrDefault(x => x.MainWindowHandle == cHWND);
+                if (process != null)
                 {
-                    ShowNotifyIconMessage("Backup error", "\"WTF\" folder isn't found", ToolTipIcon.Error);
-                }
-                else
-                {
-                    this.ShowTaskDialog("Backup error", "\"WTF\" folder isn't found", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                }
-                return;
-            }
-            if (Utils.CalcDirectorySize(Settings.WowExe + "\\WTF") > 1048576000)
-            {
-                Log.Print("Backup error: WTF directory is too large", true);
-                if (trayMode)
-                {
-                    ShowNotifyIconMessage("Backup error", "WTF directory is too large", ToolTipIcon.Error);
-                }
-                else
-                {
-                    this.ShowTaskDialog("Backup error", "WTF directory is too large", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                }
-                return;
-            }
-            Log.Print("BackupAddons :: Starting...");
-            DirectoryInfo backupDirectory = new DirectoryInfo(Settings.AddonsBackupPath);
-            if (!backupDirectory.Exists)
-            {
-                backupDirectory.Create();
-                Log.Print("BackupAddons :: Backup directory created");
-            }
-            List<FileInfo> backupFiles = backupDirectory.GetFileSystemInfos().Where(i => i.Name.Contains("AddonsBackup_") && i is FileInfo).Cast<FileInfo>().ToList();
-            Log.Print("BackupAddons :: Total backup files: " + backupFiles.Count);
-            if (backupFiles.Count >= Settings.AddonsBackupNum)
-            {
-                // I place newest file to the end of list
-                backupFiles.Sort((first, second) =>
-                {
-                    if (first.CreationTimeUtc > second.CreationTimeUtc)
+                    foreach (char i in wowAccounts[wowAccountSelected].Login)
                     {
-                        return 1;
+                        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
+                        Thread.Sleep(5);
                     }
-                    return -1;
-                });
-                for (int i = 0; i < backupFiles.Count - Settings.AddonsBackupNum + 1; i++)
-                {
-                    backupFiles[i].Delete();
-                    Log.Print("BackupAddons :: Old backup file is deleted: " + backupFiles[i].Name);
-                }
-            }
-            try
-            {
-                if (trayMode)
-                {
-                    ShowNotifyIconMessage("Performing backup operation", "Please don't close AxTools until the operation is completed", ToolTipIcon.Info);
-                }
-                string zipPath = String.Format("{0}\\AddonsBackup_{1:yyyyMMdd_HHmmss}.zip", Settings.AddonsBackupPath, DateTime.UtcNow);
-                Log.Print("BackupAddons :: Zipping to file: " + zipPath);
-                using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
-                {
-                    if (useOneCore)
+                    IntPtr tabCode = new IntPtr(0x09);
+                    NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, tabCode, IntPtr.Zero);
+                    NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, tabCode, IntPtr.Zero);
+                    Thread.Sleep(5);
+                    foreach (char i in wowAccounts[wowAccountSelected].Password)
                     {
-                        zip.ParallelDeflateThreshold = -1;
+                        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
+                        Thread.Sleep(5);
                     }
-                    zip.CompressionLevel = (CompressionLevel) Settings.BackupCompressionLevel;
-                    zip.AddDirectory(Settings.WowExe + "\\WTF", "\\WTF");
-                    zip.AddDirectory(Settings.WowExe + "\\Interface", "\\Interface");
-                    zip.SaveProgress += BackupAddons_SaveProgress;
-                    SetProgressBar(0, 1, "Performing backup operation...", true);
-                    zip.Save();
-                    zip.SaveProgress -= BackupAddons_SaveProgress;
+                    IntPtr enterCode = new IntPtr(0x0D);
+                    NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, enterCode, IntPtr.Zero);
+                    NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, enterCode, IntPtr.Zero);
+                    Log.Print(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", process.ProcessName, process.ProcessID, wowAccounts[wowAccountSelected].Login));
+                    wowAccountSelected = -1;
                 }
-                Log.Print("BackupAddons :: Backup successfully created: " + zipPath);
-                if (trayMode)
-                {
-                    ShowNotifyIconMessage("AddOns backup operation was successfully completed", "Backup file was stored in " + Settings.AddonsBackupPath,
-                        ToolTipIcon.Info);
-                }
-                else
-                {
-                    this.ShowTaskDialog("Backup successful", "Backup file was stored in " + Settings.AddonsBackupPath, TaskDialogButton.OK,
-                        TaskDialogIcon.Information);
-                }
-                GC.Collect();
-            }
-            catch (Exception ex)
-            {
-                Log.Print("BackupAddons :: Backup error: Zipping failed: " + ex.Message, true);
-                this.ShowTaskDialog("Backup error", "Zipping failed\r\n" + ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
-            }
-            finally
-            {
-                ProgressBarVisible = false;
             }
         }
 
-        private void BackupAddons_SaveProgress(object sender, SaveProgressEventArgs e)
+        private void KeyboardHook_ClickerHotkey()
         {
-            if (e.EntriesSaved != 0 && e.EntriesTotal != 0 && e.EntriesTotal >= e.EntriesSaved)
+            if (Settings.ClickerKey == Keys.None)
             {
-                SetProgressBar(e.EntriesSaved, e.EntriesTotal);
+                this.ShowTaskDialog("Incorrect input!", "Please select key to be pressed", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                return;
             }
+            if (clicker.Enabled)
+            {
+                clicker.Stop();
+                notifyIconMain.Icon = appIconNormal;
+                WowProcess cProcess = WowProcess.Shared.FirstOrDefault(i => i.MainWindowHandle == clicker.Handle);
+                Log.Print(cProcess != null
+                    ? String.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
+                    : "UNKNOWN:null :: [Clicker] Disabled");
+            }
+            else
+            {
+                WowProcess cProcess = WowProcess.Shared.FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
+                if (cProcess != null)
+                {
+                    clicker.Start(Settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr) Settings.ClickerKey);
+                    Log.Print(string.Format("{0}:{1} :: [Clicker] Enabled, interval {2}ms, window handle 0x{3:X}", cProcess.ProcessName, cProcess.ProcessID,
+                        Settings.ClickerInterval, (uint) cProcess.MainWindowHandle));
+                }
+            }
+        }
+
+        private void KeyboardHook_PrecompiledModulesHotkey()
+        {
+            if (PluginManager.ActivePlugin == null && WowProcess.Shared.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+            {
+                InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
+            }
+            else if (PluginManager.ActivePlugin != null)
+            {
+                InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
+            }
+        }
+
+        private void KeyboardHook_LuaTimerHotkey()
+        {
+            LuaConsole pForm = Utils.FindForm<LuaConsole>();
+            if (pForm != null)
+            {
+                if (!pForm.TimerEnabled && WowProcess.Shared.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+                {
+                    pForm.SwitchTimer();
+                }
+                else if (pForm.TimerEnabled)
+                {
+                    pForm.SwitchTimer();
+                }
+            }
+        }
+
+        private void KeyboardHook_Escape()
+        {
+            //if (NativeMethods.GetForegroundWindow() == Handle && cmbboxAccSelect.Visible)
+            //{
+            //    cmbboxAccSelect.Visible = false;
+            //    tileWowAutopass.Visible = true;
+            //    linkEditWowAccounts.Visible = false;
+            //    buttonWowUpdater.Visible = false;
+            //    buttonLaunchWowWithoutAutopass.Visible = false;
+            //}
+        }
+
+        private void KeyboardHook_L()
+        {
+            //if (NativeMethods.GetForegroundWindow() == Handle)
+            //{
+            //    Stopwatch stopwatch = Stopwatch.StartNew();
+            //    if (memoryMappedFile == null)
+            //    {
+            //        memoryMappedFile = MemoryMappedFile.CreateOrOpen("AxTools_MMF", 1024);
+            //    }
+            //    using (MemoryMappedViewAccessor accessor = memoryMappedFile.CreateViewAccessor())
+            //    {
+            //        MMFStruct data = new MMFStruct(Process.GetProcessesByName("Wow")[0].Id, MMFCommand.SelectTarget, 0xF130C3DB00006FD7);
+            //        mmfMutex.WaitOne();
+            //        accessor.Write(0, ref data);
+            //        accessor.Flush();
+            //        mmfMutex.ReleaseMutex();
+            //    }
+            //    Log.Print(stopwatch.ElapsedMilliseconds);
+            //}
         }
 
         #endregion
@@ -751,9 +655,10 @@ namespace AxTools.Forms
             //save settings
             Settings.Save();
             SaveWowAccounts();
+            //
+            clicker.Dispose();
             //stop timers
             timerAntiAfk.Enabled = false;
-            timerClicker.Enabled = false;
             timerNotifyIcon.Enabled = false;
             timerPinger.Enabled = false;
             //stop watching process trace
@@ -775,7 +680,7 @@ namespace AxTools.Forms
                 UnloadInjector();
                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
             }
-            foreach (WowProcess i in WowProcesses)
+            foreach (WowProcess i in WowProcess.Shared)
             {
                 string name = i.ProcessName;
                 i.Dispose();
@@ -817,39 +722,31 @@ namespace AxTools.Forms
             }
         }
 
-        private void MainResize(object sender, EventArgs e)
+        private void MainForm_Resize(object sender, EventArgs e)
         {
-            if (WindowState == FormWindowState.Minimized) Hide();
+            if (Settings.MinimizeToTray && WindowState == FormWindowState.Minimized)
+            {
+                Hide();
+            }
+            BeginInvoke((MethodInvoker) (() => OnActivated(EventArgs.Empty)));
         }
 
         private void LoadingStepAsync()
         {
-            #region Set form location
-
-            Invoke(new Action(() =>
-                {
-                    Location = Settings.Location;
-                    //metroFlatShadowForm.Location = Settings.Location;
-                    OnActivated(EventArgs.Empty);
-                }));
-
-            #endregion
 
             #region Set registration name
 
             while (Settings.Regname == String.Empty)
             {
-                InputBox.Input("Please enter your nickname:", out Settings.Regname);
-                if (Settings.Regname != String.Empty)
+                Settings.Regname = InputBox.Input("Please enter your nickname:");
+                if (!string.IsNullOrWhiteSpace(Settings.Regname))
                 {
-                    Settings.Regname += String.Format("-{0}", Utils.GetRandomString(10)).ToUpper();
+                    Settings.Regname += "_" + Utils.GetRandomString(10).ToUpper();
                 }
             }
             Log.Print("Registered for: " + Settings.Regname);
 
             #endregion
-
-            Task.Factory.StartNew(CheckAndDownloadPrerequisites);
 
             #region Get WoW processes already running
 
@@ -862,7 +759,7 @@ namespace AxTools.Forms
                         break;
                     case "wow":
                         WowProcess process = new WowProcess(i.Id);
-                        WowProcesses.Add(process);
+                        WowProcess.Shared.Add(process);
                         Log.Print(String.Format("{0}:{1} :: [Process watcher] Process added", i.ProcessName, i.Id));
                         Task.Factory.StartNew(OnWowProcessStartup, process);
                         break;
@@ -873,7 +770,7 @@ namespace AxTools.Forms
 
             #region Backup and delete wow logs
 
-            if (Settings.DelWowLog && Directory.Exists(Settings.WowExe + "\\Logs") && WowProcesses.Count == 0)
+            if (Settings.DelWowLog && Directory.Exists(Settings.WowExe + "\\Logs") && WowProcess.Shared.Count == 0)
             {
                 if (File.Exists(Settings.WowExe + "\\Logs\\WoWCombatLog.txt") || Utils.CalcDirectorySize(Settings.WowExe + "\\Logs") > 104857600)
                 {
@@ -955,15 +852,8 @@ namespace AxTools.Forms
 
         private void LoadingStepSync()
         {
-            //int start = Environment.TickCount;
-            //ProgressBarVisible = true;
-            //for (int i = 2; i <= 100; i++)
-            //{
-            //    SetProgressBar(i, 100);
-            //    Thread.Sleep(50);
-            //    Application.DoEvents();
-            //}
-            //Log.Print(Environment.TickCount - start);
+
+            LoadPluginsAndSetupCtrls();
 
             #region Run timers
 
@@ -986,7 +876,7 @@ namespace AxTools.Forms
 
             #region Start keyboard hook
 
-            keyboardHook = new KeyboardHookListener(new GlobalHooker());
+            keyboardHook = new KeyboardHookListener(Globals.GlobalHooker);
             keyboardHook.KeyDown += KeyboardHookKeyDown;
             keyboardHook.Enabled = true;
 
@@ -994,12 +884,7 @@ namespace AxTools.Forms
 
             #region Dispose temp controls and show rest
 
-            labelLoading.Dispose();
-            progressBarLoading.Dispose();
-            foreach (Control i in Controls)
-            {
-                i.Visible = true;
-            }
+            startupOverlay.Close();
 
             #endregion
 
@@ -1040,6 +925,51 @@ namespace AxTools.Forms
             Log.Print("AxTools started succesfully");
         }
 
+        private void LoadPluginsAndSetupCtrls()
+        {
+            PluginManager.LoadPlugins();
+            if (Settings.EnableCustomPlugins)
+            {
+                PluginManager.LoadPluginsFromDisk();
+            }
+
+            comboBoxWowPlugins.Items.Clear();
+            comboBoxWowPlugins.Items.AddRange(PluginManager.Plugins.Where(i => i.TrayDescription != string.Empty).Select(i => i.TrayDescription).Cast<object>().ToArray());
+
+            contextMenuStripMain.Items.Clear();
+            contextMenuStripMain.Items.AddRange(new ToolStripItem[]
+            {
+                woWRadarToolStripMenuItem,
+                toolStripSeparator3,
+                luaConsoleToolStripMenuItem,
+                blackMarketTrackerToolStripMenuItem,
+                toolStripSeparator2
+            });
+            foreach (IPlugin i in PluginManager.Plugins.Where(i => i.TrayDescription != string.Empty))
+            {
+                IPlugin plugin = i;
+                contextMenuStripMain.Items.Add(new ToolStripMenuItem(plugin.TrayDescription, plugin.TrayIcon, delegate
+                {
+                    comboBoxWowPlugins.SelectedIndex = PluginManager.Plugins.IndexOf(plugin);
+                    if (!WoW.Hooked && WowProcess.Shared.Count != 1)
+                    {
+                        Activate();
+                    }
+                    InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
+                }));
+            }
+            contextMenuStripMain.Items.AddRange(new ToolStripItem[]
+            {
+                stopActivePluginorPresshotkeyToolStripMenuItem,
+                toolStripSeparator1,
+                woWAutopassToolStripMenuItem,
+                customizeWoTWindowToolStripMenuItem,
+                launchWoWToolStripMenuItem
+            });
+
+            UpdatePluginsShortcutsInTrayContextMenu();
+        }
+
         private void PictureBoxExtSettingsClick(object sender, EventArgs e)
         {
             new AppSettings().Show();
@@ -1063,12 +993,13 @@ namespace AxTools.Forms
         private void OnSettingsLoaded()
         {
             metroStyleManager1.Style = Settings.NewStyleColor;
-            timerClicker.Interval = Settings.ClickerInterval;
             checkBoxStartVenriloWithWow.Checked = Settings.StartVentriloWithWow;
             checkBoxStartTeamspeak3WithWow.Checked = Settings.StartTS3WithWow;
             checkBoxStartRaidcallWithWow.Checked = Settings.StartRaidcallWithWow;
             checkBoxStartMumbleWithWow.Checked = Settings.StartMumbleWithWow;
             metroCheckBoxPluginShowIngameNotification.Checked = Settings.WowPluginsShowIngameNotifications;
+            checkBoxEnableCustomPlugins.Checked = Settings.EnableCustomPlugins;
+            OnWowAccountsChanged();
         }
 
         private void SetIcon(bool phase)
@@ -1076,7 +1007,7 @@ namespace AxTools.Forms
             // ReSharper disable RedundantCheckBeforeAssignment
             if (!phase)
             {
-                if (timerClicker.Enabled)
+                if (clicker.Enabled)
                 {
                     notifyIconMain.Icon = Utils.EmptyIcon;
                 }
@@ -1087,7 +1018,7 @@ namespace AxTools.Forms
             }
             else
             {
-                if (LuaTimerEnabled && moduleEnabled)
+                if (LuaTimerEnabled && PluginManager.ActivePlugin != null)
                 {
                     notifyIconMain.Icon = appIconPluginOnLuaOn;
                 }
@@ -1095,7 +1026,7 @@ namespace AxTools.Forms
                 {
                     notifyIconMain.Icon = appIconPluginOffLuaOn;
                 }
-                else if (moduleEnabled)
+                else if (PluginManager.ActivePlugin != null)
                 {
                     notifyIconMain.Icon = appIconPluginOnLuaOff;
                 }
@@ -1114,10 +1045,12 @@ namespace AxTools.Forms
         private int updaterLastTimeChecked = Environment.TickCount;
         private bool updaterUserAlreadyAsked;
         private bool updaterShouldSkipAddonCheck;
+        private bool updaterShouldSkipUpdateCheck;
         
         private void CheckAndInstallUpdates()
         {
-            Log.Print("[Updater] Checking for updates...");
+            updaterShouldSkipUpdateCheck = true;
+            Log.Print("[Updater] Checking for updates");
             Updater updateInfo = Updater.GetUpdateInfo();
             if (updateInfo.UpdateForMainExecutableIsAvailable && !updaterUserAlreadyAsked)
             {
@@ -1141,7 +1074,27 @@ namespace AxTools.Forms
                         }
                     }
                 }
-                DownloadUpdater();
+                try
+                {
+                    using (WebClient webClient = new WebClient())
+                    {
+                        webClient.DownloadFile(Globals.DropboxPath + "/Updater.exe", Application.StartupPath + "\\Updater.exe");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Print("[Updater] Can't download updater: " + ex.Message, true);
+                    updaterShouldSkipUpdateCheck = false;
+                    return;
+                }
+                try
+                {
+                    Updater.DownloadAndExtractTestPlugin();
+                }
+                catch (Exception ex)
+                {
+                    Log.Print("[Updater] Can't download test plugin: " + ex.Message, true);
+                }
                 TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No),
                     TaskDialogIcon.Information);
                 ShowNotifyIconMessage("Update for AxTools is ready to install", "Click on icon to install", ToolTipIcon.Info);
@@ -1164,8 +1117,8 @@ namespace AxTools.Forms
             {
                 updaterShouldSkipAddonCheck = true;
                 Log.Print("[Updater] Update for addon component is available");
-                DownloadAddon();
-                string text = WowProcesses.Count > 0 ? "It's recommended to restart WoW client" : "...and it's ready to work!";
+                Updater.DownloadAndExtractAddon();
+                string text = WowProcess.Shared.Count > 0 ? "It's recommended to restart WoW client" : "...and it's ready to work!";
                 if (NativeMethods.GetForegroundWindow() == Handle)
                 {
                     this.ShowTaskDialog("Addon component has been updated", text, TaskDialogButton.OK, TaskDialogIcon.Information);
@@ -1177,88 +1130,34 @@ namespace AxTools.Forms
                 Log.Print("[Updater] Update for addon component has been successfully installed");
                 updaterShouldSkipAddonCheck = false;
             }
-        }
-
-        private void DownloadUpdater()
-        {
-            using (WebClient webClient = new WebClient())
-            {
-                webClient.DownloadFile(Globals.DropboxPath + "/Updater.exe", Application.StartupPath + "\\Updater.exe");
-            }
-        }
-
-        private void CheckAndDownloadPrerequisites()
-        {
-            DirectoryInfo directory = new DirectoryInfo(Application.StartupPath + "\\redist");
-            if (!directory.Exists)
-            {
-                directory.Create();
-            }
-            string[] files = { "dotNetFx40_Full_setup.exe", "dxwebsetup.exe", "vcredist_x86.exe" };
-            foreach (string i in files.Where(i => !File.Exists(directory.FullName + "\\" + i)))
-            {
-                using (WebClient webClient = new WebClient())
-                {
-                    webClient.DownloadFile(Globals.DropboxPath + "/" + i, directory.FullName + "\\" + i);
-                }
-            }
-        }
-
-        private void DownloadAddon()
-        {
-            string zipPath = Globals.TempPath + "\\ax_tools.zip";
-            Utils.CheckCreateDir();
-            File.Delete(zipPath);
-            try
-            {
-                using (WebClient pWebClient = new WebClient())
-                {
-                    pWebClient.DownloadFile(Globals.DropboxPath + "/ax_tools.zip", zipPath);
-                }
-                using (ZipFile zipFile = ZipFile.Read(zipPath, new ReadOptions { Encoding = Encoding.UTF8 }))
-                {
-                    zipFile.ExtractAll(Settings.WowExe + "\\Interface\\AddOns", ExtractExistingFileAction.OverwriteSilently);
-                }
-                Log.Print("AddOn component successfully updated");
-            }
-            catch (Exception ex)
-            {
-                Log.Print("Download addon error: " + ex.Message, true);
-            }
+            updaterShouldSkipUpdateCheck = false;
         }
 
         #endregion
 
         #region MainNotifyIconContextMenu
 
-        private void FishingToolStripMenuItemClick(object sender, EventArgs e)
+        private void UpdatePluginsShortcutsInTrayContextMenu()
         {
-            comboBoxWowPlugins.SelectedIndex = 0;
-            if (!WoW.Hooked && WowProcesses.Count != 1)
+            string appendix = "    [" + Settings.PrecompiledModulesHotkey + "]";
+            foreach (ToolStripItem i in contextMenuStripMain.Items)
             {
-                Activate();
-            }
-            InvokeOnClick(toggleWowPlugins, EventArgs.Empty);
-        }
+                i.Text = i.Text.Replace(appendix, string.Empty);
 
-        private void CaptureFlagsorbsOnTheBattlefieldsToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            comboBoxWowPlugins.SelectedIndex = 1;
-            if (!WoW.Hooked && WowProcesses.Count != 1)
-            {
-                Activate();
+                if (PluginManager.Plugins.Any(k => k.TrayDescription == i.Text))
+                {
+                    i.Enabled = PluginManager.ActivePlugin == null;
+                }
+                else if (i.Text.Contains("Stop active plug-in"))
+                {
+                    i.Enabled = PluginManager.ActivePlugin != null;
+                    i.Text = i.Text + appendix;
+                }
+                if (i.Text == comboBoxWowPlugins.Text)
+                {
+                    i.Text = i.Text + appendix;
+                }
             }
-            InvokeOnClick(toggleWowPlugins, EventArgs.Empty);
-        }
-
-        private void MillingdisenchantingprospectingToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            comboBoxWowPlugins.SelectedIndex = 2;
-            if (!WoW.Hooked && WowProcesses.Count != 1)
-            {
-                Activate();
-            }
-            InvokeOnClick(toggleWowPlugins, EventArgs.Empty);
         }
 
         private void WoWRadarToolStripMenuItemClick(object sender, EventArgs e)
@@ -1287,103 +1186,138 @@ namespace AxTools.Forms
 
         private void stopActivePluginorPresshotkeyToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            if (moduleEnabled)
+            if (PluginManager.ActivePlugin != null)
             {
-                InvokeOnClick(toggleWowPlugins, EventArgs.Empty);
+                InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
             }
         }
 
         #endregion
 
-        #region WowTab
+        #region MainTab
 
         private void CmbboxAccSelectSelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbboxAccSelect.SelectedIndex != -1)
             {
+                //buttonLaunchWowWithoutAutopass.Enabled = false;
+                //buttonWowUpdater.Enabled = false;
+                //Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) delegate
+                //{
+                //    buttonLaunchWowWithoutAutopass.Enabled = true;
+                //    buttonWowUpdater.Enabled = true;
+                //}));
+                WaitingOverlay waitingOverlay = new WaitingOverlay(this);
+                waitingOverlay.Show();
+                Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
                 wowAccountSelected = cmbboxAccSelect.SelectedIndex;
-                cmbboxAccSelect.Visible = false;
-                labelAccSelect.Visible = false;
-                tileWowAutopass.Visible = true;
                 if (!File.Exists(Settings.WowExe + "\\Wow.exe"))
                 {
-                    this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"",
-                        TaskDialogButton.OK, TaskDialogIcon.Stop);
+                    this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
                     return;
-                }
-                if (File.Exists(Settings.WowExe + "\\Wow-64.exe"))
-                {
-                    File.Delete(Settings.WowExe + "\\Wow-64.exe");
-                    Log.Print("File Wow-64.exe was deleted");
                 }
                 Process.Start(new ProcessStartInfo
                 {
                     WorkingDirectory = Settings.WowExe,
-                    FileName = Settings.WowExe + "\\Wow.exe"
+                    FileName = Settings.WowExe + "\\Wow.exe",
+                    Arguments = "-noautolaunch64bit",
                 });
                 if (Settings.StartVentriloWithWow && !Process.GetProcessesByName("Ventrilo").Any())
                 {
                     TileVentriloClick(null, EventArgs.Empty);
                 }
+                cmbboxAccSelect.SelectedIndex = -1;
+                cmbboxAccSelect.Invalidate();
             }
         }
 
-        private void cmbboxAccSelect_MouseClick(object sender, MouseEventArgs e)
+        private void linkOpenBackupFolder_Click(object sender, EventArgs e)
         {
-            if (labelAccSelect.Visible)
+            if (Directory.Exists(Settings.AddonsBackupPath))
             {
-                labelAccSelect.Visible = false;
+                Process.Start(Settings.AddonsBackupPath);
             }
-        }
-
-        private void labelAccSelect_MouseClick(object sender, MouseEventArgs e)
-        {
-            labelAccSelect.Visible = false;
-            cmbboxAccSelect.DroppedDown = true;
-        }
-
-        private void TileWowAutopassClick(object sender, EventArgs e)
-        {
-            cmbboxAccSelect.Items.Clear();
-            foreach (WowAccount i in wowAccounts)
+            else
             {
-                cmbboxAccSelect.Items.Add(i.Login);
+                this.ShowTaskDialog("Can't open backup folder", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
-            tileWowAutopass.Visible = false;
-            labelAccSelect.Visible = true;
-            cmbboxAccSelect.Visible = true;
         }
 
-        private void TileWowUpdaterClick(object sender, EventArgs e)
+        private void linkBackupAddons_Click(object sender, EventArgs e)
         {
-            if (!File.Exists(Settings.WowExe + "\\World of Warcraft Launcher.exe"))
-            {
-                this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"World of Warcraft Launcher.exe\"", TaskDialogButton.OK,
-                                    TaskDialogIcon.Stop);
-                return;
-            }
-            Process.Start(new ProcessStartInfo {
-                WorkingDirectory = Settings.WowExe,
-                FileName = Settings.WowExe + "\\World of Warcraft Launcher.exe"
-            });
+            WaitingOverlay waitingOverlay = new WaitingOverlay(this);
+            waitingOverlay.Show();
+            AddonsBackup addonsBackup = new AddonsBackup();
+            addonsBackup.Show(this);
+            Task.Factory.StartNew(() => addonsBackup.Start(false)).ContinueWith(l => Invoke(new Action(waitingOverlay.Close))).ContinueWith(l => addonsBackup.Invoke((MethodInvoker) addonsBackup.Close));
         }
 
-        private void TileWowClick(object sender, EventArgs e)
+        private void linkClickerSettings_Click(object sender, EventArgs e)
+        {
+            if (clicker.Enabled)
+            {
+                this.ShowTaskDialog("Clicker settings", "Please switch clicker off before", TaskDialogButton.OK, TaskDialogIcon.Warning);
+            }
+            else
+            {
+                ClickerSettings clickerSettings = Utils.FindForm<ClickerSettings>();
+                if (clickerSettings == null)
+                {
+                    new ClickerSettings().Show(this);
+                }
+                else
+                {
+                    clickerSettings.Activate();
+                }
+            }
+        }
+
+        private void buttonLaunchWowWithoutAutopass_Click(object sender, EventArgs e)
         {
             if (!File.Exists(Settings.WowExe + "\\Wow.exe"))
             {
                 this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 return;
             }
-            if (File.Exists(Settings.WowExe + "\\Wow-64.exe"))
+            Process.Start(new ProcessStartInfo
             {
-                File.Delete(Settings.WowExe + "\\Wow-64.exe");
-                Log.Print("File Wow-64.exe was deleted");
-            }
-            Process.Start(new ProcessStartInfo {
                 WorkingDirectory = Settings.WowExe,
-                FileName = Settings.WowExe + "\\Wow.exe"
+                FileName = Settings.WowExe + "\\Wow.exe",
+                Arguments = "-noautolaunch64bit",
             });
+        }
+
+        private void buttonWowUpdater_Click(object sender, EventArgs e)
+        {
+            if (!File.Exists(Settings.WowExe + "\\World of Warcraft Launcher.exe"))
+            {
+                this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"World of Warcraft Launcher.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                return;
+            }
+            Process.Start(new ProcessStartInfo
+            {
+                WorkingDirectory = Settings.WowExe,
+                FileName = Settings.WowExe + "\\World of Warcraft Launcher.exe"
+            });
+        }
+
+        private void linkEditWowAccounts_Click(object sender, EventArgs e)
+        {
+            new WowAccountsManager(wowAccounts).Show(this);
+            OnWowAccountsChanged();
+        }
+
+        private void OnWowAccountsChanged()
+        {
+            cmbboxAccSelect.Items.Clear();
+            woWAutopassToolStripMenuItem.DropDownItems.Clear();
+            foreach (WowAccount i in wowAccounts)
+            {
+                cmbboxAccSelect.Items.Add(i.Login);
+                int index = wowAccounts.IndexOf(i);
+                ToolStripItem item = new ToolStripMenuItem(i.Login, null, delegate { wowAccountSelected = index; });
+                woWAutopassToolStripMenuItem.DropDownItems.Add(item);
+            }
         }
 
         #endregion
@@ -1483,416 +1417,51 @@ namespace AxTools.Forms
         #endregion
 
         #region WowPluginsTab
-
-        private CancellationTokenSource moduleToken;
-        private NamedTask moduleTask;
-        private bool moduleEnabled;
-
-        private void FishingFunc()
+        
+        private void buttonStartStopPlugin_Click(object sender, EventArgs e)
         {
-            int state = 0;
-            string lure = "if (GetInventoryItemCooldown(\"player\", 1) == 0 and not GetWeaponEnchantInfo()) then " +
-                          "if (IsEquippedItem(33820)) then UseItemByName(33820) elseif (IsEquippedItem(88710)) then UseItemByName(88710) end end";
-            WowObject bobber = null;
-            List<WowObject> wowObjects = new List<WowObject>();
-            Log.Print(String.Format("{0}:{1} :: [Fishing] Plugin is started", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-            while (!moduleToken.IsCancellationRequested)
-            {
-                int startTime = Environment.TickCount;
-                if (!WoW.Hooked || !WoW.WProc.IsInGame)
-                {
-                    Log.Print(String.Format("{0}:{1} :: [Fishing] Plugin is stopped: the player isn't active or not in the game", WoW.WProc.ProcessName,
-                                            WoW.WProc.ProcessID));
-                    BeginInvoke(new Action(() =>
-                                           notifyIconMain.ShowBalloonTip(10000, "[Fishing] Plugin is stopped", "The player isn't active or not in the game",
-                                                                         ToolTipIcon.Error)));
-                    BeginInvoke(new Action(() => InvokeOnClick(toggleWowPlugins, EventArgs.Empty)));
-                    moduleToken.Token.ThrowIfCancellationRequested();
-                    return;
-                }
-                switch (state)
-                {
-                    case 0:
-                        Log.Print(String.Format("{0}:{1} :: [Fishing] Cast fishing...", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-                        WoW.LuaDoString("if (not UnitAffectingCombat(\"player\")) then CastSpellByName(\"Рыбная ловля\") end");
-                        Thread.Sleep(1500);
-                        state = 1;
-                        break;
-                    case 1:
-                        try
-                        {
-                            WoW.Pulse(wowObjects);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Print(String.Format("{0}:{1} :: [Fishing] Pulse error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
-                            break;
-                        }
-                        if (LocalPlayer.ChannelSpellID == 0)
-                        {
-                            Log.Print(String.Format("{0}:{1} :: [Fishing] Player isn't fishing, recast...", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-                            state = 0;
-                            break;
-                        }
-                        bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == LocalPlayer.GUID);
-                        if (bobber != null)
-                        {
-                            if (bobber.Animation == 4456449)
-                            {
-                                Log.Print(String.Format("{0}:{1} :: [Fishing] Got bit!", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-                                Thread.Sleep(250);
-                                state = 2;
-                            }
-                        }
-                        break;
-                    case 2:
-                        if (bobber != null)
-                        {
-                            Log.Print(String.Format("{0}:{1} :: [Fishing] Interacting...", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-                            WoW.Interact(bobber.GUID);
-                            bobber = null;
-                            state = 3;
-                        }
-                        else
-                        {
-                            Log.Print(String.Format("{0}:{1} :: [Fishing] Bobber isn't found, recast...", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-                            state = 0;
-                        }
-                        break;
-                    case 3:
-                        if (WoW.WProc.PlayerIsLooting)
-                        {
-                            state = 4;
-                            Log.Print(String.Format("{0}:{1} :: [Fishing] Looting...", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-                        }
-                        break;
-                    case 4:
-                        if (!WoW.WProc.PlayerIsLooting)
-                        {
-                            Log.Print(String.Format("{0}:{1} :: [Fishing] Looted, applying lure...", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-                            WoW.LuaDoString(lure);
-                            Thread.Sleep(500);
-                            state = 0;
-                        }
-                        break;
-                }
-                int counter = 100 - Environment.TickCount + startTime;
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (counter > 0 && !moduleToken.IsCancellationRequested)
-                {
-                    Thread.Sleep(counter);
-                }
-                //while (counter > 0 && fishingEnabled)
-                //{
-                //    Thread.Sleep(10);
-                //    counter -= 10;
-                //}
-            }
-            Log.Print(WoW.WProc != null
-                          ? String.Format("{0}:{1} :: [Fishing] Plugin is stopped", WoW.WProc.ProcessName, WoW.WProc.ProcessID)
-                          : "UNKNOWN:null :: [Fishing] Plugin is stopped");
-            moduleToken.Token.ThrowIfCancellationRequested();
-        }
-
-        private void FlagReturnFunc()
-        {
-            uint searchingZone = WoW.WProc.PlayerZoneID;
-            string zoneText = WoW.GetFunctionReturn("GetZoneText()");
-            string[] searchingObjects;
-            switch (searchingZone)
-            {
-                case 3277:
-                case 5031:
-                    searchingObjects = new[] {"Флаг Альянса", "Флаг Орды"};
-                    break;
-                case 3820:
-                case 5799:
-                    searchingObjects = new[] {"Флаг Пустоверти"};
-                    break;
-                case 6051:
-                    searchingObjects = new[] {"Сфера могущества"};
-                    break;
-                case 6665:
-                    searchingObjects = new[] {"Вагонетка Альянса", "Вагонетка Орды"};
-                    break;
-                case 3703:
-                    searchingObjects = new[] {"Хранилище гильдии"};
-                    break;
-                default:
-                    Log.Print(
-                        String.Format("{0}:{1} :: [Battlefield outlaw] Unknown battlefield (zoneID: {2})", WoW.WProc.ProcessName, WoW.WProc.ProcessID,
-                                      searchingZone));
-                    BeginInvoke(new Action(() =>
-                                           notifyIconMain.ShowBalloonTip(10000, "[Battlefield outlaw] Unknown battlefield",
-                                                                         "I don't know what to do in this zone...", ToolTipIcon.Error)));
-                    BeginInvoke(new Action(() => InvokeOnClick(toggleWowPlugins, EventArgs.Empty)));
-                    moduleToken.Token.ThrowIfCancellationRequested();
-                    return;
-            }
-            List<WowObject> wowObjects = new List<WowObject>();
-            Log.Print(String.Format("{0}:{1} :: [Battlefield outlaw] Plugin is started, let's take away their {2} in {3} ({4})!",
-                                    WoW.WProc.ProcessName, WoW.WProc.ProcessID, searchingObjects.AsString(), zoneText, searchingZone));
-            while (!moduleToken.IsCancellationRequested)
-            {
-                int startTime = Environment.TickCount;
-                if (!WoW.Hooked || !WoW.WProc.IsInGame)
-                {
-                    Log.Print(
-                        String.Format("{0}:{1} :: [Battlefield outlaw] Plugin is stopped: the player isn't active or not in the game", WoW.WProc.ProcessName,
-                                      WoW.WProc.ProcessID));
-                    BeginInvoke(new Action(() =>
-                                           notifyIconMain.ShowBalloonTip(10000, "[Battlefield outlaw] Plugin is stopped",
-                                                                         "The player isn't active or not in the game", ToolTipIcon.Error)));
-                    BeginInvoke(new Action(() => InvokeOnClick(toggleWowPlugins, EventArgs.Empty)));
-                    moduleToken.Token.ThrowIfCancellationRequested();
-                    return;
-                }
-                if (WoW.WProc.IsBattlegroundFinished != 0)
-                {
-                    Log.Print(
-                        String.Format("{0}:{1} :: [Battlefield outlaw] Plugin is stopped: the battle has ended", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-                    BeginInvoke(
-                        new Action(() => notifyIconMain.ShowBalloonTip(10000, "[Battlefield outlaw] Plugin is stopped", "The battle has ended", ToolTipIcon.Info)));
-                    BeginInvoke(new Action(() => InvokeOnClick(toggleWowPlugins, EventArgs.Empty)));
-                    moduleToken.Token.ThrowIfCancellationRequested();
-                    return;
-                }
-                var zone = WoW.WProc.PlayerZoneID;
-                if (zone != searchingZone)
-                {
-                    Log.Print(String.Format("{0}:{1} :: [Battlefield outlaw] Plugin is stopped: zone changed to {2} ({3})", WoW.WProc.ProcessName,
-                                            WoW.WProc.ProcessID, zoneText, zone));
-                    BeginInvoke(new Action(() =>
-                                           notifyIconMain.ShowBalloonTip(10000, "[Battlefield outlaw] Plugin is stopped",
-                                                                         String.Format("Zone changed to {0} ({1})", zoneText, zone),
-                                                                         ToolTipIcon.Info)));
-                    BeginInvoke(new Action(() => InvokeOnClick(toggleWowPlugins, EventArgs.Empty)));
-                    moduleToken.Token.ThrowIfCancellationRequested();
-                    return;
-                }
-                try
-                {
-                    WoW.Pulse(wowObjects);
-                }
-                catch (Exception ex)
-                {
-                    Log.Print(String.Format("{0}:{1} :: [Battlefield outlaw] Pulse error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
-                    continue;
-                }
-                foreach (var i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(LocalPlayer.Location) <= 10))
-                {
-                    WoW.Interact(i.GUID);
-                    Log.Print(
-                        String.Format("{0}:{1} :: [Battlefield outlaw] Interacting with {2} (0x{3:X})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID),
-                        false, false);
-                }
-                int counter = 50 - Environment.TickCount + startTime;
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (counter > 0 && !moduleToken.IsCancellationRequested)
-                {
-                    Thread.Sleep(counter);
-                }
-            }
-            Log.Print(WoW.WProc != null
-                          ? String.Format("{0}:{1} :: [Battlefield outlaw] Plugin is stopped ({2})",
-                                          WoW.WProc.ProcessName, WoW.WProc.ProcessID, searchingObjects.AsString())
-                          : String.Format("UNKNOWN:null :: [Battlefield outlaw] Plugin is stopped ({0})", searchingObjects.AsString()));
-            moduleToken.Token.ThrowIfCancellationRequested();
-        }
-
-        private void DestroyingFunc()
-        {
-            WoW.LuaDoString(
-                "AxToolsHerbsIDs = {785, 2449, 2447, 765, 2450, 2453, 3820, 2452, 3369, 3356, 3357, 3355, 3819, 3818, 3821, 3358, 8836, 8839, 4625, 8846, 8831, 8838, 13463, 13464, 13465, 13466, 13467, 22786, 22785, 22793, 22791, 22792, 22787, 22789, 36907, 36903, 36906, 36904, 36905, 36901, 39970, 37921, 52983, 52987, 52984, 52986, 52985, 52988, 22790, 72235, 72234, 72237, 79010, 79011, 89639};" +
-                "AxToolsDisenchantWeapon = \"Оружие\";" +
-                "AxToolsDisenchantArmor = \"Доспехи\";" +
-                "AxToolsOreIDs = {2770, 2771, 2772, 10620, 3858, 23424, 23425, 36909, 36912, 36910, 52185, 53038, 52183, 72093, 72094, 72103, 72092};");
-            string mill =
-                "if (IsSpellKnown(51005)) then for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local name, cCount = GetContainerItemInfo(bag, bag_slot); local id = GetContainerItemID(bag, bag_slot); if (name) then if (tContains(AxToolsHerbsIDs, id) and cCount >= 5) then CastSpellByID(51005); UseContainerItem(bag, bag_slot); return; end end end end end";
-            string disenchant =
-                "if (IsSpellKnown(13262)) then for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local itemLink = select(7, GetContainerItemInfo(bag, bag_slot)); if (itemLink) then local _, _ , cQuality, cLevel, _, cClass = GetItemInfo(itemLink); if ((cClass == AxToolsDisenchantWeapon or cClass == AxToolsDisenchantArmor) and cLevel > 1 and cQuality == 2) then CastSpellByID(13262); UseContainerItem(bag, bag_slot); return; end end end end end";
-            string prospecting =
-                "if (IsSpellKnown(31252)) then for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local name, cCount = GetContainerItemInfo(bag, bag_slot); local id = GetContainerItemID(bag, bag_slot); if (name) then if (tContains(AxToolsOreIDs, id) and cCount >= 5) then CastSpellByID(31252); UseContainerItem(bag, bag_slot); return; end end end end end";
-            int state = 0;
-            int skillStartTime = 0;
-            Log.Print(String.Format("{0}:{1} :: [Goods destroyer] Plugin is started", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-            while (!moduleToken.IsCancellationRequested)
-            {
-                int startTime = Environment.TickCount;
-                if (!WoW.Hooked || !WoW.WProc.IsInGame)
-                {
-                    Log.Print(
-                        String.Format("{0}:{1} :: [Goods destroyer] Plugin is stopped: the player isn't active or not in the game", WoW.WProc.ProcessName,
-                                      WoW.WProc.ProcessID));
-                    BeginInvoke(new Action(() =>
-                                           notifyIconMain.ShowBalloonTip(10000, "[Goods destroyer] Plugin is stopped",
-                                                                         "The player isn't active or not in the game", ToolTipIcon.Error)));
-                    BeginInvoke(new Action(() => InvokeOnClick(toggleWowPlugins, EventArgs.Empty)));
-                    moduleToken.Token.ThrowIfCancellationRequested();
-                    return;
-                }
-                switch (state)
-                {
-                    case 0:
-                        WoW.LuaDoString(mill);
-                        WoW.LuaDoString(prospecting);
-                        Thread.Sleep(1000); // pause to prevent disenchanting unreal item 
-                        WoW.LuaDoString(disenchant);
-                        skillStartTime = Environment.TickCount;
-                        state = 1;
-                        break;
-                    case 1:
-                        //WoW.Pulse();
-                        if (WoW.WProc.PlayerIsLooting)
-                        {
-                            state = 2;
-                        }
-                        else if (Environment.TickCount - skillStartTime > 5000)
-                        {
-                            state = 0;
-                            Log.Print(String.Format("{0}:{1} :: [Goods destroyer] Smth went wrong or we haven't goods to destroy, restarting...",
-                                                    WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-                        }
-                        break;
-                    case 2:
-                        if (!WoW.WProc.PlayerIsLooting)
-                        {
-                            state = 0;
-                        }
-                        break;
-                }
-                int counter = 100 - Environment.TickCount + startTime;
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (counter > 0 && !moduleToken.IsCancellationRequested)
-                {
-                    Thread.Sleep(counter);
-                }
-            }
-            Log.Print(WoW.WProc != null
-                          ? String.Format("{0}:{1} :: [Goods destroyer] Plugin is stopped", WoW.WProc.ProcessName, WoW.WProc.ProcessID)
-                          : "UNKNOWN:null :: [Goods destroyer] Plugin is stopped");
-            moduleToken.Token.ThrowIfCancellationRequested();
-        }
-
-        private void ToggleWowPluginsCheckedChanged(object sender, EventArgs e)
-        {
-            if (!(bool) toggleWowPlugins.Tag)
-            {
-                toggleWowPlugins.Tag = true;
-                return;
-            }
-            toggleWowPlugins.Enabled = false;
-            if (!moduleEnabled)
+            buttonStartStopPlugin.Enabled = false;
+            if (PluginManager.ActivePlugin == null)
             {
                 if (!WoW.Hooked && !LoadInjector())
                 {
-                    toggleWowPlugins.Tag = false;
-                    toggleWowPlugins.Checked = false;
-                    toggleWowPlugins.Enabled = true;
+                    buttonStartStopPlugin.Enabled = true;
                     return;
                 }
                 if (!WoW.WProc.IsInGame)
                 {
-                    this.ShowTaskDialog("Module error", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                    toggleWowPlugins.Tag = false;
-                    toggleWowPlugins.Enabled = true;
-                    toggleWowPlugins.Checked = false;
+                    ShowNotifyIconMessage("Plugin error", "Player isn't logged in", ToolTipIcon.Error);
+                    SystemSounds.Hand.Play();
+                    buttonStartStopPlugin.Enabled = true;
                     return;
                 }
-                switch (comboBoxWowPlugins.SelectedIndex)
+                if (comboBoxWowPlugins.SelectedIndex == -1)
                 {
-                    case 0:
-                        moduleToken = new CancellationTokenSource();
-                        moduleTask = new NamedTask(FishingFunc, moduleToken.Token, TaskCreationOptions.LongRunning, "Fishing", "Interface\\\\Icons\\\\trade_fishing");
-                        moduleTask.Start();
-                        moduleEnabled = true;
-                        break;
-                    case 1:
-                        moduleToken = new CancellationTokenSource();
-                        moduleTask = new NamedTask(FlagReturnFunc, moduleToken.Token, TaskCreationOptions.LongRunning, "BG Outlaw", "Interface\\\\Icons\\\\achievement_bg_winwsg");
-                        moduleTask.Start();
-                        moduleEnabled = true;
-                        break;
-                    case 2:
-                        moduleToken = new CancellationTokenSource();
-                        moduleTask = new NamedTask(DestroyingFunc, moduleToken.Token, TaskCreationOptions.LongRunning, "Goods Destroyer", "Interface\\\\Icons\\\\inv_misc_gem_bloodgem_01");
-                        moduleTask.Start();
-                        moduleEnabled = true;
-                        break;
-                    default:
-                        this.ShowTaskDialog("Module error", "Please select module", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                        toggleWowPlugins.Tag = false;
-                        toggleWowPlugins.Checked = false;
-                        toggleWowPlugins.Enabled = true;
-                        break;
+                    ShowNotifyIconMessage("Plugin error", "You didn't select valid plugin", ToolTipIcon.Error);
+                    SystemSounds.Hand.Play();
+                    buttonStartStopPlugin.Enabled = true;
                 }
-                if (moduleEnabled)
+                else
                 {
-                    comboBoxWowPlugins.Enabled = false;
-                    foreach (ToolStripItem i in contextMenuStripMain.Items)
-                    {
-                        if (i.Text == "Fishing" || i.Text == "Capture flags/orbs on the battlefields" || i.Text == "Milling/disenchanting/prospecting")
-                        {
-                            i.Enabled = false;
-                        }
-                        else if (i.Text.Contains("Stop active plug-in"))
-                        {
-                            i.Enabled = true;
-                        }
-                    }
-                    if (Settings.WowPluginsShowIngameNotifications)
-                    {
-                        WoW.ShowOverlayText("Plugin <" + moduleTask.Name + "> is started", moduleTask.WowIcon, Color.FromArgb(255, 102, 0));
-                        //WoW.LuaDoString("UIErrorsFrame:AddMessage(\"Plugin <" + moduleTask.Name + "> is started\", 0.0, 1.0, 0.0)");
-                    }
+                    PluginManager.ActivePlugin = PluginManager.Plugins.First(i => i.TrayDescription == comboBoxWowPlugins.Text);
+                    WowPluginHotkeyChanged();
                 }
             }
             else
             {
-                moduleToken.Cancel();
-                // ReSharper disable EmptyGeneralCatchClause
                 try
                 {
-                    moduleTask.Wait(5000);
+                    PluginManager.ActivePlugin = null;
+                    WowPluginHotkeyChanged();
+                    GC.Collect();
                 }
                 catch
                 {
-                    // Successful
-                }
-                // ReSharper restore EmptyGeneralCatchClause
-                if (moduleTask.Status == TaskStatus.Canceled || moduleTask.Status == TaskStatus.RanToCompletion || moduleTask.Status == TaskStatus.Faulted)
-                {
-                    moduleEnabled = false;
-                    comboBoxWowPlugins.Enabled = true;
-                    foreach (ToolStripItem i in contextMenuStripMain.Items)
-                    {
-                        if (i.Text == "Fishing" || i.Text == "Capture flags/orbs on the battlefields" || i.Text == "Milling/disenchanting/prospecting")
-                        {
-                            i.Enabled = true;
-                        }
-                        else if (i.Text.Contains("Stop active plug-in"))
-                        {
-                            i.Enabled = false;
-                        }
-                    }
-                    if (Settings.WowPluginsShowIngameNotifications && WoW.Hooked && WoW.WProc.IsInGame)
-                    {
-                        WoW.ShowOverlayText("Plugin <" + moduleTask.Name + "> is stopped", moduleTask.WowIcon, Color.FromArgb(255, 0, 0));
-                        //WoW.LuaDoString("UIErrorsFrame:AddMessage(\"Plugin <" + moduleTask.Name + "> is stopped\", 1.0, 0.4, 0.0)");
-                    }
-                    moduleTask.Dispose();
-                    moduleToken.Dispose();
-                    GC.Collect();
-                }
-                else
-                {
-                    Log.Print("Module task failed to cancel", true);
-                    this.ShowTaskDialog("Module error", "Module task failed to cancel", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                    toggleWowPlugins.Tag = false;
-                    toggleWowPlugins.Checked = true;
+                    Log.Print("Plugin task failed to cancel", true);
+                    this.ShowTaskDialog("Plugin error", "Plugin task failed to cancel", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 }
             }
-            toggleWowPlugins.Enabled = true;
+            buttonStartStopPlugin.Enabled = true;
         }
 
         private void metroCheckBoxPluginShowIngameNotification_CheckedChanged(object sender, EventArgs e)
@@ -1900,44 +1469,47 @@ namespace AxTools.Forms
             Settings.WowPluginsShowIngameNotifications = metroCheckBoxPluginShowIngameNotification.Checked;
         }
 
+        private void checkBoxEnableCustomPlugins_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.EnableCustomPlugins = checkBoxEnableCustomPlugins.Checked;
+        }
+
         private void ComboBoxWowPluginsSelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (comboBoxWowPlugins.SelectedIndex)
+            if (comboBoxWowPlugins.SelectedIndex == -1)
             {
-                case 0: // Fishing
-                    metroToolTip1.SetToolTip(metroLabelSelectPlugin, "This is a very simple fish bot.\r\n" +
-                                                                 "It supports Nat's Hat and\r\n" +
-                                                                 "Weather-Beaten Fishing Hat if equipped");
-                    metroLabelSelectPlugin.Text = "Select a plugin...and hover o'er me to see plugin description";
-                    break;
-                case 1: // Capture flags/orbs on the battlefields
-                    metroToolTip1.SetToolTip(metroLabelSelectPlugin, "This plugin will automatically return or pickup flags in\r\n" +
-                                                                 "Warsong Gulch, Twin Peaks and EotS,\r\n" +
-                                                                 "also it will pickup orbs in ToK");
-                    metroLabelSelectPlugin.Text = "Select a plugin...and hover o'er me to see plugin description";
-                    break;
-                case 2: // Milling/disenchanting/prospecting
-                    metroToolTip1.SetToolTip(metroLabelSelectPlugin, "This plugin will mill/prospect any herbs/ores\r\n" +
-                                                                 "and disenchant greens in your bags");
-                    metroLabelSelectPlugin.Text = "Select a plugin...and hover o'er me to see plugin description";
-                    break;
-                default:
-                    metroToolTip1.SetToolTip(metroLabelSelectPlugin, string.Empty);
-                    metroLabelSelectPlugin.Text = "Select a plugin...";
-                    break;
+                metroToolTip1.SetToolTip(comboBoxWowPlugins, string.Empty);
             }
+            else
+            {
+                string[] arr = PluginManager.Plugins.First(i => i.TrayDescription == comboBoxWowPlugins.Text).Description.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+                string text = string.Empty;
+                int counter = 0;
+                foreach (string i in arr)
+                {
+                    text += i + " ";
+                    counter += i.Length + 1;
+                    if (counter >= 50)
+                    {
+                        text += "\r\n";
+                        counter = 0;
+                    }
+                }
+                metroToolTip1.SetToolTip(comboBoxWowPlugins, text);
+            }
+            UpdatePluginsShortcutsInTrayContextMenu();
         }
 
         private void MetroButtonBlackMarketTrackerClick(object sender, EventArgs e)
         {
             if (!WoW.Hooked && !LoadInjector())
             {
-                new TaskDialog("Module error", "AxTools", "Can't inject", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
+                new TaskDialog("Plugin error", "AxTools", "Can't inject", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
             }
             if (!WoW.WProc.IsInGame)
             {
-                new TaskDialog("Module error", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
+                new TaskDialog("Plugin error", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
             }
             new BlackMarket().Show();
@@ -2001,22 +1573,14 @@ namespace AxTools.Forms
 
         private bool LoadInjector()
         {
-            int index;
-            if (WowProcesses.Count == 1)
-            {
-                index = 0;
-            }
-            else
-            {
-                ProcessSelection.SelectProcess(WowProcesses, out index);
-            }
+            int index = WowProcess.Shared.Count == 1 ? 0 : ProcessSelection.SelectProcess();
             if (index != -1)
             {
-                if (WowProcesses[index].IsValidBuild)
+                if (WowProcess.Shared[index].IsValidBuild)
                 {
-                    if (WowProcesses[index].IsInGame)
+                    if (WowProcess.Shared[index].IsInGame)
                     {
-                        switch (WoW.Hook(WowProcesses[index]))
+                        switch (WoW.Hook(WowProcess.Shared[index]))
                         {
                             case HookResult.Successful:
                                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
@@ -2045,8 +1609,8 @@ namespace AxTools.Forms
             if (pWowRadar != null) pWowRadar.Close();
             LuaConsole pLuaInjector = Utils.FindForm<LuaConsole>();
             if (pLuaInjector != null) pLuaInjector.Close();
-            BlackMarket pBlackMarket = Utils.FindForm<BlackMarket>();
-            if (pBlackMarket != null) pBlackMarket.Close();
+            //BlackMarket pBlackMarket = Utils.FindForm<BlackMarket>();
+            //if (pBlackMarket != null) pBlackMarket.Close();
             WoW.Unhook();
         }
 
@@ -2096,36 +1660,6 @@ namespace AxTools.Forms
                     Log.Print("MainForm.AttachToWow: general error: " + ex.Message, true);
                 }
             });
-        }
-
-        private void buttonBackupAddons_Click(object sender, EventArgs e)
-        {
-            WaitingOverlay waitingOverlay = new WaitingOverlay(this);
-            waitingOverlay.Show();
-            Task.Factory.StartNew(() => BackupAddons(false, false)).ContinueWith(l => Invoke(new Action(waitingOverlay.Close)));
-        }
-
-        private void linkOpenBackupFolder_Click(object sender, EventArgs e)
-        {
-            if (Directory.Exists(Settings.AddonsBackupPath))
-            {
-                Process.Start(Settings.AddonsBackupPath);
-            }
-            else
-            {
-                this.ShowTaskDialog("Can't open backup folder", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
-            }
-        }
-
-        private void metroButton1_Click(object sender, EventArgs e)
-        {
-            WowAccountsManager wowAccountsManager = new WowAccountsManager(wowAccounts);
-            wowAccountsManager.ShowDialog(this);
-            cmbboxAccSelect.Items.Clear();
-            foreach (WowAccount i in wowAccounts)
-            {
-                cmbboxAccSelect.Items.Add(i.Login);
-            }
         }
 
     }

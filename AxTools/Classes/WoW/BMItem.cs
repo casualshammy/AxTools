@@ -5,14 +5,14 @@ namespace AxTools.Classes.WoW
     [StructLayout(LayoutKind.Sequential)]
     internal struct BlackMarketItem
     {
-        public uint MarketID, unk1;
-        public uint Entry, unk2;
-        public uint Quantity;
-        public uint unk3;
-        public ulong minBid, minIncrement, currBid;
-        public uint TimeLeft;
+        internal uint MarketID, unk1;
+        internal uint Entry, unk2;
+        internal uint Quantity;
+        internal uint unk3;
+        internal ulong minBid, minIncrement, currBid;
+        internal uint TimeLeft;
         [MarshalAs(UnmanagedType.Bool)]
-        public bool YouHaveHighBid;
-        public uint NumBids;
+        internal bool YouHaveHighBid;
+        internal uint NumBids;
     }
 }

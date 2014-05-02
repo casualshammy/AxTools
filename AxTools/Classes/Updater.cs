@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Ionic.Zip;
+using System;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
 
 namespace AxTools.Classes
 {
@@ -91,6 +94,46 @@ namespace AxTools.Classes
             }
             return updater;
         }
-    
+
+        internal static void DownloadAndExtractAddon()
+        {
+            string zipPath = Globals.TempPath + "\\ax_tools.zip";
+            Utils.CheckCreateDir();
+            File.Delete(zipPath);
+            try
+            {
+                using (WebClient pWebClient = new WebClient())
+                {
+                    pWebClient.DownloadFile(Globals.DropboxPath + "/ax_tools.zip", zipPath);
+                }
+                using (ZipFile zipFile = ZipFile.Read(zipPath, new ReadOptions { Encoding = Encoding.UTF8 }))
+                {
+                    zipFile.ExtractAll(Settings.WowExe + "\\Interface\\AddOns", ExtractExistingFileAction.OverwriteSilently);
+                }
+                Log.Print("AddOn component successfully updated");
+            }
+            catch (Exception ex)
+            {
+                Log.Print("Download addon error: " + ex.Message, true);
+            }
+        }
+
+        internal static void DownloadAndExtractTestPlugin()
+        {
+            if (Directory.Exists(Globals.PluginsPath + "\\TestPlugin"))
+            {
+                Utils.CheckCreateDir();
+                Directory.Delete(Globals.PluginsPath + "\\TestPlugin", true);
+                using (WebClient webClient = new WebClient())
+                {
+                    webClient.DownloadFile(Globals.DropboxPath + "/TestPlugin.zip", Globals.TempPath + "\\TestPlugin.zip");
+                }
+                using (ZipFile zip = new ZipFile(Globals.TempPath + "\\TestPlugin.zip", Encoding.UTF8))
+                {
+                    zip.ExtractAll(Application.StartupPath, ExtractExistingFileAction.OverwriteSilently);
+                }
+            }
+        }
+
     }
 }

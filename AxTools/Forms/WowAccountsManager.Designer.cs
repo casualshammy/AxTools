@@ -1,4 +1,7 @@
-﻿namespace AxTools.Forms
+﻿using AxTools.Components;
+using MetroFramework.Controls;
+
+namespace AxTools.Forms
 {
     partial class WowAccountsManager
     {
@@ -28,6 +31,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             this.metroButtonWowAccountDelete = new MetroFramework.Controls.MetroButton();
             this.metroButtonWowAccountSaveUpdate = new MetroFramework.Controls.MetroButton();
@@ -86,7 +90,6 @@
             this.textBoxWowAccountPassword.Style = MetroFramework.MetroColorStyle.Blue;
             this.textBoxWowAccountPassword.StyleManager = this.metroStyleManager1;
             this.textBoxWowAccountPassword.TabIndex = 41;
-            this.textBoxWowAccountPassword.Text = "Password";
             this.textBoxWowAccountPassword.Theme = MetroFramework.MetroThemeStyle.Light;
             this.textBoxWowAccountPassword.UseStyleColors = true;
             // 
@@ -162,7 +165,7 @@
             this.metroLabel4.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLabel4.UseStyleColors = true;
             // 
-            // WowAccounts
+            // WowAccountsManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -177,7 +180,7 @@
             this.DisplayHeader = false;
             this.Location = new System.Drawing.Point(0, 0);
             this.MaximizeBox = false;
-            this.Name = "WowAccounts";
+            this.Name = "WowAccountsManager";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.Resizable = false;
             this.StyleManager = this.metroStyleManager1;
@@ -192,7 +195,7 @@
         private MetroFramework.Components.MetroStyleManager metroStyleManager1;
         private MetroFramework.Controls.MetroButton metroButtonWowAccountDelete;
         private MetroFramework.Controls.MetroButton metroButtonWowAccountSaveUpdate;
-        private MetroFramework.Controls.MetroTextBox textBoxWowAccountPassword;
+        private MetroTextBox textBoxWowAccountPassword;
         private MetroFramework.Controls.MetroTextBox textBoxWowAccountLogin;
         private MetroFramework.Controls.MetroComboBox comboBoxWowAccounts;
         private MetroFramework.Controls.MetroLabel metroLabel3;

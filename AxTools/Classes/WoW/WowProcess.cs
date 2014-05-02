@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
@@ -14,10 +15,24 @@ namespace AxTools.Classes.WoW
             mProcessName = Process.ProcessName;
             isValidBuild = -1;
         }
+
         public void Dispose()
         {
             if (Memory != null) Memory.Dispose();
             Process.Dispose();
+        }
+
+        private static readonly List<WowProcess> SharedList = new List<WowProcess>();
+        private static readonly object SharedLock = new object();
+        internal static List<WowProcess> Shared
+        {
+            get
+            {
+                lock (SharedLock)
+                {
+                    return SharedList;
+                }
+            }
         }
 
         internal int MaxTime;
@@ -25,6 +40,7 @@ namespace AxTools.Classes.WoW
         internal GreyMagic.ExternalProcessReader Memory;
 
         private string mProcessName;
+
         internal string ProcessName
         {
             get
@@ -135,6 +151,7 @@ namespace AxTools.Classes.WoW
                 return txtPlayerName;
             }
         }
+
         internal bool PlayerIsLooting
         {
             get

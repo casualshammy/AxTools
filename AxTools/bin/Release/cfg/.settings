@@ -1,13 +1,13 @@
 ﻿## AxTools settings file
 
 ## General settings ##
-Location={X=577,Y=493}
-GameServer=World of Warcraft - Blackscar
+Location={X=143,Y=165}
 regname=Axio-5GDMJHD20R
-LastUsedVersion=11.13.26.0
-NewStyleColor=6
+LastUsedVersion=11.15.4.0
+NewStyleColor=11
 
 WowPluginsShowIngameNotifications=True
+EnableCustomPlugins=False
 del_wow_log=True
 creature_cache=True
 clicker.key=D7
@@ -18,13 +18,16 @@ wow_wnd.auto_accept=True
 wow_wnd.noframe=True
 WowWindowLocation={X=0,Y=64}
 WowWindowSize={X=1920,Y=1016}
-widget.transparent=False
 ax_tools=True
 WowLoginHotkey=Delete
 LuaTimerHotkey=F11
 PrecompiledModulesHotkey=F10
 
 ## Paths ##
+wow_dir=D:\World of Warcraft
+vt_dir=C:\Program Files\Ventrilo
+raidcall_dir=C:\Program Files (x86)\RaidCall
+TeamspeakDir=C:\Program Files\TeamSpeak 3 Client
 
 ## VoIP settings ##
 StartVentriloWithWow=True
@@ -33,9 +36,9 @@ StartRaidcallWithWow=False
 StartMumbleWithWow=False
 
 ## Lua console settings ##
-LuaConsole.Size.Width=650
-LuaConsole.Size.Height=354
-LuaConsole.TimerInterval=500
+LuaConsole.Size.Width=1167
+LuaConsole.Size.Height=618
+LuaConsole.TimerInterval=100
 LuaConsole.RandomizeTimer=True
 LuaConsole.IgnoreGameState=True
 LuaConsole.ShowIngameNotifications=True
@@ -45,16 +48,23 @@ RadarLocation={X=1458,Y=147}
 RadarShowPlayersClasses=True
 RadarShowNpcsNames=False
 RadarShowObjectsNames=False
-RadarShow=2199040033025
+RadarShow=8796109865217
 RadarFriendColor=-8323328
 RadarEnemyColor=-65536
 RadarNpcColor=-16711681
 RadarObjectColor=-10496
 
+## Pinger ##
+Pinger.GameServer=World of Warcraft - Gordunni
+Pinger.BadNetworkPing=125
+Pinger.BadNetworkProcent=5
+Pinger.VeryBadNetworkPing=250
+Pinger.VeryBadNetworkProcent=10
+
 ## Backup settings ##
-AddonsBackupPath=D:\Dropbox\Backup\Addons
+AddonsBackupPath=F:\Dropbox\Backup\Addons
 AddonsBackup=True
 AddonsBackupNum=7
 AddonsBackupTimer=24
 BackupCompressionLevel=6
-addons_backup_lastdate=17.01.2014 20:42:26
+addons_backup_lastdate=16.02.2014 19:40:24

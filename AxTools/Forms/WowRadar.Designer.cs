@@ -39,22 +39,19 @@ namespace AxTools.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WowRadar));
             this.pictureBoxMain = new System.Windows.Forms.PictureBox();
-            this.checkBoxFriends = new AxTools.Components.CheckBoxExt(this.components);
-            this.checkBoxEnemies = new AxTools.Components.CheckBoxExt(this.components);
-            this.checkBoxObjects = new AxTools.Components.CheckBoxExt(this.components);
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.checkBoxNpcs = new AxTools.Components.CheckBoxExt(this.components);
-            this.pictureBox_ZoomOut = new AxTools.Components.PictureBoxExt(this.components);
-            this.pictureBox_ZoomIn = new AxTools.Components.PictureBoxExt(this.components);
+            this.pictureBoxClose = new AxTools.Components.PictureBoxExt(this.components);
             this.pictureBoxRadarSettings = new AxTools.Components.PictureBoxExt(this.components);
             this.toolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.checkBoxFriends = new AxTools.Components.CheckBoxExt(this.components);
+            this.checkBoxEnemies = new AxTools.Components.CheckBoxExt(this.components);
             this.checkBoxCorpses = new System.Windows.Forms.CheckBox();
             this.textBoxDetailedInfo = new System.Windows.Forms.TextBox();
+            this.checkBoxObjects = new AxTools.Components.CheckBoxExt(this.components);
+            this.checkBoxNpcs = new AxTools.Components.CheckBoxExt(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMain)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ZoomOut)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ZoomIn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxClose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRadarSettings)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,6 +66,39 @@ namespace AxTools.Forms
             this.pictureBoxMain.Paint += new System.Windows.Forms.PaintEventHandler(this.PictureBox1Paint);
             this.pictureBoxMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.PictureBoxMainMouseClick);
             this.pictureBoxMain.MouseLeave += new System.EventHandler(this.PictureBoxMainMouseLeave);
+            // 
+            // pictureBoxClose
+            // 
+            this.pictureBoxClose.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxClose.Image")));
+            this.pictureBoxClose.ImageOnHover = ((System.Drawing.Image)(resources.GetObject("pictureBoxClose.ImageOnHover")));
+            this.pictureBoxClose.Location = new System.Drawing.Point(205, 0);
+            this.pictureBoxClose.Margin = new System.Windows.Forms.Padding(1);
+            this.pictureBoxClose.Name = "pictureBoxClose";
+            this.pictureBoxClose.Size = new System.Drawing.Size(20, 20);
+            this.pictureBoxClose.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxClose.TabIndex = 6;
+            this.pictureBoxClose.TabStop = false;
+            this.pictureBoxClose.Click += new System.EventHandler(this.PictureBox2Click);
+            // 
+            // pictureBoxRadarSettings
+            // 
+            this.pictureBoxRadarSettings.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxRadarSettings.Image")));
+            this.pictureBoxRadarSettings.ImageOnHover = ((System.Drawing.Image)(resources.GetObject("pictureBoxRadarSettings.ImageOnHover")));
+            this.pictureBoxRadarSettings.Location = new System.Drawing.Point(183, 0);
+            this.pictureBoxRadarSettings.Margin = new System.Windows.Forms.Padding(1);
+            this.pictureBoxRadarSettings.Name = "pictureBoxRadarSettings";
+            this.pictureBoxRadarSettings.Size = new System.Drawing.Size(20, 20);
+            this.pictureBoxRadarSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxRadarSettings.TabIndex = 38;
+            this.pictureBoxRadarSettings.TabStop = false;
+            this.toolTip1.SetToolTip(this.pictureBoxRadarSettings, "Click to open radar settings");
+            this.pictureBoxRadarSettings.Click += new System.EventHandler(this.PictureBoxRadarSettingsClick);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.Style = MetroFramework.MetroColorStyle.Blue;
+            this.toolTip1.StyleManager = null;
+            this.toolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // checkBoxFriends
             // 
@@ -96,83 +126,6 @@ namespace AxTools.Forms
             this.checkBoxEnemies.UseVisualStyleBackColor = true;
             this.checkBoxEnemies.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxEnemiesMouseClickExtended);
             // 
-            // checkBoxObjects
-            // 
-            this.checkBoxObjects.AutoSize = true;
-            this.checkBoxObjects.ForeColor = System.Drawing.Color.Gold;
-            this.checkBoxObjects.Location = new System.Drawing.Point(93, 254);
-            this.checkBoxObjects.Name = "checkBoxObjects";
-            this.checkBoxObjects.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxObjects.TabIndex = 5;
-            this.checkBoxObjects.Text = "Objects: 999";
-            this.checkBoxObjects.UseVisualStyleBackColor = true;
-            this.checkBoxObjects.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxObjectsMouseClickExtended);
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Image = global::AxTools.Properties.Resources.close_41741;
-            this.pictureBox2.Location = new System.Drawing.Point(205, 0);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox2.TabIndex = 6;
-            this.pictureBox2.TabStop = false;
-            this.pictureBox2.Click += new System.EventHandler(this.PictureBox2Click);
-            // 
-            // checkBoxNpcs
-            // 
-            this.checkBoxNpcs.AutoSize = true;
-            this.checkBoxNpcs.ForeColor = System.Drawing.Color.GreenYellow;
-            this.checkBoxNpcs.Location = new System.Drawing.Point(12, 254);
-            this.checkBoxNpcs.Name = "checkBoxNpcs";
-            this.checkBoxNpcs.Size = new System.Drawing.Size(81, 17);
-            this.checkBoxNpcs.TabIndex = 7;
-            this.checkBoxNpcs.Text = "N: 999/999";
-            this.checkBoxNpcs.UseVisualStyleBackColor = true;
-            this.checkBoxNpcs.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxNpcsMouseClickExtended);
-            // 
-            // pictureBox_ZoomOut
-            // 
-            this.pictureBox_ZoomOut.Image = global::AxTools.Properties.Resources.plus;
-            this.pictureBox_ZoomOut.ImageOnHover = global::AxTools.Properties.Resources.PlusLight;
-            this.pictureBox_ZoomOut.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox_ZoomOut.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_ZoomOut.Name = "pictureBox_ZoomOut";
-            this.pictureBox_ZoomOut.Size = new System.Drawing.Size(16, 16);
-            this.pictureBox_ZoomOut.TabIndex = 35;
-            this.pictureBox_ZoomOut.TabStop = false;
-            this.pictureBox_ZoomOut.Click += new System.EventHandler(this.PictureBoxZoomOutClick);
-            // 
-            // pictureBox_ZoomIn
-            // 
-            this.pictureBox_ZoomIn.Image = global::AxTools.Properties.Resources.minus;
-            this.pictureBox_ZoomIn.ImageOnHover = global::AxTools.Properties.Resources.MinusLight;
-            this.pictureBox_ZoomIn.Location = new System.Drawing.Point(16, 0);
-            this.pictureBox_ZoomIn.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_ZoomIn.Name = "pictureBox_ZoomIn";
-            this.pictureBox_ZoomIn.Size = new System.Drawing.Size(16, 16);
-            this.pictureBox_ZoomIn.TabIndex = 36;
-            this.pictureBox_ZoomIn.TabStop = false;
-            this.pictureBox_ZoomIn.Click += new System.EventHandler(this.PictureBoxZoomInClick);
-            // 
-            // pictureBoxRadarSettings
-            // 
-            this.pictureBoxRadarSettings.Image = global::AxTools.Properties.Resources.Settings20px;
-            this.pictureBoxRadarSettings.ImageOnHover = global::AxTools.Properties.Resources.SettingsLight20px;
-            this.pictureBoxRadarSettings.Location = new System.Drawing.Point(35, 0);
-            this.pictureBoxRadarSettings.Name = "pictureBoxRadarSettings";
-            this.pictureBoxRadarSettings.Size = new System.Drawing.Size(16, 16);
-            this.pictureBoxRadarSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxRadarSettings.TabIndex = 38;
-            this.pictureBoxRadarSettings.TabStop = false;
-            this.toolTip1.SetToolTip(this.pictureBoxRadarSettings, "Click to open radar settings");
-            this.pictureBoxRadarSettings.Click += new System.EventHandler(this.PictureBoxRadarSettingsClick);
-            // 
-            // toolTip1
-            // 
-            this.toolTip1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.toolTip1.StyleManager = null;
-            this.toolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
             // checkBoxCorpses
             // 
             this.checkBoxCorpses.AutoSize = true;
@@ -198,6 +151,30 @@ namespace AxTools.Forms
             this.textBoxDetailedInfo.Text = "ММММММММММММ\r\n(War90) 100%";
             this.textBoxDetailedInfo.Visible = false;
             // 
+            // checkBoxObjects
+            // 
+            this.checkBoxObjects.AutoSize = true;
+            this.checkBoxObjects.ForeColor = System.Drawing.Color.Gold;
+            this.checkBoxObjects.Location = new System.Drawing.Point(93, 254);
+            this.checkBoxObjects.Name = "checkBoxObjects";
+            this.checkBoxObjects.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxObjects.TabIndex = 5;
+            this.checkBoxObjects.Text = "Objects: 999";
+            this.checkBoxObjects.UseVisualStyleBackColor = true;
+            this.checkBoxObjects.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxObjectsMouseClickExtended);
+            // 
+            // checkBoxNpcs
+            // 
+            this.checkBoxNpcs.AutoSize = true;
+            this.checkBoxNpcs.ForeColor = System.Drawing.Color.GreenYellow;
+            this.checkBoxNpcs.Location = new System.Drawing.Point(12, 254);
+            this.checkBoxNpcs.Name = "checkBoxNpcs";
+            this.checkBoxNpcs.Size = new System.Drawing.Size(81, 17);
+            this.checkBoxNpcs.TabIndex = 7;
+            this.checkBoxNpcs.Text = "N: 999/999";
+            this.checkBoxNpcs.UseVisualStyleBackColor = true;
+            this.checkBoxNpcs.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxNpcsMouseClickExtended);
+            // 
             // WowRadar
             // 
             this.BackColor = System.Drawing.Color.Black;
@@ -205,10 +182,8 @@ namespace AxTools.Forms
             this.Controls.Add(this.textBoxDetailedInfo);
             this.Controls.Add(this.checkBoxCorpses);
             this.Controls.Add(this.pictureBoxRadarSettings);
-            this.Controls.Add(this.pictureBox_ZoomIn);
-            this.Controls.Add(this.pictureBox_ZoomOut);
             this.Controls.Add(this.checkBoxNpcs);
-            this.Controls.Add(this.pictureBox2);
+            this.Controls.Add(this.pictureBoxClose);
             this.Controls.Add(this.checkBoxObjects);
             this.Controls.Add(this.checkBoxEnemies);
             this.Controls.Add(this.checkBoxFriends);
@@ -224,9 +199,7 @@ namespace AxTools.Forms
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RadarMouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.RadarMouseUp);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMain)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ZoomOut)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ZoomIn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxClose)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRadarSettings)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -239,10 +212,8 @@ namespace AxTools.Forms
         private CheckBoxExt checkBoxFriends;
         private CheckBoxExt checkBoxEnemies;
         private CheckBoxExt checkBoxObjects;
-        private PictureBox pictureBox2;
         private CheckBoxExt checkBoxNpcs;
-        private PictureBoxExt pictureBox_ZoomOut;
-        private PictureBoxExt pictureBox_ZoomIn;
+        private PictureBoxExt pictureBoxClose;
         private PictureBoxExt pictureBoxRadarSettings;
         private MetroToolTip toolTip1;
         private CheckBox checkBoxCorpses;

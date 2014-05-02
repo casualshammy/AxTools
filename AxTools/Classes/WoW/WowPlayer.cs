@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AxTools.Classes.WoW
 {
-    internal sealed class WowPlayer
+    public sealed class WowPlayer
     {
         internal WowPlayer(IntPtr pAddress)
         {
@@ -34,7 +34,7 @@ namespace AxTools.Classes.WoW
 
         internal readonly uint HealthMax;
 
-        internal readonly WowPlayerClass Class;
+        internal WowPlayerClass Class;
 
         private ulong mGUID;
         internal ulong GUID
@@ -90,16 +90,19 @@ namespace AxTools.Classes.WoW
             }
         }
 
-        private WowPoint? mLocation;
+        // We don't use System.Nullable<> because it's for 40% slower
+        private bool mLocationRead;
+        private WowPoint mLocation;
         internal WowPoint Location
         {
             get
             {
-                if (!mLocation.HasValue)
+                if (!mLocationRead)
                 {
                     mLocation = WoW.WProc.Memory.Read<WowPoint>(Address + WowBuildInfo.UnitLocation);
+                    mLocationRead = true;
                 }
-                return mLocation.Value;
+                return mLocation;
             }
         }
         

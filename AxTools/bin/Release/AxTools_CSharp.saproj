@@ -31,7 +31,7 @@
             </Assembly>
             <Assembly AssemblyName="fasmdll_managed, Culture=neutral, PublicKeyToken=null">
                 <Merging />
-                <Embedding Compress="1" Embed="1" Encrypt="0" />
+                <Embedding Compress="1" Embed="0" Encrypt="0" />
             </Assembly>
             <Assembly AssemblyName="TinySharpZip, Culture=neutral, PublicKeyToken=null">
                 <Merging Merge="0">
@@ -59,7 +59,7 @@
                     <MemberRefsProxy />
                     <ResourcesCompression Compress="1" />
                 </Merging>
-                <Embedding Compress="1" Embed="1" Encrypt="0" />
+                <Embedding Compress="1" Embed="0" Encrypt="0" />
             </Assembly>
             <Assembly AssemblyName="WindowsFormsAero, Culture=neutral, PublicKeyToken=null">
                 <Merging Merge="1">
@@ -251,10 +251,89 @@
                     <MemberRefsProxy />
                     <StringsEncoding />
                     <Pruning Prune="1">
-                        <Exclusion />
+                        <Exclusion>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Interface</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem</Namespace>
+                                <Name>IPlugin</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Name>EnvironmentObjects</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Name>Functions</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Name>Lua</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Name>Utilities</Name>
+                            </Token>
+                        </Exclusion>
                     </Pruning>
                     <Obfuscation Obfuscate="1">
-                        <Exclusion />
+                        <Exclusion>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Interface</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem</Namespace>
+                                <Name>IPlugin</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Name>EnvironmentObjects</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Name>Functions</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Name>LocalPlayer</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Name>Lua</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Name>Utilities</Name>
+                            </Token>
+                        </Exclusion>
                     </Obfuscation>
                     <ControlFlow Obfuscate="1" ObfuscationLevel="3" />
                 </Merging>
@@ -350,7 +429,7 @@
                     <MemberRefsProxy />
                     <ResourcesCompression Compress="0" />
                 </Merging>
-                <Embedding Compress="1" Embed="1" Encrypt="0" />
+                <Embedding Compress="1" Embed="0" Encrypt="0" />
             </Assembly>
             <Assembly AssemblyName="Microsoft.WindowsAPICodePack.Shell, Culture=neutral, PublicKeyToken=null">
                 <Merging />

@@ -30,11 +30,11 @@ namespace AxTools.Classes.WoW.DX
 
         protected Form Form { get; private set; }
 
-        public abstract int BeginSceneVtableIndex { get; }
+        internal abstract int BeginSceneVtableIndex { get; }
 
-        public abstract int EndSceneVtableIndex { get; }
+        internal abstract int EndSceneVtableIndex { get; }
 
-        public abstract int PresentVtableIndex { get; }
+        internal abstract int PresentVtableIndex { get; }
 
         /// <summary>
         /// initiializes d3d and sets device pointer.
@@ -74,7 +74,7 @@ namespace AxTools.Classes.WoW.DX
             return *(IntPtr*)((void*)((int)pointer + funcIndex * 4));
         }
 
-        public unsafe IntPtr GetDeviceVTableFuncAbsoluteAddress(int funcIndex)
+        internal unsafe IntPtr GetDeviceVTableFuncAbsoluteAddress(int funcIndex)
         {
             IntPtr pointer = *(IntPtr*)((void*)D3DDevicePtr);
             pointer = *(IntPtr*)((void*)((int)pointer + funcIndex * 4));

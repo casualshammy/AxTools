@@ -7,7 +7,7 @@ namespace AxTools.Forms
 {
     internal partial class Changes : BorderedMetroForm
     {
-        public Changes(string imagePath)
+        internal Changes(string imagePath)
         {
             InitializeComponent();
             Icon = Resources.AppIcon;

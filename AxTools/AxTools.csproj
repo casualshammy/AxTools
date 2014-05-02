@@ -106,16 +106,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\.NET libs\MetroFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\.NET libs\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-    </Reference>
     <Reference Include="MouseKeyboardActivityMonitor">
       <HintPath>..\..\.NET libs\MouseKeyboardActivityMonitor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
@@ -126,12 +121,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Clicker.cs" />
+    <Compile Include="Classes\TaskbarProgressbar\CTaskbarList.cs" />
+    <Compile Include="Classes\TaskbarProgressbar\ITaskbarList3.cs" />
+    <Compile Include="Classes\TaskbarProgressbar\TBProgressBar.cs" />
+    <Compile Include="Classes\TaskbarProgressbar\ThumbnailProgressState.cs" />
     <Compile Include="Classes\Updater.cs" />
+    <Compile Include="Classes\WoW\MouseButton.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\API\EnvironmentObjects.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\API\Functions.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\API\LocalPlayer.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\API\Lua.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\API\Utilities.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\CodeCompiler.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\IPlugin.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\PluginManager.cs" />
+    <Compile Include="Classes\WoW\Plugins\Fishing.cs" />
+    <Compile Include="Classes\WoW\Plugins\FlagReturner.cs" />
+    <Compile Include="Classes\WoW\Plugins\GoodsDestroyer.cs" />
+    <Compile Include="Classes\WoW\WowTerrainClickStruct.cs" />
     <Compile Include="Components\BorderedMetroForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Classes\Globals.cs" />
-    <Compile Include="Classes\NamedTask.cs" />
     <Compile Include="Classes\WoW\HookResult.cs" />
     <Compile Include="Classes\WoW\WowLocalPlayer.cs" />
     <Compile Include="Classes\WoW\WowPlayerInfo.cs" />
@@ -150,11 +162,29 @@
     <Compile Include="Components\ListBoxDoubleBuffered.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Components\MetroComboboxExt.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\MetroComboboxExt.Designer.cs">
+      <DependentUpon>MetroComboboxExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\MetroTileExt.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\MetroTileExt.Designer.cs">
+      <DependentUpon>MetroTileExt.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\MetroToggleExt.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\MetroToggleExt.Designer.cs">
       <DependentUpon>MetroToggleExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AddonsBackup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddonsBackup.Designer.cs">
+      <DependentUpon>AddonsBackup.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\AppSettings.cs">
       <SubType>Form</SubType>
@@ -187,6 +217,12 @@
     </Compile>
     <Compile Include="Components\PictureBoxExt.Designer.cs">
       <DependentUpon>PictureBoxExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ClickerSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ClickerSettings.Designer.cs">
+      <DependentUpon>ClickerSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -263,6 +299,9 @@
     <Compile Include="Classes\WoW\WoW.cs" />
     <Compile Include="Classes\WoW\WowBuildInfo.cs" />
     <Compile Include="Classes\WoW\WowPlayerClass.cs" />
+    <EmbeddedResource Include="Forms\AddonsBackup.resx">
+      <DependentUpon>AddonsBackup.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\AppSettings.resx">
       <DependentUpon>AppSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -274,6 +313,9 @@
     <EmbeddedResource Include="Forms\Changes.resx">
       <DependentUpon>Changes.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ClickerSettings.resx">
+      <DependentUpon>ClickerSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\InputBox.resx">
       <DependentUpon>InputBox.cs</DependentUpon>
@@ -340,12 +382,26 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
+    <None Include="Resources\close_26px_hl.png" />
+    <None Include="Resources\close_26px.png" />
+    <None Include="Resources\yellow_play_grey.png" />
+    <None Include="Resources\yellow_stop_grey.png" />
+    <None Include="Resources\yellow_record_grey.png" />
+    <None Include="Resources\yellow_forward_grey.png" />
+    <None Include="Resources\yellow_stop_light.png" />
+    <None Include="Resources\yellow_record_light.png" />
+    <None Include="Resources\yellow_forward_light.png" />
+    <None Include="Resources\play_light.png" />
+    <None Include="Resources\gtk-media-stop_6038.png" />
+    <None Include="Resources\gtk-media-record_6548.png" />
+    <None Include="Resources\gtk-media-play-ltr_4659.png" />
+    <None Include="Resources\gtk-media-forward-ltr_6874.png" />
+    <None Include="Resources\1a.png" />
+    <None Include="Resources\1.png" />
     <None Include="Resources\networkWarning.ico" />
     <None Include="Resources\zip.ico" />
     <None Include="Resources\go_next.png" />
     <None Include="Resources\AppIcon1.png" />
-    <None Include="Resources\AppIconPluginOnLuaOff1.png" />
-    <None Include="Resources\application-supported_7771.png" />
     <None Include="Resources\BlackMarket.png" />
     <None Include="Resources\AppIconPluginOnLuaOn.png" />
     <None Include="Resources\AppIconPluginOnLuaOff.png" />

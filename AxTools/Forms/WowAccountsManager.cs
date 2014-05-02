@@ -10,7 +10,7 @@ namespace AxTools.Forms
 {
     internal partial class WowAccountsManager : BorderedMetroForm
     {
-        public WowAccountsManager(List<WowAccount> listOfWowAccounts)
+        internal WowAccountsManager(List<WowAccount> listOfWowAccounts)
         {
             InitializeComponent();
             Icon = Resources.AppIcon;

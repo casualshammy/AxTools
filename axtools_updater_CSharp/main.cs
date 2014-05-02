@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -122,7 +121,7 @@ namespace axtools_updater
                 string updateString;
                 using (WebClient pWebClient = new WebClient())
                 {
-                    updateString = pWebClient.DownloadString(dropboxPath + "/update!push");
+                    updateString = pWebClient.DownloadString(dropboxPath + "/aloha!update");
                 }
                 if (String.IsNullOrWhiteSpace(updateString))
                 {

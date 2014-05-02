@@ -13,6 +13,7 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MouseKeyboardActivityMonitor;
 using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms
@@ -22,8 +23,6 @@ namespace AxTools.Forms
         internal WowRadar()
         {
             InitializeComponent();
-            AccessibleName = "Radar";
-            //timer1.Enabled = true;
             Icon = Resources.AppIcon;
             string filename = Globals.CfgPath + "\\.radar3";
             try
@@ -74,11 +73,16 @@ namespace AxTools.Forms
             }
             redrawTaskCTS = new CancellationTokenSource();
             redrawTask = new Task(Redraw, redrawTaskCTS.Token, TaskCreationOptions.LongRunning);
+            mouseHookListener = new MouseHookListener(Globals.GlobalHooker);
+            mouseHookListener.MouseWheel += mouseHookListener_MouseWheel;
+            mouseHookListener.Start();
             Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
         }
 
-        private static List<ObjectToFind> _radarKOS =
-            new List<ObjectToFind>(new[] {new ObjectToFind(true, "Воракем Глашатай Судьбы", false, true), new ObjectToFind(true, "Древние сутры", true, false)});
+        private readonly MouseHookListener mouseHookListener;
+        private bool processMouseWheelEvents;
+
+        private static List<ObjectToFind> _radarKOS = new List<ObjectToFind>(new[] {new ObjectToFind(true, "Воракем Глашатай Судьбы", false, true), new ObjectToFind(true, "Древние сутры", true, false)});
         internal static List<ObjectToFind> RadarKOSGeneral
         {
             get { return _radarKOS; }
@@ -228,12 +232,12 @@ namespace AxTools.Forms
                 try
                 {
                     int friendsCountAlive = friends.Count(i => i.Health > 0);
-                    checkBoxFriends.Text = String.Concat("F: ", friendsCountAlive, "/", friends.Length);
+                    checkBoxFriends.Text = String.Concat("F: ", friendsCountAlive.ToString(), "/", friends.Length.ToString());
                     int enemiesCountAlive = enemies.Count(i => i.Health > 0);
-                    checkBoxEnemies.Text = String.Concat("E: ", enemiesCountAlive, "/", enemies.Length);
-                    checkBoxObjects.Text = "Objects: " + objects.Length;
+                    checkBoxEnemies.Text = String.Concat("E: ", enemiesCountAlive.ToString(), "/", enemies.Length.ToString());
+                    checkBoxObjects.Text = String.Concat("Objects: ", objects.Length.ToString());
                     int npcsCountAlive = npcs.Count(i => i.Health > 0);
-                    checkBoxNpcs.Text = String.Concat("N: ", npcsCountAlive, "/", npcs.Length);
+                    checkBoxNpcs.Text = String.Concat("N: ", npcsCountAlive.ToString(), "/", npcs.Length.ToString());
                     
                     objectsPointsInRadarCoords.Clear();
 
@@ -290,11 +294,12 @@ namespace AxTools.Forms
                                 solidBrush = grayBrush;
                             }
                             Point[] pts;
-                            if (i.Location.Z - LocalPlayer.Location.Z >= 10)
+                            float zDiff = i.Location.Z - LocalPlayer.Location.Z;
+                            if (zDiff >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
                             }
-                            else if (LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            else if (zDiff <= -10)
                             {
                                 pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
                             }
@@ -357,11 +362,12 @@ namespace AxTools.Forms
                                 solidBrush = grayBrush;
                             }
                             Point[] pts;
-                            if (i.Location.Z - LocalPlayer.Location.Z >= 10)
+                            float zDiff = i.Location.Z - LocalPlayer.Location.Z;
+                            if (zDiff >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
                             }
-                            else if (LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            else if (zDiff <= -10)
                             {
                                 pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
                             }
@@ -411,11 +417,12 @@ namespace AxTools.Forms
                             point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931)));
                             point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Sin(num2)));
                             Point[] pts;
-                            if (i.Location.Z - LocalPlayer.Location.Z >= 10)
+                            float zDiff = i.Location.Z - LocalPlayer.Location.Z;
+                            if (zDiff >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
                             }
-                            else if (LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            else if (zDiff <= -10)
                             {
                                 pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
                             }
@@ -455,11 +462,12 @@ namespace AxTools.Forms
                             point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931)));
                             point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Sin(num2)));
                             Point[] pts;
-                            if (i.Location.Z - LocalPlayer.Location.Z >= 10)
+                            float zDiff = i.Location.Z - LocalPlayer.Location.Z;
+                            if (zDiff >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
                             }
-                            else if (LocalPlayer.Location.Z - i.Location.Z >= 10)
+                            else if (zDiff <= -10)
                             {
                                 pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
                             }
@@ -487,6 +495,11 @@ namespace AxTools.Forms
                     if (point.X >= 0 && point.Y > 0 && point.X <= pictureBoxMain.Width && point.Y <= pictureBoxMain.Height)
                     {
                         MeasureTooltip(point);
+                        processMouseWheelEvents = true;
+                    }
+                    else
+                    {
+                        processMouseWheelEvents = false;
                     }
                 }
                 catch (Exception ex)
@@ -588,25 +601,12 @@ namespace AxTools.Forms
                 Log.Print(String.Format("{0}:{1} :: [Radar] Can't save the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
 
+            if (mouseHookListener != null && mouseHookListener.Enabled)
+            {
+                mouseHookListener.Dispose();
+            }
+            
             Log.Print(String.Format("{0}:{1} :: [Radar] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
-        }
-
-        private void PictureBoxZoomOutClick(object sender, EventArgs e)
-        {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (zoomR == 2F) return;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
-            zoomR = zoomR*2;
-            SaveCheckBoxes(null, EventArgs.Empty);
-        }
-
-        private void PictureBoxZoomInClick(object sender, EventArgs e)
-        {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (zoomR == 0.25F) return;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
-            zoomR = zoomR/2;
-            SaveCheckBoxes(null, EventArgs.Empty);
         }
 
         private void RadarLoad(object sender, EventArgs e)
@@ -653,15 +653,14 @@ namespace AxTools.Forms
                     if (unit != null)
                     {
                         DrawTooltip(mousePosition,
-                                    String.Concat("   ", unit.Name, "  \r\n   (", unit.Class, "*", unit.Level, ") ",
-                                                  (uint) (unit.Health/(float) unit.HealthMax*100), "%"), unit.Class);
+                            String.Concat("   ", unit.Name, "  \r\n   (", unit.Class.ToString(), "*", unit.Level.ToString(), ") ",
+                                ((uint) (unit.Health/(float) unit.HealthMax*100)).ToString(), "%"), unit.Class);
                         return;
                     }
                     WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
                     if (npc != null)
                     {
-                        DrawTooltip(mousePosition, String.Concat("   ", npc.Name, "  \r\n   ", (uint) (npc.Health/(float) npc.HealthMax*100), "%"),
-                                    WowPlayerClass.War);
+                        DrawTooltip(mousePosition, String.Concat("   ", npc.Name, "  \r\n   ", ((uint) (npc.Health/(float) npc.HealthMax*100)).ToString(), "%"), WowPlayerClass.War);
                         return;
                     }
                     WowObject _object = wowObjects.FirstOrDefault(i => i.GUID == pair.Key);
@@ -678,7 +677,7 @@ namespace AxTools.Forms
         {
             textBoxDetailedInfo.Text = text;
             textBoxDetailedInfo.Width = TextRenderer.MeasureText(text, textBoxDetailedInfo.Font).Width;
-            if (e.X < 112)
+            if (e.X < halfOfPictureboxSize)
             {
                 textBoxDetailedInfo.Location = new Point(e.X + 5, e.Y);
                 textBoxDetailedInfo.TextAlign = HorizontalAlignment.Left;
@@ -839,5 +838,28 @@ namespace AxTools.Forms
             }
         }
 
+        private void mouseHookListener_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (processMouseWheelEvents)
+            {
+                if (e.Delta > 0)
+                {
+                    // ReSharper disable CompareOfFloatsByEqualityOperator
+                    if (zoomR == 0.25F) return;
+                    // ReSharper restore CompareOfFloatsByEqualityOperator
+                    zoomR = zoomR / 2;
+                    SaveCheckBoxes(null, EventArgs.Empty);
+                }
+                else
+                {
+                    // ReSharper disable CompareOfFloatsByEqualityOperator
+                    if (zoomR == 2F) return;
+                    // ReSharper restore CompareOfFloatsByEqualityOperator
+                    zoomR = zoomR * 2;
+                    SaveCheckBoxes(null, EventArgs.Empty);
+                }
+            }
+        }
+    
     }
 }

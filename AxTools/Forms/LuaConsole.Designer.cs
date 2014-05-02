@@ -38,32 +38,40 @@ namespace AxTools.Forms
             this.buttonDump = new System.Windows.Forms.Button();
             this.metroCheckBoxIgnoreGameState = new MetroFramework.Controls.MetroCheckBox();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
-            this.metroLinkRun = new MetroFramework.Controls.MetroLink();
-            this.metroLinkStartStopTimer = new MetroFramework.Controls.MetroLink();
             this.metroCheckBoxRandomize = new MetroFramework.Controls.MetroCheckBox();
             this.metroPanelTimerOptions = new MetroFramework.Controls.MetroPanel();
             this.metroCheckBoxShowIngameNotifications = new MetroFramework.Controls.MetroCheckBox();
             this.metroTextBoxTimerInterval = new MetroFramework.Controls.MetroTextBox();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
-            this.metroLinkTimerOptions = new MetroFramework.Controls.MetroLink();
             this.pictureBoxOpenLuaFile = new AxTools.Components.PictureBoxExt(this.components);
             this.pictureBoxSaveLuaFile = new AxTools.Components.PictureBoxExt(this.components);
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.pictureBoxRunOnce = new AxTools.Components.PictureBoxExt(this.components);
+            this.pictureBoxRunLoop = new AxTools.Components.PictureBoxExt(this.components);
+            this.pictureBoxStop = new AxTools.Components.PictureBoxExt(this.components);
+            this.pictureBoxSettings = new AxTools.Components.PictureBoxExt(this.components);
+            this.labelRequestTime = new MetroFramework.Controls.MetroLabel();
             this.metroPanelTimerOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOpenLuaFile)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSaveLuaFile)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRunOnce)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRunLoop)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxStop)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).BeginInit();
             this.SuspendLayout();
             // 
             // textBoxLuaCode
             // 
+            this.textBoxLuaCode.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxLuaCode.AutoScroll = true;
             this.textBoxLuaCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxLuaCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxLuaCode.IsReadOnly = false;
-            this.textBoxLuaCode.Location = new System.Drawing.Point(20, 60);
+            this.textBoxLuaCode.Location = new System.Drawing.Point(20, 44);
             this.textBoxLuaCode.Name = "textBoxLuaCode";
             this.textBoxLuaCode.ShowVRuler = false;
-            this.textBoxLuaCode.Size = new System.Drawing.Size(610, 274);
+            this.textBoxLuaCode.Size = new System.Drawing.Size(610, 290);
             this.textBoxLuaCode.TabIndex = 4;
             // 
             // buttonDump
@@ -105,42 +113,6 @@ namespace AxTools.Forms
             this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
-            // metroLinkRun
-            // 
-            this.metroLinkRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.metroLinkRun.CustomBackground = false;
-            this.metroLinkRun.CustomForeColor = false;
-            this.metroLinkRun.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.metroLinkRun.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.metroLinkRun.Location = new System.Drawing.Point(218, 31);
-            this.metroLinkRun.Name = "metroLinkRun";
-            this.metroLinkRun.Size = new System.Drawing.Size(62, 23);
-            this.metroLinkRun.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLinkRun.StyleManager = this.metroStyleManager1;
-            this.metroLinkRun.TabIndex = 50;
-            this.metroLinkRun.Text = "Run";
-            this.metroLinkRun.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLinkRun.UseStyleColors = true;
-            this.metroLinkRun.Click += new System.EventHandler(this.MetroLinkRunClick);
-            // 
-            // metroLinkStartStopTimer
-            // 
-            this.metroLinkStartStopTimer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.metroLinkStartStopTimer.CustomBackground = false;
-            this.metroLinkStartStopTimer.CustomForeColor = false;
-            this.metroLinkStartStopTimer.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.metroLinkStartStopTimer.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.metroLinkStartStopTimer.Location = new System.Drawing.Point(286, 31);
-            this.metroLinkStartStopTimer.Name = "metroLinkStartStopTimer";
-            this.metroLinkStartStopTimer.Size = new System.Drawing.Size(113, 23);
-            this.metroLinkStartStopTimer.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLinkStartStopTimer.StyleManager = this.metroStyleManager1;
-            this.metroLinkStartStopTimer.TabIndex = 51;
-            this.metroLinkStartStopTimer.Text = "Start timer (F99)";
-            this.metroLinkStartStopTimer.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLinkStartStopTimer.UseStyleColors = true;
-            this.metroLinkStartStopTimer.Click += new System.EventHandler(this.MetroLinkStartStopTimerClick);
-            // 
             // metroCheckBoxRandomize
             // 
             this.metroCheckBoxRandomize.AutoSize = true;
@@ -174,7 +146,7 @@ namespace AxTools.Forms
             this.metroPanelTimerOptions.HorizontalScrollbarBarColor = true;
             this.metroPanelTimerOptions.HorizontalScrollbarHighlightOnWheel = false;
             this.metroPanelTimerOptions.HorizontalScrollbarSize = 10;
-            this.metroPanelTimerOptions.Location = new System.Drawing.Point(390, 63);
+            this.metroPanelTimerOptions.Location = new System.Drawing.Point(389, 44);
             this.metroPanelTimerOptions.Name = "metroPanelTimerOptions";
             this.metroPanelTimerOptions.Size = new System.Drawing.Size(220, 96);
             this.metroPanelTimerOptions.Style = MetroFramework.MetroColorStyle.Blue;
@@ -243,46 +215,28 @@ namespace AxTools.Forms
             this.metroLabel1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLabel1.UseStyleColors = true;
             // 
-            // metroLinkTimerOptions
-            // 
-            this.metroLinkTimerOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.metroLinkTimerOptions.CustomBackground = false;
-            this.metroLinkTimerOptions.CustomForeColor = false;
-            this.metroLinkTimerOptions.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.metroLinkTimerOptions.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.metroLinkTimerOptions.Location = new System.Drawing.Point(447, 31);
-            this.metroLinkTimerOptions.Name = "metroLinkTimerOptions";
-            this.metroLinkTimerOptions.Size = new System.Drawing.Size(96, 23);
-            this.metroLinkTimerOptions.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLinkTimerOptions.StyleManager = this.metroStyleManager1;
-            this.metroLinkTimerOptions.TabIndex = 54;
-            this.metroLinkTimerOptions.Text = "Timer options";
-            this.metroLinkTimerOptions.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLinkTimerOptions.UseStyleColors = true;
-            this.metroLinkTimerOptions.Click += new System.EventHandler(this.MetroLinkTimerOptionsClick);
-            // 
             // pictureBoxOpenLuaFile
             // 
-            this.pictureBoxOpenLuaFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBoxOpenLuaFile.Image = global::AxTools.Properties.Resources.document_open;
             this.pictureBoxOpenLuaFile.ImageOnHover = global::AxTools.Properties.Resources.DocumentOpenLight;
-            this.pictureBoxOpenLuaFile.Location = new System.Drawing.Point(577, 32);
+            this.pictureBoxOpenLuaFile.Location = new System.Drawing.Point(20, 16);
             this.pictureBoxOpenLuaFile.Name = "pictureBoxOpenLuaFile";
             this.pictureBoxOpenLuaFile.Size = new System.Drawing.Size(22, 22);
             this.pictureBoxOpenLuaFile.TabIndex = 55;
             this.pictureBoxOpenLuaFile.TabStop = false;
+            this.metroToolTip1.SetToolTip(this.pictureBoxOpenLuaFile, "Open .lua file from disk");
             this.pictureBoxOpenLuaFile.Click += new System.EventHandler(this.PictureBoxOpenLuaFileClick);
             // 
             // pictureBoxSaveLuaFile
             // 
-            this.pictureBoxSaveLuaFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBoxSaveLuaFile.Image = global::AxTools.Properties.Resources.document_save;
             this.pictureBoxSaveLuaFile.ImageOnHover = global::AxTools.Properties.Resources.DocumentSaveLight;
-            this.pictureBoxSaveLuaFile.Location = new System.Drawing.Point(605, 32);
+            this.pictureBoxSaveLuaFile.Location = new System.Drawing.Point(48, 16);
             this.pictureBoxSaveLuaFile.Name = "pictureBoxSaveLuaFile";
             this.pictureBoxSaveLuaFile.Size = new System.Drawing.Size(22, 22);
             this.pictureBoxSaveLuaFile.TabIndex = 56;
             this.pictureBoxSaveLuaFile.TabStop = false;
+            this.metroToolTip1.SetToolTip(this.pictureBoxSaveLuaFile, "Save .lua file to disk");
             this.pictureBoxSaveLuaFile.Click += new System.EventHandler(this.PictureBoxSaveLuaFileClick);
             // 
             // metroToolTip1
@@ -291,22 +245,99 @@ namespace AxTools.Forms
             this.metroToolTip1.StyleManager = null;
             this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
+            // pictureBoxRunOnce
+            // 
+            this.pictureBoxRunOnce.Image = global::AxTools.Properties.Resources.yellow_play;
+            this.pictureBoxRunOnce.ImageOnHover = global::AxTools.Properties.Resources.yellow_play_light;
+            this.pictureBoxRunOnce.Location = new System.Drawing.Point(108, 16);
+            this.pictureBoxRunOnce.Name = "pictureBoxRunOnce";
+            this.pictureBoxRunOnce.Size = new System.Drawing.Size(22, 22);
+            this.pictureBoxRunOnce.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxRunOnce.TabIndex = 57;
+            this.pictureBoxRunOnce.TabStop = false;
+            this.metroToolTip1.SetToolTip(this.pictureBoxRunOnce, "Run script once");
+            this.pictureBoxRunOnce.Click += new System.EventHandler(this.pictureBoxRunOnce_Click);
+            // 
+            // pictureBoxRunLoop
+            // 
+            this.pictureBoxRunLoop.Image = global::AxTools.Properties.Resources.yellow_forward;
+            this.pictureBoxRunLoop.ImageOnHover = global::AxTools.Properties.Resources.yellow_forward_light;
+            this.pictureBoxRunLoop.Location = new System.Drawing.Point(136, 16);
+            this.pictureBoxRunLoop.Name = "pictureBoxRunLoop";
+            this.pictureBoxRunLoop.Size = new System.Drawing.Size(22, 22);
+            this.pictureBoxRunLoop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxRunLoop.TabIndex = 58;
+            this.pictureBoxRunLoop.TabStop = false;
+            this.metroToolTip1.SetToolTip(this.pictureBoxRunLoop, "Run script periodically");
+            this.pictureBoxRunLoop.Click += new System.EventHandler(this.pictureBoxRunLoop_Click);
+            // 
+            // pictureBoxStop
+            // 
+            this.pictureBoxStop.Enabled = false;
+            this.pictureBoxStop.Image = global::AxTools.Properties.Resources.yellow_stop_grey;
+            this.pictureBoxStop.ImageOnHover = global::AxTools.Properties.Resources.yellow_stop_light;
+            this.pictureBoxStop.Location = new System.Drawing.Point(164, 16);
+            this.pictureBoxStop.Name = "pictureBoxStop";
+            this.pictureBoxStop.Size = new System.Drawing.Size(22, 22);
+            this.pictureBoxStop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxStop.TabIndex = 59;
+            this.pictureBoxStop.TabStop = false;
+            this.metroToolTip1.SetToolTip(this.pictureBoxStop, "Disable periodic execution");
+            this.pictureBoxStop.Click += new System.EventHandler(this.pictureBoxStop_Click);
+            // 
+            // pictureBoxSettings
+            // 
+            this.pictureBoxSettings.Image = global::AxTools.Properties.Resources.yellow_record;
+            this.pictureBoxSettings.ImageOnHover = global::AxTools.Properties.Resources.yellow_record_light;
+            this.pictureBoxSettings.Location = new System.Drawing.Point(192, 16);
+            this.pictureBoxSettings.Name = "pictureBoxSettings";
+            this.pictureBoxSettings.Size = new System.Drawing.Size(22, 22);
+            this.pictureBoxSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxSettings.TabIndex = 60;
+            this.pictureBoxSettings.TabStop = false;
+            this.metroToolTip1.SetToolTip(this.pictureBoxSettings, "Show/hide timer options");
+            this.pictureBoxSettings.Click += new System.EventHandler(this.pictureBoxSettings_Click);
+            // 
+            // labelRequestTime
+            // 
+            this.labelRequestTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelRequestTime.CustomBackground = false;
+            this.labelRequestTime.CustomForeColor = false;
+            this.labelRequestTime.FontSize = MetroFramework.MetroLabelSize.Small;
+            this.labelRequestTime.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.labelRequestTime.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.labelRequestTime.Location = new System.Drawing.Point(389, 26);
+            this.labelRequestTime.Name = "labelRequestTime";
+            this.labelRequestTime.Size = new System.Drawing.Size(241, 15);
+            this.labelRequestTime.Style = MetroFramework.MetroColorStyle.Blue;
+            this.labelRequestTime.StyleManager = this.metroStyleManager1;
+            this.labelRequestTime.TabIndex = 61;
+            this.labelRequestTime.Text = "Script has taken {0}ms to complete";
+            this.labelRequestTime.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.labelRequestTime.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.labelRequestTime.UseStyleColors = true;
+            this.labelRequestTime.Visible = false;
+            // 
             // LuaConsole
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(650, 354);
+            this.Controls.Add(this.labelRequestTime);
+            this.Controls.Add(this.pictureBoxSettings);
+            this.Controls.Add(this.pictureBoxStop);
+            this.Controls.Add(this.pictureBoxRunLoop);
+            this.Controls.Add(this.pictureBoxRunOnce);
             this.Controls.Add(this.pictureBoxSaveLuaFile);
             this.Controls.Add(this.pictureBoxOpenLuaFile);
-            this.Controls.Add(this.metroLinkTimerOptions);
             this.Controls.Add(this.metroPanelTimerOptions);
-            this.Controls.Add(this.metroLinkStartStopTimer);
-            this.Controls.Add(this.metroLinkRun);
             this.Controls.Add(this.buttonDump);
             this.Controls.Add(this.textBoxLuaCode);
+            this.DisplayHeader = false;
             this.Location = new System.Drawing.Point(0, 0);
             this.MinimumSize = new System.Drawing.Size(650, 354);
             this.Name = "LuaConsole";
+            this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.StyleManager = this.metroStyleManager1;
             this.Text = "Lua console";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WowModulesFormClosing);
@@ -315,6 +346,10 @@ namespace AxTools.Forms
             this.metroPanelTimerOptions.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOpenLuaFile)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSaveLuaFile)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRunOnce)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRunLoop)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxStop)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -324,18 +359,20 @@ namespace AxTools.Forms
         private TextEditorControl textBoxLuaCode;
         private Button buttonDump;
         private MetroFramework.Controls.MetroCheckBox metroCheckBoxIgnoreGameState;
-        private MetroFramework.Controls.MetroLink metroLinkRun;
         private MetroFramework.Controls.MetroCheckBox metroCheckBoxRandomize;
         private MetroFramework.Controls.MetroPanel metroPanelTimerOptions;
         private MetroFramework.Controls.MetroLabel metroLabel1;
         private MetroFramework.Controls.MetroTextBox metroTextBoxTimerInterval;
-        private MetroFramework.Controls.MetroLink metroLinkTimerOptions;
         private MetroFramework.Components.MetroStyleManager metroStyleManager1;
         private PictureBoxExt pictureBoxOpenLuaFile;
         private PictureBoxExt pictureBoxSaveLuaFile;
-        private MetroFramework.Controls.MetroLink metroLinkStartStopTimer;
         private MetroFramework.Controls.MetroCheckBox metroCheckBoxShowIngameNotifications;
         private MetroFramework.Components.MetroToolTip metroToolTip1;
+        private PictureBoxExt pictureBoxStop;
+        private PictureBoxExt pictureBoxRunLoop;
+        private PictureBoxExt pictureBoxRunOnce;
+        private PictureBoxExt pictureBoxSettings;
+        private MetroFramework.Controls.MetroLabel labelRequestTime;
     }
 }
 

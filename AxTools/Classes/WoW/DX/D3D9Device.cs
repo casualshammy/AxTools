@@ -15,22 +15,22 @@ namespace AxTools.Classes.WoW.DX
 
         private IntPtr _pD3D;
 
-        public D3D9Device(Process targetProc)
+        internal D3D9Device(Process targetProc)
             : base(targetProc, "d3d9.dll")
         {
         }
 
-        public override int BeginSceneVtableIndex
+        internal override int BeginSceneVtableIndex
         {
             get { return VTableIndexes.Direct3DDevice9BeginScene; }
         }
 
-        public override int EndSceneVtableIndex
+        internal override int EndSceneVtableIndex
         {
             get { return VTableIndexes.Direct3DDevice9EndScene; }
         }
 
-        public override int PresentVtableIndex
+        internal override int PresentVtableIndex
         {
             get { return VTableIndexes.Direct3DDevice9Present; }
         }
@@ -93,44 +93,44 @@ namespace AxTools.Classes.WoW.DX
         #region Nested type: D3DPresentParameters
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct D3DPresentParameters
+        internal struct D3DPresentParameters
         {
-            public readonly uint BackBufferWidth;
-            public readonly uint BackBufferHeight;
-            public uint BackBufferFormat;
-            public readonly uint BackBufferCount;
-            public readonly uint MultiSampleType;
-            public readonly uint MultiSampleQuality;
-            public uint SwapEffect;
-            public readonly IntPtr hDeviceWindow;
+            internal readonly uint BackBufferWidth;
+            internal readonly uint BackBufferHeight;
+            internal uint BackBufferFormat;
+            internal readonly uint BackBufferCount;
+            internal readonly uint MultiSampleType;
+            internal readonly uint MultiSampleQuality;
+            internal uint SwapEffect;
+            internal readonly IntPtr hDeviceWindow;
 
             [MarshalAs(UnmanagedType.Bool)]
-            public bool Windowed;
+            internal bool Windowed;
 
             [MarshalAs(UnmanagedType.Bool)]
-            public readonly bool EnableAutoDepthStencil;
+            internal readonly bool EnableAutoDepthStencil;
 
-            public readonly uint AutoDepthStencilFormat;
-            public readonly uint Flags;
-            public readonly uint FullScreen_RefreshRateInHz;
-            public readonly uint PresentationInterval;
+            internal readonly uint AutoDepthStencilFormat;
+            internal readonly uint Flags;
+            internal readonly uint FullScreen_RefreshRateInHz;
+            internal readonly uint PresentationInterval;
         }
 
         #endregion Nested type: D3DPresentParameters
 
         #region Nested type: VTableIndexes
 
-        public struct VTableIndexes
+        internal struct VTableIndexes
         {
-            public const int Direct3D9Release = 2;
-            public const int Direct3D9CreateDevice = 0x10;
+            internal const int Direct3D9Release = 2;
+            internal const int Direct3D9CreateDevice = 0x10;
 
-            public const int Direct3DDevice9Release = 2;
-            public const int Direct3DDevice9Reset = 0x10;
-            public const int Direct3DDevice9Present = 0x11;
-            public const int Direct3DDevice9BeginScene = 0x29;
-            public const int Direct3DDevice9EndScene = 0x2A;
-            public const int Direct3DDevice9Clear = 0x2B;
+            internal const int Direct3DDevice9Release = 2;
+            internal const int Direct3DDevice9Reset = 0x10;
+            internal const int Direct3DDevice9Present = 0x11;
+            internal const int Direct3DDevice9BeginScene = 0x29;
+            internal const int Direct3DDevice9EndScene = 0x2A;
+            internal const int Direct3DDevice9Clear = 0x2B;
         }
 
         #endregion Nested type: VTableIndexes

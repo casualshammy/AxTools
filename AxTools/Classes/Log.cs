@@ -35,10 +35,9 @@ namespace AxTools.Classes
             }
             catch (Exception ex)
             {
-                MainForm main = Utils.FindForm<MainForm>();
-                if (main != null)
+                if (MainForm.Instance != null)
                 {
-                    main.ShowTaskDialog("Log file writing error", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                    MainForm.Instance.ShowTaskDialog("Log file writing error", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
                 }
                 else
                 {

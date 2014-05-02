@@ -1,10 +1,13 @@
-﻿using System;
+﻿using MetroFramework;
+using Microsoft.Win32;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using MetroFramework;
 
 namespace AxTools.Classes
 {
@@ -20,15 +23,15 @@ namespace AxTools.Classes
         internal static Keys WowLoginHotkey = Keys.None;
         internal static Point WowWindowSize = new Point(800, 600);
         internal static bool DelWowLog = false;
-        internal static string MumbleExe = string.Empty;
+        internal static string MumbleExe = String.Empty;
         internal static bool Noframe = false;
-        internal static string RaidcallExe = string.Empty;
-        internal static string Regname = string.Empty;
+        internal static string RaidcallExe = String.Empty;
+        internal static string Regname = String.Empty;
         internal static SrvAddress GameServer;
-        internal static string TeamspeakExe = string.Empty;
-        internal static string VtExe = string.Empty;
+        internal static string TeamspeakExe = String.Empty;
+        internal static string VtExe = String.Empty;
         internal static bool Wasd = false;
-        internal static string WowExe = string.Empty;
+        internal static string WowExe = String.Empty;
         internal static Point WowWindowLocation = Point.Empty;
         internal static bool StartVentriloWithWow = false;
         internal static bool StartTS3WithWow = false;
@@ -59,6 +62,12 @@ namespace AxTools.Classes
         internal static int BackupCompressionLevel = 6;
         internal static MetroColorStyle NewStyleColor = MetroColorStyle.Blue;
         internal static bool WowPluginsShowIngameNotifications = true;
+        internal static bool EnableCustomPlugins = false;
+        internal static int PingerBadNetworkPing = 125;
+        internal static int PingerBadNetworkProcent = 5;
+        internal static int PingerVeryBadNetworkPing = 250;
+        internal static int PingerVeryBadNetworkProcent = 10;
+        internal static bool MinimizeToTray = true;
         
         internal static void Load()
         {
@@ -85,6 +94,9 @@ namespace AxTools.Classes
                                             {
                                                 Location = new Point(100, 100);
                                             }
+                                            break;
+                                        case "MinimizeToTray":
+                                            MinimizeToTray = Convert.ToBoolean(strArray[1]);
                                             break;
                                         case "wow_dir":
                                             WowExe = strArray[1];
@@ -123,7 +135,20 @@ namespace AxTools.Classes
                                             ClickerInterval = Convert.ToInt32(strArray[1]);
                                             break;
                                         case "GameServer":
+                                        case "Pinger.GameServer":
                                             GameServer = Globals.GameServers.FirstOrDefault(i => i.Description == strArray[1]) ?? Globals.GameServers[0];
+                                            break;
+                                        case "Pinger.BadNetworkPing":
+                                            PingerBadNetworkPing = Convert.ToInt32(strArray[1]);
+                                            break;
+                                        case "Pinger.BadNetworkProcent":
+                                            PingerBadNetworkProcent = Convert.ToInt32(strArray[1]);
+                                            break;
+                                        case "Pinger.VeryBadNetworkPing":
+                                            PingerVeryBadNetworkPing = Convert.ToInt32(strArray[1]);
+                                            break;
+                                        case "Pinger.VeryBadNetworkProcent":
+                                            PingerVeryBadNetworkProcent = Convert.ToInt32(strArray[1]);
                                             break;
                                         case "regname":
                                             Regname = strArray[1];
@@ -295,6 +320,9 @@ namespace AxTools.Classes
                                         case "WowPluginsShowIngameNotifications":
                                             WowPluginsShowIngameNotifications = Convert.ToBoolean(strArray[1]);
                                             break;
+                                        case "EnableCustomPlugins":
+                                            EnableCustomPlugins = Convert.ToBoolean(strArray[1]);
+                                            break;
                                     }
                                 }
                                 catch (Exception ex)
@@ -303,6 +331,26 @@ namespace AxTools.Classes
                                 }
                             }
                         }
+                    }
+                    if (WowExe == String.Empty)
+                    {
+                        WowExe = GetWowPath();
+                    }
+                    if (TeamspeakExe == String.Empty)
+                    {
+                        TeamspeakExe = GetTeamspeakPath();
+                    }
+                    if (VtExe == String.Empty)
+                    {
+                        VtExe = GetVentriloPath();
+                    }
+                    if (RaidcallExe == String.Empty)
+                    {
+                        RaidcallExe = GetRaidcallPath();
+                    }
+                    if (MumbleExe == String.Empty)
+                    {
+                        MumbleExe = GetMumblePath();
                     }
                     Log.Print("Settings are loaded");
                 }
@@ -321,16 +369,18 @@ namespace AxTools.Classes
             try
             {
                 StringBuilder builder = new StringBuilder("## AxTools settings file\r\n");
-                builder.AppendLine(string.Empty);
+                builder.AppendLine(String.Empty);
                 builder.AppendLine("## General settings ##");
                 builder.AppendLine("Location=" + Location);
-                builder.AppendLine("GameServer=" + GameServer.Description);
                 builder.AppendLine("regname=" + Regname);
-                builder.AppendLine("LastUsedVersion=" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+                builder.AppendLine("LastUsedVersion=" + Assembly.GetExecutingAssembly().GetName().Version);
                 builder.AppendLine("NewStyleColor=" + Convert.ToString((int)NewStyleColor));
-                builder.AppendLine(string.Empty);
+                builder.AppendLine("MinimizeToTray=" + Convert.ToString(MinimizeToTray));
+
+                builder.AppendLine(String.Empty);
 
                 builder.AppendLine("WowPluginsShowIngameNotifications=" + Convert.ToString(WowPluginsShowIngameNotifications));
+                builder.AppendLine("EnableCustomPlugins=" + Convert.ToString(EnableCustomPlugins));
                 builder.AppendLine("del_wow_log=" + Convert.ToString(DelWowLog));
                 builder.AppendLine("creature_cache=" + Convert.ToString(CreatureCache));
                 builder.AppendLine("clicker.key=" + Convert.ToString(ClickerKey));
@@ -346,20 +396,22 @@ namespace AxTools.Classes
                 builder.AppendLine("LuaTimerHotkey=" + Convert.ToString(LuaTimerHotkey));
                 builder.AppendLine("PrecompiledModulesHotkey=" + Convert.ToString(PrecompiledModulesHotkey));
 
-                builder.AppendLine(string.Empty);
+                builder.AppendLine(String.Empty);
                 builder.AppendLine("## Paths ##");
                 if (Directory.Exists(WowExe)) builder.AppendLine("wow_dir=" + WowExe);
                 if (Directory.Exists(VtExe)) builder.AppendLine("vt_dir=" + VtExe);
                 if (Directory.Exists(MumbleExe)) builder.AppendLine("mumble_dir=" + MumbleExe);
                 if (Directory.Exists(RaidcallExe)) builder.AppendLine("raidcall_dir=" + RaidcallExe);
                 if (Directory.Exists(TeamspeakExe)) builder.AppendLine("TeamspeakDir=" + TeamspeakExe);
-                builder.AppendLine(string.Empty);
+
+                builder.AppendLine(String.Empty);
                 builder.AppendLine("## VoIP settings ##");
                 builder.AppendLine("StartVentriloWithWow=" + Convert.ToString(StartVentriloWithWow));
                 builder.AppendLine("StartTS3WithWow=" + Convert.ToString(StartTS3WithWow));
                 builder.AppendLine("StartRaidcallWithWow=" + Convert.ToString(StartRaidcallWithWow));
                 builder.AppendLine("StartMumbleWithWow=" + Convert.ToString(StartMumbleWithWow));
-                builder.AppendLine(string.Empty);
+
+                builder.AppendLine(String.Empty);
                 builder.AppendLine("## Lua console settings ##");
                 builder.AppendLine("LuaConsole.Size.Width=" + LuaConsoleSize.Width);
                 builder.AppendLine("LuaConsole.Size.Height=" + LuaConsoleSize.Height);
@@ -367,7 +419,8 @@ namespace AxTools.Classes
                 builder.AppendLine("LuaConsole.RandomizeTimer=" + LuaConsoleRandomizeTimer);
                 builder.AppendLine("LuaConsole.IgnoreGameState=" + LuaConsoleIgnoreGameState);
                 builder.AppendLine("LuaConsole.ShowIngameNotifications=" + LuaConsoleShowIngameNotifications);
-                builder.AppendLine(string.Empty);
+
+                builder.AppendLine(String.Empty);
                 builder.AppendLine("## Radar settings ##");
                 builder.AppendLine("RadarLocation=" + RadarLocation);
                 builder.AppendLine("RadarShowPlayersClasses=" + Convert.ToString(RadarShowPlayersClasses));
@@ -378,7 +431,16 @@ namespace AxTools.Classes
                 builder.AppendLine("RadarEnemyColor=" + RadarEnemyColor.ToArgb());
                 builder.AppendLine("RadarNpcColor=" + RadarNpcColor.ToArgb());
                 builder.AppendLine("RadarObjectColor=" + RadarObjectColor.ToArgb());
-                builder.AppendLine(string.Empty);
+
+                builder.AppendLine(String.Empty);
+                builder.AppendLine("## Pinger ##");
+                builder.AppendLine("Pinger.GameServer=" + GameServer.Description);
+                builder.AppendLine("Pinger.BadNetworkPing=" + PingerBadNetworkPing);
+                builder.AppendLine("Pinger.BadNetworkProcent=" + PingerBadNetworkProcent);
+                builder.AppendLine("Pinger.VeryBadNetworkPing=" + PingerVeryBadNetworkPing);
+                builder.AppendLine("Pinger.VeryBadNetworkProcent=" + PingerVeryBadNetworkProcent);
+
+                builder.AppendLine(String.Empty);
                 builder.AppendLine("## Backup settings ##");
                 builder.AppendLine("AddonsBackupPath=" + AddonsBackupPath);
                 builder.AppendLine("AddonsBackup=" + Convert.ToString(AddonsBackup));
@@ -394,5 +456,100 @@ namespace AxTools.Classes
             }
         }
 
+        private static string GetTeamspeakPath()
+        {
+            try
+            {
+                RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("ts3server\\\\shell\\\\open\\\\command");
+                if (regVersion != null && regVersion.GetValue("") != null)
+                {
+                    // "C:\Program Files\TeamSpeak 3 Client\ts3client_win64.exe" "%1"
+                    string raw = regVersion.GetValue("").ToString();
+                    return raw.Replace("\"", String.Empty).Replace("\\ts3client_win64.exe %1", String.Empty).Replace("\\ts3client_win32.exe %1", String.Empty);
+                }
+                return String.Empty;
+            }
+            catch
+            {
+                return String.Empty;
+            }
+        }
+
+        private static string GetRaidcallPath()
+        {
+            try
+            {
+                RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("raidcall\\\\shell\\\\open\\\\command");
+                if (regVersion != null && regVersion.GetValue("") != null)
+                {
+                    // "C:\Program Files\RaidCall\StartRC.exe" "%1"
+                    string raw = regVersion.GetValue("").ToString();
+                    return raw.Replace("\"", String.Empty).Replace("\\StartRC.exe %1", String.Empty);
+                }
+                return String.Empty;
+            }
+            catch
+            {
+                return String.Empty;
+            }
+        }
+
+        private static string GetVentriloPath()
+        {
+            try
+            {
+                RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("Ventrilo\\\\shell\\\\open\\\\command");
+                if (regVersion != null && regVersion.GetValue("") != null)
+                {
+                    // C:\PROGRA~1\Ventrilo\Ventrilo.exe -l%1
+                    string raw = regVersion.GetValue("").ToString();
+                    return raw.Replace("\"", String.Empty).Replace("\\Ventrilo.exe -l%1", String.Empty).Replace("PROGRA~1", "Program Files").Replace("PROGRA~2", "Program Files (x86)");
+                }
+                return String.Empty;
+            }
+            catch
+            {
+                return String.Empty;
+            }
+        }
+
+        private static string GetMumblePath()
+        {
+            try
+            {
+                RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("mumble\\\\shell\\\\open\\\\command");
+                if (regVersion != null && regVersion.GetValue("") != null)
+                {
+                    // C:\PROGRA~1\Ventrilo\Ventrilo.exe -l%1
+                    string raw = regVersion.GetValue("").ToString();
+                    return Regex.Replace(raw, "\\mumble.exe %1", String.Empty, RegexOptions.IgnoreCase);
+                }
+                return String.Empty;
+            }
+            catch
+            {
+                return String.Empty;
+            }
+        }
+
+        private static string GetWowPath()
+        {
+            try
+            {
+                RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Blizzard Entertainment\\\\World of Warcraft");
+                if (regVersion != null && regVersion.GetValue("InstallPath") != null)
+                {
+                    // D:\World of Warcraft\
+                    string raw = regVersion.GetValue("InstallPath").ToString();
+                    return raw.Replace("\"", String.Empty).Replace("World of Warcraft\\", "World of Warcraft");
+                }
+                return String.Empty;
+            }
+            catch
+            {
+                return String.Empty;
+            }
+        }
+    
     }
 }

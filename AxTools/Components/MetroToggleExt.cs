@@ -6,14 +6,14 @@ using MetroFramework.Drawing;
 
 namespace AxTools.Components
 {
-    public partial class MetroToggleExt : MetroToggle
+    internal partial class MetroToggleExt : MetroToggle
     {
-        public MetroToggleExt()
+        internal MetroToggleExt()
         {
             InitializeComponent();
         }
 
-        public MetroToggleExt(IContainer container)
+        internal MetroToggleExt(IContainer container)
         {
             container.Add(this);
 

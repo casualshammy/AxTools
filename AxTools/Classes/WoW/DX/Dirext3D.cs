@@ -6,7 +6,7 @@ namespace AxTools.Classes.WoW.DX
 {
     internal class Dirext3D
     {
-        public Dirext3D(Process targetProc)
+        internal Dirext3D(Process targetProc)
         {
             TargetProcess = targetProc;
 
@@ -23,12 +23,12 @@ namespace AxTools.Classes.WoW.DX
             }
         }
 
-        public Process TargetProcess { get; private set; }
+        internal Process TargetProcess { get; private set; }
 
-        public bool UsingDirectX11 { get; private set; }
+        internal bool UsingDirectX11 { get; private set; }
 
-        public IntPtr HookPtr { get; private set; }
+        internal IntPtr HookPtr { get; private set; }
 
-        public D3DDevice Device { get; private set; }
+        internal D3DDevice Device { get; private set; }
     }
 }

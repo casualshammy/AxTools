@@ -16,10 +16,9 @@ namespace AxTools.Forms
 {
     internal partial class AppSettings : BorderedMetroForm
     {
-        public AppSettings()
+        internal AppSettings()
         {
             InitializeComponent();
-            AccessibleName = "AppSettings";
             CheckBoxStartAxToolsWithWindows.CheckedChanged += CheckBox9CheckedChanged;
             CheckBox5.CheckedChanged += CheckBox5CheckedChanged;
             CheckBoxAxToolsAddon.CheckedChanged += CheckBox10CheckedChanged;
@@ -38,7 +37,6 @@ namespace AxTools.Forms
             })
             {
                 comboBoxClickerHotkey.Items.Add(i.ToString());
-                comboBoxClickerKey.Items.Add(i.ToString());
                 comboBoxWowLoginHotkey.Items.Add(i.ToString());
                 comboBoxWExecLuaTimer.Items.Add(i.ToString());
                 comboBoxWExecModule.Items.Add(i.ToString());
@@ -48,10 +46,12 @@ namespace AxTools.Forms
             {
                 comboBoxBadNetworkStatusProcent.Items.Add(i + "%");
             }
+            comboBoxBadNetworkStatusProcent.SelectedIndex = Settings.PingerBadNetworkProcent;
             for (int i = 0; i <= 50; i++)
             {
                 comboBoxVeryBadNetworkStatusProcent.Items.Add(i + "%");
             }
+            comboBoxVeryBadNetworkStatusProcent.SelectedIndex = Settings.PingerVeryBadNetworkProcent;
             int counter = 25;
             while (counter <= 750)
             {
@@ -59,9 +59,9 @@ namespace AxTools.Forms
                 comboBoxVeryBadNetworkStatusPing.Items.Add(counter + "ms");
                 counter += 25;
             }
+            comboBoxBadNetworkStatusPing.SelectedIndex = Settings.PingerBadNetworkPing/25 - 1;
+            comboBoxVeryBadNetworkStatusPing.SelectedIndex = Settings.PingerVeryBadNetworkPing / 25 - 1;
 
-            comboBoxClickerKey.Text = Settings.ClickerKey.ToString();
-            num_clicker_interval.Value = Settings.ClickerInterval;
             //ComboBox_server_ip
             ComboBox_server_ip.Items.Clear();
             ComboBox_server_ip.Items.AddRange(Globals.GameServers.Select(k => k.Description).Cast<object>().ToArray());
@@ -83,6 +83,7 @@ namespace AxTools.Forms
             metroStyleManager1.Style = Settings.NewStyleColor;
             metroComboBoxStyle.SelectedIndex = (int)Settings.NewStyleColor == 0 ? 0 : (int)Settings.NewStyleColor - 1;
             metroTabControl1.SelectedIndex = 0;
+            checkBoxMinimizeToTray.Checked = Settings.MinimizeToTray;
 
             Icon = Resources.AppIcon;
             checkBox_AntiAFK.Checked = Settings.Wasd;
@@ -90,7 +91,7 @@ namespace AxTools.Forms
             CheckBoxAxToolsAddon.Checked = Settings.AxToolsAddon;
             CheckBox7.Checked = Settings.Noframe;
             CheckBox6.Checked = Settings.AutoAcceptWndSetts;
-            foreach (var i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
+            foreach (Control i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
             {
                 i.Enabled = CheckBox6.Checked;
             }
@@ -102,8 +103,7 @@ namespace AxTools.Forms
             //CheckBox9
             try
             {
-                Microsoft.Win32.RegistryKey regVersion =
-                    Microsoft.Win32.Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
+                Microsoft.Win32.RegistryKey regVersion = Microsoft.Win32.Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
                 if (regVersion != null)
                 {
                     if (regVersion.GetValue("AxTools") == null | regVersion.GetValue("AxTools").ToString() != Application.ExecutablePath)
@@ -128,11 +128,9 @@ namespace AxTools.Forms
             }
             //tooltips
             metroToolTip1.SetToolTip(CheckBox3, "Deletes creature cache file when possible");
-            metroToolTip1.SetToolTip(CheckBox5,
-                                     "Moves WoW log files to temporary folder\r\non AxTools' startup\r\nand deletes it on AxTools' shutdown");
+            metroToolTip1.SetToolTip(CheckBox5, "Moves WoW log files to temporary folder\r\non AxTools' startup\r\nand deletes it on AxTools' shutdown");
             metroToolTip1.SetToolTip(CheckBoxAxToolsAddon, "Checks ax_tools version and updates it if needed\r\non AxTools' startup");
-            metroToolTip1.SetToolTip(checkBox_AntiAFK,
-                                     "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
+            metroToolTip1.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
         }
 
         private void CheckBox9CheckedChanged(Object sender, EventArgs e)
@@ -298,11 +296,7 @@ namespace AxTools.Forms
         private void ComboBoxWExecModuleSelectedIndexChanged(object sender, EventArgs e)
         {
             Enum.TryParse(comboBoxWExecModule.Text, true, out Settings.PrecompiledModulesHotkey);
-            MainForm main = Utils.FindForm<MainForm>();
-            if (main != null)
-            {
-                main.HotkeysChanged();
-            }
+            MainForm.Instance.WowPluginHotkeyChanged();
         }
 
         private void CheckBoxAddonsBackupCheckedChanged(object sender, EventArgs e)
@@ -372,16 +366,6 @@ namespace AxTools.Forms
             }
         }
 
-        private void ComboBoxClickerKeySelectedIndexChanged(object sender, EventArgs e)
-        {
-            Enum.TryParse(comboBoxClickerKey.Text, true, out Settings.ClickerKey);
-        }
-
-        private void NumClickerIntervalValueChanged(object sender, EventArgs e)
-        {
-            if (IsHandleCreated) Settings.ClickerInterval = Convert.ToInt32(num_clicker_interval.Value);
-        }
-
         private void MetroComboBoxBackupCompressionLevelSelectedIndexChanged(object sender, EventArgs e)
         {
             Settings.BackupCompressionLevel = metroComboBoxBackupCompressionLevel.SelectedIndex;
@@ -406,7 +390,7 @@ namespace AxTools.Forms
             Settings.NewStyleColor = (MetroColorStyle) style;
             foreach (object i in Application.OpenForms)
             {
-                if (i.GetType().BaseType == typeof (MetroForm))
+                if (i.GetType().ParentTypes().Any(l => l == typeof(MetroForm)))
                 {
                     if (((MetroForm) i).StyleManager != null)
                     {
@@ -439,8 +423,7 @@ namespace AxTools.Forms
         {
             try
             {
-                string subject;
-                InputBox.Input("Any comment? (optional)", out subject);
+                string subject = InputBox.Input("Any comment? (optional)");
                 WaitingOverlay waitingOverlay = new WaitingOverlay(this);
                 waitingOverlay.Show();
                 Task.Factory.StartNew(() =>
@@ -473,5 +456,31 @@ namespace AxTools.Forms
                 Settings.GameServer = Globals.GameServers.First(i => i.Description == ComboBox_server_ip.Text);
             }
         }
+
+        private void comboBoxBadNetworkStatusProcent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Settings.PingerBadNetworkProcent = comboBoxBadNetworkStatusProcent.SelectedIndex;
+        }
+
+        private void comboBoxBadNetworkStatusPing_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Settings.PingerBadNetworkPing = (comboBoxBadNetworkStatusPing.SelectedIndex + 1)*25;
+        }
+
+        private void comboBoxVeryBadNetworkStatusProcent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Settings.PingerVeryBadNetworkProcent = comboBoxVeryBadNetworkStatusProcent.SelectedIndex;
+        }
+
+        private void comboBoxVeryBadNetworkStatusPing_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Settings.PingerVeryBadNetworkPing = (comboBoxVeryBadNetworkStatusPing.SelectedIndex + 1)*25;
+        }
+
+        private void checkBoxMinimizeToTray_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.MinimizeToTray = checkBoxMinimizeToTray.Checked;
+        }
+
     }
 }

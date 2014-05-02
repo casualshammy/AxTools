@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace AxTools.Components
 {
-    internal partial class CheckBoxExt : CheckBox
+    public partial class CheckBoxExt : CheckBox
     {
         public CheckBoxExt()
         {

@@ -3,9 +3,7 @@ using AxTools.Classes;
 using AxTools.Classes.WoW;
 using AxTools.Components;
 using AxTools.Properties;
-using MetroFramework.Drawing;
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using Settings = AxTools.Classes.Settings;
@@ -36,7 +34,7 @@ namespace AxTools.Forms
         {
             if (!WoW.Hooked || !WoW.WProc.IsInGame)
             {
-                new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
+                this.ShowTaskDialog("Player isn't logged in", "If you sure it is, close this window and open BMTracker again", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 return;
             }
             int startTime = Environment.TickCount;
@@ -65,7 +63,7 @@ namespace AxTools.Forms
                                     gold + " g",
                                     item.NumBids.ToString()
                                 }) {Tag = item};
-                            Invoke(new Action(() => listView1.Items.Add(lvi)));
+                            Invoke((MethodInvoker) (() => listView1.Items.Add(lvi)));
                         }
                     }
                     catch (Exception ex)

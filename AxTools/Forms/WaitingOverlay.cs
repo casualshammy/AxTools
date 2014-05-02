@@ -10,7 +10,7 @@ namespace AxTools.Forms
 {
     internal partial class WaitingOverlay : Form
     {
-        public WaitingOverlay(MetroForm form)
+        internal WaitingOverlay(MetroForm form)
         {
             InitializeComponent();
             parentForm = form;

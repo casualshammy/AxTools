@@ -1,11 +1,20 @@
-﻿18.01.2014 11:43:40.829 // Launching... (11.13.26.0)
-18.01.2014 11:43:40.960 // Settings are loaded
-18.01.2014 11:43:40.969 // WoW accounts was loaded
-18.01.2014 11:43:41.027 // Registered for: Axio-5GDMJHD20R
-18.01.2014 11:43:41.032 // Wow:3384 :: [Process watcher] Process added
-18.01.2014 11:43:41.034 // AxTools :: preparation completed
-18.01.2014 11:43:41.036 // Wow:3384 :: [WoW hook] Attaching...
-18.01.2014 11:43:43.067 // Wow:3384 :: [WoW hook] Window style is changed
-18.01.2014 11:43:43.080 // Wow:3384 :: [WoW hook] Memory manager initialized, base address 0xA30000
-18.01.2014 11:44:01.746 // Wow:3384 :: [WoW hook] Memory manager disposed
-18.01.2014 11:44:01.748 // AxTools closed
+﻿17.02.2014 17:37:51.853 // Launching... (11.15.4.0)
+17.02.2014 17:37:51.868 // Settings are loaded
+17.02.2014 17:37:51.871 // WoW accounts file not found
+17.02.2014 17:37:51.876 // Registered for: Axio-5GDMJHD20R
+17.02.2014 17:37:51.881 // Wow:4240 :: [Process watcher] Process added
+17.02.2014 17:37:51.882 // AxTools :: preparation completed
+17.02.2014 17:37:51.884 // Wow:4240 :: [WoW hook] Attaching...
+17.02.2014 17:37:51.918 // Plugin loaded: Fishing 1.0
+17.02.2014 17:37:51.919 // Plugin loaded: BG Outlaw 1.0
+17.02.2014 17:37:51.920 // Plugin loaded: GoodsDestroyer 1.0
+17.02.2014 17:37:51.968 // AxTools started succesfully
+17.02.2014 17:37:51.969 // [Updater] Checking for updates
+17.02.2014 17:37:54.031 // Wow:4240 :: [WoW hook] Window style is changed
+17.02.2014 17:37:54.043 // Wow:4240 :: [WoW hook] Memory manager initialized, base address 0xC20000
+17.02.2014 17:37:56.931 // Wow:4240 :: [Anti-AFK] Action emulated, next MaxTime: 203661
+17.02.2014 17:38:21.547 // Starting processes trace watching is stopped
+17.02.2014 17:38:21.548 // Stopping processes trace watching is stopped
+17.02.2014 17:38:21.550 // Wow:4240 :: [WoW hook] Memory manager disposed
+17.02.2014 17:38:21.551 // Keyboard hook disposed
+17.02.2014 17:38:21.552 // AxTools closed

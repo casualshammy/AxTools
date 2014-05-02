@@ -1,8 +1,8 @@
-﻿using AxTools.Classes;
+﻿using System.Windows.Forms;
+using AxTools.Classes;
 using AxTools.Classes.WinAPI;
 using AxTools.Classes.WoW;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using AxTools.Components;
@@ -16,23 +16,7 @@ namespace AxTools.Forms
             InitializeComponent();
             ShowInTaskbar = false;
             metroStyleManager1.Style = Settings.NewStyleColor;
-        }
-
-        internal static bool SelectProcess(List<WowProcess> listProcess, out int index)
-        {
-            ProcessSelection bform = new ProcessSelection {wListProcess = listProcess};
-            bform.ShowDialog();
-            index = bform.wIndex;
-            return bform.ret;
-        }
-
-        private int wIndex = -1;
-        private bool ret;
-        private List<WowProcess> wListProcess;
-
-        private void ProcessSelectionLoad(object sender, EventArgs e)
-        {
-            foreach (var i in wListProcess)
+            foreach (WowProcess i in WowProcess.Shared)
             {
                 comboBox1.Items.Add(i.IsValidBuild && i.IsInGame ?
                     string.Format("{0} - {1} (pID: {2})", i.PlayerName, i.PlayerRealm, i.ProcessID) :
@@ -40,18 +24,28 @@ namespace AxTools.Forms
             }
             button1.Enabled = false;
             button2.Enabled = false;
-            MainForm main = Utils.FindForm<MainForm>();
-            if (main != null)
+            BeginInvoke((MethodInvoker) delegate
             {
-                Location = new Point(main.Location.X + main.Size.Width / 2 - Size.Width / 2, main.Location.Y + main.Size.Height / 2 - Size.Height / 2);
-            }
+                MainForm main = MainForm.Instance;
+                Location = new Point(main.Location.X + main.Size.Width/2 - Size.Width/2, main.Location.Y + main.Size.Height/2 - Size.Height/2);
+                OnActivated(EventArgs.Empty);
+            });
         }
+
+        internal static int SelectProcess()
+        {
+            ProcessSelection bform = new ProcessSelection();
+            bform.ShowDialog();
+            return bform.wIndex;
+        }
+
+        private int wIndex = -1;
 
         private void Button2Click(object sender, EventArgs e)
         {
             var fi = new FLASHWINFO {
                 cbSize = (uint) Marshal.SizeOf(typeof (FLASHWINFO)),
-                hwnd = wListProcess[comboBox1.SelectedIndex].MainWindowHandle,
+                hwnd = WowProcess.Shared[comboBox1.SelectedIndex].MainWindowHandle,
                 dwFlags = FlashWindowFlags.FLASHW_TRAY | FlashWindowFlags.FLASHW_TIMERNOFG
             };
             NativeMethods.FlashWindowEx(ref fi);
@@ -59,7 +53,6 @@ namespace AxTools.Forms
 
         private void Button1Click(object sender, EventArgs e)
         {
-            ret = true;
             wIndex = comboBox1.SelectedIndex;
             Close();
         }
@@ -69,5 +62,6 @@ namespace AxTools.Forms
             button1.Enabled = comboBox1.Text != string.Empty;
             button2.Enabled = comboBox1.Text != string.Empty;
         }
+    
     }
 }

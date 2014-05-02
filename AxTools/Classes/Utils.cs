@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
+using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Windows.Forms;
@@ -53,6 +55,18 @@ namespace AxTools.Classes
             {
                 Directory.CreateDirectory(Globals.CfgPath);
             }
+            if (!Directory.Exists(Globals.PluginsPath))
+            {
+                Directory.CreateDirectory(Globals.PluginsPath);
+            }
+            if (!Directory.Exists(Globals.PluginsAssembliesPath))
+            {
+                Directory.CreateDirectory(Globals.PluginsAssembliesPath);
+            }
+            if (!Directory.Exists(Globals.PluginsSettingsPath))
+            {
+                Directory.CreateDirectory(Globals.PluginsSettingsPath);
+            }
         }
 
         internal static void Legacy()
@@ -93,5 +107,14 @@ namespace AxTools.Classes
                 }
             }
         }
+
+        internal static bool FontIsInstalled(string fontName)
+        {
+            using (var fontsCollection = new InstalledFontCollection())
+            {
+                return fontsCollection.Families.Any(i => i.Name == fontName);
+            }
+        }
+
     }
 }

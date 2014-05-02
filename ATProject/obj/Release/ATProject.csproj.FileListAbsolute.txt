@@ -1,0 +1,5 @@
+F:\Dropbox\Projects\AxTools\ATProject\obj\Release\ATProject.csprojResolveAssemblyReference.cache
+F:\Dropbox\Projects\AxTools\ATProject\bin\Release\AT.dll
+F:\Dropbox\Projects\AxTools\ATProject\bin\Release\AT.pdb
+F:\Dropbox\Projects\AxTools\ATProject\obj\Release\AT.dll
+F:\Dropbox\Projects\AxTools\ATProject\obj\Release\AT.pdb

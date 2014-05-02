@@ -90,12 +90,9 @@ namespace AxTools.Forms
             this.buttonBackupPath = new MetroFramework.Controls.MetroButton();
             this.textBoxBackupPath = new System.Windows.Forms.TextBox();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
-            this.metroTabPage6 = new MetroFramework.Controls.MetroTabPage();
-            this.num_clicker_interval = new System.Windows.Forms.NumericUpDown();
-            this.comboBoxClickerKey = new MetroFramework.Controls.MetroComboBox();
-            this.metroLabel7 = new MetroFramework.Controls.MetroLabel();
-            this.metroLabel8 = new MetroFramework.Controls.MetroLabel();
             this.metroTabPage7 = new MetroFramework.Controls.MetroTabPage();
+            this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel13 = new MetroFramework.Controls.MetroLabel();
             this.comboBoxVeryBadNetworkStatusPing = new MetroFramework.Controls.MetroComboBox();
             this.comboBoxBadNetworkStatusPing = new MetroFramework.Controls.MetroComboBox();
             this.comboBoxVeryBadNetworkStatusProcent = new MetroFramework.Controls.MetroComboBox();
@@ -106,8 +103,7 @@ namespace AxTools.Forms
             this.Label3 = new MetroFramework.Controls.MetroLabel();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.metroLabel13 = new MetroFramework.Controls.MetroLabel();
-            this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
+            this.checkBoxMinimizeToTray = new MetroFramework.Controls.MetroCheckBox();
             this.GroupBox2.SuspendLayout();
             this.GroupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupTimer)).BeginInit();
@@ -118,8 +114,6 @@ namespace AxTools.Forms
             this.metroTabPage3.SuspendLayout();
             this.metroTabPage4.SuspendLayout();
             this.metroTabPage2.SuspendLayout();
-            this.metroTabPage6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.num_clicker_interval)).BeginInit();
             this.metroTabPage7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
@@ -171,6 +165,7 @@ namespace AxTools.Forms
             // 
             // buttonVentriloPath
             // 
+            this.buttonVentriloPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonVentriloPath.Highlight = true;
             this.buttonVentriloPath.Location = new System.Drawing.Point(518, 67);
             this.buttonVentriloPath.Name = "buttonVentriloPath";
@@ -627,7 +622,6 @@ namespace AxTools.Forms
             this.metroTabControl1.Controls.Add(this.metroTabPage3);
             this.metroTabControl1.Controls.Add(this.metroTabPage4);
             this.metroTabControl1.Controls.Add(this.metroTabPage2);
-            this.metroTabControl1.Controls.Add(this.metroTabPage6);
             this.metroTabControl1.Controls.Add(this.metroTabPage7);
             this.metroTabControl1.CustomBackground = false;
             this.metroTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -635,7 +629,7 @@ namespace AxTools.Forms
             this.metroTabControl1.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 6;
+            this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Size = new System.Drawing.Size(565, 220);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.StyleManager = this.metroStyleManager1;
@@ -646,6 +640,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage1
             // 
+            this.metroTabPage1.Controls.Add(this.checkBoxMinimizeToTray);
             this.metroTabPage1.Controls.Add(this.linkSendLogToDev);
             this.metroTabPage1.Controls.Add(this.linkShowLog);
             this.metroTabPage1.Controls.Add(this.metroLabel10);
@@ -662,7 +657,7 @@ namespace AxTools.Forms
             this.metroTabPage1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage1.StyleManager = null;
             this.metroTabPage1.TabIndex = 0;
-            this.metroTabPage1.Text = "   General ";
+            this.metroTabPage1.Text = "    General  ";
             this.metroTabPage1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage1.VerticalScrollbar = false;
             this.metroTabPage1.VerticalScrollbarBarColor = true;
@@ -671,6 +666,7 @@ namespace AxTools.Forms
             // 
             // linkSendLogToDev
             // 
+            this.linkSendLogToDev.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkSendLogToDev.AutoSize = true;
             this.linkSendLogToDev.CustomBackground = false;
             this.linkSendLogToDev.CustomForeColor = false;
@@ -689,6 +685,7 @@ namespace AxTools.Forms
             // 
             // linkShowLog
             // 
+            this.linkShowLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkShowLog.CustomBackground = false;
             this.linkShowLog.CustomForeColor = false;
             this.linkShowLog.FontSize = MetroFramework.MetroLinkSize.Small;
@@ -712,7 +709,7 @@ namespace AxTools.Forms
             this.metroLabel10.FontSize = MetroFramework.MetroLabelSize.Medium;
             this.metroLabel10.FontWeight = MetroFramework.MetroLabelWeight.Light;
             this.metroLabel10.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel10.Location = new System.Drawing.Point(3, 89);
+            this.metroLabel10.Location = new System.Drawing.Point(3, 98);
             this.metroLabel10.Name = "metroLabel10";
             this.metroLabel10.Size = new System.Drawing.Size(74, 19);
             this.metroLabel10.Style = MetroFramework.MetroColorStyle.Blue;
@@ -744,7 +741,7 @@ namespace AxTools.Forms
             "Purple",
             "Red",
             "Yellow"});
-            this.metroComboBoxStyle.Location = new System.Drawing.Point(104, 85);
+            this.metroComboBoxStyle.Location = new System.Drawing.Point(83, 94);
             this.metroComboBoxStyle.Name = "metroComboBoxStyle";
             this.metroComboBoxStyle.Size = new System.Drawing.Size(293, 29);
             this.metroComboBoxStyle.Style = MetroFramework.MetroColorStyle.Blue;
@@ -781,7 +778,7 @@ namespace AxTools.Forms
             this.metroTabPage5.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage5.StyleManager = null;
             this.metroTabPage5.TabIndex = 4;
-            this.metroTabPage5.Text = "   Paths";
+            this.metroTabPage5.Text = "     Paths  ";
             this.metroTabPage5.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage5.VerticalScrollbar = false;
             this.metroTabPage5.VerticalScrollbarBarColor = true;
@@ -808,6 +805,7 @@ namespace AxTools.Forms
             // 
             // buttonWowPath
             // 
+            this.buttonWowPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonWowPath.Highlight = true;
             this.buttonWowPath.Location = new System.Drawing.Point(518, 21);
             this.buttonWowPath.Name = "buttonWowPath";
@@ -829,6 +827,7 @@ namespace AxTools.Forms
             // 
             // buttonRaidcallPath
             // 
+            this.buttonRaidcallPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonRaidcallPath.Highlight = true;
             this.buttonRaidcallPath.Location = new System.Drawing.Point(518, 93);
             this.buttonRaidcallPath.Name = "buttonRaidcallPath";
@@ -850,6 +849,7 @@ namespace AxTools.Forms
             // 
             // buttonMumblePath
             // 
+            this.buttonMumblePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonMumblePath.Highlight = true;
             this.buttonMumblePath.Location = new System.Drawing.Point(518, 120);
             this.buttonMumblePath.Name = "buttonMumblePath";
@@ -871,6 +871,7 @@ namespace AxTools.Forms
             // 
             // buttonTeamspeak3Path
             // 
+            this.buttonTeamspeak3Path.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonTeamspeak3Path.Highlight = true;
             this.buttonTeamspeak3Path.Location = new System.Drawing.Point(518, 146);
             this.buttonTeamspeak3Path.Name = "buttonTeamspeak3Path";
@@ -983,7 +984,7 @@ namespace AxTools.Forms
             this.metroTabPage3.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage3.StyleManager = null;
             this.metroTabPage3.TabIndex = 2;
-            this.metroTabPage3.Text = "    World of Warcraft";
+            this.metroTabPage3.Text = "     World of Warcraft ";
             this.metroTabPage3.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage3.VerticalScrollbar = false;
             this.metroTabPage3.VerticalScrollbarBarColor = true;
@@ -1031,7 +1032,7 @@ namespace AxTools.Forms
             this.metroTabPage4.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage4.StyleManager = null;
             this.metroTabPage4.TabIndex = 3;
-            this.metroTabPage4.Text = "  Backup";
+            this.metroTabPage4.Text = "    Backup ";
             this.metroTabPage4.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage4.VerticalScrollbar = false;
             this.metroTabPage4.VerticalScrollbarBarColor = true;
@@ -1150,119 +1151,12 @@ namespace AxTools.Forms
             this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage2.StyleManager = null;
             this.metroTabPage2.TabIndex = 1;
-            this.metroTabPage2.Text = "    Hotkeys";
+            this.metroTabPage2.Text = "     Hotkeys ";
             this.metroTabPage2.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage2.VerticalScrollbar = false;
             this.metroTabPage2.VerticalScrollbarBarColor = true;
             this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.VerticalScrollbarSize = 10;
-            // 
-            // metroTabPage6
-            // 
-            this.metroTabPage6.Controls.Add(this.num_clicker_interval);
-            this.metroTabPage6.Controls.Add(this.comboBoxClickerKey);
-            this.metroTabPage6.Controls.Add(this.metroLabel7);
-            this.metroTabPage6.Controls.Add(this.metroLabel8);
-            this.metroTabPage6.CustomBackground = false;
-            this.metroTabPage6.HorizontalScrollbar = false;
-            this.metroTabPage6.HorizontalScrollbarBarColor = true;
-            this.metroTabPage6.HorizontalScrollbarHighlightOnWheel = false;
-            this.metroTabPage6.HorizontalScrollbarSize = 10;
-            this.metroTabPage6.Location = new System.Drawing.Point(4, 35);
-            this.metroTabPage6.Name = "metroTabPage6";
-            this.metroTabPage6.Size = new System.Drawing.Size(557, 181);
-            this.metroTabPage6.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTabPage6.StyleManager = null;
-            this.metroTabPage6.TabIndex = 5;
-            this.metroTabPage6.Text = "  Clicker";
-            this.metroTabPage6.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTabPage6.VerticalScrollbar = false;
-            this.metroTabPage6.VerticalScrollbarBarColor = true;
-            this.metroTabPage6.VerticalScrollbarHighlightOnWheel = false;
-            this.metroTabPage6.VerticalScrollbarSize = 10;
-            // 
-            // num_clicker_interval
-            // 
-            this.num_clicker_interval.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.num_clicker_interval.Location = new System.Drawing.Point(93, 55);
-            this.num_clicker_interval.Maximum = new decimal(new int[] {
-            36000000,
-            0,
-            0,
-            0});
-            this.num_clicker_interval.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.num_clicker_interval.Name = "num_clicker_interval";
-            this.num_clicker_interval.Size = new System.Drawing.Size(152, 20);
-            this.num_clicker_interval.TabIndex = 55;
-            this.num_clicker_interval.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.num_clicker_interval.ThousandsSeparator = true;
-            this.num_clicker_interval.Value = new decimal(new int[] {
-            36000000,
-            0,
-            0,
-            0});
-            this.num_clicker_interval.ValueChanged += new System.EventHandler(this.NumClickerIntervalValueChanged);
-            // 
-            // comboBoxClickerKey
-            // 
-            this.comboBoxClickerKey.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxClickerKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxClickerKey.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.comboBoxClickerKey.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxClickerKey.FormattingEnabled = true;
-            this.comboBoxClickerKey.ItemHeight = 19;
-            this.comboBoxClickerKey.Location = new System.Drawing.Point(93, 24);
-            this.comboBoxClickerKey.Name = "comboBoxClickerKey";
-            this.comboBoxClickerKey.Size = new System.Drawing.Size(152, 25);
-            this.comboBoxClickerKey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxClickerKey.StyleManager = this.metroStyleManager1;
-            this.comboBoxClickerKey.TabIndex = 54;
-            this.comboBoxClickerKey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboBoxClickerKey.SelectedIndexChanged += new System.EventHandler(this.ComboBoxClickerKeySelectedIndexChanged);
-            // 
-            // metroLabel7
-            // 
-            this.metroLabel7.AutoSize = true;
-            this.metroLabel7.CustomBackground = false;
-            this.metroLabel7.CustomForeColor = false;
-            this.metroLabel7.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel7.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel7.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel7.Location = new System.Drawing.Point(3, 54);
-            this.metroLabel7.Name = "metroLabel7";
-            this.metroLabel7.Size = new System.Drawing.Size(83, 19);
-            this.metroLabel7.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel7.StyleManager = this.metroStyleManager1;
-            this.metroLabel7.TabIndex = 53;
-            this.metroLabel7.Text = "Interval (ms):";
-            this.metroLabel7.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel7.UseStyleColors = true;
-            // 
-            // metroLabel8
-            // 
-            this.metroLabel8.AutoSize = true;
-            this.metroLabel8.CustomBackground = false;
-            this.metroLabel8.CustomForeColor = false;
-            this.metroLabel8.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel8.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel8.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel8.Location = new System.Drawing.Point(3, 26);
-            this.metroLabel8.Name = "metroLabel8";
-            this.metroLabel8.Size = new System.Drawing.Size(84, 19);
-            this.metroLabel8.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel8.StyleManager = this.metroStyleManager1;
-            this.metroLabel8.TabIndex = 52;
-            this.metroLabel8.Text = "Key to spam:";
-            this.metroLabel8.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel8.UseStyleColors = true;
             // 
             // metroTabPage7
             // 
@@ -1287,12 +1181,48 @@ namespace AxTools.Forms
             this.metroTabPage7.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage7.StyleManager = null;
             this.metroTabPage7.TabIndex = 6;
-            this.metroTabPage7.Text = "  Pinger";
+            this.metroTabPage7.Text = "    Pinger ";
             this.metroTabPage7.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage7.VerticalScrollbar = false;
             this.metroTabPage7.VerticalScrollbarBarColor = true;
             this.metroTabPage7.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage7.VerticalScrollbarSize = 10;
+            // 
+            // metroLabel14
+            // 
+            this.metroLabel14.AutoSize = true;
+            this.metroLabel14.CustomBackground = false;
+            this.metroLabel14.CustomForeColor = false;
+            this.metroLabel14.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.metroLabel14.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.metroLabel14.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.metroLabel14.Location = new System.Drawing.Point(339, 99);
+            this.metroLabel14.Name = "metroLabel14";
+            this.metroLabel14.Size = new System.Drawing.Size(22, 19);
+            this.metroLabel14.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroLabel14.StyleManager = null;
+            this.metroLabel14.TabIndex = 50;
+            this.metroLabel14.Text = "or";
+            this.metroLabel14.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroLabel14.UseStyleColors = true;
+            // 
+            // metroLabel13
+            // 
+            this.metroLabel13.AutoSize = true;
+            this.metroLabel13.CustomBackground = false;
+            this.metroLabel13.CustomForeColor = false;
+            this.metroLabel13.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.metroLabel13.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.metroLabel13.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.metroLabel13.Location = new System.Drawing.Point(339, 68);
+            this.metroLabel13.Name = "metroLabel13";
+            this.metroLabel13.Size = new System.Drawing.Size(22, 19);
+            this.metroLabel13.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroLabel13.StyleManager = null;
+            this.metroLabel13.TabIndex = 49;
+            this.metroLabel13.Text = "or";
+            this.metroLabel13.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroLabel13.UseStyleColors = true;
             // 
             // comboBoxVeryBadNetworkStatusPing
             // 
@@ -1302,13 +1232,14 @@ namespace AxTools.Forms
             this.comboBoxVeryBadNetworkStatusPing.FontWeight = MetroFramework.MetroLinkWeight.Regular;
             this.comboBoxVeryBadNetworkStatusPing.FormattingEnabled = true;
             this.comboBoxVeryBadNetworkStatusPing.ItemHeight = 19;
-            this.comboBoxVeryBadNetworkStatusPing.Location = new System.Drawing.Point(412, 96);
+            this.comboBoxVeryBadNetworkStatusPing.Location = new System.Drawing.Point(367, 96);
             this.comboBoxVeryBadNetworkStatusPing.Name = "comboBoxVeryBadNetworkStatusPing";
-            this.comboBoxVeryBadNetworkStatusPing.Size = new System.Drawing.Size(98, 25);
+            this.comboBoxVeryBadNetworkStatusPing.Size = new System.Drawing.Size(75, 25);
             this.comboBoxVeryBadNetworkStatusPing.Style = MetroFramework.MetroColorStyle.Blue;
             this.comboBoxVeryBadNetworkStatusPing.StyleManager = null;
             this.comboBoxVeryBadNetworkStatusPing.TabIndex = 48;
             this.comboBoxVeryBadNetworkStatusPing.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.comboBoxVeryBadNetworkStatusPing.SelectedIndexChanged += new System.EventHandler(this.comboBoxVeryBadNetworkStatusPing_SelectedIndexChanged);
             // 
             // comboBoxBadNetworkStatusPing
             // 
@@ -1318,13 +1249,14 @@ namespace AxTools.Forms
             this.comboBoxBadNetworkStatusPing.FontWeight = MetroFramework.MetroLinkWeight.Regular;
             this.comboBoxBadNetworkStatusPing.FormattingEnabled = true;
             this.comboBoxBadNetworkStatusPing.ItemHeight = 19;
-            this.comboBoxBadNetworkStatusPing.Location = new System.Drawing.Point(412, 65);
+            this.comboBoxBadNetworkStatusPing.Location = new System.Drawing.Point(367, 65);
             this.comboBoxBadNetworkStatusPing.Name = "comboBoxBadNetworkStatusPing";
-            this.comboBoxBadNetworkStatusPing.Size = new System.Drawing.Size(98, 25);
+            this.comboBoxBadNetworkStatusPing.Size = new System.Drawing.Size(75, 25);
             this.comboBoxBadNetworkStatusPing.Style = MetroFramework.MetroColorStyle.Blue;
             this.comboBoxBadNetworkStatusPing.StyleManager = null;
             this.comboBoxBadNetworkStatusPing.TabIndex = 47;
             this.comboBoxBadNetworkStatusPing.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.comboBoxBadNetworkStatusPing.SelectedIndexChanged += new System.EventHandler(this.comboBoxBadNetworkStatusPing_SelectedIndexChanged);
             // 
             // comboBoxVeryBadNetworkStatusProcent
             // 
@@ -1336,11 +1268,12 @@ namespace AxTools.Forms
             this.comboBoxVeryBadNetworkStatusProcent.ItemHeight = 19;
             this.comboBoxVeryBadNetworkStatusProcent.Location = new System.Drawing.Point(280, 96);
             this.comboBoxVeryBadNetworkStatusProcent.Name = "comboBoxVeryBadNetworkStatusProcent";
-            this.comboBoxVeryBadNetworkStatusProcent.Size = new System.Drawing.Size(98, 25);
+            this.comboBoxVeryBadNetworkStatusProcent.Size = new System.Drawing.Size(53, 25);
             this.comboBoxVeryBadNetworkStatusProcent.Style = MetroFramework.MetroColorStyle.Blue;
             this.comboBoxVeryBadNetworkStatusProcent.StyleManager = null;
             this.comboBoxVeryBadNetworkStatusProcent.TabIndex = 46;
             this.comboBoxVeryBadNetworkStatusProcent.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.comboBoxVeryBadNetworkStatusProcent.SelectedIndexChanged += new System.EventHandler(this.comboBoxVeryBadNetworkStatusProcent_SelectedIndexChanged);
             // 
             // comboBoxBadNetworkStatusProcent
             // 
@@ -1352,11 +1285,12 @@ namespace AxTools.Forms
             this.comboBoxBadNetworkStatusProcent.ItemHeight = 19;
             this.comboBoxBadNetworkStatusProcent.Location = new System.Drawing.Point(280, 65);
             this.comboBoxBadNetworkStatusProcent.Name = "comboBoxBadNetworkStatusProcent";
-            this.comboBoxBadNetworkStatusProcent.Size = new System.Drawing.Size(98, 25);
+            this.comboBoxBadNetworkStatusProcent.Size = new System.Drawing.Size(53, 25);
             this.comboBoxBadNetworkStatusProcent.Style = MetroFramework.MetroColorStyle.Blue;
             this.comboBoxBadNetworkStatusProcent.StyleManager = null;
             this.comboBoxBadNetworkStatusProcent.TabIndex = 45;
             this.comboBoxBadNetworkStatusProcent.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.comboBoxBadNetworkStatusProcent.SelectedIndexChanged += new System.EventHandler(this.comboBoxBadNetworkStatusProcent_SelectedIndexChanged);
             // 
             // metroLabel12
             // 
@@ -1442,41 +1376,24 @@ namespace AxTools.Forms
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // metroLabel13
+            // checkBoxMinimizeToTray
             // 
-            this.metroLabel13.AutoSize = true;
-            this.metroLabel13.CustomBackground = false;
-            this.metroLabel13.CustomForeColor = false;
-            this.metroLabel13.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel13.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel13.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel13.Location = new System.Drawing.Point(384, 68);
-            this.metroLabel13.Name = "metroLabel13";
-            this.metroLabel13.Size = new System.Drawing.Size(22, 19);
-            this.metroLabel13.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel13.StyleManager = null;
-            this.metroLabel13.TabIndex = 49;
-            this.metroLabel13.Text = "or";
-            this.metroLabel13.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel13.UseStyleColors = true;
-            // 
-            // metroLabel14
-            // 
-            this.metroLabel14.AutoSize = true;
-            this.metroLabel14.CustomBackground = false;
-            this.metroLabel14.CustomForeColor = false;
-            this.metroLabel14.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel14.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel14.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel14.Location = new System.Drawing.Point(384, 99);
-            this.metroLabel14.Name = "metroLabel14";
-            this.metroLabel14.Size = new System.Drawing.Size(22, 19);
-            this.metroLabel14.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel14.StyleManager = null;
-            this.metroLabel14.TabIndex = 50;
-            this.metroLabel14.Text = "or";
-            this.metroLabel14.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel14.UseStyleColors = true;
+            this.checkBoxMinimizeToTray.AutoSize = true;
+            this.checkBoxMinimizeToTray.CustomBackground = false;
+            this.checkBoxMinimizeToTray.CustomForeColor = false;
+            this.checkBoxMinimizeToTray.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.checkBoxMinimizeToTray.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.checkBoxMinimizeToTray.Location = new System.Drawing.Point(3, 45);
+            this.checkBoxMinimizeToTray.Name = "checkBoxMinimizeToTray";
+            this.checkBoxMinimizeToTray.Size = new System.Drawing.Size(125, 19);
+            this.checkBoxMinimizeToTray.Style = MetroFramework.MetroColorStyle.Blue;
+            this.checkBoxMinimizeToTray.StyleManager = null;
+            this.checkBoxMinimizeToTray.TabIndex = 48;
+            this.checkBoxMinimizeToTray.Text = "Minimize to tray";
+            this.checkBoxMinimizeToTray.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.checkBoxMinimizeToTray.UseStyleColors = true;
+            this.checkBoxMinimizeToTray.UseVisualStyleBackColor = true;
+            this.checkBoxMinimizeToTray.CheckedChanged += new System.EventHandler(this.checkBoxMinimizeToTray_CheckedChanged);
             // 
             // AppSettings
             // 
@@ -1507,9 +1424,6 @@ namespace AxTools.Forms
             this.metroTabPage4.PerformLayout();
             this.metroTabPage2.ResumeLayout(false);
             this.metroTabPage2.PerformLayout();
-            this.metroTabPage6.ResumeLayout(false);
-            this.metroTabPage6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.num_clicker_interval)).EndInit();
             this.metroTabPage7.ResumeLayout(false);
             this.metroTabPage7.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
@@ -1571,11 +1485,6 @@ namespace AxTools.Forms
         private MetroLabel metroLabel3;
         private MetroLabel metroLabel2;
         private MetroStyleManager metroStyleManager1;
-        private MetroTabPage metroTabPage6;
-        internal System.Windows.Forms.NumericUpDown num_clicker_interval;
-        private MetroComboBox comboBoxClickerKey;
-        private MetroLabel metroLabel7;
-        private MetroLabel metroLabel8;
         private MetroToolTip metroToolTip1;
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private MetroComboBox metroComboBoxBackupCompressionLevel;
@@ -1599,5 +1508,6 @@ namespace AxTools.Forms
         private MetroComboBox comboBoxVeryBadNetworkStatusProcent;
         private MetroLabel metroLabel14;
         private MetroLabel metroLabel13;
+        private MetroCheckBox checkBoxMinimizeToTray;
     }
 }

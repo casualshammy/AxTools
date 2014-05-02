@@ -20,11 +20,11 @@ namespace AxTools.Classes
         {
             if (form.InvokeRequired)
             {
-                form.Invoke(new Action(() =>
+                form.Invoke((MethodInvoker) delegate
                 {
                     form.Activate();
                     new TaskDialog(title, "AxTools", text, button, icon).Show(form);
-                }));
+                });
             }
             else
             {
@@ -34,7 +34,7 @@ namespace AxTools.Classes
         }
 
         /// <summary>
-        /// Represent array of T as string like "{item1, item2, item3, ...}"
+        /// Represent array of T as string like "{ item0, item1, item2, ... }"
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>
@@ -42,6 +42,23 @@ namespace AxTools.Classes
         internal static string AsString<T>(this IEnumerable<T> array)
         {
             return array.Aggregate("{", (current, s) => current + String.Format(" {0},", s)) + " }";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>IEnumerable of Types</returns>
+        internal static IEnumerable<Type> ParentTypes(this Type type)
+        {
+            if (type.BaseType != null)
+            {
+                yield return type.BaseType;
+                foreach (Type b in type.BaseType.ParentTypes())
+                {
+                    yield return b;
+                }
+            }
         }
 
     }

@@ -2,7 +2,6 @@
 using AxTools.Classes;
 using AxTools.Classes.WoW;
 using AxTools.Components;
-using MetroFramework.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -34,22 +33,22 @@ namespace AxTools.Forms
             metroCheckBoxShowNpcsNames.Checked = Settings.RadarShowNpcsNames;
             metroCheckBoxShowObjectsNames.Checked = Settings.RadarShowObjectsNames;
             metroStyleManager1.Style = Settings.NewStyleColor;
+            BeginInvoke((MethodInvoker) delegate
+            {
+                int maxWidth = Screen.PrimaryScreen.WorkingArea.Width;
+                WowRadar pRadar = Utils.FindForm<WowRadar>();
+                if (pRadar != null)
+                {
+                    Location = maxWidth - pRadar.Location.X - pRadar.Size.Width - 20 > Size.Width
+                        ? new Point(pRadar.Location.X + pRadar.Size.Width + 20, pRadar.Location.Y)
+                        : new Point(pRadar.Location.X - Size.Width - 20, pRadar.Location.Y);
+                }
+                OnActivated(EventArgs.Empty);
+            });
         }
 
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
-
-        private void RadarNpcObjectSelectionLoad(object sender, EventArgs e)
-        {
-            int maxWidth = Screen.PrimaryScreen.WorkingArea.Width;
-            WowRadar pRadar = Utils.FindForm<WowRadar>();
-            if (pRadar != null)
-            {
-                Location = maxWidth - pRadar.Location.X - pRadar.Size.Width - 20 > Size.Width
-                               ? new Point(pRadar.Location.X + pRadar.Size.Width + 20, pRadar.Location.Y)
-                               : new Point(pRadar.Location.X - Size.Width - 20, pRadar.Location.Y);
-            }
-        }
         
         private void ButtonAddObjectOrNpcToListClick(object sender, EventArgs e)
         {
@@ -224,17 +223,6 @@ namespace AxTools.Forms
             if (dataGridViewObjects.Rows.Count > 0)
             {
                 dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
-            }
-        }
-        private void PictureBoxDeleteLastLineClick(object sender, EventArgs e)
-        {
-            if (dataGridViewObjects.Rows.Count > 0)
-            {
-                dataGridViewObjects.Rows.RemoveAt(dataGridViewObjects.Rows.Count - 1);
-                if (dataGridViewObjects.Rows.Count > 0)
-                {
-                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
-                }
             }
         }
 

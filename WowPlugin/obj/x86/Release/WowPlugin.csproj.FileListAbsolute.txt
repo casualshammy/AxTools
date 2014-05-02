@@ -1,0 +1,15 @@
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\FishingPlugin.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\FishingPlugin.pdb
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\AxTools.exe
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\MetroFramework.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\Microsoft.WindowsAPICodePack.Shell.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\MouseKeyboardActivityMonitor.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\Ionic.Zip.Reduced.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\WindowsFormsAero.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\GreyMagic.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\ICSharpCode.TextEditor.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\fasmdll_managed.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\Microsoft.WindowsAPICodePack.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\obj\x86\Release\WowPlugin.csprojResolveAssemblyReference.cache
+F:\Dropbox\Projects\AxTools\WowPlugin\obj\x86\Release\FishingPlugin.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\obj\x86\Release\FishingPlugin.pdb

@@ -14,7 +14,7 @@ namespace AxTools.Classes.WoW.DX
         private const int D3D11_SDK_VERSION = 7;
         private const int D3D_DRIVER_TYPE_HARDWARE = 1;
 
-        public D3D11Device(Process targetProc)
+        internal D3D11Device(Process targetProc)
             : base(targetProc, "d3d11.dll")
         {
         }
@@ -79,7 +79,7 @@ namespace AxTools.Classes.WoW.DX
                 TargetProcess.Modules.Cast<ProcessModule>().First(m => m.ModuleName == "dxgi.dll").BaseAddress;
         }
 
-        public unsafe IntPtr GetSwapVTableFuncAbsoluteAddress(int funcIndex)
+        internal unsafe IntPtr GetSwapVTableFuncAbsoluteAddress(int funcIndex)
         {
             IntPtr pointer = *(IntPtr*) ((void*) _swapChain);
             pointer = *(IntPtr*) ((void*) ((int) pointer + funcIndex*4));
@@ -99,17 +99,17 @@ namespace AxTools.Classes.WoW.DX
                 _deviceContextRelease(D3DDevicePtr);
         }
 
-        public override int BeginSceneVtableIndex
+        internal override int BeginSceneVtableIndex
         {
             get { return VTableIndexes.D3D11DeviceContextBegin; }
         }
 
-        public override int EndSceneVtableIndex
+        internal override int EndSceneVtableIndex
         {
             get { return VTableIndexes.D3D11DeviceContextEnd; }
         }
 
-        public override int PresentVtableIndex
+        internal override int PresentVtableIndex
         {
             get { return VTableIndexes.DXGISwapChainPresent; }
         }
@@ -119,53 +119,53 @@ namespace AxTools.Classes.WoW.DX
 #pragma warning disable 169
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct Rational
+        internal struct Rational
         {
-            public int Numerator;
-            public int Denominator;
+            internal int Numerator;
+            internal int Denominator;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct ModeDescription
+        internal struct ModeDescription
         {
-            public int Width;
-            public int Height;
-            public Rational RefreshRate;
-            public int Format;
-            public int ScanlineOrdering;
-            public int Scaling;
+            internal int Width;
+            internal int Height;
+            internal Rational RefreshRate;
+            internal int Format;
+            internal int ScanlineOrdering;
+            internal int Scaling;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct SampleDescription
+        internal struct SampleDescription
         {
-            public int Count;
-            public int Quality;
+            internal int Count;
+            internal int Quality;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct SwapChainDescription
+        internal struct SwapChainDescription
         {
-            public ModeDescription ModeDescription;
-            public SampleDescription SampleDescription;
-            public int Usage;
-            public int BufferCount;
-            public IntPtr OutputHandle;
-            [MarshalAs(UnmanagedType.Bool)] public bool IsWindowed;
-            public int SwapEffect;
-            public int Flags;
+            internal ModeDescription ModeDescription;
+            internal SampleDescription SampleDescription;
+            internal int Usage;
+            internal int BufferCount;
+            internal IntPtr OutputHandle;
+            [MarshalAs(UnmanagedType.Bool)] internal bool IsWindowed;
+            internal int SwapEffect;
+            internal int Flags;
         }
 
-        public struct VTableIndexes
+        internal struct VTableIndexes
         {
-            public const int DXGISwapChainRelease = 2;
-            public const int D3D11DeviceRelease = 2;
-            public const int D3D11DeviceContextRelease = 2;
+            internal const int DXGISwapChainRelease = 2;
+            internal const int D3D11DeviceRelease = 2;
+            internal const int D3D11DeviceContextRelease = 2;
 
-            public const int DXGISwapChainPresent = 8;
+            internal const int DXGISwapChainPresent = 8;
 
-            public const int D3D11DeviceContextBegin = 0x1B;
-            public const int D3D11DeviceContextEnd = 0x1C;
+            internal const int D3D11DeviceContextBegin = 0x1B;
+            internal const int D3D11DeviceContextEnd = 0x1C;
         }
 
 

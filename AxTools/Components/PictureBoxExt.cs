@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using AxTools.Classes;
 
 namespace AxTools.Components
 {
@@ -24,7 +25,7 @@ namespace AxTools.Components
 
         protected override void OnMouseEnter(EventArgs e)
         {
-            if (ImageOnHover != null)
+            if (ImageOnHover != null && Enabled)
             {
                 previousImage = Image;
                 Image = ImageOnHover;
@@ -34,12 +35,11 @@ namespace AxTools.Components
 
         protected override void OnMouseLeave(EventArgs e)
         {
-            if (previousImage != null)
+            if (previousImage != null && Enabled)
             {
                 Image = previousImage;
             }
             base.OnMouseLeave(e);
         }
-
     }
 }

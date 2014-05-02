@@ -36,14 +36,12 @@ namespace AxTools.Forms
             this.components = new System.ComponentModel.Container();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             this.toolTip1 = new MetroFramework.Components.MetroToolTip();
-            this.dataGridViewObjects = new AxTools.Components.DataGridViewExt();
             this.ObjectToFindEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ObjectName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Interact = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.SoundAlarm = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.pictureBoxSaveFile = new AxTools.Components.PictureBoxExt(this.components);
             this.pictureBoxOpenFile = new AxTools.Components.PictureBoxExt(this.components);
-            this.pictureBoxDeleteLastLine = new AxTools.Components.PictureBoxExt(this.components);
             this.comboBoxSelectObjectOrNpc = new MetroFramework.Controls.MetroComboBox();
             this.label3 = new MetroFramework.Controls.MetroLabel();
             this.buttonAddObjectOrNpcToList = new MetroFramework.Controls.MetroButton();
@@ -52,10 +50,10 @@ namespace AxTools.Forms
             this.metroCheckBoxShowObjectsNames = new MetroFramework.Controls.MetroCheckBox();
             this.metroTextBoxAddNew = new MetroFramework.Controls.MetroTextBox();
             this.metroButtonAddNew = new MetroFramework.Controls.MetroButton();
+            dataGridViewObjects = new DataGridViewExt();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjects)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSaveFile)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOpenFile)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDeleteLastLine)).BeginInit();
             this.SuspendLayout();
             // 
             // metroStyleManager1
@@ -141,19 +139,6 @@ namespace AxTools.Forms
             this.pictureBoxOpenFile.TabStop = false;
             this.toolTip1.SetToolTip(this.pictureBoxOpenFile, "Open list from file...");
             this.pictureBoxOpenFile.Click += new System.EventHandler(this.PictureBoxOpenFileClick);
-            // 
-            // pictureBoxDeleteLastLine
-            // 
-            this.pictureBoxDeleteLastLine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBoxDeleteLastLine.Image = global::AxTools.Properties.Resources.delete_line;
-            this.pictureBoxDeleteLastLine.ImageOnHover = global::AxTools.Properties.Resources.DeleteLineLight;
-            this.pictureBoxDeleteLastLine.Location = new System.Drawing.Point(378, 245);
-            this.pictureBoxDeleteLastLine.Name = "pictureBoxDeleteLastLine";
-            this.pictureBoxDeleteLastLine.Size = new System.Drawing.Size(22, 22);
-            this.pictureBoxDeleteLastLine.TabIndex = 59;
-            this.pictureBoxDeleteLastLine.TabStop = false;
-            this.toolTip1.SetToolTip(this.pictureBoxDeleteLastLine, "Delete last row");
-            this.pictureBoxDeleteLastLine.Click += new System.EventHandler(this.PictureBoxDeleteLastLineClick);
             // 
             // comboBoxSelectObjectOrNpc
             // 
@@ -300,7 +285,6 @@ namespace AxTools.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(414, 366);
-            this.Controls.Add(this.pictureBoxDeleteLastLine);
             this.Controls.Add(this.pictureBoxSaveFile);
             this.Controls.Add(this.pictureBoxOpenFile);
             this.Controls.Add(this.metroButtonAddNew);
@@ -322,11 +306,9 @@ namespace AxTools.Forms
             this.StyleManager = this.metroStyleManager1;
             this.Text = "Radar settings";
             this.TopMost = true;
-            this.Load += new System.EventHandler(this.RadarNpcObjectSelectionLoad);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjects)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSaveFile)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOpenFile)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDeleteLastLine)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -347,7 +329,6 @@ namespace AxTools.Forms
         private DataGridViewExt dataGridViewObjects;
         private MetroButton metroButtonAddNew;
         private MetroTextBox metroTextBoxAddNew;
-        private PictureBoxExt pictureBoxDeleteLastLine;
         private PictureBoxExt pictureBoxSaveFile;
         private PictureBoxExt pictureBoxOpenFile;
         private DataGridViewCheckBoxColumn ObjectToFindEnabled;

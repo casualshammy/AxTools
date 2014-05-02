@@ -41,13 +41,13 @@ namespace AxTools.Forms
             // 
             this.comboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.comboBox1.FontSize = MetroFramework.MetroLinkSize.Small;
             this.comboBox1.FontWeight = MetroFramework.MetroLinkWeight.Regular;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.ItemHeight = 23;
-            this.comboBox1.Location = new System.Drawing.Point(23, 52);
+            this.comboBox1.ItemHeight = 19;
+            this.comboBox1.Location = new System.Drawing.Point(14, 43);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(206, 29);
+            this.comboBox1.Size = new System.Drawing.Size(206, 25);
             this.comboBox1.Style = MetroFramework.MetroColorStyle.Blue;
             this.comboBox1.StyleManager = this.metroStyleManager1;
             this.comboBox1.TabIndex = 0;
@@ -63,7 +63,7 @@ namespace AxTools.Forms
             // button1
             // 
             this.button1.Highlight = true;
-            this.button1.Location = new System.Drawing.Point(235, 33);
+            this.button1.Location = new System.Drawing.Point(226, 16);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.Style = MetroFramework.MetroColorStyle.Blue;
@@ -76,7 +76,7 @@ namespace AxTools.Forms
             // button2
             // 
             this.button2.Highlight = true;
-            this.button2.Location = new System.Drawing.Point(235, 58);
+            this.button2.Location = new System.Drawing.Point(226, 45);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.Style = MetroFramework.MetroColorStyle.Blue;
@@ -94,7 +94,7 @@ namespace AxTools.Forms
             this.metroLabel1.FontSize = MetroFramework.MetroLabelSize.Medium;
             this.metroLabel1.FontWeight = MetroFramework.MetroLabelWeight.Light;
             this.metroLabel1.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel1.Location = new System.Drawing.Point(23, 30);
+            this.metroLabel1.Location = new System.Drawing.Point(14, 21);
             this.metroLabel1.Name = "metroLabel1";
             this.metroLabel1.Size = new System.Drawing.Size(144, 19);
             this.metroLabel1.Style = MetroFramework.MetroColorStyle.Blue;
@@ -108,7 +108,7 @@ namespace AxTools.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(333, 98);
+            this.ClientSize = new System.Drawing.Size(313, 79);
             this.Controls.Add(this.metroLabel1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -121,7 +121,6 @@ namespace AxTools.Forms
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StyleManager = this.metroStyleManager1;
-            this.Load += new System.EventHandler(this.ProcessSelectionLoad);
             this.ResumeLayout(false);
             this.PerformLayout();
 
