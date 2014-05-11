@@ -858,6 +858,16 @@ namespace AxTools.Forms
                     zoomR = zoomR * 2;
                     SaveCheckBoxes(null, EventArgs.Empty);
                 }
+                string text = zoomR*2 + "x";
+                labelZoom.Text = text;
+                labelZoom.Visible = true;
+                Task.Factory.StartNew(() => Thread.Sleep(2000)).ContinueWith(l => BeginInvoke((MethodInvoker) delegate
+                {
+                    if (labelZoom.Text == text)
+                    {
+                        labelZoom.Visible = false;
+                    }
+                }));
             }
         }
     

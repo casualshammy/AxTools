@@ -3,8 +3,9 @@
 ## General settings ##
 Location={X=143,Y=165}
 regname=Axio-5GDMJHD20R
-LastUsedVersion=11.15.4.0
+LastUsedVersion=11.16.2.0
 NewStyleColor=11
+MinimizeToTray=True
 
 WowPluginsShowIngameNotifications=True
 EnableCustomPlugins=False
@@ -26,6 +27,7 @@ PrecompiledModulesHotkey=F10
 ## Paths ##
 wow_dir=D:\World of Warcraft
 vt_dir=C:\Program Files\Ventrilo
+mumble_dir=C:\Program Files (x86)\Mumble
 raidcall_dir=C:\Program Files (x86)\RaidCall
 TeamspeakDir=C:\Program Files\TeamSpeak 3 Client
 
@@ -67,4 +69,4 @@ AddonsBackup=True
 AddonsBackupNum=7
 AddonsBackupTimer=24
 BackupCompressionLevel=6
-addons_backup_lastdate=16.02.2014 19:40:24
+addons_backup_lastdate=10.05.2014 18:32:48

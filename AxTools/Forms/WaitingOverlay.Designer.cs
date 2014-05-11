@@ -37,7 +37,7 @@
             this.ClientSize = new System.Drawing.Size(284, 262);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "WaitingOverlay";
-            this.Opacity = 0.7D;
+            this.Opacity = 0.8D;
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.ShowInTaskbar = false;
             this.Text = "WaitingOverlay";

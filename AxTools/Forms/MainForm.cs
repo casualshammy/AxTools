@@ -193,12 +193,14 @@ namespace AxTools.Forms
                 Settings.AddonsBackupLastdate = DateTime.UtcNow;
                 ProcessPriorityClass defaultProcessPriorityClass = Process.GetCurrentProcess().PriorityClass;
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
+                linkBackupAddons.Enabled = false;
                 AddonsBackup addonsBackup = new AddonsBackup();
                 addonsBackup.Show(this);
                 Task.Factory.StartNew(() => addonsBackup.Start(true)).ContinueWith(l =>
                 {
-                    addonsBackup.Invoke((MethodInvoker) addonsBackup.Close);
+                    addonsBackup.BeginInvoke((MethodInvoker) addonsBackup.Close);
                     Process.GetCurrentProcess().PriorityClass = defaultProcessPriorityClass;
+                    linkBackupAddons.Enabled = true;
                 });
             }
 
@@ -1200,13 +1202,6 @@ namespace AxTools.Forms
         {
             if (cmbboxAccSelect.SelectedIndex != -1)
             {
-                //buttonLaunchWowWithoutAutopass.Enabled = false;
-                //buttonWowUpdater.Enabled = false;
-                //Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) delegate
-                //{
-                //    buttonLaunchWowWithoutAutopass.Enabled = true;
-                //    buttonWowUpdater.Enabled = true;
-                //}));
                 WaitingOverlay waitingOverlay = new WaitingOverlay(this);
                 waitingOverlay.Show();
                 Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
@@ -1245,11 +1240,15 @@ namespace AxTools.Forms
 
         private void linkBackupAddons_Click(object sender, EventArgs e)
         {
-            WaitingOverlay waitingOverlay = new WaitingOverlay(this);
-            waitingOverlay.Show();
+            linkBackupAddons.Enabled = false;
             AddonsBackup addonsBackup = new AddonsBackup();
             addonsBackup.Show(this);
-            Task.Factory.StartNew(() => addonsBackup.Start(false)).ContinueWith(l => Invoke(new Action(waitingOverlay.Close))).ContinueWith(l => addonsBackup.Invoke((MethodInvoker) addonsBackup.Close));
+            Task.Factory.StartNew(() => addonsBackup.Start(false))
+                .ContinueWith(l => BeginInvoke((MethodInvoker) delegate
+                {
+                    linkBackupAddons.Enabled = true;
+                }))
+                .ContinueWith(l => addonsBackup.BeginInvoke((MethodInvoker) addonsBackup.Close));
         }
 
         private void linkClickerSettings_Click(object sender, EventArgs e)

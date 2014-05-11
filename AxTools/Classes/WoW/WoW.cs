@@ -1,4 +1,5 @@
-﻿using AxTools.Classes.WoW.DX;
+﻿using System.Globalization;
+using AxTools.Classes.WoW.DX;
 using Fasm;
 using GreyMagic;
 using System;
@@ -62,6 +63,7 @@ namespace AxTools.Classes.WoW
                                                                   "   AxToolsMainOverlayChildren = CreateFrame(\"Frame\", \"AxToolsMainOverlayChildren\", AxToolsMainOverlay)\r\n" +
                                                                   "   AxToolsMainOverlayChildren:SetWidth(1)\r\nAxToolsMainOverlayChildren:SetHeight(1)\r\n" +
                                                                   "   AxToolsMainOverlayChildren:SetPoint(\"CENTER\", UIParent, \"CENTER\", 0, 100)\r\n" +
+                                                                  "   AxToolsMainOverlayChildren:SetFrameStrata(\"TOOLTIP\")\r\n" +
                                                                   "   AxToolsMainOverlayChildren.text = AxToolsMainOverlayChildren:CreateFontString(nil, \"ARTWORK\")\r\n" +
                                                                   "   AxToolsMainOverlayChildren.text:SetFont(\"Fonts\\\\FRIZQT__.TTF\", 40, \"THICKOUTLINE\")\r\n" +
                                                                   "   AxToolsMainOverlayChildren.text:SetPoint(\"CENTER\", AxToolsMainOverlayChildren, \"CENTER\", 25, 0)\r\n" +
@@ -414,9 +416,10 @@ namespace AxTools.Classes.WoW
         internal static bool ShowOverlayText(string text, string icon, Color color, bool flash = false)
         {
             //LuaDoString("UIErrorsFrame:AddMessage(\"Plugin <" + moduleTask.Name + "> is started\", 0.0, 1.0, 0.0)");
-            string colorRed = (color.R/255f).ToString(System.Globalization.CultureInfo.InvariantCulture);
-            string colorGreen = (color.G/255f).ToString(System.Globalization.CultureInfo.InvariantCulture);
-            string colorBlue = (color.B/255f).ToString(System.Globalization.CultureInfo.InvariantCulture);
+            CultureInfo culture = CultureInfo.InvariantCulture;
+            string colorRed = (color.R/255f).ToString(culture);
+            string colorGreen = (color.G/255f).ToString(culture);
+            string colorBlue = (color.B/255f).ToString(culture);
             string function = OverlayFrameName + "Children.text:SetText(\"" + text + "\");\r\n" +
                               OverlayFrameName + "Children.text:SetVertexColor(" + colorRed + ", " + colorGreen + ", " + colorBlue + ", 1);\r\n" +
                               OverlayFrameName + "Children.icon:SetTexture(\"" + icon + "\");\r\n" +

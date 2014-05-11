@@ -44,6 +44,8 @@ namespace AxTools.Forms
                 parentStyle = style;
                 metroProgressSpinner1.Style = style;
                 metroLabel1.Style = style;
+                //base.BackColor = Color.DarkSeaGreen;
+                //TransparencyKey = Color.WhiteSmoke;
             }
 
             protected override void OnPaint(PaintEventArgs e)
@@ -51,13 +53,13 @@ namespace AxTools.Forms
                 base.OnPaint(e);
                 using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(parentStyle))
                 {
-                    Rectangle rectUpper = new Rectangle(0, 0, Width, 1);
+                    Rectangle rectUpper = new Rectangle(0, 0, Width, 2);
                     e.Graphics.FillRectangle(styleBrush, rectUpper);
-                    Rectangle rectRight = new Rectangle(Width - 1, 0, 1, Height);
+                    Rectangle rectRight = new Rectangle(Width - 2, 0, 2, Height);
                     e.Graphics.FillRectangle(styleBrush, rectRight);
-                    Rectangle rectLeft = new Rectangle(0, 0, 1, Height);
+                    Rectangle rectLeft = new Rectangle(0, 0, 2, Height);
                     e.Graphics.FillRectangle(styleBrush, rectLeft);
-                    Rectangle rectBottom = new Rectangle(0, Height - 1, Width, 1);
+                    Rectangle rectBottom = new Rectangle(0, Height - 2, Width, 2);
                     e.Graphics.FillRectangle(styleBrush, rectBottom);
                 }
             }
@@ -116,7 +118,7 @@ namespace AxTools.Forms
                 this.metroLabel1.CustomBackground = false;
                 this.metroLabel1.CustomForeColor = false;
                 this.metroLabel1.FontSize = MetroFramework.MetroLabelSize.Tall;
-                this.metroLabel1.FontWeight = MetroFramework.MetroLabelWeight.Regular;
+                this.metroLabel1.FontWeight = MetroFramework.MetroLabelWeight.Bold;
                 this.metroLabel1.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
                 this.metroLabel1.Location = new System.Drawing.Point(51, 13);
                 this.metroLabel1.Name = "metroLabel1";
@@ -145,7 +147,7 @@ namespace AxTools.Forms
                 // 
                 this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
                 this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-                this.ClientSize = new System.Drawing.Size(166, 50);
+                this.ClientSize = new System.Drawing.Size(190, 50);
                 this.Controls.Add(this.metroProgressSpinner1);
                 this.Controls.Add(this.metroLabel1);
                 this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

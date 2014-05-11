@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace AxTools.Classes
@@ -458,96 +457,104 @@ namespace AxTools.Classes
 
         private static string GetTeamspeakPath()
         {
-            try
+            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("ts3server\\\\shell\\\\open\\\\command"))
             {
-                RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("ts3server\\\\shell\\\\open\\\\command");
-                if (regVersion != null && regVersion.GetValue("") != null)
+                try
                 {
-                    // "C:\Program Files\TeamSpeak 3 Client\ts3client_win64.exe" "%1"
-                    string raw = regVersion.GetValue("").ToString();
-                    return raw.Replace("\"", String.Empty).Replace("\\ts3client_win64.exe %1", String.Empty).Replace("\\ts3client_win32.exe %1", String.Empty);
+                    if (regVersion != null && regVersion.GetValue("") != null)
+                    {
+                        string raw = regVersion.GetValue("").ToString();
+                        return raw.Replace("\"", String.Empty).Replace("\\ts3client_win64.exe %1", String.Empty).Replace("\\ts3client_win32.exe %1", String.Empty);
+                    }
+                    return String.Empty;
                 }
-                return String.Empty;
-            }
-            catch
-            {
-                return String.Empty;
+                catch
+                {
+                    return String.Empty;
+                }
             }
         }
 
         private static string GetRaidcallPath()
         {
-            try
+            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("raidcall\\\\shell\\\\open\\\\command"))
             {
-                RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("raidcall\\\\shell\\\\open\\\\command");
-                if (regVersion != null && regVersion.GetValue("") != null)
+                try
                 {
-                    // "C:\Program Files\RaidCall\StartRC.exe" "%1"
-                    string raw = regVersion.GetValue("").ToString();
-                    return raw.Replace("\"", String.Empty).Replace("\\StartRC.exe %1", String.Empty);
+                    if (regVersion != null && regVersion.GetValue("") != null)
+                    {
+                        // "C:\Program Files\RaidCall\StartRC.exe" "%1"
+                        string raw = regVersion.GetValue("").ToString();
+                        return raw.Replace("\"", String.Empty).Replace("\\StartRC.exe %1", String.Empty);
+                    }
+                    return String.Empty;
                 }
-                return String.Empty;
-            }
-            catch
-            {
-                return String.Empty;
+                catch
+                {
+                    return String.Empty;
+                }
             }
         }
 
         private static string GetVentriloPath()
         {
-            try
+            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("Ventrilo\\\\shell\\\\open\\\\command"))
             {
-                RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("Ventrilo\\\\shell\\\\open\\\\command");
-                if (regVersion != null && regVersion.GetValue("") != null)
+                try
                 {
-                    // C:\PROGRA~1\Ventrilo\Ventrilo.exe -l%1
-                    string raw = regVersion.GetValue("").ToString();
-                    return raw.Replace("\"", String.Empty).Replace("\\Ventrilo.exe -l%1", String.Empty).Replace("PROGRA~1", "Program Files").Replace("PROGRA~2", "Program Files (x86)");
+                    if (regVersion != null && regVersion.GetValue("") != null)
+                    {
+                        string raw = regVersion.GetValue("").ToString();
+                        return raw.Replace("\"", String.Empty).Replace("\\Ventrilo.exe -l%1", String.Empty).Replace("PROGRA~1", "Program Files").Replace("PROGRA~2", "Program Files (x86)");
+                    }
+                    return String.Empty;
                 }
-                return String.Empty;
-            }
-            catch
-            {
-                return String.Empty;
+                catch
+                {
+                    return String.Empty;
+                }
             }
         }
 
         private static string GetMumblePath()
         {
-            try
+            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("mumble\\\\shell\\\\open\\\\command"))
             {
-                RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("mumble\\\\shell\\\\open\\\\command");
-                if (regVersion != null && regVersion.GetValue("") != null)
+                try
                 {
-                    // C:\PROGRA~1\Ventrilo\Ventrilo.exe -l%1
-                    string raw = regVersion.GetValue("").ToString();
-                    return Regex.Replace(raw, "\\mumble.exe %1", String.Empty, RegexOptions.IgnoreCase);
+                    if (regVersion != null && regVersion.GetValue("") != null)
+                    {
+                        string raw = regVersion.GetValue("").ToString();
+                        string path = raw.Replace("\\mumble.exe \"%1\"", String.Empty);
+                        return path;
+                    }
+                    return String.Empty;
                 }
-                return String.Empty;
-            }
-            catch
-            {
-                return String.Empty;
+                catch
+                {
+                    return String.Empty;
+                }
             }
         }
 
         private static string GetWowPath()
         {
-            try
+            using (RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Blizzard Entertainment\\\\World of Warcraft"))
             {
-                RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Blizzard Entertainment\\\\World of Warcraft");
-                if (regVersion != null && regVersion.GetValue("InstallPath") != null)
+                try
                 {
-                    // D:\World of Warcraft\
-                    string raw = regVersion.GetValue("InstallPath").ToString();
-                    return raw.Replace("\"", String.Empty).Replace("World of Warcraft\\", "World of Warcraft");
+                    if (regVersion != null && regVersion.GetValue("InstallPath") != null)
+                    {
+                        // D:\World of Warcraft\
+                        string raw = regVersion.GetValue("InstallPath").ToString();
+                        return raw.Replace("\"", String.Empty).Replace("World of Warcraft\\", "World of Warcraft");
+                    }
+                    return String.Empty;
                 }
-                return String.Empty;
-            }
-            catch
-            {
-                return String.Empty;
+                catch
+                {
+                    return String.Empty;
+                }
             }
         }
     
