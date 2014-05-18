@@ -43,11 +43,6 @@ namespace AxTools.Forms
             {
                 Log.Print(String.Format("{0}:{1} :: [Radar] Can't load the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
-            checkBoxFriends.CheckedChanged += SaveCheckBoxes;
-            checkBoxEnemies.CheckedChanged += SaveCheckBoxes;
-            checkBoxNpcs.CheckedChanged += SaveCheckBoxes;
-            checkBoxObjects.CheckedChanged += SaveCheckBoxes;
-            checkBoxCorpses.CheckedChanged += SaveCheckBoxes;
             checkBoxFriends.ForeColor = Settings.RadarFriendColor;
             checkBoxEnemies.ForeColor = Settings.RadarEnemyColor;
             checkBoxNpcs.ForeColor = Settings.RadarNpcColor;
@@ -71,6 +66,13 @@ namespace AxTools.Forms
             {
                 Log.Print(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
             }
+
+            checkBoxFriends.CheckedChanged += SaveCheckBoxes;
+            checkBoxEnemies.CheckedChanged += SaveCheckBoxes;
+            checkBoxNpcs.CheckedChanged += SaveCheckBoxes;
+            checkBoxObjects.CheckedChanged += SaveCheckBoxes;
+            checkBoxCorpses.CheckedChanged += SaveCheckBoxes;
+
             redrawTaskCTS = new CancellationTokenSource();
             redrawTask = new Task(Redraw, redrawTaskCTS.Token, TaskCreationOptions.LongRunning);
             mouseHookListener = new MouseHookListener(Globals.GlobalHooker);

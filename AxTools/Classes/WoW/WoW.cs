@@ -467,7 +467,49 @@ namespace AxTools.Classes.WoW
         //        WProc.Memory.FreeMemory(ctmPoint);
         //    }
         //}
-        
+
+        internal static bool MoveTo(WowPoint point)
+        {
+            IntPtr ctmPoint = WProc.Memory.AllocateMemory(0x4 * 3);
+            IntPtr ctmGUID = WProc.Memory.AllocateMemory(0x4 * 2);
+            WProc.Memory.Write(ctmPoint, point.X);
+            WProc.Memory.Write(ctmPoint + 0x4, point.Y);
+            WProc.Memory.Write(ctmPoint + 0x8, point.Z);
+            string[] asm =
+            {
+                "call " + (WProc.Memory.ImageBase + WowBuildInfo.ClntObjMgrGetActivePlayerObj),
+                "mov ecx, eax",
+                "mov eax, " + ctmGUID,
+                "mov edx, " + ctmPoint,
+                "push 0",
+                "push edx",
+                "push eax",
+                "push 4",
+                "call " + (WProc.Memory.ImageBase + WowBuildInfo.ClickToMove),
+                "retn"
+            };
+            try
+            {
+                InjectAsm(asm, (uint)_codeCavePtr);
+                WProc.Memory.Write(_addresseInjection, (int)_codeCavePtr);
+                while (WProc.Memory.Read<uint>(_addresseInjection) > 0)
+                {
+                    Thread.Sleep(1);
+                }
+                WProc.Memory.WriteBytes(_codeCavePtr, Eraser);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                WProc.Memory.FreeMemory(ctmPoint);
+                WProc.Memory.FreeMemory(ctmGUID);
+            }
+        }
+
         internal static bool TargetUnit(ulong guid)
         {
             lock (FASMLock)

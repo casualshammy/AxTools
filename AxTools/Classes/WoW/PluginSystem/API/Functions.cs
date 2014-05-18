@@ -6,5 +6,10 @@
         {
             return WoW.Interact(guid);
         }
+
+        public static bool MoveTo(WowPoint point)
+        {
+            return WoW.MoveTo(point);
+        }
     }
 }

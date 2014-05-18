@@ -24,20 +24,20 @@ namespace AxTools.Classes.WoW
 
         internal readonly IntPtr Address;
 
-        internal readonly ulong TargetGUID;
+        public readonly ulong TargetGUID;
 
         internal readonly bool IsAlliance;
 
         internal readonly uint Level;
 
-        internal readonly uint Health;
+        public readonly uint Health;
 
         internal readonly uint HealthMax;
 
         internal WowPlayerClass Class;
 
         private ulong mGUID;
-        internal ulong GUID
+        public ulong GUID
         {
             get
             {
@@ -93,7 +93,7 @@ namespace AxTools.Classes.WoW
         // We don't use System.Nullable<> because it's for 40% slower
         private bool mLocationRead;
         private WowPoint mLocation;
-        internal WowPoint Location
+        public WowPoint Location
         {
             get
             {

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using AxTools.Classes.WoW;
 using AxTools.Classes.WoW.PluginSystem;
 using AxTools.Classes.WoW.PluginSystem.API;
 
@@ -12,12 +15,12 @@ namespace TestPlugin
 
         public string Name
         {
-            get { return "TestPlugin"; }
+            get { return "Follower"; }
         }
 
         public Version Version
         {
-            get { return new Version(1, 1); }
+            get { return new Version(1, 0); }
         }
 
         public string Author
@@ -29,13 +32,13 @@ namespace TestPlugin
         {
             get
             {
-                return "Test plugin";
+                return "Follows target";
             }
         }
 
         public string TrayDescription
         {
-            get { return string.Empty; }
+            get { return "Follower"; }
         }
 
         public Image TrayIcon
@@ -45,7 +48,7 @@ namespace TestPlugin
 
         public int Interval
         {
-            get { return 1000; }
+            get { return 500; }
         }
 
         public string WowIcon
@@ -64,28 +67,36 @@ namespace TestPlugin
 
         public void OnStart()
         {
-            mainForm = new MainForm();
-            mainForm.Show();
-            Utilities.LogPrint("Plugin is started");
+            players = new List<WowPlayer>();
+            npcs= new List<WowNpc>();
         }
 
         public void OnPulse()
         {
-            string text = Lua.GetFunctionReturn("GetTime()");
-            Lua.LuaDoString("print(" + text + ");");
-            mainForm.label1.Text = text;
+            EnvironmentObjects.Pulse();
+            EnvironmentObjects.Pulse(players);
+            if (EnvironmentObjects.Me.Health > 0)
+            {
+                WowPlayer myTarget = players.FirstOrDefault(i => i.Health > 0 && i.GUID == EnvironmentObjects.Me.TargetGUID);
+                if (myTarget != null)
+                {
+                    if (myTarget.Location.Distance(EnvironmentObjects.Me.Location) > 5)
+                    {
+                        Functions.MoveTo(myTarget.Location);
+                    }
+                }
+            }
         }
 
         public void OnStop()
         {
-            mainForm.Close();
-            mainForm.Dispose();
-            Utilities.LogPrint("Plugin is stopped");
+
         }
 
         #endregion
 
-        private MainForm mainForm;
+        private List<WowPlayer> players;
+        private List<WowNpc> npcs;
 
     }
 }

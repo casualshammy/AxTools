@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 namespace AxTools.Classes.WoW
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct WowPoint
+    public struct WowPoint
     {
-        internal readonly float X;
-        internal readonly float Y;
-        internal readonly float Z;
+        public readonly float X;
+        public readonly float Y;
+        public readonly float Z;
 
         internal WowPoint(float x, float y, float z)
         {
@@ -17,7 +17,7 @@ namespace AxTools.Classes.WoW
             Z = z;
         }
 
-        internal double Distance(WowPoint p)
+        public double Distance(WowPoint p)
         {
             return Math.Sqrt((X - p.X)*(X - p.X) + (Y - p.Y)*(Y - p.Y) + (Z - p.Z)*(Z - p.Z));
         }

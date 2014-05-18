@@ -620,23 +620,7 @@ namespace AxTools.Forms
 
         private void KeyboardHook_L()
         {
-            //if (NativeMethods.GetForegroundWindow() == Handle)
-            //{
-            //    Stopwatch stopwatch = Stopwatch.StartNew();
-            //    if (memoryMappedFile == null)
-            //    {
-            //        memoryMappedFile = MemoryMappedFile.CreateOrOpen("AxTools_MMF", 1024);
-            //    }
-            //    using (MemoryMappedViewAccessor accessor = memoryMappedFile.CreateViewAccessor())
-            //    {
-            //        MMFStruct data = new MMFStruct(Process.GetProcessesByName("Wow")[0].Id, MMFCommand.SelectTarget, 0xF130C3DB00006FD7);
-            //        mmfMutex.WaitOne();
-            //        accessor.Write(0, ref data);
-            //        accessor.Flush();
-            //        mmfMutex.ReleaseMutex();
-            //    }
-            //    Log.Print(stopwatch.ElapsedMilliseconds);
-            //}
+            
         }
 
         #endregion
