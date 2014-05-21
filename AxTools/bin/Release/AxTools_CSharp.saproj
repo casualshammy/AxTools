@@ -287,6 +287,34 @@
                                 <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
                                 <Name>Utilities</Name>
                             </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW</Namespace>
+                                <Name>WowNpc</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW</Namespace>
+                                <Name>WowObject</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW</Namespace>
+                                <Name>WowPlayer</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>ValueType</ItemType>
+                                <Namespace>AxTools.Classes.WoW</Namespace>
+                                <Name>WowPoint</Name>
+                            </Token>
                         </Exclusion>
                     </Pruning>
                     <Obfuscation Obfuscate="1">
@@ -332,6 +360,34 @@
                                 <ItemType>Class</ItemType>
                                 <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
                                 <Name>Utilities</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW</Namespace>
+                                <Name>WowNpc</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW</Namespace>
+                                <Name>WowObject</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes.WoW</Namespace>
+                                <Name>WowPlayer</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>ValueType</ItemType>
+                                <Namespace>AxTools.Classes.WoW</Namespace>
+                                <Name>WowPoint</Name>
                             </Token>
                         </Exclusion>
                     </Obfuscation>

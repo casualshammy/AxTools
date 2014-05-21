@@ -7,7 +7,7 @@ F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\GreyMagic.dll
 F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\ICSharpCode.TextEditor.dll
 F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\fasmdll_managed.dll
 F:\Dropbox\Projects\AxTools\WowPlugin\obj\x86\Release\WowPlugin.csprojResolveAssemblyReference.cache
-F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\TestPlugin.dll
-F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\TestPlugin.pdb
-F:\Dropbox\Projects\AxTools\WowPlugin\obj\x86\Release\TestPlugin.dll
-F:\Dropbox\Projects\AxTools\WowPlugin\obj\x86\Release\TestPlugin.pdb
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\Follower.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\bin\x86\Release\Follower.pdb
+F:\Dropbox\Projects\AxTools\WowPlugin\obj\x86\Release\Follower.dll
+F:\Dropbox\Projects\AxTools\WowPlugin\obj\x86\Release\Follower.pdb

@@ -4,36 +4,36 @@
     {
         #region Build info
 
-        internal static readonly int WowBuild = 18019;
-        internal static readonly int WowBuildAddress = 0xB94994;
+        internal static readonly int WowBuild = 18291;
+        internal static readonly int WowBuildAddress = 0xB94E74;
 
         #endregion
         
         #region Static infos
 
-        internal static readonly int LastHardwareAction = 0xBB2794; // CGGameUI::UpdatePlayerAFK / WRITE
-        internal static readonly int IsInGame = 0xD65626; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound)
-        internal static readonly int IsBattlegroundFinished = 0xDC2B60; // Script_GetBattlefieldWinner (2)
-        internal static readonly int PlayerName = 0xEC4180; // ClientServices::GetCharacterName (or Script_UnitName/GetPlayerName)
-        internal static readonly int PlayerRealm = 0xEBF7DE;
-        internal static readonly int PlayerZoneID = 0xD656C4; // CGGameUI::NewZoneFeedback (16) (or Script_GetRaidRosterInfo (101))
-        internal static readonly int PlayerIsLooting = 0xDD2D88; // CGPlayer_C::IsLooting (17) (or Script_SetLootPortrait (32) or Script_GetContainerPurchaseInfo)
-        internal static readonly int BlackMarketNumItems = 0xE10270;
-        internal static readonly int BlackMarketItems = 0xE10274;
-        internal static readonly int UnitNameCachePointer = 0xC86358 + 0x8;
-        internal static readonly int ObjectManager = 0xCB42D4; // ClntObjMgrPush (7)
+        internal static readonly int LastHardwareAction = 0xBB2C74; // CGGameUI::UpdatePlayerAFK / WRITE
+        internal static readonly int IsInGame = 0xD65B16; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound)
+        internal static readonly int IsBattlegroundFinished = 0xDC3050; // Script_GetBattlefieldWinner (2)
+        internal static readonly int PlayerName = 0xEC4668; // ClientServices::GetCharacterName (or Script_UnitName/GetPlayerName)
+        internal static readonly int PlayerRealm = 0xEC480E; // Гордунни = D0 93 D0 BE D1 80 D0 B4 D1 83 D0 BD D0 BD D0 B8 // Черный Шрам = D0 A7 D0 B5 D1 80 D0 BD D1 8B D0 B9 20 D0 A8 D1 80 D0 B0 D0 BC
+        internal static readonly int PlayerZoneID = 0xD65BB4; // CGGameUI::NewZoneFeedback (16) (or Script_GetRaidRosterInfo (101))
+        internal static readonly int PlayerIsLooting = 0xDD3270; // CGPlayer_C::IsLooting (17) (or Script_SetLootPortrait (32) or Script_GetContainerPurchaseInfo)
+        internal static readonly int BlackMarketNumItems = 0xE10758;
+        internal static readonly int BlackMarketItems = 0xE1075C;
+        internal static readonly int UnitNameCachePointer = 0xC86838 + 0x8;
+        internal static readonly int ObjectManager = 0xCB47C4; // ClntObjMgrPush (7)
 
         #endregion
 
         #region Injected methods
 
-        internal static readonly int ClntObjMgrGetActivePlayerObj = 0x4FC6; // ClntObjMgrGetActivePlayerObj
-        internal static readonly int LuaDoStringAddress = 0x50236; // FrameScript_ExecuteBuffer
-        internal static readonly int LuaGetLocalizedTextAddress = 0x414C74; // FrameScript_GetLocalizedText
-        internal static readonly int SelectTarget = 0x8CE477; // CGGameUI::Target
-        internal static readonly int Interact = 0x8D01D0; // CGGameUI::Interact
+        internal static readonly int ClntObjMgrGetActivePlayerObj = 0x4F84; // ClntObjMgrGetActivePlayerObj
+        internal static readonly int LuaDoStringAddress = 0x4FD26; // FrameScript_ExecuteBuffer
+        internal static readonly int LuaGetLocalizedTextAddress = 0x4141AE; // FrameScript_GetLocalizedText
+        internal static readonly int SelectTarget = 0x8CE494; // CGGameUI::Target
+        internal static readonly int Interact = 0x8D01EE; // CGGameUI::Interact
         //internal static readonly int HandleTerrainClick = 0x38D7AA; // Spell_C__HandleTerrainClick
-        internal static readonly int ClickToMove = 0x420543; // CGUnit_C::InitializeTrackingState
+        internal static readonly int ClickToMove = 0x41FA94; // CGUnit_C::InitializeTrackingState
 
         #endregion
 

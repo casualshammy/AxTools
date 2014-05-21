@@ -33,11 +33,6 @@ namespace AxTools.Classes.WoW.Plugins
             get { return "This is a very simple fish bot. It supports Nat's Hat and Weather-Beaten Fishing Hat if equipped"; }
         }
 
-        public string TrayDescription
-        {
-            get { return "Fishing"; }
-        }
-
         public Image TrayIcon { get { return Resources.trade_fishing; } }
 
         public int Interval

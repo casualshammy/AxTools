@@ -13,7 +13,7 @@ namespace AxTools.Classes.WoW.Plugins
 
         public string Name
         {
-            get { return "GoodsDestroyer"; }
+            get { return "Milling/disenchanting/prospecting"; }
         }
 
         public Version Version
@@ -32,11 +32,6 @@ namespace AxTools.Classes.WoW.Plugins
             {
                 return "This plugin will mill/prospect any herbs/ores and disenchant greens in your bags";
             }
-        }
-
-        public string TrayDescription
-        {
-            get { return "Milling/disenchanting/prospecting"; }
         }
 
         public Image TrayIcon { get { return Resources.inv_misc_gem_bloodgem_01; } }

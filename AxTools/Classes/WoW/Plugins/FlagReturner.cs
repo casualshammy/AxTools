@@ -1,4 +1,5 @@
-﻿using AxTools.Classes.WoW.PluginSystem;
+﻿using System.Media;
+using AxTools.Classes.WoW.PluginSystem;
 using AxTools.Forms;
 using AxTools.Properties;
 using System;
@@ -16,7 +17,7 @@ namespace AxTools.Classes.WoW.Plugins
 
         public string Name
         {
-            get { return "BG Outlaw"; }
+            get { return "Capture flags/orbs on the battlefields"; }
         }
 
         public Version Version
@@ -35,11 +36,6 @@ namespace AxTools.Classes.WoW.Plugins
             {
                 return "This plugin will automatically return or pickup flags in Warsong Gulch, Twin Peaks and EotS, also it will pickup orbs in ToK";
             }
-        }
-
-        public string TrayDescription
-        {
-            get { return "Capture flags/orbs on the battlefields"; }
         }
 
         public Image TrayIcon { get { return Resources.achievement_bg_winwsg; } }
@@ -87,10 +83,11 @@ namespace AxTools.Classes.WoW.Plugins
                     searchingObjects = new[] { "Хранилище гильдии" };
                     break;
                 default:
-                    Log.Print(String.Format("{0}:{1} :: [{2}] Plugin is stopped: unknown battlefield ({3}/{4})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, Name, searchingZone, zoneText));
-                    MainForm.Instance.ShowNotifyIconMessage("[" + Name + "] Plugin is stopped: unknown battlefield", "I don't know what to do in this zone...", ToolTipIcon.Error);
-                    PluginManager.StopPluginFromPlugin();
-                    return;
+                    searchingObjects = new string[] {};
+                    Log.Print(String.Format("{0}:{1} :: [{2}] Unknown battlefield ({3}/{4})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, Name, searchingZone, zoneText));
+                    MainForm.Instance.ShowNotifyIconMessage("[" + Name + "] Unknown battlefield", "I don't know what to do in this zone...", ToolTipIcon.Error);
+                    SystemSounds.Hand.Play();
+                    break;
             }
         }
 

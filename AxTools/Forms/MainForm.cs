@@ -920,7 +920,7 @@ namespace AxTools.Forms
             }
 
             comboBoxWowPlugins.Items.Clear();
-            comboBoxWowPlugins.Items.AddRange(PluginManager.Plugins.Where(i => i.TrayDescription != string.Empty).Select(i => i.TrayDescription).Cast<object>().ToArray());
+            comboBoxWowPlugins.Items.AddRange(PluginManager.Plugins.Select(i => i.Name).Cast<object>().ToArray());
 
             contextMenuStripMain.Items.Clear();
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
@@ -931,10 +931,10 @@ namespace AxTools.Forms
                 blackMarketTrackerToolStripMenuItem,
                 toolStripSeparator2
             });
-            foreach (IPlugin i in PluginManager.Plugins.Where(i => i.TrayDescription != string.Empty))
+            foreach (IPlugin i in PluginManager.Plugins)
             {
                 IPlugin plugin = i;
-                contextMenuStripMain.Items.Add(new ToolStripMenuItem(plugin.TrayDescription, plugin.TrayIcon, delegate
+                contextMenuStripMain.Items.Add(new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate
                 {
                     comboBoxWowPlugins.SelectedIndex = PluginManager.Plugins.IndexOf(plugin);
                     if (!WoW.Hooked && WowProcess.Shared.Count != 1)
@@ -1130,7 +1130,7 @@ namespace AxTools.Forms
             {
                 i.Text = i.Text.Replace(appendix, string.Empty);
 
-                if (PluginManager.Plugins.Any(k => k.TrayDescription == i.Text))
+                if (PluginManager.Plugins.Any(k => k.Name == i.Text))
                 {
                     i.Enabled = PluginManager.ActivePlugin == null;
                 }
@@ -1426,7 +1426,7 @@ namespace AxTools.Forms
                 }
                 else
                 {
-                    PluginManager.ActivePlugin = PluginManager.Plugins.First(i => i.TrayDescription == comboBoxWowPlugins.Text);
+                    PluginManager.ActivePlugin = PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text);
                     WowPluginHotkeyChanged();
                 }
             }
@@ -1465,7 +1465,7 @@ namespace AxTools.Forms
             }
             else
             {
-                string[] arr = PluginManager.Plugins.First(i => i.TrayDescription == comboBoxWowPlugins.Text).Description.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+                string[] arr = PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text).Description.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
                 string text = string.Empty;
                 int counter = 0;
                 foreach (string i in arr)

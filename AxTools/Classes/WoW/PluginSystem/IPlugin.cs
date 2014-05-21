@@ -26,11 +26,6 @@ namespace AxTools.Classes.WoW.PluginSystem
         string Description { get; }
 
         /// <summary>
-        ///     Description to display in the tray context menu
-        /// </summary>
-        string TrayDescription { get; }
-
-        /// <summary>
         ///     Icon for tray context menu
         /// </summary>
         Image TrayIcon { get; }

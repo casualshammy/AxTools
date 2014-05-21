@@ -1,4 +1,5 @@
-﻿using AxTools.Classes.WoW.Plugins;
+﻿using WindowsFormsAero.TaskDialog;
+using AxTools.Classes.WoW.Plugins;
 using AxTools.Forms;
 using System;
 using System.CodeDom.Compiler;
@@ -143,11 +144,12 @@ namespace AxTools.Classes.WoW.PluginSystem
         internal static void LoadPluginsFromDisk()
         {
             string[] directories = Directory.GetDirectories(Globals.PluginsPath);
+            bool haveError = false;
             foreach (string directory in directories)
             {
                 try
                 {
-                    var cc = new CodeCompiler(directory);
+                    CodeCompiler cc = new CodeCompiler(directory);
                     CompilerResults results = cc.Compile();
 
                     if (results != null)
@@ -156,8 +158,9 @@ namespace AxTools.Classes.WoW.PluginSystem
                         {
                             foreach (object error in results.Errors)
                             {
-                                Log.Print("Compiler Error: " + error, true);
+                                Log.Print("Compiler Error: " + error);
                             }
+                            haveError = true;
                         }
                         else
                         {
@@ -169,15 +172,20 @@ namespace AxTools.Classes.WoW.PluginSystem
                                     IPlugin temp = (IPlugin) Activator.CreateInstance(t);
                                     if (Plugins.All(i => i.Name != temp.Name))
                                     {
-                                        if (!string.IsNullOrWhiteSpace(temp.TrayDescription))
+                                        if (!string.IsNullOrWhiteSpace(temp.Name))
                                         {
                                             Plugins.Add(temp);
                                             Log.Print(string.Format("Plugin loaded: {0} {1}", temp.Name, temp.Version));
                                         }
                                         else
                                         {
-                                            Log.Print(string.Format("Can't load plugin [{0}]: TrayDescription is empty", temp.Name));
+                                            Log.Print(string.Format("Can't load plugin [{0}]: [Name] is empty", temp.Name));
+                                            haveError = true;
                                         }
+                                    }
+                                    else
+                                    {
+                                        Log.Print(string.Format("Can't load plugin [{0}]: already loaded", temp.Name));
                                     }
                                 }
                             }
@@ -188,6 +196,10 @@ namespace AxTools.Classes.WoW.PluginSystem
                 {
                     Log.Print(ex.Message, true);
                 }
+            }
+            if (haveError)
+            {
+                MainForm.Instance.ShowTaskDialog("Plugin error", "Error has occured during compiling plugins\r\nSome plugins could not be loaded and are disabled", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
         }
 

@@ -735,6 +735,8 @@ namespace AxTools.Forms
 
         private void PictureBoxMainMouseClick(object sender, MouseEventArgs e)
         {
+            ulong guid = 0;
+            WowPoint point = new WowPoint();
             foreach (KeyValuePair<ulong, Point> pair in objectsPointsInRadarCoords)
             {
                 if (Math.Abs(pair.Value.X - e.X) < 4 && Math.Abs(pair.Value.Y - e.Y) < 4)
@@ -742,15 +744,29 @@ namespace AxTools.Forms
                     WowPlayer unit = wowPlayers.FirstOrDefault(i => i.GUID == pair.Key);
                     if (unit != null)
                     {
-                        WoW.TargetUnit(unit.GUID);
-                        return;
+                        guid = unit.GUID;
+                        point = unit.Location;
                     }
-                    WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
-                    if (npc != null)
+                    else
                     {
-                        WoW.TargetUnit(npc.GUID);
-                        return;
+                        WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
+                        if (npc != null)
+                        {
+                            guid = npc.GUID;
+                            point = npc.Location;
+                        }
                     }
+                }
+            }
+            if (guid != 0)
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    WoW.TargetUnit(guid);
+                }
+                else if (e.Button == MouseButtons.Right)
+                {
+                    WoW.MoveTo(point);
                 }
             }
         }
