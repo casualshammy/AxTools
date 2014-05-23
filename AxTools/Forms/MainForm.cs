@@ -831,6 +831,16 @@ namespace AxTools.Forms
 
             #endregion
 
+            #region Loading plugins
+
+            PluginManager.LoadPlugins();
+            if (Settings.EnableCustomPlugins)
+            {
+                PluginManager.LoadPluginsFromDisk();
+            }
+
+            #endregion
+
             //continue starting...
             BeginInvoke(new Action(LoadingStepSync));
             Log.Print("AxTools :: preparation completed");
@@ -839,7 +849,7 @@ namespace AxTools.Forms
         private void LoadingStepSync()
         {
 
-            LoadPluginsAndSetupCtrls();
+            OnPluginsLoaded();
 
             #region Run timers
 
@@ -911,14 +921,8 @@ namespace AxTools.Forms
             Log.Print("AxTools started succesfully");
         }
 
-        private void LoadPluginsAndSetupCtrls()
+        private void OnPluginsLoaded()
         {
-            PluginManager.LoadPlugins();
-            if (Settings.EnableCustomPlugins)
-            {
-                PluginManager.LoadPluginsFromDisk();
-            }
-
             comboBoxWowPlugins.Items.Clear();
             comboBoxWowPlugins.Items.AddRange(PluginManager.Plugins.Select(i => i.Name).Cast<object>().ToArray());
 

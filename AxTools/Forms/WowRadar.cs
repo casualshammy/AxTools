@@ -744,29 +744,42 @@ namespace AxTools.Forms
                     WowPlayer unit = wowPlayers.FirstOrDefault(i => i.GUID == pair.Key);
                     if (unit != null)
                     {
-                        guid = unit.GUID;
-                        point = unit.Location;
-                    }
-                    else
-                    {
-                        WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
-                        if (npc != null)
+                        if (e.Button == MouseButtons.Left)
                         {
-                            guid = npc.GUID;
-                            point = npc.Location;
+                            WoW.TargetUnit(unit.GUID);
                         }
+                        else if (e.Button == MouseButtons.Right)
+                        {
+                            WoW.MoveTo(unit.Location);
+                        }
+                        break;
                     }
-                }
-            }
-            if (guid != 0)
-            {
-                if (e.Button == MouseButtons.Left)
-                {
-                    WoW.TargetUnit(guid);
-                }
-                else if (e.Button == MouseButtons.Right)
-                {
-                    WoW.MoveTo(point);
+                    WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
+                    if (npc != null)
+                    {
+                        if (e.Button == MouseButtons.Left)
+                        {
+                            WoW.TargetUnit(npc.GUID);
+                        }
+                        else if (e.Button == MouseButtons.Right)
+                        {
+                            WoW.MoveTo(npc.Location);
+                        }
+                        break;
+                    }
+                    WowObject wowObject = wowObjects.FirstOrDefault(i => i.GUID == pair.Key);
+                    if (wowObject != null)
+                    {
+                        if (e.Button == MouseButtons.Left)
+                        {
+                            WoW.Interact(wowObject.GUID);
+                        }
+                        else if (e.Button == MouseButtons.Right)
+                        {
+                            WoW.MoveTo(wowObject.Location);
+                        }
+                        break;
+                    }
                 }
             }
         }

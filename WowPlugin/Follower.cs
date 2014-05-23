@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using AxTools.Classes.WoW;
 using AxTools.Classes.WoW.PluginSystem;
 using AxTools.Classes.WoW.PluginSystem.API;
@@ -36,9 +37,10 @@ namespace TestPlugin
             }
         }
 
+        private Image trayIcon;
         public Image TrayIcon
         {
-            get { return null; }
+            get { return trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\Follower\\ability_hunter_posthaste.jpg")); }
         }
 
         public int Interval
