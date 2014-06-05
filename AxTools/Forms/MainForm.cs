@@ -153,30 +153,6 @@ namespace AxTools.Forms
 
         #region Timers
 
-        private void timerAddonsBackup_Tick(object sender, EventArgs e)
-        {
-            TimeSpan pTimeSpan = DateTime.UtcNow - Settings.AddonsBackupLastdate;
-            if (pTimeSpan.TotalHours >= Settings.AddonsBackupTimer && linkBackupAddons.Visible)
-            {
-                Settings.AddonsBackupLastdate = DateTime.UtcNow;
-                ProcessPriorityClass defaultProcessPriorityClass = Process.GetCurrentProcess().PriorityClass;
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
-                linkBackupAddons.Visible = false;
-                progressBarAddonsBackup.Value = 0;
-                progressBarAddonsBackup.Visible = true;
-                Task.Factory.StartNew(() => AddonsBackup.Start(true))
-                    .ContinueWith(l =>
-                    {
-                        Process.GetCurrentProcess().PriorityClass = defaultProcessPriorityClass;
-                        BeginInvoke((MethodInvoker) delegate
-                        {
-                            linkBackupAddons.Visible = true;
-                            progressBarAddonsBackup.Visible = false;
-                        });
-                    });
-            }
-        }
-
         private void TimerNiElapsed(object sender, ElapsedEventArgs e)
         {
             BeginInvoke(new Action(() => SetIcon(false)));
@@ -553,7 +529,7 @@ namespace AxTools.Forms
             //
             clicker.Dispose();
             //stop timers
-            timerAddonsBackup.Enabled = false;
+            AddonsBackup.StopService();
             timerNotifyIcon.Enabled = false;
             timerPinger.Enabled = false;
             //stop watching process trace
@@ -761,7 +737,7 @@ namespace AxTools.Forms
 
             #region Run timers
 
-            timerAddonsBackup.Enabled = true;
+            AddonsBackup.StartService();
             timerNotifyIcon.Enabled = true;
             timerPinger.Enabled = true;
 
@@ -978,15 +954,9 @@ namespace AxTools.Forms
 
         private void linkBackupAddons_Click(object sender, EventArgs e)
         {
-            linkBackupAddons.Visible = false;
-            progressBarAddonsBackup.Value = 0;
-            progressBarAddonsBackup.Visible = true;
-            Task.Factory.StartNew(() => AddonsBackup.Start(false))
-                .ContinueWith(l => BeginInvoke((MethodInvoker) delegate
-                {
-                    linkBackupAddons.Visible = true;
-                    progressBarAddonsBackup.Visible = false;
-                }));
+            AddonsBackup_OnChangedState(-1);
+            Task.Factory.StartNew(AddonsBackup.StartOnDemand)
+                .ContinueWith(l => AddonsBackup_OnChangedState(101));
         }
 
         private void linkClickerSettings_Click(object sender, EventArgs e)
@@ -1454,10 +1424,30 @@ namespace AxTools.Forms
 
         internal void AddonsBackup_OnChangedState(int procent)
         {
-            BeginInvoke((MethodInvoker) delegate
+            switch (procent)
             {
-                progressBarAddonsBackup.Value = procent;
-            });
+                case -1:
+                    BeginInvoke((MethodInvoker) delegate
+                    {
+                        linkBackupAddons.Visible = false;
+                        progressBarAddonsBackup.Value = 0;
+                        progressBarAddonsBackup.Visible = true;
+                    });
+                    break;
+                case 101:
+                    BeginInvoke((MethodInvoker) delegate
+                    {
+                        linkBackupAddons.Visible = true;
+                        progressBarAddonsBackup.Visible = false;
+                    });
+                    break;
+                default:
+                    BeginInvoke((MethodInvoker) delegate
+                    {
+                        progressBarAddonsBackup.Value = procent;
+                    });
+                    break;
+            }
         }
 
         #endregion

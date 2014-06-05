@@ -59,7 +59,6 @@ namespace AxTools.Forms
             this.customizeWoTWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.launchWoWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.woWPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.timerAddonsBackup = new System.Windows.Forms.Timer(this.components);
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
             this.progressBarAddonsBackup = new MetroFramework.Controls.MetroProgressBar();
@@ -196,11 +195,6 @@ namespace AxTools.Forms
             // 
             this.woWPluginsToolStripMenuItem.Name = "woWPluginsToolStripMenuItem";
             this.woWPluginsToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
-            // 
-            // timerAddonsBackup
-            // 
-            this.timerAddonsBackup.Interval = 5000;
-            this.timerAddonsBackup.Tick += new System.EventHandler(this.timerAddonsBackup_Tick);
             // 
             // metroTabControl1
             // 
@@ -794,7 +788,6 @@ namespace AxTools.Forms
         }
         #endregion
 
-        private Timer timerAddonsBackup;
         private NotifyIcon notifyIconMain;
         private MetroTabControl metroTabControl1;
         private MetroTabPage metroTabPage1;
