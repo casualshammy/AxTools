@@ -16,7 +16,7 @@ namespace AxTools.Forms
             InitializeComponent();
             ShowInTaskbar = false;
             metroStyleManager1.Style = Settings.NewStyleColor;
-            foreach (WowProcess i in WowProcess.Shared)
+            foreach (WowProcess i in WowProcess.GetAllWowProcesses())
             {
                 comboBox1.Items.Add(i.IsValidBuild && i.IsInGame ?
                     string.Format("{0} - {1} (pID: {2})", i.PlayerName, i.PlayerRealm, i.ProcessID) :
@@ -45,7 +45,7 @@ namespace AxTools.Forms
         {
             var fi = new FLASHWINFO {
                 cbSize = (uint) Marshal.SizeOf(typeof (FLASHWINFO)),
-                hwnd = WowProcess.Shared[comboBox1.SelectedIndex].MainWindowHandle,
+                hwnd = WowProcess.GetAllWowProcesses()[comboBox1.SelectedIndex].MainWindowHandle,
                 dwFlags = FlashWindowFlags.FLASHW_TRAY | FlashWindowFlags.FLASHW_TIMERNOFG
             };
             NativeMethods.FlashWindowEx(ref fi);

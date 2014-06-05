@@ -79,7 +79,14 @@ namespace AxTools.Classes.WoW
                         }
                         byte[] nameBytes = WoW.WProc.Memory.ReadBytes((IntPtr) (nameMask + WowBuildInfo.UnitNameStringOffset), 80);
                         temp = Encoding.UTF8.GetString(nameBytes).Split('\0')[0];
-                        Names.Add(GUID, temp);
+                        if (!string.IsNullOrWhiteSpace(temp))
+                        {
+                            Names.Add(GUID, temp);
+                        }
+                        else
+                        {
+                            Log.Print("Null name!", true);
+                        }
                     }
                     catch
                     {

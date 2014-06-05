@@ -9,35 +9,34 @@ namespace AxTools.Classes.WoW
     {
         internal WowProcess(int processID)
         {
-            MaxTime = Utils.Rnd.Next(150000, 290000);
             ProcessID = processID;
             mProcess = Process.GetProcessById(processID);
             mProcessName = Process.ProcessName;
             isValidBuild = -1;
+            woWAntiKick = new WoWAntiKick(this);
         }
 
         public void Dispose()
         {
+            woWAntiKick.Dispose();
             if (Memory != null) Memory.Dispose();
             Process.Dispose();
         }
 
         private static readonly List<WowProcess> SharedList = new List<WowProcess>();
         private static readonly object SharedLock = new object();
-        internal static List<WowProcess> Shared
+        internal static List<WowProcess> GetAllWowProcesses()
         {
-            get
+            lock (SharedLock)
             {
-                lock (SharedLock)
-                {
-                    return SharedList;
-                }
+                return SharedList;
             }
         }
 
-        internal int MaxTime;
         internal int ProcessID;
         internal GreyMagic.ExternalProcessReader Memory;
+
+        private readonly WoWAntiKick woWAntiKick;
 
         private string mProcessName;
 

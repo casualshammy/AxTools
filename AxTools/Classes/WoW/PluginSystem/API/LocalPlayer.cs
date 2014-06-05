@@ -2,15 +2,15 @@ namespace AxTools.Classes.WoW.PluginSystem.API
 {
     public class LocalPlayer
     {
-        internal ulong GUID;
+        public ulong GUID;
         public WowPoint Location;
         public uint Health;
-        internal uint HealthMax;
-        internal uint CastingSpellID;
-        internal uint ChannelSpellID;
-        internal float Rotation;
-        internal uint Level;
+        public uint HealthMax;
+        public uint CastingSpellID;
+        public uint ChannelSpellID;
+        public float Rotation;
+        public uint Level;
         public ulong TargetGUID;
-        internal bool IsAlliance;
+        public bool IsAlliance;
     }
 }

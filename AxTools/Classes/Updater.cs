@@ -1,24 +1,95 @@
-﻿using Ionic.Zip;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
+using WindowsFormsAero.TaskDialog;
+using AxTools.Forms;
 using System;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace AxTools.Classes
 {
     internal class Updater
     {
-        internal bool UpdateForMainExecutableIsAvailable;
 
-        internal bool UpdateForAddonIsAvailable;
+        private static readonly System.Timers.Timer Timer = new System.Timers.Timer(900000);
 
-        internal string[] FilesToDownload;
-
-        internal static Updater GetUpdateInfo()
+        internal static void Start()
         {
-            Updater updater = new Updater();
+            Timer.Elapsed += timer_Elapsed;
+            Timer.Start();
+            OnElapsed();
+        }
+
+        private static void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            OnElapsed();
+        }
+
+        private static void OnElapsed()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                Timer.Stop();
+                CheckForUpdates();
+                Timer.Start();
+            });
+        }
+
+        private static void DownloadAndInstallMainExecutable(IEnumerable<string> filesToDownload)
+        {
+            Log.Print("[Updater] Update for main executable is available");
+            DirectoryInfo updateDirectoryInfo = new DirectoryInfo(Application.StartupPath + "\\update");
+            if (updateDirectoryInfo.Exists)
+            {
+                updateDirectoryInfo.Delete(true);
+            }
+            updateDirectoryInfo.Create();
+            using (WebClient webClient = new WebClient())
+            {
+                foreach (string i in filesToDownload)
+                {
+                    string fullpath = updateDirectoryInfo.FullName + "\\" + i;
+                    File.Delete(fullpath);
+                    webClient.DownloadFile(Globals.DropboxPath + "/" + i, fullpath);
+                }
+            }
+            try
+            {
+                using (WebClient webClient = new WebClient())
+                {
+                    webClient.DownloadFile(Globals.DropboxPath + "/Updater.exe", Application.StartupPath + "\\Updater.exe");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Print("[Updater] Can't download updater: " + ex.Message, true);
+                return;
+            }
+            TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No),
+                TaskDialogIcon.Information);
+            MainForm.Instance.ShowNotifyIconMessage("Update for AxTools is ready to install", "Click on icon to install", ToolTipIcon.Info);
+            if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
+            {
+                try
+                {
+                    Log.Print("[Updater] Closing for update...");
+                    Program.IsRestarting = true;
+                    MainForm.Instance.BeginInvoke(new Action(MainForm.Instance.Close));
+                }
+                catch (Exception ex)
+                {
+                    Log.Print("[Updater] Update error: " + ex.Message, true);
+                }
+            }
+        }
+
+        private static void CheckForUpdates()
+        {
+            Log.Print("[Updater] Checking for updates");
             string updateString;
             try
             {
@@ -30,15 +101,18 @@ namespace AxTools.Classes
             catch (WebException webException)
             {
                 Log.Print("[Updater] Fetching error: " + webException.Message);
-                return updater;
+                return;
             }
             catch (Exception ex)
             {
                 Log.Print("[Updater] Fetching error: " + ex.Message + " :: " + ex.GetType(), true);
-                return updater;
+                return;
             }
+            
             if (!String.IsNullOrWhiteSpace(updateString))
             {
+                bool updateForMainExecutableIsAvailable = false;
+                string[] filesToDownload = null;
                 using (StringReader stringReader = new StringReader(updateString))
                 {
                     while (stringReader.Peek() != -1)
@@ -56,27 +130,11 @@ namespace AxTools.Classes
                                         Version serverVersion = new Version(pair[1]);
                                         if (localVersion.Major != serverVersion.Major || localVersion.Minor != serverVersion.Minor || localVersion.Build != serverVersion.Build)
                                         {
-                                            updater.UpdateForMainExecutableIsAvailable = true;
-                                        }
-                                        break;
-                                    case "CurrentAddonVersion":
-                                        if (Directory.Exists(Settings.WowExe + "\\Interface\\AddOns"))
-                                        {
-                                            string localAddonVersionFile = Settings.WowExe + "\\Interface\\AddOns\\ax_tools\\ax_tools.toc";
-                                            string localAddonVersion = string.Empty;
-                                            if (File.Exists(localAddonVersionFile))
-                                            {
-                                                localAddonVersion = File.ReadAllLines(localAddonVersionFile)[1];
-                                            }
-                                            string serverAddonVersion = pair[1];
-                                            if (!File.Exists(localAddonVersionFile) || serverAddonVersion != localAddonVersion)
-                                            {
-                                                updater.UpdateForAddonIsAvailable = true;
-                                            }
+                                            updateForMainExecutableIsAvailable = true;
                                         }
                                         break;
                                     case "FilesToDownload":
-                                        updater.FilesToDownload = pair[1].Split(',');
+                                        filesToDownload = pair[1].Split(',');
                                         break;
                                 }
                             }
@@ -87,51 +145,15 @@ namespace AxTools.Classes
                         }
                     }
                 }
+                if (updateForMainExecutableIsAvailable && filesToDownload != null && filesToDownload.Count(i => !string.IsNullOrWhiteSpace(i)) > 0)
+                {
+                    Timer.Elapsed -= timer_Elapsed;
+                    DownloadAndInstallMainExecutable(filesToDownload);
+                }
             }
             else
             {
                 Log.Print("[Updater] Update file fetched, but it's empty!", true);
-            }
-            return updater;
-        }
-
-        internal static void DownloadAndExtractAddon()
-        {
-            string zipPath = Globals.TempPath + "\\ax_tools.zip";
-            Utils.CheckCreateDir();
-            File.Delete(zipPath);
-            try
-            {
-                using (WebClient pWebClient = new WebClient())
-                {
-                    pWebClient.DownloadFile(Globals.DropboxPath + "/ax_tools.zip", zipPath);
-                }
-                using (ZipFile zipFile = ZipFile.Read(zipPath, new ReadOptions { Encoding = Encoding.UTF8 }))
-                {
-                    zipFile.ExtractAll(Settings.WowExe + "\\Interface\\AddOns", ExtractExistingFileAction.OverwriteSilently);
-                }
-                Log.Print("AddOn component successfully updated");
-            }
-            catch (Exception ex)
-            {
-                Log.Print("Download addon error: " + ex.Message, true);
-            }
-        }
-
-        internal static void DownloadAndExtractTestPlugin()
-        {
-            if (Directory.Exists(Globals.PluginsPath + "\\TestPlugin"))
-            {
-                Utils.CheckCreateDir();
-                Directory.Delete(Globals.PluginsPath + "\\TestPlugin", true);
-                using (WebClient webClient = new WebClient())
-                {
-                    webClient.DownloadFile(Globals.DropboxPath + "/TestPlugin.zip", Globals.TempPath + "\\TestPlugin.zip");
-                }
-                using (ZipFile zip = new ZipFile(Globals.TempPath + "\\TestPlugin.zip", Encoding.UTF8))
-                {
-                    zip.ExtractAll(Application.StartupPath, ExtractExistingFileAction.OverwriteSilently);
-                }
             }
         }
 

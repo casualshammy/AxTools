@@ -735,8 +735,6 @@ namespace AxTools.Forms
 
         private void PictureBoxMainMouseClick(object sender, MouseEventArgs e)
         {
-            ulong guid = 0;
-            WowPoint point = new WowPoint();
             foreach (KeyValuePair<ulong, Point> pair in objectsPointsInRadarCoords)
             {
                 if (Math.Abs(pair.Value.X - e.X) < 4 && Math.Abs(pair.Value.Y - e.Y) < 4)

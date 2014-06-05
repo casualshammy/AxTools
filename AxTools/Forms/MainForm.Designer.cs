@@ -55,12 +55,14 @@ namespace AxTools.Forms
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.stopActivePluginorPresshotkeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.woWAutopassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customizeWoTWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.launchWoWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.woWPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.timerAntiAfk = new System.Windows.Forms.Timer(this.components);
+            this.timerAddonsBackup = new System.Windows.Forms.Timer(this.components);
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
+            this.progressBarAddonsBackup = new MetroFramework.Controls.MetroProgressBar();
             this.linkEditWowAccounts = new MetroFramework.Controls.MetroLink();
             this.buttonWowUpdater = new MetroFramework.Controls.MetroButton();
             this.buttonLaunchWowWithoutAutopass = new MetroFramework.Controls.MetroButton();
@@ -90,7 +92,6 @@ namespace AxTools.Forms
             this.pictureBoxExtSettings = new AxTools.Components.PictureBoxExt(this.components);
             this.labelPingNum = new MetroFramework.Controls.MetroLabel();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
-            this.woWAutopassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripMain.SuspendLayout();
             this.metroTabControl1.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -120,7 +121,7 @@ namespace AxTools.Forms
             this.customizeWoTWindowToolStripMenuItem,
             this.launchWoWToolStripMenuItem});
             this.contextMenuStripMain.Name = "contextMenuStripMain";
-            this.contextMenuStripMain.Size = new System.Drawing.Size(204, 198);
+            this.contextMenuStripMain.Size = new System.Drawing.Size(204, 176);
             // 
             // woWRadarToolStripMenuItem
             // 
@@ -170,6 +171,12 @@ namespace AxTools.Forms
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(200, 6);
             // 
+            // woWAutopassToolStripMenuItem
+            // 
+            this.woWAutopassToolStripMenuItem.Name = "woWAutopassToolStripMenuItem";
+            this.woWAutopassToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.woWAutopassToolStripMenuItem.Text = "WoW Autopass";
+            // 
             // customizeWoTWindowToolStripMenuItem
             // 
             this.customizeWoTWindowToolStripMenuItem.Name = "customizeWoTWindowToolStripMenuItem";
@@ -190,10 +197,10 @@ namespace AxTools.Forms
             this.woWPluginsToolStripMenuItem.Name = "woWPluginsToolStripMenuItem";
             this.woWPluginsToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
             // 
-            // timerAntiAfk
+            // timerAddonsBackup
             // 
-            this.timerAntiAfk.Interval = 5000;
-            this.timerAntiAfk.Tick += new System.EventHandler(this.Timer2000Tick);
+            this.timerAddonsBackup.Interval = 5000;
+            this.timerAddonsBackup.Tick += new System.EventHandler(this.timerAddonsBackup_Tick);
             // 
             // metroTabControl1
             // 
@@ -218,6 +225,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage1
             // 
+            this.metroTabPage1.Controls.Add(this.progressBarAddonsBackup);
             this.metroTabPage1.Controls.Add(this.linkEditWowAccounts);
             this.metroTabPage1.Controls.Add(this.buttonWowUpdater);
             this.metroTabPage1.Controls.Add(this.buttonLaunchWowWithoutAutopass);
@@ -243,6 +251,22 @@ namespace AxTools.Forms
             this.metroTabPage1.VerticalScrollbarBarColor = true;
             this.metroTabPage1.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage1.VerticalScrollbarSize = 10;
+            // 
+            // progressBarAddonsBackup
+            // 
+            this.progressBarAddonsBackup.FontSize = MetroFramework.MetroProgressBarSize.Medium;
+            this.progressBarAddonsBackup.FontWeight = MetroFramework.MetroProgressBarWeight.Light;
+            this.progressBarAddonsBackup.HideProgressText = false;
+            this.progressBarAddonsBackup.Location = new System.Drawing.Point(3, 107);
+            this.progressBarAddonsBackup.Name = "progressBarAddonsBackup";
+            this.progressBarAddonsBackup.ProgressBarStyle = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBarAddonsBackup.Size = new System.Drawing.Size(92, 23);
+            this.progressBarAddonsBackup.Style = MetroFramework.MetroColorStyle.Blue;
+            this.progressBarAddonsBackup.StyleManager = null;
+            this.progressBarAddonsBackup.TabIndex = 64;
+            this.progressBarAddonsBackup.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.progressBarAddonsBackup.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.progressBarAddonsBackup.Value = 100;
             // 
             // linkEditWowAccounts
             // 
@@ -741,12 +765,6 @@ namespace AxTools.Forms
             this.metroToolTip1.StyleManager = null;
             this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
-            // woWAutopassToolStripMenuItem
-            // 
-            this.woWAutopassToolStripMenuItem.Name = "woWAutopassToolStripMenuItem";
-            this.woWAutopassToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.woWAutopassToolStripMenuItem.Text = "WoW Autopass";
-            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(469, 265);
@@ -776,7 +794,7 @@ namespace AxTools.Forms
         }
         #endregion
 
-        private Timer timerAntiAfk;
+        private Timer timerAddonsBackup;
         private NotifyIcon notifyIconMain;
         private MetroTabControl metroTabControl1;
         private MetroTabPage metroTabPage1;
@@ -821,6 +839,7 @@ namespace AxTools.Forms
         private MetroButton buttonWowUpdater;
         private MetroLink linkEditWowAccounts;
         private ToolStripMenuItem woWAutopassToolStripMenuItem;
+        private MetroProgressBar progressBarAddonsBackup;
     }
 }
 

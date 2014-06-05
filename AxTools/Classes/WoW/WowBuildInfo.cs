@@ -2,6 +2,7 @@
 {
     internal static class WowBuildInfo
     {
+
         #region Build info
 
         internal static readonly int WowBuild = 18291;

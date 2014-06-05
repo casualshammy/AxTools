@@ -121,12 +121,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\AddonsBackup.cs" />
     <Compile Include="Classes\Clicker.cs" />
     <Compile Include="Classes\TaskbarProgressbar\CTaskbarList.cs" />
     <Compile Include="Classes\TaskbarProgressbar\ITaskbarList3.cs" />
     <Compile Include="Classes\TaskbarProgressbar\TBProgressBar.cs" />
     <Compile Include="Classes\TaskbarProgressbar\ThumbnailProgressState.cs" />
     <Compile Include="Classes\Updater.cs" />
+    <Compile Include="Classes\WoWAntiKick.cs" />
     <Compile Include="Classes\WoW\MouseButton.cs" />
     <Compile Include="Classes\WoW\PluginSystem\API\EnvironmentObjects.cs" />
     <Compile Include="Classes\WoW\PluginSystem\API\Functions.cs" />
@@ -179,12 +181,6 @@
     </Compile>
     <Compile Include="Components\MetroToggleExt.Designer.cs">
       <DependentUpon>MetroToggleExt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\AddonsBackup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\AddonsBackup.Designer.cs">
-      <DependentUpon>AddonsBackup.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\AppSettings.cs">
       <SubType>Form</SubType>
@@ -299,9 +295,6 @@
     <Compile Include="Classes\WoW\WoW.cs" />
     <Compile Include="Classes\WoW\WowBuildInfo.cs" />
     <Compile Include="Classes\WoW\WowPlayerClass.cs" />
-    <EmbeddedResource Include="Forms\AddonsBackup.resx">
-      <DependentUpon>AddonsBackup.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\AppSettings.resx">
       <DependentUpon>AppSettings.cs</DependentUpon>
       <SubType>Designer</SubType>

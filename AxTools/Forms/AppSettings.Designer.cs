@@ -62,6 +62,7 @@ namespace AxTools.Forms
             this.checkBoxAddonsBackup = new MetroFramework.Controls.MetroCheckBox();
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
+            this.checkBoxMinimizeToTray = new MetroFramework.Controls.MetroCheckBox();
             this.linkSendLogToDev = new MetroFramework.Controls.MetroLink();
             this.linkShowLog = new MetroFramework.Controls.MetroLink();
             this.metroLabel10 = new MetroFramework.Controls.MetroLabel();
@@ -103,7 +104,6 @@ namespace AxTools.Forms
             this.Label3 = new MetroFramework.Controls.MetroLabel();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.checkBoxMinimizeToTray = new MetroFramework.Controls.MetroCheckBox();
             this.GroupBox2.SuspendLayout();
             this.GroupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupTimer)).BeginInit();
@@ -629,7 +629,7 @@ namespace AxTools.Forms
             this.metroTabControl1.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.SelectedIndex = 3;
             this.metroTabControl1.Size = new System.Drawing.Size(565, 220);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.StyleManager = this.metroStyleManager1;
@@ -663,6 +663,25 @@ namespace AxTools.Forms
             this.metroTabPage1.VerticalScrollbarBarColor = true;
             this.metroTabPage1.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage1.VerticalScrollbarSize = 10;
+            // 
+            // checkBoxMinimizeToTray
+            // 
+            this.checkBoxMinimizeToTray.AutoSize = true;
+            this.checkBoxMinimizeToTray.CustomBackground = false;
+            this.checkBoxMinimizeToTray.CustomForeColor = false;
+            this.checkBoxMinimizeToTray.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.checkBoxMinimizeToTray.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.checkBoxMinimizeToTray.Location = new System.Drawing.Point(3, 45);
+            this.checkBoxMinimizeToTray.Name = "checkBoxMinimizeToTray";
+            this.checkBoxMinimizeToTray.Size = new System.Drawing.Size(125, 19);
+            this.checkBoxMinimizeToTray.Style = MetroFramework.MetroColorStyle.Blue;
+            this.checkBoxMinimizeToTray.StyleManager = null;
+            this.checkBoxMinimizeToTray.TabIndex = 48;
+            this.checkBoxMinimizeToTray.Text = "Minimize to tray";
+            this.checkBoxMinimizeToTray.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.checkBoxMinimizeToTray.UseStyleColors = true;
+            this.checkBoxMinimizeToTray.UseVisualStyleBackColor = true;
+            this.checkBoxMinimizeToTray.CheckedChanged += new System.EventHandler(this.checkBoxMinimizeToTray_CheckedChanged);
             // 
             // linkSendLogToDev
             // 
@@ -1049,7 +1068,6 @@ namespace AxTools.Forms
             this.metroComboBoxBackupCompressionLevel.ItemHeight = 19;
             this.metroComboBoxBackupCompressionLevel.Items.AddRange(new object[] {
             "None",
-            "Ultrafast",
             "Superfast",
             "Veryfast",
             "Faster",
@@ -1057,7 +1075,8 @@ namespace AxTools.Forms
             "Medium",
             "Slow",
             "Slower",
-            "Veryslow"});
+            "Veryslow",
+            "Superslow"});
             this.metroComboBoxBackupCompressionLevel.Location = new System.Drawing.Point(128, 155);
             this.metroComboBoxBackupCompressionLevel.Name = "metroComboBoxBackupCompressionLevel";
             this.metroComboBoxBackupCompressionLevel.Size = new System.Drawing.Size(152, 25);
@@ -1375,25 +1394,6 @@ namespace AxTools.Forms
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
-            // 
-            // checkBoxMinimizeToTray
-            // 
-            this.checkBoxMinimizeToTray.AutoSize = true;
-            this.checkBoxMinimizeToTray.CustomBackground = false;
-            this.checkBoxMinimizeToTray.CustomForeColor = false;
-            this.checkBoxMinimizeToTray.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.checkBoxMinimizeToTray.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxMinimizeToTray.Location = new System.Drawing.Point(3, 45);
-            this.checkBoxMinimizeToTray.Name = "checkBoxMinimizeToTray";
-            this.checkBoxMinimizeToTray.Size = new System.Drawing.Size(125, 19);
-            this.checkBoxMinimizeToTray.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxMinimizeToTray.StyleManager = null;
-            this.checkBoxMinimizeToTray.TabIndex = 48;
-            this.checkBoxMinimizeToTray.Text = "Minimize to tray";
-            this.checkBoxMinimizeToTray.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.checkBoxMinimizeToTray.UseStyleColors = true;
-            this.checkBoxMinimizeToTray.UseVisualStyleBackColor = true;
-            this.checkBoxMinimizeToTray.CheckedChanged += new System.EventHandler(this.checkBoxMinimizeToTray_CheckedChanged);
             // 
             // AppSettings
             // 
