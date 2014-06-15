@@ -4,7 +4,10 @@ using System.Text;
 
 namespace AxTools.Classes.WoW.Management.ObjectManager
 {
-    public sealed class WowPlayer
+    /// <summary>
+    /// Represents a World of Warcraft player object
+    /// </summary>
+    public class WowPlayer
     {
         internal WowPlayer(IntPtr pAddress)
         {
@@ -36,16 +39,16 @@ namespace AxTools.Classes.WoW.Management.ObjectManager
 
         internal WowPlayerClass Class;
 
-        private ulong mGUID;
+        protected ulong MGUID;
         public ulong GUID
         {
             get
             {
-                if (mGUID == 0)
+                if (MGUID == 0)
                 {
-                    mGUID = WoWManager.WoWProcess.Memory.Read<ulong>(Address + WowBuildInfo.ObjectGUID);
+                    MGUID = WoWManager.WoWProcess.Memory.Read<ulong>(Address + WowBuildInfo.ObjectGUID);
                 }
-                return mGUID;
+                return MGUID;
             }
         }
 

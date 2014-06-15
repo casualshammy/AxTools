@@ -23,6 +23,7 @@
         internal static readonly int BlackMarketItems = 0xE1075C;
         internal static readonly int UnitNameCachePointer = 0xC86838 + 0x8;
         internal static readonly int ObjectManager = 0xCB47C4; // ClntObjMgrPush (7)
+        internal static readonly int PlayerPtr = 0xCFF49C; // ClntObjMgrGetActivePlayerObj
 
         #endregion
 

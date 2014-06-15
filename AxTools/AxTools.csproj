@@ -131,7 +131,7 @@
     <Compile Include="Classes\Updater.cs" />
     <Compile Include="Classes\WoWAntiKick.cs" />
     <Compile Include="Classes\WoWProcessWatcher.cs" />
-    <Compile Include="Classes\WoW\Management\ObjectManager\LocalPlayer.cs" />
+    <Compile Include="Classes\WoW\Management\ObjectManager\WoWPlayerMe.cs" />
     <Compile Include="Classes\WoW\Management\ObjectMgr.cs" />
     <Compile Include="Classes\WoW\Management\WoWDXInject.cs" />
     <Compile Include="Classes\WoW\Management\WoWManager.cs" />

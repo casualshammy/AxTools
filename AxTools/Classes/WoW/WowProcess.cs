@@ -52,10 +52,6 @@ namespace AxTools.Classes.WoW
             }
         }
         
-        internal string MainWindowTitle
-        {
-            get { return Process.MainWindowTitle; }
-        }
         internal IntPtr MainWindowHandle
         {
             get { return Process.MainWindowHandle; }

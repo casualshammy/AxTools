@@ -136,7 +136,7 @@ namespace AxTools.Forms
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
         private readonly Dictionary<ulong, Point> objectsPointsInRadarCoords = new Dictionary<ulong, Point>();
 
-        private readonly LocalPlayer localPlayer = ObjectMgr.LocalPlayer;
+        private readonly WoWPlayerMe localPlayer = ObjectMgr.LocalPlayer;
         private WowPlayer[] friends;
         private WowPlayer[] enemies;
         private WowObject[] objects;

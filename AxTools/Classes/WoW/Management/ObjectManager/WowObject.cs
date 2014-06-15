@@ -4,6 +4,9 @@ using System.Text;
 
 namespace AxTools.Classes.WoW.Management.ObjectManager
 {
+    /// <summary>
+    /// Represents a World of Warcraft game object's object
+    /// </summary>
     public sealed class WowObject
     {
         internal static readonly Dictionary<ulong, string> Names = new Dictionary<ulong, string>();

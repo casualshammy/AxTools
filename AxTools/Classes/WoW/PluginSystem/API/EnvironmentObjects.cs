@@ -39,7 +39,7 @@ namespace AxTools.Classes.WoW.PluginSystem.API
         /// <summary>
         /// You should call Pulse(void) overload to refresh local player info
         /// </summary>
-        public static LocalPlayer Me
+        public static WoWPlayerMe Me
         {
             get
             {
