@@ -82,7 +82,6 @@ namespace AxTools.Forms
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
-            this.CheckBoxAxToolsAddon = new MetroFramework.Controls.MetroCheckBox();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
             this.metroComboBoxBackupCompressionLevel = new MetroFramework.Controls.MetroComboBox();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
@@ -125,7 +124,7 @@ namespace AxTools.Forms
             this.checkBox_AntiAFK.CustomForeColor = false;
             this.checkBox_AntiAFK.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBox_AntiAFK.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBox_AntiAFK.Location = new System.Drawing.Point(309, 45);
+            this.checkBox_AntiAFK.Location = new System.Drawing.Point(3, 45);
             this.checkBox_AntiAFK.Name = "checkBox_AntiAFK";
             this.checkBox_AntiAFK.Size = new System.Drawing.Size(74, 19);
             this.checkBox_AntiAFK.Style = MetroFramework.MetroColorStyle.Blue;
@@ -629,7 +628,7 @@ namespace AxTools.Forms
             this.metroTabControl1.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 3;
+            this.metroTabControl1.SelectedIndex = 5;
             this.metroTabControl1.Size = new System.Drawing.Size(565, 220);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.StyleManager = this.metroStyleManager1;
@@ -984,7 +983,6 @@ namespace AxTools.Forms
             // 
             // metroTabPage3
             // 
-            this.metroTabPage3.Controls.Add(this.CheckBoxAxToolsAddon);
             this.metroTabPage3.Controls.Add(this.CheckBox3);
             this.metroTabPage3.Controls.Add(this.CheckBox5);
             this.metroTabPage3.Controls.Add(this.GroupBox2);
@@ -1009,24 +1007,6 @@ namespace AxTools.Forms
             this.metroTabPage3.VerticalScrollbarBarColor = true;
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
-            // 
-            // CheckBoxAxToolsAddon
-            // 
-            this.CheckBoxAxToolsAddon.AutoSize = true;
-            this.CheckBoxAxToolsAddon.CustomBackground = false;
-            this.CheckBoxAxToolsAddon.CustomForeColor = false;
-            this.CheckBoxAxToolsAddon.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.CheckBoxAxToolsAddon.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBoxAxToolsAddon.Location = new System.Drawing.Point(3, 45);
-            this.CheckBoxAxToolsAddon.Name = "CheckBoxAxToolsAddon";
-            this.CheckBoxAxToolsAddon.Size = new System.Drawing.Size(234, 19);
-            this.CheckBoxAxToolsAddon.Style = MetroFramework.MetroColorStyle.Blue;
-            this.CheckBoxAxToolsAddon.StyleManager = null;
-            this.CheckBoxAxToolsAddon.TabIndex = 43;
-            this.CheckBoxAxToolsAddon.Text = "Update ax_tools addon on startup";
-            this.CheckBoxAxToolsAddon.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.CheckBoxAxToolsAddon.UseStyleColors = true;
-            this.CheckBoxAxToolsAddon.UseVisualStyleBackColor = true;
             // 
             // metroTabPage4
             // 
@@ -1492,7 +1472,6 @@ namespace AxTools.Forms
         private MetroLabel metroLabel5;
         private MetroButton buttonWowPath;
         private System.Windows.Forms.TextBox textBoxWowPath;
-        private MetroCheckBox CheckBoxAxToolsAddon;
         private MetroLabel metroLabel10;
         private MetroComboBox metroComboBoxStyle;
         private MetroLink linkShowLog;

@@ -123,31 +123,35 @@
   <ItemGroup>
     <Compile Include="Classes\AddonsBackup.cs" />
     <Compile Include="Classes\Clicker.cs" />
+    <Compile Include="Classes\Pinger.cs" />
     <Compile Include="Classes\TaskbarProgressbar\CTaskbarList.cs" />
     <Compile Include="Classes\TaskbarProgressbar\ITaskbarList3.cs" />
     <Compile Include="Classes\TaskbarProgressbar\TBProgressBar.cs" />
     <Compile Include="Classes\TaskbarProgressbar\ThumbnailProgressState.cs" />
     <Compile Include="Classes\Updater.cs" />
     <Compile Include="Classes\WoWAntiKick.cs" />
+    <Compile Include="Classes\WoWProcessWatcher.cs" />
+    <Compile Include="Classes\WoW\Management\ObjectManager\LocalPlayer.cs" />
+    <Compile Include="Classes\WoW\Management\ObjectMgr.cs" />
+    <Compile Include="Classes\WoW\Management\WoWDXInject.cs" />
+    <Compile Include="Classes\WoW\Management\WoWManager.cs" />
     <Compile Include="Classes\WoW\MouseButton.cs" />
     <Compile Include="Classes\WoW\PluginSystem\API\EnvironmentObjects.cs" />
     <Compile Include="Classes\WoW\PluginSystem\API\Functions.cs" />
-    <Compile Include="Classes\WoW\PluginSystem\API\LocalPlayer.cs" />
     <Compile Include="Classes\WoW\PluginSystem\API\Lua.cs" />
     <Compile Include="Classes\WoW\PluginSystem\API\Utilities.cs" />
     <Compile Include="Classes\WoW\PluginSystem\CodeCompiler.cs" />
     <Compile Include="Classes\WoW\PluginSystem\IPlugin.cs" />
     <Compile Include="Classes\WoW\PluginSystem\PluginManager.cs" />
-    <Compile Include="Classes\WoW\Plugins\Fishing.cs" />
-    <Compile Include="Classes\WoW\Plugins\FlagReturner.cs" />
-    <Compile Include="Classes\WoW\Plugins\GoodsDestroyer.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\Plugins\Fishing.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\Plugins\FlagReturner.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\Plugins\GoodsDestroyer.cs" />
     <Compile Include="Classes\WoW\WowTerrainClickStruct.cs" />
     <Compile Include="Components\BorderedMetroForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Classes\Globals.cs" />
-    <Compile Include="Classes\WoW\HookResult.cs" />
-    <Compile Include="Classes\WoW\WowLocalPlayer.cs" />
+    <Compile Include="Classes\WoW\Management\HookResult.cs" />
     <Compile Include="Classes\WoW\WowPlayerInfo.cs" />
     <Compile Include="Components\CheckBoxExt.cs">
       <SubType>Component</SubType>
@@ -231,17 +235,17 @@
     <Compile Include="Classes\WoW\DX\D3D11Device.cs" />
     <Compile Include="Classes\WoW\DX\D3D9Device.cs" />
     <Compile Include="Classes\WoW\DX\D3DDevice.cs" />
-    <Compile Include="Classes\WoW\DX\Dirext3D.cs" />
+    <Compile Include="Classes\WoW\DX\DirectX3D.cs" />
     <Compile Include="Classes\Utils.cs" />
     <Compile Include="Classes\Log.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\WoW\WowAccount.cs" />
-    <Compile Include="Classes\WoW\WowNpc.cs" />
-    <Compile Include="Classes\WoW\WowObject.cs" />
+    <Compile Include="Classes\WoW\Management\ObjectManager\WowNpc.cs" />
+    <Compile Include="Classes\WoW\Management\ObjectManager\WowObject.cs" />
     <Compile Include="Classes\WoW\WowPoint.cs" />
     <Compile Include="Classes\WoW\WowProcess.cs" />
     <Compile Include="Classes\Crypt.cs" />
-    <Compile Include="Classes\WoW\WowPlayer.cs" />
+    <Compile Include="Classes\WoW\Management\ObjectManager\WowPlayer.cs" />
     <Compile Include="Forms\WaitingOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -292,7 +296,6 @@
     <Compile Include="Forms\WowRadarOptions.Designer.cs">
       <DependentUpon>WowRadarOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\WoW\WoW.cs" />
     <Compile Include="Classes\WoW\WowBuildInfo.cs" />
     <Compile Include="Classes\WoW\WowPlayerClass.cs" />
     <EmbeddedResource Include="Forms\AppSettings.resx">

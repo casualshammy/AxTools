@@ -2,11 +2,11 @@
 using AxTools.Classes.TaskbarProgressbar;
 using AxTools.Classes.WinAPI;
 using AxTools.Classes.WoW;
-using AxTools.Classes.WoW.Plugins;
+using AxTools.Classes.WoW.Management;
 using AxTools.Classes.WoW.PluginSystem;
+using AxTools.Classes.WoW.PluginSystem.Plugins;
 using AxTools.Components;
 using AxTools.Properties;
-using GreyMagic;
 using Ionic.Zip;
 using MouseKeyboardActivityMonitor;
 using System;
@@ -16,10 +16,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Management;
 using System.Media;
 using System.Net;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -39,10 +37,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             Instance = this;
-            pingCallback = WoWPingerCallback;
-            pingCallbackOnDisabled = WoWPingerCallbackOnDisabled;
             timerNotifyIcon.Elapsed += TimerNiElapsed;
-            timerPinger.Elapsed += timerPinger_Elapsed;
             Closing += MainFormClosing;
             notifyIconMain.Icon = Resources.AppIcon;
 
@@ -127,13 +122,8 @@ namespace AxTools.Forms
         
         #region Variables
 
-        private ManagementEventWatcher wowWatcherStart;
-        private ManagementEventWatcher wowWatcherStop;
-        //clicker
-        private readonly Clicker clicker = new Clicker();
         //timers
         private readonly Timer timerNotifyIcon = new Timer(1000);
-        private readonly Timer timerPinger = new Timer(2000);
         //another
         private bool isClosing;
         private WaitingOverlay startupOverlay;
@@ -158,216 +148,6 @@ namespace AxTools.Forms
             BeginInvoke(new Action(() => SetIcon(false)));
             Thread.Sleep(500);
             BeginInvoke(new Action(() => SetIcon(true)));
-        }
-
-        private void timerPinger_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            if (Settings.GameServer.Port == 0)
-            {
-                Invoke(pingCallbackOnDisabled);
-            }
-            else
-            {
-                using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-                {
-                    try
-                    {
-                        lock (pingLock)
-                        {
-                            Stopwatch stopwatch = Stopwatch.StartNew();
-                            bool result = pSocket.BeginConnect(Settings.GameServer.Ip, Settings.GameServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
-                            long ping = stopwatch.ElapsedMilliseconds;
-                            if (pingList.Count == 100)
-                            {
-                                pingList.RemoveAt(0);
-                            }
-                            pingList.Add((int)(!result || !pSocket.Connected ? -1 : ping));
-                            pingPing = pingList.GetRange(pingList.Count - 10, 10).Max();
-                            pingPacketLoss = pingList.Count(x => x == -1);
-                            Invoke(pingCallback);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Print("[Pinger] " + ex.Message, true);
-                    }
-                }
-            }
-        }
-
-        #endregion
-
-        #region Pinger
-
-        private readonly Action pingCallback;
-        private readonly Action pingCallbackOnDisabled;
-        private List<int> pingList = new List<int>(100) {-2, -2, -2, -2, -2, -2, -2, -2, -2, -2};
-        private readonly object pingLock = new object();
-        private int pingPing;
-        private int pingPacketLoss;
-
-        private void WoWPingerCallback()
-        {
-            labelPingNum.Text = string.Format("[{0}]::[{1}%]", pingPing == -1 || pingPing == -2 ? "n/a" : pingPing.ToString(), pingPacketLoss);
-            TBProgressBar.SetProgressValue(Handle, 1, 1);
-            if (pingPacketLoss >= Settings.PingerVeryBadNetworkProcent || pingPing >= Settings.PingerVeryBadNetworkPing)
-            {
-                TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
-            }
-            else if (pingPacketLoss >= Settings.PingerBadNetworkProcent || pingPing >= Settings.PingerBadNetworkPing)
-            {
-                TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
-            }
-            else
-            {
-                TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
-            }
-        }
-
-        private void WoWPingerCallbackOnDisabled()
-        {
-            labelPingNum.Text = "[n/a]::[n/a]";
-            TBProgressBar.SetProgressValue(Handle, 1, 1);
-            TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
-        }
-
-        #endregion
-
-        #region WoW client startup/closing handlers
-
-        private void WowProcessStarted(object sender, EventArrivedEventArgs e)
-        {
-            try
-            {
-                int processId = Convert.ToInt32(e.NewEvent["ProcessID"]);
-                string processName = e.NewEvent["ProcessName"].ToString().ToLower();
-                switch (processName)
-                {
-                    case "wow-64.exe":
-                        notifyIconMain.ShowBalloonTip(10000, "Unsupported WoW version", "AxTools doesn't support x64 versions of WoW client", ToolTipIcon.Error);
-                        Log.Print(String.Format("{0}:{1} :: [Process watcher] 64bit WoW processes aren't supported", processName, processId), true);
-                        break;
-                    case "wow.exe":
-                        WowProcess wowProcess = new WowProcess(processId);
-                        WowProcess.GetAllWowProcesses().Add(wowProcess);
-                        Log.Print(String.Format("{0}:{1} :: [Process watcher] Process started, {2} total", wowProcess.ProcessName, wowProcess.ProcessID, WowProcess.GetAllWowProcesses().Count));
-                        Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Print(String.Format("{0}:{1} :: [Process watcher] Process started with error: {2}", e.NewEvent["ProcessName"], e.NewEvent["ProcessID"], ex.Message), true);
-            }
-            finally
-            {
-                e.NewEvent.Dispose();
-            }
-        }
-
-        private void WowProcessStopped(object sender, EventArrivedEventArgs e)
-        {
-            try
-            {
-                if (e.NewEvent["ProcessName"].ToString().ToLower() == "wow.exe")
-                {
-                    int pid = Convert.ToInt32(e.NewEvent["ProcessID"]);
-                    string name = e.NewEvent["ProcessName"].ToString().Substring(0, e.NewEvent["ProcessName"].ToString().Length - 4);
-                    WowProcess pWowProcess = WowProcess.GetAllWowProcesses().FirstOrDefault(x => x.ProcessID == pid);
-                    if (pWowProcess != null)
-                    {
-                        if (WoW.Hooked && WoW.WProc.ProcessID == pWowProcess.ProcessID)
-                        {
-                            UnloadInjector();
-                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector unloaded", name, pid));
-                        }
-                        pWowProcess.Dispose();
-                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, pid));
-                        if (WowProcess.GetAllWowProcesses().Remove(pWowProcess))
-                        {
-                            Log.Print(String.Format("{0}:{1} :: [Process watcher] Process closed, {2} total", name, pid, WowProcess.GetAllWowProcesses().Count));
-                        }
-                        else
-                        {
-                            Log.Print(String.Format("{0}:{1} :: [Process watcher] Can't delete WowProcess instance", name, pid), true);
-                        }
-                    }
-                    else
-                    {
-                        Log.Print(String.Format("{0}:{1} :: [Process watcher] Closed WoW process not found", name, pid), true);
-                    }
-                    if (Settings.CreatureCache && Directory.Exists(Settings.WowExe + "\\Cache\\WDB"))
-                    {
-                        foreach (DirectoryInfo i in new DirectoryInfo(Settings.WowExe + "\\Cache\\WDB").GetDirectories().Where(i => File.Exists(i.FullName + "\\creaturecache.wdb")))
-                        {
-                            File.Delete(i.FullName + "\\creaturecache.wdb");
-                            Log.Print("[Cache cleaner] " + i.FullName + "\\creaturecache.wdb was deleted");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Print(string.Format("{0}:{1} :: [Process watcher] Process stopped with error: {2}", e.NewEvent["ProcessName"], e.NewEvent["ProcessID"], ex.Message), true);
-            }
-            finally
-            {
-                e.NewEvent.Dispose();
-            }
-        }
-
-        private void OnWowProcessStartup(object wowProcess)
-        {
-            try
-            {
-                WowProcess process = (WowProcess) wowProcess;
-                Log.Print(String.Format("{0}:{1} :: [WoW hook] Attaching...", process.ProcessName, process.ProcessID));
-                for (int i = 0; i < 40; i++)
-                {
-                    Thread.Sleep(1500);
-                    if (process.MainWindowHandle != IntPtr.Zero)
-                    {
-                        if (Settings.AutoAcceptWndSetts)
-                        {
-                            try
-                            {
-                                if (Settings.Noframe)
-                                {
-                                    int styleWow = NativeMethods.GetWindowLong(process.MainWindowHandle, NativeMethods.GWL_STYLE) & ~(NativeMethods.WS_CAPTION | NativeMethods.WS_THICKFRAME);
-                                    NativeMethods.SetWindowLong(process.MainWindowHandle, NativeMethods.GWL_STYLE, styleWow);
-                                }
-                                NativeMethods.SetWindowPos(process.MainWindowHandle, (IntPtr) SpecialWindowHandles.HWND_NOTOPMOST,
-                                    Settings.WowWindowLocation.X, Settings.WowWindowLocation.Y, Settings.WowWindowSize.X, Settings.WowWindowSize.Y,
-                                    SetWindowPosFlags.SWP_SHOWWINDOW);
-                                Log.Print(String.Format("{0}:{1} :: [WoW hook] Window style is changed", process.ProcessName, process.ProcessID));
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Print(String.Format("{0}:{1} :: [WoW hook] Window changing failed with error: {2}", process.ProcessName, process.ProcessID, ex.Message), true);
-                            }
-                        }
-                        try
-                        {
-                            process.Memory = new ExternalProcessReader(Process.GetProcessById(process.ProcessID));
-                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager initialized, base address 0x{2:X}", process.ProcessName, process.ProcessID, (uint) process.Memory.ImageBase));
-                            if (!process.IsValidBuild)
-                            {
-                                Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager: invalid WoW executable", process.ProcessName, process.ProcessID), true);
-                                this.ShowTaskDialog("Injector is locked", "Invalid WoW executable", TaskDialogButton.OK, TaskDialogIcon.SecurityError);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager initialization failed with error: {2}", process.ProcessName, process.ProcessID, ex.Message), true);
-                        }
-                        break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Print("MainForm.AttachToWow: general error: " + ex.Message, true);
-            }
         }
 
         #endregion
@@ -442,11 +222,11 @@ namespace AxTools.Forms
                 this.ShowTaskDialog("Incorrect input!", "Please select key to be pressed", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 return;
             }
-            if (clicker.Enabled)
+            if (Clicker.Enabled)
             {
-                clicker.Stop();
+                Clicker.Stop();
                 notifyIconMain.Icon = appIconNormal;
-                WowProcess cProcess = WowProcess.GetAllWowProcesses().FirstOrDefault(i => i.MainWindowHandle == clicker.Handle);
+                WowProcess cProcess = WowProcess.GetAllWowProcesses().FirstOrDefault(i => i.MainWindowHandle == Clicker.Handle);
                 Log.Print(cProcess != null
                     ? String.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
                     : "UNKNOWN:null :: [Clicker] Disabled");
@@ -456,7 +236,7 @@ namespace AxTools.Forms
                 WowProcess cProcess = WowProcess.GetAllWowProcesses().FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
                 if (cProcess != null)
                 {
-                    clicker.Start(Settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr) Settings.ClickerKey);
+                    Clicker.Start(Settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr) Settings.ClickerKey);
                     Log.Print(string.Format("{0}:{1} :: [Clicker] Enabled, interval {2}ms, window handle 0x{3:X}", cProcess.ProcessName, cProcess.ProcessID,
                         Settings.ClickerInterval, (uint) cProcess.MainWindowHandle));
                 }
@@ -465,11 +245,11 @@ namespace AxTools.Forms
 
         private void KeyboardHook_PrecompiledModulesHotkey()
         {
-            if (PluginManager.ActivePlugin == null && WowProcess.GetAllWowProcesses().Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+            if (PluginManager.ActPlugin == null && WowProcess.GetAllWowProcesses().Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
             {
                 InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
             }
-            else if (PluginManager.ActivePlugin != null)
+            else if (PluginManager.ActPlugin != null)
             {
                 InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
             }
@@ -527,29 +307,19 @@ namespace AxTools.Forms
             Settings.Save();
             WowAccount.SaveToDisk();
             //
-            clicker.Dispose();
+            Clicker.Stop();
             //stop timers
             AddonsBackup.StopService();
             timerNotifyIcon.Enabled = false;
-            timerPinger.Enabled = false;
+            Pinger.Stop();
             //stop watching process trace
-            if (wowWatcherStart != null)
-            {
-                wowWatcherStart.Stop();
-                wowWatcherStart.Dispose();
-                Log.Print("Starting processes trace watching is stopped");
-            }
-            if (wowWatcherStop != null)
-            {
-                wowWatcherStop.Stop();
-                wowWatcherStop.Dispose();
-                Log.Print("Stopping processes trace watching is stopped");
-            }
+            WoWProcessWatcher.Stop();
+            Log.Print("WoW processes trace watching is stopped");
             // release hook 
-            if (WoW.Hooked)
+            if (WoWManager.Hooked)
             {
-                UnloadInjector();
-                Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
+                WoWManager.Unhook();
+                Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
             foreach (WowProcess i in WowProcess.GetAllWowProcesses())
             {
@@ -616,26 +386,6 @@ namespace AxTools.Forms
                 }
             }
             Log.Print("Registered for: " + Settings.Regname);
-
-            #endregion
-
-            #region Get WoW processes already running
-
-            foreach (Process i in Process.GetProcesses())
-            {
-                switch (i.ProcessName.ToLower())
-                {
-                    case "wow-64":
-                        notifyIconMain.ShowBalloonTip(10000, "Unsupported WoW version", "AxTools doesn't support x64 versions of WoW client", ToolTipIcon.Warning);
-                        break;
-                    case "wow":
-                        WowProcess process = new WowProcess(i.Id);
-                        WowProcess.GetAllWowProcesses().Add(process);
-                        Log.Print(String.Format("{0}:{1} :: [Process watcher] Process added", i.ProcessName, i.Id));
-                        Task.Factory.StartNew(OnWowProcessStartup, process);
-                        break;
-                }
-            }
 
             #endregion
 
@@ -739,20 +489,11 @@ namespace AxTools.Forms
 
             AddonsBackup.StartService();
             timerNotifyIcon.Enabled = true;
-            timerPinger.Enabled = true;
+            Pinger.Start();
 
             #endregion
 
-            #region Start process watcher
-
-            wowWatcherStart = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace"));
-            wowWatcherStop = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
-            wowWatcherStart.EventArrived += WowProcessStarted;
-            wowWatcherStop.EventArrived += WowProcessStopped;
-            wowWatcherStart.Start();
-            wowWatcherStop.Start();
-
-            #endregion
+            WoWProcessWatcher.Start();
 
             #region Start keyboard hook
 
@@ -816,11 +557,9 @@ namespace AxTools.Forms
             {
                 case MouseButtons.Left:
                 case MouseButtons.Right:
-                    lock (pingLock)
-                    {
-                        labelPingNum.Text = "cleared";
-                        pingList = new List<int>(100) {-2, -2, -2, -2, -2, -2, -2, -2, -2, -2};
-                    }
+                    Pinger.Stop();
+                    labelPingNum.Text = "cleared";
+                    Pinger.Start();
                     break;
             }
         }
@@ -830,7 +569,7 @@ namespace AxTools.Forms
             // ReSharper disable RedundantCheckBeforeAssignment
             if (!phase)
             {
-                if (clicker.Enabled)
+                if (Clicker.Enabled)
                 {
                     notifyIconMain.Icon = Utils.EmptyIcon;
                 }
@@ -841,7 +580,7 @@ namespace AxTools.Forms
             }
             else
             {
-                if (LuaTimerEnabled && PluginManager.ActivePlugin != null)
+                if (LuaTimerEnabled && PluginManager.ActPlugin != null)
                 {
                     notifyIconMain.Icon = appIconPluginOnLuaOn;
                 }
@@ -849,7 +588,7 @@ namespace AxTools.Forms
                 {
                     notifyIconMain.Icon = appIconPluginOffLuaOn;
                 }
-                else if (PluginManager.ActivePlugin != null)
+                else if (PluginManager.ActPlugin != null)
                 {
                     notifyIconMain.Icon = appIconPluginOnLuaOff;
                 }
@@ -870,9 +609,9 @@ namespace AxTools.Forms
             foreach (ToolStripMenuItem i in pluginsToolStripMenuItems)
             {
                 i.ShortcutKeyDisplayString = i.Text == comboBoxWowPlugins.Text ? Settings.PrecompiledModulesHotkey.ToString() : null;
-                i.Enabled = PluginManager.ActivePlugin == null;
+                i.Enabled = PluginManager.ActPlugin == null;
             }
-            stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManager.ActivePlugin != null;
+            stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManager.ActPlugin != null;
             stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = Settings.PrecompiledModulesHotkey.ToString();
         }
 
@@ -902,7 +641,7 @@ namespace AxTools.Forms
 
         private void stopActivePluginorPresshotkeyToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            if (PluginManager.ActivePlugin != null)
+            if (PluginManager.ActPlugin != null)
             {
                 InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
             }
@@ -961,7 +700,7 @@ namespace AxTools.Forms
 
         private void linkClickerSettings_Click(object sender, EventArgs e)
         {
-            if (clicker.Enabled)
+            if (Clicker.Enabled)
             {
                 this.ShowTaskDialog("Clicker settings", "Please switch clicker off before", TaskDialogButton.OK, TaskDialogIcon.Warning);
             }
@@ -1115,14 +854,14 @@ namespace AxTools.Forms
         private void buttonStartStopPlugin_Click(object sender, EventArgs e)
         {
             buttonStartStopPlugin.Enabled = false;
-            if (PluginManager.ActivePlugin == null)
+            if (PluginManager.ActPlugin == null)
             {
-                if (!WoW.Hooked && !LoadInjector())
+                if (!WoWManager.Hooked && !LoadInjector())
                 {
                     buttonStartStopPlugin.Enabled = true;
                     return;
                 }
-                if (!WoW.WProc.IsInGame)
+                if (!WoWManager.WoWProcess.IsInGame)
                 {
                     ShowNotifyIconMessage("Plugin error", "Player isn't logged in", ToolTipIcon.Error);
                     SystemSounds.Hand.Play();
@@ -1137,7 +876,7 @@ namespace AxTools.Forms
                 }
                 else
                 {
-                    PluginManager.ActivePlugin = PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text);
+                    PluginManager.StartPlugin(PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text));
                     WowPluginHotkeyChanged();
                 }
             }
@@ -1145,7 +884,7 @@ namespace AxTools.Forms
             {
                 try
                 {
-                    PluginManager.ActivePlugin = null;
+                    PluginManager.StopPlugin();
                     WowPluginHotkeyChanged();
                     GC.Collect();
                 }
@@ -1196,12 +935,12 @@ namespace AxTools.Forms
 
         private void MetroButtonBlackMarketTrackerClick(object sender, EventArgs e)
         {
-            if (!WoW.Hooked && !LoadInjector())
+            if (!WoWManager.Hooked && !LoadInjector())
             {
                 new TaskDialog("Plugin error", "AxTools", "Can't inject", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
             }
-            if (!WoW.WProc.IsInGame)
+            if (!WoWManager.WoWProcess.IsInGame)
             {
                 new TaskDialog("Plugin error", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
@@ -1211,7 +950,7 @@ namespace AxTools.Forms
 
         private void MetroButtonRadarClick(object sender, EventArgs e)
         {
-            if (WoW.Hooked)
+            if (WoWManager.Hooked)
             {
                 var cForm = Utils.FindForm<WowRadar>();
                 if (cForm != null)
@@ -1232,7 +971,7 @@ namespace AxTools.Forms
 
         private void MetroButtonLuaConsoleClick(object sender, EventArgs e)
         {
-            if (WoW.Hooked)
+            if (WoWManager.Hooked)
             {
                 LuaConsole cForm = Utils.FindForm<LuaConsole>();
                 if (cForm != null)
@@ -1253,10 +992,10 @@ namespace AxTools.Forms
 
         private void ButtonUnloadInjectorClick(object sender, EventArgs e)
         {
-            if (WoW.Hooked)
+            if (WoWManager.Hooked)
             {
-                UnloadInjector();
-                Log.Print(String.Format("{0}:{1} :: Injector unloaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
+                WoWManager.Unhook();
+                Log.Print(String.Format("{0}:{1} :: Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
             else
             {
@@ -1274,10 +1013,10 @@ namespace AxTools.Forms
                 {
                     if (WowProcess.GetAllWowProcesses()[index].IsInGame)
                     {
-                        switch (WoW.Hook(WowProcess.GetAllWowProcesses()[index]))
+                        switch (WoWManager.Hook(WowProcess.GetAllWowProcesses()[index]))
                         {
                             case HookResult.Successful:
-                                Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
+                                Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
                                 return true;
                             case HookResult.IncorrectDirectXVersion:
                                 this.ShowTaskDialog("Injecting error", "Incorrect DirectX version", TaskDialogButton.OK, TaskDialogIcon.SecurityError);
@@ -1293,19 +1032,6 @@ namespace AxTools.Forms
                 return false;
             }
             return false;
-        }
-
-        private void UnloadInjector()
-        {
-            WowRadarOptions pWowRadarOptions = Utils.FindForm<WowRadarOptions>();
-            if (pWowRadarOptions != null) pWowRadarOptions.Close();
-            WowRadar pWowRadar = Utils.FindForm<WowRadar>();
-            if (pWowRadar != null) pWowRadar.Close();
-            LuaConsole pLuaInjector = Utils.FindForm<LuaConsole>();
-            if (pLuaInjector != null) pLuaInjector.Close();
-            //BlackMarket pBlackMarket = Utils.FindForm<BlackMarket>();
-            //if (pBlackMarket != null) pBlackMarket.Close();
-            WoW.Unhook();
         }
 
         #endregion
@@ -1357,7 +1083,7 @@ namespace AxTools.Forms
                 ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate
                 {
                     comboBoxWowPlugins.SelectedIndex = PluginManager.Plugins.IndexOf(plugin);
-                    if (!WoW.Hooked && WowProcess.GetAllWowProcesses().Count != 1)
+                    if (!WoWManager.Hooked && WowProcess.GetAllWowProcesses().Count != 1)
                     {
                         Activate();
                     }
@@ -1377,7 +1103,7 @@ namespace AxTools.Forms
                         ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate
                         {
                             comboBoxWowPlugins.SelectedIndex = PluginManager.Plugins.IndexOf(plugin);
-                            if (!WoW.Hooked && WowProcess.GetAllWowProcesses().Count != 1)
+                            if (!WoWManager.Hooked && WowProcess.GetAllWowProcesses().Count != 1)
                             {
                                 Activate();
                             }
@@ -1416,8 +1142,8 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker)delegate
             {
-                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugin == null ? "Start" : "Stop", Settings.PrecompiledModulesHotkey);
-                comboBoxWowPlugins.Enabled = PluginManager.ActivePlugin == null;
+                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActPlugin == null ? "Start" : "Stop", Settings.PrecompiledModulesHotkey);
+                comboBoxWowPlugins.Enabled = PluginManager.ActPlugin == null;
                 UpdatePluginsShortcutsInTrayContextMenu();
             });
         }
@@ -1448,6 +1174,37 @@ namespace AxTools.Forms
                     });
                     break;
             }
+        }
+
+        internal void Pinger_DataChanged(int ping, int packetLoss)
+        {
+            BeginInvoke((MethodInvoker) delegate
+            {
+                if (ping == -1)
+                {
+                    labelPingNum.Visible = packetLoss != 0;
+                    labelPingNum.Text = "[n/a]::[n/a]";
+                    TBProgressBar.SetProgressValue(Handle, 1, 1);
+                    TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
+                }
+                else
+                {
+                    labelPingNum.Text = string.Format("[{0}]::[{1}%]", ping == -1 || ping == -2 ? "n/a" : ping.ToString(), packetLoss);
+                    TBProgressBar.SetProgressValue(Handle, 1, 1);
+                    if (packetLoss >= Settings.PingerVeryBadNetworkProcent || ping >= Settings.PingerVeryBadNetworkPing)
+                    {
+                        TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
+                    }
+                    else if (packetLoss >= Settings.PingerBadNetworkProcent || ping >= Settings.PingerBadNetworkPing)
+                    {
+                        TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
+                    }
+                    else
+                    {
+                        TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
+                    }
+                }
+            });
         }
 
         #endregion

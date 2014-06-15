@@ -80,39 +80,39 @@ namespace TestPlugin
 
         #endregion
 
-        private readonly string craft = "local t = {" +
-                                        "    \"Чернила звездного света\"," +
-                                        "    \"Чернила снов\"," +
-                                        "    \"Чернила Преисподней\"," +
-                                        "    \"Мрачно-коричневые чернила\"," +
-                                        "    \"Чернила снегопада\"," +
-                                        "    \"Чернила моря\"," +
-                                        "    \"Чернила черного огня\"," +
-                                        "    \"Астральные чернила\"," +
-                                        "    \"Небесные чернила\"," +
-                                        "    \"Мерцающие чернила\"," +
-                                        "    \"Огненные чернила\"," +
-                                        "    \"Астрономические чернила\"," +
-                                        "    \"Королевские чернила\"," +
-                                        "    \"Чернила Нефритового Пламени\"," +
-                                        "    \"Чернила утренней звезды\"," +
-                                        "    \"Чернила царя зверей\"," +
-                                        "    \"Чернила охотника\"," +
-                                        "    \"Полуночные чернила\"," +
-                                        "    \"Чернила лунного сияния\"," +
-                                        "    \"Бежевые чернила\"," +
-                                        "    \"Великолепная шкура\"," +
-                                        "}; " +
-                                        "local numTradeSkills = GetNumTradeSkills(); " +
-                                        "if (numTradeSkills > 0) then" +
-                                        "    for i = 1, numTradeSkills do" +
-                                        "        local skillName, skillType, numAvailable, isExpanded, serviceType, numSkillUps, indentLevel, showProgressBar, currentRank, maxRank, startingRank = GetTradeSkillInfo(i);" +
-                                        "        if (tContains(t, skillName) and numAvailable > 0) then" +
-                                        "            DoTradeSkill(i, numAvailable);" +
-                                        "            return;" +
-                                        "        end" +
-                                        "    end" +
-                                        "end " +
+        private readonly string craft = "local t = {\r\n" +
+                                        "    \"Чернила звездного света\",\r\n" +
+                                        "    \"Чернила снов\",\r\n" +
+                                        "    \"Чернила Преисподней\",\r\n" +
+                                        "    \"Мрачно-коричневые чернила\",\r\n" +
+                                        "    \"Чернила снегопада\",\r\n" +
+                                        "    \"Чернила моря\",\r\n" +
+                                        "    \"Чернила черного огня\",\r\n" +
+                                        "    \"Астральные чернила\",\r\n" +
+                                        "    \"Небесные чернила\",\r\n" +
+                                        "    \"Мерцающие чернила\",\r\n" +
+                                        "    \"Огненные чернила\",\r\n" +
+                                        "    \"Астрономические чернила\",\r\n" +
+                                        "    \"Королевские чернила\",\r\n" +
+                                        "    \"Чернила Нефритового Пламени\",\r\n" +
+                                        "    \"Чернила утренней звезды\",\r\n" +
+                                        "    \"Чернила царя зверей\",\r\n" +
+                                        "    \"Чернила охотника\",\r\n" +
+                                        "    \"Полуночные чернила\",\r\n" +
+                                        "    \"Чернила лунного сияния\",\r\n" +
+                                        "    \"Бежевые чернила\",\r\n" +
+                                        "    \"Великолепная шкура\",\r\n" +
+                                        "};\r\n" +
+                                        "local numTradeSkills = GetNumTradeSkills();\r\n" +
+                                        "if (numTradeSkills > 0) then\r\n" +
+                                        "    for i = 1, numTradeSkills do\r\n" +
+                                        "        local skillName, skillType, numAvailable, isExpanded, serviceType, numSkillUps, indentLevel, showProgressBar, currentRank, maxRank, startingRank = GetTradeSkillInfo(i);\r\n" +
+                                        "        if (tContains(t, skillName) and numAvailable > 0) then\r\n" +
+                                        "            DoTradeSkill(i, numAvailable);\r\n" +
+                                        "            return;\r\n" +
+                                        "        end\r\n" +
+                                        "    end\r\n" +
+                                        "end\r\n" +
                                         "print(\"Nothing to craft!\");";
 
     }

@@ -2,6 +2,8 @@
 using System.Threading;
 using AxTools.Classes;
 using AxTools.Classes.WoW;
+using AxTools.Classes.WoW.Management;
+using AxTools.Classes.WoW.Management.ObjectManager;
 using AxTools.Properties;
 using System;
 using System.Collections.Generic;
@@ -41,7 +43,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Can't load the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Can't load the latest list: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
             }
             checkBoxFriends.ForeColor = Settings.RadarFriendColor;
             checkBoxEnemies.ForeColor = Settings.RadarEnemyColor;
@@ -64,7 +66,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
             }
 
             checkBoxFriends.CheckedChanged += SaveCheckBoxes;
@@ -78,7 +80,7 @@ namespace AxTools.Forms
             mouseHookListener = new MouseHookListener(Globals.GlobalHooker);
             mouseHookListener.MouseWheel += mouseHookListener_MouseWheel;
             mouseHookListener.Start();
-            Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
+            Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private readonly MouseHookListener mouseHookListener;
@@ -134,6 +136,7 @@ namespace AxTools.Forms
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
         private readonly Dictionary<ulong, Point> objectsPointsInRadarCoords = new Dictionary<ulong, Point>();
 
+        private readonly LocalPlayer localPlayer = ObjectMgr.LocalPlayer;
         private WowPlayer[] friends;
         private WowPlayer[] enemies;
         private WowObject[] objects;
@@ -158,7 +161,7 @@ namespace AxTools.Forms
             {
                 int startTime = Environment.TickCount;
                 readyToDraw = false;
-                if (!WoW.Hooked || !WoW.WProc.IsInGame)
+                if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
                 {
                     try
                     {
@@ -166,39 +169,39 @@ namespace AxTools.Forms
                     }
                     catch (Exception ex)
                     {
-                        Log.Print(String.Format("{0}:{1} :: [Radar] OOG drawing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
+                        Log.Print(String.Format("{0}:{1} :: [Radar] OOG drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true, false);
                     }
                     Thread.Sleep(100);
                     continue;
                 }
                 try
                 {
-                    WoW.Pulse(wowObjects, wowPlayers, wowNpcs);
+                    ObjectMgr.Pulse(wowObjects, wowPlayers, wowNpcs);
                 }
                 catch (Exception ex)
                 {
-                    Log.Print(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
+                    Log.Print(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true, false);
                     BeginInvoke(clearRadar);
                     Thread.Sleep(100);
                     continue;
                 }
                 try
                 {
-                    friends = wowPlayers.Where(i => i.IsAlliance == LocalPlayer.IsAlliance).ToArray();
+                    friends = wowPlayers.Where(i => i.IsAlliance == localPlayer.IsAlliance).ToArray();
                     enemies = wowPlayers.Except(friends).ToArray();
                     objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
                     npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                    if (!WoW.WProc.PlayerIsLooting && LocalPlayer.CastingSpellID == 0)
+                    if (!WoWManager.WoWProcess.PlayerIsLooting && localPlayer.CastingSpellID == 0)
                     {
-                        foreach (WowObject i in objects.Where(i => i.Location.Distance(LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
+                        foreach (WowObject i in objects.Where(i => i.Location.Distance(localPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
                         {
-                            WoW.Interact(i.GUID);
-                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID), false, false);
+                            WoWDXInject.Interact(i.GUID);
+                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, i.Name, i.GUID), false, false);
                         }
-                        foreach (WowNpc i in npcs.Where(i => i.Location.Distance(LocalPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
+                        foreach (WowNpc i in npcs.Where(i => i.Location.Distance(localPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
                         {
-                            WoW.Interact(i.GUID);
-                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoW.WProc.ProcessName, WoW.WProc.ProcessID, i.Name, i.GUID), false, false);
+                            WoWDXInject.Interact(i.GUID);
+                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, i.Name, i.GUID), false, false);
                         }
                     }
                     bool soundAlarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);
@@ -212,7 +215,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Print(String.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true, false);
+                    Log.Print(String.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true, false);
                     BeginInvoke(clearRadar);
                     Thread.Sleep(100);
                     continue;
@@ -223,7 +226,7 @@ namespace AxTools.Forms
                     Thread.Sleep(counter);
                 }
             }
-            Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
+            Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             redrawTaskCTS.Token.ThrowIfCancellationRequested();
         }
 
@@ -247,15 +250,15 @@ namespace AxTools.Forms
                     Point point2 = new Point();
                     Graphics graphics = e.Graphics;
                     graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                    double localPlayerLocationX = LocalPlayer.Location.X;
-                    double localPlayerLocationY = LocalPlayer.Location.Y;
+                    double localPlayerLocationX = localPlayer.Location.X;
+                    double localPlayerLocationY = localPlayer.Location.Y;
                     double var2X;
                     double var2Y;
                     double num2;
 
                     #region Draw local player
 
-                    double d = -LocalPlayer.Rotation + 4.71238898038469;
+                    double d = -localPlayer.Rotation + 4.71238898038469;
                     point.X = halfOfPictureboxSize;
                     point.Y = halfOfPictureboxSize;
                     graphics.FillRectangle(whiteBrush, point.X - 2, point.Y - 2, 4, 4);
@@ -296,7 +299,7 @@ namespace AxTools.Forms
                                 solidBrush = grayBrush;
                             }
                             Point[] pts;
-                            float zDiff = i.Location.Z - LocalPlayer.Location.Z;
+                            float zDiff = i.Location.Z - localPlayer.Location.Z;
                             if (zDiff >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
@@ -310,17 +313,17 @@ namespace AxTools.Forms
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
                             }
                             graphics.FillPolygon(solidBrush, pts);
-                            graphics.DrawPolygon(i.TargetGUID == LocalPlayer.GUID ? whitePen : pen, pts);
+                            graphics.DrawPolygon(i.TargetGUID == localPlayer.GUID ? whitePen : pen, pts);
                             objectsPointsInRadarCoords.Add(i.GUID, point);
                             point.X += 3;
                             point.Y += 3;
                             if (Settings.RadarShowPlayersClasses)
                             {
-                                if (i.Level == LocalPlayer.Level)
+                                if (i.Level == localPlayer.Level)
                                 {
                                     graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
                                 }
-                                else if (i.Level > LocalPlayer.Level)
+                                else if (i.Level > localPlayer.Level)
                                 {
                                     graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
                                 }
@@ -364,7 +367,7 @@ namespace AxTools.Forms
                                 solidBrush = grayBrush;
                             }
                             Point[] pts;
-                            float zDiff = i.Location.Z - LocalPlayer.Location.Z;
+                            float zDiff = i.Location.Z - localPlayer.Location.Z;
                             if (zDiff >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
@@ -378,17 +381,17 @@ namespace AxTools.Forms
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
                             }
                             graphics.FillPolygon(solidBrush, pts);
-                            graphics.DrawPolygon(i.TargetGUID == LocalPlayer.GUID ? whitePen : pen, pts);
+                            graphics.DrawPolygon(i.TargetGUID == localPlayer.GUID ? whitePen : pen, pts);
                             objectsPointsInRadarCoords.Add(i.GUID, point);
                             point.X += 3;
                             point.Y += 3;
                             if (Settings.RadarShowPlayersClasses)
                             {
-                                if (i.Level == LocalPlayer.Level)
+                                if (i.Level == localPlayer.Level)
                                 {
                                     graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
                                 }
-                                else if (i.Level > LocalPlayer.Level)
+                                else if (i.Level > localPlayer.Level)
                                 {
                                     graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
                                 }
@@ -419,7 +422,7 @@ namespace AxTools.Forms
                             point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931)));
                             point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Sin(num2)));
                             Point[] pts;
-                            float zDiff = i.Location.Z - LocalPlayer.Location.Z;
+                            float zDiff = i.Location.Z - localPlayer.Location.Z;
                             if (zDiff >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
@@ -464,7 +467,7 @@ namespace AxTools.Forms
                             point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931)));
                             point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Sin(num2)));
                             Point[] pts;
-                            float zDiff = i.Location.Z - LocalPlayer.Location.Z;
+                            float zDiff = i.Location.Z - localPlayer.Location.Z;
                             if (zDiff >= 10)
                             {
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
@@ -506,7 +509,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Print(String.Format("{0}:{1} :: Radar: Drawing error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                    Log.Print(String.Format("{0}:{1} :: Radar: Drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
                 }
             }
         }
@@ -582,11 +585,11 @@ namespace AxTools.Forms
             {
                 redrawTask.Dispose();
                 redrawTaskCTS.Dispose();
-                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
+                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
             else
             {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, redrawTask.Status), true);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, redrawTask.Status), true);
             }
 
             try
@@ -600,7 +603,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Can't save the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Can't save the latest list: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
             }
 
             if (mouseHookListener != null && mouseHookListener.Enabled)
@@ -608,7 +611,7 @@ namespace AxTools.Forms
                 mouseHookListener.Dispose();
             }
             
-            Log.Print(String.Format("{0}:{1} :: [Radar] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
+            Log.Print(String.Format("{0}:{1} :: [Radar] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void RadarLoad(object sender, EventArgs e)
@@ -744,11 +747,11 @@ namespace AxTools.Forms
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            WoW.TargetUnit(unit.GUID);
+                            WoWDXInject.TargetUnit(unit.GUID);
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
-                            WoW.MoveTo(unit.Location);
+                            WoWDXInject.MoveTo(unit.Location);
                         }
                         break;
                     }
@@ -757,11 +760,11 @@ namespace AxTools.Forms
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            WoW.TargetUnit(npc.GUID);
+                            WoWDXInject.TargetUnit(npc.GUID);
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
-                            WoW.MoveTo(npc.Location);
+                            WoWDXInject.MoveTo(npc.Location);
                         }
                         break;
                     }
@@ -770,11 +773,11 @@ namespace AxTools.Forms
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            WoW.Interact(wowObject.GUID);
+                            WoWDXInject.Interact(wowObject.GUID);
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
-                            WoW.MoveTo(wowObject.Location);
+                            WoWDXInject.MoveTo(wowObject.Location);
                         }
                         break;
                     }

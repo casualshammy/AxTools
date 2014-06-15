@@ -14,7 +14,6 @@ namespace AxTools.Classes
     {
         internal static Point Location = new Point(100, 100);
         internal static bool AutoAcceptWndSetts = false;
-        internal static bool AxToolsAddon = false;
         internal static Keys ClickerHotkey = Keys.None;
         internal static int ClickerInterval = 0x3e8;
         internal static Keys ClickerKey = Keys.None;
@@ -186,9 +185,6 @@ namespace AxTools.Classes
                                         case "WowWindowSize":
                                             WowWindowSize.X = Convert.ToInt32(strArray[2].Substring(0, strArray[2].Length - 2));
                                             WowWindowSize.Y = Convert.ToInt32(strArray[3].Substring(0, strArray[3].Length - 1));
-                                            break;
-                                        case "ax_tools":
-                                            AxToolsAddon = Convert.ToBoolean(strArray[1]);
                                             break;
                                         case "StartVentriloWithWow":
                                             StartVentriloWithWow = Convert.ToBoolean(strArray[1]);
@@ -390,7 +386,6 @@ namespace AxTools.Classes
                 builder.AppendLine("wow_wnd.noframe=" + Convert.ToString(Noframe));
                 builder.AppendLine("WowWindowLocation=" + WowWindowLocation);
                 builder.AppendLine("WowWindowSize=" + WowWindowSize);
-                builder.AppendLine("ax_tools=" + Convert.ToString(AxToolsAddon));
                 builder.AppendLine("WowLoginHotkey=" + Convert.ToString(WowLoginHotkey));
                 builder.AppendLine("LuaTimerHotkey=" + Convert.ToString(LuaTimerHotkey));
                 builder.AppendLine("PrecompiledModulesHotkey=" + Convert.ToString(PrecompiledModulesHotkey));

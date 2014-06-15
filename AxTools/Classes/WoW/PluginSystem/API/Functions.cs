@@ -1,15 +1,17 @@
-﻿namespace AxTools.Classes.WoW.PluginSystem.API
+﻿using AxTools.Classes.WoW.Management;
+
+namespace AxTools.Classes.WoW.PluginSystem.API
 {
     public static class Functions
     {
-        public static bool Interact(ulong guid)
+        public static void Interact(ulong guid)
         {
-            return WoW.Interact(guid);
+            WoWDXInject.Interact(guid);
         }
 
-        public static bool MoveTo(WowPoint point)
+        public static void MoveTo(WowPoint point)
         {
-            return WoW.MoveTo(point);
+            WoWDXInject.MoveTo(point);
         }
     }
 }

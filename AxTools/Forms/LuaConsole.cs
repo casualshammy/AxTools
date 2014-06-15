@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using AxTools.Classes;
-using AxTools.Classes.WoW;
+using AxTools.Classes.WoW.Management;
+using AxTools.Classes.WoW.Management.ObjectManager;
 using AxTools.Components;
 using AxTools.Properties;
 using System;
@@ -48,21 +49,21 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(string.Format("{0}:{1} :: [Lua console] Can't load the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                Log.Print(string.Format("{0}:{1} :: [Lua console] Can't load the latest list: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
             }
-            Log.Print(string.Format("{0}:{1} :: [Lua console] Loaded", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
+            Log.Print(string.Format("{0}:{1} :: [Lua console] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private readonly System.Timers.Timer timerLua = new System.Timers.Timer(1000);
 
         private void TimerLuaElapsed(object sender, ElapsedEventArgs e)
         {
-            if (!WoW.Hooked || !WoW.WProc.IsInGame)
+            if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
             {
                 if (!Settings.LuaConsoleIgnoreGameState)
                 {
-                    Log.Print(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoW.WProc.ProcessName,
-                        WoW.WProc.ProcessID));
+                    Log.Print(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName,
+                        WoWManager.WoWProcess.ProcessID));
                     MainForm.Instance.ShowNotifyIconMessage("Lua console's timer is stopped", "The player isn't active or not in the game", ToolTipIcon.Error);
                     Invoke(new Action(() => InvokeOnClick(pictureBoxStop, EventArgs.Empty)));
                     return;
@@ -73,7 +74,7 @@ namespace AxTools.Forms
             {
                 timerLua.Interval = Settings.LuaConsoleTimerInterval + Utils.Rnd.Next(-(Settings.LuaConsoleTimerInterval / 5), Settings.LuaConsoleTimerInterval / 5);
             }
-            WoW.LuaDoString(textBoxLuaCode.Text);
+            WoWDXInject.LuaDoString(textBoxLuaCode.Text);
         }
 
         private void ButtonDumpClick(object sender, EventArgs e)
@@ -83,7 +84,7 @@ namespace AxTools.Forms
             List<WowNpc> wowNpcs = new List<WowNpc>();
             try
             {
-                WoW.Pulse(wowObjects, wowUnits, wowNpcs);
+                ObjectMgr.Pulse(wowObjects, wowUnits, wowNpcs);
             }
             catch (Exception ex)
             {
@@ -91,26 +92,26 @@ namespace AxTools.Forms
             }
             var sb = new StringBuilder("\r\nLocal player-----------------------------------------\r\n");
             sb.AppendFormat("GUID: 0x{0:X}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; Realm: {5}; BgExit: {6}; IsLooting: {7}; Name: {8}\r\n",
-                            LocalPlayer.GUID, (uint)LocalPlayer.Address, LocalPlayer.Location, WoW.WProc.PlayerZoneID,
-                            "dummy", WoW.WProc.PlayerRealm, WoW.WProc.IsBattlegroundFinished, WoW.WProc.PlayerIsLooting, WoW.WProc.PlayerName);
+                            ObjectMgr.LocalPlayer.GUID, (uint)ObjectMgr.LocalPlayer.Address, ObjectMgr.LocalPlayer.Location, WoWManager.WoWProcess.PlayerZoneID,
+                            "dummy", WoWManager.WoWProcess.PlayerRealm, WoWManager.WoWProcess.IsBattlegroundFinished, WoWManager.WoWProcess.PlayerIsLooting, WoWManager.WoWProcess.PlayerName);
             sb.AppendLine("Objects-----------------------------------------");
             foreach (var i in wowObjects)
             {
                 sb.AppendFormat("{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4:X}; Address: 0x{5:X}; EntryID: {6}\r\n", i.Name, i.GUID,
-                                i.Location, (int)i.Location.Distance(LocalPlayer.Location), i.OwnerGUID, (uint)i.Address, i.EntryID);
+                                i.Location, (int)i.Location.Distance(ObjectMgr.LocalPlayer.Location), i.OwnerGUID, (uint)i.Address, i.EntryID);
             }
             sb.AppendLine("Npcs-----------------------------------------");
             foreach (var i in wowNpcs)
             {
                 sb.AppendFormat("{0}; Location: {1}; Distance: {2}; HP:{3}; MaxHP:{4}; Address:0x{5:X}; GUID:0x{6:X}\r\n", i.Name, i.Location,
-                    (int)i.Location.Distance(LocalPlayer.Location), i.Health, i.HealthMax, (uint)i.Address, i.GUID);
+                    (int)i.Location.Distance(ObjectMgr.LocalPlayer.Location), i.Health, i.HealthMax, (uint)i.Address, i.GUID);
             }
             sb.AppendLine("Players-----------------------------------------");
             foreach (var i in wowUnits)
             {
                 sb.AppendFormat(
                     "{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; Address:{4:X}; Class:{5}; Level:{6}; HP:{7}; MaxHP:{8}; TargetGUID: 0x{9:X}; IsAlliance:{10}\r\n",
-                    i.Name, i.GUID, i.Location, (int)i.Location.Distance(LocalPlayer.Location), (uint)i.Address, i.Class, i.Level, i.Health, i.HealthMax,
+                    i.Name, i.GUID, i.Location, (int)i.Location.Distance(ObjectMgr.LocalPlayer.Location), (uint)i.Address, i.Class, i.Level, i.Health, i.HealthMax,
                     i.TargetGUID, i.IsAlliance);
             }
             Log.Print(sb.ToString());
@@ -125,12 +126,12 @@ namespace AxTools.Forms
             //        {
             //            try
             //            {
-            //                IntPtr desc = WoW.WProc.Memory.Read<IntPtr>(nomi.Address + (int)i);
+            //                IntPtr desc = WoWManager.WoWProcess.Memory.Read<IntPtr>(nomi.Address + (int)i);
             //                Parallel.For((long)0, 0x100, l =>
             //                    {
             //                        try
             //                        {
-            //                            uint name2 = WoW.WProc.Memory.Read<uint>(desc + (int)i1);
+            //                            uint name2 = WoWManager.WoWProcess.Memory.Read<uint>(desc + (int)i1);
             //                            if (name2 == 188127)
             //                            {
             //                                sb.AppendLine("УДАЧА!!!: " + i1.ToString() + "/" + i.ToString());
@@ -165,9 +166,9 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(string.Format("{0}:{1} :: [Lua console] Can't save the latest list: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                Log.Print(string.Format("{0}:{1} :: [Lua console] Can't save the latest list: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
             }
-            Log.Print(string.Format("{0}:{1} :: [Lua console] Closed", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
+            Log.Print(string.Format("{0}:{1} :: [Lua console] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void PictureBoxOpenLuaFileClick(object sender, EventArgs e)
@@ -259,13 +260,13 @@ namespace AxTools.Forms
         {
             if (textBoxLuaCode.Text.Trim().Length != 0)
             {
-                if (!WoW.Hooked || !WoW.WProc.IsInGame)
+                if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
                 {
                     new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                     return;
                 }
                 Stopwatch stopwatch = Stopwatch.StartNew();
-                WoW.LuaDoString(textBoxLuaCode.Text);
+                WoWDXInject.LuaDoString(textBoxLuaCode.Text);
                 labelRequestTime.Text = string.Format("Script has taken {0}ms to complete", stopwatch.ElapsedMilliseconds);
                 labelRequestTime.Visible = true;
             }
@@ -274,7 +275,7 @@ namespace AxTools.Forms
         private void pictureBoxRunLoop_Click(object sender, EventArgs e)
         {
             labelRequestTime.Visible = false;
-            if (!WoW.Hooked || !WoW.WProc.IsInGame)
+            if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
             {
                 new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
@@ -295,23 +296,23 @@ namespace AxTools.Forms
             timerLua.Enabled = true;
             if (Settings.LuaConsoleShowIngameNotifications)
             {
-                WoW.ShowOverlayText("LTimer is started", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 102, 0));
-                //WoW.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is started\", 0.0, 1.0, 0.0)");
+                WoWDXInject.ShowOverlayText("LTimer is started", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 102, 0));
+                //WoWDXInject.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is started\", 0.0, 1.0, 0.0)");
             }
-            Log.Print(string.Format("{0}:{1} :: [Lua console] Lua timer enabled", WoW.WProc.ProcessName, WoW.WProc.ProcessID));
+            Log.Print(string.Format("{0}:{1} :: [Lua console] Lua timer enabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void pictureBoxStop_Click(object sender, EventArgs e)
         {
             timerLua.Enabled = false;
-            Log.Print(WoW.WProc != null
-                          ? string.Format("{0}:{1} :: [Lua console] Lua timer disabled", WoW.WProc.ProcessName, WoW.WProc.ProcessID)
+            Log.Print(WoWManager.WoWProcess != null
+                          ? string.Format("{0}:{1} :: [Lua console] Lua timer disabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID)
                           : "UNKNOWN:null :: Lua timer disabled");
             TimerHotkeyChanged();
-            if (Settings.LuaConsoleShowIngameNotifications && WoW.Hooked && WoW.WProc != null && WoW.WProc.IsInGame)
+            if (Settings.LuaConsoleShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
             {
-                WoW.ShowOverlayText("LTimer is stopped", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 0, 0));
-                //WoW.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is stopped\", 1.0, 0.4, 0.0)");
+                WoWDXInject.ShowOverlayText("LTimer is stopped", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 0, 0));
+                //WoWDXInject.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is stopped\", 1.0, 0.4, 0.0)");
             }
             MainForm.LuaTimerEnabled = false;
             SetupTimerControls(false);

@@ -748,6 +748,7 @@ namespace AxTools.Forms
             this.labelPingNum.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroToolTip1.SetToolTip(this.labelPingNum, "Click to show connectivity info widget");
             this.labelPingNum.UseStyleColors = true;
+            this.labelPingNum.Visible = false;
             this.labelPingNum.MouseClick += new System.Windows.Forms.MouseEventHandler(this.LabelPingNumMouseClick);
             // 
             // metroToolTip1

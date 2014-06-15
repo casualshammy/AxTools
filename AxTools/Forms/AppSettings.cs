@@ -21,7 +21,6 @@ namespace AxTools.Forms
             InitializeComponent();
             CheckBoxStartAxToolsWithWindows.CheckedChanged += CheckBox9CheckedChanged;
             CheckBox5.CheckedChanged += CheckBox5CheckedChanged;
-            CheckBoxAxToolsAddon.CheckedChanged += CheckBox10CheckedChanged;
             CheckBox7.CheckedChanged += CheckBox7CheckedChanged;
             CheckBox6.CheckedChanged += CheckBox6CheckedChanged;
             TextBox7.TextChanged += TextBox7TextChanged;
@@ -88,7 +87,6 @@ namespace AxTools.Forms
             Icon = Resources.AppIcon;
             checkBox_AntiAFK.Checked = Settings.Wasd;
             CheckBox5.Checked = Settings.DelWowLog;
-            CheckBoxAxToolsAddon.Checked = Settings.AxToolsAddon;
             CheckBox7.Checked = Settings.Noframe;
             CheckBox6.Checked = Settings.AutoAcceptWndSetts;
             foreach (Control i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
@@ -129,7 +127,6 @@ namespace AxTools.Forms
             //tooltips
             metroToolTip1.SetToolTip(CheckBox3, "Deletes creature cache file when possible");
             metroToolTip1.SetToolTip(CheckBox5, "Moves WoW log files to temporary folder\r\non AxTools' startup\r\nand deletes it on AxTools' shutdown");
-            metroToolTip1.SetToolTip(CheckBoxAxToolsAddon, "Checks ax_tools version and updates it if needed\r\non AxTools' startup");
             metroToolTip1.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
         }
 
@@ -177,11 +174,6 @@ namespace AxTools.Forms
         private void CheckBox5CheckedChanged(Object sender, EventArgs e)
         {
             Settings.DelWowLog = CheckBox5.Checked;
-        }
-
-        private void CheckBox10CheckedChanged(Object sender, EventArgs e)
-        {
-            Settings.AxToolsAddon = CheckBoxAxToolsAddon.Checked;
         }
 
         private void CheckBox7CheckedChanged(Object sender, EventArgs e)
@@ -451,9 +443,17 @@ namespace AxTools.Forms
 
         private void ComboBox_server_ip_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ComboBox_server_ip.SelectedIndex != -1)
+            if (IsHandleCreated && ComboBox_server_ip.SelectedIndex != -1)
             {
                 Settings.GameServer = Globals.GameServers.First(i => i.Description == ComboBox_server_ip.Text);
+                if (Settings.GameServer.Port == 0)
+                {
+                    Pinger.Stop();
+                }
+                else
+                {
+                    Pinger.Start();
+                }
             }
         }
 

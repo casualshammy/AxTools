@@ -4,57 +4,63 @@ using AxTools.Classes.WinAPI;
 
 namespace AxTools.Classes
 {
-    class Clicker : IDisposable
+    internal static class Clicker
     {
-        private readonly Timer timer;
-        private IntPtr handle;
-        private IntPtr key;
+        private static Timer _timer;
+        private static IntPtr _handle;
+        private static IntPtr _key;
+        private static readonly object Lock = new object();
 
-        internal Clicker()
+        internal static void Start(double interval, IntPtr hwnd, IntPtr keyToPress)
         {
-            timer = new Timer();
-            timer.Elapsed += timer_Elapsed;
-        }
-
-        internal void Start(double interval, IntPtr hwnd, IntPtr keyToPress)
-        {
-            key = keyToPress;
-            handle = hwnd;
-            timer.Interval = interval;
-            timer.Start();
-        }
-
-        internal void Stop()
-        {
-            timer.Stop();
-        }
-
-        internal bool Enabled
-        {
-            get
+            lock (Lock)
             {
-                return timer.Enabled;
+                if (_timer == null)
+                {
+                    _timer = new Timer(interval);
+                    _timer.Elapsed += timer_Elapsed;
+                    _key = keyToPress;
+                    _handle = hwnd;
+                    _timer.Start();
+                }
             }
         }
 
-        internal IntPtr Handle
+        internal static void Stop()
         {
-            get
+            lock (Lock)
             {
-                return handle;
+                if (_timer != null)
+                {
+                    _timer.Elapsed -= timer_Elapsed;
+                    _timer.Stop();
+                    _timer.Close();
+                    _timer = null;
+                }
             }
         }
 
-        private void timer_Elapsed(object sender, ElapsedEventArgs e)
+        internal static bool Enabled
         {
-            NativeMethods.PostMessage(handle, WM_MESSAGE.WM_KEYDOWN, key, IntPtr.Zero);
-            NativeMethods.PostMessage(handle, WM_MESSAGE.WM_KEYUP, key, IntPtr.Zero);
+            get
+            {
+                return _timer != null && _timer.Enabled;
+            }
         }
 
-        public void Dispose()
+        internal static IntPtr Handle
         {
-            timer.Elapsed -= timer_Elapsed;
-            timer.Close();
+            get
+            {
+                return _handle;
+            }
         }
+
+        private static void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            NativeMethods.PostMessage(_handle, WM_MESSAGE.WM_KEYDOWN, _key, IntPtr.Zero);
+            NativeMethods.PostMessage(_handle, WM_MESSAGE.WM_KEYUP, _key, IntPtr.Zero);
+        }
+
     }
 }

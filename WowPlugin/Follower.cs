@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using AxTools.Classes.WoW;
+using AxTools.Classes.WoW.Management.ObjectManager;
 using AxTools.Classes.WoW.PluginSystem;
 using AxTools.Classes.WoW.PluginSystem.API;
 
@@ -69,7 +69,6 @@ namespace TestPlugin
 
         public void OnPulse()
         {
-            EnvironmentObjects.Pulse();
             EnvironmentObjects.Pulse(players);
             if (EnvironmentObjects.Me.Health > 0)
             {

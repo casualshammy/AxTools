@@ -1,6 +1,8 @@
 ﻿using WindowsFormsAero.TaskDialog;
 using AxTools.Classes;
 using AxTools.Classes.WoW;
+using AxTools.Classes.WoW.Management;
+using AxTools.Classes.WoW.Management.ObjectManager;
 using AxTools.Components;
 using System;
 using System.Collections.Generic;
@@ -100,7 +102,7 @@ namespace AxTools.Forms
             {
                 List<WowObject> tempObjectList = new List<WowObject>();
                 List<WowNpc> tempNpcList = new List<WowNpc>();
-                WoW.Pulse(tempObjectList, tempNpcList);
+                ObjectMgr.Pulse(tempObjectList, tempNpcList);
 
                 wowObjects.Clear();
                 foreach (WowObject i in tempObjectList.Where(i => wowObjects.All(l => l.Name != i.Name)))
@@ -126,7 +128,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(string.Format("{0}:{1} :: [WoWRadarOptions] Error: {2}", WoW.WProc.ProcessName, WoW.WProc.ProcessID, ex.Message), true);
+                Log.Print(string.Format("{0}:{1} :: [WoWRadarOptions] Error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
             }
         }
 
