@@ -4,10 +4,8 @@ using AxTools.Classes.WoW.Management.ObjectManager;
 
 namespace AxTools.Classes.WoW.PluginSystem.API
 {
-    public static class EnvironmentObjects
+    public static class ObjMgr
     {
-
-        #region Pulse()
 
         public static void Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
         {
@@ -34,10 +32,8 @@ namespace AxTools.Classes.WoW.PluginSystem.API
             ObjectMgr.Pulse();
         }
 
-        #endregion
-
         /// <summary>
-        /// You should call Pulse(void) overload to refresh local player info
+        /// You should call Pulse (any overload) to refresh local player info
         /// </summary>
         public static WoWPlayerMe Me
         {

@@ -8,6 +8,10 @@ namespace AxTools.Classes.WoW.Management
     internal static class ObjectMgr
     {
         private static ExternalProcessReader _memory;
+
+        /// <summary>
+        /// You should call Pulse (any overload) to refresh local player info
+        /// </summary>
         internal static volatile WoWPlayerMe LocalPlayer;
 
         internal static void Initialize(WowProcess process)

@@ -69,13 +69,13 @@ namespace TestPlugin
 
         public void OnPulse()
         {
-            EnvironmentObjects.Pulse(players);
-            if (EnvironmentObjects.Me.Health > 0)
+            ObjMgr.Pulse(players);
+            if (ObjMgr.Me.Health > 0)
             {
-                WowPlayer myTarget = players.FirstOrDefault(i => i.Health > 0 && i.GUID == EnvironmentObjects.Me.TargetGUID);
+                WowPlayer myTarget = players.FirstOrDefault(i => i.Health > 0 && i.GUID == ObjMgr.Me.TargetGUID);
                 if (myTarget != null)
                 {
-                    if (myTarget.Location.Distance(EnvironmentObjects.Me.Location) > 5)
+                    if (myTarget.Location.Distance(ObjMgr.Me.Location) > 5)
                     {
                         Functions.MoveTo(myTarget.Location);
                     }

@@ -66,8 +66,8 @@ namespace TestPlugin
 
         public void OnPulse()
         {
-            EnvironmentObjects.Pulse();
-            if (EnvironmentObjects.Me.CastingSpellID == 0 && EnvironmentObjects.Me.ChannelSpellID == 0)
+            ObjMgr.Pulse();
+            if (ObjMgr.Me.CastingSpellID == 0 && ObjMgr.Me.ChannelSpellID == 0)
             {
                 Lua.LuaDoString(craft);
             }

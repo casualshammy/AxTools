@@ -136,7 +136,7 @@
     <Compile Include="Classes\WoW\Management\WoWDXInject.cs" />
     <Compile Include="Classes\WoW\Management\WoWManager.cs" />
     <Compile Include="Classes\WoW\MouseButton.cs" />
-    <Compile Include="Classes\WoW\PluginSystem\API\EnvironmentObjects.cs" />
+    <Compile Include="Classes\WoW\PluginSystem\API\ObjMgr.cs" />
     <Compile Include="Classes\WoW\PluginSystem\API\Functions.cs" />
     <Compile Include="Classes\WoW\PluginSystem\API\Lua.cs" />
     <Compile Include="Classes\WoW\PluginSystem\API\Utilities.cs" />
