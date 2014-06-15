@@ -5,7 +5,7 @@ using System.Text;
 namespace AxTools.Classes.WoW.Management.ObjectManager
 {
     /// <summary>
-    /// Represents a World of Warcraft game object's object
+    ///     World of Warcraft game object
     /// </summary>
     public sealed class WowObject
     {

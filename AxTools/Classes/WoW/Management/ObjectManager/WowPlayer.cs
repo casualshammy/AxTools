@@ -5,7 +5,7 @@ using System.Text;
 namespace AxTools.Classes.WoW.Management.ObjectManager
 {
     /// <summary>
-    /// Represents a World of Warcraft player object
+    ///     World of Warcraft player
     /// </summary>
     public class WowPlayer
     {
@@ -27,16 +27,31 @@ namespace AxTools.Classes.WoW.Management.ObjectManager
 
         internal readonly IntPtr Address;
 
+        /// <summary>
+        ///     The GUID of the object this unit is targeting.
+        /// </summary>
         public readonly ulong TargetGUID;
 
         internal readonly bool IsAlliance;
 
+        /// <summary>
+        ///     The unit's level.
+        /// </summary>
         internal readonly uint Level;
 
+        /// <summary>
+        ///     The unit's health.
+        /// </summary>
         public readonly uint Health;
 
+        /// <summary>
+        ///     The unit's maximum health.
+        /// </summary>
         internal readonly uint HealthMax;
 
+        /// <summary>
+        ///     Gets the class of the unit.
+        /// </summary>
         internal WowPlayerClass Class;
 
         protected ulong MGUID;
