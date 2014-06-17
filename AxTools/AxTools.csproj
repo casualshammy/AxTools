@@ -128,7 +128,8 @@
     <Compile Include="Classes\TaskbarProgressbar\ITaskbarList3.cs" />
     <Compile Include="Classes\TaskbarProgressbar\TBProgressBar.cs" />
     <Compile Include="Classes\TaskbarProgressbar\ThumbnailProgressState.cs" />
-    <Compile Include="Classes\Updater.cs" />
+    <Compile Include="Classes\Updater\UpdateInfo.cs" />
+    <Compile Include="Classes\Updater\Updater.cs" />
     <Compile Include="Classes\WoWAntiKick.cs" />
     <Compile Include="Classes\WoWProcessWatcher.cs" />
     <Compile Include="Classes\WoW\Management\ObjectManager\WoWPlayerMe.cs" />

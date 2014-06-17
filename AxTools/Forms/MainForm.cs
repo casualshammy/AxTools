@@ -1,5 +1,6 @@
 ﻿using AxTools.Classes;
 using AxTools.Classes.TaskbarProgressbar;
+using AxTools.Classes.Updater;
 using AxTools.Classes.WinAPI;
 using AxTools.Classes.WoW;
 using AxTools.Classes.WoW.Management;
@@ -18,7 +19,6 @@ using System.IO;
 using System.Linq;
 using System.Media;
 using System.Net;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,9 +66,8 @@ namespace AxTools.Forms
                     File.Delete(Globals.LogFileName);
                 }
             }
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            Log.Print(String.Format("Launching... ({0})", version));
-            base.Text = "AxTools " + version.Major;
+            Log.Print(String.Format("Launching... ({0})", Globals.AppVersion));
+            base.Text = "AxTools " + Globals.AppVersion.Major;
             Icon = Resources.AppIcon;
             Utils.Legacy();
             Settings.Load();
@@ -526,8 +525,7 @@ namespace AxTools.Forms
 
             #region Show update notes
 
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            if (version.Major != Settings.LastUsedVersion.Major || version.Minor != Settings.LastUsedVersion.Minor)
+            if (Globals.AppVersion.Major != Settings.LastUsedVersion.Major || Globals.AppVersion.Minor != Settings.LastUsedVersion.Minor)
             {
                 Task.Factory.StartNew(() =>
                     {

@@ -1,9 +1,11 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Reflection;
+using System.Windows.Forms;
 using MouseKeyboardActivityMonitor.WinApi;
 
 namespace AxTools.Classes
 {
-    class Globals
+    internal class Globals
     {
         internal static readonly string TempPath = Application.StartupPath + "\\tmp";
         internal static readonly string CfgPath = Application.StartupPath + "\\cfg";
@@ -15,7 +17,8 @@ namespace AxTools.Classes
         internal static readonly string PluginsAssembliesPath = Application.StartupPath + "\\pluginsAssemblies";
         internal static readonly string PluginsSettingsPath = Application.StartupPath + "\\pluginsSettings";
         internal static readonly string DropboxPath = "https://dl.dropboxusercontent.com/u/33646867/axtools";
-        internal static readonly string UpdateFilePath = DropboxPath + "/aloha!update";
+        internal static readonly string UpdateFilePath = DropboxPath + "/__update";
+        internal static readonly Version AppVersion = Assembly.GetExecutingAssembly().GetName().Version;
         internal static readonly GlobalHooker GlobalHooker = new GlobalHooker();
 
         internal static readonly SrvAddress[] GameServers =

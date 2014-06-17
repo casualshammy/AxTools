@@ -368,7 +368,7 @@ namespace AxTools.Classes
                 builder.AppendLine("## General settings ##");
                 builder.AppendLine("Location=" + Location);
                 builder.AppendLine("regname=" + Regname);
-                builder.AppendLine("LastUsedVersion=" + Assembly.GetExecutingAssembly().GetName().Version);
+                builder.AppendLine("LastUsedVersion=" + Globals.AppVersion);
                 builder.AppendLine("NewStyleColor=" + Convert.ToString((int)NewStyleColor));
                 builder.AppendLine("MinimizeToTray=" + Convert.ToString(MinimizeToTray));
 
