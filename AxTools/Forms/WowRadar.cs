@@ -136,7 +136,7 @@ namespace AxTools.Forms
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
         private readonly Dictionary<ulong, Point> objectsPointsInRadarCoords = new Dictionary<ulong, Point>();
 
-        private readonly WoWPlayerMe localPlayer = ObjectMgr.LocalPlayer;
+        private WoWPlayerMe localPlayer;
         private WowPlayer[] friends;
         private WowPlayer[] enemies;
         private WowObject[] objects;
@@ -177,6 +177,7 @@ namespace AxTools.Forms
                 try
                 {
                     ObjectMgr.Pulse(wowObjects, wowPlayers, wowNpcs);
+                    localPlayer = ObjectMgr.LocalPlayer;
                 }
                 catch (Exception ex)
                 {

@@ -57,14 +57,16 @@ namespace AxTools.Classes.WoW.Management.ObjectManager
             }
         }
 
-        private uint rotation;
-        public uint Rotation
+        private bool rotationRead;
+        private float rotation;
+        public float Rotation
         {
             get
             {
-                if (rotation == 0)
+                if (!rotationRead)
                 {
-                    rotation = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfo.UnitRotation);
+                    rotation = WoWManager.WoWProcess.Memory.Read<float>(Address + WowBuildInfo.UnitRotation);
+                    rotationRead = true;
                 }
                 return rotation;
             }

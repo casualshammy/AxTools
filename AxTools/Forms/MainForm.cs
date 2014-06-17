@@ -145,9 +145,39 @@ namespace AxTools.Forms
 
         private void TimerNiElapsed(object sender, ElapsedEventArgs e)
         {
-            BeginInvoke(new Action(() => SetIcon(false)));
+            // ReSharper disable RedundantCheckBeforeAssignment
+            BeginInvoke(new Action(() =>
+            {
+                if (Clicker.Enabled)
+                {
+                    notifyIconMain.Icon = Utils.EmptyIcon;
+                }
+                else if (notifyIconMain.Icon != appIconNormal)
+                {
+                    notifyIconMain.Icon = appIconNormal;
+                }
+            }));
             Thread.Sleep(500);
-            BeginInvoke(new Action(() => SetIcon(true)));
+            BeginInvoke(new Action(() =>
+            {
+                if (LuaTimerEnabled && PluginManager.ActivePlugin != null)
+                {
+                    notifyIconMain.Icon = appIconPluginOnLuaOn;
+                }
+                else if (LuaTimerEnabled)
+                {
+                    notifyIconMain.Icon = appIconPluginOffLuaOn;
+                }
+                else if (PluginManager.ActivePlugin != null)
+                {
+                    notifyIconMain.Icon = appIconPluginOnLuaOff;
+                }
+                else if (notifyIconMain.Icon != appIconNormal)
+                {
+                    notifyIconMain.Icon = appIconNormal;
+                }
+            }));
+            // ReSharper restore RedundantCheckBeforeAssignment
         }
 
         #endregion
@@ -245,11 +275,11 @@ namespace AxTools.Forms
 
         private void KeyboardHook_PrecompiledModulesHotkey()
         {
-            if (PluginManager.ActPlugin == null && WowProcess.GetAllWowProcesses().Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+            if (PluginManager.ActivePlugin == null && WowProcess.GetAllWowProcesses().Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
             {
                 InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
             }
-            else if (PluginManager.ActPlugin != null)
+            else if (PluginManager.ActivePlugin != null)
             {
                 InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
             }
@@ -436,17 +466,12 @@ namespace AxTools.Forms
 
             #region Processing creaturecache.wdb
 
-            if (Settings.CreatureCache && Directory.Exists(Settings.WowExe))
+            if (Settings.CreatureCache && Directory.Exists(Settings.WowExe + "\\Cache\\WDB"))
             {
-                if (!Directory.Exists(Settings.WowExe + "\\Cache\\WDB"))
+                DirectoryInfo[] directories = new DirectoryInfo(Settings.WowExe + "\\Cache\\WDB").GetDirectories();
+                if (directories.Length > 0)
                 {
-                    Directory.CreateDirectory(Settings.WowExe + "\\Cache\\WDB");
-                    Log.Print(String.Format("[WoW cache] Directory \"{0}\\Cache\\WDB\" created", Settings.WowExe));
-                }
-                var cDirectories = new DirectoryInfo(Settings.WowExe + "\\Cache\\WDB").GetDirectories();
-                if (cDirectories.Length > 0)
-                {
-                    foreach (DirectoryInfo i in cDirectories)
+                    foreach (DirectoryInfo i in directories)
                     {
                         try
                         {
@@ -484,17 +509,11 @@ namespace AxTools.Forms
         private void LoadingStepSync()
         {
             OnPluginsLoaded();
-
-            #region Run timers
-
             AddonsBackup.StartService();
-            timerNotifyIcon.Enabled = true;
             Pinger.Start();
-
-            #endregion
-
             WoWProcessWatcher.Start();
-
+            timerNotifyIcon.Enabled = true;
+            
             #region Start keyboard hook
 
             keyboardHook = new KeyboardHookListener(Globals.GlobalHooker);
@@ -503,11 +522,7 @@ namespace AxTools.Forms
 
             #endregion
 
-            #region Dispose temp controls and show rest
-
             startupOverlay.Close();
-
-            #endregion
 
             #region Show update notes
 
@@ -564,42 +579,6 @@ namespace AxTools.Forms
             }
         }
 
-        private void SetIcon(bool phase)
-        {
-            // ReSharper disable RedundantCheckBeforeAssignment
-            if (!phase)
-            {
-                if (Clicker.Enabled)
-                {
-                    notifyIconMain.Icon = Utils.EmptyIcon;
-                }
-                else if (notifyIconMain.Icon != appIconNormal)
-                {
-                    notifyIconMain.Icon = appIconNormal;
-                }
-            }
-            else
-            {
-                if (LuaTimerEnabled && PluginManager.ActPlugin != null)
-                {
-                    notifyIconMain.Icon = appIconPluginOnLuaOn;
-                }
-                else if (LuaTimerEnabled)
-                {
-                    notifyIconMain.Icon = appIconPluginOffLuaOn;
-                }
-                else if (PluginManager.ActPlugin != null)
-                {
-                    notifyIconMain.Icon = appIconPluginOnLuaOff;
-                }
-                else if (notifyIconMain.Icon != appIconNormal)
-                {
-                    notifyIconMain.Icon = appIconNormal;
-                }
-            }
-            // ReSharper restore RedundantCheckBeforeAssignment
-        }
-
         #endregion
 
         #region MainNotifyIconContextMenu
@@ -609,9 +588,9 @@ namespace AxTools.Forms
             foreach (ToolStripMenuItem i in pluginsToolStripMenuItems)
             {
                 i.ShortcutKeyDisplayString = i.Text == comboBoxWowPlugins.Text ? Settings.PrecompiledModulesHotkey.ToString() : null;
-                i.Enabled = PluginManager.ActPlugin == null;
+                i.Enabled = PluginManager.ActivePlugin == null;
             }
-            stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManager.ActPlugin != null;
+            stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManager.ActivePlugin != null;
             stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = Settings.PrecompiledModulesHotkey.ToString();
         }
 
@@ -641,7 +620,7 @@ namespace AxTools.Forms
 
         private void stopActivePluginorPresshotkeyToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            if (PluginManager.ActPlugin != null)
+            if (PluginManager.ActivePlugin != null)
             {
                 InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
             }
@@ -854,7 +833,7 @@ namespace AxTools.Forms
         private void buttonStartStopPlugin_Click(object sender, EventArgs e)
         {
             buttonStartStopPlugin.Enabled = false;
-            if (PluginManager.ActPlugin == null)
+            if (PluginManager.ActivePlugin == null)
             {
                 if (!WoWManager.Hooked && !LoadInjector())
                 {
@@ -1092,7 +1071,7 @@ namespace AxTools.Forms
                 pluginsToolStripMenuItems.Add(toolStripMenuItem);
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
-            if (Settings.EnableCustomPlugins)
+            if (Settings.EnableCustomPlugins && PluginManager.Plugins.Count > nativePlugins.Length)
             {
                 ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Custom plugins") as ToolStripMenuItem;
                 if (customPlugins != null)
@@ -1142,8 +1121,8 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker)delegate
             {
-                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActPlugin == null ? "Start" : "Stop", Settings.PrecompiledModulesHotkey);
-                comboBoxWowPlugins.Enabled = PluginManager.ActPlugin == null;
+                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugin == null ? "Start" : "Stop", Settings.PrecompiledModulesHotkey);
+                comboBoxWowPlugins.Enabled = PluginManager.ActivePlugin == null;
                 UpdatePluginsShortcutsInTrayContextMenu();
             });
         }

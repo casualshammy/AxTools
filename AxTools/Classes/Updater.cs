@@ -14,7 +14,6 @@ namespace AxTools.Classes
 {
     internal class Updater
     {
-
         private static readonly System.Timers.Timer Timer = new System.Timers.Timer(900000);
 
         internal static void Start()
