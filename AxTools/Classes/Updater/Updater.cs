@@ -106,17 +106,17 @@ namespace AxTools.Classes.Updater
             {
                 using (WebClient webClient = new WebClient())
                 {
-                    updateString = webClient.DownloadString(Globals.UpdateFilePath);
+                    updateString = webClient.DownloadString(Globals.UpdateFilePath + ".json");
                 }
             }
             catch (WebException webException)
             {
-                Log.Print("[Updater] Fetching error: " + webException.Message);
+                Log.Print("[Updater] Fetching info error: " + webException.Message);
                 return;
             }
             catch (Exception ex)
             {
-                Log.Print("[Updater] Fetching error: " + ex.Message + " :: " + ex.GetType(), true);
+                Log.Print("[Updater] Fetching info error: " + ex.Message + " :: " + ex.GetType(), true);
                 return;
             }
             
