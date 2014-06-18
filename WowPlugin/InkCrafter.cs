@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using AxTools.Classes.WoW.Management.ObjectManager;
 using AxTools.Classes.WoW.PluginSystem;
 using AxTools.Classes.WoW.PluginSystem.API;
 
@@ -66,8 +67,8 @@ namespace TestPlugin
 
         public void OnPulse()
         {
-            ObjMgr.Pulse();
-            if (ObjMgr.Me.CastingSpellID == 0 && ObjMgr.Me.ChannelSpellID == 0)
+            WoWPlayerMe locaPlayer = ObjMgr.Pulse();
+            if (locaPlayer.CastingSpellID == 0 && locaPlayer.ChannelSpellID == 0)
             {
                 Lua.LuaDoString(craft);
             }

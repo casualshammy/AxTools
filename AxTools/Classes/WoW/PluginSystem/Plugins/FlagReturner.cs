@@ -109,16 +109,17 @@ namespace AxTools.Classes.WoW.PluginSystem.Plugins
                 PluginManager.StopPlugin(true, true);
                 return;
             }
+            WoWPlayerMe localPlayer;
             try
             {
-                ObjectMgr.Pulse(wowObjects);
+                localPlayer = ObjectMgr.Pulse(wowObjects);
             }
             catch (Exception ex)
             {
                 Log.Print(string.Format("{0}:{1} :: [{2}] Pulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
                 return;
             }
-            foreach (WowObject i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(ObjectMgr.LocalPlayer.Location) <= 10))
+            foreach (WowObject i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(localPlayer.Location) <= 10))
             {
                 WoWDXInject.Interact(i.GUID);
                 Log.Print(string.Format("{0}:{1} :: [{2}] Interacting with {3} (0x{4:X})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, i.Name, i.GUID), false, false);

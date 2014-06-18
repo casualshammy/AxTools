@@ -108,11 +108,11 @@ namespace AxTools.Classes.WoW.Management.ObjectManager
                 return mHealthMax;
             }
         }
-        
-        internal static int SortByDistance(WowNpc x, WowNpc y)
+
+        internal static int SortByDistance(WoWPlayerMe localPlayer, WowNpc x, WowNpc y)
         {
-            double distance1 = x.Location.Distance(ObjectMgr.LocalPlayer.Location);
-            double distance2 = y.Location.Distance(ObjectMgr.LocalPlayer.Location);
+            double distance1 = x.Location.Distance(localPlayer.Location);
+            double distance2 = y.Location.Distance(localPlayer.Location);
             if (distance1 > distance2)
             {
                 return 1;

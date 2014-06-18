@@ -69,13 +69,13 @@ namespace TestPlugin
 
         public void OnPulse()
         {
-            ObjMgr.Pulse(players);
-            if (ObjMgr.Me.Health > 0)
+            WoWPlayerMe locaPlayer = ObjMgr.Pulse(players);
+            if (locaPlayer.Health > 0)
             {
-                WowPlayer myTarget = players.FirstOrDefault(i => i.Health > 0 && i.GUID == ObjMgr.Me.TargetGUID);
+                WowPlayer myTarget = players.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
                 if (myTarget != null)
                 {
-                    if (myTarget.Location.Distance(ObjMgr.Me.Location) > 5)
+                    if (myTarget.Location.Distance(locaPlayer.Location) > 5)
                     {
                         Functions.MoveTo(myTarget.Location);
                     }

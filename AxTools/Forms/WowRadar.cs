@@ -176,8 +176,7 @@ namespace AxTools.Forms
                 }
                 try
                 {
-                    ObjectMgr.Pulse(wowObjects, wowPlayers, wowNpcs);
-                    localPlayer = ObjectMgr.LocalPlayer;
+                    localPlayer = ObjectMgr.Pulse(wowObjects, wowPlayers, wowNpcs);
                 }
                 catch (Exception ex)
                 {

@@ -5,7 +5,7 @@ namespace AxTools.Classes.WoW.Management.ObjectManager
 {
     public class WoWPlayerMe : WowPlayer
     {
-        internal WoWPlayerMe(IntPtr address, ulong guid = 0) : base(address)
+        internal WoWPlayerMe(IntPtr address, ulong guid = 0) : base(address, guid)
         {
             MGUID = guid;
         }

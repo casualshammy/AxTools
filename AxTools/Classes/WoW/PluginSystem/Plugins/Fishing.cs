@@ -79,22 +79,23 @@ namespace AxTools.Classes.WoW.PluginSystem.Plugins
                     iterationStartTime = Environment.TickCount;
                     break;
                 case 1:
+                    WoWPlayerMe localPlayer;
                     try
                     {
-                        ObjectMgr.Pulse(wowObjects);
+                        localPlayer = ObjectMgr.Pulse(wowObjects);
                     }
                     catch (Exception ex)
                     {
                         Log.Print(String.Format("{0}:{1} :: [Fishing] Pulse error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
                         break;
                     }
-                    if (ObjectMgr.LocalPlayer.ChannelSpellID == 0)
+                    if (localPlayer.ChannelSpellID == 0)
                     {
                         Log.Print(String.Format("{0}:{1} :: [{2}] Player isn't fishing, recast...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
                         state = 0;
                         break;
                     }
-                    bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == ObjectMgr.LocalPlayer.GUID);
+                    bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == localPlayer.GUID);
                     if (bobber != null && bobber.Animation == 4456449)
                     {
                         Log.Print(String.Format("{0}:{1} :: [{2}] Got bit!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));

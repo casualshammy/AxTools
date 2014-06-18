@@ -114,10 +114,10 @@ namespace AxTools.Classes.WoW.Management.ObjectManager
             Address = pAddress;
         }
 
-        internal static int SortByDistance(WowObject one, WowObject two)
+        internal static int SortByDistance(WoWPlayerMe localPlayer, WowObject one, WowObject two)
         {
-            double distance1 = one.Location.Distance(ObjectMgr.LocalPlayer.Location);
-            double distance2 = two.Location.Distance(ObjectMgr.LocalPlayer.Location);
+            double distance1 = one.Location.Distance(localPlayer.Location);
+            double distance2 = two.Location.Distance(localPlayer.Location);
             if (distance1 > distance2)
             {
                 return 1;

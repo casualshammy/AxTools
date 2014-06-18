@@ -102,14 +102,27 @@ namespace AxTools.Forms
             {
                 List<WowObject> tempObjectList = new List<WowObject>();
                 List<WowNpc> tempNpcList = new List<WowNpc>();
-                ObjectMgr.Pulse(tempObjectList, tempNpcList);
+                WoWPlayerMe localPlayer = ObjectMgr.Pulse(tempObjectList, tempNpcList);
 
                 wowObjects.Clear();
                 foreach (WowObject i in tempObjectList.Where(i => wowObjects.All(l => l.Name != i.Name)))
                 {
                     wowObjects.Add(i);
                 }
-                wowObjects.Sort(WowObject.SortByDistance);
+                wowObjects.Sort(delegate(WowObject wo1, WowObject wo2)
+                {
+                    double distance1 = wo1.Location.Distance(localPlayer.Location);
+                    double distance2 = wo2.Location.Distance(localPlayer.Location);
+                    if (distance1 > distance2)
+                    {
+                        return 1;
+                    }
+                    if (distance1 < distance2)
+                    {
+                        return -1;
+                    }
+                    return 0;
+                });
                 foreach (WowObject i in wowObjects)
                 {
                     comboBoxSelectObjectOrNpc.Items.Add(i.Name);
@@ -120,7 +133,20 @@ namespace AxTools.Forms
                 {
                     wowNpcs.Add(i);
                 }
-                wowNpcs.Sort(WowNpc.SortByDistance);
+                wowNpcs.Sort(delegate(WowNpc npc1, WowNpc npc2)
+                {
+                    double distance1 = npc1.Location.Distance(localPlayer.Location);
+                    double distance2 = npc2.Location.Distance(localPlayer.Location);
+                    if (distance1 > distance2)
+                    {
+                        return 1;
+                    }
+                    if (distance1 < distance2)
+                    {
+                        return -1;
+                    }
+                    return 0;
+                });
                 foreach (WowNpc i in wowNpcs)
                 {
                     comboBoxSelectObjectOrNpc.Items.Add(i.Name);

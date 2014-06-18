@@ -9,9 +9,10 @@ namespace AxTools.Classes.WoW.Management.ObjectManager
     /// </summary>
     public class WowPlayer
     {
-        internal WowPlayer(IntPtr pAddress)
+        internal WowPlayer(IntPtr pAddress, ulong guid)
         {
             Address = pAddress;
+            MGUID = guid;
             IntPtr desc = WoWManager.WoWProcess.Memory.Read<IntPtr>(pAddress + WowBuildInfo.UnitDescriptors);
             WowPlayerInfo info = WoWManager.WoWProcess.Memory.Read<WowPlayerInfo>(desc + WowBuildInfo.UnitTargetGUID);
             TargetGUID = info.TargetGUID;

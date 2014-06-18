@@ -12,18 +12,19 @@ namespace AxTools.Classes.WoW.Management
         /// <summary>
         /// You should call Pulse (any overload) to refresh local player info
         /// </summary>
-        internal static volatile WoWPlayerMe LocalPlayer;
+        //internal static volatile WoWPlayerMe LocalPlayer;
 
         internal static void Initialize(WowProcess process)
         {
             _memory = process.Memory;
         }
 
-        internal static void Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
+        internal static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
         {
             wowObjects.Clear();
             wowUnits.Clear();
             wowNpcs.Clear();
+            WoWPlayerMe localPlayer = null;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfo.ObjectManager);
             ulong playerGUID = _memory.Read<ulong>(manager + WowBuildInfo.LocalGUID);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfo.ObjectManagerFirstObject);
@@ -40,11 +41,11 @@ namespace AxTools.Classes.WoW.Management
                         ulong objectGUID = _memory.Read<ulong>(currObject + WowBuildInfo.ObjectGUID);
                         if (objectGUID == playerGUID)
                         {
-                            LocalPlayer = new WoWPlayerMe(currObject, playerGUID);
+                            localPlayer = new WoWPlayerMe(currObject, playerGUID);
                         }
                         else
                         {
-                            wowUnits.Add(new WowPlayer(currObject));
+                            wowUnits.Add(new WowPlayer(currObject, objectGUID));
                         }
                         break;
                     case 5:
@@ -53,16 +54,17 @@ namespace AxTools.Classes.WoW.Management
                 }
                 currObject = _memory.Read<IntPtr>(currObject + WowBuildInfo.ObjectManagerNextObject);
             }
+            return localPlayer;
         }
-        
-        internal static void Pulse(List<WowObject> wowObjects, List<WowNpc> wowNpcs)
+
+        internal static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowNpc> wowNpcs)
         {
             wowObjects.Clear();
             wowNpcs.Clear();
+            WoWPlayerMe localPlayer = null;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfo.ObjectManager);
             ulong playerGUID = _memory.Read<ulong>(manager + WowBuildInfo.LocalGUID);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfo.ObjectManagerFirstObject);
-            bool localPlayerFound = false;
             for (int i = _memory.Read<int>(currObject + WowBuildInfo.ObjectType);
                 (i < 10) && (i > 0);
                 i = _memory.Read<int>(currObject + WowBuildInfo.ObjectType))
@@ -73,13 +75,12 @@ namespace AxTools.Classes.WoW.Management
                         wowNpcs.Add(new WowNpc(currObject));
                         break;
                     case 4:
-                        if (!localPlayerFound)
+                        if (localPlayer == null)
                         {
                             ulong objectGUID = _memory.Read<ulong>(currObject + WowBuildInfo.ObjectGUID);
                             if (objectGUID == playerGUID)
                             {
-                                LocalPlayer = new WoWPlayerMe(currObject, playerGUID);
-                                localPlayerFound = true;
+                                localPlayer = new WoWPlayerMe(currObject, playerGUID);
                             }
                         }
                         break;
@@ -89,14 +90,15 @@ namespace AxTools.Classes.WoW.Management
                 }
                 currObject = _memory.Read<IntPtr>(currObject + WowBuildInfo.ObjectManagerNextObject);
             }
+            return localPlayer;
         }
-        
-        internal static void Pulse(List<WowObject> wowObjects)
+
+        internal static WoWPlayerMe Pulse(List<WowObject> wowObjects)
         {
             wowObjects.Clear();
+            WoWPlayerMe localPlayer = null;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfo.ObjectManager);
             ulong playerGUID = _memory.Read<ulong>(manager + WowBuildInfo.LocalGUID);
-            bool localPlayerFound = false;
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfo.ObjectManagerFirstObject);
             for (int i = _memory.Read<int>(currObject + WowBuildInfo.ObjectType);
                 (i < 10) && (i > 0);
@@ -105,13 +107,12 @@ namespace AxTools.Classes.WoW.Management
                 switch (i)
                 {
                     case 4:
-                        if (!localPlayerFound)
+                        if (localPlayer == null)
                         {
                             ulong objectGUID = _memory.Read<ulong>(currObject + WowBuildInfo.ObjectGUID);
                             if (objectGUID == playerGUID)
                             {
-                                LocalPlayer = new WoWPlayerMe(currObject, playerGUID);
-                                localPlayerFound = true;
+                                localPlayer = new WoWPlayerMe(currObject, playerGUID);
                             }
                         }
                         break;
@@ -121,11 +122,13 @@ namespace AxTools.Classes.WoW.Management
                 }
                 currObject = _memory.Read<IntPtr>(currObject + WowBuildInfo.ObjectManagerNextObject);
             }
+            return localPlayer;
         }
-        
-        internal static void Pulse(List<WowPlayer> wowPlayers)
+
+        internal static WoWPlayerMe Pulse(List<WowPlayer> wowPlayers)
         {
             wowPlayers.Clear();
+            WoWPlayerMe localPlayer = null;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfo.ObjectManager);
             ulong playerGUID = _memory.Read<ulong>(manager + WowBuildInfo.LocalGUID);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfo.ObjectManagerFirstObject);
@@ -138,22 +141,23 @@ namespace AxTools.Classes.WoW.Management
                     ulong objectGUID = _memory.Read<ulong>(currObject + WowBuildInfo.ObjectGUID);
                     if (objectGUID == playerGUID)
                     {
-                        LocalPlayer = new WoWPlayerMe(currObject, playerGUID);
+                        localPlayer = new WoWPlayerMe(currObject, playerGUID);
                     }
                     else
                     {
-                        wowPlayers.Add(new WowPlayer(currObject));
+                        wowPlayers.Add(new WowPlayer(currObject, objectGUID));
                     }
                 }
                 currObject = _memory.Read<IntPtr>(currObject + WowBuildInfo.ObjectManagerNextObject);
             }
+            return localPlayer;
         }
-        
-        internal static void Pulse()
+
+        internal static WoWPlayerMe Pulse()
         {
             IntPtr localPlayerPtr = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfo.PlayerPtr);
-            LocalPlayer = new WoWPlayerMe(localPlayerPtr);
+            return new WoWPlayerMe(localPlayerPtr);
         }
-    
+        
     }
 }

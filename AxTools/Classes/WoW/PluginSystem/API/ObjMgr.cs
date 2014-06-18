@@ -7,40 +7,29 @@ namespace AxTools.Classes.WoW.PluginSystem.API
     public static class ObjMgr
     {
 
-        public static void Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
+        public static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
         {
-            ObjectMgr.Pulse(wowObjects, wowUnits, wowNpcs);
+            return ObjectMgr.Pulse(wowObjects, wowUnits, wowNpcs);
         }
 
-        public static void Pulse(List<WowObject> wowObjects, List<WowNpc> wowNpcs)
+        public static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowNpc> wowNpcs)
         {
-            ObjectMgr.Pulse(wowObjects, wowNpcs);
+            return ObjectMgr.Pulse(wowObjects, wowNpcs);
         }
 
-        public static void Pulse(List<WowObject> wowObjects)
+        public static WoWPlayerMe Pulse(List<WowObject> wowObjects)
         {
-            ObjectMgr.Pulse(wowObjects);
+            return ObjectMgr.Pulse(wowObjects);
         }
 
-        public static void Pulse(List<WowPlayer> wowPlayers)
+        public static WoWPlayerMe Pulse(List<WowPlayer> wowPlayers)
         {
-            ObjectMgr.Pulse(wowPlayers);
+            return ObjectMgr.Pulse(wowPlayers);
         }
 
-        public static void Pulse()
+        public static WoWPlayerMe Pulse()
         {
-            ObjectMgr.Pulse();
-        }
-
-        /// <summary>
-        /// You should call Pulse (any overload) to refresh local player info
-        /// </summary>
-        public static WoWPlayerMe Me
-        {
-            get
-            {
-                return ObjectMgr.LocalPlayer;
-            }
+            return ObjectMgr.Pulse();
         }
     
     }
