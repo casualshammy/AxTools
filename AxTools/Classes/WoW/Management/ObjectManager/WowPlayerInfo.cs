@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace AxTools.Classes.WoW
+namespace AxTools.Classes.WoW.Management.ObjectManager
 {
     [StructLayout(LayoutKind.Sequential)]
     internal struct WowPlayerInfo

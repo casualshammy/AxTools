@@ -104,6 +104,15 @@ namespace AxTools.Forms
                 List<WowNpc> tempNpcList = new List<WowNpc>();
                 WoWPlayerMe localPlayer = ObjectMgr.Pulse(tempObjectList, tempNpcList);
 
+                //tempObjectList = tempObjectList.DistinctBy(i => i.Name).ToList();
+                //tempObjectList.Sort(delegate(WowObject wo1, WowObject wo2)
+                //{
+                //    double distance1 = wo1.Location.Distance(localPlayer.Location);
+                //    double distance2 = wo2.Location.Distance(localPlayer.Location);
+                //    return distance1.CompareTo(distance2);
+                //});
+                //comboBoxSelectObjectOrNpc.Items.AddRange(tempObjectList.Select(i => i.Name).Cast<object>().ToArray());
+
                 wowObjects.Clear();
                 foreach (WowObject i in tempObjectList.Where(i => wowObjects.All(l => l.Name != i.Name)))
                 {
@@ -113,15 +122,7 @@ namespace AxTools.Forms
                 {
                     double distance1 = wo1.Location.Distance(localPlayer.Location);
                     double distance2 = wo2.Location.Distance(localPlayer.Location);
-                    if (distance1 > distance2)
-                    {
-                        return 1;
-                    }
-                    if (distance1 < distance2)
-                    {
-                        return -1;
-                    }
-                    return 0;
+                    return distance1.CompareTo(distance2);
                 });
                 foreach (WowObject i in wowObjects)
                 {
@@ -137,15 +138,7 @@ namespace AxTools.Forms
                 {
                     double distance1 = npc1.Location.Distance(localPlayer.Location);
                     double distance2 = npc2.Location.Distance(localPlayer.Location);
-                    if (distance1 > distance2)
-                    {
-                        return 1;
-                    }
-                    if (distance1 < distance2)
-                    {
-                        return -1;
-                    }
-                    return 0;
+                    return distance1.CompareTo(distance2);
                 });
                 foreach (WowNpc i in wowNpcs)
                 {

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using AxTools.Classes;
 using AxTools.Classes.WoW;
 using AxTools.Classes.WoW.Management;
@@ -94,6 +95,23 @@ namespace AxTools.Forms
                 TimeSpan ts = TimeSpan.FromSeconds(item.TimeLeft) - diff;
                 i.SubItems[1].Text = ts.TotalSeconds <= 0 ? "Finished" : ts.ToString("hh\\:mm\\:ss");
             }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct BlackMarketItem
+        {
+            private readonly uint MarketID;
+            private readonly uint unk1;
+            internal readonly uint Entry;
+            private readonly uint unk2;
+            private readonly uint Quantity;
+            private readonly uint unk3;
+            internal readonly ulong minBid;
+            private readonly ulong minIncrement;
+            internal readonly ulong currBid;
+            internal readonly uint TimeLeft;
+            [MarshalAs(UnmanagedType.Bool)] private readonly bool YouHaveHighBid;
+            internal readonly uint NumBids;
         }
 
     }

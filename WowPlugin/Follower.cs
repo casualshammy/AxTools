@@ -69,7 +69,7 @@ namespace TestPlugin
 
         public void OnPulse()
         {
-            WoWPlayerMe locaPlayer = ObjMgr.Pulse(players);
+            locaPlayer = ObjMgr.Pulse(players);
             if (locaPlayer.Health > 0)
             {
                 WowPlayer myTarget = players.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
@@ -91,6 +91,7 @@ namespace TestPlugin
         #endregion
 
         private List<WowPlayer> players;
+        private WoWPlayerMe locaPlayer;
 
     }
 }

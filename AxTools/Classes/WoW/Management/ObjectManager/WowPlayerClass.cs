@@ -1,4 +1,4 @@
-﻿namespace AxTools.Classes.WoW
+﻿namespace AxTools.Classes.WoW.Management.ObjectManager
 {
     internal enum WowPlayerClass : byte
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace AxTools.Classes.WoW
+namespace AxTools.Classes.WoW.Management.ObjectManager
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct WowPoint
@@ -26,5 +26,6 @@ namespace AxTools.Classes.WoW
         {
             return String.Format("{0},{1},{2}", (int) X, (int) Y, (int) Z);
         }
+    
     }
 }

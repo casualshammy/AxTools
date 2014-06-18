@@ -109,19 +109,5 @@ namespace AxTools.Classes.WoW.Management.ObjectManager
             }
         }
 
-        internal static int SortByDistance(WoWPlayerMe localPlayer, WowNpc x, WowNpc y)
-        {
-            double distance1 = x.Location.Distance(localPlayer.Location);
-            double distance2 = y.Location.Distance(localPlayer.Location);
-            if (distance1 > distance2)
-            {
-                return 1;
-            }
-            if (distance1 < distance2)
-            {
-                return -1;
-            }
-            return 0;
-        }
     }
 }

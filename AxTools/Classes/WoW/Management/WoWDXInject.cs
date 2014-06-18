@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using AxTools.Classes.WoW.DX;
+using AxTools.Classes.WoW.Management.ObjectManager;
 using Fasm;
 
 namespace AxTools.Classes.WoW.Management

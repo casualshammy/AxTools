@@ -153,7 +153,7 @@
     </Compile>
     <Compile Include="Classes\Globals.cs" />
     <Compile Include="Classes\WoW\Management\HookResult.cs" />
-    <Compile Include="Classes\WoW\WowPlayerInfo.cs" />
+    <Compile Include="Classes\WoW\Management\ObjectManager\WowPlayerInfo.cs" />
     <Compile Include="Components\CheckBoxExt.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -211,7 +211,6 @@
     <Compile Include="Classes\WinAPI\FLASHWINFO.cs" />
     <Compile Include="Classes\WinAPI\NativeMethods.cs" />
     <Compile Include="Classes\WinAPI\WM_MESSAGE.cs" />
-    <Compile Include="Classes\WoW\BMItem.cs" />
     <Compile Include="Classes\WoW\ObjectToFind.cs" />
     <Compile Include="Components\PictureBoxExt.cs">
       <SubType>Component</SubType>
@@ -243,7 +242,7 @@
     <Compile Include="Classes\WoW\WowAccount.cs" />
     <Compile Include="Classes\WoW\Management\ObjectManager\WowNpc.cs" />
     <Compile Include="Classes\WoW\Management\ObjectManager\WowObject.cs" />
-    <Compile Include="Classes\WoW\WowPoint.cs" />
+    <Compile Include="Classes\WoW\Management\ObjectManager\WowPoint.cs" />
     <Compile Include="Classes\WoW\WowProcess.cs" />
     <Compile Include="Classes\Crypt.cs" />
     <Compile Include="Classes\WoW\Management\ObjectManager\WowPlayer.cs" />
@@ -298,7 +297,7 @@
       <DependentUpon>WowRadarOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\WoW\WowBuildInfo.cs" />
-    <Compile Include="Classes\WoW\WowPlayerClass.cs" />
+    <Compile Include="Classes\WoW\Management\ObjectManager\WowPlayerClass.cs" />
     <EmbeddedResource Include="Forms\AppSettings.resx">
       <DependentUpon>AppSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
