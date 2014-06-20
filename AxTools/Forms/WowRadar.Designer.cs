@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using AxTools.Classes.WoW;
 using AxTools.Components;
 using AxTools.Properties;
 using MetroFramework;

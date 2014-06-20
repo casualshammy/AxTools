@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using AxTools.Classes;
-using AxTools.Classes.WoW.Management;
-using AxTools.Classes.WoW.Management.ObjectManager;
 using AxTools.Components;
 using AxTools.Properties;
 using System;
@@ -12,6 +10,8 @@ using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.WoW.Management;
+using AxTools.WoW.Management.ObjectManager;
 using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms

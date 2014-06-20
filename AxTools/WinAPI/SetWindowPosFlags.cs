@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AxTools.Classes.WinAPI
+namespace AxTools.WinAPI
 {
     [Flags]
     internal enum SetWindowPosFlags : uint

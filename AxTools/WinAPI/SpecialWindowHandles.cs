@@ -1,4 +1,4 @@
-﻿namespace AxTools.Classes.WinAPI
+﻿namespace AxTools.WinAPI
 {
     /// <summary>
     ///     Special window handles

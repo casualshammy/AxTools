@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using AxTools.Classes.WoW;
 using AxTools.Components;
 using AxTools.Properties;
+using AxTools.WoW;
 using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms

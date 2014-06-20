@@ -1,4 +1,4 @@
-﻿namespace AxTools.Classes.WinAPI
+﻿namespace AxTools.WinAPI
 {
     // ReSharper disable InconsistentNaming
     internal enum WM_MESSAGE : uint

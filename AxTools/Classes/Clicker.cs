@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Timers;
-using AxTools.Classes.WinAPI;
+using AxTools.WinAPI;
 
 namespace AxTools.Classes
 {

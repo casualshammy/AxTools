@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace AxTools.Classes.WinAPI
+namespace AxTools.WinAPI
 {
     [StructLayout(LayoutKind.Sequential)]
     internal struct FLASHWINFO

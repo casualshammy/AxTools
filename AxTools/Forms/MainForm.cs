@@ -1,13 +1,12 @@
 ﻿using AxTools.Classes;
-using AxTools.Classes.TaskbarProgressbar;
-using AxTools.Classes.Updater;
-using AxTools.Classes.WinAPI;
-using AxTools.Classes.WoW;
-using AxTools.Classes.WoW.Management;
-using AxTools.Classes.WoW.PluginSystem;
-using AxTools.Classes.WoW.PluginSystem.Plugins;
 using AxTools.Components;
+using AxTools.Components.TaskbarProgressbar;
 using AxTools.Properties;
+using AxTools.WinAPI;
+using AxTools.WoW;
+using AxTools.WoW.Management;
+using AxTools.WoW.PluginSystem;
+using AxTools.WoW.PluginSystem.Plugins;
 using Ionic.Zip;
 using MouseKeyboardActivityMonitor;
 using System;
@@ -554,7 +553,7 @@ namespace AxTools.Forms
 
             #endregion
 
-            Updater.Start();
+            Updater.UpdaterService.Start();
 
             Log.Print("AxTools started succesfully");
         }

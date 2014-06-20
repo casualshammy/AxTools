@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace AxTools.Classes.WinAPI
+namespace AxTools.WinAPI
 {
     internal static class NativeMethods
     {

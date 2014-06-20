@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using AxTools.Classes.WoW.Management.ObjectManager;
-using AxTools.Classes.WoW.PluginSystem;
-using AxTools.Classes.WoW.PluginSystem.API;
+using AxTools.WoW.Management.ObjectManager;
+using AxTools.WoW.PluginSystem;
+using AxTools.WoW.PluginSystem.API;
 
 namespace TestPlugin
 {

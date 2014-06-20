@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AxTools.Classes.TaskbarProgressbar
+namespace AxTools.Components.TaskbarProgressbar
 {
     internal class TBProgressBar
     {

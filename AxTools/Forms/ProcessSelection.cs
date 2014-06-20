@@ -1,11 +1,11 @@
 ﻿using System.Windows.Forms;
 using AxTools.Classes;
-using AxTools.Classes.WinAPI;
-using AxTools.Classes.WoW;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using AxTools.Components;
+using AxTools.WinAPI;
+using AxTools.WoW;
 
 namespace AxTools.Forms
 {

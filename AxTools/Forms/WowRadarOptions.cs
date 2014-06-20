@@ -1,7 +1,4 @@
 ﻿using AxTools.Classes;
-using AxTools.Classes.WoW;
-using AxTools.Classes.WoW.Management;
-using AxTools.Classes.WoW.Management.ObjectManager;
 using AxTools.Components;
 using System;
 using System.Collections.Generic;
@@ -11,6 +8,9 @@ using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.WoW;
+using AxTools.WoW.Management;
+using AxTools.WoW.Management.ObjectManager;
 
 namespace AxTools.Forms
 {

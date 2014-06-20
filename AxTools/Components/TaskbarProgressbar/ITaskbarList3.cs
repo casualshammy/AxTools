@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace AxTools.Classes.TaskbarProgressbar
+namespace AxTools.Components.TaskbarProgressbar
 {
     [ComImport]
     [Guid("ea1afb91-9e28-4b86-90e9-9e9f8a5eefaf")]

@@ -1,9 +1,6 @@
 ﻿using System.Media;
 using System.Threading;
 using AxTools.Classes;
-using AxTools.Classes.WoW;
-using AxTools.Classes.WoW.Management;
-using AxTools.Classes.WoW.Management.ObjectManager;
 using AxTools.Properties;
 using System;
 using System.Collections.Generic;
@@ -15,6 +12,9 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AxTools.WoW;
+using AxTools.WoW.Management;
+using AxTools.WoW.Management.ObjectManager;
 using MouseKeyboardActivityMonitor;
 using Settings = AxTools.Classes.Settings;
 

@@ -1,4 +1,4 @@
-﻿namespace AxTools.Classes.TaskbarProgressbar
+﻿namespace AxTools.Components.TaskbarProgressbar
 {
     /// <summary>
     /// Represents the thumbnail progress bar state.
