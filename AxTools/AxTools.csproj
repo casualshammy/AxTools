@@ -124,10 +124,10 @@
     <Compile Include="Classes\AddonsBackup.cs" />
     <Compile Include="Classes\Clicker.cs" />
     <Compile Include="Classes\Pinger.cs" />
-    <Compile Include="Classes\TaskbarProgressbar\CTaskbarList.cs" />
-    <Compile Include="Classes\TaskbarProgressbar\ITaskbarList3.cs" />
-    <Compile Include="Classes\TaskbarProgressbar\TBProgressBar.cs" />
-    <Compile Include="Classes\TaskbarProgressbar\ThumbnailProgressState.cs" />
+    <Compile Include="Components\TaskbarProgressbar\CTaskbarList.cs" />
+    <Compile Include="Components\TaskbarProgressbar\ITaskbarList3.cs" />
+    <Compile Include="Components\TaskbarProgressbar\TBProgressBar.cs" />
+    <Compile Include="Components\TaskbarProgressbar\ThumbnailProgressState.cs" />
     <Compile Include="Classes\Updater\UpdateInfo.cs" />
     <Compile Include="Classes\Updater\Updater.cs" />
     <Compile Include="Classes\WoW\WoWAntiKick.cs" />
@@ -205,12 +205,12 @@
     <Compile Include="Forms\Changes.Designer.cs">
       <DependentUpon>Changes.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\WinAPI\FlashWindowFlags.cs" />
-    <Compile Include="Classes\WinAPI\SetWindowPosFlags.cs" />
-    <Compile Include="Classes\WinAPI\SpecialWindowHandles.cs" />
-    <Compile Include="Classes\WinAPI\FLASHWINFO.cs" />
-    <Compile Include="Classes\WinAPI\NativeMethods.cs" />
-    <Compile Include="Classes\WinAPI\WM_MESSAGE.cs" />
+    <Compile Include="WinAPI\FlashWindowFlags.cs" />
+    <Compile Include="WinAPI\SetWindowPosFlags.cs" />
+    <Compile Include="WinAPI\SpecialWindowHandles.cs" />
+    <Compile Include="WinAPI\FLASHWINFO.cs" />
+    <Compile Include="WinAPI\NativeMethods.cs" />
+    <Compile Include="WinAPI\WM_MESSAGE.cs" />
     <Compile Include="Classes\WoW\ObjectToFind.cs" />
     <Compile Include="Components\PictureBoxExt.cs">
       <SubType>Component</SubType>
@@ -472,9 +472,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Classes\NewFolder1\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
