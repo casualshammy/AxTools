@@ -27,6 +27,11 @@ namespace AxTools.Classes.WoW.PluginSystem.API
             return ObjectMgr.Pulse(wowPlayers);
         }
 
+        public static WoWPlayerMe Pulse(List<WowNpc> wowNpcs)
+        {
+            return ObjectMgr.Pulse(wowNpcs);
+        }
+
         public static WoWPlayerMe Pulse()
         {
             return ObjectMgr.Pulse();

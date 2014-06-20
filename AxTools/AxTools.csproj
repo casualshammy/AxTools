@@ -130,8 +130,8 @@
     <Compile Include="Classes\TaskbarProgressbar\ThumbnailProgressState.cs" />
     <Compile Include="Classes\Updater\UpdateInfo.cs" />
     <Compile Include="Classes\Updater\Updater.cs" />
-    <Compile Include="Classes\WoWAntiKick.cs" />
-    <Compile Include="Classes\WoWProcessWatcher.cs" />
+    <Compile Include="Classes\WoW\WoWAntiKick.cs" />
+    <Compile Include="Classes\WoW\WoWProcessWatcher.cs" />
     <Compile Include="Classes\WoW\Management\ObjectManager\WoWPlayerMe.cs" />
     <Compile Include="Classes\WoW\Management\ObjectMgr.cs" />
     <Compile Include="Classes\WoW\Management\WoWDXInject.cs" />
@@ -472,7 +472,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Classes\NewFolder1\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

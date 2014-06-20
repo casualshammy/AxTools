@@ -1,5 +1,4 @@
-﻿using WindowsFormsAero.TaskDialog;
-using AxTools.Classes;
+﻿using AxTools.Classes;
 using AxTools.Classes.WoW;
 using AxTools.Classes.WoW.Management;
 using AxTools.Classes.WoW.Management.ObjectManager;
@@ -11,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Windows.Forms;
+using WindowsFormsAero.TaskDialog;
 
 namespace AxTools.Forms
 {
@@ -24,8 +24,8 @@ namespace AxTools.Forms
             {
                 dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
             }
-            dataGridViewObjects.RowsAdded += DataGridViewObjectsRowsAdded;
-            dataGridViewObjects.RowsRemoved += DataGridViewObjectsRowsRemoved;
+            dataGridViewObjects.RowsAdded += DataGridViewObjectsRowsAddedOrRemove;
+            dataGridViewObjects.RowsRemoved += DataGridViewObjectsRowsAddedOrRemove;
             dataGridViewObjects.CellValueChanged += DataGridViewObjectsOnCellValueChanged;
             dataGridViewObjects.CellMouseClick += DataGridViewObjectsOnCellMouseClick;
             dataGridViewObjects.CellContentClick += DataGridViewObjectsOnCellContentClick;
@@ -35,6 +35,7 @@ namespace AxTools.Forms
             metroCheckBoxShowNpcsNames.Checked = Settings.RadarShowNpcsNames;
             metroCheckBoxShowObjectsNames.Checked = Settings.RadarShowObjectsNames;
             metroStyleManager1.Style = Settings.NewStyleColor;
+            metroTabControl1.SelectedIndex = 0;
             BeginInvoke((MethodInvoker) delegate
             {
                 int maxWidth = Screen.PrimaryScreen.WorkingArea.Width;
@@ -49,42 +50,6 @@ namespace AxTools.Forms
             });
         }
 
-        private readonly List<WowObject> wowObjects = new List<WowObject>();
-        private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
-        
-        private void ButtonAddObjectOrNpcToListClick(object sender, EventArgs e)
-        {
-            if (comboBoxSelectObjectOrNpc.SelectedIndex != -1 && comboBoxSelectObjectOrNpc.SelectedItem != null && !string.IsNullOrWhiteSpace(comboBoxSelectObjectOrNpc.SelectedItem.ToString()))
-            {
-                dataGridViewObjects.Rows.Add(true, comboBoxSelectObjectOrNpc.SelectedItem.ToString(),
-                    comboBoxSelectObjectOrNpc.SelectedIndex + 1 <= wowObjects.Count, true);
-                if (dataGridViewObjects.Rows.Count > 0)
-                {
-                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
-                }
-            }
-            else
-            {
-                this.ShowTaskDialog("Object name cannot be empty!", "Please select an object from the combobox", TaskDialogButton.OK, TaskDialogIcon.Stop);
-            }
-        }
-
-        private void MetroButtonAddNewClick(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(metroTextBoxAddNew.Text))
-            {
-                dataGridViewObjects.Rows.Add(true, metroTextBoxAddNew.Text, true, true);
-                if (dataGridViewObjects.Rows.Count > 0)
-                {
-                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
-                }
-            }
-            else
-            {
-                this.ShowTaskDialog("Object name cannot be empty!", "Please enter an object name in the textbox", TaskDialogButton.OK, TaskDialogIcon.Stop);
-            }
-        }
-
         private void RebuildKOSList()
         {
             List<ObjectToFind> list = new List<ObjectToFind>();
@@ -93,62 +58,6 @@ namespace AxTools.Forms
                 list.Add(new ObjectToFind((bool)i.Cells[0].Value, (string)i.Cells[1].Value, (bool)i.Cells[2].Value, (bool)i.Cells[3].Value));
             }
             WowRadar.RadarKOSGeneral = list;
-        }
-
-        private void ComboBoxSelectObjectOrNpcClick(object sender, EventArgs e)
-        {
-            comboBoxSelectObjectOrNpc.Items.Clear();
-            try
-            {
-                List<WowObject> tempObjectList = new List<WowObject>();
-                List<WowNpc> tempNpcList = new List<WowNpc>();
-                WoWPlayerMe localPlayer = ObjectMgr.Pulse(tempObjectList, tempNpcList);
-
-                //tempObjectList = tempObjectList.DistinctBy(i => i.Name).ToList();
-                //tempObjectList.Sort(delegate(WowObject wo1, WowObject wo2)
-                //{
-                //    double distance1 = wo1.Location.Distance(localPlayer.Location);
-                //    double distance2 = wo2.Location.Distance(localPlayer.Location);
-                //    return distance1.CompareTo(distance2);
-                //});
-                //comboBoxSelectObjectOrNpc.Items.AddRange(tempObjectList.Select(i => i.Name).Cast<object>().ToArray());
-
-                wowObjects.Clear();
-                foreach (WowObject i in tempObjectList.Where(i => wowObjects.All(l => l.Name != i.Name)))
-                {
-                    wowObjects.Add(i);
-                }
-                wowObjects.Sort(delegate(WowObject wo1, WowObject wo2)
-                {
-                    double distance1 = wo1.Location.Distance(localPlayer.Location);
-                    double distance2 = wo2.Location.Distance(localPlayer.Location);
-                    return distance1.CompareTo(distance2);
-                });
-                foreach (WowObject i in wowObjects)
-                {
-                    comboBoxSelectObjectOrNpc.Items.Add(i.Name);
-                }
-
-                wowNpcs.Clear();
-                foreach (WowNpc i in tempNpcList.Where(i => wowNpcs.All(l => l.Name != i.Name)))
-                {
-                    wowNpcs.Add(i);
-                }
-                wowNpcs.Sort(delegate(WowNpc npc1, WowNpc npc2)
-                {
-                    double distance1 = npc1.Location.Distance(localPlayer.Location);
-                    double distance2 = npc2.Location.Distance(localPlayer.Location);
-                    return distance1.CompareTo(distance2);
-                });
-                foreach (WowNpc i in wowNpcs)
-                {
-                    comboBoxSelectObjectOrNpc.Items.Add(i.Name);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Print(string.Format("{0}:{1} :: [WoWRadarOptions] Error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
-            }
         }
 
         private void MetroCheckBoxShowPlayersClassesCheckedChanged(object sender, EventArgs e)
@@ -166,15 +75,10 @@ namespace AxTools.Forms
             Settings.RadarShowObjectsNames = metroCheckBoxShowObjectsNames.Checked;
         }
 
-        private void DataGridViewObjectsRowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        private void DataGridViewObjectsRowsAddedOrRemove(object sender, EventArgs e)
         {
             RebuildKOSList();
-            dataGridViewObjects.Columns[1].Width = dataGridViewObjects.Rows.Count > 7 ? 220 : 237;
-        }
-        private void DataGridViewObjectsRowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-            RebuildKOSList();
-            dataGridViewObjects.Columns[1].Width = dataGridViewObjects.Rows.Count > 7 ? 220 : 237;
+            dataGridViewObjects.Columns[1].Width = dataGridViewObjects.Rows.Count > 7 ? 248 : 265;
         }
         private void DataGridViewObjectsOnCellValueChanged(object sender, DataGridViewCellEventArgs dataGridViewCellEventArgs)
         {
@@ -244,6 +148,98 @@ namespace AxTools.Forms
             if (dataGridViewObjects.Rows.Count > 0)
             {
                 dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
+            }
+        }
+
+        private void buttonAddUnknown_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(metroTextBoxAddNew.Text))
+            {
+                dataGridViewObjects.Rows.Add(true, metroTextBoxAddNew.Text, true, true);
+                if (dataGridViewObjects.Rows.Count > 0)
+                {
+                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
+                }
+            }
+            else
+            {
+                this.ShowTaskDialog("Object name cannot be empty!", "Please enter an object name in the textbox", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
+        }
+
+        private void buttonAddNPC_Click(object sender, EventArgs e)
+        {
+            if (comboboxNPCs.SelectedIndex != -1 && comboboxNPCs.SelectedItem != null && !string.IsNullOrWhiteSpace(comboboxNPCs.SelectedItem.ToString()))
+            {
+                dataGridViewObjects.Rows.Add(true, comboboxNPCs.SelectedItem.ToString(),false, true);
+                if (dataGridViewObjects.Rows.Count > 0)
+                {
+                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
+                }
+            }
+            else
+            {
+                this.ShowTaskDialog("NPC name cannot be empty!", "Please select NPC from the combobox", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
+        }
+
+        private void buttonAddObject_Click(object sender, EventArgs e)
+        {
+            if (comboboxObjects.SelectedIndex != -1 && comboboxObjects.SelectedItem != null && !string.IsNullOrWhiteSpace(comboboxObjects.SelectedItem.ToString()))
+            {
+                dataGridViewObjects.Rows.Add(true, comboboxObjects.SelectedItem.ToString(), true, true);
+                if (dataGridViewObjects.Rows.Count > 0)
+                {
+                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
+                }
+            }
+            else
+            {
+                this.ShowTaskDialog("Object name cannot be empty!", "Please select object from the combobox", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
+        }
+
+        private void comboboxNPCs_Click(object sender, EventArgs e)
+        {
+            comboboxNPCs.Items.Clear();
+            try
+            {
+                List<WowNpc> npcList = new List<WowNpc>();
+                WoWPlayerMe localPlayer = ObjectMgr.Pulse(npcList);
+                List<WowNpc> npcsWithUniqueNames = npcList.DistinctBy(i => i.Name).ToList();
+                npcsWithUniqueNames.Sort(delegate(WowNpc o1, WowNpc o2)
+                {
+                    double distance1 = o1.Location.Distance(localPlayer.Location);
+                    double distance2 = o2.Location.Distance(localPlayer.Location);
+                    return distance1.CompareTo(distance2);
+                });
+                comboboxNPCs.Items.AddRange(npcsWithUniqueNames.Select(i => i.Name).Cast<object>().ToArray());
+            }
+            catch (Exception ex)
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoWRadarOptions] Error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
+            }
+        }
+
+        private void comboboxObjects_Click(object sender, EventArgs e)
+        {
+            comboboxObjects.Items.Clear();
+            try
+            {
+                List<WowObject> objectList = new List<WowObject>();
+                WoWPlayerMe localPlayer = ObjectMgr.Pulse(objectList);
+                List<WowObject> objectsWithUniqueNames = objectList.DistinctBy(i => i.Name).ToList();
+                objectsWithUniqueNames.Sort(delegate(WowObject wo1, WowObject wo2)
+                {
+                    double distance1 = wo1.Location.Distance(localPlayer.Location);
+                    double distance2 = wo2.Location.Distance(localPlayer.Location);
+                    return distance1.CompareTo(distance2);
+                });
+                comboboxObjects.Items.AddRange(objectsWithUniqueNames.Select(i => i.Name).Cast<object>().ToArray());
+            }
+            catch (Exception ex)
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoWRadarOptions] Error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
             }
         }
 

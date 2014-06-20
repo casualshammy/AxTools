@@ -34,7 +34,7 @@
         internal static readonly int LuaGetLocalizedTextAddress = 0x414267; // FrameScript_GetLocalizedText
         internal static readonly int SelectTarget = 0x8CE510; // CGGameUI::Target
         internal static readonly int Interact = 0x8D0268; // CGGameUI::Interact
-        //internal static readonly int HandleTerrainClick = 0x38D7AA; // Spell_C__HandleTerrainClick
+        internal static readonly int HandleTerrainClick = 0x38F129; // Spell_C__HandleTerrainClick
         internal static readonly int ClickToMove = 0x41FB57; // CGUnit_C::InitializeTrackingState
 
         #endregion

@@ -331,39 +331,33 @@ namespace AxTools.Classes.WoW.Management
             LuaDoString(InitializeIngameOverlay + "\r\n" + function);
         }
 
-        //internal static unsafe bool TerrainClick(TerrainClickStruct clickStruct)
-        //{
-        //    IntPtr ctmPoint = wowProcess.Memory.AllocateMemory(sizeof(TerrainClickStruct));
-        //    wowProcess.Memory.Write(ctmPoint, clickStruct);
-        //    string[] asm =
-        //    {
-        //        "mov eax, " + ctmPoint,
-        //        "push eax",
-        //        "mov eax, " + (wowProcess.Memory.ImageBase + WowBuildInfo.HandleTerrainClick),
-        //        "call eax",
-        //        "add esp, 0x4",
-        //        "retn"
-        //    };
-        //    try
-        //    {
-        //        InjectAsm(asm, (uint)_codeCavePtr);
-        //        wowProcess.Memory.Write(_addresseInjection, (int)_codeCavePtr);
-        //        while (wowProcess.Memory.Read<uint>(_addresseInjection) > 0)
-        //        {
-        //            Thread.Sleep(1);
-        //        }
-        //        wowProcess.Memory.WriteBytes(_codeCavePtr, Eraser);
-        //        return true;
-        //    }
-        //    catch
-        //    {
-        //        return false;
-        //    }
-        //    finally
-        //    {
-        //        wowProcess.Memory.FreeMemory(ctmPoint);
-        //    }
-        //}
+        internal static unsafe void TerrainClick(TerrainClickStruct clickStruct)
+        {
+            IntPtr ctmPoint = _wowProcess.Memory.AllocateMemory(sizeof(TerrainClickStruct));
+            _wowProcess.Memory.Write(ctmPoint, clickStruct);
+            string[] asm =
+            {
+                "mov eax, " + ctmPoint,
+                "push eax",
+                "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.HandleTerrainClick),
+                "call eax",
+                "add esp, 0x4",
+                "retn"
+            };
+            try
+            {
+                InjectVoid(asm);
+            }
+            catch
+            {
+                // ReSharper disable once RedundantJumpStatement
+                return;
+            }
+            finally
+            {
+                _wowProcess.Memory.FreeMemory(ctmPoint);
+            }
+        }
 
         internal static void MoveTo(WowPoint point)
         {

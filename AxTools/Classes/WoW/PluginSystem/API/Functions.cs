@@ -24,5 +24,10 @@ namespace AxTools.Classes.WoW.PluginSystem.API
         {
             WoWDXInject.MoveTo(point);
         }
+
+        public static void TerrainClick(TerrainClickStruct clickStruct)
+        {
+            WoWDXInject.TerrainClick(clickStruct);
+        }
     }
 }

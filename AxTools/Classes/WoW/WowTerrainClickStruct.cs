@@ -4,7 +4,7 @@ using AxTools.Classes.WoW.Management.ObjectManager;
 namespace AxTools.Classes.WoW
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct TerrainClickStruct
+    public struct TerrainClickStruct
     {
         internal ulong misc;
         internal WowPoint loc;
