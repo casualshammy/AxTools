@@ -25,6 +25,7 @@ namespace AxTools.Classes
         {
             _timer = new Timer(10000);
             _timer.Elapsed += Timer_OnElapsed;
+            _timer.Start();
         }
 
         internal static void StopService()

@@ -1,4 +1,4 @@
-<SmartAssemblyProject ProjectId="{79aa9d16-50bc-4ce5-9a25-ddadf05b7d99}" Version="2.0">
+<SmartAssemblyProject ProjectId="{ca0a3e43-e8fe-45db-93c3-f2643fa5c0f5}" Version="2.0">
     <MainAssemblyFileName>.\AxTools.exe</MainAssemblyFileName>
     <Configuration Name="Release">
         <Options>
@@ -23,71 +23,71 @@
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
-                                <ItemType>ValueType</ItemType>
-                                <Namespace>AxTools.Classes.WoW</Namespace>
-                                <Name>WowPoint</Name>
-                            </Token>
-                            <Token Table="WholeType">
-                                <Assembly>AxTools</Assembly>
-                                <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.Management.ObjectManager</Namespace>
+                                <Namespace>AxTools.WoW.Management.ObjectManager</Namespace>
                                 <Name>WowNpc</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.Management.ObjectManager</Namespace>
+                                <Namespace>AxTools.WoW.Management.ObjectManager</Namespace>
                                 <Name>WowObject</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.Management.ObjectManager</Namespace>
+                                <Namespace>AxTools.WoW.Management.ObjectManager</Namespace>
                                 <Name>WowPlayer</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.Management.ObjectManager</Namespace>
+                                <Namespace>AxTools.WoW.Management.ObjectManager</Namespace>
                                 <Name>WoWPlayerMe</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
+                                <ItemType>ValueType</ItemType>
+                                <Namespace>AxTools.WoW.Management.ObjectManager</Namespace>
+                                <Name>WowPoint</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
                                 <ItemType>Interface</ItemType>
-                                <Namespace>AxTools.Classes.WoW.PluginSystem</Namespace>
+                                <Namespace>AxTools.WoW.PluginSystem</Namespace>
                                 <Name>IPlugin</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Namespace>AxTools.WoW.PluginSystem.API</Namespace>
                                 <Name>Functions</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Namespace>AxTools.WoW.PluginSystem.API</Namespace>
                                 <Name>Lua</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Namespace>AxTools.WoW.PluginSystem.API</Namespace>
                                 <Name>ObjMgr</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Namespace>AxTools.WoW.PluginSystem.API</Namespace>
                                 <Name>Utilities</Name>
                             </Token>
                         </Exclusion>
@@ -97,72 +97,72 @@
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
-                                <ItemType>ValueType</ItemType>
-                                <Namespace>AxTools.Classes.WoW</Namespace>
-                                <Name>WowPoint</Name>
-                            </Token>
-                            <Token Table="WholeType">
-                                <Assembly>AxTools</Assembly>
-                                <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.Management.ObjectManager</Namespace>
+                                <Namespace>AxTools.WoW.Management.ObjectManager</Namespace>
                                 <Name>WowNpc</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.Management.ObjectManager</Namespace>
+                                <Namespace>AxTools.WoW.Management.ObjectManager</Namespace>
                                 <Name>WowObject</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.Management.ObjectManager</Namespace>
+                                <Namespace>AxTools.WoW.Management.ObjectManager</Namespace>
                                 <Name>WowPlayer</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.Management.ObjectManager</Namespace>
+                                <Namespace>AxTools.WoW.Management.ObjectManager</Namespace>
                                 <Name>WoWPlayerMe</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
+                                <ItemType>ValueType</ItemType>
+                                <Namespace>AxTools.WoW.Management.ObjectManager</Namespace>
+                                <Name>WowPoint</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Interface</ItemType>
+                                <Namespace>AxTools.WoW.PluginSystem</Namespace>
+                                <Name>IPlugin</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Namespace>AxTools.WoW.PluginSystem.API</Namespace>
                                 <Name>Functions</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Namespace>AxTools.WoW.PluginSystem.API</Namespace>
                                 <Name>Lua</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Namespace>AxTools.WoW.PluginSystem.API</Namespace>
                                 <Name>ObjMgr</Name>
                             </Token>
                             <Token Table="WholeType">
                                 <Assembly>AxTools</Assembly>
                                 <Module>AxTools.exe</Module>
                                 <ItemType>Class</ItemType>
-                                <Namespace>AxTools.Classes.WoW.PluginSystem.API</Namespace>
+                                <Namespace>AxTools.WoW.PluginSystem.API</Namespace>
                                 <Name>Utilities</Name>
-                            </Token>
-                            <Token Table="WholeType">
-                                <Assembly>AxTools</Assembly>
-                                <Module>AxTools.exe</Module>
-                                <ItemType>Interface</ItemType>
-                                <Namespace>AxTools.Classes.WoW.PluginSystem</Namespace>
-                                <Name>IPlugin</Name>
                             </Token>
                         </Exclusion>
                     </Obfuscation>
@@ -187,7 +187,7 @@
                     <Obfuscation Obfuscate="1">
                         <Exclusion />
                     </Obfuscation>
-                    <ControlFlow Obfuscate="0" />
+                    <ControlFlow />
                     <MemberRefsProxy />
                     <ResourcesCompression />
                 </Merging>
@@ -205,7 +205,7 @@
                     <Obfuscation Obfuscate="1">
                         <Exclusion />
                     </Obfuscation>
-                    <ControlFlow Obfuscate="0" />
+                    <ControlFlow />
                     <MemberRefsProxy />
                     <ResourcesCompression />
                 </Merging>
@@ -219,7 +219,7 @@
                     <Obfuscation Obfuscate="1">
                         <Exclusion />
                     </Obfuscation>
-                    <ControlFlow Obfuscate="0" />
+                    <ControlFlow />
                     <MemberRefsProxy />
                     <ResourcesCompression Compress="1" />
                 </Merging>
