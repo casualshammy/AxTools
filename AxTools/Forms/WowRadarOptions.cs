@@ -16,6 +16,10 @@ namespace AxTools.Forms
 {
     internal partial class WowRadarOptions : BorderedMetroForm
     {
+        private readonly int nameColumnWidth = 248;
+        private readonly int nameColumnWidthExt = 265;
+        private readonly int maxVisibleRows = 7;
+
         internal WowRadarOptions()
         {
             InitializeComponent();
@@ -30,7 +34,7 @@ namespace AxTools.Forms
             dataGridViewObjects.CellMouseClick += DataGridViewObjectsOnCellMouseClick;
             dataGridViewObjects.CellContentClick += DataGridViewObjectsOnCellContentClick;
             dataGridViewObjects.ColumnHeaderMouseClick += DataGridViewObjectsColumnHeaderMouseClick;
-            dataGridViewObjects.Columns[1].Width = dataGridViewObjects.Rows.Count > 7 ? 220 : 237;
+            dataGridViewObjects.Columns[1].Width = dataGridViewObjects.Rows.Count > maxVisibleRows ? nameColumnWidth : nameColumnWidthExt;
             metroCheckBoxShowPlayersClasses.Checked = Settings.RadarShowPlayersClasses;
             metroCheckBoxShowNpcsNames.Checked = Settings.RadarShowNpcsNames;
             metroCheckBoxShowObjectsNames.Checked = Settings.RadarShowObjectsNames;
@@ -78,7 +82,7 @@ namespace AxTools.Forms
         private void DataGridViewObjectsRowsAddedOrRemove(object sender, EventArgs e)
         {
             RebuildKOSList();
-            dataGridViewObjects.Columns[1].Width = dataGridViewObjects.Rows.Count > 7 ? 248 : 265;
+            dataGridViewObjects.Columns[1].Width = dataGridViewObjects.Rows.Count > maxVisibleRows ? nameColumnWidth : nameColumnWidthExt;
         }
         private void DataGridViewObjectsOnCellValueChanged(object sender, DataGridViewCellEventArgs dataGridViewCellEventArgs)
         {
@@ -100,54 +104,6 @@ namespace AxTools.Forms
             if (dataGridViewCellMouseEventArgs.Button == MouseButtons.Right && dataGridViewCellMouseEventArgs.RowIndex >= 0)
             {
                 dataGridViewObjects.Rows.RemoveAt(dataGridViewCellMouseEventArgs.RowIndex);
-            }
-        }
-
-        private void PictureBoxSaveFileClick(object sender, EventArgs e)
-        {
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                Utils.CheckCreateDir();
-                saveFileDialog.Filter = @"Text file|*.txt";
-                saveFileDialog.InitialDirectory = Globals.UserfilesPath;
-                saveFileDialog.AddExtension = true;
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {
-                        new DataContractJsonSerializer(WowRadar.RadarKOSGeneral.GetType()).WriteObject(memoryStream, WowRadar.RadarKOSGeneral);
-                        File.WriteAllBytes(saveFileDialog.FileName, memoryStream.ToArray());
-                    }
-                }
-            }
-        }
-        private void PictureBoxOpenFileClick(object sender, EventArgs e)
-        {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                Utils.CheckCreateDir();
-                openFileDialog.Filter = @"Text file|*.txt";
-                openFileDialog.InitialDirectory = Globals.UserfilesPath;
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    byte[] bytes = File.ReadAllBytes(openFileDialog.FileName);
-                    if (bytes.Length > 0)
-                    {
-                        dataGridViewObjects.Rows.Clear();
-                        using (MemoryStream memoryStream = new MemoryStream(bytes))
-                        {
-                            List<ObjectToFind> list = (List<ObjectToFind>) new DataContractJsonSerializer(WowRadar.RadarKOSGeneral.GetType()).ReadObject(memoryStream);
-                            foreach (ObjectToFind i in list)
-                            {
-                                dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
-                            }
-                        }
-                    }
-                }
-            }
-            if (dataGridViewObjects.Rows.Count > 0)
-            {
-                dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
             }
         }
 
@@ -176,6 +132,8 @@ namespace AxTools.Forms
                 {
                     dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
                 }
+                comboboxNPCs.SelectedIndex = -1;
+                comboboxNPCs.Invalidate();
             }
             else
             {
@@ -192,6 +150,8 @@ namespace AxTools.Forms
                 {
                     dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
                 }
+                comboboxObjects.SelectedIndex = -1;
+                comboboxObjects.Invalidate();
             }
             else
             {
@@ -243,5 +203,54 @@ namespace AxTools.Forms
             }
         }
 
+        private void buttonOpenFile_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                Utils.CheckCreateDir();
+                openFileDialog.Filter = @"JSON file|*.json";
+                openFileDialog.InitialDirectory = Globals.UserfilesPath;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    byte[] bytes = File.ReadAllBytes(openFileDialog.FileName);
+                    if (bytes.Length > 0)
+                    {
+                        dataGridViewObjects.Rows.Clear();
+                        using (MemoryStream memoryStream = new MemoryStream(bytes))
+                        {
+                            List<ObjectToFind> list = (List<ObjectToFind>)new DataContractJsonSerializer(WowRadar.RadarKOSGeneral.GetType()).ReadObject(memoryStream);
+                            foreach (ObjectToFind i in list)
+                            {
+                                dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
+                            }
+                        }
+                    }
+                }
+            }
+            if (dataGridViewObjects.Rows.Count > 0)
+            {
+                dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
+            }
+        }
+
+        private void buttonSaveFile_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                Utils.CheckCreateDir();
+                saveFileDialog.Filter = @"JSON file|*.json";
+                saveFileDialog.InitialDirectory = Globals.UserfilesPath;
+                saveFileDialog.AddExtension = true;
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        new DataContractJsonSerializer(WowRadar.RadarKOSGeneral.GetType()).WriteObject(memoryStream, WowRadar.RadarKOSGeneral);
+                        File.WriteAllBytes(saveFileDialog.FileName, memoryStream.ToArray());
+                    }
+                }
+            }
+        }
+    
     }
 }

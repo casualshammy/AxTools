@@ -103,6 +103,7 @@ namespace TestPlugin
                                         "    \"Чернила лунного сияния\",\r\n" +
                                         "    \"Бежевые чернила\",\r\n" +
                                         "    \"Великолепная шкура\",\r\n" +
+                                        "    \"Толстая борейская кожа\",\r\n" +
                                         "};\r\n" +
                                         "local numTradeSkills = GetNumTradeSkills();\r\n" +
                                         "if (numTradeSkills > 0) then\r\n" +

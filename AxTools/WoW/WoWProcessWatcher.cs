@@ -161,9 +161,9 @@ namespace AxTools.WoW
             {
                 WowProcess process = (WowProcess)wowProcess;
                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Attaching...", process.ProcessName, process.ProcessID));
-                for (int i = 0; i < 40; i++)
+                for (int i = 0; i < 120; i++)
                 {
-                    Thread.Sleep(1500);
+                    Thread.Sleep(500);
                     if (process.MainWindowHandle != IntPtr.Zero)
                     {
                         if (Settings.AutoAcceptWndSetts)
@@ -208,6 +208,6 @@ namespace AxTools.WoW
                 Log.Print("MainForm.AttachToWow: general error: " + ex.Message, true);
             }
         }
-
+        
     }
 }

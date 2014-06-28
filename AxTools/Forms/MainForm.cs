@@ -125,8 +125,6 @@ namespace AxTools.Forms
         //another
         private bool isClosing;
         private WaitingOverlay startupOverlay;
-        // wow accounts
-        private int wowAccountSelected = -1;
 
         // notifyicon's Icons
         private readonly Icon appIconPluginOnLuaOn = Icon.FromHandle(Resources.AppIconPluginOnLuaOn.GetHicon());
@@ -214,33 +212,33 @@ namespace AxTools.Forms
 
         private void KeyboardHook_WowLoginHotkey()
         {
-            if (wowAccountSelected != -1)
-            {
-                IntPtr cHWND = NativeMethods.GetForegroundWindow();
-                WowProcess process = WowProcess.GetAllWowProcesses().FirstOrDefault(x => x.MainWindowHandle == cHWND);
-                if (process != null)
-                {
-                    foreach (char i in WowAccount.GetAccounts()[wowAccountSelected].Login)
-                    {
-                        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
-                        Thread.Sleep(5);
-                    }
-                    IntPtr tabCode = new IntPtr(0x09);
-                    NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, tabCode, IntPtr.Zero);
-                    NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, tabCode, IntPtr.Zero);
-                    Thread.Sleep(5);
-                    foreach (char i in WowAccount.GetAccounts()[wowAccountSelected].Password)
-                    {
-                        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
-                        Thread.Sleep(5);
-                    }
-                    IntPtr enterCode = new IntPtr(0x0D);
-                    NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, enterCode, IntPtr.Zero);
-                    NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, enterCode, IntPtr.Zero);
-                    Log.Print(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", process.ProcessName, process.ProcessID, WowAccount.GetAccounts()[wowAccountSelected].Login));
-                    wowAccountSelected = -1;
-                }
-            }
+            //if (wowAccountSelected != -1)
+            //{
+            //    IntPtr cHWND = NativeMethods.GetForegroundWindow();
+            //    WowProcess process = WowProcess.GetAllWowProcesses().FirstOrDefault(x => x.MainWindowHandle == cHWND);
+            //    if (process != null)
+            //    {
+            //        foreach (char i in WowAccount.AllAccounts[wowAccountSelected].Login)
+            //        {
+            //            NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
+            //            Thread.Sleep(5);
+            //        }
+            //        IntPtr tabCode = new IntPtr(0x09);
+            //        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, tabCode, IntPtr.Zero);
+            //        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, tabCode, IntPtr.Zero);
+            //        Thread.Sleep(5);
+            //        foreach (char i in WowAccount.AllAccounts[wowAccountSelected].Password)
+            //        {
+            //            NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
+            //            Thread.Sleep(5);
+            //        }
+            //        IntPtr enterCode = new IntPtr(0x0D);
+            //        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, enterCode, IntPtr.Zero);
+            //        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, enterCode, IntPtr.Zero);
+            //        Log.Print(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", process.ProcessName, process.ProcessID, WowAccount.AllAccounts[wowAccountSelected].Login));
+            //        wowAccountSelected = -1;
+            //    }
+            //}
         }
 
         private void KeyboardHook_ClickerHotkey()
@@ -634,17 +632,65 @@ namespace AxTools.Forms
                 WaitingOverlay waitingOverlay = new WaitingOverlay(this);
                 waitingOverlay.Show();
                 Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
-                wowAccountSelected = cmbboxAccSelect.SelectedIndex;
+                WowAccount wowAccount = new WowAccount(WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
                 if (!File.Exists(Settings.WowExe + "\\Wow.exe"))
                 {
                     this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
                     return;
                 }
-                Process.Start(new ProcessStartInfo
+                Process process = Process.Start(new ProcessStartInfo
                 {
                     WorkingDirectory = Settings.WowExe,
                     FileName = Settings.WowExe + "\\Wow.exe",
                     Arguments = "-noautolaunch64bit",
+                });
+                Task.Factory.StartNew(() =>
+                {
+                    int counter = 300;
+                    while (counter > 0)
+                    {
+                        try
+                        {
+                            process.Refresh();
+                            if (process.MainWindowHandle != (IntPtr) 0)
+                            {
+                                WowProcess wowProcess = WowProcess.GetAllWowProcesses().FirstOrDefault(i => i.ProcessID == process.Id);
+                                if (wowProcess != null && wowProcess.Memory != null && wowProcess.IsValidBuild)
+                                {
+                                    GlueState glueState = wowProcess.Memory.Read<GlueState>((IntPtr) 0xC95888, true);
+                                    IntPtr focusedWidget = wowProcess.Memory.Read<IntPtr>((IntPtr) 0xBB292C, true);
+                                    if (glueState == GlueState.Disconnected && focusedWidget != (IntPtr) 0)
+                                    {
+                                        foreach (char ch in wowAccount.Login)
+                                        {
+                                            NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_CHAR, (IntPtr) ch, IntPtr.Zero);
+                                            Thread.Sleep(5);
+                                        }
+                                        IntPtr tabCode = new IntPtr(0x09);
+                                        NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYDOWN, tabCode, IntPtr.Zero);
+                                        NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYUP, tabCode, IntPtr.Zero);
+                                        Thread.Sleep(5);
+                                        foreach (char ch in wowAccount.Password)
+                                        {
+                                            NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_CHAR, (IntPtr) ch, IntPtr.Zero);
+                                            Thread.Sleep(5);
+                                        }
+                                        IntPtr enterCode = new IntPtr(0x0D);
+                                        NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYDOWN, enterCode, IntPtr.Zero);
+                                        NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYUP, enterCode, IntPtr.Zero);
+                                        Log.Print(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", wowProcess.ProcessName, wowProcess.ProcessID, wowAccount.Login));
+                                        break;
+                                    }
+                                }
+                            }
+                            Thread.Sleep(100);
+                            counter--;
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Print(string.Format("{0}:{1} :: [Account manager] Internal error: {2}", process.ProcessName, process.Id, ex.Message), true);
+                        }
+                    }
                 });
                 if (Settings.StartVentriloWithWow && !Process.GetProcessesByName("Ventrilo").Any())
                 {
@@ -654,6 +700,20 @@ namespace AxTools.Forms
                 cmbboxAccSelect.Invalidate();
             }
         }
+
+        // ReSharper disable UnusedMember.Local
+        private enum GlueState
+        {
+            None = -1,
+            Disconnected = 0,
+            Updater,
+            CharacterSelection = 2,
+            CharacterCreation = 3,
+            ServerSelection = 6,
+            Credits = 7,
+            RegionalSelection = 8
+        }
+        // ReSharper restore UnusedMember.Local
 
         private void linkOpenBackupFolder_Click(object sender, EventArgs e)
         {
@@ -670,7 +730,7 @@ namespace AxTools.Forms
         private void linkBackupAddons_Click(object sender, EventArgs e)
         {
             AddonsBackup_OnChangedState(-1);
-            Task.Factory.StartNew(AddonsBackup.StartOnDemand)
+            Task.Factory.StartNew(AddonsBackup.MakeBackup)
                 .ContinueWith(l => AddonsBackup_OnChangedState(101));
         }
 
@@ -1017,17 +1077,13 @@ namespace AxTools.Forms
         private void OnWowAccountsChanged()
         {
             cmbboxAccSelect.Items.Clear();
-            woWAutopassToolStripMenuItem.DropDownItems.Clear();
-            if (WowAccount.GetAccounts().Count > 0)
+            if (WowAccount.AllAccounts.Count > 0)
             {
                 cmbboxAccSelect.OverlayText = "Click to launch WoW using autopass...";
                 cmbboxAccSelect.Enabled = true;
-                foreach (WowAccount i in WowAccount.GetAccounts())
+                foreach (WowAccount i in WowAccount.AllAccounts)
                 {
                     cmbboxAccSelect.Items.Add(i.Login);
-                    int index = WowAccount.GetAccounts().IndexOf(i);
-                    ToolStripItem item = new ToolStripMenuItem(i.Login, null, delegate { wowAccountSelected = index; });
-                    woWAutopassToolStripMenuItem.DropDownItems.Add(item);
                 }
             }
             else
@@ -1094,8 +1150,6 @@ namespace AxTools.Forms
             {
                 stopActivePluginorPresshotkeyToolStripMenuItem,
                 toolStripSeparator1,
-                woWAutopassToolStripMenuItem,
-                customizeWoTWindowToolStripMenuItem,
                 launchWoWToolStripMenuItem
             });
 
@@ -1184,52 +1238,6 @@ namespace AxTools.Forms
         }
 
         #endregion
-
-        private void customizeWoTWindowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    foreach (Process p in Process.GetProcessesByName("worldoftanks"))
-                    {
-                        for (int i = 0; i < 40; i++)
-                        {
-                            Thread.Sleep(1500);
-                            p.Refresh();
-                            if (p.MainWindowHandle != (IntPtr) 0)
-                            {
-                                if (Settings.AutoAcceptWndSetts)
-                                {
-                                    try
-                                    {
-                                        if (Settings.Noframe)
-                                        {
-                                            int styleWow = NativeMethods.GetWindowLong(p.MainWindowHandle, NativeMethods.GWL_STYLE);
-                                            styleWow = styleWow & ~(NativeMethods.WS_CAPTION | NativeMethods.WS_THICKFRAME);
-                                            NativeMethods.SetWindowLong(p.MainWindowHandle, NativeMethods.GWL_STYLE, styleWow);
-                                        }
-                                        NativeMethods.SetWindowPos(p.MainWindowHandle, (IntPtr) SpecialWindowHandles.HWND_NOTOPMOST, Settings.WowWindowLocation.X,
-                                            Settings.WowWindowLocation.Y, Settings.WowWindowSize.X, Settings.WowWindowSize.Y,
-                                            SetWindowPosFlags.SWP_SHOWWINDOW);
-                                        Log.Print(String.Format("{0}:{1} :: [WoT] Window style is changed", p.ProcessName, p.Id));
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Log.Print(String.Format("{0}:{1} :: [WoT] Window changing failed with error: {2}", p.ProcessName, p.Id, ex.Message), true);
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Print("MainForm.AttachToWow: general error: " + ex.Message, true);
-                }
-            });
-        }
-
+    
     }
 }

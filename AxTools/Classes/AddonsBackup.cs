@@ -20,24 +20,38 @@ namespace AxTools.Classes
         private static int _prevProcent = -1;
         private static bool _isBackingUp;
         private static Timer _timer;
+        private static bool _serviceIsStarted;
 
         internal static void StartService()
         {
-            _timer = new Timer(10000);
-            _timer.Elapsed += Timer_OnElapsed;
-            _timer.Start();
+            if (!_serviceIsStarted)
+            {
+                _timer = new Timer(10000);
+                _timer.Elapsed += Timer_OnElapsed;
+                _timer.Start();
+                _serviceIsStarted = true;
+            }
+            else
+            {
+                throw new Exception("AddonBackup service is already started!");
+            }
         }
 
         internal static void StopService()
         {
-            if (_timer != null)
+            if (_serviceIsStarted)
             {
                 _timer.Elapsed -= Timer_OnElapsed;
                 _timer.Close();
+                _serviceIsStarted = false;
+            }
+            else
+            {
+                throw new Exception("AddonBackup service isn't running!");
             }
         }
 
-        internal static void StartOnDemand()
+        internal static void MakeBackup()
         {
             Start(false);
         }
@@ -223,5 +237,6 @@ namespace AxTools.Classes
             WTFDirIsNotFound,
             WTFDirIsTooLarge,
         }
+    
     }
 }

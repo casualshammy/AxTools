@@ -40,6 +40,9 @@ namespace AxTools.WinAPI
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool FreeLibrary(IntPtr hModule);
 
+        [DllImportAttribute("winmm.dll", EntryPoint = "sndPlaySoundW")]
+        [return: MarshalAsAttribute(UnmanagedType.Bool)]
+        internal static extern bool sndPlaySoundW([InAttribute] [MarshalAsAttribute(UnmanagedType.LPWStr)] string pszSound, uint fuSound);
 
         // ReSharper disable InconsistentNaming
         internal static int WS_CAPTION = 0xC00000;

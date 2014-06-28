@@ -24,13 +24,16 @@ namespace AxTools.WoW
             Password = password;
         }
 
-        private static readonly object LockObject = new object();
+        private static readonly object _lock = new object();
         private static List<WowAccount> _list = new List<WowAccount>();
-        internal static List<WowAccount> GetAccounts()
+        internal static List<WowAccount> AllAccounts
         {
-            lock (LockObject)
+            get
             {
-                return _list;
+                lock (_lock)
+                {
+                    return _list;
+                }
             }
         }
 

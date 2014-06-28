@@ -65,6 +65,16 @@ namespace TestPlugin
         public void OnStart()
         {
             players = new List<WowPlayer>();
+            locaPlayer = ObjMgr.Pulse(players);
+            WowPlayer myTarget = players.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
+            if (myTarget != null)
+            {
+                guid = myTarget.GUID;
+            }
+            else
+            {
+                Utilities.LogPrint("Unit isn't found!");
+            }
         }
 
         public void OnPulse()
@@ -72,12 +82,12 @@ namespace TestPlugin
             locaPlayer = ObjMgr.Pulse(players);
             if (locaPlayer.Health > 0)
             {
-                WowPlayer myTarget = players.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
-                if (myTarget != null)
+                WowPlayer unit = players.FirstOrDefault(i => i.Health > 0 && i.GUID == guid);
+                if (unit != null)
                 {
-                    if (myTarget.Location.Distance(locaPlayer.Location) > 5)
+                    if (unit.Location.Distance(locaPlayer.Location) > 5)
                     {
-                        Functions.MoveTo(myTarget.Location);
+                        Functions.MoveTo(unit.Location);
                     }
                 }
             }
@@ -92,6 +102,7 @@ namespace TestPlugin
 
         private List<WowPlayer> players;
         private WoWPlayerMe locaPlayer;
+        private ulong guid;
 
     }
 }

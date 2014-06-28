@@ -55,8 +55,6 @@ namespace AxTools.Forms
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.stopActivePluginorPresshotkeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.woWAutopassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.customizeWoTWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.launchWoWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.woWPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
@@ -116,30 +114,28 @@ namespace AxTools.Forms
             this.toolStripSeparator2,
             this.stopActivePluginorPresshotkeyToolStripMenuItem,
             this.toolStripSeparator1,
-            this.woWAutopassToolStripMenuItem,
-            this.customizeWoTWindowToolStripMenuItem,
             this.launchWoWToolStripMenuItem});
             this.contextMenuStripMain.Name = "contextMenuStripMain";
-            this.contextMenuStripMain.Size = new System.Drawing.Size(204, 176);
+            this.contextMenuStripMain.Size = new System.Drawing.Size(182, 154);
             // 
             // woWRadarToolStripMenuItem
             // 
             this.woWRadarToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("woWRadarToolStripMenuItem.Image")));
             this.woWRadarToolStripMenuItem.Name = "woWRadarToolStripMenuItem";
-            this.woWRadarToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.woWRadarToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.woWRadarToolStripMenuItem.Text = "WoW Radar";
             this.woWRadarToolStripMenuItem.Click += new System.EventHandler(this.WoWRadarToolStripMenuItemClick);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(200, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(178, 6);
             // 
             // luaConsoleToolStripMenuItem
             // 
             this.luaConsoleToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("luaConsoleToolStripMenuItem.Image")));
             this.luaConsoleToolStripMenuItem.Name = "luaConsoleToolStripMenuItem";
-            this.luaConsoleToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.luaConsoleToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.luaConsoleToolStripMenuItem.Text = "Lua console";
             this.luaConsoleToolStripMenuItem.Click += new System.EventHandler(this.LuaConsoleToolStripMenuItemClick);
             // 
@@ -147,47 +143,34 @@ namespace AxTools.Forms
             // 
             this.blackMarketTrackerToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("blackMarketTrackerToolStripMenuItem.Image")));
             this.blackMarketTrackerToolStripMenuItem.Name = "blackMarketTrackerToolStripMenuItem";
-            this.blackMarketTrackerToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.blackMarketTrackerToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.blackMarketTrackerToolStripMenuItem.Text = "Black Market tracker";
             this.blackMarketTrackerToolStripMenuItem.Click += new System.EventHandler(this.blackMarketTrackerToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(200, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
             // 
             // stopActivePluginorPresshotkeyToolStripMenuItem
             // 
             this.stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = false;
             this.stopActivePluginorPresshotkeyToolStripMenuItem.Name = "stopActivePluginorPresshotkeyToolStripMenuItem";
             this.stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = "";
-            this.stopActivePluginorPresshotkeyToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.stopActivePluginorPresshotkeyToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.stopActivePluginorPresshotkeyToolStripMenuItem.Text = "Stop active plug-in";
             this.stopActivePluginorPresshotkeyToolStripMenuItem.Click += new System.EventHandler(this.stopActivePluginorPresshotkeyToolStripMenuItem_Click_1);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(200, 6);
-            // 
-            // woWAutopassToolStripMenuItem
-            // 
-            this.woWAutopassToolStripMenuItem.Name = "woWAutopassToolStripMenuItem";
-            this.woWAutopassToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.woWAutopassToolStripMenuItem.Text = "WoW Autopass";
-            // 
-            // customizeWoTWindowToolStripMenuItem
-            // 
-            this.customizeWoTWindowToolStripMenuItem.Name = "customizeWoTWindowToolStripMenuItem";
-            this.customizeWoTWindowToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.customizeWoTWindowToolStripMenuItem.Text = "Customize WoT window";
-            this.customizeWoTWindowToolStripMenuItem.Click += new System.EventHandler(this.customizeWoTWindowToolStripMenuItem_Click);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
             // 
             // launchWoWToolStripMenuItem
             // 
             this.launchWoWToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("launchWoWToolStripMenuItem.Image")));
             this.launchWoWToolStripMenuItem.Name = "launchWoWToolStripMenuItem";
-            this.launchWoWToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.launchWoWToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.launchWoWToolStripMenuItem.Text = "Exit";
             this.launchWoWToolStripMenuItem.Click += new System.EventHandler(this.LaunchWoWToolStripMenuItemClick);
             // 
@@ -823,7 +806,6 @@ namespace AxTools.Forms
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem blackMarketTrackerToolStripMenuItem;
         private MetroCheckBox metroCheckBoxPluginShowIngameNotification;
-        private ToolStripMenuItem customizeWoTWindowToolStripMenuItem;
         private MetroLink linkOpenBackupFolder;
         private MetroLink linkBackupAddons;
         private MetroLink linkClickerSettings;
@@ -832,7 +814,6 @@ namespace AxTools.Forms
         private MetroButton buttonLaunchWowWithoutAutopass;
         private MetroButton buttonWowUpdater;
         private MetroLink linkEditWowAccounts;
-        private ToolStripMenuItem woWAutopassToolStripMenuItem;
         private MetroProgressBar progressBarAddonsBackup;
     }
 }
