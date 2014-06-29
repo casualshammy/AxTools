@@ -1,6 +1,5 @@
 ﻿using AxTools.WinAPI;
 using System;
-using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
@@ -14,7 +13,6 @@ namespace AxTools.Classes
     internal static class Utils
     {
         internal static readonly Random Rnd = new Random();
-        internal static readonly Icon EmptyIcon = Icon.FromHandle(new Bitmap(1, 1).GetHicon());
 
         internal static T FindForm<T>() where T : Form
         {

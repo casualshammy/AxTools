@@ -1,6 +1,7 @@
 ﻿using AxTools.Classes;
 using AxTools.Components;
 using AxTools.Components.TaskbarProgressbar;
+using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WinAPI;
 using AxTools.WoW;
@@ -21,12 +22,10 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using CompressionLevel = Ionic.Zlib.CompressionLevel;
 using Settings = AxTools.Classes.Settings;
-using Timer = System.Timers.Timer;
 
 namespace AxTools.Forms
 {
@@ -36,7 +35,6 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             Instance = this;
-            timerNotifyIcon.Elapsed += TimerNiElapsed;
             Closing += MainFormClosing;
             notifyIconMain.Icon = Resources.AppIcon;
 
@@ -120,64 +118,15 @@ namespace AxTools.Forms
         
         #region Variables
 
-        //timers
-        private readonly Timer timerNotifyIcon = new Timer(1000);
         //another
         private bool isClosing;
         private WaitingOverlay startupOverlay;
-
-        // notifyicon's Icons
-        private readonly Icon appIconPluginOnLuaOn = Icon.FromHandle(Resources.AppIconPluginOnLuaOn.GetHicon());
-        private readonly Icon appIconPluginOffLuaOn = Icon.FromHandle(Resources.AppIconPluginOffLuaOn.GetHicon());
-        private readonly Icon appIconPluginOnLuaOff = Icon.FromHandle(Resources.AppIconPluginOnLuaOff.GetHicon());
-        private readonly Icon appIconNormal = Icon.FromHandle(Resources.AppIcon1.GetHicon());
 
         //
         private readonly List<ToolStripMenuItem> pluginsToolStripMenuItems = new List<ToolStripMenuItem>(); 
 
         #endregion
-
-        #region Timers
-
-        private void TimerNiElapsed(object sender, ElapsedEventArgs e)
-        {
-            // ReSharper disable RedundantCheckBeforeAssignment
-            BeginInvoke(new Action(() =>
-            {
-                if (Clicker.Enabled)
-                {
-                    notifyIconMain.Icon = Utils.EmptyIcon;
-                }
-                else if (notifyIconMain.Icon != appIconNormal)
-                {
-                    notifyIconMain.Icon = appIconNormal;
-                }
-            }));
-            Thread.Sleep(500);
-            BeginInvoke(new Action(() =>
-            {
-                if (LuaTimerEnabled && PluginManager.ActivePlugin != null)
-                {
-                    notifyIconMain.Icon = appIconPluginOnLuaOn;
-                }
-                else if (LuaTimerEnabled)
-                {
-                    notifyIconMain.Icon = appIconPluginOffLuaOn;
-                }
-                else if (PluginManager.ActivePlugin != null)
-                {
-                    notifyIconMain.Icon = appIconPluginOnLuaOff;
-                }
-                else if (notifyIconMain.Icon != appIconNormal)
-                {
-                    notifyIconMain.Icon = appIconNormal;
-                }
-            }));
-            // ReSharper restore RedundantCheckBeforeAssignment
-        }
-
-        #endregion
-
+        
         #region Keyboard hook
 
         private KeyboardHookListener keyboardHook;
@@ -208,7 +157,6 @@ namespace AxTools.Forms
             if (Clicker.Enabled)
             {
                 Clicker.Stop();
-                notifyIconMain.Icon = appIconNormal;
                 WowProcess cProcess = WowProcess.GetAllWowProcesses().FirstOrDefault(i => i.MainWindowHandle == Clicker.Handle);
                 Log.Print(cProcess != null
                     ? String.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
@@ -276,7 +224,7 @@ namespace AxTools.Forms
             Clicker.Stop();
             //stop timers
             AddonsBackup.StopService();
-            timerNotifyIcon.Enabled = false;
+            TrayIconAnimation.Close();
             Pinger.Stop();
             //stop watching process trace
             WoWProcessWatcher.Stop();
@@ -448,7 +396,7 @@ namespace AxTools.Forms
             AddonsBackup.StartService();
             Pinger.Start();
             WoWProcessWatcher.Start();
-            timerNotifyIcon.Enabled = true;
+            TrayIconAnimation.Initialize(notifyIconMain);
             
             #region Start keyboard hook
 
