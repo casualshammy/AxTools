@@ -184,11 +184,7 @@ namespace AxTools.Forms
 
         private void KeyboardHookKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Settings.WowLoginHotkey)
-            {
-                KeyboardHook_WowLoginHotkey();
-            }
-            else if (e.KeyCode == Settings.ClickerHotkey)
+            if (e.KeyCode == Settings.ClickerHotkey)
             {
                 KeyboardHook_ClickerHotkey();
             }
@@ -200,45 +196,6 @@ namespace AxTools.Forms
             {
                 KeyboardHook_LuaTimerHotkey();
             }
-            else if (e.KeyCode == Keys.Escape)
-            {
-                KeyboardHook_Escape();
-            }
-            else if (e.KeyCode == Keys.L)
-            {
-                KeyboardHook_L();
-            }
-        }
-
-        private void KeyboardHook_WowLoginHotkey()
-        {
-            //if (wowAccountSelected != -1)
-            //{
-            //    IntPtr cHWND = NativeMethods.GetForegroundWindow();
-            //    WowProcess process = WowProcess.GetAllWowProcesses().FirstOrDefault(x => x.MainWindowHandle == cHWND);
-            //    if (process != null)
-            //    {
-            //        foreach (char i in WowAccount.AllAccounts[wowAccountSelected].Login)
-            //        {
-            //            NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
-            //            Thread.Sleep(5);
-            //        }
-            //        IntPtr tabCode = new IntPtr(0x09);
-            //        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, tabCode, IntPtr.Zero);
-            //        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, tabCode, IntPtr.Zero);
-            //        Thread.Sleep(5);
-            //        foreach (char i in WowAccount.AllAccounts[wowAccountSelected].Password)
-            //        {
-            //            NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_CHAR, (IntPtr) i, IntPtr.Zero);
-            //            Thread.Sleep(5);
-            //        }
-            //        IntPtr enterCode = new IntPtr(0x0D);
-            //        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYDOWN, enterCode, IntPtr.Zero);
-            //        NativeMethods.PostMessage(cHWND, WM_MESSAGE.WM_KEYUP, enterCode, IntPtr.Zero);
-            //        Log.Print(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", process.ProcessName, process.ProcessID, WowAccount.AllAccounts[wowAccountSelected].Login));
-            //        wowAccountSelected = -1;
-            //    }
-            //}
         }
 
         private void KeyboardHook_ClickerHotkey()
@@ -295,23 +252,6 @@ namespace AxTools.Forms
                     pForm.SwitchTimer();
                 }
             }
-        }
-
-        private void KeyboardHook_Escape()
-        {
-            //if (NativeMethods.GetForegroundWindow() == Handle && cmbboxAccSelect.Visible)
-            //{
-            //    cmbboxAccSelect.Visible = false;
-            //    tileWowAutopass.Visible = true;
-            //    linkEditWowAccounts.Visible = false;
-            //    buttonWowUpdater.Visible = false;
-            //    buttonLaunchWowWithoutAutopass.Visible = false;
-            //}
-        }
-
-        private void KeyboardHook_L()
-        {
-            
         }
 
         #endregion
@@ -632,88 +572,29 @@ namespace AxTools.Forms
                 WaitingOverlay waitingOverlay = new WaitingOverlay(this);
                 waitingOverlay.Show();
                 Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
-                WowAccount wowAccount = new WowAccount(WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
-                if (!File.Exists(Settings.WowExe + "\\Wow.exe"))
+                if (File.Exists(Settings.WowExe + "\\Wow.exe"))
+                {
+                    Process process = Process.Start(new ProcessStartInfo
+                    {
+                        WorkingDirectory = Settings.WowExe,
+                        FileName = Settings.WowExe + "\\Wow.exe",
+                        Arguments = "-noautolaunch64bit",
+                    });
+                    WowAccount wowAccount = new WowAccount(WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
+                    new AutoLogin(wowAccount, process).EnterCredentialsASAPAsync();
+                    if (Settings.StartVentriloWithWow && !Process.GetProcessesByName("Ventrilo").Any())
+                    {
+                        StartVentrilo();
+                    }
+                    cmbboxAccSelect.SelectedIndex = -1;
+                    cmbboxAccSelect.Invalidate();
+                }
+                else
                 {
                     this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                    return;
                 }
-                Process process = Process.Start(new ProcessStartInfo
-                {
-                    WorkingDirectory = Settings.WowExe,
-                    FileName = Settings.WowExe + "\\Wow.exe",
-                    Arguments = "-noautolaunch64bit",
-                });
-                Task.Factory.StartNew(() =>
-                {
-                    int counter = 300;
-                    while (counter > 0)
-                    {
-                        try
-                        {
-                            process.Refresh();
-                            if (process.MainWindowHandle != (IntPtr) 0)
-                            {
-                                WowProcess wowProcess = WowProcess.GetAllWowProcesses().FirstOrDefault(i => i.ProcessID == process.Id);
-                                if (wowProcess != null && wowProcess.Memory != null && wowProcess.IsValidBuild)
-                                {
-                                    GlueState glueState = wowProcess.Memory.Read<GlueState>((IntPtr) 0xC95888, true);
-                                    IntPtr focusedWidget = wowProcess.Memory.Read<IntPtr>((IntPtr) 0xBB292C, true);
-                                    if (glueState == GlueState.Disconnected && focusedWidget != (IntPtr) 0)
-                                    {
-                                        foreach (char ch in wowAccount.Login)
-                                        {
-                                            NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_CHAR, (IntPtr) ch, IntPtr.Zero);
-                                            Thread.Sleep(5);
-                                        }
-                                        IntPtr tabCode = new IntPtr(0x09);
-                                        NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYDOWN, tabCode, IntPtr.Zero);
-                                        NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYUP, tabCode, IntPtr.Zero);
-                                        Thread.Sleep(5);
-                                        foreach (char ch in wowAccount.Password)
-                                        {
-                                            NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_CHAR, (IntPtr) ch, IntPtr.Zero);
-                                            Thread.Sleep(5);
-                                        }
-                                        IntPtr enterCode = new IntPtr(0x0D);
-                                        NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYDOWN, enterCode, IntPtr.Zero);
-                                        NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYUP, enterCode, IntPtr.Zero);
-                                        Log.Print(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", wowProcess.ProcessName, wowProcess.ProcessID, wowAccount.Login));
-                                        break;
-                                    }
-                                }
-                            }
-                            Thread.Sleep(100);
-                            counter--;
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Print(string.Format("{0}:{1} :: [Account manager] Internal error: {2}", process.ProcessName, process.Id, ex.Message), true);
-                        }
-                    }
-                });
-                if (Settings.StartVentriloWithWow && !Process.GetProcessesByName("Ventrilo").Any())
-                {
-                    TileVentriloClick(null, EventArgs.Empty);
-                }
-                cmbboxAccSelect.SelectedIndex = -1;
-                cmbboxAccSelect.Invalidate();
             }
         }
-
-        // ReSharper disable UnusedMember.Local
-        private enum GlueState
-        {
-            None = -1,
-            Disconnected = 0,
-            Updater,
-            CharacterSelection = 2,
-            CharacterCreation = 3,
-            ServerSelection = 6,
-            Credits = 7,
-            RegionalSelection = 8
-        }
-        // ReSharper restore UnusedMember.Local
 
         private void linkOpenBackupFolder_Click(object sender, EventArgs e)
         {
@@ -767,6 +648,10 @@ namespace AxTools.Forms
                 FileName = Settings.WowExe + "\\Wow.exe",
                 Arguments = "-noautolaunch64bit",
             });
+            if (Settings.StartVentriloWithWow && !Process.GetProcessesByName("Ventrilo").Any())
+            {
+                StartVentrilo();
+            }
         }
 
         private void buttonWowUpdater_Click(object sender, EventArgs e)
@@ -795,18 +680,7 @@ namespace AxTools.Forms
 
         private void TileVentriloClick(object sender, EventArgs e)
         {
-            if (!File.Exists(Settings.VtExe + "\\Ventrilo.exe"))
-            {
-                this.ShowTaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                return;
-            }
-            Process.Start(new ProcessStartInfo
-            {
-                WorkingDirectory = Settings.VtExe,
-                FileName = Settings.VtExe + "\\Ventrilo.exe",
-                Arguments = "-m"
-            });
-            Log.Print("Ventrilo process started");
+            StartVentrilo();
         }
 
         private void TileRaidcallClick(object sender, EventArgs e)
@@ -1238,6 +1112,49 @@ namespace AxTools.Forms
         }
 
         #endregion
-    
+
+        #region Helpers
+
+        private void StartVentrilo()
+        {
+            if (!File.Exists(Settings.VtExe + "\\Ventrilo.exe"))
+            {
+                this.ShowTaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                return;
+            }
+            Process process = Process.Start(new ProcessStartInfo
+            {
+                WorkingDirectory = Settings.VtExe,
+                FileName = Settings.VtExe + "\\Ventrilo.exe",
+                Arguments = "-m"
+            });
+            Task.Factory.StartNew(() =>
+            {
+                int counter = 300;
+                while (counter > 0)
+                {
+                    process.Refresh();
+                    if (process.MainWindowHandle != (IntPtr)0)
+                    {
+                        IntPtr windowHandle = NativeMethods.FindWindow(null, "Ventrilo");
+                        if (windowHandle != IntPtr.Zero)
+                        {
+                            IntPtr connectButtonHandle = NativeMethods.FindWindowEx(windowHandle, IntPtr.Zero, "Button", "C&onnect");
+                            if (connectButtonHandle != IntPtr.Zero)
+                            {
+                                NativeMethods.PostMessage(connectButtonHandle, WM_MESSAGE.WM_BM_CLICK, IntPtr.Zero, IntPtr.Zero);
+                                break;
+                            }
+                        }
+                    }
+                    Thread.Sleep(100);
+                    counter--;
+                }
+            });
+            Log.Print("Ventrilo process started");
+        }
+
+        #endregion
+
     }
 }

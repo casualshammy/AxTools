@@ -130,6 +130,7 @@
     <Compile Include="Components\TaskbarProgressbar\ThumbnailProgressState.cs" />
     <Compile Include="Updater\UpdateInfo.cs" />
     <Compile Include="Updater\UpdaterService.cs" />
+    <Compile Include="WoW\AutoLogin.cs" />
     <Compile Include="WoW\WoWAntiKick.cs" />
     <Compile Include="WoW\WoWProcessWatcher.cs" />
     <Compile Include="WoW\Management\ObjectManager\WoWPlayerMe.cs" />

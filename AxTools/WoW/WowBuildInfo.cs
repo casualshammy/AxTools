@@ -24,6 +24,8 @@
         internal static readonly int UnitNameCachePointer = 0xC86838 + 0x8;
         internal static readonly int ObjectManager = 0xCB47C4; // ClntObjMgrPush (7)
         internal static readonly int PlayerPtr = 0xCFF49C; // ClntObjMgrGetActivePlayerObj
+        internal static readonly int GlueState = 0xC95888;
+        internal static readonly int FocusedWidget = 0xBB292C;
 
         #endregion
 

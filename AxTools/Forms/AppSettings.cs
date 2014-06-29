@@ -36,7 +36,6 @@ namespace AxTools.Forms
             })
             {
                 comboBoxClickerHotkey.Items.Add(i.ToString());
-                comboBoxWowLoginHotkey.Items.Add(i.ToString());
                 comboBoxWExecLuaTimer.Items.Add(i.ToString());
                 comboBoxWExecModule.Items.Add(i.ToString());
             }
@@ -66,7 +65,6 @@ namespace AxTools.Forms
             ComboBox_server_ip.Items.AddRange(Globals.GameServers.Select(k => k.Description).Cast<object>().ToArray());
             ComboBox_server_ip.Text = Settings.GameServer.Description;
             comboBoxClickerHotkey.Text = Settings.ClickerHotkey.ToString();
-            comboBoxWowLoginHotkey.Text = Settings.WowLoginHotkey.ToString();
             comboBoxWExecLuaTimer.Text = Settings.LuaTimerHotkey.ToString();
             comboBoxWExecModule.Text = Settings.PrecompiledModulesHotkey.ToString();
             checkBoxAddonsBackup.Checked = Settings.AddonsBackup;
@@ -268,11 +266,6 @@ namespace AxTools.Forms
         private void ComboBoxClickerHotkeySelectedIndexChanged(object sender, EventArgs e)
         {
             Enum.TryParse(comboBoxClickerHotkey.Text, true, out Settings.ClickerHotkey);
-        }
-
-        private void ComboBoxWowLoginHotkeySelectedIndexChanged(object sender, EventArgs e)
-        {
-            Enum.TryParse(comboBoxWowLoginHotkey.Text, true, out Settings.WowLoginHotkey);
         }
 
         private void ComboBoxWExecLuaTimerSelectedIndexChanged(object sender, EventArgs e)

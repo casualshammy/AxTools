@@ -16,9 +16,6 @@ namespace AxTools.WinAPI
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SetWindowPos(IntPtr hwnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, SetWindowPosFlags wFlags);
 
-        [DllImport("user32")]
-        internal static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
-
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32", EntryPoint = "PostMessageA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         internal static extern bool PostMessage(IntPtr hwnd, WM_MESSAGE wMsg, IntPtr wParam, IntPtr lParam);
@@ -43,6 +40,12 @@ namespace AxTools.WinAPI
         [DllImportAttribute("winmm.dll", EntryPoint = "sndPlaySoundW")]
         [return: MarshalAsAttribute(UnmanagedType.Bool)]
         internal static extern bool sndPlaySoundW([InAttribute] [MarshalAsAttribute(UnmanagedType.LPWStr)] string pszSound, uint fuSound);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         // ReSharper disable InconsistentNaming
         internal static int WS_CAPTION = 0xC00000;

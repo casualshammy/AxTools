@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSONTester", "JSONTester\JS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoTWindowChanger", "WoTWindowChanger\WoTWindowChanger.csproj", "{F5EFDD8F-6F2B-4E94-B357-9E143425DE97}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IEmailNotifier", "IEmailNotifier\IEmailNotifier.csproj", "{EA2CD57F-70D1-493C-BC83-404547A9130A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -286,6 +288,27 @@ Global
 		{F5EFDD8F-6F2B-4E94-B357-9E143425DE97}.Template|Win32.ActiveCfg = Release|Any CPU
 		{F5EFDD8F-6F2B-4E94-B357-9E143425DE97}.Template|x64.ActiveCfg = Release|Any CPU
 		{F5EFDD8F-6F2B-4E94-B357-9E143425DE97}.Template|x86.ActiveCfg = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Release|Win32.ActiveCfg = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Release|x64.ActiveCfg = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Release|x86.ActiveCfg = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Template|Any CPU.ActiveCfg = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Template|Any CPU.Build.0 = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Template|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Template|Mixed Platforms.Build.0 = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Template|Win32.ActiveCfg = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Template|x64.ActiveCfg = Release|Any CPU
+		{EA2CD57F-70D1-493C-BC83-404547A9130A}.Template|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

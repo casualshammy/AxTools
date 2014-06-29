@@ -17,7 +17,6 @@ namespace AxTools.Classes
         internal static int ClickerInterval = 0x3e8;
         internal static Keys ClickerKey = Keys.None;
         internal static bool CreatureCache = false;
-        internal static Keys WowLoginHotkey = Keys.None;
         internal static Point WowWindowSize = new Point(800, 600);
         internal static bool DelWowLog = false;
         internal static string MumbleExe = String.Empty;
@@ -196,9 +195,6 @@ namespace AxTools.Classes
                                             break;
                                         case "StartMumbleWithWow":
                                             StartMumbleWithWow = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "WowLoginHotkey":
-                                            Enum.TryParse(strArray[1], true, out WowLoginHotkey);
                                             break;
                                         case "LastUsedVersion":
                                             LastUsedVersion = new Version(strArray[1]);
@@ -385,7 +381,6 @@ namespace AxTools.Classes
                 builder.AppendLine("wow_wnd.noframe=" + Convert.ToString(Noframe));
                 builder.AppendLine("WowWindowLocation=" + WowWindowLocation);
                 builder.AppendLine("WowWindowSize=" + WowWindowSize);
-                builder.AppendLine("WowLoginHotkey=" + Convert.ToString(WowLoginHotkey));
                 builder.AppendLine("LuaTimerHotkey=" + Convert.ToString(LuaTimerHotkey));
                 builder.AppendLine("PrecompiledModulesHotkey=" + Convert.ToString(PrecompiledModulesHotkey));
 

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using AxTools.WinAPI;
+using System;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AxTools.Classes
@@ -114,6 +116,11 @@ namespace AxTools.Classes
             {
                 return fontsCollection.Families.Any(i => i.Name == fontName);
             }
+        }
+
+        internal static void PlaySystemNotificationAsync()
+        {
+            Task.Factory.StartNew(() => NativeMethods.sndPlaySoundW("SystemNotification", 65536 | 2));  //SND_ALIAS = 65536; SND_NODEFAULT = 2;);
         }
 
     }

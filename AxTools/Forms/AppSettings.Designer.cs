@@ -53,8 +53,6 @@ namespace AxTools.Forms
             this.labelWExecModule = new MetroFramework.Controls.MetroLabel();
             this.comboBoxWExecLuaTimer = new MetroFramework.Controls.MetroComboBox();
             this.labelWExecLuaTimer = new MetroFramework.Controls.MetroLabel();
-            this.comboBoxWowLoginHotkey = new MetroFramework.Controls.MetroComboBox();
-            this.labelWowLoginHotkey = new MetroFramework.Controls.MetroLabel();
             this.numericUpDownBackupTimer = new System.Windows.Forms.NumericUpDown();
             this.Hours = new MetroFramework.Controls.MetroLabel();
             this.numericUpDownBackupCopiesToKeep = new System.Windows.Forms.NumericUpDown();
@@ -419,7 +417,7 @@ namespace AxTools.Forms
             this.comboBoxWExecModule.FontWeight = MetroFramework.MetroLinkWeight.Regular;
             this.comboBoxWExecModule.FormattingEnabled = true;
             this.comboBoxWExecModule.ItemHeight = 23;
-            this.comboBoxWExecModule.Location = new System.Drawing.Point(231, 120);
+            this.comboBoxWExecModule.Location = new System.Drawing.Point(231, 85);
             this.comboBoxWExecModule.Name = "comboBoxWExecModule";
             this.comboBoxWExecModule.Size = new System.Drawing.Size(88, 29);
             this.comboBoxWExecModule.Style = MetroFramework.MetroColorStyle.Blue;
@@ -436,7 +434,7 @@ namespace AxTools.Forms
             this.labelWExecModule.FontSize = MetroFramework.MetroLabelSize.Medium;
             this.labelWExecModule.FontWeight = MetroFramework.MetroLabelWeight.Light;
             this.labelWExecModule.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelWExecModule.Location = new System.Drawing.Point(3, 125);
+            this.labelWExecModule.Location = new System.Drawing.Point(3, 90);
             this.labelWExecModule.Name = "labelWExecModule";
             this.labelWExecModule.Size = new System.Drawing.Size(187, 19);
             this.labelWExecModule.Style = MetroFramework.MetroColorStyle.Blue;
@@ -454,7 +452,7 @@ namespace AxTools.Forms
             this.comboBoxWExecLuaTimer.FontWeight = MetroFramework.MetroLinkWeight.Regular;
             this.comboBoxWExecLuaTimer.FormattingEnabled = true;
             this.comboBoxWExecLuaTimer.ItemHeight = 23;
-            this.comboBoxWExecLuaTimer.Location = new System.Drawing.Point(231, 85);
+            this.comboBoxWExecLuaTimer.Location = new System.Drawing.Point(231, 50);
             this.comboBoxWExecLuaTimer.Name = "comboBoxWExecLuaTimer";
             this.comboBoxWExecLuaTimer.Size = new System.Drawing.Size(88, 29);
             this.comboBoxWExecLuaTimer.Style = MetroFramework.MetroColorStyle.Blue;
@@ -471,7 +469,7 @@ namespace AxTools.Forms
             this.labelWExecLuaTimer.FontSize = MetroFramework.MetroLabelSize.Medium;
             this.labelWExecLuaTimer.FontWeight = MetroFramework.MetroLabelWeight.Light;
             this.labelWExecLuaTimer.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelWExecLuaTimer.Location = new System.Drawing.Point(3, 90);
+            this.labelWExecLuaTimer.Location = new System.Drawing.Point(3, 55);
             this.labelWExecLuaTimer.Name = "labelWExecLuaTimer";
             this.labelWExecLuaTimer.Size = new System.Drawing.Size(224, 19);
             this.labelWExecLuaTimer.Style = MetroFramework.MetroColorStyle.Blue;
@@ -480,41 +478,6 @@ namespace AxTools.Forms
             this.labelWExecLuaTimer.Text = "Lua console\'s timer start/stop hotkey:";
             this.labelWExecLuaTimer.Theme = MetroFramework.MetroThemeStyle.Light;
             this.labelWExecLuaTimer.UseStyleColors = true;
-            // 
-            // comboBoxWowLoginHotkey
-            // 
-            this.comboBoxWowLoginHotkey.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxWowLoginHotkey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxWowLoginHotkey.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.comboBoxWowLoginHotkey.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxWowLoginHotkey.FormattingEnabled = true;
-            this.comboBoxWowLoginHotkey.ItemHeight = 23;
-            this.comboBoxWowLoginHotkey.Location = new System.Drawing.Point(231, 50);
-            this.comboBoxWowLoginHotkey.Name = "comboBoxWowLoginHotkey";
-            this.comboBoxWowLoginHotkey.Size = new System.Drawing.Size(88, 29);
-            this.comboBoxWowLoginHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxWowLoginHotkey.StyleManager = null;
-            this.comboBoxWowLoginHotkey.TabIndex = 47;
-            this.comboBoxWowLoginHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboBoxWowLoginHotkey.SelectedIndexChanged += new System.EventHandler(this.ComboBoxWowLoginHotkeySelectedIndexChanged);
-            // 
-            // labelWowLoginHotkey
-            // 
-            this.labelWowLoginHotkey.AutoSize = true;
-            this.labelWowLoginHotkey.CustomBackground = false;
-            this.labelWowLoginHotkey.CustomForeColor = false;
-            this.labelWowLoginHotkey.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.labelWowLoginHotkey.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.labelWowLoginHotkey.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelWowLoginHotkey.Location = new System.Drawing.Point(3, 55);
-            this.labelWowLoginHotkey.Name = "labelWowLoginHotkey";
-            this.labelWowLoginHotkey.Size = new System.Drawing.Size(147, 19);
-            this.labelWowLoginHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.labelWowLoginHotkey.StyleManager = null;
-            this.labelWowLoginHotkey.TabIndex = 46;
-            this.labelWowLoginHotkey.Text = "WoW autologin hotkey:";
-            this.labelWowLoginHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.labelWowLoginHotkey.UseStyleColors = true;
             // 
             // numericUpDownBackupTimer
             // 
@@ -628,7 +591,7 @@ namespace AxTools.Forms
             this.metroTabControl1.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 5;
+            this.metroTabControl1.SelectedIndex = 4;
             this.metroTabControl1.Size = new System.Drawing.Size(565, 220);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.StyleManager = this.metroStyleManager1;
@@ -1137,8 +1100,6 @@ namespace AxTools.Forms
             this.metroTabPage2.Controls.Add(this.labelClickerHotkey);
             this.metroTabPage2.Controls.Add(this.labelWExecLuaTimer);
             this.metroTabPage2.Controls.Add(this.comboBoxClickerHotkey);
-            this.metroTabPage2.Controls.Add(this.comboBoxWowLoginHotkey);
-            this.metroTabPage2.Controls.Add(this.labelWowLoginHotkey);
             this.metroTabPage2.CustomBackground = false;
             this.metroTabPage2.HorizontalScrollbar = false;
             this.metroTabPage2.HorizontalScrollbarBarColor = true;
@@ -1434,8 +1395,6 @@ namespace AxTools.Forms
 
         private MetroLabel labelClickerHotkey;
         private MetroComboBox comboBoxClickerHotkey;
-        private MetroComboBox comboBoxWowLoginHotkey;
-        private MetroLabel labelWowLoginHotkey;
         private MetroComboBox comboBoxWExecModule;
         private MetroLabel labelWExecModule;
         private MetroComboBox comboBoxWExecLuaTimer;

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Forms;
 using AxTools.Classes;
 using AxTools.Properties;
-using AxTools.WinAPI;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem.API;
@@ -168,13 +167,13 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 string zoneText = Lua.GetFunctionReturn("GetZoneText()");
                 Utilities.LogPrint("We're in " + zoneText + ", searching for " + searchingObjects.AsString());
                 Utilities.ShowNotifyMessage("[" + Name + "] " + zoneText, "Searching for " + searchingObjects.AsString(), ToolTipIcon.Info);
-                NativeMethods.sndPlaySoundW("SystemNotification", 65536 | 2);   //SND_ALIAS = 65536; SND_NODEFAULT = 2;
+                Utils.PlaySystemNotificationAsync();
             }
             else
             {
                 Utilities.LogPrint("Unknown battlefield, ID:" + zone);
                 Utilities.ShowNotifyMessage("[" + Name + "] Unknown battlefield", "I don't know what to do in this zone...", ToolTipIcon.Warning);
-                NativeMethods.sndPlaySoundW("SystemNotification", 65536 | 2);   //SND_ALIAS = 65536; SND_NODEFAULT = 2;
+                Utils.PlaySystemNotificationAsync();
             }
         }
 

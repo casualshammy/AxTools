@@ -1,4 +1,9 @@
-﻿using System;
+﻿using AxTools.Classes;
+using AxTools.Forms;
+using AxTools.WinAPI;
+using AxTools.WoW.Management;
+using GreyMagic;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -6,12 +11,6 @@ using System.Management;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WindowsFormsAero.TaskDialog;
-using AxTools.Classes;
-using AxTools.Forms;
-using AxTools.WinAPI;
-using AxTools.WoW.Management;
-using GreyMagic;
 
 namespace AxTools.WoW
 {
@@ -19,11 +18,11 @@ namespace AxTools.WoW
     {
         private static ManagementEventWatcher _wowWatcherStart;
         private static ManagementEventWatcher _wowWatcherStop;
-        private static readonly object Lock = new object();
+        private static readonly object _lock = new object();
 
         internal static void Start()
         {
-            lock (Lock)
+            lock (_lock)
             {
                 _wowWatcherStart = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace"));
                 _wowWatcherStop = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
@@ -37,7 +36,7 @@ namespace AxTools.WoW
 
         internal static void Stop()
         {
-            lock (Lock)
+            lock (_lock)
             {
                 if (_wowWatcherStart != null && _wowWatcherStop != null)
                 {
@@ -192,7 +191,8 @@ namespace AxTools.WoW
                             if (!process.IsValidBuild)
                             {
                                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager: invalid WoW executable", process.ProcessName, process.ProcessID), true);
-                                MainForm.Instance.ShowTaskDialog("Injector is locked", "Invalid WoW executable", TaskDialogButton.OK, TaskDialogIcon.SecurityError);
+                                MainForm.Instance.ShowNotifyIconMessage("Incorrect WoW version", "Injector is locked, please wait for update", ToolTipIcon.Warning);
+                                Utils.PlaySystemNotificationAsync();
                             }
                         }
                         catch (Exception ex)
