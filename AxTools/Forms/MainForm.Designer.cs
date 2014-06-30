@@ -61,7 +61,6 @@ namespace AxTools.Forms
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
             this.progressBarAddonsBackup = new MetroFramework.Controls.MetroProgressBar();
             this.linkEditWowAccounts = new MetroFramework.Controls.MetroLink();
-            this.buttonWowUpdater = new MetroFramework.Controls.MetroButton();
             this.buttonLaunchWowWithoutAutopass = new MetroFramework.Controls.MetroButton();
             this.linkClickerSettings = new MetroFramework.Controls.MetroLink();
             this.linkBackupAddons = new MetroFramework.Controls.MetroLink();
@@ -116,7 +115,7 @@ namespace AxTools.Forms
             this.toolStripSeparator1,
             this.launchWoWToolStripMenuItem});
             this.contextMenuStripMain.Name = "contextMenuStripMain";
-            this.contextMenuStripMain.Size = new System.Drawing.Size(182, 154);
+            this.contextMenuStripMain.Size = new System.Drawing.Size(182, 132);
             // 
             // woWRadarToolStripMenuItem
             // 
@@ -204,7 +203,6 @@ namespace AxTools.Forms
             // 
             this.metroTabPage1.Controls.Add(this.progressBarAddonsBackup);
             this.metroTabPage1.Controls.Add(this.linkEditWowAccounts);
-            this.metroTabPage1.Controls.Add(this.buttonWowUpdater);
             this.metroTabPage1.Controls.Add(this.buttonLaunchWowWithoutAutopass);
             this.metroTabPage1.Controls.Add(this.linkClickerSettings);
             this.metroTabPage1.Controls.Add(this.linkBackupAddons);
@@ -263,25 +261,12 @@ namespace AxTools.Forms
             this.linkEditWowAccounts.UseStyleColors = true;
             this.linkEditWowAccounts.Click += new System.EventHandler(this.linkEditWowAccounts_Click);
             // 
-            // buttonWowUpdater
-            // 
-            this.buttonWowUpdater.Highlight = true;
-            this.buttonWowUpdater.Location = new System.Drawing.Point(214, 78);
-            this.buttonWowUpdater.Name = "buttonWowUpdater";
-            this.buttonWowUpdater.Size = new System.Drawing.Size(204, 23);
-            this.buttonWowUpdater.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonWowUpdater.StyleManager = null;
-            this.buttonWowUpdater.TabIndex = 58;
-            this.buttonWowUpdater.Text = "WoW Updater";
-            this.buttonWowUpdater.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.buttonWowUpdater.Click += new System.EventHandler(this.buttonWowUpdater_Click);
-            // 
             // buttonLaunchWowWithoutAutopass
             // 
             this.buttonLaunchWowWithoutAutopass.Highlight = true;
             this.buttonLaunchWowWithoutAutopass.Location = new System.Drawing.Point(3, 78);
             this.buttonLaunchWowWithoutAutopass.Name = "buttonLaunchWowWithoutAutopass";
-            this.buttonLaunchWowWithoutAutopass.Size = new System.Drawing.Size(205, 23);
+            this.buttonLaunchWowWithoutAutopass.Size = new System.Drawing.Size(415, 23);
             this.buttonLaunchWowWithoutAutopass.Style = MetroFramework.MetroColorStyle.Blue;
             this.buttonLaunchWowWithoutAutopass.StyleManager = null;
             this.buttonLaunchWowWithoutAutopass.TabIndex = 57;
@@ -812,7 +797,6 @@ namespace AxTools.Forms
         private MetroCheckBox checkBoxEnableCustomPlugins;
         private MetroButton buttonStartStopPlugin;
         private MetroButton buttonLaunchWowWithoutAutopass;
-        private MetroButton buttonWowUpdater;
         private MetroLink linkEditWowAccounts;
         private MetroProgressBar progressBarAddonsBackup;
     }

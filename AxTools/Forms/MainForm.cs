@@ -602,20 +602,6 @@ namespace AxTools.Forms
             }
         }
 
-        private void buttonWowUpdater_Click(object sender, EventArgs e)
-        {
-            if (!File.Exists(Settings.WowExe + "\\World of Warcraft Launcher.exe"))
-            {
-                this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"World of Warcraft Launcher.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                return;
-            }
-            Process.Start(new ProcessStartInfo
-            {
-                WorkingDirectory = Settings.WowExe,
-                FileName = Settings.WowExe + "\\World of Warcraft Launcher.exe"
-            });
-        }
-
         private void linkEditWowAccounts_Click(object sender, EventArgs e)
         {
             new WowAccountsManager().ShowDialog(this);
