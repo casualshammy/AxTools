@@ -12,9 +12,9 @@ using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms
 {
-    internal partial class BlackMarket : BorderedMetroForm
+    internal partial class BlackMarket : BorderedMetroForm, IWoWModule
     {
-        internal BlackMarket()
+        public BlackMarket()
         {
             InitializeComponent();
             Icon = Resources.AppIcon;

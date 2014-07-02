@@ -3,6 +3,7 @@ using AxTools.Components;
 using AxTools.Components.TaskbarProgressbar;
 using AxTools.Helpers;
 using AxTools.Properties;
+using AxTools.Updater;
 using AxTools.WinAPI;
 using AxTools.WoW;
 using AxTools.WoW.Management;
@@ -17,7 +18,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Media;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -31,6 +31,8 @@ namespace AxTools.Forms
 {
     internal partial class MainForm : BorderedMetroForm
     {
+        internal static MainForm Instance;
+
         internal MainForm()
         {
             InitializeComponent();
@@ -100,22 +102,6 @@ namespace AxTools.Forms
             }
         }
 
-        #region Internals
-
-        internal void ShowNotifyIconMessage(string title, string text, ToolTipIcon icon)
-        {
-            if (InvokeRequired)
-                BeginInvoke((MethodInvoker) (() => notifyIconMain.ShowBalloonTip(30000, title, text, icon)));
-            else
-                notifyIconMain.ShowBalloonTip(30000, title, text, icon);
-        }
-
-        internal static bool LuaTimerEnabled = false;
-
-        internal static MainForm Instance;
-
-        #endregion
-        
         #region Variables
 
         //another
@@ -176,29 +162,18 @@ namespace AxTools.Forms
 
         private void KeyboardHook_PrecompiledModulesHotkey()
         {
-            if (PluginManager.ActivePlugin == null && WowProcess.GetAllWowProcesses().Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+            if (WowProcess.GetAllWowProcesses().Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
             {
-                InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
-            }
-            else if (PluginManager.ActivePlugin != null)
-            {
-                InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
+                SwitchWoWPlugin();
             }
         }
 
         private void KeyboardHook_LuaTimerHotkey()
         {
             LuaConsole pForm = Utils.FindForm<LuaConsole>();
-            if (pForm != null)
+            if (pForm != null && WowProcess.GetAllWowProcesses().Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
             {
-                if (!pForm.TimerEnabled && WowProcess.GetAllWowProcesses().Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
-                {
-                    pForm.SwitchTimer();
-                }
-                else if (pForm.TimerEnabled)
-                {
-                    pForm.SwitchTimer();
-                }
+                pForm.SwitchTimer();
             }
         }
 
@@ -439,7 +414,7 @@ namespace AxTools.Forms
 
             #endregion
 
-            Updater.UpdaterService.Start();
+            UpdaterService.Start();
 
             Log.Print("AxTools started succesfully");
         }
@@ -479,20 +454,20 @@ namespace AxTools.Forms
 
         private void WoWRadarToolStripMenuItemClick(object sender, EventArgs e)
         {
-            MetroButtonRadarClick(null, EventArgs.Empty);
+            StartWoWModule<WowRadar>();
         }
 
         private void blackMarketTrackerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InvokeOnClick(metroButtonBlackMarketTracker, EventArgs.Empty);
+            StartWoWModule<BlackMarket>();
         }
 
         private void LuaConsoleToolStripMenuItemClick(object sender, EventArgs e)
         {
-            MetroButtonLuaConsoleClick(null, EventArgs.Empty);
+            StartWoWModule<LuaConsole>();
         }
 
-        private void LaunchWoWToolStripMenuItemClick(object sender, EventArgs e)
+        private void ExitAxToolsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!isClosing)
             {
@@ -505,7 +480,7 @@ namespace AxTools.Forms
         {
             if (PluginManager.ActivePlugin != null)
             {
-                InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
+                SwitchWoWPlugin();
             }
         }
 
@@ -697,48 +672,7 @@ namespace AxTools.Forms
         
         private void buttonStartStopPlugin_Click(object sender, EventArgs e)
         {
-            buttonStartStopPlugin.Enabled = false;
-            if (PluginManager.ActivePlugin == null)
-            {
-                if (!WoWManager.Hooked && !LoadInjector())
-                {
-                    buttonStartStopPlugin.Enabled = true;
-                    return;
-                }
-                if (!WoWManager.WoWProcess.IsInGame)
-                {
-                    ShowNotifyIconMessage("Plugin error", "Player isn't logged in", ToolTipIcon.Error);
-                    SystemSounds.Hand.Play();
-                    buttonStartStopPlugin.Enabled = true;
-                    return;
-                }
-                if (comboBoxWowPlugins.SelectedIndex == -1)
-                {
-                    ShowNotifyIconMessage("Plugin error", "You didn't select valid plugin", ToolTipIcon.Error);
-                    SystemSounds.Hand.Play();
-                    buttonStartStopPlugin.Enabled = true;
-                }
-                else
-                {
-                    PluginManager.StartPlugin(PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text));
-                    WowPluginHotkeyChanged();
-                }
-            }
-            else
-            {
-                try
-                {
-                    PluginManager.StopPlugin();
-                    WowPluginHotkeyChanged();
-                    GC.Collect();
-                }
-                catch
-                {
-                    Log.Print("Plugin task failed to cancel", true);
-                    this.ShowTaskDialog("Plugin error", "Plugin task failed to cancel", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                }
-            }
-            buttonStartStopPlugin.Enabled = true;
+            SwitchWoWPlugin();
         }
 
         private void metroCheckBoxPluginShowIngameNotification_CheckedChanged(object sender, EventArgs e)
@@ -779,59 +713,17 @@ namespace AxTools.Forms
 
         private void MetroButtonBlackMarketTrackerClick(object sender, EventArgs e)
         {
-            if (!WoWManager.Hooked && !LoadInjector())
-            {
-                new TaskDialog("Plugin error", "AxTools", "Can't inject", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
-                return;
-            }
-            if (!WoWManager.WoWProcess.IsInGame)
-            {
-                new TaskDialog("Plugin error", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
-                return;
-            }
-            new BlackMarket().Show();
+            StartWoWModule<BlackMarket>();
         }
 
         private void MetroButtonRadarClick(object sender, EventArgs e)
         {
-            if (WoWManager.Hooked)
-            {
-                var cForm = Utils.FindForm<WowRadar>();
-                if (cForm != null)
-                {
-                    cForm.Activate();
-                }
-                else
-                {
-                    new WowRadar().Show();
-                }
-                return;
-            }
-            if (LoadInjector())
-            {
-                new WowRadar().Show();
-            }
+            StartWoWModule<WowRadar>();
         }
 
         private void MetroButtonLuaConsoleClick(object sender, EventArgs e)
         {
-            if (WoWManager.Hooked)
-            {
-                LuaConsole cForm = Utils.FindForm<LuaConsole>();
-                if (cForm != null)
-                {
-                    cForm.Activate();
-                }
-                else
-                {
-                    new LuaConsole().Show();
-                }
-                return;
-            }
-            if (LoadInjector())
-            {
-                new LuaConsole().Show();
-            }
+            StartWoWModule<LuaConsole>();
         }
 
         private void ButtonUnloadInjectorClick(object sender, EventArgs e)
@@ -846,36 +738,6 @@ namespace AxTools.Forms
                 Log.Print("Injector error: WoW injector isn't active", true);
                 this.ShowTaskDialog("Injector error", "WoW injector isn't active", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
-        }
-
-        private bool LoadInjector()
-        {
-            int index = WowProcess.GetAllWowProcesses().Count == 1 ? 0 : ProcessSelection.SelectProcess();
-            if (index != -1)
-            {
-                if (WowProcess.GetAllWowProcesses()[index].IsValidBuild)
-                {
-                    if (WowProcess.GetAllWowProcesses()[index].IsInGame)
-                    {
-                        switch (WoWManager.Hook(WowProcess.GetAllWowProcesses()[index]))
-                        {
-                            case HookResult.Successful:
-                                Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
-                                return true;
-                            case HookResult.IncorrectDirectXVersion:
-                                this.ShowTaskDialog("Injecting error", "Incorrect DirectX version", TaskDialogButton.OK, TaskDialogIcon.SecurityError);
-                                return false;
-                        }
-                    }
-                    Log.Print("[WoW hook] Injecting error: Player isn't logged in");
-                    this.ShowTaskDialog("Injecting error", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                    return false;
-                }
-                Log.Print("[WoW hook] Injecting error: Incorrect WoW build", true);
-                this.ShowTaskDialog("Injecting error", "Incorrect WoW build", TaskDialogButton.OK, TaskDialogIcon.SecurityError);
-                return false;
-            }
-            return false;
         }
 
         #endregion
@@ -916,7 +778,7 @@ namespace AxTools.Forms
                 blackMarketTrackerToolStripMenuItem,
                 toolStripSeparator2
             });
-            Type[] nativePlugins = { typeof(Fishing), typeof(FlagReturner), typeof(GoodsDestroyer) };
+            Type[] nativePlugins = {typeof (Fishing), typeof (FlagReturner), typeof (GoodsDestroyer)};
             foreach (IPlugin i in PluginManager.Plugins.Where(i => nativePlugins.Contains(i.GetType())))
             {
                 IPlugin plugin = i;
@@ -927,7 +789,7 @@ namespace AxTools.Forms
                     {
                         Activate();
                     }
-                    InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
+                    SwitchWoWPlugin();
                 });
                 pluginsToolStripMenuItems.Add(toolStripMenuItem);
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
@@ -947,7 +809,7 @@ namespace AxTools.Forms
                             {
                                 Activate();
                             }
-                            InvokeOnClick(buttonStartStopPlugin, EventArgs.Empty);
+                            SwitchWoWPlugin();
                         });
                         pluginsToolStripMenuItems.Add(toolStripMenuItem);
                         customPlugins.DropDownItems.Add(toolStripMenuItem);
@@ -978,7 +840,7 @@ namespace AxTools.Forms
 
         internal void WowPluginHotkeyChanged()
         {
-            BeginInvoke((MethodInvoker)delegate
+            BeginInvoke((MethodInvoker) delegate
             {
                 buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugin == null ? "Start" : "Stop", Settings.PrecompiledModulesHotkey);
                 comboBoxWowPlugins.Enabled = PluginManager.ActivePlugin == null;
@@ -1086,6 +948,107 @@ namespace AxTools.Forms
                 }
             });
             Log.Print("Ventrilo process started");
+        }
+
+        private void StartWoWModule<T>() where T : Form, IWoWModule, new()
+        {
+            if (!WoWManager.Hooked)
+            {
+                if (HookWoW())
+                {
+                    new T().Show();
+                }
+            }
+            else
+            {
+                T form = Utils.FindForm<T>();
+                if (form != null)
+                {
+                    form.Activate();
+                }
+                else
+                {
+                    new T().Show();
+                }
+            }
+        }
+
+        private bool HookWoW()
+        {
+            int index = WowProcess.GetAllWowProcesses().Count == 1 ? 0 : ProcessSelection.SelectProcess();
+            if (index != -1)
+            {
+                WowProcess wowProcess = WowProcess.GetAllWowProcesses()[index];
+                switch (WoWManager.Hook(wowProcess))
+                {
+                    case HookResult.Successful:
+                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector loaded", wowProcess.ProcessName, wowProcess.ProcessID));
+                        return true;
+                    case HookResult.IncorrectDirectXVersion:
+                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Incorrect DirectX version", wowProcess.ProcessName, wowProcess.ProcessID), true);
+                        Utils.NotifyUser("Injecting error", "Incorrect DirectX version", NotifyUserType.Error, true);
+                        return false;
+                    case HookResult.InvalidWoWBuild:
+                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Incorrect WoW build", wowProcess.ProcessName, wowProcess.ProcessID), true);
+                        Utils.NotifyUser("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
+                        return false;
+                    case HookResult.NotInGame:
+                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Player isn't logged in", wowProcess.ProcessName, wowProcess.ProcessID));
+                        Utils.NotifyUser("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        private void SwitchWoWPlugin()
+        {
+            buttonStartStopPlugin.Enabled = false;
+            if (PluginManager.ActivePlugin == null)
+            {
+                if (comboBoxWowPlugins.SelectedIndex != -1)
+                {
+                    if (WoWManager.Hooked || HookWoW())
+                    {
+                        if (WoWManager.WoWProcess.IsInGame)
+                        {
+                            PluginManager.StartPlugin(PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text));
+                            WowPluginHotkeyChanged();
+                        }
+                        else
+                        {
+                            Utils.NotifyUser("Plugin error", "Player isn't logged in", NotifyUserType.Error, true);
+                        }
+                    }
+                }
+                else
+                {
+                    Utils.NotifyUser("Plugin error", "You didn't select valid plugin", NotifyUserType.Error, true);
+                }
+            }
+            else
+            {
+                try
+                {
+                    PluginManager.StopPlugin();
+                    WowPluginHotkeyChanged();
+                    GC.Collect();
+                }
+                catch
+                {
+                    Log.Print("Plugin task failed to cancel", true);
+                    Utils.NotifyUser("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
+                }
+            }
+            buttonStartStopPlugin.Enabled = true;
+        }
+
+        internal void ShowNotifyIconMessage(string title, string text, ToolTipIcon icon)
+        {
+            if (InvokeRequired)
+                BeginInvoke(new MethodInvoker(() => notifyIconMain.ShowBalloonTip(30000, title, text, icon)));
+            else
+                notifyIconMain.ShowBalloonTip(30000, title, text, icon);
         }
 
         #endregion

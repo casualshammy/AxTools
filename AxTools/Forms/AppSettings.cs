@@ -270,11 +270,10 @@ namespace AxTools.Forms
 
         private void ComboBoxWExecLuaTimerSelectedIndexChanged(object sender, EventArgs e)
         {
-            Enum.TryParse(comboBoxWExecLuaTimer.Text, true, out Settings.LuaTimerHotkey);
-            LuaConsole luaConsole = Utils.FindForm<LuaConsole>();
-            if (luaConsole != null)
+            Keys key;
+            if (Enum.TryParse(comboBoxWExecLuaTimer.Text, true, out key))
             {
-                luaConsole.TimerHotkeyChanged();
+                Settings.LuaTimerHotkey = key;
             }
         }
 

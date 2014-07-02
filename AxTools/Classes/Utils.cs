@@ -1,12 +1,16 @@
-﻿using AxTools.WinAPI;
+﻿using AxTools.Forms;
+using AxTools.Helpers;
+using AxTools.WinAPI;
 using System;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsFormsAero.TaskDialog;
 
 namespace AxTools.Classes
 {
@@ -119,6 +123,40 @@ namespace AxTools.Classes
         internal static void PlaySystemNotificationAsync()
         {
             Task.Factory.StartNew(() => NativeMethods.sndPlaySoundW("SystemNotification", 65536 | 2));  //SND_ALIAS = 65536; SND_NODEFAULT = 2;);
+        }
+
+        internal static void NotifyUser(string title, string message, NotifyUserType type, bool sound)
+        {
+            if (NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
+            {
+                switch (type)
+                {
+                    case NotifyUserType.Error:
+                        MainForm.Instance.ShowTaskDialog(title, message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                        break;
+                    case NotifyUserType.Warn:
+                        MainForm.Instance.ShowTaskDialog(title, message, TaskDialogButton.OK, TaskDialogIcon.Warning);
+                        break;
+                    default:
+                        MainForm.Instance.ShowTaskDialog(title, message, TaskDialogButton.OK, TaskDialogIcon.Information);
+                        break;
+                }
+            }
+            else
+            {
+                MainForm.Instance.ShowNotifyIconMessage(title, message, (ToolTipIcon) type);
+                if (sound)
+                {
+                    if (type == NotifyUserType.Error || type == NotifyUserType.Warn)
+                    {
+                        SystemSounds.Hand.Play();
+                    }
+                    else
+                    {
+                        PlaySystemNotificationAsync();
+                    }
+                }
+            }
         }
 
     }

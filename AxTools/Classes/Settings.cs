@@ -34,7 +34,6 @@ namespace AxTools.Classes
         internal static bool StartRaidcallWithWow = false;
         internal static bool StartMumbleWithWow = false;
         internal static Version LastUsedVersion = new Version(0, 0, 0, 0);
-        internal static Keys LuaTimerHotkey = Keys.None;
         internal static Keys PrecompiledModulesHotkey = Keys.None;
         internal static Size LuaConsoleSize = new Size(650, 354);
         internal static int LuaConsoleTimerInterval = 1000;
@@ -64,7 +63,26 @@ namespace AxTools.Classes
         internal static int PingerVeryBadNetworkPing = 250;
         internal static int PingerVeryBadNetworkProcent = 10;
         internal static bool MinimizeToTray = true;
-        
+
+        internal delegate void LuaTimerHotkeyChangedHandler(Keys key);
+        internal static LuaTimerHotkeyChangedHandler LuaTimerHotkeyChanged;
+        private static Keys _luaTimerHotkey = Keys.None;
+        internal static Keys LuaTimerHotkey
+        {
+            get
+            {
+                return _luaTimerHotkey;
+            }
+            set
+            {
+                _luaTimerHotkey = value;
+                if (LuaTimerHotkeyChanged != null)
+                {
+                    LuaTimerHotkeyChanged(value);
+                }
+            }
+        }
+
         internal static void Load()
         {
             try
@@ -200,7 +218,7 @@ namespace AxTools.Classes
                                             LastUsedVersion = new Version(strArray[1]);
                                             break;
                                         case "LuaTimerHotkey":
-                                            Enum.TryParse(strArray[1], true, out LuaTimerHotkey);
+                                            Enum.TryParse(strArray[1], true, out _luaTimerHotkey);
                                             break;
                                         case "PrecompiledModulesHotkey":
                                             Enum.TryParse(strArray[1], true, out PrecompiledModulesHotkey);
@@ -381,7 +399,7 @@ namespace AxTools.Classes
                 builder.AppendLine("wow_wnd.noframe=" + Convert.ToString(Noframe));
                 builder.AppendLine("WowWindowLocation=" + WowWindowLocation);
                 builder.AppendLine("WowWindowSize=" + WowWindowSize);
-                builder.AppendLine("LuaTimerHotkey=" + Convert.ToString(LuaTimerHotkey));
+                builder.AppendLine("LuaTimerHotkey=" + Convert.ToString(_luaTimerHotkey));
                 builder.AppendLine("PrecompiledModulesHotkey=" + Convert.ToString(PrecompiledModulesHotkey));
 
                 builder.AppendLine(String.Empty);

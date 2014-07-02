@@ -121,17 +121,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\AddonsBackup.cs" />
+    <Compile Include="Services\AddonsBackup.cs" />
     <Compile Include="Classes\Clicker.cs" />
-    <Compile Include="Classes\Pinger.cs" />
+    <Compile Include="Services\Pinger.cs" />
     <Compile Include="Components\TaskbarProgressbar\CTaskbarList.cs" />
     <Compile Include="Components\TaskbarProgressbar\ITaskbarList3.cs" />
     <Compile Include="Components\TaskbarProgressbar\TBProgressBar.cs" />
     <Compile Include="Components\TaskbarProgressbar\ThumbnailProgressState.cs" />
+    <Compile Include="Helpers\NotifyUserType.cs" />
     <Compile Include="Helpers\TrayIconAnimation.cs" />
     <Compile Include="Updater\UpdateInfo.cs" />
     <Compile Include="Updater\UpdaterService.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
+    <Compile Include="WoW\IWoWModule.cs" />
     <Compile Include="WoW\WoWAntiKick.cs" />
     <Compile Include="WoW\WoWProcessWatcher.cs" />
     <Compile Include="WoW\Management\ObjectManager\WoWPlayerMe.cs" />
@@ -474,9 +476,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

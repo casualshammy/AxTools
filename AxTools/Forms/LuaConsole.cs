@@ -10,15 +10,19 @@ using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.WoW;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms
 {
-    internal partial class LuaConsole : BorderedMetroForm
+    internal partial class LuaConsole : BorderedMetroForm, IWoWModule
     {
-        internal LuaConsole()
+        internal static bool TimerEnabled = false;
+        private readonly System.Timers.Timer timerLua = new System.Timers.Timer(1000);
+
+        public LuaConsole()
         {
             InitializeComponent();
             AccessibleName = "Lua";
@@ -29,15 +33,12 @@ namespace AxTools.Forms
             textBoxLuaCode.Visible = true;
             metroPanelTimerOptions.Visible = false;
             Size = Settings.LuaConsoleSize;
-            TimerHotkeyChanged();
             metroStyleManager1.Style = Settings.NewStyleColor;
             metroCheckBoxRandomize.Checked = Settings.LuaConsoleRandomizeTimer;
             metroCheckBoxIgnoreGameState.Checked = Settings.LuaConsoleIgnoreGameState;
             metroTextBoxTimerInterval.Text = Settings.LuaConsoleTimerInterval.ToString();
             metroCheckBoxShowIngameNotifications.Checked = Settings.LuaConsoleShowIngameNotifications;
             metroToolTip1.SetToolTip(pictureBoxRunOnce, "Execute script once");
-            metroToolTip1.SetToolTip(pictureBoxRunLoop, string.Format("Enable loop script execution\r\nHotkey: [{0}]", Settings.LuaTimerHotkey));
-            metroToolTip1.SetToolTip(pictureBoxStop, string.Format("Disable loop script execution\r\nHotkey: [{0}]", Settings.LuaTimerHotkey));
             metroToolTip1.SetToolTip(pictureBoxSettings, "Open settings");
             string filename = Globals.CfgPath + "\\.luaconsole3";
             try
@@ -51,10 +52,10 @@ namespace AxTools.Forms
             {
                 Log.Print(string.Format("{0}:{1} :: [Lua console] Can't load the latest list: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
             }
+            Settings.LuaTimerHotkeyChanged += LuaTimerHotkeyChanged;
+            LuaTimerHotkeyChanged(Settings.LuaTimerHotkey);
             Log.Print(string.Format("{0}:{1} :: [Lua console] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
-
-        private readonly System.Timers.Timer timerLua = new System.Timers.Timer(1000);
 
         private void TimerLuaElapsed(object sender, ElapsedEventArgs e)
         {
@@ -170,6 +171,8 @@ namespace AxTools.Forms
             {
                 Log.Print(string.Format("{0}:{1} :: [Lua console] Can't save the latest list: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
             }
+            // ReSharper disable once DelegateSubtraction
+            Settings.LuaTimerHotkeyChanged -= LuaTimerHotkeyChanged;
             Log.Print(string.Format("{0}:{1} :: [Lua console] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
@@ -242,10 +245,10 @@ namespace AxTools.Forms
             Int32.TryParse(metroTextBoxTimerInterval.Text, out Settings.LuaConsoleTimerInterval);
         }
 
-        internal void TimerHotkeyChanged()
+        private void LuaTimerHotkeyChanged(Keys key)
         {
-            metroToolTip1.SetToolTip(pictureBoxRunLoop, string.Format("Enable loop script execution\r\nHotkey: [{0}]", Settings.LuaTimerHotkey));
-            metroToolTip1.SetToolTip(pictureBoxStop, string.Format("Disable loop script execution\r\nHotkey: [{0}]", Settings.LuaTimerHotkey));
+            metroToolTip1.SetToolTip(pictureBoxRunLoop, string.Format("Enable loop script execution\r\nHotkey: [{0}]", key));
+            metroToolTip1.SetToolTip(pictureBoxStop, string.Format("Disable loop script execution\r\nHotkey: [{0}]", key));
         }
 
         internal void SwitchTimer()
@@ -253,10 +256,7 @@ namespace AxTools.Forms
             InvokeOnClick(timerLua.Enabled ? pictureBoxStop : pictureBoxRunLoop, EventArgs.Empty);
         }
 
-        internal bool TimerEnabled
-        {
-            get { return timerLua.Enabled; }
-        }
+        
 
         private void pictureBoxRunOnce_Click(object sender, EventArgs e)
         {
@@ -293,7 +293,7 @@ namespace AxTools.Forms
                 return;
             }
             timerLua.Interval = Settings.LuaConsoleTimerInterval;
-            MainForm.LuaTimerEnabled = true;
+            TimerEnabled = true;
             SetupTimerControls(true);
             timerLua.Enabled = true;
             if (Settings.LuaConsoleShowIngameNotifications)
@@ -310,13 +310,12 @@ namespace AxTools.Forms
             Log.Print(WoWManager.WoWProcess != null
                           ? string.Format("{0}:{1} :: [Lua console] Lua timer disabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID)
                           : "UNKNOWN:null :: Lua timer disabled");
-            TimerHotkeyChanged();
             if (Settings.LuaConsoleShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
             {
                 WoWDXInject.ShowOverlayText("LTimer is stopped", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 0, 0));
                 //WoWDXInject.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is stopped\", 1.0, 0.4, 0.0)");
             }
-            MainForm.LuaTimerEnabled = false;
+            TimerEnabled = false;
             SetupTimerControls(false);
         }
 

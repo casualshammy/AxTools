@@ -20,9 +20,9 @@ using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms
 {
-    internal partial class WowRadar : Form
+    internal partial class WowRadar : Form, IWoWModule
     {
-        internal WowRadar()
+        public WowRadar()
         {
             InitializeComponent();
             Icon = Resources.AppIcon;

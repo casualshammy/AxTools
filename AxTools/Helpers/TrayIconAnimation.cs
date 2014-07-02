@@ -79,11 +79,11 @@ namespace AxTools.Helpers
         private static void ActualizingPhase()
         {
             // ReSharper disable RedundantCheckBeforeAssignment
-            if (MainForm.LuaTimerEnabled && PluginManager.ActivePlugin != null)
+            if (LuaConsole.TimerEnabled && PluginManager.ActivePlugin != null)
             {
                 _notifyIcon.Icon = AppIconPluginOnLuaOn;
             }
-            else if (MainForm.LuaTimerEnabled)
+            else if (LuaConsole.TimerEnabled)
             {
                 _notifyIcon.Icon = AppIconPluginOffLuaOn;
             }

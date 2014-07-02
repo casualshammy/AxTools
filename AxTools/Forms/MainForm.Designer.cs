@@ -171,7 +171,7 @@ namespace AxTools.Forms
             this.launchWoWToolStripMenuItem.Name = "launchWoWToolStripMenuItem";
             this.launchWoWToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.launchWoWToolStripMenuItem.Text = "Exit";
-            this.launchWoWToolStripMenuItem.Click += new System.EventHandler(this.LaunchWoWToolStripMenuItemClick);
+            this.launchWoWToolStripMenuItem.Click += new System.EventHandler(this.ExitAxToolsToolStripMenuItem_Click);
             // 
             // woWPluginsToolStripMenuItem
             // 

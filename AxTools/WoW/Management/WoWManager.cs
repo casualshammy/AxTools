@@ -13,18 +13,30 @@ namespace AxTools.WoW.Management
 
         internal static HookResult Hook(WowProcess process)
         {
-            WoWProcess = process;
-            if (WoWProcess.Memory == null)
+            if (!Hooked)
             {
-                WoWProcess.Memory = new ExternalProcessReader(Process.GetProcessById(WoWProcess.ProcessID));
+                if (process.IsValidBuild)
+                {
+                    if (process.IsInGame)
+                    {
+                        WoWProcess = process;
+                        if (WoWProcess.Memory == null)
+                        {
+                            WoWProcess.Memory = new ExternalProcessReader(Process.GetProcessById(WoWProcess.ProcessID));
+                        }
+                        if (WoWDXInject.Apply(WoWProcess))
+                        {
+                            ObjectMgr.Initialize(WoWProcess);
+                            Hooked = true;
+                            return HookResult.Successful;
+                        }
+                        return HookResult.IncorrectDirectXVersion;
+                    }
+                    return HookResult.NotInGame;
+                }
+                return HookResult.InvalidWoWBuild;
             }
-            if (!WoWDXInject.Apply(WoWProcess))
-            {
-                return HookResult.IncorrectDirectXVersion;
-            }
-            ObjectMgr.Initialize(WoWProcess);
-            Hooked = true;
-            return HookResult.Successful;
+            return HookResult.AlreadyHooked;
         }
 
         internal static void Unhook()
