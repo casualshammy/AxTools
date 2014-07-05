@@ -1,81 +1,212 @@
-﻿using MetroFramework;
+﻿using System.Collections.Generic;
+using AxTools.Helpers;
+using AxTools.WoW;
+using MetroFramework;
 using Microsoft.Win32;
 using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace AxTools.Classes
 {
-    internal static class Settings
+    [JsonObject(MemberSerialization.OptIn)]
+    internal class Settings
     {
-        internal static Point Location = new Point(100, 100);
-        internal static bool AutoAcceptWndSetts = false;
-        internal static Keys ClickerHotkey = Keys.None;
-        internal static int ClickerInterval = 0x3e8;
-        internal static Keys ClickerKey = Keys.None;
-        internal static bool CreatureCache = false;
-        internal static Point WowWindowSize = new Point(800, 600);
-        internal static bool DelWowLog = false;
-        internal static string MumbleExe = String.Empty;
-        internal static bool Noframe = false;
-        internal static string RaidcallExe = String.Empty;
-        internal static string Regname = String.Empty;
-        internal static SrvAddress GameServer;
-        internal static string TeamspeakExe = String.Empty;
-        internal static string VtExe = String.Empty;
-        internal static bool Wasd = false;
-        internal static string WowExe = String.Empty;
-        internal static Point WowWindowLocation = Point.Empty;
-        internal static bool StartVentriloWithWow = false;
-        internal static bool StartTS3WithWow = false;
-        internal static bool StartRaidcallWithWow = false;
-        internal static bool StartMumbleWithWow = false;
-        internal static Version LastUsedVersion = new Version(0, 0, 0, 0);
-        internal static Keys PrecompiledModulesHotkey = Keys.None;
-        internal static Size LuaConsoleSize = new Size(650, 354);
-        internal static int LuaConsoleTimerInterval = 1000;
-        internal static bool LuaConsoleRandomizeTimer = false;
-        internal static bool LuaConsoleIgnoreGameState = false;
-        internal static bool LuaConsoleShowIngameNotifications = true;
-        internal static Point RadarLocation = Point.Empty;
-        internal static bool RadarShowPlayersClasses = true;
-        internal static bool RadarShowNpcsNames = true;
-        internal static bool RadarShowObjectsNames = true;
-        internal static ulong RadarShow = 0;
-        internal static Color RadarFriendColor = Color.Green;
-        internal static Color RadarEnemyColor = Color.Red;
-        internal static Color RadarNpcColor = Color.GreenYellow;
-        internal static Color RadarObjectColor = Color.Gold;
-        internal static string AddonsBackupPath = Globals.UserfilesPath;
-        internal static DateTime AddonsBackupLastdate = new DateTime(1970, 1, 1);
-        internal static bool AddonsBackup = true;
-        internal static int AddonsBackupNum = 7;
-        internal static int AddonsBackupTimer = 24;
-        internal static int BackupCompressionLevel = 6;
-        internal static MetroColorStyle NewStyleColor = MetroColorStyle.Blue;
-        internal static bool WowPluginsShowIngameNotifications = true;
-        internal static bool EnableCustomPlugins = false;
-        internal static int PingerBadNetworkPing = 125;
-        internal static int PingerBadNetworkProcent = 5;
-        internal static int PingerVeryBadNetworkPing = 250;
-        internal static int PingerVeryBadNetworkProcent = 10;
-        internal static bool MinimizeToTray = true;
-
-        internal delegate void LuaTimerHotkeyChangedHandler(Keys key);
-        internal static LuaTimerHotkeyChangedHandler LuaTimerHotkeyChanged;
-        private static Keys _luaTimerHotkey = Keys.None;
-        internal static Keys LuaTimerHotkey
+        private static Settings _instance;
+        internal static Settings Instance
         {
             get
             {
-                return _luaTimerHotkey;
+                if (_instance == null)
+                {
+                    string settingsFile = Globals.CfgPath + "//settings.json";
+                    if (File.Exists(settingsFile))
+                    {
+                        _instance = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(settingsFile, Encoding.UTF8));
+                        Log.Print("Settings file is loaded");
+                    }
+                    else
+                    {
+                        _instance = new Settings();
+                        Log.Print("Settings file is not found!");
+                    }
+                    _instance.CheckForErrors();
+                }
+                return _instance;
+            }
+        }
+
+        internal void CheckForErrors()
+        {
+            if (MainWindowLocation.X < 0 || MainWindowLocation.Y < 0)
+            {
+                MainWindowLocation = new Point(100, 100);
+            }
+            if (WoWLuaConsoleWindowSize.Height < 354)
+            {
+                WoWLuaConsoleWindowSize.Height = 354;
+            }
+            if (WoWLuaConsoleWindowSize.Width < 650)
+            {
+                WoWLuaConsoleWindowSize.Width = 650;
+            }
+            if (WoWLuaConsoleTimerInterval < 50)
+            {
+                WoWLuaConsoleTimerInterval = 50;
+            }
+            if (WoWAddonsBackupCompressionLevel < 0)
+            {
+                WoWAddonsBackupCompressionLevel = 0;
+            }
+            if (WoWAddonsBackupCompressionLevel > 9)
+            {
+                WoWAddonsBackupCompressionLevel = 9;
+            }
+            if (string.IsNullOrWhiteSpace(WoWDirectory))
+            {
+                WoWDirectory = GetWowPath();
+            }
+            if (string.IsNullOrWhiteSpace(VentriloDirectory))
+            {
+                VentriloDirectory = GetVentriloPath();
+            }
+            if (string.IsNullOrWhiteSpace(MumbleDirectory))
+            {
+                MumbleDirectory = GetMumblePath();
+            }
+            if (string.IsNullOrWhiteSpace(RaidcallDirectory))
+            {
+                RaidcallDirectory = GetRaidcallPath();
+            }
+            if (string.IsNullOrWhiteSpace(TS3Directory))
+            {
+                TS3Directory = GetTeamspeakPath();
+            }
+        }
+
+        internal void SaveJSON()
+        {
+            _instance.LastUsedVersion = Globals.AppVersion;
+            string json = JsonConvert.SerializeObject(_instance, Formatting.Indented);
+            File.WriteAllText(Globals.CfgPath + "//settings.json", json, Encoding.UTF8);
+        }
+
+
+
+        [JsonProperty(Order = 0, PropertyName = "UserID")]
+        internal string UserID = String.Empty;
+
+        [JsonProperty(Order = 1, PropertyName = "LastUsedVersion")]
+        internal VersionExt LastUsedVersion = new VersionExt(0, 0, 0);
+
+        [JsonProperty(Order = 2, PropertyName = "MainWindowLocation")]
+        internal Point MainWindowLocation = new Point(100, 100);
+
+        [JsonProperty(Order = 3, PropertyName = "StyleColor")]
+        internal MetroColorStyle StyleColor = MetroColorStyle.Blue;
+
+        [JsonProperty(Order = 4, PropertyName = "MinimizeToTray")]
+        internal bool MinimizeToTray = true;
+
+
+
+        [JsonProperty(Order = 5, PropertyName = "WoWDirectory")]
+        internal  string WoWDirectory = String.Empty;
+
+        [JsonProperty(Order = 6, PropertyName = "WoWAccounts")]
+        internal byte[] WoWAccounts = new byte[0];
+
+        [JsonProperty(Order = 7, PropertyName = "WoWAntiKick")]
+        internal  bool WoWAntiKick = false;
+
+        [JsonProperty(Order = 8, PropertyName = "WoWWipeCreatureCache")]
+        internal  bool WoWWipeCreatureCache = false;
+
+        [JsonProperty(Order = 9, PropertyName = "WoWDeleteLogs")]
+        internal  bool WoWDeleteLogs = false;
+
+        [JsonProperty(Order = 10, PropertyName = "WoWCustomizeWindow")]
+        internal  bool WoWCustomizeWindow = false;
+
+        [JsonProperty(Order = 11, PropertyName = "WoWCustomWindowSize")]
+        internal  Point WoWCustomWindowSize = new Point(800, 600);
+
+        [JsonProperty(Order = 12, PropertyName = "WoWCustomWindowNoBorder")]
+        internal  bool WoWCustomWindowNoBorder = false;
+
+        [JsonProperty(Order = 13, PropertyName = "WoWCustomWindowLocation")]
+        internal  Point WoWCustomWindowLocation = Point.Empty;
+
+
+
+        [JsonProperty(Order = 14, PropertyName = "ClickerHotkey")]
+        internal  Keys ClickerHotkey = Keys.None;
+
+        [JsonProperty(Order = 15, PropertyName = "ClickerInterval")]
+        internal  int ClickerInterval = 0x3e8;
+
+        [JsonProperty(Order = 16, PropertyName = "ClickerKey")]
+        internal  Keys ClickerKey = Keys.None;
+
+
+
+        [JsonProperty(Order = 17, PropertyName = "MumbleDirectory")]
+        internal  string MumbleDirectory = String.Empty;
+
+        [JsonProperty(Order = 18, PropertyName = "MumbleStartWithWoW")]
+        internal  bool MumbleStartWithWoW = false;
+
+        
+
+        [JsonProperty(Order = 19, PropertyName = "RaidcallDirectory")]
+        internal  string RaidcallDirectory = String.Empty;
+
+        [JsonProperty(Order = 20, PropertyName = "RaidcallStartWithWoW")]
+        internal  bool RaidcallStartWithWoW = false;
+        
+
+        
+        [JsonProperty(Order = 21, PropertyName = "TS3Directory")]
+        internal  string TS3Directory = String.Empty;
+
+        [JsonProperty(Order = 22, PropertyName = "TS3StartWithWoW")]
+        internal  bool TS3StartWithWoW = false;
+
+
+
+        [JsonProperty(Order = 23, PropertyName = "VentriloDirectory")]
+        internal  string VentriloDirectory = String.Empty;
+
+        [JsonProperty(Order = 24, PropertyName = "VentriloStartWithWoW")]
+        internal  bool VentriloStartWithWoW = false;
+
+
+
+        [JsonProperty(Order = 25, PropertyName = "WoWLuaConsoleWindowSize")]
+        internal  Size WoWLuaConsoleWindowSize = new Size(650, 354);
+
+        [JsonProperty(Order = 26, PropertyName = "WoWLuaConsoleTimerInterval")]
+        internal  int WoWLuaConsoleTimerInterval = 1000;
+
+        [JsonProperty(Order = 27, PropertyName = "WoWLuaConsoleTimerRnd")]
+        internal  bool WoWLuaConsoleTimerRnd = false;
+
+        internal delegate void LuaTimerHotkeyChangedHandler(Keys key);
+        internal  LuaTimerHotkeyChangedHandler LuaTimerHotkeyChanged;
+        private  Keys luaTimerHotkey = Keys.None;
+        [JsonProperty(Order = 28, PropertyName = "WoWLuaConsoleTimerHotkey")]
+        internal  Keys LuaTimerHotkey
+        {
+            get
+            {
+                return luaTimerHotkey;
             }
             set
             {
-                _luaTimerHotkey = value;
+                luaTimerHotkey = value;
                 if (LuaTimerHotkeyChanged != null)
                 {
                     LuaTimerHotkeyChanged(value);
@@ -83,384 +214,96 @@ namespace AxTools.Classes
             }
         }
 
-        internal static void Load()
-        {
-            try
-            {
-                if (File.Exists(Globals.SettingsFilePath))
-                {
-                    using (StringReader reader = new StringReader(File.ReadAllText(Globals.SettingsFilePath, Encoding.UTF8)))
-                    {
-                        while (reader.Peek() != -1)
-                        {
-                            string str = reader.ReadLine();
-                            if (str != null && str.Contains("=") && !str.Contains("##"))
-                            {
-                                string[] strArray = str.Split('=');
-                                try
-                                {
-                                    switch (strArray[0])
-                                    {
-                                        case "Location":
-                                            Location.X = Convert.ToInt32(strArray[2].Substring(0, strArray[2].Length - 2));
-                                            Location.Y = Convert.ToInt32(strArray[3].Substring(0, strArray[3].Length - 1));
-                                            if (Location.X < 0 || Location.Y < 0)
-                                            {
-                                                Location = new Point(100, 100);
-                                            }
-                                            break;
-                                        case "MinimizeToTray":
-                                            MinimizeToTray = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "wow_dir":
-                                            WowExe = strArray[1];
-                                            break;
-                                        case "vt_dir":
-                                            VtExe = strArray[1];
-                                            break;
-                                        case "mumble_dir":
-                                            MumbleExe = strArray[1];
-                                            break;
-                                        case "raidcall_dir":
-                                            RaidcallExe = strArray[1];
-                                            break;
-                                        case "TeamspeakDir":
-                                            TeamspeakExe = strArray[1];
-                                            break;
-                                        case "addons_backup_lastdate":
-                                            AddonsBackupLastdate = Convert.ToDateTime(strArray[1]);
-                                            break;
-                                        case "del_wow_log":
-                                            DelWowLog = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "creature_cache":
-                                            CreatureCache = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "clicker_key":
-                                        case "clicker.key":
-                                            Enum.TryParse(strArray[1], true, out ClickerKey);
-                                            break;
-                                        case "clicker_hotkey":
-                                        case "clicker.hotkey":
-                                            Enum.TryParse(strArray[1], true, out ClickerHotkey);
-                                            break;
-                                        case "clicker_interval":
-                                        case "clicker.interval":
-                                            ClickerInterval = Convert.ToInt32(strArray[1]);
-                                            break;
-                                        case "GameServer":
-                                        case "Pinger.GameServer":
-                                            GameServer = Globals.GameServers.FirstOrDefault(i => i.Description == strArray[1]) ?? Globals.GameServers[0];
-                                            break;
-                                        case "Pinger.BadNetworkPing":
-                                            PingerBadNetworkPing = Convert.ToInt32(strArray[1]);
-                                            break;
-                                        case "Pinger.BadNetworkProcent":
-                                            PingerBadNetworkProcent = Convert.ToInt32(strArray[1]);
-                                            break;
-                                        case "Pinger.VeryBadNetworkPing":
-                                            PingerVeryBadNetworkPing = Convert.ToInt32(strArray[1]);
-                                            break;
-                                        case "Pinger.VeryBadNetworkProcent":
-                                            PingerVeryBadNetworkProcent = Convert.ToInt32(strArray[1]);
-                                            break;
-                                        case "regname":
-                                            Regname = strArray[1];
-                                            break;
-                                        case "wasd":
-                                            Wasd = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "auto_accept_wnd_setts":
-                                        case "wow_wnd.auto_accept":
-                                            AutoAcceptWndSetts = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "noframe":
-                                        case "wow_wnd.noframe":
-                                            Noframe = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "x":
-                                        case "wow_wnd.pos.x":
-                                            WowWindowLocation.X = Convert.ToInt32(strArray[1]);
-                                            break;
-                                        case "y":
-                                        case "wow_wnd.pos.y":
-                                            WowWindowLocation.Y = Convert.ToInt32(strArray[1]);
-                                            break;
-                                        case "WowWindowLocation":
-                                            WowWindowLocation.X = Convert.ToInt32(strArray[2].Substring(0, strArray[2].Length - 2));
-                                            WowWindowLocation.Y = Convert.ToInt32(strArray[3].Substring(0, strArray[3].Length - 1));
-                                            break;
-                                        case "cx":
-                                        case "wow_wnd.width":
-                                            WowWindowSize.X = Convert.ToUInt16(strArray[1]);
-                                            break;
-                                        case "cy":
-                                        case "wow_wnd.height":
-                                            WowWindowSize.Y = Convert.ToUInt16(strArray[1]);
-                                            break;
-                                        case "WowWindowSize":
-                                            WowWindowSize.X = Convert.ToInt32(strArray[2].Substring(0, strArray[2].Length - 2));
-                                            WowWindowSize.Y = Convert.ToInt32(strArray[3].Substring(0, strArray[3].Length - 1));
-                                            break;
-                                        case "StartVentriloWithWow":
-                                            StartVentriloWithWow = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "StartTS3WithWow":
-                                            StartTS3WithWow = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "StartRaidcallWithWow":
-                                            StartRaidcallWithWow = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "StartMumbleWithWow":
-                                            StartMumbleWithWow = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "LastUsedVersion":
-                                            LastUsedVersion = new Version(strArray[1]);
-                                            break;
-                                        case "LuaTimerHotkey":
-                                            Enum.TryParse(strArray[1], true, out _luaTimerHotkey);
-                                            break;
-                                        case "PrecompiledModulesHotkey":
-                                            Enum.TryParse(strArray[1], true, out PrecompiledModulesHotkey);
-                                            break;
-                                        case "LuaConsole.Size.Width":
-                                            LuaConsoleSize.Width = Convert.ToInt32(strArray[1]);
-                                            if (LuaConsoleSize.Width < 650)
-                                            {
-                                                LuaConsoleSize.Width = 650;
-                                            }
-                                            break;
-                                        case "LuaConsole.Size.Height":
-                                            LuaConsoleSize.Height = Convert.ToInt32(strArray[1]);
-                                            if (LuaConsoleSize.Height < 354)
-                                            {
-                                                LuaConsoleSize.Height = 354;
-                                            }
-                                            break;
-                                        case "LuaConsole.TimerInterval":
-                                            LuaConsoleTimerInterval = Convert.ToInt32(strArray[1]);
-                                            if (LuaConsoleTimerInterval < 50)
-                                            {
-                                                LuaConsoleTimerInterval = 50;
-                                            }
-                                            break;
-                                        case "LuaConsole.RandomizeTimer":
-                                            LuaConsoleRandomizeTimer = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "LuaConsole.IgnoreGameState":
-                                            LuaConsoleIgnoreGameState = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "LuaConsole.ShowIngameNotifications":
-                                            LuaConsoleShowIngameNotifications = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "RadarLocation":
-                                            RadarLocation.X = Convert.ToInt32(strArray[2].Substring(0, strArray[2].Length - 2));
-                                            RadarLocation.Y = Convert.ToInt32(strArray[3].Substring(0, strArray[3].Length - 1));
-                                            break;
-                                        case "RadarPlayersDrawingMode":
-                                            RadarShowPlayersClasses = Convert.ToInt32(strArray[1]) == 0;
-                                            break;
-                                        case "RadarNpcsDrawingMode":
-                                            RadarShowNpcsNames = Convert.ToInt32(strArray[1]) == 0;
-                                            break;
-                                        case "RadarObjectsDrawingMode":
-                                            RadarShowObjectsNames = Convert.ToInt32(strArray[1]) == 0;
-                                            break;
-                                        case "RadarShowPlayersClasses":
-                                            RadarShowPlayersClasses = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "RadarShowNpcsNames":
-                                            RadarShowNpcsNames = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "RadarShowObjectsNames":
-                                            RadarShowObjectsNames = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "RadarShow":
-                                            RadarShow = Convert.ToUInt64(strArray[1]);
-                                            break;
-                                        case "RadarFriendColor":
-                                            RadarFriendColor = Color.FromArgb(Convert.ToInt32(strArray[1]));
-                                            break;
-                                        case "RadarEnemyColor":
-                                            RadarEnemyColor = Color.FromArgb(Convert.ToInt32(strArray[1]));
-                                            break;
-                                        case "RadarNpcColor":
-                                            RadarNpcColor = Color.FromArgb(Convert.ToInt32(strArray[1]));
-                                            break;
-                                        case "RadarObjectColor":
-                                            RadarObjectColor = Color.FromArgb(Convert.ToInt32(strArray[1]));
-                                            break;
-                                        case "AddonsBackupPath":
-                                            AddonsBackupPath = strArray[1];
-                                            if (AddonsBackupPath == Application.StartupPath + "\\common")
-                                            {
-                                                AddonsBackupPath = Globals.UserfilesPath;
-                                            }
-                                            break;
-                                        case "AddonsBackup":
-                                            AddonsBackup = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "AddonsBackupNum":
-                                            AddonsBackupNum = Convert.ToInt32(strArray[1]);
-                                            break;
-                                        case "AddonsBackupTimer":
-                                            AddonsBackupTimer = Convert.ToInt32(strArray[1]);
-                                            break;
-                                        case "BackupCompressionLevel":
-                                            BackupCompressionLevel = Convert.ToInt32(strArray[1]);
-                                            if (BackupCompressionLevel < 0)
-                                            {
-                                                BackupCompressionLevel = 0;
-                                            }
-                                            if (BackupCompressionLevel > 9)
-                                            {
-                                                BackupCompressionLevel = 9;
-                                            }
-                                            break;
-                                        case "NewStyleColor":
-                                            int intRepresentation = Convert.ToInt32(strArray[1]);
-                                            if (intRepresentation == 1 || intRepresentation > 13 || intRepresentation < 0)
-                                            {
-                                                intRepresentation = 3;
-                                            }
-                                            NewStyleColor = (MetroColorStyle) intRepresentation;
-                                            break;
-                                        case "WowPluginsShowIngameNotifications":
-                                            WowPluginsShowIngameNotifications = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                        case "EnableCustomPlugins":
-                                            EnableCustomPlugins = Convert.ToBoolean(strArray[1]);
-                                            break;
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Log.Print("Settings reading error (" + strArray.AsString() + "): " + ex.Message, true);
-                                }
-                            }
-                        }
-                    }
-                    if (WowExe == String.Empty)
-                    {
-                        WowExe = GetWowPath();
-                    }
-                    if (TeamspeakExe == String.Empty)
-                    {
-                        TeamspeakExe = GetTeamspeakPath();
-                    }
-                    if (VtExe == String.Empty)
-                    {
-                        VtExe = GetVentriloPath();
-                    }
-                    if (RaidcallExe == String.Empty)
-                    {
-                        RaidcallExe = GetRaidcallPath();
-                    }
-                    if (MumbleExe == String.Empty)
-                    {
-                        MumbleExe = GetMumblePath();
-                    }
-                    Log.Print("Settings are loaded");
-                }
-                else
-                {
-                    Log.Print("Settings file isn't found");
-                }
-            }
-            catch (Exception exception1)
-            {
-                Log.Print("Reading settings failed: " + exception1.Message, true);
-            }
-        }
-        internal static void Save()
-        {
-            try
-            {
-                StringBuilder builder = new StringBuilder("## AxTools settings file\r\n");
-                builder.AppendLine(String.Empty);
-                builder.AppendLine("## General settings ##");
-                builder.AppendLine("Location=" + Location);
-                builder.AppendLine("regname=" + Regname);
-                builder.AppendLine("LastUsedVersion=" + Globals.AppVersion);
-                builder.AppendLine("NewStyleColor=" + Convert.ToString((int)NewStyleColor));
-                builder.AppendLine("MinimizeToTray=" + Convert.ToString(MinimizeToTray));
+        [JsonProperty(Order = 29, PropertyName = "WoWLuaConsoleIgnoreGameState")]
+        internal  bool WoWLuaConsoleIgnoreGameState = false;
 
-                builder.AppendLine(String.Empty);
+        [JsonProperty(Order = 30, PropertyName = "WoWLuaConsoleShowIngameNotifications")]
+        internal  bool WoWLuaConsoleShowIngameNotifications = true;
 
-                builder.AppendLine("WowPluginsShowIngameNotifications=" + Convert.ToString(WowPluginsShowIngameNotifications));
-                builder.AppendLine("EnableCustomPlugins=" + Convert.ToString(EnableCustomPlugins));
-                builder.AppendLine("del_wow_log=" + Convert.ToString(DelWowLog));
-                builder.AppendLine("creature_cache=" + Convert.ToString(CreatureCache));
-                builder.AppendLine("clicker.key=" + Convert.ToString(ClickerKey));
-                builder.AppendLine("clicker.hotkey=" + Convert.ToString(ClickerHotkey));
-                builder.AppendLine("clicker.interval=" + Convert.ToString(ClickerInterval));
-                builder.AppendLine("wasd=" + Convert.ToString(Wasd));
-                builder.AppendLine("wow_wnd.auto_accept=" + Convert.ToString(AutoAcceptWndSetts));
-                builder.AppendLine("wow_wnd.noframe=" + Convert.ToString(Noframe));
-                builder.AppendLine("WowWindowLocation=" + WowWindowLocation);
-                builder.AppendLine("WowWindowSize=" + WowWindowSize);
-                builder.AppendLine("LuaTimerHotkey=" + Convert.ToString(_luaTimerHotkey));
-                builder.AppendLine("PrecompiledModulesHotkey=" + Convert.ToString(PrecompiledModulesHotkey));
+        [JsonProperty(Order = 31, PropertyName = "WoWLuaConsoleLastText")]
+        internal string LuaConsoleLastText;
 
-                builder.AppendLine(String.Empty);
-                builder.AppendLine("## Paths ##");
-                if (Directory.Exists(WowExe)) builder.AppendLine("wow_dir=" + WowExe);
-                if (Directory.Exists(VtExe)) builder.AppendLine("vt_dir=" + VtExe);
-                if (Directory.Exists(MumbleExe)) builder.AppendLine("mumble_dir=" + MumbleExe);
-                if (Directory.Exists(RaidcallExe)) builder.AppendLine("raidcall_dir=" + RaidcallExe);
-                if (Directory.Exists(TeamspeakExe)) builder.AppendLine("TeamspeakDir=" + TeamspeakExe);
 
-                builder.AppendLine(String.Empty);
-                builder.AppendLine("## VoIP settings ##");
-                builder.AppendLine("StartVentriloWithWow=" + Convert.ToString(StartVentriloWithWow));
-                builder.AppendLine("StartTS3WithWow=" + Convert.ToString(StartTS3WithWow));
-                builder.AppendLine("StartRaidcallWithWow=" + Convert.ToString(StartRaidcallWithWow));
-                builder.AppendLine("StartMumbleWithWow=" + Convert.ToString(StartMumbleWithWow));
 
-                builder.AppendLine(String.Empty);
-                builder.AppendLine("## Lua console settings ##");
-                builder.AppendLine("LuaConsole.Size.Width=" + LuaConsoleSize.Width);
-                builder.AppendLine("LuaConsole.Size.Height=" + LuaConsoleSize.Height);
-                builder.AppendLine("LuaConsole.TimerInterval=" + LuaConsoleTimerInterval);
-                builder.AppendLine("LuaConsole.RandomizeTimer=" + LuaConsoleRandomizeTimer);
-                builder.AppendLine("LuaConsole.IgnoreGameState=" + LuaConsoleIgnoreGameState);
-                builder.AppendLine("LuaConsole.ShowIngameNotifications=" + LuaConsoleShowIngameNotifications);
+        [JsonProperty(Order = 32, PropertyName = "WoWRadarList")]
+        internal List<ObjectToFind> WoWRadarList = new List<ObjectToFind>();
 
-                builder.AppendLine(String.Empty);
-                builder.AppendLine("## Radar settings ##");
-                builder.AppendLine("RadarLocation=" + RadarLocation);
-                builder.AppendLine("RadarShowPlayersClasses=" + Convert.ToString(RadarShowPlayersClasses));
-                builder.AppendLine("RadarShowNpcsNames=" + Convert.ToString(RadarShowNpcsNames));
-                builder.AppendLine("RadarShowObjectsNames=" + Convert.ToString(RadarShowObjectsNames));
-                builder.AppendLine("RadarShow=" + Convert.ToString(RadarShow));
-                builder.AppendLine("RadarFriendColor=" + RadarFriendColor.ToArgb());
-                builder.AppendLine("RadarEnemyColor=" + RadarEnemyColor.ToArgb());
-                builder.AppendLine("RadarNpcColor=" + RadarNpcColor.ToArgb());
-                builder.AppendLine("RadarObjectColor=" + RadarObjectColor.ToArgb());
+        [JsonProperty(Order = 33, PropertyName = "WoWRadarLocation")]
+        internal  Point WoWRadarLocation = Point.Empty;
 
-                builder.AppendLine(String.Empty);
-                builder.AppendLine("## Pinger ##");
-                builder.AppendLine("Pinger.GameServer=" + GameServer.Description);
-                builder.AppendLine("Pinger.BadNetworkPing=" + PingerBadNetworkPing);
-                builder.AppendLine("Pinger.BadNetworkProcent=" + PingerBadNetworkProcent);
-                builder.AppendLine("Pinger.VeryBadNetworkPing=" + PingerVeryBadNetworkPing);
-                builder.AppendLine("Pinger.VeryBadNetworkProcent=" + PingerVeryBadNetworkProcent);
+        [JsonProperty(Order = 34, PropertyName = "WoWRadarShowPlayersClasses")]
+        internal  bool WoWRadarShowPlayersClasses = true;
 
-                builder.AppendLine(String.Empty);
-                builder.AppendLine("## Backup settings ##");
-                builder.AppendLine("AddonsBackupPath=" + AddonsBackupPath);
-                builder.AppendLine("AddonsBackup=" + Convert.ToString(AddonsBackup));
-                builder.AppendLine("AddonsBackupNum=" + Convert.ToString(AddonsBackupNum));
-                builder.AppendLine("AddonsBackupTimer=" + Convert.ToString(AddonsBackupTimer));
-                builder.AppendLine("BackupCompressionLevel=" + Convert.ToString(BackupCompressionLevel));
-                builder.Append("addons_backup_lastdate=" + Convert.ToString(AddonsBackupLastdate));
-                File.WriteAllText(Globals.SettingsFilePath, builder.ToString(), Encoding.UTF8);
-            }
-            catch (Exception exception1)
-            {
-                Log.Print("Error: " + exception1.Message, true);
-            }
-        }
+        [JsonProperty(Order = 35, PropertyName = "WoWRadarShowNPCsNames")]
+        internal  bool WoWRadarShowNPCsNames = true;
+
+        [JsonProperty(Order = 36, PropertyName = "WoWRadarShowObjectsNames")]
+        internal  bool WoWRadarShowObjectsNames = true;
+
+        [JsonProperty(Order = 37, PropertyName = "WoWRadarShowMode")]
+        internal  ulong WoWRadarShowMode = 0;
+
+        [JsonProperty(Order = 38, PropertyName = "WoWRadarFriendColor")]
+        internal  Color WoWRadarFriendColor = Color.Green;
+
+        [JsonProperty(Order = 39, PropertyName = "WoWRadarEnemyColor")]
+        internal  Color WoWRadarEnemyColor = Color.Red;
+
+        [JsonProperty(Order = 40, PropertyName = "WoWRadarNPCColor")]
+        internal  Color WoWRadarNPCColor = Color.GreenYellow;
+
+        [JsonProperty(Order = 41, PropertyName = "WoWRadarObjectColor")]
+        internal  Color WoWRadarObjectColor = Color.Gold;
+
+
+
+        [JsonProperty(Order = 42, PropertyName = "WoWAddonsBackupPath")]
+        internal  string WoWAddonsBackupPath = Globals.UserfilesPath;
+
+        [JsonProperty(Order = 43, PropertyName = "WoWAddonsBackupLastDate")]
+        internal  DateTime WoWAddonsBackupLastDate = new DateTime(1970, 1, 1);
+
+        [JsonProperty(Order = 44, PropertyName = "WoWAddonsBackupIsActive")]
+        internal  bool WoWAddonsBackupIsActive = true;
+
+        [JsonProperty(Order = 45, PropertyName = "WoWAddonsBackupNumberOfArchives")]
+        internal  int WoWAddonsBackupNumberOfArchives = 7;
+
+        [JsonProperty(Order = 46, PropertyName = "WoWAddonsBackupMinimumTimeBetweenBackup")]
+        internal  int WoWAddonsBackupMinimumTimeBetweenBackup = 24;
+
+        [JsonProperty(Order = 47, PropertyName = "WoWAddonsBackupCompressionLevel")]
+        internal  int WoWAddonsBackupCompressionLevel = 6;
+
+
+
+        [JsonProperty(Order = 48, PropertyName = "WoWPluginHotkey")]
+        internal  Keys WoWPluginHotkey = Keys.None;
+
+        [JsonProperty(Order = 49, PropertyName = "WoWPluginShowIngameNotifications")]
+        internal  bool WoWPluginShowIngameNotifications = true;
+
+        [JsonProperty(Order = 50, PropertyName = "WoWPluginEnableCustom")]
+        internal  bool WoWPluginEnableCustom = false;
+
+
+
+        [JsonProperty(Order = 51, PropertyName = "PingerServer")]
+        internal  SrvAddress PingerServer;
+
+        [JsonProperty(Order = 52, PropertyName = "PingerBadPing")]
+        internal  int PingerBadPing = 125;
+
+        [JsonProperty(Order = 53, PropertyName = "PingerBadPacketLoss")]
+        internal  int PingerBadPacketLoss = 5;
+
+        [JsonProperty(Order = 54, PropertyName = "PingerVeryBadPing")]
+        internal  int PingerVeryBadPing = 250;
+
+        [JsonProperty(Order = 55, PropertyName = "PingerVeryBadPacketLoss")]
+        internal  int PingerVeryBadPacketLoss = 10;
+
+
 
         private static string GetTeamspeakPath()
         {

@@ -18,7 +18,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             Icon = Resources.AppIcon;
-            metroStyleManager1.Style = Settings.NewStyleColor;
+            metroStyleManager1.Style = Settings.Instance.StyleColor;
             timerUpdateList.Enabled = true;
             Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Opened", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }

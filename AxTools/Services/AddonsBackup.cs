@@ -8,15 +8,17 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.Classes;
 using AxTools.Forms;
 using Ionic.Zip;
 using Ionic.Zlib;
 using Timer = System.Timers.Timer;
 
-namespace AxTools.Classes
+namespace AxTools.Services
 {
     internal static class AddonsBackup
     {
+        private static readonly Settings _settings = Settings.Instance;
         private static int _prevProcent = -1;
         private static bool _isBackingUp;
         private static Timer _timer;
@@ -58,10 +60,10 @@ namespace AxTools.Classes
 
         private static void Timer_OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            TimeSpan pTimeSpan = DateTime.UtcNow - Settings.AddonsBackupLastdate;
-            if (pTimeSpan.TotalHours >= Settings.AddonsBackupTimer && !_isBackingUp)
+            TimeSpan pTimeSpan = DateTime.UtcNow - _settings.WoWAddonsBackupLastDate;
+            if (pTimeSpan.TotalHours >= _settings.WoWAddonsBackupMinimumTimeBetweenBackup && !_isBackingUp)
             {
-                Settings.AddonsBackupLastdate = DateTime.UtcNow;
+                _settings.WoWAddonsBackupLastDate = DateTime.UtcNow;
                 ProcessPriorityClass defaultProcessPriorityClass = Process.GetCurrentProcess().PriorityClass;
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
                 MainForm.Instance.AddonsBackup_OnChangedState(-1);
@@ -95,7 +97,7 @@ namespace AxTools.Classes
                         if (zip == null)
                         {
                             Log.Print("BackupAddons :: Backup successfully created");
-                            ReportToUser("Backup successful", "Backup file was stored in " + Settings.AddonsBackupPath, false, trayMode);
+                            ReportToUser("Backup successful", "Backup file was stored in " + _settings.WoWAddonsBackupPath, false, trayMode);
                         }
                         else
                         {
@@ -123,11 +125,11 @@ namespace AxTools.Classes
 
         private static CheckWTFDirectoryResult CheckWTFDirectory()
         {
-            if (!Directory.Exists(Settings.WowExe + "\\WTF"))
+            if (!Directory.Exists(_settings.WoWDirectory + "\\WTF"))
             {
                 return CheckWTFDirectoryResult.WTFDirIsNotFound;
             }
-            if (Utils.CalcDirectorySize(Settings.WowExe + "\\WTF") > 1024 * 1024 * 1024)
+            if (Utils.CalcDirectorySize(_settings.WoWDirectory + "\\WTF") > 1024 * 1024 * 1024)
             {
                 return CheckWTFDirectoryResult.WTFDirIsTooLarge;
             }
@@ -136,7 +138,7 @@ namespace AxTools.Classes
 
         private static Exception CreateBackupDir()
         {
-            DirectoryInfo backupDirectory = new DirectoryInfo(Settings.AddonsBackupPath);
+            DirectoryInfo backupDirectory = new DirectoryInfo(_settings.WoWAddonsBackupPath);
             try
             {
                 if (!backupDirectory.Exists)
@@ -153,10 +155,10 @@ namespace AxTools.Classes
 
         private static void DeleteOldFiles()
         {
-            DirectoryInfo backupDirectory = new DirectoryInfo(Settings.AddonsBackupPath);
+            DirectoryInfo backupDirectory = new DirectoryInfo(_settings.WoWAddonsBackupPath);
             List<FileInfo> backupFiles = backupDirectory.GetFileSystemInfos().Where(i => i.Name.Contains("AddonsBackup_") && i is FileInfo).Cast<FileInfo>().ToList();
             Log.Print("BackupAddons :: Total backup files: " + backupFiles.Count);
-            if (backupFiles.Count >= Settings.AddonsBackupNum)
+            if (backupFiles.Count >= _settings.WoWAddonsBackupNumberOfArchives)
             {
                 // I place newest file to the end of list
                 backupFiles.Sort((first, second) =>
@@ -167,7 +169,7 @@ namespace AxTools.Classes
                     }
                     return -1;
                 });
-                for (int i = 0; i < backupFiles.Count - Settings.AddonsBackupNum + 1; i++)
+                for (int i = 0; i < backupFiles.Count - _settings.WoWAddonsBackupNumberOfArchives + 1; i++)
                 {
                     try
                     {
@@ -184,15 +186,15 @@ namespace AxTools.Classes
 
         private static Exception Zip()
         {
-            string zipPath = String.Format("{0}\\AddonsBackup_{1:yyyyMMdd_HHmmss}.zip", Settings.AddonsBackupPath, DateTime.UtcNow);
+            string zipPath = String.Format("{0}\\AddonsBackup_{1:yyyyMMdd_HHmmss}.zip", _settings.WoWAddonsBackupPath, DateTime.UtcNow);
             Log.Print("BackupAddons :: Zipping to file: " + zipPath);
             try
             {
                 using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
                 {
-                    zip.CompressionLevel = (CompressionLevel)Settings.BackupCompressionLevel;
-                    zip.AddDirectory(Settings.WowExe + "\\WTF", "\\WTF");
-                    zip.AddDirectory(Settings.WowExe + "\\Interface", "\\Interface");
+                    zip.CompressionLevel = (CompressionLevel)_settings.WoWAddonsBackupCompressionLevel;
+                    zip.AddDirectory(_settings.WoWDirectory + "\\WTF", "\\WTF");
+                    zip.AddDirectory(_settings.WoWDirectory + "\\Interface", "\\Interface");
                     zip.SaveProgress += AddonsBackup_SaveProgress;
                     zip.Save();
                     zip.SaveProgress -= AddonsBackup_SaveProgress;

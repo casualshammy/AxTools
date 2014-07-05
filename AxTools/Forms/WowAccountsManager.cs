@@ -13,7 +13,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             Icon = Resources.AppIcon;
-            metroStyleManager1.Style = Settings.NewStyleColor;
+            metroStyleManager1.Style = Settings.Instance.StyleColor;
             comboBoxWowAccounts.Items.Clear();
             foreach (WowAccount i in WowAccount.AllAccounts)
             {

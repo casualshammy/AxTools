@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Security.Cryptography;
+using System.Text;
 using AxTools.Classes;
+using Newtonsoft.Json;
 
 namespace AxTools.WoW
 {
@@ -18,6 +18,7 @@ namespace AxTools.WoW
         [DataMember(Name = "WowAccountPassword")]
         internal string Password;
 
+        [JsonConstructor]
         internal WowAccount(string login, string password)
         {
             Login = login;
@@ -25,54 +26,55 @@ namespace AxTools.WoW
         }
 
         private static readonly object _lock = new object();
-        private static List<WowAccount> _list = new List<WowAccount>();
+        private static List<WowAccount> _list;
         internal static List<WowAccount> AllAccounts
         {
             get
             {
                 lock (_lock)
                 {
-                    return _list;
+                    return _list ?? (_list = Load());
                 }
             }
         }
 
-        internal static void LoadFromDisk()
+        private static List<WowAccount> Load()
         {
             try
             {
-                if (File.Exists(Globals.WowAccountsFilePath))
-                {
-                    byte[] strangeBytes = { 0x2A, 0x26, 0x44, 0x56, 0x47, 0x2A, 0x37, 0x64, 0x76, 0x47, 0x26, 0x44, 0x2A, 0x48, 0x56, 0x37, 0x68, 0x26, 0x56, 0x68, 0x65, 0x68, 0x76, 0x26, 0x2A, 0x56, 0x48 };
-                    byte[] bytes = Crypt.Decrypt<RijndaelManaged>(File.ReadAllBytes(Globals.WowAccountsFilePath), strangeBytes);
-                    using (MemoryStream memoryStream = new MemoryStream(bytes))
-                    {
-                        _list = (List<WowAccount>)new DataContractJsonSerializer(_list.GetType()).ReadObject(memoryStream);
-                    }
-                    Log.Print("WoW accounts was loaded");
-                }
-                else
-                {
-                    Log.Print("WoW accounts file not found");
-                }
+                byte[] strangeBytes = {0x2A, 0x26, 0x44, 0x56, 0x47, 0x2A, 0x37, 0x64, 0x76, 0x47, 0x26, 0x44, 0x2A, 0x48, 0x56, 0x37, 0x68, 0x26, 0x56, 0x68, 0x65, 0x68, 0x76, 0x26, 0x2A, 0x56, 0x48};
+                byte[] bytes = Crypt.Decrypt<RijndaelManaged>(Settings.Instance.WoWAccounts, strangeBytes);
+                List<WowAccount> list = JsonConvert.DeserializeObject<List<WowAccount>>(Encoding.UTF8.GetString(bytes));
+                //using (MemoryStream memoryStream = new MemoryStream(bytes))
+                //{
+                //    list = (List<WowAccount>) new DataContractJsonSerializer(_list.GetType()).ReadObject(memoryStream);
+                //}
+                Log.Print("WoW accounts was loaded");
+                return list;
             }
             catch (Exception ex)
             {
                 Log.Print("WoW accounts loading failed: " + ex.Message, true);
+                return null;
             }
         }
 
-        internal static void SaveToDisk()
+        internal static void Save()
         {
             try
             {
-                using (MemoryStream memoryStream = new MemoryStream())
+                if (_list != null)
                 {
-                    new DataContractJsonSerializer(_list.GetType()).WriteObject(memoryStream, _list);
+                    string json = JsonConvert.SerializeObject(_list);
                     byte[] strangeBytes = { 0x2A, 0x26, 0x44, 0x56, 0x47, 0x2A, 0x37, 0x64, 0x76, 0x47, 0x26, 0x44, 0x2A, 0x48, 0x56, 0x37, 0x68, 0x26, 0x56, 0x68, 0x65, 0x68, 0x76, 0x26, 0x2A, 0x56, 0x48 };
-                    byte[] bytes = Crypt.Encrypt<RijndaelManaged>(memoryStream.ToArray(), strangeBytes);
-                    File.WriteAllBytes(Globals.WowAccountsFilePath, bytes);
+                    Settings.Instance.WoWAccounts = Crypt.Encrypt<RijndaelManaged>(Encoding.UTF8.GetBytes(json), strangeBytes);
                 }
+                //using (MemoryStream memoryStream = new MemoryStream())
+                //{
+                //    new DataContractJsonSerializer(_list.GetType()).WriteObject(memoryStream, _list);
+                //    byte[] strangeBytes = { 0x2A, 0x26, 0x44, 0x56, 0x47, 0x2A, 0x37, 0x64, 0x76, 0x47, 0x26, 0x44, 0x2A, 0x48, 0x56, 0x37, 0x68, 0x26, 0x56, 0x68, 0x65, 0x68, 0x76, 0x26, 0x2A, 0x56, 0x48 };
+                //    Settings.Instance.WoWAccounts = Crypt.Encrypt<RijndaelManaged>(memoryStream.ToArray(), strangeBytes);
+                //}
             }
             catch (Exception ex)
             {

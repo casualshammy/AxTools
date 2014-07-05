@@ -9,7 +9,6 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.WoW;
@@ -26,33 +25,15 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             Icon = Resources.AppIcon;
-            string filename = Globals.CfgPath + "\\.radar3";
-            try
-            {
-                if (File.Exists(filename))
-                {
-                    byte[] bytes = File.ReadAllBytes(filename);
-                    if (bytes.Length > 0)
-                    {
-                        using (MemoryStream memoryStream = new MemoryStream(bytes))
-                        {
-                            RadarKOSGeneral = (List<ObjectToFind>) new DataContractJsonSerializer(RadarKOSGeneral.GetType()).ReadObject(memoryStream);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Can't load the latest list: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
-            }
-            checkBoxFriends.ForeColor = Settings.RadarFriendColor;
-            checkBoxEnemies.ForeColor = Settings.RadarEnemyColor;
-            checkBoxNpcs.ForeColor = Settings.RadarNpcColor;
-            checkBoxObjects.ForeColor = Settings.RadarObjectColor;
+            RadarKOSGeneral = settings.WoWRadarList;
+            checkBoxFriends.ForeColor = settings.WoWRadarFriendColor;
+            checkBoxEnemies.ForeColor = settings.WoWRadarEnemyColor;
+            checkBoxNpcs.ForeColor = settings.WoWRadarNPCColor;
+            checkBoxObjects.ForeColor = settings.WoWRadarObjectColor;
             halfOfPictureboxSize = pictureBoxMain.Width / 2;
             try
             {
-                byte[] p = BitConverter.GetBytes(Settings.RadarShow);
+                byte[] p = BitConverter.GetBytes(settings.WoWRadarShowMode);
                 checkBoxFriends.Checked = p[0] == 1;
                 checkBoxEnemies.Checked = p[1] == 1;
                 checkBoxNpcs.Checked = p[2] == 1;
@@ -112,18 +93,19 @@ namespace AxTools.Forms
         }
         private static readonly HashSet<string> RadarKOSFind = new HashSet<string>();
         private static readonly HashSet<string> RadarKOSFindAlarm = new HashSet<string>();
-        private static readonly HashSet<string> RadarKOSFindInteract = new HashSet<string>(); 
+        private static readonly HashSet<string> RadarKOSFindInteract = new HashSet<string>();
 
-        private Pen friendPen = new Pen(Settings.RadarFriendColor, 1f);
-        private Pen enemyPen = new Pen(Settings.RadarEnemyColor, 1f);
-        private Pen npcPen = new Pen(Settings.RadarNpcColor, 1f);
-        private Pen objectPen = new Pen(Settings.RadarObjectColor, 1f);
+        private readonly Settings settings = Settings.Instance;
+        private Pen friendPen = new Pen(Settings.Instance.WoWRadarFriendColor, 1f);
+        private Pen enemyPen = new Pen(Settings.Instance.WoWRadarEnemyColor, 1f);
+        private Pen npcPen = new Pen(Settings.Instance.WoWRadarNPCColor, 1f);
+        private Pen objectPen = new Pen(Settings.Instance.WoWRadarObjectColor, 1f);
         private readonly Pen whitePen = new Pen(Color.White, 1f);
         private readonly Pen grayPen = new Pen(Color.Gray, 1f);
-        private SolidBrush friendBrush = new SolidBrush(Settings.RadarFriendColor);
-        private SolidBrush enemyBrush = new SolidBrush(Settings.RadarEnemyColor);
-        private SolidBrush npcBrush = new SolidBrush(Settings.RadarNpcColor);
-        private SolidBrush objectBrush = new SolidBrush(Settings.RadarObjectColor);
+        private SolidBrush friendBrush = new SolidBrush(Settings.Instance.WoWRadarFriendColor);
+        private SolidBrush enemyBrush = new SolidBrush(Settings.Instance.WoWRadarEnemyColor);
+        private SolidBrush npcBrush = new SolidBrush(Settings.Instance.WoWRadarNPCColor);
+        private SolidBrush objectBrush = new SolidBrush(Settings.Instance.WoWRadarObjectColor);
         private readonly SolidBrush whiteBrush = new SolidBrush(Color.White);
         private readonly SolidBrush grayBrush = new SolidBrush(Color.Gray);
         Point tmpPoint = Point.Empty;
@@ -317,7 +299,7 @@ namespace AxTools.Forms
                             objectsPointsInRadarCoords.Add(i.GUID, point);
                             point.X += 3;
                             point.Y += 3;
-                            if (Settings.RadarShowPlayersClasses)
+                            if (settings.WoWRadarShowPlayersClasses)
                             {
                                 if (i.Level == localPlayer.Level)
                                 {
@@ -385,7 +367,7 @@ namespace AxTools.Forms
                             objectsPointsInRadarCoords.Add(i.GUID, point);
                             point.X += 3;
                             point.Y += 3;
-                            if (Settings.RadarShowPlayersClasses)
+                            if (settings.WoWRadarShowPlayersClasses)
                             {
                                 if (i.Level == localPlayer.Level)
                                 {
@@ -438,7 +420,7 @@ namespace AxTools.Forms
                             graphics.DrawPolygon(objectPen, pts);
                             graphics.FillPolygon(objectBrush, pts);
                             objectsPointsInRadarCoords.Add(i.GUID, point);
-                            if (Settings.RadarShowObjectsNames)
+                            if (settings.WoWRadarShowObjectsNames)
                             {
                                 point.X += 3;
                                 point.Y += 3;
@@ -483,7 +465,7 @@ namespace AxTools.Forms
                             graphics.DrawPolygon(i.Health > 0 ? npcPen : grayPen, pts);
                             graphics.FillPolygon(i.Health > 0 ? npcBrush : grayBrush, pts);
                             objectsPointsInRadarCoords.Add(i.GUID, point);
-                            if (Settings.RadarShowNpcsNames)
+                            if (settings.WoWRadarShowNPCsNames)
                             {
                                 point.X += 3;
                                 point.Y += 3;
@@ -552,7 +534,7 @@ namespace AxTools.Forms
         private void RadarMouseUp(object sender, MouseEventArgs e)
         {
             isDragging = false;
-            Settings.RadarLocation = Location;
+            settings.WoWRadarLocation = Location;
         }
 
         private void RadarFormClosing(object sender, FormClosingEventArgs e)
@@ -591,21 +573,7 @@ namespace AxTools.Forms
             {
                 Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, redrawTask.Status), true);
             }
-
-            try
-            {
-                Utils.CheckCreateDir();
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    new DataContractJsonSerializer(RadarKOSGeneral.GetType()).WriteObject(memoryStream, RadarKOSGeneral);
-                    File.WriteAllBytes(Globals.CfgPath + "\\.radar3", memoryStream.ToArray());
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Can't save the latest list: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
-            }
-
+            settings.WoWRadarList = RadarKOSGeneral;
             if (mouseHookListener != null && mouseHookListener.Enabled)
             {
                 mouseHookListener.Dispose();
@@ -616,7 +584,7 @@ namespace AxTools.Forms
 
         private void RadarLoad(object sender, EventArgs e)
         {
-            Location = Settings.RadarLocation;
+            Location = settings.WoWRadarLocation;
             redrawTask.Start();
             if (!File.Exists(Globals.UserfilesPath + "\\alarm.wav"))
             {
@@ -645,7 +613,7 @@ namespace AxTools.Forms
             p[3] = (byte) (checkBoxObjects.Checked ? 1 : 0);
             p[4] = (byte) (checkBoxCorpses.Checked ? 1 : 0);
             p[5] = (byte) (zoomR/0.25F);
-            Settings.RadarShow = BitConverter.ToUInt64(p, 0);
+            settings.WoWRadarShowMode = BitConverter.ToUInt64(p, 0);
         }
 
         private void MeasureTooltip(Point mousePosition)
@@ -793,15 +761,15 @@ namespace AxTools.Forms
                 {
                     colorDialog.AllowFullOpen = true;
                     colorDialog.AnyColor = true;
-                    colorDialog.Color = Settings.RadarFriendColor;
+                    colorDialog.Color = settings.WoWRadarFriendColor;
                     colorDialog.FullOpen = true;
                     colorDialog.SolidColorOnly = true;
                     if (colorDialog.ShowDialog(this) == DialogResult.OK)
                     {
-                        Settings.RadarFriendColor = colorDialog.Color;
-                        friendPen = new Pen(Settings.RadarFriendColor, 1f);
-                        friendBrush = new SolidBrush(Settings.RadarFriendColor);
-                        checkBoxFriends.ForeColor = Settings.RadarFriendColor;
+                        settings.WoWRadarFriendColor = colorDialog.Color;
+                        friendPen = new Pen(settings.WoWRadarFriendColor, 1f);
+                        friendBrush = new SolidBrush(settings.WoWRadarFriendColor);
+                        checkBoxFriends.ForeColor = settings.WoWRadarFriendColor;
                     }
                 }
             }
@@ -814,15 +782,15 @@ namespace AxTools.Forms
                 {
                     colorDialog.AllowFullOpen = true;
                     colorDialog.AnyColor = true;
-                    colorDialog.Color = Settings.RadarEnemyColor;
+                    colorDialog.Color = settings.WoWRadarEnemyColor;
                     colorDialog.FullOpen = true;
                     colorDialog.SolidColorOnly = true;
                     if (colorDialog.ShowDialog(this) == DialogResult.OK)
                     {
-                        Settings.RadarEnemyColor = colorDialog.Color;
-                        enemyPen = new Pen(Settings.RadarEnemyColor, 1f);
-                        enemyBrush = new SolidBrush(Settings.RadarEnemyColor);
-                        checkBoxEnemies.ForeColor = Settings.RadarEnemyColor;
+                        settings.WoWRadarEnemyColor = colorDialog.Color;
+                        enemyPen = new Pen(settings.WoWRadarEnemyColor, 1f);
+                        enemyBrush = new SolidBrush(settings.WoWRadarEnemyColor);
+                        checkBoxEnemies.ForeColor = settings.WoWRadarEnemyColor;
                     }
                 }
             }
@@ -835,15 +803,15 @@ namespace AxTools.Forms
                 {
                     colorDialog.AllowFullOpen = true;
                     colorDialog.AnyColor = true;
-                    colorDialog.Color = Settings.RadarNpcColor;
+                    colorDialog.Color = settings.WoWRadarNPCColor;
                     colorDialog.FullOpen = true;
                     colorDialog.SolidColorOnly = true;
                     if (colorDialog.ShowDialog(this) == DialogResult.OK)
                     {
-                        Settings.RadarNpcColor = colorDialog.Color;
-                        npcPen = new Pen(Settings.RadarNpcColor, 1f);
-                        npcBrush = new SolidBrush(Settings.RadarNpcColor);
-                        checkBoxNpcs.ForeColor = Settings.RadarNpcColor;
+                        settings.WoWRadarNPCColor = colorDialog.Color;
+                        npcPen = new Pen(settings.WoWRadarNPCColor, 1f);
+                        npcBrush = new SolidBrush(settings.WoWRadarNPCColor);
+                        checkBoxNpcs.ForeColor = settings.WoWRadarNPCColor;
                     }
                 }
             }
@@ -856,15 +824,15 @@ namespace AxTools.Forms
                 {
                     colorDialog.AllowFullOpen = true;
                     colorDialog.AnyColor = true;
-                    colorDialog.Color = Settings.RadarObjectColor;
+                    colorDialog.Color = settings.WoWRadarObjectColor;
                     colorDialog.FullOpen = true;
                     colorDialog.SolidColorOnly = true;
                     if (colorDialog.ShowDialog(this) == DialogResult.OK)
                     {
-                        Settings.RadarObjectColor = colorDialog.Color;
-                        objectPen = new Pen(Settings.RadarObjectColor, 1f);
-                        objectBrush = new SolidBrush(Settings.RadarObjectColor);
-                        checkBoxObjects.ForeColor = Settings.RadarObjectColor;
+                        settings.WoWRadarObjectColor = colorDialog.Color;
+                        objectPen = new Pen(settings.WoWRadarObjectColor, 1f);
+                        objectBrush = new SolidBrush(settings.WoWRadarObjectColor);
+                        checkBoxObjects.ForeColor = settings.WoWRadarObjectColor;
                     }
                 }
             }

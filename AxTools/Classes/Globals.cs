@@ -1,6 +1,6 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Windows.Forms;
+using AxTools.Helpers;
 using MouseKeyboardActivityMonitor.WinApi;
 
 namespace AxTools.Classes
@@ -10,15 +10,13 @@ namespace AxTools.Classes
         internal static readonly string TempPath = Application.StartupPath + "\\tmp";
         internal static readonly string CfgPath = Application.StartupPath + "\\cfg";
         internal static readonly string UserfilesPath = Application.StartupPath + "\\userfiles";
-        internal static readonly string SettingsFilePath = Application.StartupPath + "\\cfg\\.settings";
-        internal static readonly string WowAccountsFilePath = Application.StartupPath + "\\cfg\\.wowaccounts2";
         internal static readonly string LogFileName = TempPath + "\\AxTools.log";
         internal static readonly string PluginsPath = Application.StartupPath + "\\plugins";
         internal static readonly string PluginsAssembliesPath = Application.StartupPath + "\\pluginsAssemblies";
         internal static readonly string PluginsSettingsPath = Application.StartupPath + "\\pluginsSettings";
         internal static readonly string DropboxPath = "https://dl.dropboxusercontent.com/u/33646867/axtools";
         internal static readonly string UpdateFilePath = DropboxPath + "/__update";
-        internal static readonly Version AppVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        internal static readonly VersionExt AppVersion = new VersionExt(Assembly.GetExecutingAssembly().GetName().Version);
         internal static readonly GlobalHooker GlobalHooker = new GlobalHooker();
 
         internal static readonly SrvAddress[] GameServers =

@@ -15,7 +15,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             ShowInTaskbar = false;
-            metroStyleManager1.Style = Settings.NewStyleColor;
+            metroStyleManager1.Style = Settings.Instance.StyleColor;
             foreach (WowProcess i in WowProcess.GetAllWowProcesses())
             {
                 comboBox1.Items.Add(i.IsValidBuild && i.IsInGame ?

@@ -5,13 +5,15 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Timers;
+using AxTools.Classes;
 using AxTools.Forms;
 using Timer = System.Timers.Timer;
 
-namespace AxTools.Classes
+namespace AxTools.Services
 {
     internal static class Pinger
     {
+        private static readonly Settings _settings = Settings.Instance;
         private static Timer _timer;
         private static readonly object Lock = new object();
         private static Stopwatch _stopwatch;
@@ -53,7 +55,7 @@ namespace AxTools.Classes
                     using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                     {
                         _stopwatch.Restart();
-                        bool result = pSocket.BeginConnect(Settings.GameServer.Ip, Settings.GameServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
+                        bool result = pSocket.BeginConnect(_settings.PingerServer.Ip, _settings.PingerServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
                         long elapsed = _stopwatch.ElapsedMilliseconds;
                         if (_pingList.Count == 100)
                         {

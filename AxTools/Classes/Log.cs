@@ -60,9 +60,9 @@ namespace AxTools.Classes
                 using (MailMessage mailMessage = new MailMessage("axtoolslogsender@gmail.com", "axio@axio.name"))
                 {
                     mailMessage.SubjectEncoding = Encoding.UTF8;
-                    mailMessage.Subject = string.IsNullOrWhiteSpace(subject) ? String.Format("Error log from {0}", Settings.Regname) : String.Format("Error log from {0} ({1})", Settings.Regname, subject);
+                    mailMessage.Subject = string.IsNullOrWhiteSpace(subject) ? String.Format("Error log from {0}", Settings.Instance.UserID) : String.Format("Error log from {0} ({1})", Settings.Instance.UserID, subject);
                     mailMessage.BodyEncoding = Encoding.UTF8;
-                    mailMessage.Body = File.ReadAllText(Globals.LogFileName, Encoding.UTF8) + "\r\n\r\n" + File.ReadAllText(Globals.SettingsFilePath, Encoding.UTF8);
+                    mailMessage.Body = File.ReadAllText(Globals.LogFileName, Encoding.UTF8);
                     smtpClient.Send(mailMessage);
                 }
             }

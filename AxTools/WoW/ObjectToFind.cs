@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace AxTools.WoW
 {
@@ -7,6 +8,7 @@ namespace AxTools.WoW
     [DataContract(Name = "WowRadarObjectToFind")]
     internal class ObjectToFind
     {
+        [JsonConstructor]
         internal ObjectToFind(bool enabled, string name, bool interact, bool soundAlarm)
         {
             Enabled = enabled;

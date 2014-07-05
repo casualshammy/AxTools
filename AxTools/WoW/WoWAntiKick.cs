@@ -6,6 +6,7 @@ namespace AxTools.WoW
 {
     internal class WoWAntiKick : IDisposable
     {
+        private readonly Settings settings = Settings.Instance;
         private readonly WowProcess wowProcess;
         private readonly Timer timer;
         private int maxTime;
@@ -21,7 +22,7 @@ namespace AxTools.WoW
 
         private void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (Settings.Wasd)
+            if (settings.WoWAntiKick)
             {
                 if (wowProcess.IsValidBuild && wowProcess.IsInGame)
                 {

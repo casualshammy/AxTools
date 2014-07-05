@@ -12,7 +12,7 @@ namespace AxTools.Forms
             InitializeComponent();
             button1.Click += Button1Click;
             button2.Click += Button2Click;
-            metroStyleManager1.Style = Settings.NewStyleColor;
+            metroStyleManager1.Style = Settings.Instance.StyleColor;
             BeginInvoke((MethodInvoker) delegate
             {
                 Location = MousePosition;

@@ -8,6 +8,7 @@ using AxTools.Components;
 using AxTools.Properties;
 using System;
 using System.Windows.Forms;
+using AxTools.Services;
 using MetroFramework;
 using MetroFramework.Forms;
 using Settings = AxTools.Classes.Settings;
@@ -16,6 +17,8 @@ namespace AxTools.Forms
 {
     internal partial class AppSettings : BorderedMetroForm
     {
+        private readonly Settings settings = Settings.Instance;
+
         internal AppSettings()
         {
             InitializeComponent();
@@ -44,12 +47,12 @@ namespace AxTools.Forms
             {
                 comboBoxBadNetworkStatusProcent.Items.Add(i + "%");
             }
-            comboBoxBadNetworkStatusProcent.SelectedIndex = Settings.PingerBadNetworkProcent;
+            comboBoxBadNetworkStatusProcent.SelectedIndex = settings.PingerBadPacketLoss;
             for (int i = 0; i <= 50; i++)
             {
                 comboBoxVeryBadNetworkStatusProcent.Items.Add(i + "%");
             }
-            comboBoxVeryBadNetworkStatusProcent.SelectedIndex = Settings.PingerVeryBadNetworkProcent;
+            comboBoxVeryBadNetworkStatusProcent.SelectedIndex = settings.PingerVeryBadPacketLoss;
             int counter = 25;
             while (counter <= 750)
             {
@@ -57,45 +60,45 @@ namespace AxTools.Forms
                 comboBoxVeryBadNetworkStatusPing.Items.Add(counter + "ms");
                 counter += 25;
             }
-            comboBoxBadNetworkStatusPing.SelectedIndex = Settings.PingerBadNetworkPing/25 - 1;
-            comboBoxVeryBadNetworkStatusPing.SelectedIndex = Settings.PingerVeryBadNetworkPing / 25 - 1;
+            comboBoxBadNetworkStatusPing.SelectedIndex = settings.PingerBadPing/25 - 1;
+            comboBoxVeryBadNetworkStatusPing.SelectedIndex = settings.PingerVeryBadPing / 25 - 1;
 
             //ComboBox_server_ip
             ComboBox_server_ip.Items.Clear();
             ComboBox_server_ip.Items.AddRange(Globals.GameServers.Select(k => k.Description).Cast<object>().ToArray());
-            ComboBox_server_ip.Text = Settings.GameServer.Description;
-            comboBoxClickerHotkey.Text = Settings.ClickerHotkey.ToString();
-            comboBoxWExecLuaTimer.Text = Settings.LuaTimerHotkey.ToString();
-            comboBoxWExecModule.Text = Settings.PrecompiledModulesHotkey.ToString();
-            checkBoxAddonsBackup.Checked = Settings.AddonsBackup;
-            numericUpDownBackupCopiesToKeep.Value = Settings.AddonsBackupNum;
-            numericUpDownBackupTimer.Value = Settings.AddonsBackupTimer;
-            metroComboBoxBackupCompressionLevel.SelectedIndex = Settings.BackupCompressionLevel;
-            textBoxBackupPath.Text = Settings.AddonsBackupPath;
-            textBoxMumblePath.Text = Settings.MumbleExe;
-            textBoxRaidcallPath.Text = Settings.RaidcallExe;
-            textBoxTeamspeak3Path.Text = Settings.TeamspeakExe;
-            textBoxVentriloPath.Text = Settings.VtExe;
-            textBoxWowPath.Text = Settings.WowExe;
-            metroStyleManager1.Style = Settings.NewStyleColor;
-            metroComboBoxStyle.SelectedIndex = (int)Settings.NewStyleColor == 0 ? 0 : (int)Settings.NewStyleColor - 1;
+            ComboBox_server_ip.Text = settings.PingerServer.Description;
+            comboBoxClickerHotkey.Text = settings.ClickerHotkey.ToString();
+            comboBoxWExecLuaTimer.Text = settings.LuaTimerHotkey.ToString();
+            comboBoxWExecModule.Text = settings.WoWPluginHotkey.ToString();
+            checkBoxAddonsBackup.Checked = settings.WoWAddonsBackupIsActive;
+            numericUpDownBackupCopiesToKeep.Value = settings.WoWAddonsBackupNumberOfArchives;
+            numericUpDownBackupTimer.Value = settings.WoWAddonsBackupMinimumTimeBetweenBackup;
+            metroComboBoxBackupCompressionLevel.SelectedIndex = settings.WoWAddonsBackupCompressionLevel;
+            textBoxBackupPath.Text = settings.WoWAddonsBackupPath;
+            textBoxMumblePath.Text = settings.MumbleDirectory;
+            textBoxRaidcallPath.Text = settings.RaidcallDirectory;
+            textBoxTeamspeak3Path.Text = settings.TS3Directory;
+            textBoxVentriloPath.Text = settings.VentriloDirectory;
+            textBoxWowPath.Text = settings.WoWDirectory;
+            metroStyleManager1.Style = settings.StyleColor;
+            metroComboBoxStyle.SelectedIndex = (int)settings.StyleColor == 0 ? 0 : (int)settings.StyleColor - 1;
             metroTabControl1.SelectedIndex = 0;
-            checkBoxMinimizeToTray.Checked = Settings.MinimizeToTray;
+            checkBoxMinimizeToTray.Checked = settings.MinimizeToTray;
 
             Icon = Resources.AppIcon;
-            checkBox_AntiAFK.Checked = Settings.Wasd;
-            CheckBox5.Checked = Settings.DelWowLog;
-            CheckBox7.Checked = Settings.Noframe;
-            CheckBox6.Checked = Settings.AutoAcceptWndSetts;
+            checkBox_AntiAFK.Checked = settings.WoWAntiKick;
+            CheckBox5.Checked = settings.WoWDeleteLogs;
+            CheckBox7.Checked = settings.WoWCustomWindowNoBorder;
+            CheckBox6.Checked = settings.WoWCustomizeWindow;
             foreach (Control i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
             {
                 i.Enabled = CheckBox6.Checked;
             }
-            CheckBox3.Checked = Settings.CreatureCache;
-            TextBox7.Text = Settings.WowWindowSize.X.ToString();
-            TextBox6.Text = Settings.WowWindowSize.Y.ToString();
-            TextBox5.Text = Settings.WowWindowLocation.X.ToString();
-            TextBox4.Text = Settings.WowWindowLocation.Y.ToString();
+            CheckBox3.Checked = settings.WoWWipeCreatureCache;
+            TextBox7.Text = settings.WoWCustomWindowSize.X.ToString();
+            TextBox6.Text = settings.WoWCustomWindowSize.Y.ToString();
+            TextBox5.Text = settings.WoWCustomWindowLocation.X.ToString();
+            TextBox4.Text = settings.WoWCustomWindowLocation.Y.ToString();
             //CheckBox9
             try
             {
@@ -171,17 +174,17 @@ namespace AxTools.Forms
 
         private void CheckBox5CheckedChanged(Object sender, EventArgs e)
         {
-            Settings.DelWowLog = CheckBox5.Checked;
+            settings.WoWDeleteLogs = CheckBox5.Checked;
         }
 
         private void CheckBox7CheckedChanged(Object sender, EventArgs e)
         {
-            Settings.Noframe = CheckBox7.Checked;
+            settings.WoWCustomWindowNoBorder = CheckBox7.Checked;
         }
 
         private void CheckBox6CheckedChanged(Object sender, EventArgs e)
         {
-            Settings.AutoAcceptWndSetts = CheckBox6.Checked;
+            settings.WoWCustomizeWindow = CheckBox6.Checked;
             foreach (var i in new Control[] { CheckBox7, GroupBox1, GroupBox2 })
             {
                 i.Enabled = CheckBox6.Checked;
@@ -193,7 +196,7 @@ namespace AxTools.Forms
             if (TextBox7.Text != string.Empty && Convert.ToUInt16(TextBox7.Text) >= 720)
             {
                 errorProvider1.Clear();
-                Settings.WowWindowSize.X = Convert.ToUInt16(TextBox7.Text);
+                settings.WoWCustomWindowSize.X = Convert.ToUInt16(TextBox7.Text);
             }
             else
             {
@@ -206,7 +209,7 @@ namespace AxTools.Forms
             if (TextBox6.Text != string.Empty && Convert.ToUInt16(TextBox6.Text) >= 576)
             {
                 errorProvider1.Clear();
-                Settings.WowWindowSize.Y = Convert.ToUInt16(TextBox6.Text);
+                settings.WoWCustomWindowSize.Y = Convert.ToUInt16(TextBox6.Text);
             }
             else
             {
@@ -219,7 +222,7 @@ namespace AxTools.Forms
             if (TextBox5.Text != string.Empty && Convert.ToInt16(TextBox5.Text) >= 0)
             {
                 errorProvider1.Clear();
-                Settings.WowWindowLocation.X = Convert.ToInt32(TextBox5.Text);
+                settings.WoWCustomWindowLocation.X = Convert.ToInt32(TextBox5.Text);
             }
             else
             {
@@ -232,7 +235,7 @@ namespace AxTools.Forms
             if ((TextBox4.Text != string.Empty && Convert.ToInt16(TextBox4.Text) >= 0))
             {
                 errorProvider1.Clear();
-                Settings.WowWindowLocation.Y = Convert.ToInt32(TextBox4.Text);
+                settings.WoWCustomWindowLocation.Y = Convert.ToInt32(TextBox4.Text);
             }
             else
             {
@@ -242,7 +245,7 @@ namespace AxTools.Forms
 
         private void CheckBox3CheckedChanged(Object sender, EventArgs e)
         {
-            Settings.CreatureCache = CheckBox3.Checked;
+            settings.WoWWipeCreatureCache = CheckBox3.Checked;
         }
 
         private void Button9Click(object sender, EventArgs e)
@@ -253,19 +256,19 @@ namespace AxTools.Forms
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
                     textBoxVentriloPath.Text = p.SelectedPath;
-                    Settings.VtExe = p.SelectedPath;
+                    settings.VentriloDirectory = p.SelectedPath;
                 }
             }
         }
 
         private void CheckBox1CheckedChanged(object sender, EventArgs e)
         {
-            Settings.Wasd = checkBox_AntiAFK.Checked;
+            settings.WoWAntiKick = checkBox_AntiAFK.Checked;
         }
 
         private void ComboBoxClickerHotkeySelectedIndexChanged(object sender, EventArgs e)
         {
-            Enum.TryParse(comboBoxClickerHotkey.Text, true, out Settings.ClickerHotkey);
+            Enum.TryParse(comboBoxClickerHotkey.Text, true, out settings.ClickerHotkey);
         }
 
         private void ComboBoxWExecLuaTimerSelectedIndexChanged(object sender, EventArgs e)
@@ -273,29 +276,29 @@ namespace AxTools.Forms
             Keys key;
             if (Enum.TryParse(comboBoxWExecLuaTimer.Text, true, out key))
             {
-                Settings.LuaTimerHotkey = key;
+                settings.LuaTimerHotkey = key;
             }
         }
 
         private void ComboBoxWExecModuleSelectedIndexChanged(object sender, EventArgs e)
         {
-            Enum.TryParse(comboBoxWExecModule.Text, true, out Settings.PrecompiledModulesHotkey);
+            Enum.TryParse(comboBoxWExecModule.Text, true, out settings.WoWPluginHotkey);
             MainForm.Instance.WowPluginHotkeyChanged();
         }
 
         private void CheckBoxAddonsBackupCheckedChanged(object sender, EventArgs e)
         {
-            Settings.AddonsBackup = checkBoxAddonsBackup.Checked;
+            settings.WoWAddonsBackupIsActive = checkBoxAddonsBackup.Checked;
         }
 
         private void NumericUpDownBackupCopiesToKeepValueChanged(object sender, EventArgs e)
         {
-            Settings.AddonsBackupNum = (int) numericUpDownBackupCopiesToKeep.Value;
+            settings.WoWAddonsBackupNumberOfArchives = (int) numericUpDownBackupCopiesToKeep.Value;
         }
 
         private void NumericUpDownBackupTimerValueChanged(object sender, EventArgs e)
         {
-            Settings.AddonsBackupTimer = (int) numericUpDownBackupTimer.Value;
+            settings.WoWAddonsBackupMinimumTimeBetweenBackup = (int) numericUpDownBackupTimer.Value;
         }
 
         private void ButtonRaidcallPathClick(object sender, EventArgs e)
@@ -306,7 +309,7 @@ namespace AxTools.Forms
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
                     textBoxRaidcallPath.Text = p.SelectedPath;
-                    Settings.RaidcallExe = p.SelectedPath;
+                    settings.RaidcallDirectory = p.SelectedPath;
                 }
             }
         }
@@ -319,7 +322,7 @@ namespace AxTools.Forms
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
                     textBoxMumblePath.Text = p.SelectedPath;
-                    Settings.MumbleExe = p.SelectedPath;
+                    settings.MumbleDirectory = p.SelectedPath;
                 }
             }
         }
@@ -332,7 +335,7 @@ namespace AxTools.Forms
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
                     textBoxTeamspeak3Path.Text = p.SelectedPath;
-                    Settings.TeamspeakExe = p.SelectedPath;
+                    settings.TS3Directory = p.SelectedPath;
                 }
             }
         }
@@ -345,14 +348,14 @@ namespace AxTools.Forms
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
                     textBoxBackupPath.Text = p.SelectedPath;
-                    Settings.AddonsBackupPath = p.SelectedPath;
+                    settings.WoWAddonsBackupPath = p.SelectedPath;
                 }
             }
         }
 
         private void MetroComboBoxBackupCompressionLevelSelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.BackupCompressionLevel = metroComboBoxBackupCompressionLevel.SelectedIndex;
+            settings.WoWAddonsBackupCompressionLevel = metroComboBoxBackupCompressionLevel.SelectedIndex;
         }
 
         private void buttonWowPath_Click(object sender, EventArgs e)
@@ -363,7 +366,7 @@ namespace AxTools.Forms
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
                     textBoxWowPath.Text = p.SelectedPath;
-                    Settings.WowExe = p.SelectedPath;
+                    settings.WoWDirectory = p.SelectedPath;
                 }
             }
         }
@@ -371,7 +374,7 @@ namespace AxTools.Forms
         private void metroComboBoxStyle_SelectedIndexChanged(object sender, EventArgs e)
         {
             int style = metroComboBoxStyle.SelectedIndex == 0 ? 0 : metroComboBoxStyle.SelectedIndex + 1;
-            Settings.NewStyleColor = (MetroColorStyle) style;
+            settings.StyleColor = (MetroColorStyle) style;
             foreach (object i in Application.OpenForms)
             {
                 if (i.GetType().ParentTypes().Any(l => l == typeof(MetroForm)))
@@ -437,8 +440,8 @@ namespace AxTools.Forms
         {
             if (IsHandleCreated && ComboBox_server_ip.SelectedIndex != -1)
             {
-                Settings.GameServer = Globals.GameServers.First(i => i.Description == ComboBox_server_ip.Text);
-                if (Settings.GameServer.Port == 0)
+                settings.PingerServer = Globals.GameServers.First(i => i.Description == ComboBox_server_ip.Text);
+                if (settings.PingerServer.Port == 0)
                 {
                     Pinger.Stop();
                 }
@@ -451,27 +454,27 @@ namespace AxTools.Forms
 
         private void comboBoxBadNetworkStatusProcent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.PingerBadNetworkProcent = comboBoxBadNetworkStatusProcent.SelectedIndex;
+            settings.PingerBadPacketLoss = comboBoxBadNetworkStatusProcent.SelectedIndex;
         }
 
         private void comboBoxBadNetworkStatusPing_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.PingerBadNetworkPing = (comboBoxBadNetworkStatusPing.SelectedIndex + 1)*25;
+            settings.PingerBadPing = (comboBoxBadNetworkStatusPing.SelectedIndex + 1)*25;
         }
 
         private void comboBoxVeryBadNetworkStatusProcent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.PingerVeryBadNetworkProcent = comboBoxVeryBadNetworkStatusProcent.SelectedIndex;
+            settings.PingerVeryBadPacketLoss = comboBoxVeryBadNetworkStatusProcent.SelectedIndex;
         }
 
         private void comboBoxVeryBadNetworkStatusPing_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.PingerVeryBadNetworkPing = (comboBoxVeryBadNetworkStatusPing.SelectedIndex + 1)*25;
+            settings.PingerVeryBadPing = (comboBoxVeryBadNetworkStatusPing.SelectedIndex + 1)*25;
         }
 
         private void checkBoxMinimizeToTray_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.MinimizeToTray = checkBoxMinimizeToTray.Checked;
+            settings.MinimizeToTray = checkBoxMinimizeToTray.Checked;
         }
 
     }

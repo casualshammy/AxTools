@@ -19,6 +19,7 @@ namespace AxTools.Forms
 {
     internal partial class LuaConsole : BorderedMetroForm, IWoWModule
     {
+        private readonly Settings settings = Settings.Instance;
         internal static bool TimerEnabled = false;
         private readonly System.Timers.Timer timerLua = new System.Timers.Timer(1000);
 
@@ -32,28 +33,17 @@ namespace AxTools.Forms
             textBoxLuaCode.Font = Utils.FontIsInstalled("Consolas") ? new Font("Consolas", 8) : new Font("Courier New", 8);
             textBoxLuaCode.Visible = true;
             metroPanelTimerOptions.Visible = false;
-            Size = Settings.LuaConsoleSize;
-            metroStyleManager1.Style = Settings.NewStyleColor;
-            metroCheckBoxRandomize.Checked = Settings.LuaConsoleRandomizeTimer;
-            metroCheckBoxIgnoreGameState.Checked = Settings.LuaConsoleIgnoreGameState;
-            metroTextBoxTimerInterval.Text = Settings.LuaConsoleTimerInterval.ToString();
-            metroCheckBoxShowIngameNotifications.Checked = Settings.LuaConsoleShowIngameNotifications;
+            Size = settings.WoWLuaConsoleWindowSize;
+            metroStyleManager1.Style = settings.StyleColor;
+            metroCheckBoxRandomize.Checked = settings.WoWLuaConsoleTimerRnd;
+            metroCheckBoxIgnoreGameState.Checked = settings.WoWLuaConsoleIgnoreGameState;
+            metroTextBoxTimerInterval.Text = settings.WoWLuaConsoleTimerInterval.ToString();
+            metroCheckBoxShowIngameNotifications.Checked = settings.WoWLuaConsoleShowIngameNotifications;
             metroToolTip1.SetToolTip(pictureBoxRunOnce, "Execute script once");
             metroToolTip1.SetToolTip(pictureBoxSettings, "Open settings");
-            string filename = Globals.CfgPath + "\\.luaconsole3";
-            try
-            {
-                if (File.Exists(filename))
-                {
-                    textBoxLuaCode.Text = File.ReadAllText(filename, Encoding.UTF8);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Print(string.Format("{0}:{1} :: [Lua console] Can't load the latest list: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
-            }
-            Settings.LuaTimerHotkeyChanged += LuaTimerHotkeyChanged;
-            LuaTimerHotkeyChanged(Settings.LuaTimerHotkey);
+            textBoxLuaCode.Text = settings.LuaConsoleLastText;
+            settings.LuaTimerHotkeyChanged += LuaTimerHotkeyChanged;
+            LuaTimerHotkeyChanged(settings.LuaTimerHotkey);
             Log.Print(string.Format("{0}:{1} :: [Lua console] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
@@ -61,7 +51,7 @@ namespace AxTools.Forms
         {
             if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
             {
-                if (!Settings.LuaConsoleIgnoreGameState)
+                if (!settings.WoWLuaConsoleIgnoreGameState)
                 {
                     Log.Print(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName,
                         WoWManager.WoWProcess.ProcessID));
@@ -71,9 +61,9 @@ namespace AxTools.Forms
                 }
                 return;
             }
-            if (Settings.LuaConsoleRandomizeTimer)
+            if (settings.WoWLuaConsoleTimerRnd)
             {
-                timerLua.Interval = Settings.LuaConsoleTimerInterval + Utils.Rnd.Next(-(Settings.LuaConsoleTimerInterval / 5), Settings.LuaConsoleTimerInterval / 5);
+                timerLua.Interval = settings.WoWLuaConsoleTimerInterval + Utils.Rnd.Next(-(settings.WoWLuaConsoleTimerInterval / 5), settings.WoWLuaConsoleTimerInterval / 5);
             }
             WoWDXInject.LuaDoString(textBoxLuaCode.Text);
         }
@@ -162,17 +152,9 @@ namespace AxTools.Forms
             {
                 InvokeOnClick(pictureBoxStop, EventArgs.Empty);
             }
-            try
-            {
-                Utils.CheckCreateDir();
-                File.WriteAllText(Globals.CfgPath + "\\.luaconsole3", textBoxLuaCode.Text, Encoding.UTF8);
-            }
-            catch (Exception ex)
-            {
-                Log.Print(string.Format("{0}:{1} :: [Lua console] Can't save the latest list: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
-            }
+            settings.LuaConsoleLastText = textBoxLuaCode.Text;
             // ReSharper disable once DelegateSubtraction
-            Settings.LuaTimerHotkeyChanged -= LuaTimerHotkeyChanged;
+            settings.LuaTimerHotkeyChanged -= LuaTimerHotkeyChanged;
             Log.Print(string.Format("{0}:{1} :: [Lua console] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
@@ -192,8 +174,8 @@ namespace AxTools.Forms
                             string readLine = cStringReader.ReadLine();
                             if (readLine != null)
                             {
-                                Settings.LuaConsoleTimerInterval = Convert.ToInt32(readLine.Split('=')[1]);
-                                metroTextBoxTimerInterval.Text = Settings.LuaConsoleTimerInterval.ToString();
+                                settings.WoWLuaConsoleTimerInterval = Convert.ToInt32(readLine.Split('=')[1]);
+                                metroTextBoxTimerInterval.Text = settings.WoWLuaConsoleTimerInterval.ToString();
                             }
                             textBoxLuaCode.Text = cStringReader.ReadToEnd();
                         }
@@ -215,34 +197,34 @@ namespace AxTools.Forms
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
-                    File.WriteAllText(p.FileName, string.Format("----- Interval={0}\r\n{1}", Settings.LuaConsoleTimerInterval, textBoxLuaCode.Text), Encoding.UTF8);
+                    File.WriteAllText(p.FileName, string.Format("----- Interval={0}\r\n{1}", settings.WoWLuaConsoleTimerInterval, textBoxLuaCode.Text), Encoding.UTF8);
                 }
             }
         }
 
         private void LuaConsole_Resize(object sender, EventArgs e)
         {
-            Settings.LuaConsoleSize = Size;
+            settings.WoWLuaConsoleWindowSize = Size;
         }
 
         private void metroCheckBoxRandomize_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.LuaConsoleRandomizeTimer = metroCheckBoxRandomize.Checked;
+            settings.WoWLuaConsoleTimerRnd = metroCheckBoxRandomize.Checked;
         }
 
         private void metroCheckBoxIgnoreGameState_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.LuaConsoleIgnoreGameState = metroCheckBoxIgnoreGameState.Checked;
+            settings.WoWLuaConsoleIgnoreGameState = metroCheckBoxIgnoreGameState.Checked;
         }
 
         private void metroCheckBoxShowIngameNotifications_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.LuaConsoleShowIngameNotifications = metroCheckBoxShowIngameNotifications.Checked;
+            settings.WoWLuaConsoleShowIngameNotifications = metroCheckBoxShowIngameNotifications.Checked;
         }
 
         private void metroTextBoxTimerInterval_TextChanged(object sender, EventArgs e)
         {
-            Int32.TryParse(metroTextBoxTimerInterval.Text, out Settings.LuaConsoleTimerInterval);
+            Int32.TryParse(metroTextBoxTimerInterval.Text, out settings.WoWLuaConsoleTimerInterval);
         }
 
         private void LuaTimerHotkeyChanged(Keys key)
@@ -282,7 +264,7 @@ namespace AxTools.Forms
                 new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
             }
-            if (!Int32.TryParse(metroTextBoxTimerInterval.Text, out Settings.LuaConsoleTimerInterval) || Settings.LuaConsoleTimerInterval < 50)
+            if (!Int32.TryParse(metroTextBoxTimerInterval.Text, out settings.WoWLuaConsoleTimerInterval) || settings.WoWLuaConsoleTimerInterval < 50)
             {
                 TaskDialog.Show("Incorrect input!", "AxTools", "Interval must be a number more or equal 50", TaskDialogButton.OK, TaskDialogIcon.Warning);
                 return;
@@ -292,11 +274,11 @@ namespace AxTools.Forms
                 new TaskDialog("Error!", "AxTools", "Script is empty", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
             }
-            timerLua.Interval = Settings.LuaConsoleTimerInterval;
+            timerLua.Interval = settings.WoWLuaConsoleTimerInterval;
             TimerEnabled = true;
             SetupTimerControls(true);
             timerLua.Enabled = true;
-            if (Settings.LuaConsoleShowIngameNotifications)
+            if (settings.WoWLuaConsoleShowIngameNotifications)
             {
                 WoWDXInject.ShowOverlayText("LTimer is started", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 102, 0));
                 //WoWDXInject.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is started\", 0.0, 1.0, 0.0)");
@@ -310,7 +292,7 @@ namespace AxTools.Forms
             Log.Print(WoWManager.WoWProcess != null
                           ? string.Format("{0}:{1} :: [Lua console] Lua timer disabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID)
                           : "UNKNOWN:null :: Lua timer disabled");
-            if (Settings.LuaConsoleShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
+            if (settings.WoWLuaConsoleShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
             {
                 WoWDXInject.ShowOverlayText("LTimer is stopped", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 0, 0));
                 //WoWDXInject.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is stopped\", 1.0, 0.4, 0.0)");

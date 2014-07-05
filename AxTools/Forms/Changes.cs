@@ -1,4 +1,7 @@
 ﻿using System.Drawing;
+using System.Net;
+using System.Threading.Tasks;
+using AxTools.Classes;
 using AxTools.Components;
 using AxTools.Properties;
 using Settings = AxTools.Classes.Settings;
@@ -18,8 +21,34 @@ namespace AxTools.Forms
                 pictureBox1.Size = objImage.Size;
                 pictureBox1.ImageLocation = imagePath;
             }
-            metroStyleManager1.Style = Settings.NewStyleColor;
+            metroStyleManager1.Style = Settings.Instance.StyleColor;
         }
-        
+
+        /// <summary>
+        ///     Remark: should be run from UI thread
+        /// </summary>
+        internal static void ShowChangesIfNeeded()
+        {
+            Log.Print(Globals.AppVersion);
+            Log.Print(Settings.Instance.LastUsedVersion);
+            if (Globals.AppVersion.Major != Settings.Instance.LastUsedVersion.Major || Globals.AppVersion.Minor != Settings.Instance.LastUsedVersion.Minor)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    Utils.CheckCreateDir();
+                    using (WebClient pWebClient = new WebClient())
+                    {
+                        pWebClient.DownloadFile(Globals.DropboxPath + "/changes.jpg", Globals.TempPath + "\\changes.jpg");
+                    }
+                }).ContinueWith(l =>
+                {
+                    if (l.Exception == null)
+                    {
+                        new Changes(Globals.TempPath + "\\changes.jpg").ShowDialog();
+                    }
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+        }
+
     }
 }

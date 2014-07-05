@@ -16,6 +16,7 @@ namespace AxTools.Forms
 {
     internal partial class WowRadarOptions : BorderedMetroForm
     {
+        private readonly Settings settings = Settings.Instance;
         private readonly int nameColumnWidth = 248;
         private readonly int nameColumnWidthExt = 265;
         private readonly int maxVisibleRows = 7;
@@ -35,10 +36,10 @@ namespace AxTools.Forms
             dataGridViewObjects.CellContentClick += DataGridViewObjectsOnCellContentClick;
             dataGridViewObjects.ColumnHeaderMouseClick += DataGridViewObjectsColumnHeaderMouseClick;
             dataGridViewObjects.Columns[1].Width = dataGridViewObjects.Rows.Count > maxVisibleRows ? nameColumnWidth : nameColumnWidthExt;
-            metroCheckBoxShowPlayersClasses.Checked = Settings.RadarShowPlayersClasses;
-            metroCheckBoxShowNpcsNames.Checked = Settings.RadarShowNpcsNames;
-            metroCheckBoxShowObjectsNames.Checked = Settings.RadarShowObjectsNames;
-            metroStyleManager1.Style = Settings.NewStyleColor;
+            metroCheckBoxShowPlayersClasses.Checked = settings.WoWRadarShowPlayersClasses;
+            metroCheckBoxShowNpcsNames.Checked = settings.WoWRadarShowNPCsNames;
+            metroCheckBoxShowObjectsNames.Checked = settings.WoWRadarShowObjectsNames;
+            metroStyleManager1.Style = settings.StyleColor;
             metroTabControl1.SelectedIndex = 0;
             BeginInvoke((MethodInvoker) delegate
             {
@@ -66,17 +67,17 @@ namespace AxTools.Forms
 
         private void MetroCheckBoxShowPlayersClassesCheckedChanged(object sender, EventArgs e)
         {
-            Settings.RadarShowPlayersClasses = metroCheckBoxShowPlayersClasses.Checked;
+            settings.WoWRadarShowPlayersClasses = metroCheckBoxShowPlayersClasses.Checked;
         }
 
         private void MetroCheckBoxShowNpcsNamesCheckedChanged(object sender, EventArgs e)
         {
-            Settings.RadarShowNpcsNames = metroCheckBoxShowNpcsNames.Checked;
+            settings.WoWRadarShowNPCsNames = metroCheckBoxShowNpcsNames.Checked;
         }
 
         private void MetroCheckBoxShowObjectsNamesCheckedChanged(object sender, EventArgs e)
         {
-            Settings.RadarShowObjectsNames = metroCheckBoxShowObjectsNames.Checked;
+            settings.WoWRadarShowObjectsNames = metroCheckBoxShowObjectsNames.Checked;
         }
 
         private void DataGridViewObjectsRowsAddedOrRemove(object sender, EventArgs e)

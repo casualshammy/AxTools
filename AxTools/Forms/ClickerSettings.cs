@@ -9,11 +9,13 @@ namespace AxTools.Forms
 {
     internal partial class ClickerSettings : BorderedMetroForm
     {
+        private readonly Settings settings = Settings.Instance;
+
         internal ClickerSettings()
         {
             InitializeComponent();
             Icon = Resources.AppIcon;
-            metroStyleManager1.Style = Settings.NewStyleColor;
+            metroStyleManager1.Style = settings.StyleColor;
             Keys[] keys =
             {
                 Keys.None, Keys.F1, Keys.F2, Keys.F3, Keys.F4, Keys.F5, Keys.F6, Keys.F7, Keys.F8, Keys.F9, Keys.F10, Keys.F11,
@@ -24,8 +26,8 @@ namespace AxTools.Forms
             {
                 comboBoxClickerKey.Items.Add(i.ToString());
             }
-            comboBoxClickerKey.Text = Settings.ClickerKey.ToString();
-            num_clicker_interval.Value = Settings.ClickerInterval;
+            comboBoxClickerKey.Text = settings.ClickerKey.ToString();
+            num_clicker_interval.Value = settings.ClickerInterval;
             labelError.Visible = false;
             num_clicker_interval.TextChanged += num_clicker_interval_TextChanged;
             BeginInvoke((MethodInvoker)delegate
@@ -41,7 +43,7 @@ namespace AxTools.Forms
 
         private void comboBoxClickerKey_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Enum.TryParse(comboBoxClickerKey.Text, true, out Settings.ClickerKey);
+            Enum.TryParse(comboBoxClickerKey.Text, true, out settings.ClickerKey);
         }
 
         private void num_clicker_interval_ValueChanged(object sender, EventArgs e)
@@ -52,7 +54,7 @@ namespace AxTools.Forms
                 if (interval >= 50)
                 {
                     labelError.Visible = false;
-                    Settings.ClickerInterval = interval;
+                    settings.ClickerInterval = interval;
                 }
                 else
                 {

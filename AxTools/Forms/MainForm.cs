@@ -3,6 +3,7 @@ using AxTools.Components;
 using AxTools.Components.TaskbarProgressbar;
 using AxTools.Helpers;
 using AxTools.Properties;
+using AxTools.Services;
 using AxTools.Updater;
 using AxTools.WinAPI;
 using AxTools.WoW;
@@ -69,15 +70,14 @@ namespace AxTools.Forms
             base.Text = "AxTools " + Globals.AppVersion.Major;
             Icon = Resources.AppIcon;
             Utils.Legacy();
-            Settings.Load();
-            WowAccount.LoadFromDisk();
+            settings = Settings.Instance;
             OnSettingsLoaded();
             WowPluginHotkeyChanged();
             WebRequest.DefaultWebProxy = null;
             Task.Factory.StartNew(LoadingStepAsync);
             BeginInvoke((MethodInvoker) delegate
             {
-                Location = Settings.Location;
+                Location = settings.MainWindowLocation;
                 OnActivated(EventArgs.Empty);
                 startupOverlay = new WaitingOverlay(this);
                 startupOverlay.Show();
@@ -108,6 +108,7 @@ namespace AxTools.Forms
         private bool isClosing;
         private WaitingOverlay startupOverlay;
 
+        private readonly Settings settings;
         //
         private readonly List<ToolStripMenuItem> pluginsToolStripMenuItems = new List<ToolStripMenuItem>(); 
 
@@ -119,15 +120,15 @@ namespace AxTools.Forms
 
         private void KeyboardHookKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Settings.ClickerHotkey)
+            if (e.KeyCode == settings.ClickerHotkey)
             {
                 KeyboardHook_ClickerHotkey();
             }
-            else if (e.KeyCode == Settings.PrecompiledModulesHotkey)
+            else if (e.KeyCode == settings.WoWPluginHotkey)
             {
                 KeyboardHook_PrecompiledModulesHotkey();
             }
-            else if (e.KeyCode == Settings.LuaTimerHotkey)
+            else if (e.KeyCode == settings.LuaTimerHotkey)
             {
                 KeyboardHook_LuaTimerHotkey();
             }
@@ -135,7 +136,7 @@ namespace AxTools.Forms
 
         private void KeyboardHook_ClickerHotkey()
         {
-            if (Settings.ClickerKey == Keys.None)
+            if (settings.ClickerKey == Keys.None)
             {
                 this.ShowTaskDialog("Incorrect input!", "Please select key to be pressed", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 return;
@@ -153,9 +154,9 @@ namespace AxTools.Forms
                 WowProcess cProcess = WowProcess.GetAllWowProcesses().FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
                 if (cProcess != null)
                 {
-                    Clicker.Start(Settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr) Settings.ClickerKey);
+                    Clicker.Start(settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr) settings.ClickerKey);
                     Log.Print(string.Format("{0}:{1} :: [Clicker] Enabled, interval {2}ms, window handle 0x{3:X}", cProcess.ProcessName, cProcess.ProcessID,
-                        Settings.ClickerInterval, (uint) cProcess.MainWindowHandle));
+                        settings.ClickerInterval, (uint) cProcess.MainWindowHandle));
                 }
             }
         }
@@ -191,10 +192,10 @@ namespace AxTools.Forms
                 i.Close();
             }
             //
-            Settings.Location = Location;
+            settings.MainWindowLocation = Location;
             //save settings
-            Settings.Save();
-            WowAccount.SaveToDisk();
+            settings.SaveJSON();
+            WowAccount.Save();
             //
             Clicker.Stop();
             //stop timers
@@ -254,7 +255,7 @@ namespace AxTools.Forms
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
-            if (Settings.MinimizeToTray && WindowState == FormWindowState.Minimized)
+            if (settings.MinimizeToTray && WindowState == FormWindowState.Minimized)
             {
                 Hide();
             }
@@ -266,26 +267,26 @@ namespace AxTools.Forms
 
             #region Set registration name
 
-            while (Settings.Regname == String.Empty)
+            while (Settings.Instance.UserID == String.Empty)
             {
-                Settings.Regname = InputBox.Input("Please enter your nickname:");
-                if (!string.IsNullOrWhiteSpace(Settings.Regname))
+                Settings.Instance.UserID = InputBox.Input("Please enter your nickname:");
+                if (!string.IsNullOrWhiteSpace(Settings.Instance.UserID))
                 {
-                    Settings.Regname += "_" + Utils.GetRandomString(10).ToUpper();
+                    Settings.Instance.UserID += "_" + Utils.GetRandomString(10).ToUpper();
                 }
             }
-            Log.Print("Registered for: " + Settings.Regname);
+            Log.Print("Registered for: " + Settings.Instance.UserID);
 
             #endregion
 
             #region Backup and delete wow logs
 
-            if (Settings.DelWowLog && Directory.Exists(Settings.WowExe + "\\Logs") && WowProcess.GetAllWowProcesses().Count == 0)
+            if (settings.WoWDeleteLogs && Directory.Exists(settings.WoWDirectory + "\\Logs") && WowProcess.GetAllWowProcesses().Count == 0)
             {
-                if (File.Exists(Settings.WowExe + "\\Logs\\WoWCombatLog.txt") || Utils.CalcDirectorySize(Settings.WowExe + "\\Logs") > 104857600)
+                if (File.Exists(settings.WoWDirectory + "\\Logs\\WoWCombatLog.txt") || Utils.CalcDirectorySize(settings.WoWDirectory + "\\Logs") > 104857600)
                 {
                     Utils.CheckCreateDir();
-                    string zipPath = String.Format("{0}\\WoWLogs.zip", Settings.AddonsBackupPath);
+                    string zipPath = String.Format("{0}\\WoWLogs.zip", settings.WoWAddonsBackupPath);
                     if (File.Exists(zipPath))
                     {
                         File.Delete(zipPath);
@@ -294,12 +295,12 @@ namespace AxTools.Forms
                     {
                         using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
                         {
-                            zip.CompressionLevel = (CompressionLevel) Settings.BackupCompressionLevel;
-                            zip.AddDirectory(Settings.WowExe + "\\Logs");
+                            zip.CompressionLevel = (CompressionLevel) settings.WoWAddonsBackupCompressionLevel;
+                            zip.AddDirectory(settings.WoWDirectory + "\\Logs");
                             zip.Save();
                         }
                         Log.Print(String.Format("[Backup] WoW combat log's backup was placed to \"{0}\"", zipPath));
-                        string[] cLogFiles = Directory.GetFiles(Settings.WowExe + "\\Logs");
+                        string[] cLogFiles = Directory.GetFiles(settings.WoWDirectory + "\\Logs");
                         foreach (string i in cLogFiles)
                         {
                             try
@@ -312,7 +313,7 @@ namespace AxTools.Forms
                                 Log.Print(String.Format("[WoW logs] Error deleting log file \"{0}\": {1}", i, ex.Message), true);
                             }
                         }
-                        notifyIconMain.ShowBalloonTip(10000, "WoW log files were deleted", "Backup was placed to " + Settings.AddonsBackupPath, ToolTipIcon.Info);
+                        notifyIconMain.ShowBalloonTip(10000, "WoW log files were deleted", "Backup was placed to " + settings.WoWAddonsBackupPath, ToolTipIcon.Info);
                     }
                     catch (Exception ex)
                     {
@@ -325,9 +326,9 @@ namespace AxTools.Forms
 
             #region Processing creaturecache.wdb
 
-            if (Settings.CreatureCache && Directory.Exists(Settings.WowExe + "\\Cache\\WDB"))
+            if (settings.WoWWipeCreatureCache && Directory.Exists(settings.WoWDirectory + "\\Cache\\WDB"))
             {
-                DirectoryInfo[] directories = new DirectoryInfo(Settings.WowExe + "\\Cache\\WDB").GetDirectories();
+                DirectoryInfo[] directories = new DirectoryInfo(settings.WoWDirectory + "\\Cache\\WDB").GetDirectories();
                 if (directories.Length > 0)
                 {
                     foreach (DirectoryInfo i in directories)
@@ -353,7 +354,7 @@ namespace AxTools.Forms
             #region Loading plugins
 
             PluginManager.LoadPlugins();
-            if (Settings.EnableCustomPlugins)
+            if (settings.WoWPluginEnableCustom)
             {
                 PluginManager.LoadPluginsFromDisk();
             }
@@ -382,41 +383,11 @@ namespace AxTools.Forms
             #endregion
 
             startupOverlay.Close();
-
-            #region Show update notes
-
-            if (Globals.AppVersion.Major != Settings.LastUsedVersion.Major || Globals.AppVersion.Minor != Settings.LastUsedVersion.Minor)
-            {
-                Task.Factory.StartNew(() =>
-                    {
-                        Utils.CheckCreateDir();
-                        using (WebClient pWebClient = new WebClient())
-                        {
-                            pWebClient.DownloadFile(Globals.DropboxPath + "/changes.jpg", Globals.TempPath + "\\changes.jpg");
-                        }
-                    }).ContinueWith(l =>
-                        {
-                            if (l.Exception == null)
-                            {
-                                Invoke(new Action(() => new Changes(Globals.TempPath + "\\changes.jpg").ShowDialog()));
-                            }
-                        });
-            }
-
-            #endregion
-
-            #region Custom commands
-
-            if (Settings.Regname == "Axio-5GDMJHD20R")
-            {
-                Process.Start("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-noexit \"-file\" \"C:\\Users\\Axioma\\Desktop\\vpn.ps1\"");
-            }
-
-            #endregion
-
+            Changes.ShowChangesIfNeeded();
             UpdaterService.Start();
-
             Log.Print("AxTools started succesfully");
+
+
         }
 
         private void PictureBoxExtSettingsClick(object sender, EventArgs e)
@@ -445,11 +416,11 @@ namespace AxTools.Forms
         {
             foreach (ToolStripMenuItem i in pluginsToolStripMenuItems)
             {
-                i.ShortcutKeyDisplayString = i.Text == comboBoxWowPlugins.Text ? Settings.PrecompiledModulesHotkey.ToString() : null;
+                i.ShortcutKeyDisplayString = i.Text == comboBoxWowPlugins.Text ? settings.WoWPluginHotkey.ToString() : null;
                 i.Enabled = PluginManager.ActivePlugin == null;
             }
             stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManager.ActivePlugin != null;
-            stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = Settings.PrecompiledModulesHotkey.ToString();
+            stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = settings.WoWPluginHotkey.ToString();
         }
 
         private void WoWRadarToolStripMenuItemClick(object sender, EventArgs e)
@@ -495,17 +466,17 @@ namespace AxTools.Forms
                 WaitingOverlay waitingOverlay = new WaitingOverlay(this);
                 waitingOverlay.Show();
                 Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
-                if (File.Exists(Settings.WowExe + "\\Wow.exe"))
+                if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
                 {
                     Process process = Process.Start(new ProcessStartInfo
                     {
-                        WorkingDirectory = Settings.WowExe,
-                        FileName = Settings.WowExe + "\\Wow.exe",
+                        WorkingDirectory = settings.WoWDirectory,
+                        FileName = settings.WoWDirectory + "\\Wow.exe",
                         Arguments = "-noautolaunch64bit",
                     });
                     WowAccount wowAccount = new WowAccount(WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
                     new AutoLogin(wowAccount, process).EnterCredentialsASAPAsync();
-                    if (Settings.StartVentriloWithWow && !Process.GetProcessesByName("Ventrilo").Any())
+                    if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
                     {
                         StartVentrilo();
                     }
@@ -521,9 +492,9 @@ namespace AxTools.Forms
 
         private void linkOpenBackupFolder_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(Settings.AddonsBackupPath))
+            if (Directory.Exists(settings.WoWAddonsBackupPath))
             {
-                Process.Start(Settings.AddonsBackupPath);
+                Process.Start(settings.WoWAddonsBackupPath);
             }
             else
             {
@@ -560,18 +531,18 @@ namespace AxTools.Forms
 
         private void buttonLaunchWowWithoutAutopass_Click(object sender, EventArgs e)
         {
-            if (!File.Exists(Settings.WowExe + "\\Wow.exe"))
+            if (!File.Exists(settings.WoWDirectory + "\\Wow.exe"))
             {
                 this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 return;
             }
             Process.Start(new ProcessStartInfo
             {
-                WorkingDirectory = Settings.WowExe,
-                FileName = Settings.WowExe + "\\Wow.exe",
+                WorkingDirectory = settings.WoWDirectory,
+                FileName = settings.WoWDirectory + "\\Wow.exe",
                 Arguments = "-noautolaunch64bit",
             });
-            if (Settings.StartVentriloWithWow && !Process.GetProcessesByName("Ventrilo").Any())
+            if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
             {
                 StartVentrilo();
             }
@@ -594,15 +565,15 @@ namespace AxTools.Forms
 
         private void TileRaidcallClick(object sender, EventArgs e)
         {
-            if (!File.Exists(Settings.RaidcallExe + "\\raidcall.exe"))
+            if (!File.Exists(settings.RaidcallDirectory + "\\raidcall.exe"))
             {
                 new TaskDialog("Executable not found", "AxTools", "Can't locate \"raidcall.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
             }
             Process.Start(new ProcessStartInfo
             {
-                WorkingDirectory = Settings.RaidcallExe,
-                FileName = Settings.RaidcallExe + "\\raidcall.exe"
+                WorkingDirectory = settings.RaidcallDirectory,
+                FileName = settings.RaidcallDirectory + "\\raidcall.exe"
             });
             Log.Print("Raidcall process started");
         }
@@ -610,13 +581,13 @@ namespace AxTools.Forms
         private void TileTeamspeak3Click(object sender, EventArgs e)
         {
             string cPath;
-            if (File.Exists(Settings.TeamspeakExe + "\\ts3client_win32.exe"))
+            if (File.Exists(settings.TS3Directory + "\\ts3client_win32.exe"))
             {
-                cPath = Settings.TeamspeakExe + "\\ts3client_win32.exe";
+                cPath = settings.TS3Directory + "\\ts3client_win32.exe";
             }
-            else if (File.Exists(Settings.TeamspeakExe + "\\ts3client_win64.exe"))
+            else if (File.Exists(settings.TS3Directory + "\\ts3client_win64.exe"))
             {
-                cPath = Settings.TeamspeakExe + "\\ts3client_win64.exe";
+                cPath = settings.TS3Directory + "\\ts3client_win64.exe";
             }
             else
             {
@@ -626,7 +597,7 @@ namespace AxTools.Forms
             }
             Process.Start(new ProcessStartInfo
             {
-                WorkingDirectory = Settings.TeamspeakExe,
+                WorkingDirectory = settings.TS3Directory,
                 FileName = cPath
             });
             Log.Print("TS3 process started");
@@ -634,36 +605,36 @@ namespace AxTools.Forms
 
         private void TileMumbleClick(object sender, EventArgs e)
         {
-            if (!File.Exists(Settings.MumbleExe + "\\mumble.exe"))
+            if (!File.Exists(settings.MumbleDirectory + "\\mumble.exe"))
             {
                 new TaskDialog("Executable not found", "AxTools", "Can't locate \"mumble.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
             }
             Process.Start(new ProcessStartInfo {
-                WorkingDirectory = Settings.MumbleExe,
-                FileName = Settings.MumbleExe + "\\mumble.exe"
+                WorkingDirectory = settings.MumbleDirectory,
+                FileName = settings.MumbleDirectory + "\\mumble.exe"
             });
             Log.Print("Mumble process started");
         }
 
         private void checkBoxStartVenriloWithWow_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.StartVentriloWithWow = checkBoxStartVenriloWithWow.Checked;
+            settings.VentriloStartWithWoW = checkBoxStartVenriloWithWow.Checked;
         }
 
         private void checkBoxStartRaidcallWithWow_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.StartRaidcallWithWow = checkBoxStartRaidcallWithWow.Checked;
+            settings.RaidcallStartWithWoW = checkBoxStartRaidcallWithWow.Checked;
         }
 
         private void checkBoxStartMumbleWithWow_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.StartMumbleWithWow = checkBoxStartMumbleWithWow.Checked;
+            settings.MumbleStartWithWoW = checkBoxStartMumbleWithWow.Checked;
         }
 
         private void checkBoxStartTeamspeak3WithWow_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.StartTS3WithWow = checkBoxStartTeamspeak3WithWow.Checked;
+            settings.TS3StartWithWoW = checkBoxStartTeamspeak3WithWow.Checked;
         }
 
         #endregion
@@ -677,12 +648,12 @@ namespace AxTools.Forms
 
         private void metroCheckBoxPluginShowIngameNotification_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.WowPluginsShowIngameNotifications = metroCheckBoxPluginShowIngameNotification.Checked;
+            settings.WoWPluginShowIngameNotifications = metroCheckBoxPluginShowIngameNotification.Checked;
         }
 
         private void checkBoxEnableCustomPlugins_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.EnableCustomPlugins = checkBoxEnableCustomPlugins.Checked;
+            settings.WoWPluginEnableCustom = checkBoxEnableCustomPlugins.Checked;
         }
 
         private void ComboBoxWowPluginsSelectedIndexChanged(object sender, EventArgs e)
@@ -794,7 +765,7 @@ namespace AxTools.Forms
                 pluginsToolStripMenuItems.Add(toolStripMenuItem);
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
-            if (Settings.EnableCustomPlugins && PluginManager.Plugins.Count > nativePlugins.Length)
+            if (settings.WoWPluginEnableCustom && PluginManager.Plugins.Count > nativePlugins.Length)
             {
                 ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Custom plugins") as ToolStripMenuItem;
                 if (customPlugins != null)
@@ -828,13 +799,13 @@ namespace AxTools.Forms
 
         private void OnSettingsLoaded()
         {
-            metroStyleManager1.Style = Settings.NewStyleColor;
-            checkBoxStartVenriloWithWow.Checked = Settings.StartVentriloWithWow;
-            checkBoxStartTeamspeak3WithWow.Checked = Settings.StartTS3WithWow;
-            checkBoxStartRaidcallWithWow.Checked = Settings.StartRaidcallWithWow;
-            checkBoxStartMumbleWithWow.Checked = Settings.StartMumbleWithWow;
-            metroCheckBoxPluginShowIngameNotification.Checked = Settings.WowPluginsShowIngameNotifications;
-            checkBoxEnableCustomPlugins.Checked = Settings.EnableCustomPlugins;
+            metroStyleManager1.Style = settings.StyleColor;
+            checkBoxStartVenriloWithWow.Checked = settings.VentriloStartWithWoW;
+            checkBoxStartTeamspeak3WithWow.Checked = settings.TS3StartWithWoW;
+            checkBoxStartRaidcallWithWow.Checked = settings.RaidcallStartWithWoW;
+            checkBoxStartMumbleWithWow.Checked = settings.MumbleStartWithWoW;
+            metroCheckBoxPluginShowIngameNotification.Checked = settings.WoWPluginShowIngameNotifications;
+            checkBoxEnableCustomPlugins.Checked = settings.WoWPluginEnableCustom;
             OnWowAccountsChanged();
         }
 
@@ -842,7 +813,7 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugin == null ? "Start" : "Stop", Settings.PrecompiledModulesHotkey);
+                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugin == null ? "Start" : "Stop", settings.WoWPluginHotkey);
                 comboBoxWowPlugins.Enabled = PluginManager.ActivePlugin == null;
                 UpdatePluginsShortcutsInTrayContextMenu();
             });
@@ -891,11 +862,11 @@ namespace AxTools.Forms
                 {
                     labelPingNum.Text = string.Format("[{0}]::[{1}%]", ping == -1 || ping == -2 ? "n/a" : ping.ToString(), packetLoss);
                     TBProgressBar.SetProgressValue(Handle, 1, 1);
-                    if (packetLoss >= Settings.PingerVeryBadNetworkProcent || ping >= Settings.PingerVeryBadNetworkPing)
+                    if (packetLoss >= settings.PingerVeryBadPacketLoss || ping >= settings.PingerVeryBadPing)
                     {
                         TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
                     }
-                    else if (packetLoss >= Settings.PingerBadNetworkProcent || ping >= Settings.PingerBadNetworkPing)
+                    else if (packetLoss >= settings.PingerBadPacketLoss || ping >= settings.PingerBadPing)
                     {
                         TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
                     }
@@ -913,15 +884,15 @@ namespace AxTools.Forms
 
         private void StartVentrilo()
         {
-            if (!File.Exists(Settings.VtExe + "\\Ventrilo.exe"))
+            if (!File.Exists(settings.VentriloDirectory + "\\Ventrilo.exe"))
             {
                 this.ShowTaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 return;
             }
             Process process = Process.Start(new ProcessStartInfo
             {
-                WorkingDirectory = Settings.VtExe,
-                FileName = Settings.VtExe + "\\Ventrilo.exe",
+                WorkingDirectory = settings.VentriloDirectory,
+                FileName = settings.VentriloDirectory + "\\Ventrilo.exe",
                 Arguments = "-m"
             });
             Task.Factory.StartNew(() =>

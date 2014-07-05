@@ -109,4 +109,5 @@ F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.WowRadar.resou
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.Forms.WowRadarOptions.resources
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.csproj.GenerateResource.Cache
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.exe
-F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.csprojResolveAssemblyReference.cache
+F:\Dropbox\Projects\AxTools\AxTools\bin\Release\Newtonsoft.Json.dll
+F:\Dropbox\Projects\AxTools\AxTools\bin\Release\Newtonsoft.Json.xml

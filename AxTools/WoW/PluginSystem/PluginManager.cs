@@ -52,7 +52,7 @@ namespace AxTools.WoW.PluginSystem
                         Log.Print(string.Format("Plugin OnStart error [{0}]: {1}", ActivePlugin.Name, ex.Message), true);
                     }
                     _balancingStopwatch = new Stopwatch();
-                    if (Settings.WowPluginsShowIngameNotifications)
+                    if (Settings.Instance.WoWPluginShowIngameNotifications)
                     {
                         WoWDXInject.ShowOverlayText("Plugin <" + ActivePlugin.Name + "> is started", ActivePlugin.WowIcon, Color.FromArgb(255, 102, 0));
                     }
@@ -87,7 +87,7 @@ namespace AxTools.WoW.PluginSystem
                     {
                         Log.Print(string.Format("Can't shutdown plugin [{0}]: {1}", ActivePlugin.Name, ex.Message), true);
                     }
-                    if (Settings.WowPluginsShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
+                    if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
                     {
                         WoWDXInject.ShowOverlayText("Plugin <" + ActivePlugin.Name + "> is stopped", ActivePlugin.WowIcon, Color.FromArgb(255, 0, 0));
                     }

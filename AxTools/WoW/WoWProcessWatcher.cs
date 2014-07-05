@@ -134,9 +134,9 @@ namespace AxTools.WoW
                     {
                         Log.Print(String.Format("{0}:{1} :: [Process watcher] Closed WoW process not found", name, pid), true);
                     }
-                    if (Settings.CreatureCache && Directory.Exists(Settings.WowExe + "\\Cache\\WDB"))
+                    if (Settings.Instance.WoWWipeCreatureCache && Directory.Exists(Settings.Instance.WoWDirectory + "\\Cache\\WDB"))
                     {
-                        foreach (DirectoryInfo i in new DirectoryInfo(Settings.WowExe + "\\Cache\\WDB").GetDirectories().Where(i => File.Exists(i.FullName + "\\creaturecache.wdb")))
+                        foreach (DirectoryInfo i in new DirectoryInfo(Settings.Instance.WoWDirectory + "\\Cache\\WDB").GetDirectories().Where(i => File.Exists(i.FullName + "\\creaturecache.wdb")))
                         {
                             File.Delete(i.FullName + "\\creaturecache.wdb");
                             Log.Print("[Cache cleaner] " + i.FullName + "\\creaturecache.wdb was deleted");
@@ -165,17 +165,17 @@ namespace AxTools.WoW
                     Thread.Sleep(500);
                     if (process.MainWindowHandle != IntPtr.Zero)
                     {
-                        if (Settings.AutoAcceptWndSetts)
+                        if (Settings.Instance.WoWCustomizeWindow)
                         {
                             try
                             {
-                                if (Settings.Noframe)
+                                if (Settings.Instance.WoWCustomWindowNoBorder)
                                 {
                                     int styleWow = NativeMethods.GetWindowLong(process.MainWindowHandle, NativeMethods.GWL_STYLE) & ~(NativeMethods.WS_CAPTION | NativeMethods.WS_THICKFRAME);
                                     NativeMethods.SetWindowLong(process.MainWindowHandle, NativeMethods.GWL_STYLE, styleWow);
                                 }
                                 NativeMethods.SetWindowPos(process.MainWindowHandle, (IntPtr)SpecialWindowHandles.HWND_NOTOPMOST,
-                                    Settings.WowWindowLocation.X, Settings.WowWindowLocation.Y, Settings.WowWindowSize.X, Settings.WowWindowSize.Y,
+                                    Settings.Instance.WoWCustomWindowLocation.X, Settings.Instance.WoWCustomWindowLocation.Y, Settings.Instance.WoWCustomWindowSize.X, Settings.Instance.WoWCustomWindowSize.Y,
                                     SetWindowPosFlags.SWP_SHOWWINDOW);
                                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Window style is changed", process.ProcessName, process.ProcessID));
                             }
