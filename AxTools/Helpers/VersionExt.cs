@@ -29,5 +29,10 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 2, PropertyName = "Build")]
         internal int Build;
+
+        public override string ToString()
+        {
+            return Major + "." + Minor + "." + Build;
+        }
     }
 }

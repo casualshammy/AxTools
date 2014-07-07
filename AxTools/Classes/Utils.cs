@@ -85,7 +85,7 @@ namespace AxTools.Classes
                 Settings settings = Settings.Instance;
                 if (File.Exists(Globals.CfgPath + "//.luaconsole3"))
                 {
-                    settings.LuaConsoleLastText = File.ReadAllText(Globals.CfgPath + "//.luaconsole3", Encoding.UTF8);
+                    settings.WoWLuaConsoleLastText = File.ReadAllText(Globals.CfgPath + "//.luaconsole3", Encoding.UTF8);
                     File.Delete(Globals.CfgPath + "//.luaconsole3");
                     Settings.Instance.SaveJSON();
                 }
@@ -149,7 +149,11 @@ namespace AxTools.Classes
                                             break;
                                         case "clicker_hotkey":
                                         case "clicker.hotkey":
-                                            Enum.TryParse(strArray[1], true, out settings.ClickerHotkey);
+                                            Keys key0;
+                                            if (Enum.TryParse(strArray[1], true, out key0))
+                                            {
+                                                settings.ClickerHotkey = key0;
+                                            }
                                             break;
                                         case "clicker_interval":
                                         case "clicker.interval":
@@ -230,7 +234,11 @@ namespace AxTools.Classes
                                             }
                                             break;
                                         case "PrecompiledModulesHotkey":
-                                            Enum.TryParse(strArray[1], true, out settings.WoWPluginHotkey);
+                                            Keys key1;
+                                            if (Enum.TryParse(strArray[1], true, out key1))
+                                            {
+                                                settings.WoWPluginHotkey = key1;
+                                            }
                                             break;
                                         case "LuaConsole.Size.Width":
                                             settings.WoWLuaConsoleWindowSize.Width = Convert.ToInt32(strArray[1]);

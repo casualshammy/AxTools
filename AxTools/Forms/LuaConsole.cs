@@ -41,7 +41,7 @@ namespace AxTools.Forms
             metroCheckBoxShowIngameNotifications.Checked = settings.WoWLuaConsoleShowIngameNotifications;
             metroToolTip1.SetToolTip(pictureBoxRunOnce, "Execute script once");
             metroToolTip1.SetToolTip(pictureBoxSettings, "Open settings");
-            textBoxLuaCode.Text = settings.LuaConsoleLastText;
+            textBoxLuaCode.Text = settings.WoWLuaConsoleLastText;
             settings.LuaTimerHotkeyChanged += LuaTimerHotkeyChanged;
             LuaTimerHotkeyChanged(settings.LuaTimerHotkey);
             Log.Print(string.Format("{0}:{1} :: [Lua console] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
@@ -152,8 +152,7 @@ namespace AxTools.Forms
             {
                 InvokeOnClick(pictureBoxStop, EventArgs.Empty);
             }
-            settings.LuaConsoleLastText = textBoxLuaCode.Text;
-            // ReSharper disable once DelegateSubtraction
+            settings.WoWLuaConsoleLastText = textBoxLuaCode.Text;
             settings.LuaTimerHotkeyChanged -= LuaTimerHotkeyChanged;
             Log.Print(string.Format("{0}:{1} :: [Lua console] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }

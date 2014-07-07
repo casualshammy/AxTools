@@ -22,6 +22,17 @@ namespace AxTools.Services
         private static int _lastPing;
         private static int _lastPacketLoss;
 
+        /// <summary>
+        ///     First parameter is ping
+        ///     Second is packet loss
+        /// </summary>
+        internal static event Action<int, int> DataChanged;
+
+        /// <summary>
+        ///     True if pinger is active, false overwise
+        /// </summary>
+        internal static event Action<bool> StateChanged;
+
         internal static void Start()
         {
             lock (Lock)
@@ -31,7 +42,10 @@ namespace AxTools.Services
                 _timer = new Timer(2000);
                 _timer.Elapsed += TimerOnElapsed;
                 _timer.Start();
-                MainForm.Instance.Pinger_DataChanged(-1, 1);
+                if (StateChanged != null)
+                {
+                    StateChanged(true);
+                }
             }
         }
 
@@ -42,7 +56,10 @@ namespace AxTools.Services
                 _timer.Elapsed -= TimerOnElapsed;
                 _timer.Stop();
                 _timer.Close();
-                MainForm.Instance.Pinger_DataChanged(-1, 0);
+                if (StateChanged != null)
+                {
+                    StateChanged(false);
+                }
             }
         }
 
@@ -66,7 +83,10 @@ namespace AxTools.Services
                         int packetLoss = _pingList.Count(x => x == -1);
                         if (ping != _lastPing || packetLoss != _lastPacketLoss)
                         {
-                            MainForm.Instance.Pinger_DataChanged(ping, packetLoss);
+                            if (DataChanged != null)
+                            {
+                                DataChanged(ping, packetLoss);
+                            }
                             _lastPing = ping;
                             _lastPacketLoss = packetLoss;
                         }

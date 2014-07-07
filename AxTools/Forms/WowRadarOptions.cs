@@ -1,16 +1,17 @@
 ﻿using AxTools.Classes;
 using AxTools.Components;
+using AxTools.WoW;
+using AxTools.WoW.Management;
+using AxTools.WoW.Management.ObjectManager;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using AxTools.WoW;
-using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
 
 namespace AxTools.Forms
 {
@@ -25,7 +26,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             ShowInTaskbar = false;
-            foreach (ObjectToFind i in WowRadar.RadarKOSGeneral)
+            foreach (ObjectToFind i in settings.WoWRadarList)
             {
                 dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
             }
@@ -62,7 +63,7 @@ namespace AxTools.Forms
             {
                 list.Add(new ObjectToFind((bool)i.Cells[0].Value, (string)i.Cells[1].Value, (bool)i.Cells[2].Value, (bool)i.Cells[3].Value));
             }
-            WowRadar.RadarKOSGeneral = list;
+            settings.WoWRadarList = list;
         }
 
         private void MetroCheckBoxShowPlayersClassesCheckedChanged(object sender, EventArgs e)
@@ -213,18 +214,11 @@ namespace AxTools.Forms
                 openFileDialog.InitialDirectory = Globals.UserfilesPath;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    byte[] bytes = File.ReadAllBytes(openFileDialog.FileName);
-                    if (bytes.Length > 0)
+                    List<ObjectToFind> list = JsonConvert.DeserializeObject<List<ObjectToFind>>(File.ReadAllText(openFileDialog.FileName, Encoding.UTF8));
+                    dataGridViewObjects.Rows.Clear();
+                    foreach (ObjectToFind i in list)
                     {
-                        dataGridViewObjects.Rows.Clear();
-                        using (MemoryStream memoryStream = new MemoryStream(bytes))
-                        {
-                            List<ObjectToFind> list = (List<ObjectToFind>)new DataContractJsonSerializer(WowRadar.RadarKOSGeneral.GetType()).ReadObject(memoryStream);
-                            foreach (ObjectToFind i in list)
-                            {
-                                dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
-                            }
-                        }
+                        dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
                     }
                 }
             }
@@ -244,11 +238,8 @@ namespace AxTools.Forms
                 saveFileDialog.AddExtension = true;
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {
-                        new DataContractJsonSerializer(WowRadar.RadarKOSGeneral.GetType()).WriteObject(memoryStream, WowRadar.RadarKOSGeneral);
-                        File.WriteAllBytes(saveFileDialog.FileName, memoryStream.ToArray());
-                    }
+                    string json = JsonConvert.SerializeObject(settings.WoWRadarList);
+                    File.WriteAllText(saveFileDialog.FileName, json, Encoding.UTF8);
                 }
             }
         }

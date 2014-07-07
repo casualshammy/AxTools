@@ -24,6 +24,11 @@ namespace AxTools.Services
         private static Timer _timer;
         private static bool _serviceIsStarted;
 
+        /// <summary>
+        ///     Parameter: -1 means backup is started; 101 means backup is finished; another value means backup progress in %
+        /// </summary>
+        internal static event Action<int> StateChanged;
+
         internal static void StartService()
         {
             if (!_serviceIsStarted)
@@ -66,12 +71,18 @@ namespace AxTools.Services
                 _settings.WoWAddonsBackupLastDate = DateTime.UtcNow;
                 ProcessPriorityClass defaultProcessPriorityClass = Process.GetCurrentProcess().PriorityClass;
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
-                MainForm.Instance.AddonsBackup_OnChangedState(-1);
+                if (StateChanged != null)
+                {
+                    StateChanged(-1);
+                }
                 Task.Factory.StartNew(() => Start(true))
                     .ContinueWith(l =>
                     {
                         Process.GetCurrentProcess().PriorityClass = defaultProcessPriorityClass;
-                        MainForm.Instance.AddonsBackup_OnChangedState(101);
+                        if (StateChanged != null)
+                        {
+                            StateChanged(101);
+                        }
                     });
             }
         }
@@ -216,7 +227,10 @@ namespace AxTools.Services
                 if (procent != _prevProcent)
                 {
                     _prevProcent = procent;
-                    MainForm.Instance.AddonsBackup_OnChangedState(procent);
+                    if (StateChanged != null)
+                    {
+                        StateChanged(procent);
+                    }
                 }
             }
         }

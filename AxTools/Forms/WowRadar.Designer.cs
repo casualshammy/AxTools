@@ -49,7 +49,6 @@ namespace AxTools.Forms
             this.textBoxDetailedInfo = new System.Windows.Forms.TextBox();
             this.checkBoxObjects = new AxTools.Components.CheckBoxExt(this.components);
             this.checkBoxNpcs = new AxTools.Components.CheckBoxExt(this.components);
-            this.labelZoom = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxClose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRadarSettings)).BeginInit();
@@ -175,22 +174,10 @@ namespace AxTools.Forms
             this.checkBoxNpcs.UseVisualStyleBackColor = true;
             this.checkBoxNpcs.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxNpcsMouseClickExtended);
             // 
-            // labelZoom
-            // 
-            this.labelZoom.AutoSize = true;
-            this.labelZoom.ForeColor = System.Drawing.Color.White;
-            this.labelZoom.Location = new System.Drawing.Point(12, 9);
-            this.labelZoom.Name = "labelZoom";
-            this.labelZoom.Size = new System.Drawing.Size(18, 13);
-            this.labelZoom.TabIndex = 41;
-            this.labelZoom.Text = "2x";
-            this.labelZoom.Visible = false;
-            // 
             // WowRadar
             // 
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(225, 274);
-            this.Controls.Add(this.labelZoom);
             this.Controls.Add(this.textBoxDetailedInfo);
             this.Controls.Add(this.checkBoxCorpses);
             this.Controls.Add(this.pictureBoxRadarSettings);
@@ -230,6 +217,5 @@ namespace AxTools.Forms
         private MetroToolTip toolTip1;
         private CheckBox checkBoxCorpses;
         private TextBox textBoxDetailedInfo;
-        private Label labelZoom;
     }
 }

@@ -166,13 +166,13 @@ namespace AxTools.WoW.PluginSystem.Plugins
             {
                 string zoneText = Lua.GetFunctionReturn("GetZoneText()");
                 Utilities.LogPrint("We're in " + zoneText + ", searching for " + searchingObjects.AsString());
-                Utilities.ShowNotifyMessage("[" + Name + "] " + zoneText, "Searching for " + searchingObjects.AsString(), ToolTipIcon.Info);
+                Utilities.ShowNotifyMessage("[" + Name + "] ", zoneText + ": " + searchingObjects.AsString(), ToolTipIcon.Info);
                 Utils.PlaySystemNotificationAsync();
             }
             else
             {
                 Utilities.LogPrint("Unknown battlefield, ID:" + zone);
-                Utilities.ShowNotifyMessage("[" + Name + "] Unknown battlefield", "I don't know what to do in this zone...", ToolTipIcon.Warning);
+                Utilities.ShowNotifyMessage("[" + Name + "]", "Unknown battlefield. I don't know what to do in this zone...", ToolTipIcon.Warning);
                 Utils.PlaySystemNotificationAsync();
             }
         }

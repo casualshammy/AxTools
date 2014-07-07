@@ -29,8 +29,6 @@ namespace AxTools.Forms
         /// </summary>
         internal static void ShowChangesIfNeeded()
         {
-            Log.Print(Globals.AppVersion);
-            Log.Print(Settings.Instance.LastUsedVersion);
             if (Globals.AppVersion.Major != Settings.Instance.LastUsedVersion.Major || Globals.AppVersion.Minor != Settings.Instance.LastUsedVersion.Minor)
             {
                 Task.Factory.StartNew(() =>
@@ -48,6 +46,7 @@ namespace AxTools.Forms
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
             }
+            Settings.Instance.LastUsedVersion = Globals.AppVersion;
         }
 
     }

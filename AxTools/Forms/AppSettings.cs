@@ -268,7 +268,11 @@ namespace AxTools.Forms
 
         private void ComboBoxClickerHotkeySelectedIndexChanged(object sender, EventArgs e)
         {
-            Enum.TryParse(comboBoxClickerHotkey.Text, true, out settings.ClickerHotkey);
+            Keys key;
+            if (Enum.TryParse(comboBoxClickerHotkey.Text, true, out key))
+            {
+                settings.ClickerHotkey = key;
+            }
         }
 
         private void ComboBoxWExecLuaTimerSelectedIndexChanged(object sender, EventArgs e)
@@ -282,8 +286,11 @@ namespace AxTools.Forms
 
         private void ComboBoxWExecModuleSelectedIndexChanged(object sender, EventArgs e)
         {
-            Enum.TryParse(comboBoxWExecModule.Text, true, out settings.WoWPluginHotkey);
-            MainForm.Instance.WowPluginHotkeyChanged();
+            Keys key;
+            if (Enum.TryParse(comboBoxWExecModule.Text, true, out key))
+            {
+                settings.WoWPluginHotkey = key;
+            }
         }
 
         private void CheckBoxAddonsBackupCheckedChanged(object sender, EventArgs e)

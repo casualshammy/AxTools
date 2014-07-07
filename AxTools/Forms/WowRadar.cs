@@ -1,4 +1,5 @@
-﻿using System.Media;
+﻿using System.Diagnostics;
+using System.Media;
 using System.Threading;
 using AxTools.Classes;
 using AxTools.Properties;
@@ -21,91 +22,24 @@ namespace AxTools.Forms
 {
     internal partial class WowRadar : Form, IWoWModule
     {
-        public WowRadar()
-        {
-            InitializeComponent();
-            Icon = Resources.AppIcon;
-            RadarKOSGeneral = settings.WoWRadarList;
-            checkBoxFriends.ForeColor = settings.WoWRadarFriendColor;
-            checkBoxEnemies.ForeColor = settings.WoWRadarEnemyColor;
-            checkBoxNpcs.ForeColor = settings.WoWRadarNPCColor;
-            checkBoxObjects.ForeColor = settings.WoWRadarObjectColor;
-            halfOfPictureboxSize = pictureBoxMain.Width / 2;
-            try
-            {
-                byte[] p = BitConverter.GetBytes(settings.WoWRadarShowMode);
-                checkBoxFriends.Checked = p[0] == 1;
-                checkBoxEnemies.Checked = p[1] == 1;
-                checkBoxNpcs.Checked = p[2] == 1;
-                checkBoxObjects.Checked = p[3] == 1;
-                checkBoxCorpses.Checked = p[4] == 1;
-                zoomR = p[5]*0.25F;
-                if (zoomR > 2F || zoomR < 0.25F)
-                {
-                    zoomR = 0.5F;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
-            }
-
-            checkBoxFriends.CheckedChanged += SaveCheckBoxes;
-            checkBoxEnemies.CheckedChanged += SaveCheckBoxes;
-            checkBoxNpcs.CheckedChanged += SaveCheckBoxes;
-            checkBoxObjects.CheckedChanged += SaveCheckBoxes;
-            checkBoxCorpses.CheckedChanged += SaveCheckBoxes;
-
-            redrawTaskCTS = new CancellationTokenSource();
-            redrawTask = new Task(Redraw, redrawTaskCTS.Token, TaskCreationOptions.LongRunning);
-            mouseHookListener = new MouseHookListener(Globals.GlobalHooker);
-            mouseHookListener.MouseWheel += mouseHookListener_MouseWheel;
-            mouseHookListener.Start();
-            Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
-        }
-
         private readonly MouseHookListener mouseHookListener;
         private bool processMouseWheelEvents;
 
-        private static List<ObjectToFind> _radarKOS = new List<ObjectToFind>(new[] {new ObjectToFind(true, "Воракем Глашатай Судьбы", false, true), new ObjectToFind(true, "Древние сутры", true, false)});
-        internal static List<ObjectToFind> RadarKOSGeneral
-        {
-            get { return _radarKOS; }
-            set
-            {
-                _radarKOS = value;
-                RadarKOSFind.Clear();
-                RadarKOSFindAlarm.Clear();
-                RadarKOSFindInteract.Clear();
-                foreach (ObjectToFind i in _radarKOS.Where(i => i.Enabled))
-                {
-                    RadarKOSFind.Add(i.Name);
-                    if (i.Interact)
-                    {
-                        RadarKOSFindInteract.Add(i.Name);
-                    }
-                    if (i.SoundAlarm)
-                    {
-                        RadarKOSFindAlarm.Add(i.Name);
-                    }
-                }
-            }
-        }
         private static readonly HashSet<string> RadarKOSFind = new HashSet<string>();
         private static readonly HashSet<string> RadarKOSFindAlarm = new HashSet<string>();
         private static readonly HashSet<string> RadarKOSFindInteract = new HashSet<string>();
 
         private readonly Settings settings = Settings.Instance;
-        private Pen friendPen = new Pen(Settings.Instance.WoWRadarFriendColor, 1f);
-        private Pen enemyPen = new Pen(Settings.Instance.WoWRadarEnemyColor, 1f);
-        private Pen npcPen = new Pen(Settings.Instance.WoWRadarNPCColor, 1f);
-        private Pen objectPen = new Pen(Settings.Instance.WoWRadarObjectColor, 1f);
+        private readonly Pen friendPen = new Pen(Settings.Instance.WoWRadarFriendColor, 1f);
+        private readonly Pen enemyPen = new Pen(Settings.Instance.WoWRadarEnemyColor, 1f);
+        private readonly Pen npcPen = new Pen(Settings.Instance.WoWRadarNPCColor, 1f);
+        private readonly Pen objectPen = new Pen(Settings.Instance.WoWRadarObjectColor, 1f);
         private readonly Pen whitePen = new Pen(Color.White, 1f);
         private readonly Pen grayPen = new Pen(Color.Gray, 1f);
-        private SolidBrush friendBrush = new SolidBrush(Settings.Instance.WoWRadarFriendColor);
-        private SolidBrush enemyBrush = new SolidBrush(Settings.Instance.WoWRadarEnemyColor);
-        private SolidBrush npcBrush = new SolidBrush(Settings.Instance.WoWRadarNPCColor);
-        private SolidBrush objectBrush = new SolidBrush(Settings.Instance.WoWRadarObjectColor);
+        private readonly SolidBrush friendBrush = new SolidBrush(Settings.Instance.WoWRadarFriendColor);
+        private readonly SolidBrush enemyBrush = new SolidBrush(Settings.Instance.WoWRadarEnemyColor);
+        private readonly SolidBrush npcBrush = new SolidBrush(Settings.Instance.WoWRadarNPCColor);
+        private readonly SolidBrush objectBrush = new SolidBrush(Settings.Instance.WoWRadarObjectColor);
         private readonly SolidBrush whiteBrush = new SolidBrush(Color.White);
         private readonly SolidBrush grayBrush = new SolidBrush(Color.Gray);
         Point tmpPoint = Point.Empty;
@@ -123,31 +57,67 @@ namespace AxTools.Forms
         private WowPlayer[] enemies;
         private WowObject[] objects;
         private WowNpc[] npcs;
-        private readonly Task redrawTask;
-        private readonly CancellationTokenSource redrawTaskCTS;
-        private bool readyToDraw;
+        private readonly Thread thread;
+        private volatile bool isRunning;
+        private volatile bool shouldDrawObjects;
+
+        public WowRadar()
+        {
+            InitializeComponent();
+            Icon = Resources.AppIcon;
+            settings.WoWRadarListChanged += WoWRadarListChanged;
+            UpdateCaches();
+            checkBoxFriends.ForeColor = settings.WoWRadarFriendColor;
+            checkBoxEnemies.ForeColor = settings.WoWRadarEnemyColor;
+            checkBoxNpcs.ForeColor = settings.WoWRadarNPCColor;
+            checkBoxObjects.ForeColor = settings.WoWRadarObjectColor;
+            halfOfPictureboxSize = pictureBoxMain.Width / 2;
+            try
+            {
+                byte[] p = BitConverter.GetBytes(settings.WoWRadarShowMode);
+                checkBoxFriends.Checked = p[0] == 1;
+                checkBoxEnemies.Checked = p[1] == 1;
+                checkBoxNpcs.Checked = p[2] == 1;
+                checkBoxObjects.Checked = p[3] == 1;
+                checkBoxCorpses.Checked = p[4] == 1;
+                zoomR = p[5] * 0.25F;
+                if (zoomR > 2F || zoomR < 0.25F)
+                {
+                    zoomR = 0.5F;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Print(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
+            }
+
+            checkBoxFriends.CheckedChanged += SaveCheckBoxes;
+            checkBoxEnemies.CheckedChanged += SaveCheckBoxes;
+            checkBoxNpcs.CheckedChanged += SaveCheckBoxes;
+            checkBoxObjects.CheckedChanged += SaveCheckBoxes;
+            checkBoxCorpses.CheckedChanged += SaveCheckBoxes;
+
+            thread = new Thread(Redraw);
+            mouseHookListener = new MouseHookListener(Globals.GlobalHooker);
+            mouseHookListener.MouseWheel += mouseHookListener_MouseWheel;
+            mouseHookListener.Start();
+            Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+        }
 
         private void Redraw()
         {
             Action refreshRadar = pictureBoxMain.Invalidate;
-            Action clearRadar = () =>
-            {
-                pictureBoxMain.Invalidate();
-                checkBoxFriends.Text = "F: 0/0";
-                checkBoxEnemies.Text = "E: 0/0";
-                checkBoxObjects.Text = "Objects: 0";
-                checkBoxNpcs.Text = "N: 0/0";
-            };
             bool soundAlarmPrevState = false;
-            while (!redrawTaskCTS.IsCancellationRequested)
+            Stopwatch stopwatch = new Stopwatch();
+            while (isRunning)
             {
-                int startTime = Environment.TickCount;
-                readyToDraw = false;
+                stopwatch.Restart();
                 if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
                 {
                     try
                     {
-                        BeginInvoke(clearRadar);
+                        shouldDrawObjects = false;
+                        BeginInvoke(refreshRadar);
                     }
                     catch (Exception ex)
                     {
@@ -163,7 +133,8 @@ namespace AxTools.Forms
                 catch (Exception ex)
                 {
                     Log.Print(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true, false);
-                    BeginInvoke(clearRadar);
+                    shouldDrawObjects = false;
+                    BeginInvoke(refreshRadar);
                     Thread.Sleep(100);
                     continue;
                 }
@@ -192,29 +163,29 @@ namespace AxTools.Forms
                         Task.Factory.StartNew(PlayAlarmFile);
                     }
                     soundAlarmPrevState = soundAlarm;
-                    readyToDraw = true;
+                    shouldDrawObjects = true;
                     BeginInvoke(refreshRadar);
                 }
                 catch (Exception ex)
                 {
                     Log.Print(String.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true, false);
-                    BeginInvoke(clearRadar);
+                    shouldDrawObjects = false;
+                    BeginInvoke(refreshRadar);
                     Thread.Sleep(100);
                     continue;
                 }
-                int counter = 100 - Environment.TickCount + startTime;
-                if (counter > 0 && !redrawTaskCTS.IsCancellationRequested)
+                int counter = 100 - (int) stopwatch.ElapsedMilliseconds;
+                if (counter > 0 && isRunning)
                 {
                     Thread.Sleep(counter);
                 }
             }
             Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
-            redrawTaskCTS.Token.ThrowIfCancellationRequested();
         }
 
         private void PictureBox1Paint(object sender, PaintEventArgs e)
         {
-            if (readyToDraw)
+            if (shouldDrawObjects && isRunning)
             {
                 try
                 {
@@ -225,7 +196,7 @@ namespace AxTools.Forms
                     checkBoxObjects.Text = String.Concat("Objects: ", objects.Length.ToString());
                     int npcsCountAlive = npcs.Count(i => i.Health > 0);
                     checkBoxNpcs.Text = String.Concat("N: ", npcsCountAlive.ToString(), "/", npcs.Length.ToString());
-                    
+
                     objectsPointsInRadarCoords.Clear();
 
                     Point point = new Point();
@@ -494,6 +465,13 @@ namespace AxTools.Forms
                     Log.Print(String.Format("{0}:{1} :: Radar: Drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
                 }
             }
+            else
+            {
+                checkBoxFriends.Text = "F: 0/0";
+                checkBoxEnemies.Text = "E: 0/0";
+                checkBoxObjects.Text = "Objects: 0";
+                checkBoxNpcs.Text = "N: 0/0";
+            }
         }
 
         private void PlayAlarmFile()
@@ -505,6 +483,30 @@ namespace AxTools.Forms
                     pPlayer.PlaySync();
                 }
             }
+        }
+
+        private void UpdateCaches()
+        {
+            RadarKOSFind.Clear();
+            RadarKOSFindAlarm.Clear();
+            RadarKOSFindInteract.Clear();
+            foreach (ObjectToFind i in settings.WoWRadarList.Where(i => i.Enabled))
+            {
+                RadarKOSFind.Add(i.Name);
+                if (i.Interact)
+                {
+                    RadarKOSFindInteract.Add(i.Name);
+                }
+                if (i.SoundAlarm)
+                {
+                    RadarKOSFindAlarm.Add(i.Name);
+                }
+            }
+        }
+
+        private void WoWRadarListChanged(object sender, EventArgs eventArgs)
+        {
+            UpdateCaches();
         }
 
         private void PictureBox2Click(object sender, EventArgs e)
@@ -539,7 +541,8 @@ namespace AxTools.Forms
 
         private void RadarFormClosing(object sender, FormClosingEventArgs e)
         {
-            readyToDraw = false;
+            // ReSharper disable once DelegateSubtraction
+            settings.WoWRadarListChanged -= WoWRadarListChanged;
             whitePen.Dispose();
             enemyPen.Dispose();
             friendPen.Dispose();
@@ -553,39 +556,27 @@ namespace AxTools.Forms
             enemyBrush.Dispose();
             grayBrush.Dispose();
 
-            redrawTaskCTS.Cancel();
-            try
+            isRunning = false;
+            if (!thread.Join(5000))
             {
-                redrawTask.Wait(5000);
-            }
-            // ReSharper disable once EmptyGeneralCatchClause
-            catch
-            {
-                // It's OK
-            }
-            if (redrawTask.Status == TaskStatus.Canceled || redrawTask.Status == TaskStatus.RanToCompletion || redrawTask.Status == TaskStatus.Faulted)
-            {
-                redrawTask.Dispose();
-                redrawTaskCTS.Dispose();
-                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, thread.ThreadState), true);
             }
             else
             {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, redrawTask.Status), true);
+                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
-            settings.WoWRadarList = RadarKOSGeneral;
             if (mouseHookListener != null && mouseHookListener.Enabled)
             {
                 mouseHookListener.Dispose();
             }
-            
             Log.Print(String.Format("{0}:{1} :: [Radar] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void RadarLoad(object sender, EventArgs e)
         {
             Location = settings.WoWRadarLocation;
-            redrawTask.Start();
+            isRunning = true;
+            thread.Start();
             if (!File.Exists(Globals.UserfilesPath + "\\alarm.wav"))
             {
                 Utils.CheckCreateDir();
@@ -767,8 +758,8 @@ namespace AxTools.Forms
                     if (colorDialog.ShowDialog(this) == DialogResult.OK)
                     {
                         settings.WoWRadarFriendColor = colorDialog.Color;
-                        friendPen = new Pen(settings.WoWRadarFriendColor, 1f);
-                        friendBrush = new SolidBrush(settings.WoWRadarFriendColor);
+                        friendPen.Color = colorDialog.Color;
+                        friendBrush.Color = colorDialog.Color;
                         checkBoxFriends.ForeColor = settings.WoWRadarFriendColor;
                     }
                 }
@@ -788,8 +779,8 @@ namespace AxTools.Forms
                     if (colorDialog.ShowDialog(this) == DialogResult.OK)
                     {
                         settings.WoWRadarEnemyColor = colorDialog.Color;
-                        enemyPen = new Pen(settings.WoWRadarEnemyColor, 1f);
-                        enemyBrush = new SolidBrush(settings.WoWRadarEnemyColor);
+                        enemyPen.Color = colorDialog.Color;
+                        enemyBrush.Color = colorDialog.Color;
                         checkBoxEnemies.ForeColor = settings.WoWRadarEnemyColor;
                     }
                 }
@@ -809,8 +800,8 @@ namespace AxTools.Forms
                     if (colorDialog.ShowDialog(this) == DialogResult.OK)
                     {
                         settings.WoWRadarNPCColor = colorDialog.Color;
-                        npcPen = new Pen(settings.WoWRadarNPCColor, 1f);
-                        npcBrush = new SolidBrush(settings.WoWRadarNPCColor);
+                        npcPen.Color = colorDialog.Color;
+                        npcBrush.Color = colorDialog.Color;
                         checkBoxNpcs.ForeColor = settings.WoWRadarNPCColor;
                     }
                 }
@@ -830,8 +821,8 @@ namespace AxTools.Forms
                     if (colorDialog.ShowDialog(this) == DialogResult.OK)
                     {
                         settings.WoWRadarObjectColor = colorDialog.Color;
-                        objectPen = new Pen(settings.WoWRadarObjectColor, 1f);
-                        objectBrush = new SolidBrush(settings.WoWRadarObjectColor);
+                        objectPen.Color = colorDialog.Color;
+                        objectBrush.Color = colorDialog.Color;
                         checkBoxObjects.ForeColor = settings.WoWRadarObjectColor;
                     }
                 }
@@ -858,16 +849,6 @@ namespace AxTools.Forms
                     zoomR = zoomR * 2;
                     SaveCheckBoxes(null, EventArgs.Empty);
                 }
-                string text = zoomR*2 + "x";
-                labelZoom.Text = text;
-                labelZoom.Visible = true;
-                Task.Factory.StartNew(() => Thread.Sleep(2000)).ContinueWith(l => BeginInvoke((MethodInvoker) delegate
-                {
-                    if (labelZoom.Text == text)
-                    {
-                        labelZoom.Visible = false;
-                    }
-                }));
             }
         }
     

@@ -37,7 +37,6 @@ namespace AxTools.Forms
         internal MainForm()
         {
             InitializeComponent();
-            Instance = this;
             Closing += MainFormClosing;
             notifyIconMain.Icon = Resources.AppIcon;
 
@@ -72,8 +71,14 @@ namespace AxTools.Forms
             Utils.Legacy();
             settings = Settings.Instance;
             OnSettingsLoaded();
-            WowPluginHotkeyChanged();
             WebRequest.DefaultWebProxy = null;
+
+            settings.WoWPluginHotkeyChanged += WoWPluginHotkeyChanged;
+            PluginManager.PluginStateChanged += PluginManagerOnPluginStateChanged;
+            Pinger.DataChanged += Pinger_DataChanged;
+            Pinger.StateChanged += PingerOnStateChanged;
+            AddonsBackup.StateChanged += AddonsBackup_OnChangedState;
+
             Task.Factory.StartNew(LoadingStepAsync);
             BeginInvoke((MethodInvoker) delegate
             {
@@ -192,6 +197,12 @@ namespace AxTools.Forms
                 i.Close();
             }
             //
+            settings.WoWPluginHotkeyChanged -= WoWPluginHotkeyChanged;
+            PluginManager.PluginStateChanged -= PluginManagerOnPluginStateChanged;
+            Pinger.DataChanged -= Pinger_DataChanged;
+            Pinger.StateChanged += PingerOnStateChanged;
+            AddonsBackup.StateChanged -= AddonsBackup_OnChangedState;
+            //
             settings.MainWindowLocation = Location;
             //save settings
             settings.SaveJSON();
@@ -228,8 +239,8 @@ namespace AxTools.Forms
 
         private void SendLogToDeveloper()
         {
-            TaskDialog taskDialog = new TaskDialog("There were errors during runtime", "AxTools", "Do you want to send log file to developer?",
-                (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No), TaskDialogIcon.Warning);
+            TaskDialogButton yesNo = TaskDialogButton.Yes + (int) TaskDialogButton.No;
+            TaskDialog taskDialog = new TaskDialog("There were errors during runtime", "AxTools", "Do you want to send log file to developer?", yesNo, TaskDialogIcon.Warning);
             if (Log.HaveErrors && Utils.InternetAvailable && taskDialog.Show(this).CommonButton == Result.Yes && File.Exists(Globals.LogFileName))
             {
                 try
@@ -806,10 +817,11 @@ namespace AxTools.Forms
             checkBoxStartMumbleWithWow.Checked = settings.MumbleStartWithWoW;
             metroCheckBoxPluginShowIngameNotification.Checked = settings.WoWPluginShowIngameNotifications;
             checkBoxEnableCustomPlugins.Checked = settings.WoWPluginEnableCustom;
+            buttonStartStopPlugin.Text = string.Format("{0} [{1}]", "Start", settings.WoWPluginHotkey);
             OnWowAccountsChanged();
         }
 
-        internal void WowPluginHotkeyChanged()
+        private void PluginManagerOnPluginStateChanged()
         {
             BeginInvoke((MethodInvoker) delegate
             {
@@ -819,7 +831,16 @@ namespace AxTools.Forms
             });
         }
 
-        internal void AddonsBackup_OnChangedState(int procent)
+        private void WoWPluginHotkeyChanged(Keys key)
+        {
+            BeginInvoke(new MethodInvoker(() =>
+            {
+                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugin == null ? "Start" : "Stop", key);
+                UpdatePluginsShortcutsInTrayContextMenu();
+            }));
+        }
+
+        private void AddonsBackup_OnChangedState(int procent)
         {
             switch (procent)
             {
@@ -847,33 +868,34 @@ namespace AxTools.Forms
             }
         }
 
-        internal void Pinger_DataChanged(int ping, int packetLoss)
+        private void PingerOnStateChanged(bool enabled)
+        {
+            BeginInvoke(new MethodInvoker(() =>
+            {
+                labelPingNum.Visible = enabled;
+                labelPingNum.Text = "[n/a]::[n/a]";
+                TBProgressBar.SetProgressValue(Handle, 1, 1);
+                TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
+            }));
+        }
+
+        private void Pinger_DataChanged(int ping, int packetLoss)
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                if (ping == -1)
+                labelPingNum.Text = string.Format("[{0}]::[{1}%]", ping == -1 || ping == -2 ? "n/a" : ping.ToString(), packetLoss);
+                TBProgressBar.SetProgressValue(Handle, 1, 1);
+                if (packetLoss >= settings.PingerVeryBadPacketLoss || ping >= settings.PingerVeryBadPing)
                 {
-                    labelPingNum.Visible = packetLoss != 0;
-                    labelPingNum.Text = "[n/a]::[n/a]";
-                    TBProgressBar.SetProgressValue(Handle, 1, 1);
-                    TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
+                    TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
+                }
+                else if (packetLoss >= settings.PingerBadPacketLoss || ping >= settings.PingerBadPing)
+                {
+                    TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
                 }
                 else
                 {
-                    labelPingNum.Text = string.Format("[{0}]::[{1}%]", ping == -1 || ping == -2 ? "n/a" : ping.ToString(), packetLoss);
-                    TBProgressBar.SetProgressValue(Handle, 1, 1);
-                    if (packetLoss >= settings.PingerVeryBadPacketLoss || ping >= settings.PingerVeryBadPing)
-                    {
-                        TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
-                    }
-                    else if (packetLoss >= settings.PingerBadPacketLoss || ping >= settings.PingerBadPing)
-                    {
-                        TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
-                    }
-                    else
-                    {
-                        TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
-                    }
+                    TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
                 }
             });
         }
@@ -884,41 +906,43 @@ namespace AxTools.Forms
 
         private void StartVentrilo()
         {
-            if (!File.Exists(settings.VentriloDirectory + "\\Ventrilo.exe"))
+            if (File.Exists(settings.VentriloDirectory + "\\Ventrilo.exe"))
             {
-                this.ShowTaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                return;
-            }
-            Process process = Process.Start(new ProcessStartInfo
-            {
-                WorkingDirectory = settings.VentriloDirectory,
-                FileName = settings.VentriloDirectory + "\\Ventrilo.exe",
-                Arguments = "-m"
-            });
-            Task.Factory.StartNew(() =>
-            {
-                int counter = 300;
-                while (counter > 0)
+                Process process = Process.Start(new ProcessStartInfo
                 {
-                    process.Refresh();
-                    if (process.MainWindowHandle != (IntPtr)0)
+                    WorkingDirectory = settings.VentriloDirectory,
+                    FileName = settings.VentriloDirectory + "\\Ventrilo.exe",
+                    Arguments = "-m"
+                });
+                Task.Factory.StartNew(() =>
+                {
+                    int counter = 300;
+                    while (counter > 0)
                     {
-                        IntPtr windowHandle = NativeMethods.FindWindow(null, "Ventrilo");
-                        if (windowHandle != IntPtr.Zero)
+                        process.Refresh();
+                        if (process.MainWindowHandle != (IntPtr) 0)
                         {
-                            IntPtr connectButtonHandle = NativeMethods.FindWindowEx(windowHandle, IntPtr.Zero, "Button", "C&onnect");
-                            if (connectButtonHandle != IntPtr.Zero)
+                            IntPtr windowHandle = NativeMethods.FindWindow(null, "Ventrilo");
+                            if (windowHandle != IntPtr.Zero)
                             {
-                                NativeMethods.PostMessage(connectButtonHandle, WM_MESSAGE.WM_BM_CLICK, IntPtr.Zero, IntPtr.Zero);
-                                break;
+                                IntPtr connectButtonHandle = NativeMethods.FindWindowEx(windowHandle, IntPtr.Zero, "Button", "C&onnect");
+                                if (connectButtonHandle != IntPtr.Zero)
+                                {
+                                    NativeMethods.PostMessage(connectButtonHandle, WM_MESSAGE.WM_BM_CLICK, IntPtr.Zero, IntPtr.Zero);
+                                    break;
+                                }
                             }
                         }
+                        Thread.Sleep(100);
+                        counter--;
                     }
-                    Thread.Sleep(100);
-                    counter--;
-                }
-            });
-            Log.Print("Ventrilo process started");
+                });
+                Log.Print("Ventrilo process started");
+            }
+            else
+            {
+                this.ShowTaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
         }
 
         private void StartWoWModule<T>() where T : Form, IWoWModule, new()
@@ -984,7 +1008,6 @@ namespace AxTools.Forms
                         if (WoWManager.WoWProcess.IsInGame)
                         {
                             PluginManager.StartPlugin(PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text));
-                            WowPluginHotkeyChanged();
                         }
                         else
                         {
@@ -1002,7 +1025,6 @@ namespace AxTools.Forms
                 try
                 {
                     PluginManager.StopPlugin();
-                    WowPluginHotkeyChanged();
                     GC.Collect();
                 }
                 catch

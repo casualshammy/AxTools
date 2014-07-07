@@ -6,8 +6,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.Classes;
 using AxTools.Forms;
@@ -29,6 +27,8 @@ namespace AxTools.WoW.PluginSystem
         private static Stopwatch _balancingStopwatch;
 
         private static readonly object _lock = new object();
+
+        internal static event Action PluginStateChanged;
 
         private static Thread _pluginThread;
 
@@ -57,6 +57,10 @@ namespace AxTools.WoW.PluginSystem
                         WoWDXInject.ShowOverlayText("Plugin <" + ActivePlugin.Name + "> is started", ActivePlugin.WowIcon, Color.FromArgb(255, 102, 0));
                     }
                     _pluginThread.Start();
+                    if (PluginStateChanged != null)
+                    {
+                        PluginStateChanged();
+                    }
                 }
                 else
                 {
@@ -65,7 +69,7 @@ namespace AxTools.WoW.PluginSystem
             }
         }
 
-        internal static void StopPlugin(bool reportToMainWindow = false)
+        internal static void StopPlugin()
         {
             lock (_lock)
             {
@@ -93,9 +97,9 @@ namespace AxTools.WoW.PluginSystem
                     }
                     _pluginThread = null;
                     ActivePlugin = null;
-                    if (reportToMainWindow)
+                    if (PluginStateChanged != null)
                     {
-                        MainForm.Instance.WowPluginHotkeyChanged();
+                        PluginStateChanged();
                     }
                 }
                 else
@@ -110,20 +114,23 @@ namespace AxTools.WoW.PluginSystem
             while (_shouldPulse)
             {
                 _balancingStopwatch.Restart();
-                if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
+                //if (!WoWManager.Hooked)
+                //{
+                //    Log.Print(String.Format("{0}:{1} :: [{2}] Plugin is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name));
+                //    MainForm.Instance.ShowNotifyIconMessage("[" + ActivePlugin.Name + "] Plugin is stopped", "The player isn't active or not in the game", ToolTipIcon.Error);
+                //    Task.Factory.StartNew(() => StopPlugin(true));
+                //    return;
+                //}
+                if (WoWManager.WoWProcess.IsInGame)
                 {
-                    Log.Print(String.Format("{0}:{1} :: [{2}] Plugin is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name));
-                    MainForm.Instance.ShowNotifyIconMessage("[" + ActivePlugin.Name + "] Plugin is stopped", "The player isn't active or not in the game", ToolTipIcon.Error);
-                    Task.Factory.StartNew(() => StopPlugin(true));
-                    return;
-                }
-                try
-                {
-                    ActivePlugin.OnPulse();
-                }
-                catch (Exception ex)
-                {
-                    Log.Print(String.Format("{0}:{1} :: [{2}] OnPulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name, ex.Message), true);
+                    try
+                    {
+                        ActivePlugin.OnPulse();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Print(String.Format("{0}:{1} :: [{2}] OnPulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name, ex.Message), true);
+                    }
                 }
                 int shouldWait = (int) (_intervalBetweenPulses - _balancingStopwatch.ElapsedMilliseconds);
                 while (shouldWait > 0 && _shouldPulse)

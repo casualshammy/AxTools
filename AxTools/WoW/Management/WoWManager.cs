@@ -2,6 +2,7 @@
 using AxTools.Classes;
 using AxTools.Forms;
 using AxTools.WoW.Management.ObjectManager;
+using AxTools.WoW.PluginSystem;
 using GreyMagic;
 
 namespace AxTools.WoW.Management
@@ -39,6 +40,11 @@ namespace AxTools.WoW.Management
             return HookResult.AlreadyHooked;
         }
 
+        /// <summary>
+        ///     Closes //WoWRadar, LuaConsole//
+        ///     Stops WoW plugin
+        ///     Releases DX hook
+        /// </summary>
         internal static void Unhook()
         {
             WowRadarOptions pWowRadarOptions = Utils.FindForm<WowRadarOptions>();
@@ -47,6 +53,11 @@ namespace AxTools.WoW.Management
             if (pWowRadar != null) pWowRadar.Close();
             LuaConsole pLuaInjector = Utils.FindForm<LuaConsole>();
             if (pLuaInjector != null) pLuaInjector.Close();
+
+            if (PluginManager.ActivePlugin != null)
+            {
+                PluginManager.StopPlugin();
+            }
 
             WoWDXInject.Release();
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Total objects cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowObject.Names.Count), false, false);
