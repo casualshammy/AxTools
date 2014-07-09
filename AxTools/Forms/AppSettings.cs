@@ -18,6 +18,7 @@ namespace AxTools.Forms
     internal partial class AppSettings : BorderedMetroForm
     {
         private readonly Settings settings = Settings.Instance;
+        private readonly bool isSettingsLoaded;
 
         internal AppSettings()
         {
@@ -129,266 +130,339 @@ namespace AxTools.Forms
             metroToolTip1.SetToolTip(CheckBox3, "Deletes creature cache file when possible");
             metroToolTip1.SetToolTip(CheckBox5, "Moves WoW log files to temporary folder\r\non AxTools' startup\r\nand deletes it on AxTools' shutdown");
             metroToolTip1.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
+            isSettingsLoaded = true;
         }
 
         private void CheckBox9CheckedChanged(Object sender, EventArgs e)
         {
-            if (CheckBoxStartAxToolsWithWindows.Checked)
+            if (isSettingsLoaded)
             {
-                try
+                if (CheckBoxStartAxToolsWithWindows.Checked)
                 {
-                    Microsoft.Win32.RegistryKey regVersion =
-                        Microsoft.Win32.Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
-                    if (regVersion != null)
+                    try
                     {
-                        regVersion.SetValue("AxTools", Application.ExecutablePath);
-                        regVersion.Close();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Print("app_sett.CheckBox9.CheckedChanged_1: " + ex.Message, true);
-                }
-            }
-            else
-            {
-                try
-                {
-                    Microsoft.Win32.RegistryKey regVersion = 
-                        Microsoft.Win32.Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
-                    if (regVersion != null)
-                    {
-                        if (regVersion.GetValue("AxTools") != null)
+                        Microsoft.Win32.RegistryKey regVersion =
+                            Microsoft.Win32.Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
+                        if (regVersion != null)
                         {
-                            regVersion.DeleteValue("AxTools");
+                            regVersion.SetValue("AxTools", Application.ExecutablePath);
                             regVersion.Close();
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        Log.Print("app_sett.CheckBox9.CheckedChanged_1: " + ex.Message, true);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Log.Print("app_sett.CheckBox9.CheckedChanged_2: " + ex.Message, true);
+                    try
+                    {
+                        Microsoft.Win32.RegistryKey regVersion =
+                            Microsoft.Win32.Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
+                        if (regVersion != null)
+                        {
+                            if (regVersion.GetValue("AxTools") != null)
+                            {
+                                regVersion.DeleteValue("AxTools");
+                                regVersion.Close();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Print("app_sett.CheckBox9.CheckedChanged_2: " + ex.Message, true);
+                    }
                 }
             }
         }
 
         private void CheckBox5CheckedChanged(Object sender, EventArgs e)
         {
-            settings.WoWDeleteLogs = CheckBox5.Checked;
+            if (isSettingsLoaded)
+            {
+                settings.WoWDeleteLogs = CheckBox5.Checked;
+            }
         }
 
         private void CheckBox7CheckedChanged(Object sender, EventArgs e)
         {
-            settings.WoWCustomWindowNoBorder = CheckBox7.Checked;
+            if (isSettingsLoaded)
+            {
+                settings.WoWCustomWindowNoBorder = CheckBox7.Checked;
+            }
         }
 
         private void CheckBox6CheckedChanged(Object sender, EventArgs e)
         {
-            settings.WoWCustomizeWindow = CheckBox6.Checked;
-            foreach (var i in new Control[] { CheckBox7, GroupBox1, GroupBox2 })
+            if (isSettingsLoaded)
             {
-                i.Enabled = CheckBox6.Checked;
+                settings.WoWCustomizeWindow = CheckBox6.Checked;
+                foreach (var i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
+                {
+                    i.Enabled = CheckBox6.Checked;
+                }
             }
         }
 
         private void TextBox7TextChanged(Object sender, EventArgs e)
         {
-            if (TextBox7.Text != string.Empty && Convert.ToUInt16(TextBox7.Text) >= 720)
+            if (isSettingsLoaded)
             {
-                errorProvider1.Clear();
-                settings.WoWCustomWindowSize.X = Convert.ToUInt16(TextBox7.Text);
-            }
-            else
-            {
-                errorProvider1.SetError(TextBox7, "Incorrect value! It must be bigger than 720px");
+                if (TextBox7.Text != string.Empty && Convert.ToUInt16(TextBox7.Text) >= 720)
+                {
+                    errorProvider1.Clear();
+                    settings.WoWCustomWindowSize.X = Convert.ToUInt16(TextBox7.Text);
+                }
+                else
+                {
+                    errorProvider1.SetError(TextBox7, "Incorrect value! It must be bigger than 720px");
+                }
             }
         }
 
         private void TextBox6TextChanged(Object sender, EventArgs e)
         {
-            if (TextBox6.Text != string.Empty && Convert.ToUInt16(TextBox6.Text) >= 576)
+            if (isSettingsLoaded)
             {
-                errorProvider1.Clear();
-                settings.WoWCustomWindowSize.Y = Convert.ToUInt16(TextBox6.Text);
-            }
-            else
-            {
-                errorProvider1.SetError(TextBox6, "Incorrect value! It must be bigger than 576px");
+                if (TextBox6.Text != string.Empty && Convert.ToUInt16(TextBox6.Text) >= 576)
+                {
+                    errorProvider1.Clear();
+                    settings.WoWCustomWindowSize.Y = Convert.ToUInt16(TextBox6.Text);
+                }
+                else
+                {
+                    errorProvider1.SetError(TextBox6, "Incorrect value! It must be bigger than 576px");
+                }
             }
         }
 
         private void TextBox5TextChanged(Object sender, EventArgs e)
         {
-            if (TextBox5.Text != string.Empty && Convert.ToInt16(TextBox5.Text) >= 0)
+            if (isSettingsLoaded)
             {
-                errorProvider1.Clear();
-                settings.WoWCustomWindowLocation.X = Convert.ToInt32(TextBox5.Text);
-            }
-            else
-            {
-                errorProvider1.SetError(TextBox5, "Incorrect value! It must be bigger than zero");
+                if (TextBox5.Text != string.Empty && Convert.ToInt16(TextBox5.Text) >= 0)
+                {
+                    errorProvider1.Clear();
+                    settings.WoWCustomWindowLocation.X = Convert.ToInt32(TextBox5.Text);
+                }
+                else
+                {
+                    errorProvider1.SetError(TextBox5, "Incorrect value! It must be bigger than zero");
+                }
             }
         }
 
         private void TextBox4TextChanged(Object sender, EventArgs e)
         {
-            if ((TextBox4.Text != string.Empty && Convert.ToInt16(TextBox4.Text) >= 0))
+            if (isSettingsLoaded)
             {
-                errorProvider1.Clear();
-                settings.WoWCustomWindowLocation.Y = Convert.ToInt32(TextBox4.Text);
-            }
-            else
-            {
-                errorProvider1.SetError(TextBox4, "Incorrect value! It must be bigger than zero");
+                if (TextBox4.Text != string.Empty && Convert.ToInt32(TextBox4.Text) >= 0)
+                {
+                    errorProvider1.Clear();
+                    settings.WoWCustomWindowLocation.Y = Convert.ToInt32(TextBox4.Text);
+                }
+                else
+                {
+                    errorProvider1.SetError(TextBox4, "Incorrect value! It must be bigger than zero");
+                }
             }
         }
 
         private void CheckBox3CheckedChanged(Object sender, EventArgs e)
         {
-            settings.WoWWipeCreatureCache = CheckBox3.Checked;
+            if (isSettingsLoaded)
+            {
+                settings.WoWWipeCreatureCache = CheckBox3.Checked;
+            }
         }
 
         private void Button9Click(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog p = new FolderBrowserDialog { ShowNewFolderButton = false, SelectedPath = string.Empty })
+            if (isSettingsLoaded)
             {
-                p.Description = "Select Ventrilo directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
+                using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
                 {
-                    textBoxVentriloPath.Text = p.SelectedPath;
-                    settings.VentriloDirectory = p.SelectedPath;
+                    p.Description = "Select Ventrilo directory:";
+                    if (p.ShowDialog(this) == DialogResult.OK)
+                    {
+                        textBoxVentriloPath.Text = p.SelectedPath;
+                        settings.VentriloDirectory = p.SelectedPath;
+                    }
                 }
             }
         }
 
         private void CheckBox1CheckedChanged(object sender, EventArgs e)
         {
-            settings.WoWAntiKick = checkBox_AntiAFK.Checked;
+            if (isSettingsLoaded)
+            {
+                settings.WoWAntiKick = checkBox_AntiAFK.Checked;
+            }
         }
 
         private void ComboBoxClickerHotkeySelectedIndexChanged(object sender, EventArgs e)
         {
-            Keys key;
-            if (Enum.TryParse(comboBoxClickerHotkey.Text, true, out key))
+            if (isSettingsLoaded)
             {
-                settings.ClickerHotkey = key;
+                Keys key;
+                if (Enum.TryParse(comboBoxClickerHotkey.Text, true, out key))
+                {
+                    settings.ClickerHotkey = key;
+                }
             }
         }
 
         private void ComboBoxWExecLuaTimerSelectedIndexChanged(object sender, EventArgs e)
         {
-            Keys key;
-            if (Enum.TryParse(comboBoxWExecLuaTimer.Text, true, out key))
+            if (isSettingsLoaded)
             {
-                settings.LuaTimerHotkey = key;
+                Keys key;
+                if (Enum.TryParse(comboBoxWExecLuaTimer.Text, true, out key))
+                {
+                    settings.LuaTimerHotkey = key;
+                }
             }
         }
 
         private void ComboBoxWExecModuleSelectedIndexChanged(object sender, EventArgs e)
         {
-            Keys key;
-            if (Enum.TryParse(comboBoxWExecModule.Text, true, out key))
+            if (isSettingsLoaded)
             {
-                settings.WoWPluginHotkey = key;
+                Keys key;
+                if (Enum.TryParse(comboBoxWExecModule.Text, true, out key))
+                {
+                    settings.WoWPluginHotkey = key;
+                }
             }
         }
 
         private void CheckBoxAddonsBackupCheckedChanged(object sender, EventArgs e)
         {
-            settings.WoWAddonsBackupIsActive = checkBoxAddonsBackup.Checked;
+            if (isSettingsLoaded)
+            {
+                settings.WoWAddonsBackupIsActive = checkBoxAddonsBackup.Checked;
+            }
         }
 
         private void NumericUpDownBackupCopiesToKeepValueChanged(object sender, EventArgs e)
         {
-            settings.WoWAddonsBackupNumberOfArchives = (int) numericUpDownBackupCopiesToKeep.Value;
+            if (isSettingsLoaded)
+            {
+                settings.WoWAddonsBackupNumberOfArchives = (int) numericUpDownBackupCopiesToKeep.Value;
+            }
         }
 
         private void NumericUpDownBackupTimerValueChanged(object sender, EventArgs e)
         {
-            settings.WoWAddonsBackupMinimumTimeBetweenBackup = (int) numericUpDownBackupTimer.Value;
+            if (isSettingsLoaded)
+            {
+                settings.WoWAddonsBackupMinimumTimeBetweenBackup = (int) numericUpDownBackupTimer.Value;
+            }
         }
 
         private void ButtonRaidcallPathClick(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
+            if (isSettingsLoaded)
             {
-                p.Description = "Select RaidCall directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
+                using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
                 {
-                    textBoxRaidcallPath.Text = p.SelectedPath;
-                    settings.RaidcallDirectory = p.SelectedPath;
+                    p.Description = "Select RaidCall directory:";
+                    if (p.ShowDialog(this) == DialogResult.OK)
+                    {
+                        textBoxRaidcallPath.Text = p.SelectedPath;
+                        settings.RaidcallDirectory = p.SelectedPath;
+                    }
                 }
             }
         }
 
         private void ButtonMumblePathClick(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
+            if (isSettingsLoaded)
             {
-                p.Description = "Select Mumble directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
+                using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
                 {
-                    textBoxMumblePath.Text = p.SelectedPath;
-                    settings.MumbleDirectory = p.SelectedPath;
+                    p.Description = "Select Mumble directory:";
+                    if (p.ShowDialog(this) == DialogResult.OK)
+                    {
+                        textBoxMumblePath.Text = p.SelectedPath;
+                        settings.MumbleDirectory = p.SelectedPath;
+                    }
                 }
             }
         }
 
         private void ButtonTeamspeak3PathClick(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
+            if (isSettingsLoaded)
             {
-                p.Description = "Select Teamspeak directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
+                using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
                 {
-                    textBoxTeamspeak3Path.Text = p.SelectedPath;
-                    settings.TS3Directory = p.SelectedPath;
+                    p.Description = "Select Teamspeak directory:";
+                    if (p.ShowDialog(this) == DialogResult.OK)
+                    {
+                        textBoxTeamspeak3Path.Text = p.SelectedPath;
+                        settings.TS3Directory = p.SelectedPath;
+                    }
                 }
             }
         }
 
         private void ButtonBackupPathClick(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
+            if (isSettingsLoaded)
             {
-                p.Description = "Select addons backup directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
+                using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
                 {
-                    textBoxBackupPath.Text = p.SelectedPath;
-                    settings.WoWAddonsBackupPath = p.SelectedPath;
+                    p.Description = "Select addons backup directory:";
+                    if (p.ShowDialog(this) == DialogResult.OK)
+                    {
+                        textBoxBackupPath.Text = p.SelectedPath;
+                        settings.WoWAddonsBackupPath = p.SelectedPath;
+                    }
                 }
             }
         }
 
         private void MetroComboBoxBackupCompressionLevelSelectedIndexChanged(object sender, EventArgs e)
         {
-            settings.WoWAddonsBackupCompressionLevel = metroComboBoxBackupCompressionLevel.SelectedIndex;
+            if (isSettingsLoaded)
+            {
+                settings.WoWAddonsBackupCompressionLevel = metroComboBoxBackupCompressionLevel.SelectedIndex;
+            }
         }
 
         private void buttonWowPath_Click(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog p = new FolderBrowserDialog { ShowNewFolderButton = false, SelectedPath = string.Empty })
+            if (isSettingsLoaded)
             {
-                p.Description = "Select WoW directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
+                using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
                 {
-                    textBoxWowPath.Text = p.SelectedPath;
-                    settings.WoWDirectory = p.SelectedPath;
+                    p.Description = "Select WoW directory:";
+                    if (p.ShowDialog(this) == DialogResult.OK)
+                    {
+                        textBoxWowPath.Text = p.SelectedPath;
+                        settings.WoWDirectory = p.SelectedPath;
+                    }
                 }
             }
         }
 
         private void metroComboBoxStyle_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int style = metroComboBoxStyle.SelectedIndex == 0 ? 0 : metroComboBoxStyle.SelectedIndex + 1;
-            settings.StyleColor = (MetroColorStyle) style;
-            foreach (object i in Application.OpenForms)
+            if (isSettingsLoaded)
             {
-                if (i.GetType().ParentTypes().Any(l => l == typeof(MetroForm)))
+                int style = metroComboBoxStyle.SelectedIndex == 0 ? 0 : metroComboBoxStyle.SelectedIndex + 1;
+                settings.StyleColor = (MetroColorStyle) style;
+                foreach (object i in Application.OpenForms)
                 {
-                    if (((MetroForm) i).StyleManager != null)
+                    if (i.GetType().ParentTypes().Any(l => l == typeof (MetroForm)))
                     {
-                        ((MetroForm) i).StyleManager.Style = (MetroColorStyle) style;
+                        if (((MetroForm) i).StyleManager != null)
+                        {
+                            ((MetroForm) i).StyleManager.Style = (MetroColorStyle) style;
+                        }
                     }
                 }
             }
@@ -396,56 +470,62 @@ namespace AxTools.Forms
 
         private void linkShowLog_Click(object sender, EventArgs e)
         {
-            if (File.Exists(Globals.LogFileName))
+            if (isSettingsLoaded)
             {
-                try
+                if (File.Exists(Globals.LogFileName))
                 {
-                    Process.Start(Globals.LogFileName);
+                    try
+                    {
+                        Process.Start(Globals.LogFileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.ShowTaskDialog("Cannot open log file", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    this.ShowTaskDialog("Cannot open log file", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                    this.ShowTaskDialog("Cannot open log file", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 }
-            }
-            else
-            {
-                this.ShowTaskDialog("Cannot open log file", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
         }
 
         private void linkSendLogToDev_Click(object sender, EventArgs e)
         {
-            try
+            if (isSettingsLoaded)
             {
-                string subject = InputBox.Input("Any comment? (optional)");
-                WaitingOverlay waitingOverlay = new WaitingOverlay(this);
-                waitingOverlay.Show();
-                Task.Factory.StartNew(() =>
+                try
                 {
-                    try
+                    string subject = InputBox.Input("Any comment? (optional)");
+                    WaitingOverlay waitingOverlay = new WaitingOverlay(this);
+                    waitingOverlay.Show();
+                    Task.Factory.StartNew(() =>
                     {
-                        Log.SendViaEmail(subject);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Print("Can't send log: " + ex.Message, true);
-                        this.ShowTaskDialog("Can't send log", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
-                    }
-                    finally
-                    {
-                        Invoke(new Action(waitingOverlay.Close));
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                this.ShowTaskDialog("Log file sending error", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                        try
+                        {
+                            Log.SendViaEmail(subject);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Print("Can't send log: " + ex.Message, true);
+                            this.ShowTaskDialog("Can't send log", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                        }
+                        finally
+                        {
+                            Invoke(new Action(waitingOverlay.Close));
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    this.ShowTaskDialog("Log file sending error", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                }
             }
         }
 
         private void ComboBox_server_ip_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (IsHandleCreated && ComboBox_server_ip.SelectedIndex != -1)
+            if (isSettingsLoaded && ComboBox_server_ip.SelectedIndex != -1)
             {
                 settings.PingerServer = Globals.GameServers.First(i => i.Description == ComboBox_server_ip.Text);
                 if (settings.PingerServer.Port == 0)
@@ -461,28 +541,42 @@ namespace AxTools.Forms
 
         private void comboBoxBadNetworkStatusProcent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            settings.PingerBadPacketLoss = comboBoxBadNetworkStatusProcent.SelectedIndex;
+            if (isSettingsLoaded)
+            {
+                settings.PingerBadPacketLoss = comboBoxBadNetworkStatusProcent.SelectedIndex;
+            }
         }
 
         private void comboBoxBadNetworkStatusPing_SelectedIndexChanged(object sender, EventArgs e)
         {
-            settings.PingerBadPing = (comboBoxBadNetworkStatusPing.SelectedIndex + 1)*25;
+            if (isSettingsLoaded)
+            {
+                settings.PingerBadPing = (comboBoxBadNetworkStatusPing.SelectedIndex + 1)*25;
+            }
         }
 
         private void comboBoxVeryBadNetworkStatusProcent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            settings.PingerVeryBadPacketLoss = comboBoxVeryBadNetworkStatusProcent.SelectedIndex;
+            if (isSettingsLoaded)
+            {
+                settings.PingerVeryBadPacketLoss = comboBoxVeryBadNetworkStatusProcent.SelectedIndex;
+            }
         }
 
         private void comboBoxVeryBadNetworkStatusPing_SelectedIndexChanged(object sender, EventArgs e)
         {
-            settings.PingerVeryBadPing = (comboBoxVeryBadNetworkStatusPing.SelectedIndex + 1)*25;
+            if (isSettingsLoaded)
+            {
+                settings.PingerVeryBadPing = (comboBoxVeryBadNetworkStatusPing.SelectedIndex + 1)*25;
+            }
         }
 
         private void checkBoxMinimizeToTray_CheckedChanged(object sender, EventArgs e)
         {
-            settings.MinimizeToTray = checkBoxMinimizeToTray.Checked;
+            if (isSettingsLoaded)
+            {
+                settings.MinimizeToTray = checkBoxMinimizeToTray.Checked;
+            }
         }
-
     }
 }

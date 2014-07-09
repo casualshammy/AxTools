@@ -66,10 +66,8 @@ namespace AxTools.Forms
                 }
             }
             Log.Print(String.Format("Launching... ({0})", Globals.AppVersion));
-            base.Text = "AxTools " + Globals.AppVersion.Major;
             Icon = Resources.AppIcon;
             Utils.Legacy();
-            settings = Settings.Instance;
             OnSettingsLoaded();
             WebRequest.DefaultWebProxy = null;
 
@@ -113,7 +111,7 @@ namespace AxTools.Forms
         private bool isClosing;
         private WaitingOverlay startupOverlay;
 
-        private readonly Settings settings;
+        private readonly Settings settings = Settings.Instance;
         //
         private readonly List<ToolStripMenuItem> pluginsToolStripMenuItems = new List<ToolStripMenuItem>(); 
 
@@ -542,20 +540,22 @@ namespace AxTools.Forms
 
         private void buttonLaunchWowWithoutAutopass_Click(object sender, EventArgs e)
         {
-            if (!File.Exists(settings.WoWDirectory + "\\Wow.exe"))
+            if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    WorkingDirectory = settings.WoWDirectory,
+                    FileName = settings.WoWDirectory + "\\Wow.exe",
+                    Arguments = "-noautolaunch64bit",
+                });
+                if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
+                {
+                    StartVentrilo();
+                }
+            }
+            else
             {
                 this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                return;
-            }
-            Process.Start(new ProcessStartInfo
-            {
-                WorkingDirectory = settings.WoWDirectory,
-                FileName = settings.WoWDirectory + "\\Wow.exe",
-                Arguments = "-noautolaunch64bit",
-            });
-            if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
-            {
-                StartVentrilo();
             }
         }
 
@@ -755,7 +755,6 @@ namespace AxTools.Forms
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
             {
                 woWRadarToolStripMenuItem,
-                toolStripSeparator3,
                 luaConsoleToolStripMenuItem,
                 blackMarketTrackerToolStripMenuItem,
                 toolStripSeparator2
@@ -883,7 +882,7 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                labelPingNum.Text = string.Format("[{0}]::[{1}%]", ping == -1 || ping == -2 ? "n/a" : ping.ToString(), packetLoss);
+                labelPingNum.Text = string.Format("[{0}ms]::[{1}%]", ping == -1 || ping == -2 ? "n/a" : ping.ToString(), packetLoss);
                 TBProgressBar.SetProgressValue(Handle, 1, 1);
                 if (packetLoss >= settings.PingerVeryBadPacketLoss || ping >= settings.PingerVeryBadPing)
                 {

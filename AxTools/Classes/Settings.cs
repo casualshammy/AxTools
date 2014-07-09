@@ -17,6 +17,7 @@ namespace AxTools.Classes
     [JsonObject(MemberSerialization.OptIn)]
     internal class Settings
     {
+        private static readonly object _lock = new object();
         private static Settings _instance;
         internal static Settings Instance
         {
@@ -24,21 +25,32 @@ namespace AxTools.Classes
             {
                 if (_instance == null)
                 {
-                    string settingsFile = Globals.CfgPath + "//settings.json";
-                    if (File.Exists(settingsFile))
+                    lock (_lock)
                     {
-                        _instance = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(settingsFile, Encoding.UTF8));
-                        Log.Print("Settings file is loaded");
+                        if (_instance == null)
+                        {
+                            string settingsFile = Globals.CfgPath + "//settings.json";
+                            if (File.Exists(settingsFile))
+                            {
+                                _instance = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(settingsFile, Encoding.UTF8));
+                                Log.Print("Settings file is loaded");
+                            }
+                            else
+                            {
+                                _instance = new Settings();
+                                Log.Print("Settings file is not found!");
+                            }
+                            _instance.ValidateAndFix();
+                        }
                     }
-                    else
-                    {
-                        _instance = new Settings();
-                        Log.Print("Settings file is not found!");
-                    }
-                    _instance.ValidateAndFix();
                 }
                 return _instance;
             }
+        }
+
+        private Settings()
+        {
+            
         }
 
         internal void ValidateAndFix()

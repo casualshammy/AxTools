@@ -49,7 +49,6 @@ namespace AxTools.Forms
             this.notifyIconMain = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.woWRadarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.luaConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.blackMarketTrackerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -107,7 +106,6 @@ namespace AxTools.Forms
             // 
             this.contextMenuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.woWRadarToolStripMenuItem,
-            this.toolStripSeparator3,
             this.luaConsoleToolStripMenuItem,
             this.blackMarketTrackerToolStripMenuItem,
             this.toolStripSeparator2,
@@ -115,20 +113,15 @@ namespace AxTools.Forms
             this.toolStripSeparator1,
             this.launchWoWToolStripMenuItem});
             this.contextMenuStripMain.Name = "contextMenuStripMain";
-            this.contextMenuStripMain.Size = new System.Drawing.Size(182, 132);
+            this.contextMenuStripMain.Size = new System.Drawing.Size(182, 126);
             // 
             // woWRadarToolStripMenuItem
             // 
-            this.woWRadarToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("woWRadarToolStripMenuItem.Image")));
+            this.woWRadarToolStripMenuItem.Image = global::AxTools.Properties.Resources.radar;
             this.woWRadarToolStripMenuItem.Name = "woWRadarToolStripMenuItem";
             this.woWRadarToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.woWRadarToolStripMenuItem.Text = "WoW Radar";
             this.woWRadarToolStripMenuItem.Click += new System.EventHandler(this.WoWRadarToolStripMenuItemClick);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(178, 6);
             // 
             // luaConsoleToolStripMenuItem
             // 
@@ -740,7 +733,7 @@ namespace AxTools.Forms
             this.Padding = new System.Windows.Forms.Padding(20, 60, 20, 10);
             this.Resizable = false;
             this.StyleManager = this.metroStyleManager1;
-            this.Text = "AxTools 99";
+            this.Text = "AxTools";
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.contextMenuStripMain.ResumeLayout(false);
             this.metroTabControl1.ResumeLayout(false);
@@ -788,7 +781,6 @@ namespace AxTools.Forms
         private MetroCheckBox checkBoxStartTeamspeak3WithWow;
         private MetroCheckBox checkBoxStartMumbleWithWow;
         private ToolStripMenuItem stopActivePluginorPresshotkeyToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem blackMarketTrackerToolStripMenuItem;
         private MetroCheckBox metroCheckBoxPluginShowIngameNotification;
         private MetroLink linkOpenBackupFolder;

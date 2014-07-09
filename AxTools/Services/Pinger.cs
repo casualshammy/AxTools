@@ -37,6 +37,10 @@ namespace AxTools.Services
         {
             lock (Lock)
             {
+                if (_timer != null && _timer.Enabled)
+                {
+                    throw new Exception("Pinger is already running!");
+                }
                 _pingList = new List<int>(100) { -2, -2, -2, -2, -2, -2, -2, -2, -2, -2 };
                 _stopwatch = new Stopwatch();
                 _timer = new Timer(2000);
