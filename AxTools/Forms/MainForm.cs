@@ -48,7 +48,8 @@ namespace AxTools.Forms
             metroTabControl1.SelectedIndex = 0;
             metroToolTip1.SetToolTip(labelPingNum, "This is ingame connection info. It's formatted as\r\n" +
                                                    "  [worst ping of the last 10]::[packet loss in the last 200 seconds]  \r\n" +
-                                                   "Click to clear statistics");
+                                                   "Left-click to clear statistics\r\n"+
+                                                   "Right-click to open pinger settings");
 
             progressBarAddonsBackup.Size = linkBackupAddons.Size;
             progressBarAddonsBackup.Location = linkBackupAddons.Location;
@@ -409,10 +410,13 @@ namespace AxTools.Forms
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                case MouseButtons.Right:
                     Pinger.Stop();
                     labelPingNum.Text = "cleared";
                     Pinger.Start();
+                    break;
+                case MouseButtons.Right:
+                    int pingerTabPageIndex = 5;
+                    new AppSettings(pingerTabPageIndex).ShowDialog(this);
                     break;
             }
         }

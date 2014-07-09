@@ -133,6 +133,11 @@ namespace AxTools.Forms
             isSettingsLoaded = true;
         }
 
+        internal AppSettings(int tabPage) : this()
+        {
+            metroTabControl1.SelectedIndex = tabPage;
+        }
+
         private void CheckBox9CheckedChanged(Object sender, EventArgs e)
         {
             if (isSettingsLoaded)
