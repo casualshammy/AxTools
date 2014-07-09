@@ -87,7 +87,7 @@ namespace AxTools.Forms
             this.pictureBoxExtSettings = new AxTools.Components.PictureBoxExt(this.components);
             this.labelPingNum = new MetroFramework.Controls.MetroLabel();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
-            this.metroLink1 = new MetroFramework.Controls.MetroLink();
+            this.linkSettings = new MetroFramework.Controls.MetroLink();
             this.contextMenuStripMain.SuspendLayout();
             this.metroTabControl1.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -682,13 +682,14 @@ namespace AxTools.Forms
             // 
             this.pictureBoxExtSettings.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxExtSettings.Image")));
             this.pictureBoxExtSettings.ImageOnHover = ((System.Drawing.Image)(resources.GetObject("pictureBoxExtSettings.ImageOnHover")));
-            this.pictureBoxExtSettings.Location = new System.Drawing.Point(379, 5);
+            this.pictureBoxExtSettings.Location = new System.Drawing.Point(370, 34);
             this.pictureBoxExtSettings.Name = "pictureBoxExtSettings";
             this.pictureBoxExtSettings.Size = new System.Drawing.Size(20, 20);
             this.pictureBoxExtSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxExtSettings.TabIndex = 68;
             this.pictureBoxExtSettings.TabStop = false;
             this.metroToolTip1.SetToolTip(this.pictureBoxExtSettings, "Application settings");
+            this.pictureBoxExtSettings.Visible = false;
             this.pictureBoxExtSettings.Click += new System.EventHandler(this.PictureBoxExtSettingsClick);
             // 
             // labelPingNum
@@ -700,7 +701,7 @@ namespace AxTools.Forms
             this.labelPingNum.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.labelPingNum.ForeColor = System.Drawing.Color.BlueViolet;
             this.labelPingNum.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelPingNum.Location = new System.Drawing.Point(140, 6);
+            this.labelPingNum.Location = new System.Drawing.Point(216, 6);
             this.labelPingNum.Name = "labelPingNum";
             this.labelPingNum.Size = new System.Drawing.Size(108, 19);
             this.labelPingNum.Style = MetroFramework.MetroColorStyle.Blue;
@@ -722,29 +723,29 @@ namespace AxTools.Forms
             this.metroToolTip1.StyleManager = null;
             this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
-            // metroLink1
+            // linkSettings
             // 
-            this.metroLink1.AutoSize = true;
-            this.metroLink1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.metroLink1.CustomBackground = false;
-            this.metroLink1.CustomForeColor = false;
-            this.metroLink1.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.metroLink1.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.metroLink1.Location = new System.Drawing.Point(320, 2);
-            this.metroLink1.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
-            this.metroLink1.Name = "metroLink1";
-            this.metroLink1.Size = new System.Drawing.Size(53, 23);
-            this.metroLink1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLink1.StyleManager = this.metroStyleManager1;
-            this.metroLink1.TabIndex = 65;
-            this.metroLink1.Text = "settings";
-            this.metroLink1.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLink1.UseStyleColors = true;
+            this.linkSettings.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.linkSettings.CustomBackground = false;
+            this.linkSettings.CustomForeColor = false;
+            this.linkSettings.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkSettings.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.linkSettings.Location = new System.Drawing.Point(349, 5);
+            this.linkSettings.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.linkSettings.Name = "linkSettings";
+            this.linkSettings.Size = new System.Drawing.Size(53, 20);
+            this.linkSettings.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkSettings.StyleManager = this.metroStyleManager1;
+            this.linkSettings.TabIndex = 65;
+            this.linkSettings.Text = "settings";
+            this.linkSettings.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkSettings.UseStyleColors = true;
+            this.linkSettings.Click += new System.EventHandler(this.linkSettings_Click);
             // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(469, 265);
-            this.Controls.Add(this.metroLink1);
+            this.Controls.Add(this.linkSettings);
             this.Controls.Add(this.pictureBoxExtSettings);
             this.Controls.Add(this.metroTabControl1);
             this.Controls.Add(this.labelPingNum);
@@ -812,7 +813,7 @@ namespace AxTools.Forms
         private MetroButton buttonLaunchWowWithoutAutopass;
         private MetroLink linkEditWowAccounts;
         private MetroProgressBar progressBarAddonsBackup;
-        private MetroLink metroLink1;
+        private MetroLink linkSettings;
     }
 }
 

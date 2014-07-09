@@ -405,6 +405,11 @@ namespace AxTools.Forms
             new AppSettings().Show();
         }
 
+        private void linkSettings_Click(object sender, EventArgs e)
+        {
+            new AppSettings().ShowDialog(this);
+        }
+
         private void LabelPingNumMouseClick(object sender, MouseEventArgs e)
         {
             switch (e.Button)
@@ -886,7 +891,8 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                labelPingNum.Text = string.Format("[{0}ms]::[{1}%]", ping == -1 || ping == -2 ? "n/a" : ping.ToString(), packetLoss);
+                labelPingNum.Text = string.Format("[{0}]::[{1}%]", (ping == -1 || ping == -2) ? "n/a" : ping + "ms", packetLoss);
+                labelPingNum.Location = new Point(Size.Width/2 - labelPingNum.Size.Width/2, labelPingNum.Location.Y);
                 TBProgressBar.SetProgressValue(Handle, 1, 1);
                 if (packetLoss >= settings.PingerVeryBadPacketLoss || ping >= settings.PingerVeryBadPing)
                 {
@@ -1048,6 +1054,8 @@ namespace AxTools.Forms
         }
 
         #endregion
+
+        
 
     }
 }
