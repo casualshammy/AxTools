@@ -566,6 +566,7 @@ namespace AxTools.Forms
             {
                 this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
+            Log.Print("WOW! buttonLaunchWowWithoutAutopass_Click!", true);
         }
 
         private void linkEditWowAccounts_Click(object sender, EventArgs e)
