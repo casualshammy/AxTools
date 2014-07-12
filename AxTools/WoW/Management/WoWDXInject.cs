@@ -5,7 +5,9 @@ using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+using WindowsFormsAero.TaskDialog;
 using AxTools.Classes;
+using AxTools.Forms;
 using AxTools.WoW.DX;
 using AxTools.WoW.Management.ObjectManager;
 using Fasm;
@@ -107,8 +109,29 @@ namespace AxTools.WoW.Management
                 _endSceneOriginalBytes = _wowProcess.Memory.ReadBytes(_dxAddress.HookPtr + (int)offset, 5);
                 if (_endSceneOriginalBytes[0] != 0xA1)
                 {
-                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Incorrect DX version, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_endSceneOriginalBytes)), false, false);
-                    return false;
+                    if (_endSceneOriginalBytes[0] == 0xE9)
+                    {
+                        TaskDialogButton yesNo = TaskDialogButton.Yes + (int)TaskDialogButton.No;
+                        TaskDialog taskDialog = new TaskDialog("DirectX is already hooked by some tool", "AxTools", "Do you want to overwrite this hook? It may cause a crash!", yesNo, TaskDialogIcon.Warning);
+                        if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
+                        {
+                            Log.Print(
+                                string.Format("{0}:{1} :: [WoW hook] DX is already hooked, trying to overwrite, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID,
+                                    BitConverter.ToString(_endSceneOriginalBytes)), false, false);
+                        }
+                        else
+                        {
+                            Log.Print(
+                                string.Format("{0}:{1} :: [WoW hook] DX is already hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID,
+                                    BitConverter.ToString(_endSceneOriginalBytes)), false, false);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        Log.Print(string.Format("{0}:{1} :: [WoW hook] Incorrect DX version, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_endSceneOriginalBytes)), true);
+                        return false;
+                    }
                 }
             }
             else
