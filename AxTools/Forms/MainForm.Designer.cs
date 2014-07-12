@@ -84,7 +84,6 @@ namespace AxTools.Forms
             this.tileTeamspeak3 = new AxTools.Components.MetroTileExt(this.components);
             this.tileMumble = new AxTools.Components.MetroTileExt(this.components);
             this.tileVentrilo = new AxTools.Components.MetroTileExt(this.components);
-            this.pictureBoxExtSettings = new AxTools.Components.PictureBoxExt(this.components);
             this.labelPingNum = new MetroFramework.Controls.MetroLabel();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.linkSettings = new MetroFramework.Controls.MetroLink();
@@ -93,7 +92,6 @@ namespace AxTools.Forms
             this.metroTabPage1.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
             this.metroTabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxExtSettings)).BeginInit();
             this.SuspendLayout();
             // 
             // notifyIconMain
@@ -180,11 +178,12 @@ namespace AxTools.Forms
             this.metroTabControl1.CustomBackground = false;
             this.metroTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroTabControl1.FontSize = MetroFramework.MetroTabControlSize.Medium;
-            this.metroTabControl1.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
+            this.metroTabControl1.FontWeight = MetroFramework.MetroTabControlWeight.Bold;
             this.metroTabControl1.HotTrack = true;
+            this.metroTabControl1.ItemSize = new System.Drawing.Size(148, 31);
             this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.SelectedIndex = 1;
             this.metroTabControl1.Size = new System.Drawing.Size(429, 195);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.StyleManager = this.metroStyleManager1;
@@ -214,7 +213,7 @@ namespace AxTools.Forms
             this.metroTabPage1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage1.StyleManager = this.metroStyleManager1;
             this.metroTabPage1.TabIndex = 0;
-            this.metroTabPage1.Text = "              Main            ";
+            this.metroTabPage1.Text = "             Main           ";
             this.metroTabPage1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage1.VerticalScrollbar = false;
             this.metroTabPage1.VerticalScrollbarBarColor = true;
@@ -243,7 +242,7 @@ namespace AxTools.Forms
             this.linkEditWowAccounts.CustomForeColor = false;
             this.linkEditWowAccounts.FontSize = MetroFramework.MetroLinkSize.Small;
             this.linkEditWowAccounts.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.linkEditWowAccounts.Location = new System.Drawing.Point(151, 52);
+            this.linkEditWowAccounts.Location = new System.Drawing.Point(151, 47);
             this.linkEditWowAccounts.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.linkEditWowAccounts.Name = "linkEditWowAccounts";
             this.linkEditWowAccounts.Size = new System.Drawing.Size(116, 23);
@@ -258,7 +257,7 @@ namespace AxTools.Forms
             // buttonLaunchWowWithoutAutopass
             // 
             this.buttonLaunchWowWithoutAutopass.Highlight = true;
-            this.buttonLaunchWowWithoutAutopass.Location = new System.Drawing.Point(3, 78);
+            this.buttonLaunchWowWithoutAutopass.Location = new System.Drawing.Point(3, 73);
             this.buttonLaunchWowWithoutAutopass.Name = "buttonLaunchWowWithoutAutopass";
             this.buttonLaunchWowWithoutAutopass.Size = new System.Drawing.Size(415, 23);
             this.buttonLaunchWowWithoutAutopass.Style = MetroFramework.MetroColorStyle.Blue;
@@ -333,7 +332,7 @@ namespace AxTools.Forms
             this.cmbboxAccSelect.FontWeight = MetroFramework.MetroLinkWeight.Regular;
             this.cmbboxAccSelect.FormattingEnabled = true;
             this.cmbboxAccSelect.ItemHeight = 23;
-            this.cmbboxAccSelect.Location = new System.Drawing.Point(76, 20);
+            this.cmbboxAccSelect.Location = new System.Drawing.Point(76, 15);
             this.cmbboxAccSelect.Name = "cmbboxAccSelect";
             this.cmbboxAccSelect.OverlayText = "Click to launch WoW using autopass...";
             this.cmbboxAccSelect.Size = new System.Drawing.Size(290, 29);
@@ -370,7 +369,7 @@ namespace AxTools.Forms
             this.metroTabPage3.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage3.StyleManager = this.metroStyleManager1;
             this.metroTabPage3.TabIndex = 2;
-            this.metroTabPage3.Text = "        WoW plug-ins      ";
+            this.metroTabPage3.Text = "      WoW plug-ins    ";
             this.metroTabPage3.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage3.VerticalScrollbar = false;
             this.metroTabPage3.VerticalScrollbarBarColor = true;
@@ -380,7 +379,7 @@ namespace AxTools.Forms
             // buttonStartStopPlugin
             // 
             this.buttonStartStopPlugin.Highlight = true;
-            this.buttonStartStopPlugin.Location = new System.Drawing.Point(338, 20);
+            this.buttonStartStopPlugin.Location = new System.Drawing.Point(338, 15);
             this.buttonStartStopPlugin.Name = "buttonStartStopPlugin";
             this.buttonStartStopPlugin.Size = new System.Drawing.Size(80, 29);
             this.buttonStartStopPlugin.Style = MetroFramework.MetroColorStyle.Blue;
@@ -398,7 +397,7 @@ namespace AxTools.Forms
             this.checkBoxEnableCustomPlugins.CustomForeColor = false;
             this.checkBoxEnableCustomPlugins.FontSize = MetroFramework.MetroLinkSize.Small;
             this.checkBoxEnableCustomPlugins.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxEnableCustomPlugins.Location = new System.Drawing.Point(189, 55);
+            this.checkBoxEnableCustomPlugins.Location = new System.Drawing.Point(189, 50);
             this.checkBoxEnableCustomPlugins.Name = "checkBoxEnableCustomPlugins";
             this.checkBoxEnableCustomPlugins.Size = new System.Drawing.Size(143, 15);
             this.checkBoxEnableCustomPlugins.Style = MetroFramework.MetroColorStyle.Blue;
@@ -418,7 +417,7 @@ namespace AxTools.Forms
             this.metroCheckBoxPluginShowIngameNotification.CustomForeColor = false;
             this.metroCheckBoxPluginShowIngameNotification.FontSize = MetroFramework.MetroLinkSize.Small;
             this.metroCheckBoxPluginShowIngameNotification.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.metroCheckBoxPluginShowIngameNotification.Location = new System.Drawing.Point(3, 55);
+            this.metroCheckBoxPluginShowIngameNotification.Location = new System.Drawing.Point(3, 50);
             this.metroCheckBoxPluginShowIngameNotification.Name = "metroCheckBoxPluginShowIngameNotification";
             this.metroCheckBoxPluginShowIngameNotification.Size = new System.Drawing.Size(159, 15);
             this.metroCheckBoxPluginShowIngameNotification.Style = MetroFramework.MetroColorStyle.Blue;
@@ -495,7 +494,7 @@ namespace AxTools.Forms
             "Fishing",
             "Capture flags/orbs on the battlefields",
             "Milling/disenchanting/prospecting"});
-            this.comboBoxWowPlugins.Location = new System.Drawing.Point(3, 20);
+            this.comboBoxWowPlugins.Location = new System.Drawing.Point(3, 15);
             this.comboBoxWowPlugins.Name = "comboBoxWowPlugins";
             this.comboBoxWowPlugins.OverlayText = "Click to select plugin...";
             this.comboBoxWowPlugins.Size = new System.Drawing.Size(329, 29);
@@ -517,7 +516,7 @@ namespace AxTools.Forms
             this.metroTabPage2.Controls.Add(this.tileMumble);
             this.metroTabPage2.Controls.Add(this.tileVentrilo);
             this.metroTabPage2.CustomBackground = false;
-            this.metroTabPage2.HorizontalScrollbar = false;
+            this.metroTabPage2.HorizontalScrollbar = true;
             this.metroTabPage2.HorizontalScrollbarBarColor = true;
             this.metroTabPage2.HorizontalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.HorizontalScrollbarSize = 10;
@@ -527,9 +526,9 @@ namespace AxTools.Forms
             this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage2.StyleManager = this.metroStyleManager1;
             this.metroTabPage2.TabIndex = 1;
-            this.metroTabPage2.Text = "          VoIP        ";
+            this.metroTabPage2.Text = "             VoIP           ";
             this.metroTabPage2.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTabPage2.VerticalScrollbar = false;
+            this.metroTabPage2.VerticalScrollbar = true;
             this.metroTabPage2.VerticalScrollbarBarColor = true;
             this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.VerticalScrollbarSize = 10;
@@ -541,7 +540,7 @@ namespace AxTools.Forms
             this.checkBoxStartTeamspeak3WithWow.CustomForeColor = false;
             this.checkBoxStartTeamspeak3WithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxStartTeamspeak3WithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartTeamspeak3WithWow.Location = new System.Drawing.Point(241, 115);
+            this.checkBoxStartTeamspeak3WithWow.Location = new System.Drawing.Point(241, 112);
             this.checkBoxStartTeamspeak3WithWow.Name = "checkBoxStartTeamspeak3WithWow";
             this.checkBoxStartTeamspeak3WithWow.Size = new System.Drawing.Size(148, 19);
             this.checkBoxStartTeamspeak3WithWow.Style = MetroFramework.MetroColorStyle.Blue;
@@ -560,7 +559,7 @@ namespace AxTools.Forms
             this.checkBoxStartMumbleWithWow.CustomForeColor = false;
             this.checkBoxStartMumbleWithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxStartMumbleWithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartMumbleWithWow.Location = new System.Drawing.Point(241, 90);
+            this.checkBoxStartMumbleWithWow.Location = new System.Drawing.Point(241, 87);
             this.checkBoxStartMumbleWithWow.Name = "checkBoxStartMumbleWithWow";
             this.checkBoxStartMumbleWithWow.Size = new System.Drawing.Size(177, 19);
             this.checkBoxStartMumbleWithWow.Style = MetroFramework.MetroColorStyle.Blue;
@@ -579,7 +578,7 @@ namespace AxTools.Forms
             this.checkBoxStartRaidcallWithWow.CustomForeColor = false;
             this.checkBoxStartRaidcallWithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxStartRaidcallWithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartRaidcallWithWow.Location = new System.Drawing.Point(241, 65);
+            this.checkBoxStartRaidcallWithWow.Location = new System.Drawing.Point(241, 62);
             this.checkBoxStartRaidcallWithWow.Name = "checkBoxStartRaidcallWithWow";
             this.checkBoxStartRaidcallWithWow.Size = new System.Drawing.Size(171, 19);
             this.checkBoxStartRaidcallWithWow.Style = MetroFramework.MetroColorStyle.Blue;
@@ -598,7 +597,7 @@ namespace AxTools.Forms
             this.checkBoxStartVenriloWithWow.CustomForeColor = false;
             this.checkBoxStartVenriloWithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxStartVenriloWithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartVenriloWithWow.Location = new System.Drawing.Point(241, 40);
+            this.checkBoxStartVenriloWithWow.Location = new System.Drawing.Point(241, 37);
             this.checkBoxStartVenriloWithWow.Name = "checkBoxStartVenriloWithWow";
             this.checkBoxStartVenriloWithWow.Size = new System.Drawing.Size(174, 19);
             this.checkBoxStartVenriloWithWow.Style = MetroFramework.MetroColorStyle.Blue;
@@ -616,10 +615,10 @@ namespace AxTools.Forms
             this.tileRaidcall.CenterText = "Raidcall";
             this.tileRaidcall.CustomBackground = false;
             this.tileRaidcall.CustomForeColor = false;
-            this.tileRaidcall.Location = new System.Drawing.Point(125, 20);
+            this.tileRaidcall.Location = new System.Drawing.Point(125, 15);
             this.tileRaidcall.Name = "tileRaidcall";
             this.tileRaidcall.PaintTileCount = true;
-            this.tileRaidcall.Size = new System.Drawing.Size(110, 64);
+            this.tileRaidcall.Size = new System.Drawing.Size(110, 66);
             this.tileRaidcall.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileRaidcall.StyleManager = this.metroStyleManager1;
             this.tileRaidcall.TabIndex = 8;
@@ -633,10 +632,10 @@ namespace AxTools.Forms
             this.tileTeamspeak3.CenterText = "Teamspeak 3";
             this.tileTeamspeak3.CustomBackground = false;
             this.tileTeamspeak3.CustomForeColor = false;
-            this.tileTeamspeak3.Location = new System.Drawing.Point(3, 90);
+            this.tileTeamspeak3.Location = new System.Drawing.Point(3, 87);
             this.tileTeamspeak3.Name = "tileTeamspeak3";
             this.tileTeamspeak3.PaintTileCount = true;
-            this.tileTeamspeak3.Size = new System.Drawing.Size(116, 63);
+            this.tileTeamspeak3.Size = new System.Drawing.Size(116, 66);
             this.tileTeamspeak3.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileTeamspeak3.StyleManager = this.metroStyleManager1;
             this.tileTeamspeak3.TabIndex = 7;
@@ -650,10 +649,10 @@ namespace AxTools.Forms
             this.tileMumble.CenterText = "Mumble";
             this.tileMumble.CustomBackground = false;
             this.tileMumble.CustomForeColor = false;
-            this.tileMumble.Location = new System.Drawing.Point(125, 90);
+            this.tileMumble.Location = new System.Drawing.Point(125, 87);
             this.tileMumble.Name = "tileMumble";
             this.tileMumble.PaintTileCount = true;
-            this.tileMumble.Size = new System.Drawing.Size(110, 63);
+            this.tileMumble.Size = new System.Drawing.Size(110, 66);
             this.tileMumble.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileMumble.StyleManager = this.metroStyleManager1;
             this.tileMumble.TabIndex = 6;
@@ -667,30 +666,16 @@ namespace AxTools.Forms
             this.tileVentrilo.CenterText = "Ventrilo";
             this.tileVentrilo.CustomBackground = false;
             this.tileVentrilo.CustomForeColor = false;
-            this.tileVentrilo.Location = new System.Drawing.Point(3, 20);
+            this.tileVentrilo.Location = new System.Drawing.Point(3, 15);
             this.tileVentrilo.Name = "tileVentrilo";
             this.tileVentrilo.PaintTileCount = true;
-            this.tileVentrilo.Size = new System.Drawing.Size(116, 64);
+            this.tileVentrilo.Size = new System.Drawing.Size(116, 66);
             this.tileVentrilo.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileVentrilo.StyleManager = this.metroStyleManager1;
             this.tileVentrilo.TabIndex = 5;
             this.tileVentrilo.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileVentrilo.TileCount = 0;
             this.tileVentrilo.Click += new System.EventHandler(this.TileVentriloClick);
-            // 
-            // pictureBoxExtSettings
-            // 
-            this.pictureBoxExtSettings.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxExtSettings.Image")));
-            this.pictureBoxExtSettings.ImageOnHover = ((System.Drawing.Image)(resources.GetObject("pictureBoxExtSettings.ImageOnHover")));
-            this.pictureBoxExtSettings.Location = new System.Drawing.Point(370, 34);
-            this.pictureBoxExtSettings.Name = "pictureBoxExtSettings";
-            this.pictureBoxExtSettings.Size = new System.Drawing.Size(20, 20);
-            this.pictureBoxExtSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxExtSettings.TabIndex = 68;
-            this.pictureBoxExtSettings.TabStop = false;
-            this.metroToolTip1.SetToolTip(this.pictureBoxExtSettings, "Application settings");
-            this.pictureBoxExtSettings.Visible = false;
-            this.pictureBoxExtSettings.Click += new System.EventHandler(this.PictureBoxExtSettingsClick);
             // 
             // labelPingNum
             // 
@@ -701,7 +686,7 @@ namespace AxTools.Forms
             this.labelPingNum.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.labelPingNum.ForeColor = System.Drawing.Color.BlueViolet;
             this.labelPingNum.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelPingNum.Location = new System.Drawing.Point(216, 6);
+            this.labelPingNum.Location = new System.Drawing.Point(184, 6);
             this.labelPingNum.Name = "labelPingNum";
             this.labelPingNum.Size = new System.Drawing.Size(108, 19);
             this.labelPingNum.Style = MetroFramework.MetroColorStyle.Blue;
@@ -746,7 +731,6 @@ namespace AxTools.Forms
             // 
             this.ClientSize = new System.Drawing.Size(469, 265);
             this.Controls.Add(this.linkSettings);
-            this.Controls.Add(this.pictureBoxExtSettings);
             this.Controls.Add(this.metroTabControl1);
             this.Controls.Add(this.labelPingNum);
             this.Location = new System.Drawing.Point(0, 0);
@@ -765,7 +749,6 @@ namespace AxTools.Forms
             this.metroTabPage3.PerformLayout();
             this.metroTabPage2.ResumeLayout(false);
             this.metroTabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxExtSettings)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -797,7 +780,6 @@ namespace AxTools.Forms
         private MetroButton metroButtonBlackMarketTracker;
         private MetroButton metroButtonLuaConsole;
         private MetroButton metroButtonRadar;
-        private PictureBoxExt pictureBoxExtSettings;
         private MetroCheckBox checkBoxStartVenriloWithWow;
         private MetroCheckBox checkBoxStartRaidcallWithWow;
         private MetroCheckBox checkBoxStartTeamspeak3WithWow;

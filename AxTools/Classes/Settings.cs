@@ -117,6 +117,7 @@ namespace AxTools.Classes
                 }
             }
             string json = sb.ToString();
+            Utils.CheckCreateDir();
             File.WriteAllText(Globals.CfgPath + "//settings.json", json, Encoding.UTF8);
             Log.Print("Settings file has been updated, time: " + stopwatch.ElapsedMilliseconds + "ms");
         }
@@ -149,7 +150,7 @@ namespace AxTools.Classes
         internal byte[] WoWAccounts = new byte[0];
 
         [JsonProperty(Order = 7, PropertyName = "WoWAntiKick")]
-        internal bool WoWAntiKick = false;
+        internal bool WoWAntiKick = true;
 
         [JsonProperty(Order = 8, PropertyName = "WoWWipeCreatureCache")]
         internal bool WoWWipeCreatureCache = false;
@@ -255,7 +256,7 @@ namespace AxTools.Classes
         internal bool WoWLuaConsoleShowIngameNotifications = true;
 
         [JsonProperty(Order = 31, PropertyName = "WoWLuaConsoleLastText")]
-        internal string WoWLuaConsoleLastText;
+        internal string WoWLuaConsoleLastText = string.Empty;
 
         #endregion
 
@@ -363,7 +364,7 @@ namespace AxTools.Classes
         #region Pinger
 
         [JsonProperty(Order = 51, PropertyName = "PingerServer")]
-        internal SrvAddress PingerServer;
+        internal SrvAddress PingerServer = Globals.GameServers[1];
 
         [JsonProperty(Order = 52, PropertyName = "PingerBadPing")]
         internal int PingerBadPing = 125;

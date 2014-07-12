@@ -79,6 +79,7 @@ namespace AxTools.Forms
             AddonsBackup.StateChanged += AddonsBackup_OnChangedState;
 
             Task.Factory.StartNew(LoadingStepAsync);
+            Log.Print("1");
             BeginInvoke((MethodInvoker) delegate
             {
                 Location = settings.MainWindowLocation;
@@ -277,9 +278,9 @@ namespace AxTools.Forms
 
             #region Set registration name
 
-            while (Settings.Instance.UserID == String.Empty)
+            while (string.IsNullOrWhiteSpace(Settings.Instance.UserID))
             {
-                Settings.Instance.UserID = InputBox.Input("Please enter your nickname:");
+                Invoke(new MethodInvoker(() => { Settings.Instance.UserID = InputBox.Input("Please enter your nickname:") ?? string.Empty; }));
                 if (!string.IsNullOrWhiteSpace(Settings.Instance.UserID))
                 {
                     Settings.Instance.UserID += "_" + Utils.GetRandomString(10).ToUpper();
@@ -297,37 +298,44 @@ namespace AxTools.Forms
                 {
                     Utils.CheckCreateDir();
                     string zipPath = String.Format("{0}\\WoWLogs.zip", settings.WoWAddonsBackupPath);
-                    if (File.Exists(zipPath))
-                    {
-                        File.Delete(zipPath);
-                    }
                     try
                     {
-                        using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
+                        if (File.Exists(zipPath))
                         {
-                            zip.CompressionLevel = (CompressionLevel) settings.WoWAddonsBackupCompressionLevel;
-                            zip.AddDirectory(settings.WoWDirectory + "\\Logs");
-                            zip.Save();
+                            File.Delete(zipPath);
                         }
-                        Log.Print(String.Format("[Backup] WoW combat log's backup was placed to \"{0}\"", zipPath));
-                        string[] cLogFiles = Directory.GetFiles(settings.WoWDirectory + "\\Logs");
-                        foreach (string i in cLogFiles)
+                        try
                         {
-                            try
+                            using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
                             {
-                                File.Delete(i);
-                                Log.Print("[WoW logs] Log file deleted: " + i);
+                                zip.CompressionLevel = (CompressionLevel)settings.WoWAddonsBackupCompressionLevel;
+                                zip.AddDirectory(settings.WoWDirectory + "\\Logs");
+                                zip.Save();
                             }
-                            catch (Exception ex)
+                            Log.Print(String.Format("[WoW logs] WoW combat log's backup was placed to \"{0}\"", zipPath));
+                            string[] cLogFiles = Directory.GetFiles(settings.WoWDirectory + "\\Logs");
+                            foreach (string i in cLogFiles)
                             {
-                                Log.Print(String.Format("[WoW logs] Error deleting log file \"{0}\": {1}", i, ex.Message), true);
+                                try
+                                {
+                                    File.Delete(i);
+                                    Log.Print("[WoW logs] Log file deleted: " + i);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Print(String.Format("[WoW logs] Error deleting log file \"{0}\": {1}", i, ex.Message), true);
+                                }
                             }
+                            notifyIconMain.ShowBalloonTip(10000, "WoW log files were deleted", "Backup was placed to " + settings.WoWAddonsBackupPath, ToolTipIcon.Info);
                         }
-                        notifyIconMain.ShowBalloonTip(10000, "WoW log files were deleted", "Backup was placed to " + settings.WoWAddonsBackupPath, ToolTipIcon.Info);
+                        catch (Exception ex)
+                        {
+                            Log.Print(String.Format("[WoW logs] Can't backup wow combat log \"{0}\": {1}", zipPath, ex.Message), true);
+                        }
                     }
                     catch (Exception ex)
                     {
-                        Log.Print(String.Format("[Backup] Can't backup wow combat log \"{0}\": {1}", zipPath, ex.Message), true);
+                        Log.Print(String.Format("[WoW logs] Can't delete \"{0}\": {1}", zipPath, ex.Message), true);
                     }
                 }
             }
@@ -383,26 +391,15 @@ namespace AxTools.Forms
             Pinger.Start();
             WoWProcessWatcher.Start();
             TrayIconAnimation.Initialize(notifyIconMain);
-            
-            #region Start keyboard hook
 
             keyboardHook = new KeyboardHookListener(Globals.GlobalHooker);
             keyboardHook.KeyDown += KeyboardHookKeyDown;
             keyboardHook.Enabled = true;
 
-            #endregion
-
             startupOverlay.Close();
             Changes.ShowChangesIfNeeded();
             UpdaterService.Start();
             Log.Print("AxTools started succesfully");
-
-
-        }
-
-        private void PictureBoxExtSettingsClick(object sender, EventArgs e)
-        {
-            new AppSettings().Show();
         }
 
         private void linkSettings_Click(object sender, EventArgs e)
@@ -1055,8 +1052,6 @@ namespace AxTools.Forms
         }
 
         #endregion
-
         
-
     }
 }

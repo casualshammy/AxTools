@@ -72,10 +72,6 @@ namespace AxTools.Classes
             {
                 Directory.CreateDirectory(Globals.PluginsAssembliesPath);
             }
-            if (!Directory.Exists(Globals.PluginsSettingsPath))
-            {
-                Directory.CreateDirectory(Globals.PluginsSettingsPath);
-            }
         }
 
         internal static void Legacy()

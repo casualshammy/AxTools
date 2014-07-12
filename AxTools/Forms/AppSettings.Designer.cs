@@ -122,7 +122,7 @@ namespace AxTools.Forms
             this.checkBox_AntiAFK.CustomForeColor = false;
             this.checkBox_AntiAFK.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBox_AntiAFK.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBox_AntiAFK.Location = new System.Drawing.Point(3, 45);
+            this.checkBox_AntiAFK.Location = new System.Drawing.Point(3, 15);
             this.checkBox_AntiAFK.Name = "checkBox_AntiAFK";
             this.checkBox_AntiAFK.Size = new System.Drawing.Size(74, 19);
             this.checkBox_AntiAFK.Style = MetroFramework.MetroColorStyle.Blue;
@@ -141,7 +141,7 @@ namespace AxTools.Forms
             this.CheckBox5.CustomForeColor = false;
             this.CheckBox5.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.CheckBox5.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBox5.Location = new System.Drawing.Point(309, 20);
+            this.CheckBox5.Location = new System.Drawing.Point(3, 40);
             this.CheckBox5.Name = "CheckBox5";
             this.CheckBox5.Size = new System.Drawing.Size(225, 19);
             this.CheckBox5.Style = MetroFramework.MetroColorStyle.Blue;
@@ -181,7 +181,7 @@ namespace AxTools.Forms
             this.CheckBoxStartAxToolsWithWindows.CustomForeColor = false;
             this.CheckBoxStartAxToolsWithWindows.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.CheckBoxStartAxToolsWithWindows.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBoxStartAxToolsWithWindows.Location = new System.Drawing.Point(3, 20);
+            this.CheckBoxStartAxToolsWithWindows.Location = new System.Drawing.Point(3, 15);
             this.CheckBoxStartAxToolsWithWindows.Name = "CheckBoxStartAxToolsWithWindows";
             this.CheckBoxStartAxToolsWithWindows.Size = new System.Drawing.Size(195, 19);
             this.CheckBoxStartAxToolsWithWindows.Style = MetroFramework.MetroColorStyle.Blue;
@@ -199,7 +199,7 @@ namespace AxTools.Forms
             this.CheckBox3.CustomForeColor = false;
             this.CheckBox3.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.CheckBox3.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBox3.Location = new System.Drawing.Point(3, 20);
+            this.CheckBox3.Location = new System.Drawing.Point(3, 65);
             this.CheckBox3.Name = "CheckBox3";
             this.CheckBox3.Size = new System.Drawing.Size(240, 19);
             this.CheckBox3.Style = MetroFramework.MetroColorStyle.Blue;
@@ -565,7 +565,7 @@ namespace AxTools.Forms
             this.checkBoxAddonsBackup.CustomForeColor = false;
             this.checkBoxAddonsBackup.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxAddonsBackup.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxAddonsBackup.Location = new System.Drawing.Point(3, 20);
+            this.checkBoxAddonsBackup.Location = new System.Drawing.Point(3, 15);
             this.checkBoxAddonsBackup.Name = "checkBoxAddonsBackup";
             this.checkBoxAddonsBackup.Size = new System.Drawing.Size(162, 19);
             this.checkBoxAddonsBackup.Style = MetroFramework.MetroColorStyle.Blue;
@@ -591,7 +591,7 @@ namespace AxTools.Forms
             this.metroTabControl1.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 4;
+            this.metroTabControl1.SelectedIndex = 2;
             this.metroTabControl1.Size = new System.Drawing.Size(565, 220);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.StyleManager = this.metroStyleManager1;
@@ -633,7 +633,7 @@ namespace AxTools.Forms
             this.checkBoxMinimizeToTray.CustomForeColor = false;
             this.checkBoxMinimizeToTray.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxMinimizeToTray.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxMinimizeToTray.Location = new System.Drawing.Point(3, 45);
+            this.checkBoxMinimizeToTray.Location = new System.Drawing.Point(3, 40);
             this.checkBoxMinimizeToTray.Name = "checkBoxMinimizeToTray";
             this.checkBoxMinimizeToTray.Size = new System.Drawing.Size(125, 19);
             this.checkBoxMinimizeToTray.Style = MetroFramework.MetroColorStyle.Blue;

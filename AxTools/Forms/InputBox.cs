@@ -20,11 +20,11 @@ namespace AxTools.Forms
             });
         }
 
-        string temp;
+        private string temp;
 
         internal static string Input(string prompt)
         {
-            InputBox bform = new InputBox {metroLabel1 = {Text = prompt}};
+            InputBox bform = new InputBox {metroLabel1 = {Text = prompt}, temp = null};
             bform.ShowDialog();
             return bform.temp;
         }
