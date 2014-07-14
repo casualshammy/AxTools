@@ -1,4 +1,9 @@
-﻿using System;
+﻿using AxTools.Classes;
+using AxTools.Forms;
+using AxTools.WoW.DX;
+using AxTools.WoW.Management.ObjectManager;
+using Fasm;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -6,11 +11,6 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using WindowsFormsAero.TaskDialog;
-using AxTools.Classes;
-using AxTools.Forms;
-using AxTools.WoW.DX;
-using AxTools.WoW.Management.ObjectManager;
-using Fasm;
 
 namespace AxTools.WoW.Management
 {

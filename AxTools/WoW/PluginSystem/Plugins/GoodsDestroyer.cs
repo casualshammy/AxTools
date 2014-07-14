@@ -19,7 +19,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public Version Version
         {
-            get { return new Version(1, 0); }
+            get { return new Version(1, 1); }
         }
 
         public string Author
@@ -77,10 +77,23 @@ namespace AxTools.WoW.PluginSystem.Plugins
             switch (state)
             {
                 case 0:
-                    WoWDXInject.LuaDoString(mill);
-                    WoWDXInject.LuaDoString(prospecting);
-                    Thread.Sleep(1000); // pause to prevent disenchanting unreal item 
-                    WoWDXInject.LuaDoString(disenchant);
+                    if (WoWDXInject.GetFunctionReturn("tostring(IsSpellKnown(51005))") == "true") // mill
+                    {
+                        WoWDXInject.LuaDoString(mill);
+                    }
+                    else if (WoWDXInject.GetFunctionReturn("tostring(IsSpellKnown(31252))") == "true") // prospect
+                    {
+                        WoWDXInject.LuaDoString(prospecting);
+                    }
+                    else if (WoWDXInject.GetFunctionReturn("tostring(IsSpellKnown(13262))") == "true") // disenchant
+                    {
+                        Thread.Sleep(1000); // pause to prevent disenchanting unreal item 
+                        WoWDXInject.LuaDoString(disenchant);
+                    }
+                    else
+                    {
+                        Log.Print("This character can't mill, prospect or disenchant!", false, false);
+                    }
                     iterationStartTime = Environment.TickCount;
                     state = 1;
                     break;
@@ -109,13 +122,13 @@ namespace AxTools.WoW.PluginSystem.Plugins
         #region Variables
 
         private readonly string mill =
-            "if (IsSpellKnown(51005)) then for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local name, cCount = GetContainerItemInfo(bag, bag_slot); local id = GetContainerItemID(bag, bag_slot); if (name) then if (tContains(AxToolsHerbsIDs, id) and cCount >= 5) then CastSpellByID(51005); UseContainerItem(bag, bag_slot); return; end end end end end";
+            "for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local name, cCount = GetContainerItemInfo(bag, bag_slot); local id = GetContainerItemID(bag, bag_slot); if (name) then if (tContains(AxToolsHerbsIDs, id) and cCount >= 5) then CastSpellByID(51005); UseContainerItem(bag, bag_slot); return; end end end end";
 
         private readonly string disenchant =
-            "if (IsSpellKnown(13262)) then for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local itemLink = select(7, GetContainerItemInfo(bag, bag_slot)); if (itemLink) then local _, _ , cQuality, cLevel, _, cClass = GetItemInfo(itemLink); if ((cClass == AxToolsDisenchantWeapon or cClass == AxToolsDisenchantArmor) and cLevel > 1 and cQuality == 2) then CastSpellByID(13262); UseContainerItem(bag, bag_slot); return; end end end end end";
+            "for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local itemLink = select(7, GetContainerItemInfo(bag, bag_slot)); if (itemLink) then local _, _ , cQuality, cLevel, _, cClass = GetItemInfo(itemLink); if ((cClass == AxToolsDisenchantWeapon or cClass == AxToolsDisenchantArmor) and cLevel > 1 and cQuality == 2) then CastSpellByID(13262); UseContainerItem(bag, bag_slot); return; end end end end";
 
         private readonly string prospecting =
-            "if (IsSpellKnown(31252)) then for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local name, cCount = GetContainerItemInfo(bag, bag_slot); local id = GetContainerItemID(bag, bag_slot); if (name) then if (tContains(AxToolsOreIDs, id) and cCount >= 5) then CastSpellByID(31252); UseContainerItem(bag, bag_slot); return; end end end end end";
+            "for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local name, cCount = GetContainerItemInfo(bag, bag_slot); local id = GetContainerItemID(bag, bag_slot); if (name) then if (tContains(AxToolsOreIDs, id) and cCount >= 5) then CastSpellByID(31252); UseContainerItem(bag, bag_slot); return; end end end end";
 
         private int state;
 

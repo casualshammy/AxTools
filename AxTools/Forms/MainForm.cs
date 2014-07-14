@@ -79,7 +79,6 @@ namespace AxTools.Forms
             AddonsBackup.StateChanged += AddonsBackup_OnChangedState;
 
             Task.Factory.StartNew(LoadingStepAsync);
-            Log.Print("1");
             BeginInvoke((MethodInvoker) delegate
             {
                 Location = settings.MainWindowLocation;
@@ -187,7 +186,7 @@ namespace AxTools.Forms
 
         #region MainFormEvents
 
-        private void MainFormClosing(Object sender, CancelEventArgs e)
+        private void MainFormClosing(object sender, CancelEventArgs e)
         {
             isClosing = true;
             // Close all children forms
@@ -205,8 +204,8 @@ namespace AxTools.Forms
             //
             settings.MainWindowLocation = Location;
             //save settings
-            settings.SaveJSON();
             WowAccount.Save();
+            settings.SaveJSON();
             //
             Clicker.Stop();
             //stop timers
@@ -478,30 +477,35 @@ namespace AxTools.Forms
         {
             if (cmbboxAccSelect.SelectedIndex != -1)
             {
-                WaitingOverlay waitingOverlay = new WaitingOverlay(this);
-                waitingOverlay.Show();
-                Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
-                if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
-                {
-                    Process process = Process.Start(new ProcessStartInfo
-                    {
-                        WorkingDirectory = settings.WoWDirectory,
-                        FileName = settings.WoWDirectory + "\\Wow.exe",
-                        Arguments = "-noautolaunch64bit",
-                    });
-                    WowAccount wowAccount = new WowAccount(WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
-                    new AutoLogin(wowAccount, process).EnterCredentialsASAPAsync();
-                    if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
-                    {
-                        StartVentrilo();
-                    }
-                    cmbboxAccSelect.SelectedIndex = -1;
-                    cmbboxAccSelect.Invalidate();
-                }
-                else
-                {
-                    this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                }
+                WowAccount wowAccount = new WowAccount(WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
+                StartWoW(wowAccount);
+                cmbboxAccSelect.SelectedIndex = -1;
+                cmbboxAccSelect.Invalidate();
+
+                //WaitingOverlay waitingOverlay = new WaitingOverlay(this);
+                //waitingOverlay.Show();
+                //Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
+                //if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
+                //{
+                //    Process process = Process.Start(new ProcessStartInfo
+                //    {
+                //        WorkingDirectory = settings.WoWDirectory,
+                //        FileName = settings.WoWDirectory + "\\Wow.exe",
+                //        Arguments = "-noautolaunch64bit",
+                //    });
+                //    WowAccount wowAccount = new WowAccount(WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
+                //    new AutoLogin(wowAccount, process).EnterCredentialsASAPAsync();
+                //    if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
+                //    {
+                //        StartVentrilo();
+                //    }
+                //    cmbboxAccSelect.SelectedIndex = -1;
+                //    cmbboxAccSelect.Invalidate();
+                //}
+                //else
+                //{
+                //    this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                //}
             }
         }
 
@@ -546,23 +550,7 @@ namespace AxTools.Forms
 
         private void buttonLaunchWowWithoutAutopass_Click(object sender, EventArgs e)
         {
-            if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    WorkingDirectory = settings.WoWDirectory,
-                    FileName = settings.WoWDirectory + "\\Wow.exe",
-                    Arguments = "-noautolaunch64bit",
-                });
-                if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
-                {
-                    StartVentrilo();
-                }
-            }
-            else
-            {
-                this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
-            }
+            StartWoW();
             Log.Print("WOW! buttonLaunchWowWithoutAutopass_Click!", true);
         }
 
@@ -750,7 +738,21 @@ namespace AxTools.Forms
                 cmbboxAccSelect.OverlayText = "At least one WoW account is required!";
                 cmbboxAccSelect.Enabled = false;
             }
-            
+
+            ToolStripItem[] items = contextMenuStripMain.Items.Find("World of Warcraft", false);
+            if (items.Length > 0)
+            {
+                ToolStripMenuItem launchWoW = (ToolStripMenuItem) items[0];
+                launchWoW.DropDownItems.Cast<ToolStripMenuItem>().ToList().ForEach(l => l.Dispose());
+                foreach (WowAccount wowAccount in WowAccount.AllAccounts)
+                {
+                    WowAccount account = wowAccount;
+                    launchWoW.DropDownItems.Add(new ToolStripMenuItem(wowAccount.Login, null, delegate
+                    {
+                        StartWoW(account);
+                    }));
+                }
+            }
         }
 
         private void OnPluginsLoaded()
@@ -759,8 +761,22 @@ namespace AxTools.Forms
             comboBoxWowPlugins.Items.AddRange(PluginManager.Plugins.Select(i => i.Name).Cast<object>().ToArray());
 
             contextMenuStripMain.Items.Clear();
+            ToolStripMenuItem launchWoW = new ToolStripMenuItem("World of Warcraft", null, delegate
+            {
+                StartWoW();
+            }, "World of Warcraft");
+            foreach (WowAccount wowAccount in WowAccount.AllAccounts)
+            {
+                WowAccount account = wowAccount;
+                launchWoW.DropDownItems.Add(new ToolStripMenuItem(wowAccount.Login, null, delegate
+                {
+                    StartWoW(account);
+                }));
+            }
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
             {
+                launchWoW,
+                new ToolStripSeparator(),
                 woWRadarToolStripMenuItem,
                 luaConsoleToolStripMenuItem,
                 blackMarketTrackerToolStripMenuItem,
@@ -949,6 +965,34 @@ namespace AxTools.Forms
             else
             {
                 this.ShowTaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
+        }
+
+        private void StartWoW(WowAccount wowAccount = null)
+        {
+            WaitingOverlay waitingOverlay = new WaitingOverlay(this);
+            waitingOverlay.Show();
+            Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
+            if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
+            {
+                Process process = Process.Start(new ProcessStartInfo
+                {
+                    WorkingDirectory = settings.WoWDirectory,
+                    FileName = settings.WoWDirectory + "\\Wow.exe",
+                    Arguments = "-noautolaunch64bit",
+                });
+                if (wowAccount != null)
+                {
+                    new AutoLogin(wowAccount, process).EnterCredentialsASAPAsync();
+                }
+                if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
+                {
+                    StartVentrilo();
+                }
+            }
+            else
+            {
+                this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
         }
 

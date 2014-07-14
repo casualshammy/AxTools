@@ -55,7 +55,7 @@ namespace AxTools.WoW
             catch (Exception ex)
             {
                 Log.Print("WoW accounts loading failed: " + ex.Message, true);
-                return new List<WowAccount>(); ;
+                return new List<WowAccount>();
             }
         }
 
