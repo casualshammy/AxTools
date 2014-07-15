@@ -469,6 +469,16 @@ namespace AxTools.Forms
             }
         }
 
+        private void TrayContextMenu_PluginClicked(IPlugin plugin)
+        {
+            comboBoxWowPlugins.SelectedIndex = PluginManager.Plugins.IndexOf(plugin);
+            if (!WoWManager.Hooked && WowProcess.GetAllWowProcesses().Count != 1)
+            {
+                Activate();
+            }
+            SwitchWoWPlugin();
+        }
+
         #endregion
 
         #region MainTab
@@ -761,6 +771,36 @@ namespace AxTools.Forms
             comboBoxWowPlugins.Items.AddRange(PluginManager.Plugins.Select(i => i.Name).Cast<object>().ToArray());
 
             contextMenuStripMain.Items.Clear();
+            
+            contextMenuStripMain.Items.AddRange(new ToolStripItem[]
+            {
+                woWRadarToolStripMenuItem,
+                luaConsoleToolStripMenuItem,
+                blackMarketTrackerToolStripMenuItem,
+                toolStripSeparator2
+            });
+            Type[] nativePlugins = {typeof (Fishing), typeof (FlagReturner), typeof (GoodsDestroyer)};
+            foreach (IPlugin i in PluginManager.Plugins.Where(i => nativePlugins.Contains(i.GetType())))
+            {
+                IPlugin plugin = i;
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate { TrayContextMenu_PluginClicked(plugin); });
+                pluginsToolStripMenuItems.Add(toolStripMenuItem);
+                contextMenuStripMain.Items.Add(toolStripMenuItem);
+            }
+            if (settings.WoWPluginEnableCustom && PluginManager.Plugins.Count > nativePlugins.Length)
+            {
+                ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Custom plugins") as ToolStripMenuItem;
+                if (customPlugins != null)
+                {
+                    foreach (IPlugin i in PluginManager.Plugins.Where(i => !nativePlugins.Contains(i.GetType())))
+                    {
+                        IPlugin plugin = i;
+                        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate { TrayContextMenu_PluginClicked(plugin); });
+                        pluginsToolStripMenuItems.Add(toolStripMenuItem);
+                        customPlugins.DropDownItems.Add(toolStripMenuItem);
+                    }
+                }
+            }
             ToolStripMenuItem launchWoW = new ToolStripMenuItem("World of Warcraft", null, delegate
             {
                 StartWoW();
@@ -775,55 +815,10 @@ namespace AxTools.Forms
             }
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
             {
-                launchWoW,
-                new ToolStripSeparator(),
-                woWRadarToolStripMenuItem,
-                luaConsoleToolStripMenuItem,
-                blackMarketTrackerToolStripMenuItem,
-                toolStripSeparator2
-            });
-            Type[] nativePlugins = {typeof (Fishing), typeof (FlagReturner), typeof (GoodsDestroyer)};
-            foreach (IPlugin i in PluginManager.Plugins.Where(i => nativePlugins.Contains(i.GetType())))
-            {
-                IPlugin plugin = i;
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate
-                {
-                    comboBoxWowPlugins.SelectedIndex = PluginManager.Plugins.IndexOf(plugin);
-                    if (!WoWManager.Hooked && WowProcess.GetAllWowProcesses().Count != 1)
-                    {
-                        Activate();
-                    }
-                    SwitchWoWPlugin();
-                });
-                pluginsToolStripMenuItems.Add(toolStripMenuItem);
-                contextMenuStripMain.Items.Add(toolStripMenuItem);
-            }
-            if (settings.WoWPluginEnableCustom && PluginManager.Plugins.Count > nativePlugins.Length)
-            {
-                ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Custom plugins") as ToolStripMenuItem;
-                if (customPlugins != null)
-                {
-                    foreach (IPlugin i in PluginManager.Plugins.Where(i => !nativePlugins.Contains(i.GetType())))
-                    {
-                        IPlugin plugin = i;
-                        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate
-                        {
-                            comboBoxWowPlugins.SelectedIndex = PluginManager.Plugins.IndexOf(plugin);
-                            if (!WoWManager.Hooked && WowProcess.GetAllWowProcesses().Count != 1)
-                            {
-                                Activate();
-                            }
-                            SwitchWoWPlugin();
-                        });
-                        pluginsToolStripMenuItems.Add(toolStripMenuItem);
-                        customPlugins.DropDownItems.Add(toolStripMenuItem);
-                    }
-                }
-            }
-            contextMenuStripMain.Items.AddRange(new ToolStripItem[]
-            {
                 stopActivePluginorPresshotkeyToolStripMenuItem,
                 toolStripSeparator1,
+                launchWoW,
+                new ToolStripSeparator(),
                 launchWoWToolStripMenuItem
             });
 
