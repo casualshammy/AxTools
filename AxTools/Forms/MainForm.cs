@@ -14,6 +14,7 @@ using Ionic.Zip;
 using MouseKeyboardActivityMonitor;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -70,6 +71,7 @@ namespace AxTools.Forms
             Icon = Resources.AppIcon;
             Utils.Legacy();
             OnSettingsLoaded();
+            WoWAccounts_CollectionChanged(null, null); // initial load wowaccounts
             WebRequest.DefaultWebProxy = null;
 
             settings.WoWPluginHotkeyChanged += WoWPluginHotkeyChanged;
@@ -77,6 +79,7 @@ namespace AxTools.Forms
             Pinger.DataChanged += Pinger_DataChanged;
             Pinger.StateChanged += PingerOnStateChanged;
             AddonsBackup.StateChanged += AddonsBackup_OnChangedState;
+            WoWAccount.AllAccounts.CollectionChanged += WoWAccounts_CollectionChanged;
 
             Task.Factory.StartNew(LoadingStepAsync);
             BeginInvoke((MethodInvoker) delegate
@@ -204,7 +207,7 @@ namespace AxTools.Forms
             //
             settings.MainWindowLocation = Location;
             //save settings
-            WowAccount.Save();
+            WoWAccount.Save();
             settings.SaveJSON();
             //
             Clicker.Stop();
@@ -269,7 +272,7 @@ namespace AxTools.Forms
             {
                 Hide();
             }
-            BeginInvoke((MethodInvoker) (() => OnActivated(EventArgs.Empty)));
+            BeginInvoke((MethodInvoker)(() => OnActivated(EventArgs.Empty)));
         }
 
         private void LoadingStepAsync()
@@ -487,7 +490,7 @@ namespace AxTools.Forms
         {
             if (cmbboxAccSelect.SelectedIndex != -1)
             {
-                WowAccount wowAccount = new WowAccount(WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
+                WoWAccount wowAccount = new WoWAccount(WoWAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WoWAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
                 StartWoW(wowAccount);
                 cmbboxAccSelect.SelectedIndex = -1;
                 cmbboxAccSelect.Invalidate();
@@ -567,7 +570,6 @@ namespace AxTools.Forms
         private void linkEditWowAccounts_Click(object sender, EventArgs e)
         {
             new WowAccountsManager().ShowDialog(this);
-            OnWowAccountsChanged();
         }
 
         #endregion
@@ -731,14 +733,14 @@ namespace AxTools.Forms
 
         #region Events()
 
-        private void OnWowAccountsChanged()
+        private void WoWAccounts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             cmbboxAccSelect.Items.Clear();
-            if (WowAccount.AllAccounts.Count > 0)
+            if (WoWAccount.AllAccounts.Count > 0)
             {
                 cmbboxAccSelect.OverlayText = "Click to launch WoW using autopass...";
                 cmbboxAccSelect.Enabled = true;
-                foreach (WowAccount i in WowAccount.AllAccounts)
+                foreach (WoWAccount i in WoWAccount.AllAccounts)
                 {
                     cmbboxAccSelect.Items.Add(i.Login);
                 }
@@ -752,11 +754,11 @@ namespace AxTools.Forms
             ToolStripItem[] items = contextMenuStripMain.Items.Find("World of Warcraft", false);
             if (items.Length > 0)
             {
-                ToolStripMenuItem launchWoW = (ToolStripMenuItem) items[0];
+                ToolStripMenuItem launchWoW = (ToolStripMenuItem)items[0];
                 launchWoW.DropDownItems.Cast<ToolStripMenuItem>().ToList().ForEach(l => l.Dispose());
-                foreach (WowAccount wowAccount in WowAccount.AllAccounts)
+                foreach (WoWAccount wowAccount in WoWAccount.AllAccounts)
                 {
-                    WowAccount account = wowAccount;
+                    WoWAccount account = wowAccount;
                     launchWoW.DropDownItems.Add(new ToolStripMenuItem(wowAccount.Login, null, delegate
                     {
                         StartWoW(account);
@@ -805,9 +807,9 @@ namespace AxTools.Forms
             {
                 StartWoW();
             }, "World of Warcraft");
-            foreach (WowAccount wowAccount in WowAccount.AllAccounts)
+            foreach (WoWAccount wowAccount in WoWAccount.AllAccounts)
             {
-                WowAccount account = wowAccount;
+                WoWAccount account = wowAccount;
                 launchWoW.DropDownItems.Add(new ToolStripMenuItem(wowAccount.Login, null, delegate
                 {
                     StartWoW(account);
@@ -835,7 +837,6 @@ namespace AxTools.Forms
             metroCheckBoxPluginShowIngameNotification.Checked = settings.WoWPluginShowIngameNotifications;
             checkBoxEnableCustomPlugins.Checked = settings.WoWPluginEnableCustom;
             buttonStartStopPlugin.Text = string.Format("{0} [{1}]", "Start", settings.WoWPluginHotkey);
-            OnWowAccountsChanged();
         }
 
         private void PluginManagerOnPluginStateChanged()
@@ -963,7 +964,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void StartWoW(WowAccount wowAccount = null)
+        private void StartWoW(WoWAccount wowAccount = null)
         {
             WaitingOverlay waitingOverlay = new WaitingOverlay(this);
             waitingOverlay.Show();

@@ -204,6 +204,7 @@ namespace AxTools.Forms
         private void LuaConsole_Resize(object sender, EventArgs e)
         {
             settings.WoWLuaConsoleWindowSize = Size;
+            BeginInvoke((MethodInvoker) (() => OnActivated(EventArgs.Empty)));
         }
 
         private void metroCheckBoxRandomize_CheckedChanged(object sender, EventArgs e)
@@ -236,8 +237,6 @@ namespace AxTools.Forms
         {
             InvokeOnClick(timerLua.Enabled ? pictureBoxStop : pictureBoxRunLoop, EventArgs.Empty);
         }
-
-        
 
         private void pictureBoxRunOnce_Click(object sender, EventArgs e)
         {

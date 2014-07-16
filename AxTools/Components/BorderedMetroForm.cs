@@ -1,7 +1,7 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
-using MetroFramework.Drawing;
+﻿using MetroFramework.Drawing;
 using MetroFramework.Forms;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace AxTools.Components
 {
@@ -21,5 +21,16 @@ namespace AxTools.Components
             }
         }
 
+        //protected override void OnResize(EventArgs e)
+        //{
+        //    base.OnResize(e);
+        //    base.OnResizeBegin(e);
+        //    base.OnResizeEnd(e);
+        //    //if (!AppDomain.CurrentDomain.FriendlyName.Contains("DefaultDomain"))
+        //    //{
+        //    //    BeginInvoke((MethodInvoker)(() => OnActivated(EventArgs.Empty)));
+        //    //    //MessageBox.Show("OnResize");
+        //    //}
+        //}
     }
 }

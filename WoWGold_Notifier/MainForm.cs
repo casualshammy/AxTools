@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Media;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 using HtmlAgilityPack;
+using WoWGold_Notifier.WinAPI;
 
 namespace WoWGold_Notifier
 {
@@ -36,9 +39,15 @@ namespace WoWGold_Notifier
                     string amount = node.Descendants("td").ToArray()[4].InnerText;
                     if (server.Contains("Гордунни"))
                     {
-                        Activate();
                         SystemSounds.Exclamation.Play();
                         notifyIcon.ShowBalloonTip(30000, "WoWGold - New Order!", server + " - " + amount, ToolTipIcon.Warning);
+                        FLASHWINFO flashwinfo = new FLASHWINFO
+                        {
+                            cbSize = (uint) Marshal.SizeOf(typeof (FLASHWINFO)),
+                            hwnd = Handle,
+                            dwFlags = FlashWindowFlags.FLASHW_TRAY | FlashWindowFlags.FLASHW_TIMERNOFG
+                        };
+                        NativeMethods.FlashWindowEx(ref flashwinfo);
                     }
                     orders.Add(node.Attributes["data-id"].Value);
                 }
@@ -54,6 +63,11 @@ namespace WoWGold_Notifier
         {
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
+        }
+
+        private void buttonGoToSite_Click(object sender, System.EventArgs e)
+        {
+            Process.Start("http://supply.wowgold.ru/");
         }
     }
 }

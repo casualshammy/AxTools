@@ -10,11 +10,11 @@ namespace AxTools.WoW
 {
     internal class AutoLogin
     {
-        private readonly WowAccount wowAccount;
+        private readonly WoWAccount wowAccount;
 
         private readonly Process process;
 
-        internal AutoLogin(WowAccount wowAccount, Process process)
+        internal AutoLogin(WoWAccount wowAccount, Process process)
         {
             this.wowAccount = wowAccount;
             this.process = process;

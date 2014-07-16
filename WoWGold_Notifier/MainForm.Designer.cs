@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.buttonGoToSite = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // webBrowser1
@@ -40,11 +41,22 @@
             this.webBrowser1.Size = new System.Drawing.Size(1458, 320);
             this.webBrowser1.TabIndex = 0;
             // 
+            // buttonGoToSite
+            // 
+            this.buttonGoToSite.Location = new System.Drawing.Point(1358, 12);
+            this.buttonGoToSite.Name = "buttonGoToSite";
+            this.buttonGoToSite.Size = new System.Drawing.Size(75, 23);
+            this.buttonGoToSite.TabIndex = 1;
+            this.buttonGoToSite.Text = "Go to site";
+            this.buttonGoToSite.UseVisualStyleBackColor = true;
+            this.buttonGoToSite.Click += new System.EventHandler(this.buttonGoToSite_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1458, 320);
+            this.Controls.Add(this.buttonGoToSite);
             this.Controls.Add(this.webBrowser1);
             this.Name = "MainForm";
             this.Text = "WoWGold.Ru";
@@ -56,6 +68,7 @@
         #endregion
 
         private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.Button buttonGoToSite;
     }
 }
 

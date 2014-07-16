@@ -15,7 +15,7 @@ namespace AxTools.Forms
             Icon = Resources.AppIcon;
             metroStyleManager1.Style = Settings.Instance.StyleColor;
             comboBoxWowAccounts.Items.Clear();
-            foreach (WowAccount i in WowAccount.AllAccounts)
+            foreach (WoWAccount i in WoWAccount.AllAccounts)
             {
                 comboBoxWowAccounts.Items.Add(i.Login);
             }
@@ -25,17 +25,17 @@ namespace AxTools.Forms
 
         private void metroButtonWowAccountSaveUpdate_Click(object sender, EventArgs e)
         {
-            WowAccount wowAccount = WowAccount.AllAccounts.FirstOrDefault(i => i.Login == textBoxWowAccountLogin.Text);
+            WoWAccount wowAccount = WoWAccount.AllAccounts.FirstOrDefault(i => i.Login == textBoxWowAccountLogin.Text);
             if (wowAccount != null)
             {
                 wowAccount.Password = textBoxWowAccountPassword.Text;
             }
             else
             {
-                WowAccount.AllAccounts.Add(new WowAccount(textBoxWowAccountLogin.Text, textBoxWowAccountPassword.Text));
+                WoWAccount.AllAccounts.Add(new WoWAccount(textBoxWowAccountLogin.Text, textBoxWowAccountPassword.Text));
             }
             comboBoxWowAccounts.Items.Clear();
-            foreach (WowAccount i in WowAccount.AllAccounts)
+            foreach (WoWAccount i in WoWAccount.AllAccounts)
             {
                 comboBoxWowAccounts.Items.Add(i.Login);
             }
@@ -45,13 +45,13 @@ namespace AxTools.Forms
 
         private void metroButtonWowAccountDelete_Click(object sender, EventArgs e)
         {
-            WowAccount wowAccount = WowAccount.AllAccounts.FirstOrDefault(i => i.Login == textBoxWowAccountLogin.Text);
+            WoWAccount wowAccount = WoWAccount.AllAccounts.FirstOrDefault(i => i.Login == textBoxWowAccountLogin.Text);
             if (wowAccount != null)
             {
-                WowAccount.AllAccounts.Remove(wowAccount);
+                WoWAccount.AllAccounts.Remove(wowAccount);
             }
             comboBoxWowAccounts.Items.Clear();
-            foreach (WowAccount i in WowAccount.AllAccounts)
+            foreach (WoWAccount i in WoWAccount.AllAccounts)
             {
                 comboBoxWowAccounts.Items.Add(i.Login);
             }
@@ -61,7 +61,7 @@ namespace AxTools.Forms
 
         private void textBoxWowAccountLogin_TextChanged(object sender, EventArgs e)
         {
-            if (WowAccount.AllAccounts.Any(i => i.Login == textBoxWowAccountLogin.Text))
+            if (WoWAccount.AllAccounts.Any(i => i.Login == textBoxWowAccountLogin.Text))
             {
                 metroButtonWowAccountSaveUpdate.Text = "Update";
                 metroButtonWowAccountDelete.Enabled = true;
@@ -78,8 +78,8 @@ namespace AxTools.Forms
         {
             if (comboBoxWowAccounts.SelectedIndex != -1)
             {
-                textBoxWowAccountLogin.Text = WowAccount.AllAccounts[comboBoxWowAccounts.SelectedIndex].Login;
-                textBoxWowAccountPassword.Text = new String('*', WowAccount.AllAccounts[comboBoxWowAccounts.SelectedIndex].Password.Length);
+                textBoxWowAccountLogin.Text = WoWAccount.AllAccounts[comboBoxWowAccounts.SelectedIndex].Login;
+                textBoxWowAccountPassword.Text = new String('*', WoWAccount.AllAccounts[comboBoxWowAccounts.SelectedIndex].Password.Length);
             }
             
         }
