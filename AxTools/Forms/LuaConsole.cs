@@ -204,7 +204,6 @@ namespace AxTools.Forms
         private void LuaConsole_Resize(object sender, EventArgs e)
         {
             settings.WoWLuaConsoleWindowSize = Size;
-            BeginInvoke((MethodInvoker) (() => OnActivated(EventArgs.Empty)));
         }
 
         private void metroCheckBoxRandomize_CheckedChanged(object sender, EventArgs e)

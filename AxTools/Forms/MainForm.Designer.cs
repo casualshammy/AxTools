@@ -56,7 +56,7 @@ namespace AxTools.Forms
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.launchWoWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.woWPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
+            this.tabControl = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
             this.progressBarAddonsBackup = new MetroFramework.Controls.MetroProgressBar();
             this.linkEditWowAccounts = new MetroFramework.Controls.MetroLink();
@@ -88,7 +88,7 @@ namespace AxTools.Forms
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.linkSettings = new MetroFramework.Controls.MetroLink();
             this.contextMenuStripMain.SuspendLayout();
-            this.metroTabControl1.SuspendLayout();
+            this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
             this.metroTabPage2.SuspendLayout();
@@ -170,27 +170,27 @@ namespace AxTools.Forms
             this.woWPluginsToolStripMenuItem.Name = "woWPluginsToolStripMenuItem";
             this.woWPluginsToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
             // 
-            // metroTabControl1
+            // tabControl
             // 
-            this.metroTabControl1.Controls.Add(this.metroTabPage1);
-            this.metroTabControl1.Controls.Add(this.metroTabPage3);
-            this.metroTabControl1.Controls.Add(this.metroTabPage2);
-            this.metroTabControl1.CustomBackground = false;
-            this.metroTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTabControl1.FontSize = MetroFramework.MetroTabControlSize.Medium;
-            this.metroTabControl1.FontWeight = MetroFramework.MetroTabControlWeight.Bold;
-            this.metroTabControl1.HotTrack = true;
-            this.metroTabControl1.ItemSize = new System.Drawing.Size(148, 31);
-            this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
-            this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
-            this.metroTabControl1.Size = new System.Drawing.Size(429, 195);
-            this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTabControl1.StyleManager = this.metroStyleManager1;
-            this.metroTabControl1.TabIndex = 59;
-            this.metroTabControl1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTabControl1.UseStyleColors = true;
+            this.tabControl.Controls.Add(this.metroTabPage1);
+            this.tabControl.Controls.Add(this.metroTabPage3);
+            this.tabControl.Controls.Add(this.metroTabPage2);
+            this.tabControl.CustomBackground = false;
+            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl.FontSize = MetroFramework.MetroTabControlSize.Medium;
+            this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Bold;
+            this.tabControl.HotTrack = true;
+            this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
+            this.tabControl.Location = new System.Drawing.Point(20, 60);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(429, 195);
+            this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tabControl.StyleManager = this.metroStyleManager1;
+            this.tabControl.TabIndex = 59;
+            this.tabControl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tabControl.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.tabControl.UseStyleColors = true;
             // 
             // metroTabPage1
             // 
@@ -381,7 +381,7 @@ namespace AxTools.Forms
             this.buttonStartStopPlugin.Highlight = true;
             this.buttonStartStopPlugin.Location = new System.Drawing.Point(338, 15);
             this.buttonStartStopPlugin.Name = "buttonStartStopPlugin";
-            this.buttonStartStopPlugin.Size = new System.Drawing.Size(80, 29);
+            this.buttonStartStopPlugin.Size = new System.Drawing.Size(80, 50);
             this.buttonStartStopPlugin.Style = MetroFramework.MetroColorStyle.Blue;
             this.buttonStartStopPlugin.StyleManager = this.metroStyleManager1;
             this.buttonStartStopPlugin.TabIndex = 74;
@@ -731,7 +731,7 @@ namespace AxTools.Forms
             // 
             this.ClientSize = new System.Drawing.Size(469, 265);
             this.Controls.Add(this.linkSettings);
-            this.Controls.Add(this.metroTabControl1);
+            this.Controls.Add(this.tabControl);
             this.Controls.Add(this.labelPingNum);
             this.Location = new System.Drawing.Point(0, 0);
             this.MaximizeBox = false;
@@ -742,7 +742,7 @@ namespace AxTools.Forms
             this.Text = "AxTools";
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.contextMenuStripMain.ResumeLayout(false);
-            this.metroTabControl1.ResumeLayout(false);
+            this.tabControl.ResumeLayout(false);
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage1.PerformLayout();
             this.metroTabPage3.ResumeLayout(false);
@@ -756,7 +756,7 @@ namespace AxTools.Forms
         #endregion
 
         private NotifyIcon notifyIconMain;
-        private MetroTabControl metroTabControl1;
+        private MetroTabControl tabControl;
         private MetroTabPage metroTabPage1;
         private MetroTabPage metroTabPage2;
         private MetroTileExt tileRaidcall;

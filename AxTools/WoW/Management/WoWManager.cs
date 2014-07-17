@@ -1,9 +1,11 @@
-﻿using System.Diagnostics;
-using AxTools.Classes;
+﻿using AxTools.Classes;
 using AxTools.Forms;
+using AxTools.Helpers;
 using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem;
 using GreyMagic;
+using System;
+using System.Diagnostics;
 
 namespace AxTools.WoW.Management
 {
@@ -12,7 +14,43 @@ namespace AxTools.WoW.Management
         internal static WowProcess WoWProcess;
         internal static bool Hooked { private set; get; }
 
-        internal static HookResult Hook(WowProcess process)
+        /// <summary>
+        ///     Selects <see cref="WowProcess"/> from all available processes (via <see cref="ProcessSelection"/>).
+        ///     Checks selected process for IncorrectDirectXVersion, InvalidWoWBuild and NotInGame states.
+        ///     If something went wrong, informs user via Utils.NotifyUser().
+        /// </summary>
+        /// <returns>
+        ///     True if hook was successful, false otherwise
+        /// </returns>
+        internal static bool HookWoWAndNotifyUserIfError()
+        {
+            int index = WowProcess.GetAllWowProcesses().Count == 1 ? 0 : ProcessSelection.SelectProcess();
+            if (index != -1)
+            {
+                WowProcess wowProcess = WowProcess.GetAllWowProcesses()[index];
+                switch (Hook(wowProcess))
+                {
+                    case HookResult.Successful:
+                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector loaded", wowProcess.ProcessName, wowProcess.ProcessID));
+                        return true;
+                    case HookResult.IncorrectDirectXVersion:
+                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Incorrect DirectX version", wowProcess.ProcessName, wowProcess.ProcessID), true);
+                        Utils.NotifyUser("Injecting error", "Incorrect DirectX version", NotifyUserType.Error, true);
+                        return false;
+                    case HookResult.InvalidWoWBuild:
+                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Incorrect WoW build", wowProcess.ProcessName, wowProcess.ProcessID), true);
+                        Utils.NotifyUser("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
+                        return false;
+                    case HookResult.NotInGame:
+                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Player isn't logged in", wowProcess.ProcessName, wowProcess.ProcessID));
+                        Utils.NotifyUser("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        private static HookResult Hook(WowProcess process)
         {
             if (!Hooked)
             {
@@ -67,6 +105,16 @@ namespace AxTools.WoW.Management
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Total NPC cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowNpc.Names.Count));
             WowNpc.Names.Clear();
             Hooked = false;
+        }
+
+        private enum HookResult
+        {
+            // None,
+            Successful,
+            IncorrectDirectXVersion,
+            NotInGame,
+            InvalidWoWBuild,
+            AlreadyHooked,
         }
 
     }

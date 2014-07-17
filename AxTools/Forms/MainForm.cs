@@ -46,7 +46,7 @@ namespace AxTools.Forms
             cmbboxAccSelect.Location = new Point(metroTabPage1.Size.Width/2 - cmbboxAccSelect.Size.Width/2, cmbboxAccSelect.Location.Y);
             linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width / 2 - linkEditWowAccounts.Size.Width / 2, linkEditWowAccounts.Location.Y);
 
-            metroTabControl1.SelectedIndex = 0;
+            tabControl.SelectedIndex = 0;
             metroToolTip1.SetToolTip(labelPingNum, "This is ingame connection info. It's formatted as\r\n" +
                                                    "  [worst ping of the last 10]::[packet loss in the last 200 seconds]  \r\n" +
                                                    "Left-click to clear statistics\r\n"+
@@ -216,7 +216,7 @@ namespace AxTools.Forms
             TrayIconAnimation.Close();
             Pinger.Stop();
             //stop watching process trace
-            WoWProcessWatcher.Stop();
+            WoWProcessWatcher.StopWatcher();
             Log.Print("WoW processes trace watching is stopped");
             // release hook 
             if (WoWManager.Hooked)
@@ -272,7 +272,6 @@ namespace AxTools.Forms
             {
                 Hide();
             }
-            BeginInvoke((MethodInvoker)(() => OnActivated(EventArgs.Empty)));
         }
 
         private void LoadingStepAsync()
@@ -391,7 +390,7 @@ namespace AxTools.Forms
             OnPluginsLoaded();
             AddonsBackup.StartService();
             Pinger.Start();
-            WoWProcessWatcher.Start();
+            WoWProcessWatcher.StartWatcher();
             TrayIconAnimation.Initialize(notifyIconMain);
 
             keyboardHook = new KeyboardHookListener(Globals.GlobalHooker);
@@ -406,7 +405,15 @@ namespace AxTools.Forms
 
         private void linkSettings_Click(object sender, EventArgs e)
         {
-            new AppSettings().ShowDialog(this);
+            AppSettings appSettings = Utils.FindForm<AppSettings>();
+            if (appSettings != null)
+            {
+                appSettings.Activate();
+            }
+            else
+            {
+                new AppSettings().Show();
+            }
         }
 
         private void LabelPingNumMouseClick(object sender, MouseEventArgs e)
@@ -494,31 +501,6 @@ namespace AxTools.Forms
                 StartWoW(wowAccount);
                 cmbboxAccSelect.SelectedIndex = -1;
                 cmbboxAccSelect.Invalidate();
-
-                //WaitingOverlay waitingOverlay = new WaitingOverlay(this);
-                //waitingOverlay.Show();
-                //Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
-                //if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
-                //{
-                //    Process process = Process.Start(new ProcessStartInfo
-                //    {
-                //        WorkingDirectory = settings.WoWDirectory,
-                //        FileName = settings.WoWDirectory + "\\Wow.exe",
-                //        Arguments = "-noautolaunch64bit",
-                //    });
-                //    WowAccount wowAccount = new WowAccount(WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WowAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
-                //    new AutoLogin(wowAccount, process).EnterCredentialsASAPAsync();
-                //    if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
-                //    {
-                //        StartVentrilo();
-                //    }
-                //    cmbboxAccSelect.SelectedIndex = -1;
-                //    cmbboxAccSelect.Invalidate();
-                //}
-                //else
-                //{
-                //    this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                //}
             }
         }
 
@@ -805,6 +787,7 @@ namespace AxTools.Forms
             }
             ToolStripMenuItem launchWoW = new ToolStripMenuItem("World of Warcraft", null, delegate
             {
+                contextMenuStripMain.Hide();
                 StartWoW();
             }, "World of Warcraft");
             foreach (WoWAccount wowAccount in WoWAccount.AllAccounts)
@@ -966,8 +949,12 @@ namespace AxTools.Forms
 
         private void StartWoW(WoWAccount wowAccount = null)
         {
-            WaitingOverlay waitingOverlay = new WaitingOverlay(this);
-            waitingOverlay.Show();
+            WaitingOverlay waitingOverlay = null;
+            Invoke((MethodInvoker) (() =>
+            {
+                waitingOverlay = new WaitingOverlay(this);
+                waitingOverlay.Show();
+            }));
             Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
             if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
             {
@@ -996,7 +983,7 @@ namespace AxTools.Forms
         {
             if (!WoWManager.Hooked)
             {
-                if (HookWoW())
+                if (WoWManager.HookWoWAndNotifyUserIfError())
                 {
                     new T().Show();
                 }
@@ -1015,34 +1002,6 @@ namespace AxTools.Forms
             }
         }
 
-        private bool HookWoW()
-        {
-            int index = WowProcess.GetAllWowProcesses().Count == 1 ? 0 : ProcessSelection.SelectProcess();
-            if (index != -1)
-            {
-                WowProcess wowProcess = WowProcess.GetAllWowProcesses()[index];
-                switch (WoWManager.Hook(wowProcess))
-                {
-                    case HookResult.Successful:
-                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector loaded", wowProcess.ProcessName, wowProcess.ProcessID));
-                        return true;
-                    case HookResult.IncorrectDirectXVersion:
-                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Incorrect DirectX version", wowProcess.ProcessName, wowProcess.ProcessID), true);
-                        Utils.NotifyUser("Injecting error", "Incorrect DirectX version", NotifyUserType.Error, true);
-                        return false;
-                    case HookResult.InvalidWoWBuild:
-                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Incorrect WoW build", wowProcess.ProcessName, wowProcess.ProcessID), true);
-                        Utils.NotifyUser("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
-                        return false;
-                    case HookResult.NotInGame:
-                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Player isn't logged in", wowProcess.ProcessName, wowProcess.ProcessID));
-                        Utils.NotifyUser("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
-                        return false;
-                }
-            }
-            return false;
-        }
-
         private void SwitchWoWPlugin()
         {
             buttonStartStopPlugin.Enabled = false;
@@ -1050,7 +1009,7 @@ namespace AxTools.Forms
             {
                 if (comboBoxWowPlugins.SelectedIndex != -1)
                 {
-                    if (WoWManager.Hooked || HookWoW())
+                    if (WoWManager.Hooked || WoWManager.HookWoWAndNotifyUserIfError())
                     {
                         if (WoWManager.WoWProcess.IsInGame)
                         {
@@ -1072,7 +1031,7 @@ namespace AxTools.Forms
                 try
                 {
                     PluginManager.StopPlugin();
-                    GC.Collect();
+                    //GC.Collect();
                 }
                 catch
                 {

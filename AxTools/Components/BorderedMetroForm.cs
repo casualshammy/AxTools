@@ -7,30 +7,24 @@ namespace AxTools.Components
 {
     internal class BorderedMetroForm : MetroForm
     {
+        internal BorderedMetroForm()
+        {
+            ShadowType = ShadowType.None;
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
             using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(Style))
             {
-                Rectangle rectRight = new Rectangle(Width - 1, 0, 1, Height);
-                e.Graphics.FillRectangle(styleBrush, rectRight);
-                Rectangle rectLeft = new Rectangle(0, 0, 1, Height);
-                e.Graphics.FillRectangle(styleBrush, rectLeft);
-                Rectangle rectBottom = new Rectangle(0, Height - 1, Width, 1);
-                e.Graphics.FillRectangle(styleBrush, rectBottom);
+                e.Graphics.FillRectangles(styleBrush, new[]
+                {
+                    new Rectangle(Width - 2, 0, 2, Height), // right
+                    new Rectangle(0, 0, 2, Height),         // left
+                    new Rectangle(0, Height - 2, Width, 2)  // bottom
+                });
             }
         }
 
-        //protected override void OnResize(EventArgs e)
-        //{
-        //    base.OnResize(e);
-        //    base.OnResizeBegin(e);
-        //    base.OnResizeEnd(e);
-        //    //if (!AppDomain.CurrentDomain.FriendlyName.Contains("DefaultDomain"))
-        //    //{
-        //    //    BeginInvoke((MethodInvoker)(() => OnActivated(EventArgs.Empty)));
-        //    //    //MessageBox.Show("OnResize");
-        //    //}
-        //}
     }
 }

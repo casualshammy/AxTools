@@ -1,4 +1,8 @@
-﻿using System;
+﻿using AxTools.Classes;
+using AxTools.Forms;
+using AxTools.WoW.Management;
+using AxTools.WoW.PluginSystem.Plugins;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,10 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using WindowsFormsAero.TaskDialog;
-using AxTools.Classes;
-using AxTools.Forms;
-using AxTools.WoW.Management;
-using AxTools.WoW.PluginSystem.Plugins;
 
 namespace AxTools.WoW.PluginSystem
 {

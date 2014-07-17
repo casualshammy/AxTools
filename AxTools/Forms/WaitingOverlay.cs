@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using MetroFramework;
+using AxTools.Classes;
 using MetroFramework.Drawing;
 using MetroFramework.Forms;
 
@@ -10,22 +9,27 @@ namespace AxTools.Forms
 {
     internal partial class WaitingOverlay : Form
     {
+        private readonly MetroForm parentForm;
+        private WaitingOverlaySub panel;
+
         internal WaitingOverlay(MetroForm form)
         {
             InitializeComponent();
             parentForm = form;
+            Load += WaitingOverlay_Load;
         }
 
-        private readonly MetroForm parentForm;
-
-        private WaitingOverlaySub panel;
+        public new void Show()
+        {
+            Show(parentForm);
+        }
 
         private void WaitingOverlay_Load(object sender, EventArgs e)
         {
             Size = parentForm.Size;
             Location = parentForm.Location;
-            panel = new WaitingOverlaySub(this, parentForm.Style);
-            Task.Factory.StartNew(() => BeginInvoke(new Action(() => panel.Show(this))));
+            panel = new WaitingOverlaySub(this);
+            panel.Show(this);
         }
 
         private void WaitingOverlay_FormClosing(object sender, FormClosingEventArgs e)
@@ -37,35 +41,31 @@ namespace AxTools.Forms
 
         private class WaitingOverlaySub : Form
         {
-            internal WaitingOverlaySub(Form form, MetroColorStyle style)
+            internal WaitingOverlaySub(Form form)
             {
                 InitializeComponent();
                 parentForm = form;
-                parentStyle = style;
-                metroProgressSpinner1.Style = style;
-                metroLabel1.Style = style;
-                //base.BackColor = Color.DarkSeaGreen;
-                //TransparencyKey = Color.WhiteSmoke;
+                metroProgressSpinner1.Style = Settings.Instance.StyleColor;
+                metroLabel1.Style = Settings.Instance.StyleColor;
             }
 
             protected override void OnPaint(PaintEventArgs e)
             {
                 base.OnPaint(e);
-                using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(parentStyle))
+                using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(Settings.Instance.StyleColor))
                 {
-                    Rectangle rectUpper = new Rectangle(0, 0, Width, 2);
-                    e.Graphics.FillRectangle(styleBrush, rectUpper);
-                    Rectangle rectRight = new Rectangle(Width - 2, 0, 2, Height);
-                    e.Graphics.FillRectangle(styleBrush, rectRight);
-                    Rectangle rectLeft = new Rectangle(0, 0, 2, Height);
-                    e.Graphics.FillRectangle(styleBrush, rectLeft);
-                    Rectangle rectBottom = new Rectangle(0, Height - 2, Width, 2);
-                    e.Graphics.FillRectangle(styleBrush, rectBottom);
+                    e.Graphics.FillRectangles(styleBrush, new[]
+                    {
+                        new Rectangle(0, 0, Width, 2),
+                        new Rectangle(Width - 2, 0, 2, Height),
+                        new Rectangle(0, 0, 2, Height),
+                        new Rectangle(0, Height - 2, Width, 2)
+                    });
                 }
             }
 
             private readonly Form parentForm;
-            private readonly MetroColorStyle parentStyle;
+            //private readonly MetroColorStyle parentStyle = Settings.Instance.StyleColor;
 
             private void WaitingOverlaySub_Load(object sender, EventArgs e)
             {

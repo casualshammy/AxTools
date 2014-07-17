@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Timers;
 using AxTools.Classes;
-using AxTools.Forms;
 using Timer = System.Timers.Timer;
 
 namespace AxTools.Services
@@ -29,7 +28,7 @@ namespace AxTools.Services
         internal static event Action<int, int> DataChanged;
 
         /// <summary>
-        ///     True if pinger is active, false overwise
+        ///     True if pinger is active, false otherwise
         /// </summary>
         internal static event Action<bool> StateChanged;
 

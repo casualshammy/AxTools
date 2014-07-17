@@ -20,7 +20,7 @@ namespace AxTools.WoW
         private static ManagementEventWatcher _wowWatcherStop;
         private static readonly object _lock = new object();
 
-        internal static void Start()
+        internal static void StartWatcher()
         {
             lock (_lock)
             {
@@ -34,7 +34,7 @@ namespace AxTools.WoW
             }
         }
 
-        internal static void Stop()
+        internal static void StopWatcher()
         {
             lock (_lock)
             {

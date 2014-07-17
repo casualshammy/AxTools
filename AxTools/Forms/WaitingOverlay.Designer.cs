@@ -42,7 +42,6 @@
             this.ShowInTaskbar = false;
             this.Text = "WaitingOverlay";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WaitingOverlay_FormClosing);
-            this.Load += new System.EventHandler(this.WaitingOverlay_Load);
             this.ResumeLayout(false);
 
         }
