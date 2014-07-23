@@ -64,21 +64,11 @@ namespace AxTools.Helpers
 
         private static void ClearingPhase()
         {
-            // ReSharper disable RedundantCheckBeforeAssignment
-            if (Clicker.Enabled)
-            {
-                _notifyIcon.Icon = EmptyIcon;
-            }
-            else if (_notifyIcon.Icon != AppIconNormal)
-            {
-                _notifyIcon.Icon = AppIconNormal;
-            }
-            // ReSharper restore RedundantCheckBeforeAssignment
+            _notifyIcon.Icon = Clicker.Enabled ? EmptyIcon : AppIconNormal;
         }
 
         private static void ActualizingPhase()
         {
-            // ReSharper disable RedundantCheckBeforeAssignment
             if (LuaConsole.TimerEnabled && PluginManager.ActivePlugin != null)
             {
                 _notifyIcon.Icon = AppIconPluginOnLuaOn;
@@ -91,11 +81,10 @@ namespace AxTools.Helpers
             {
                 _notifyIcon.Icon = AppIconPluginOnLuaOff;
             }
-            else if (_notifyIcon.Icon != AppIconNormal)
+            else
             {
                 _notifyIcon.Icon = AppIconNormal;
             }
-            // ReSharper restore RedundantCheckBeforeAssignment
         }
 
         private enum Phase

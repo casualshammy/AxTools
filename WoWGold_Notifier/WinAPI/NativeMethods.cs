@@ -47,6 +47,11 @@ namespace WoWGold_Notifier.WinAPI
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
+        [DllImport("urlmon.dll")]
+        [PreserveSig]
+        [return: MarshalAs(UnmanagedType.Error)]
+        internal static extern int CoInternetSetFeatureEnabled(int featureEntry, [MarshalAs(UnmanagedType.U4)] int dwFlags, bool fEnable);
+
         // ReSharper disable InconsistentNaming
         internal static int WS_CAPTION = 0xC00000;
         internal static int WS_THICKFRAME = 0x40000;

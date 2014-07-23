@@ -207,7 +207,6 @@ namespace AxTools.Forms
             //
             settings.MainWindowLocation = Location;
             //save settings
-            WoWAccount.Save();
             settings.SaveJSON();
             //
             Clicker.Stop();
@@ -438,10 +437,14 @@ namespace AxTools.Forms
 
         private void UpdatePluginsShortcutsInTrayContextMenu()
         {
-            foreach (ToolStripMenuItem i in pluginsToolStripMenuItems)
+            foreach (IPlugin plugin in PluginManager.Plugins)
             {
-                i.ShortcutKeyDisplayString = i.Text == comboBoxWowPlugins.Text ? settings.WoWPluginHotkey.ToString() : null;
-                i.Enabled = PluginManager.ActivePlugin == null;
+                ToolStripItem[] items = contextMenuStripMain.Items.Find("NativeN" + plugin.Name, true);  //contextMenuStripMain.Items["NativeN" + plugin.Name] as ToolStripMenuItem;
+                foreach (ToolStripMenuItem item in items)
+                {
+                    item.ShortcutKeyDisplayString = item.Text == comboBoxWowPlugins.Text ? settings.WoWPluginHotkey.ToString() : null;
+                    item.Enabled = PluginManager.ActivePlugin == null;
+                }
             }
             stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManager.ActivePlugin != null;
             stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = settings.WoWPluginHotkey.ToString();
@@ -767,7 +770,7 @@ namespace AxTools.Forms
             foreach (IPlugin i in PluginManager.Plugins.Where(i => nativePlugins.Contains(i.GetType())))
             {
                 IPlugin plugin = i;
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate { TrayContextMenu_PluginClicked(plugin); });
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate { TrayContextMenu_PluginClicked(plugin); }, "NativeN" + plugin.Name);
                 pluginsToolStripMenuItems.Add(toolStripMenuItem);
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
@@ -779,7 +782,7 @@ namespace AxTools.Forms
                     foreach (IPlugin i in PluginManager.Plugins.Where(i => !nativePlugins.Contains(i.GetType())))
                     {
                         IPlugin plugin = i;
-                        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate { TrayContextMenu_PluginClicked(plugin); });
+                        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate { TrayContextMenu_PluginClicked(plugin); }, "NativeN" + plugin.Name);
                         pluginsToolStripMenuItems.Add(toolStripMenuItem);
                         customPlugins.DropDownItems.Add(toolStripMenuItem);
                     }

@@ -25,7 +25,7 @@ namespace AxTools.Classes
                         HaveErrors = true;
                     }
                     PStringBuilder.AppendLine(string.Concat(DateTime.UtcNow.ToString("dd.MM.yyyy HH:mm:ss.fff"), isError ? " !! " : " // ", text));
-                    if (flush || PStringBuilder.Length >= 32000)
+                    if (flush || PStringBuilder.Length >= 32768)
                     {
                         Utils.CheckCreateDir();
 						File.AppendAllText(Globals.LogFileName, PStringBuilder.ToString(), Encoding.UTF8);

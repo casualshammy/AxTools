@@ -39,7 +39,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public int Interval
         {
-            get { return 100; }
+            get { return 50; }
         }
 
         public string WowIcon
@@ -71,8 +71,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             if (Environment.TickCount - iterationStartTime > 5000)
             {
+                Log.Print(String.Format("{0}:{1} :: [{2}] Timeout has expired (nothing to do?), state: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, state));
                 state = 0;
-                Log.Print(String.Format("{0}:{1} :: [{2}] Timeout has expired (nothing to do?)", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
             }
             switch (state)
             {
