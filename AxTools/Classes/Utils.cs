@@ -133,9 +133,6 @@ namespace AxTools.Classes
                                         case "addons_backup_lastdate":
                                             settings.WoWAddonsBackupLastDate = Convert.ToDateTime(strArray[1]);
                                             break;
-                                        case "del_wow_log":
-                                            settings.WoWDeleteLogs = Convert.ToBoolean(strArray[1]);
-                                            break;
                                         case "creature_cache":
                                             settings.WoWWipeCreatureCache = Convert.ToBoolean(strArray[1]);
                                             break;
@@ -157,7 +154,8 @@ namespace AxTools.Classes
                                             break;
                                         case "GameServer":
                                         case "Pinger.GameServer":
-                                            settings.PingerServer = Globals.GameServers.FirstOrDefault(i => i.Description == strArray[1]) ?? Globals.GameServers[0];
+                                            int oldIndex = new List<SrvAddress>(Globals.GameServers).FindIndex(i => i.Description == strArray[1]);
+                                            settings.PingerServerID = oldIndex == -1 ? 1 : oldIndex;
                                             break;
                                         case "Pinger.BadNetworkPing":
                                             settings.PingerBadPing = Convert.ToInt32(strArray[1]);

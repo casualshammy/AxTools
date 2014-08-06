@@ -38,6 +38,7 @@ namespace WoWGold_Notifier
             this.label1 = new System.Windows.Forms.Label();
             this.labelThreads = new System.Windows.Forms.Label();
             this.buttonLog = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // webBrowser1
@@ -62,7 +63,7 @@ namespace WoWGold_Notifier
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1072, 9);
+            this.label1.Location = new System.Drawing.Point(993, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(117, 13);
             this.label1.TabIndex = 2;
@@ -71,7 +72,7 @@ namespace WoWGold_Notifier
             // labelThreads
             // 
             this.labelThreads.AutoSize = true;
-            this.labelThreads.Location = new System.Drawing.Point(1104, 22);
+            this.labelThreads.Location = new System.Drawing.Point(1025, 22);
             this.labelThreads.Name = "labelThreads";
             this.labelThreads.Size = new System.Drawing.Size(58, 13);
             this.labelThreads.TabIndex = 3;
@@ -87,9 +88,20 @@ namespace WoWGold_Notifier
             this.buttonLog.UseVisualStyleBackColor = true;
             this.buttonLog.Click += new System.EventHandler(this.buttonLog_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(1139, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(132, 23);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "Stop timer/refresh page";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(1458, 320);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.buttonLog);
             this.Controls.Add(this.labelThreads);
             this.Controls.Add(this.label1);
@@ -110,6 +122,7 @@ namespace WoWGold_Notifier
         private Label label1;
         private Label labelThreads;
         private Button buttonLog;
+        private Button button1;
     }
 }
 

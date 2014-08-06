@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -89,7 +90,7 @@ namespace AxTools.Updater
                 try
                 {
                     Log.Print("[Updater] Closing for update...");
-                    Program.IsRestarting = true;
+                    Application.ApplicationExit += ApplicationOnApplicationExit;
                     MainForm.Instance.BeginInvoke(new Action(MainForm.Instance.Close));
                 }
                 catch (Exception ex)
@@ -138,6 +139,12 @@ namespace AxTools.Updater
             {
                 Log.Print("[Updater] Update file fetched, but it's empty!", true);
             }
+        }
+
+        private static void ApplicationOnApplicationExit(object sender, EventArgs eventArgs)
+        {
+            Application.ApplicationExit -= ApplicationOnApplicationExit;
+            Process.Start(new ProcessStartInfo {FileName = Application.StartupPath + "\\Updater.exe", WorkingDirectory = Application.StartupPath});
         }
 
     }

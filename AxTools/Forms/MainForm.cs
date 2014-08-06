@@ -10,7 +10,6 @@ using AxTools.WoW;
 using AxTools.WoW.Management;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.Plugins;
-using Ionic.Zip;
 using MouseKeyboardActivityMonitor;
 using System;
 using System.Collections.Generic;
@@ -21,12 +20,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using CompressionLevel = Ionic.Zlib.CompressionLevel;
 using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms
@@ -56,17 +53,6 @@ namespace AxTools.Forms
             progressBarAddonsBackup.Location = linkBackupAddons.Location;
             progressBarAddonsBackup.Visible = false;
 
-            if (Directory.Exists(Globals.TempPath))
-            {
-                try
-                {
-                    Directory.Delete(Globals.TempPath, true);
-                }
-                catch
-                {
-                    File.Delete(Globals.LogFileName);
-                }
-            }
             Log.Print(String.Format("Launching... ({0})", Globals.AppVersion));
             Icon = Resources.AppIcon;
             Utils.Legacy();
@@ -292,53 +278,69 @@ namespace AxTools.Forms
 
             #region Backup and delete wow logs
 
-            if (settings.WoWDeleteLogs && Directory.Exists(settings.WoWDirectory + "\\Logs") && WowProcess.GetAllWowProcesses().Count == 0)
+            if (settings.WoWNotifyIfBigLogs && Directory.Exists(settings.WoWDirectory + "\\Logs") && WowProcess.GetAllWowProcesses().Count == 0)
             {
-                if (File.Exists(settings.WoWDirectory + "\\Logs\\WoWCombatLog.txt") || Utils.CalcDirectorySize(settings.WoWDirectory + "\\Logs") > 104857600)
+                long directorySize = Utils.CalcDirectorySize(settings.WoWDirectory + "\\Logs");
+                Log.Print("[WoW logs watcher] Log directory size: " + Math.Round((float) directorySize/1024/1024, 3, MidpointRounding.ToEven) + " MB");
+                if (directorySize > settings.WoWNotifyIfBigLogsSize * 1024 * 1024)
                 {
-                    Utils.CheckCreateDir();
-                    string zipPath = String.Format("{0}\\WoWLogs.zip", settings.WoWAddonsBackupPath);
-                    try
+                    DirectoryInfo rootDir = new DirectoryInfo(settings.WoWDirectory + "\\Logs").Root;
+                    DriveInfo drive = DriveInfo.GetDrives().FirstOrDefault(i => i.RootDirectory.FullName == rootDir.FullName);
+                    if (drive != null)
                     {
-                        if (File.Exists(zipPath))
-                        {
-                            File.Delete(zipPath);
-                        }
-                        try
-                        {
-                            using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
-                            {
-                                zip.CompressionLevel = (CompressionLevel)settings.WoWAddonsBackupCompressionLevel;
-                                zip.AddDirectory(settings.WoWDirectory + "\\Logs");
-                                zip.Save();
-                            }
-                            Log.Print(String.Format("[WoW logs] WoW combat log's backup was placed to \"{0}\"", zipPath));
-                            string[] cLogFiles = Directory.GetFiles(settings.WoWDirectory + "\\Logs");
-                            foreach (string i in cLogFiles)
-                            {
-                                try
-                                {
-                                    File.Delete(i);
-                                    Log.Print("[WoW logs] Log file deleted: " + i);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Log.Print(String.Format("[WoW logs] Error deleting log file \"{0}\": {1}", i, ex.Message), true);
-                                }
-                            }
-                            notifyIconMain.ShowBalloonTip(10000, "WoW log files were deleted", "Backup was placed to " + settings.WoWAddonsBackupPath, ToolTipIcon.Info);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Print(String.Format("[WoW logs] Can't backup wow combat log \"{0}\": {1}", zipPath, ex.Message), true);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Print(String.Format("[WoW logs] Can't delete \"{0}\": {1}", zipPath, ex.Message), true);
+                        double freeSpace = Math.Round((float) drive.TotalFreeSpace/1024/1024, 3, MidpointRounding.ToEven);
+                        Utils.NotifyUser("Log directory is too large!", "Disk free space: " + freeSpace + " MB", NotifyUserType.Warn, true);
                     }
                 }
             }
+
+            //if (settings.WoWDeleteLogs && Directory.Exists(settings.WoWDirectory + "\\Logs") && WowProcess.GetAllWowProcesses().Count == 0)
+            //{
+            //    //if (File.Exists(settings.WoWDirectory + "\\Logs\\WoWCombatLog.txt") || Utils.CalcDirectorySize(settings.WoWDirectory + "\\Logs") > 104857600)
+            //    //{
+            //    //    Utils.CheckCreateDir();
+            //    //    string zipPath = String.Format("{0}\\WoWLogs.zip", settings.WoWAddonsBackupPath);
+            //    //    try
+            //    //    {
+            //    //        if (File.Exists(zipPath))
+            //    //        {
+            //    //            File.Delete(zipPath);
+            //    //        }
+            //    //        try
+            //    //        {
+            //    //            using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
+            //    //            {
+            //    //                zip.CompressionLevel = (CompressionLevel)settings.WoWAddonsBackupCompressionLevel;
+            //    //                zip.AddDirectory(settings.WoWDirectory + "\\Logs");
+            //    //                zip.Save();
+            //    //            }
+            //    //            Log.Print(String.Format("[WoW logs] WoW combat log's backup was placed to \"{0}\"", zipPath));
+            //    //            string[] cLogFiles = Directory.GetFiles(settings.WoWDirectory + "\\Logs");
+            //    //            foreach (string i in cLogFiles)
+            //    //            {
+            //    //                try
+            //    //                {
+            //    //                    File.Delete(i);
+            //    //                    Log.Print("[WoW logs] Log file deleted: " + i);
+            //    //                }
+            //    //                catch (Exception ex)
+            //    //                {
+            //    //                    Log.Print(String.Format("[WoW logs] Error deleting log file \"{0}\": {1}", i, ex.Message), true);
+            //    //                }
+            //    //            }
+            //    //            notifyIconMain.ShowBalloonTip(10000, "WoW log files were deleted", "Backup was placed to " + settings.WoWAddonsBackupPath, ToolTipIcon.Info);
+            //    //        }
+            //    //        catch (Exception ex)
+            //    //        {
+            //    //            Log.Print(String.Format("[WoW logs] Can't backup wow combat log \"{0}\": {1}", zipPath, ex.Message), true);
+            //    //        }
+            //    //    }
+            //    //    catch (Exception ex)
+            //    //    {
+            //    //        Log.Print(String.Format("[WoW logs] Can't delete \"{0}\": {1}", zipPath, ex.Message), true);
+            //    //    }
+            //    //}
+            //}
 
             #endregion
 

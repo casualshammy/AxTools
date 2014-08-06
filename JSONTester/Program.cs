@@ -52,7 +52,7 @@ namespace JSONTester
                             Console.WriteLine("Channel: " + channel);
                             Console.WriteLine("Game: " + twitchStreamInfo.MetaGame);
                             Console.WriteLine("Title: " + twitchStreamInfo.Title);
-                            Console.WriteLine("Video height: " + twitchStreamInfo.VideoHeight);
+                            Console.WriteLine("Video size: " + twitchStreamInfo.VideoWidth + "x" + twitchStreamInfo.VideoHeight);
                             Console.WriteLine("Video bitrate: " + twitchStreamInfo.VideoBitrate);
                         }
                         else
@@ -87,6 +87,9 @@ namespace JSONTester
 
             [DataMember(Name = "video_height")]
             internal int VideoHeight;
+
+            [DataMember(Name = "video_width")]
+            internal int VideoWidth;
         }
     }
 }

@@ -101,7 +101,8 @@ namespace AxTools.WoW.Management
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Total objects cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowObject.Names.Count), false, false);
             WowObject.Names.Clear();
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Total players cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowPlayer.Names.Count), false, false);
-            WowPlayer.Names.Clear();
+            // todo
+            //WowPlayer.Names.Clear();
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Total NPC cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowNpc.Names.Count));
             WowNpc.Names.Clear();
             Hooked = false;

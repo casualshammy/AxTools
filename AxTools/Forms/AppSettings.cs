@@ -1,16 +1,16 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using WindowsFormsAero.TaskDialog;
-using AxTools.Classes;
+﻿using AxTools.Classes;
 using AxTools.Components;
 using AxTools.Properties;
-using System;
-using System.Windows.Forms;
 using AxTools.Services;
 using MetroFramework;
 using MetroFramework.Forms;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using WindowsFormsAero.TaskDialog;
 using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms
@@ -24,7 +24,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             CheckBoxStartAxToolsWithWindows.CheckedChanged += CheckBox9CheckedChanged;
-            CheckBox5.CheckedChanged += CheckBox5CheckedChanged;
+            checkBoxNotifyIfBigLogFile.CheckedChanged += CheckBox5CheckedChanged;
             CheckBox7.CheckedChanged += CheckBox7CheckedChanged;
             CheckBox6.CheckedChanged += CheckBox6CheckedChanged;
             TextBox7.TextChanged += TextBox7TextChanged;
@@ -64,10 +64,9 @@ namespace AxTools.Forms
             comboBoxBadNetworkStatusPing.SelectedIndex = settings.PingerBadPing/25 - 1;
             comboBoxVeryBadNetworkStatusPing.SelectedIndex = settings.PingerVeryBadPing / 25 - 1;
 
-            //ComboBox_server_ip
             ComboBox_server_ip.Items.Clear();
             ComboBox_server_ip.Items.AddRange(Globals.GameServers.Select(k => k.Description).Cast<object>().ToArray());
-            ComboBox_server_ip.Text = settings.PingerServer.Description;
+            ComboBox_server_ip.SelectedIndex = settings.PingerServerID;
             comboBoxClickerHotkey.Text = settings.ClickerHotkey.ToString();
             comboBoxWExecLuaTimer.Text = settings.LuaTimerHotkey.ToString();
             comboBoxWExecModule.Text = settings.WoWPluginHotkey.ToString();
@@ -88,7 +87,8 @@ namespace AxTools.Forms
 
             Icon = Resources.AppIcon;
             checkBox_AntiAFK.Checked = settings.WoWAntiKick;
-            CheckBox5.Checked = settings.WoWDeleteLogs;
+            checkBoxNotifyIfBigLogFile.Checked = settings.WoWNotifyIfBigLogs;
+            textBoxNotifyIfBigLogFile.Text = settings.WoWNotifyIfBigLogsSize.ToString();
             CheckBox7.Checked = settings.WoWCustomWindowNoBorder;
             CheckBox6.Checked = settings.WoWCustomizeWindow;
             foreach (Control i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
@@ -128,7 +128,7 @@ namespace AxTools.Forms
             }
             //tooltips
             metroToolTip1.SetToolTip(CheckBox3, "Deletes creature cache file when possible");
-            metroToolTip1.SetToolTip(CheckBox5, "Moves WoW log files to temporary folder\r\non AxTools' startup\r\nand deletes it on AxTools' shutdown");
+            metroToolTip1.SetToolTip(checkBoxNotifyIfBigLogFile, "Moves WoW log files to temporary folder\r\non AxTools' startup\r\nand deletes it on AxTools' shutdown");
             metroToolTip1.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
             isSettingsLoaded = true;
         }
@@ -186,7 +186,7 @@ namespace AxTools.Forms
         {
             if (isSettingsLoaded)
             {
-                settings.WoWDeleteLogs = CheckBox5.Checked;
+                settings.WoWNotifyIfBigLogs = checkBoxNotifyIfBigLogFile.Checked;
             }
         }
 
@@ -532,14 +532,20 @@ namespace AxTools.Forms
         {
             if (isSettingsLoaded && ComboBox_server_ip.SelectedIndex != -1)
             {
-                settings.PingerServer = Globals.GameServers.First(i => i.Description == ComboBox_server_ip.Text);
-                if (settings.PingerServer.Port == 0)
+                settings.PingerServerID = ComboBox_server_ip.SelectedIndex;
+                if (ComboBox_server_ip.SelectedIndex == 0)
                 {
-                    Pinger.Stop();
+                    if (Pinger.Enabled)
+                    {
+                        Pinger.Stop();
+                    }
                 }
                 else
                 {
-                    Pinger.Start();
+                    if (!Pinger.Enabled)
+                    {
+                        Pinger.Start();
+                    }
                 }
             }
         }
@@ -583,5 +589,22 @@ namespace AxTools.Forms
                 settings.MinimizeToTray = checkBoxMinimizeToTray.Checked;
             }
         }
+
+        private void textBoxNotifyIfBigLogFile_TextChanged(object sender, EventArgs e)
+        {
+            if (isSettingsLoaded)
+            {
+                int parsedValue;
+                if (int.TryParse(textBoxNotifyIfBigLogFile.Text, out parsedValue))
+                {
+                    settings.WoWNotifyIfBigLogsSize = parsedValue;
+                }
+                else
+                {
+                    this.ShowTaskDialog("Incorrect value", "Value must be a number", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                }
+            }
+        }
+    
     }
 }

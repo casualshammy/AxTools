@@ -1,16 +1,16 @@
-﻿using AxTools.Forms;
+﻿using AxTools.Classes;
+using AxTools.Forms;
 using System;
-using System.Diagnostics;
+using System.IO;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
+using WindowsFormsAero.TaskDialog;
 
 namespace AxTools
 {
     static class Program
     {
-        internal static bool IsRestarting = false;
-
         [STAThread]
         static void Main()
         {
@@ -28,36 +28,44 @@ namespace AxTools
                                 WindowsPrincipal pricipal = new WindowsPrincipal(p);
                                 if (!pricipal.IsInRole(WindowsBuiltInRole.Administrator))
                                 {
-                                    MessageBox.Show("This program requires administrator privileges", "AxTools", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    TaskDialog.Show("This program requires administrator privileges", "AxTools", "Make sure you have administrator privileges", TaskDialogButton.OK, TaskDialogIcon.SecurityError);
                                     return;
                                 }
                             }
                         }
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
-                        Application.ApplicationExit += ApplicationOnApplicationExit;
+                        OnStartup();
+                        Log.Print("Loading main window...");
                         Application.Run((MainForm.Instance = new MainForm()));
+                        Log.Print("Application is closed");
                     }
                     else
                     {
-                        MessageBox.Show("This program works only on Windows 7 or higher", "AxTools", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        TaskDialog.Show("This program works only on Windows 7 or higher", "AxTools", "Sorry...", TaskDialogButton.OK, TaskDialogIcon.Stop);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("This program is already running", "AxTools", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    TaskDialog.Show("This program is already running", "AxTools", "", TaskDialogButton.OK, TaskDialogIcon.Warning);
                 }
             }
         }
 
-        private static void ApplicationOnApplicationExit(object sender, EventArgs eventArgs)
+        private static void OnStartup()
         {
-            Application.ApplicationExit -= ApplicationOnApplicationExit;
-            if (IsRestarting)
+            if (Directory.Exists(Globals.TempPath))
             {
-                Process.Start(new ProcessStartInfo {FileName = Application.StartupPath + "\\Updater.exe", WorkingDirectory = Application.StartupPath});
+                try
+                {
+                    Directory.Delete(Globals.TempPath, true);
+                }
+                catch
+                {
+                    File.Delete(Globals.LogFileName);
+                }
             }
         }
-    
+
     }
 }

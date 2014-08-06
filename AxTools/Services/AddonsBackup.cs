@@ -6,10 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using System.Windows.Forms;
-using WindowsFormsAero.TaskDialog;
 using AxTools.Classes;
-using AxTools.Forms;
+using AxTools.Helpers;
 using Ionic.Zip;
 using Ionic.Zlib;
 using Timer = System.Timers.Timer;
@@ -60,7 +58,7 @@ namespace AxTools.Services
 
         internal static void MakeBackup()
         {
-            Start(false);
+            Start();
         }
 
         private static void Timer_OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
@@ -75,7 +73,7 @@ namespace AxTools.Services
                 {
                     StateChanged(-1);
                 }
-                Task.Factory.StartNew(() => Start(true))
+                Task.Factory.StartNew(Start)
                     .ContinueWith(l =>
                     {
                         Process.GetCurrentProcess().PriorityClass = defaultProcessPriorityClass;
@@ -87,7 +85,7 @@ namespace AxTools.Services
             }
         }
 
-        private static void Start(bool trayMode)
+        private static void Start()
         {
             _isBackingUp = true;
             CheckWTFDirectoryResult checkWTFDirectoryResult = CheckWTFDirectory();
@@ -100,35 +98,31 @@ namespace AxTools.Services
                     {
                         Log.Print("BackupAddons :: Backup directory created");
                         DeleteOldFiles();
-                        if (trayMode)
-                        {
-                            MainForm.Instance.ShowNotifyIconMessage("Performing backup operation", "Please don't close AxTools until the operation is completed", ToolTipIcon.Info);
-                        }
                         Exception zip = Zip();
                         if (zip == null)
                         {
-                            Log.Print("BackupAddons :: Backup successfully created");
-                            ReportToUser("Backup successful", "Backup file was stored in " + _settings.WoWAddonsBackupPath, false, trayMode);
+                            //Log.Print("BackupAddons :: Backup successfully created");
+                            //ReportToUser("Backup successful", "Backup file was stored in " + _settings.WoWAddonsBackupPath, false, trayMode);
                         }
                         else
                         {
                             Log.Print("BackupAddons :: Backup error: Zipping failed: " + zip.Message, true);
-                            ReportToUser("Backup error", "Zipping failed\r\n" + zip.Message, true, trayMode);
+                            Utils.NotifyUser("Backup error", zip.Message, NotifyUserType.Error, true);
                         }
                     }
                     else
                     {
                         Log.Print("BackupAddons :: Can't create backup directory: " + backupDir.Message, true);
-                        ReportToUser("Backup error", "Can't create backup dir:\r\n" + backupDir.Message, true, trayMode);
+                        Utils.NotifyUser("Backup error", "Can't create backup dir:\r\n" + backupDir.Message, NotifyUserType.Error, true);
                     }
                     break;
                 case CheckWTFDirectoryResult.WTFDirIsNotFound:
                     Log.Print("Backup error: WTF directory isn't found");
-                    ReportToUser("Backup error", "\"WTF\" folder isn't found", true, trayMode);
+                    Utils.NotifyUser("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
                     break;
                 case CheckWTFDirectoryResult.WTFDirIsTooLarge:
                     Log.Print("Backup error: WTF directory is too large", true);
-                    ReportToUser("Backup error", "WTF directory is too large (>1GB)", true, trayMode);
+                    Utils.NotifyUser("Backup error", "WTF directory is too large (> 1GB)", NotifyUserType.Error, true);
                     break;
             }
             _isBackingUp = false;
@@ -232,18 +226,6 @@ namespace AxTools.Services
                         StateChanged(procent);
                     }
                 }
-            }
-        }
-
-        private static void ReportToUser(string title, string message,bool isError, bool tray)
-        {
-            if (tray)
-            {
-                MainForm.Instance.ShowNotifyIconMessage(title, message, isError ? ToolTipIcon.Error : ToolTipIcon.Info);
-            }
-            else
-            {
-                MainForm.Instance.ShowTaskDialog(title, message, TaskDialogButton.OK, isError ? TaskDialogIcon.Stop : TaskDialogIcon.Information);
             }
         }
 

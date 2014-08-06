@@ -161,6 +161,12 @@ namespace WoWGold_Notifier
         {
             Process.Start(logFilePath);
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            timer.Stop();
+            webBrowser1.Invoke(navigate);
+        }
     
     }
 }

@@ -32,6 +32,14 @@ namespace AxTools.Services
         /// </summary>
         internal static event Action<bool> StateChanged;
 
+        internal static bool Enabled
+        {
+            get
+            {
+                return _timer.Enabled;
+            }
+        }
+
         internal static void Start()
         {
             lock (Lock)
@@ -75,7 +83,7 @@ namespace AxTools.Services
                     using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                     {
                         _stopwatch.Restart();
-                        bool result = pSocket.BeginConnect(_settings.PingerServer.Ip, _settings.PingerServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
+                        bool result = pSocket.BeginConnect(Globals.GameServers[_settings.PingerServerID].Ip, Globals.GameServers[_settings.PingerServerID].Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
                         long elapsed = _stopwatch.ElapsedMilliseconds;
                         if (_pingList.Count == 100)
                         {
