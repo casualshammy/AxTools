@@ -289,7 +289,8 @@ namespace AxTools.Forms
                     if (drive != null)
                     {
                         double freeSpace = Math.Round((float) drive.TotalFreeSpace/1024/1024, 3, MidpointRounding.ToEven);
-                        Utils.NotifyUser("Log directory is too large!", "Disk free space: " + freeSpace + " MB", NotifyUserType.Warn, true);
+                        ShowNotifyIconMessage("Log directory is too large!", "Disk free space: " + freeSpace + " MB", ToolTipIcon.Warning);
+                        Utils.PlaySystemNotificationAsync();
                     }
                 }
             }
