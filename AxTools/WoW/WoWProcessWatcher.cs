@@ -1,11 +1,11 @@
 ﻿using AxTools.Classes;
 using AxTools.Forms;
+using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW.Management;
 using GreyMagic;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Management;
 using System.Threading;
@@ -134,14 +134,7 @@ namespace AxTools.WoW
                     {
                         Log.Print(String.Format("{0}:{1} :: [Process watcher] Closed WoW process not found", name, pid), true);
                     }
-                    if (Settings.Instance.WoWWipeCreatureCache && Directory.Exists(Settings.Instance.WoWDirectory + "\\Cache\\WDB"))
-                    {
-                        foreach (DirectoryInfo i in new DirectoryInfo(Settings.Instance.WoWDirectory + "\\Cache\\WDB").GetDirectories().Where(i => File.Exists(i.FullName + "\\creaturecache.wdb")))
-                        {
-                            File.Delete(i.FullName + "\\creaturecache.wdb");
-                            Log.Print("[Cache cleaner] " + i.FullName + "\\creaturecache.wdb was deleted");
-                        }
-                    }
+                    WoWLogsAndCacheManager.DeleteCreatureCache();
                 }
             }
             catch (Exception ex)

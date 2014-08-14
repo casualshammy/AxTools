@@ -11,7 +11,7 @@ namespace AxTools.Classes
         [JsonProperty(Order = 1, PropertyName = "Port")]
         internal int Port;
 
-        [JsonProperty(Order = 1, PropertyName = "Description")]
+        [JsonProperty(Order = 2, PropertyName = "Description")]
         internal string Description;
 
         [JsonConstructor]

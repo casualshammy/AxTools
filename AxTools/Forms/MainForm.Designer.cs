@@ -62,7 +62,7 @@ namespace AxTools.Forms
             this.linkEditWowAccounts = new MetroFramework.Controls.MetroLink();
             this.buttonLaunchWowWithoutAutopass = new MetroFramework.Controls.MetroButton();
             this.linkClickerSettings = new MetroFramework.Controls.MetroLink();
-            this.linkBackupAddons = new MetroFramework.Controls.MetroLink();
+            this.linkBackup = new MetroFramework.Controls.MetroLink();
             this.linkOpenBackupFolder = new MetroFramework.Controls.MetroLink();
             this.cmbboxAccSelect = new AxTools.Components.MetroComboboxExt(this.components);
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
@@ -198,7 +198,7 @@ namespace AxTools.Forms
             this.metroTabPage1.Controls.Add(this.linkEditWowAccounts);
             this.metroTabPage1.Controls.Add(this.buttonLaunchWowWithoutAutopass);
             this.metroTabPage1.Controls.Add(this.linkClickerSettings);
-            this.metroTabPage1.Controls.Add(this.linkBackupAddons);
+            this.metroTabPage1.Controls.Add(this.linkBackup);
             this.metroTabPage1.Controls.Add(this.linkOpenBackupFolder);
             this.metroTabPage1.Controls.Add(this.cmbboxAccSelect);
             this.metroTabPage1.CustomBackground = false;
@@ -286,25 +286,25 @@ namespace AxTools.Forms
             this.linkClickerSettings.UseStyleColors = true;
             this.linkClickerSettings.Click += new System.EventHandler(this.linkClickerSettings_Click);
             // 
-            // linkBackupAddons
+            // linkBackup
             // 
-            this.linkBackupAddons.AutoSize = true;
-            this.linkBackupAddons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.linkBackupAddons.CustomBackground = false;
-            this.linkBackupAddons.CustomForeColor = false;
-            this.linkBackupAddons.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.linkBackupAddons.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.linkBackupAddons.Location = new System.Drawing.Point(3, 133);
-            this.linkBackupAddons.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
-            this.linkBackupAddons.Name = "linkBackupAddons";
-            this.linkBackupAddons.Size = new System.Drawing.Size(92, 23);
-            this.linkBackupAddons.Style = MetroFramework.MetroColorStyle.Blue;
-            this.linkBackupAddons.StyleManager = null;
-            this.linkBackupAddons.TabIndex = 49;
-            this.linkBackupAddons.Text = "Backup addons";
-            this.linkBackupAddons.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.linkBackupAddons.UseStyleColors = true;
-            this.linkBackupAddons.Click += new System.EventHandler(this.linkBackupAddons_Click);
+            this.linkBackup.AutoSize = true;
+            this.linkBackup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.linkBackup.CustomBackground = false;
+            this.linkBackup.CustomForeColor = false;
+            this.linkBackup.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkBackup.FontWeight = MetroFramework.MetroLinkWeight.Bold;
+            this.linkBackup.Location = new System.Drawing.Point(3, 133);
+            this.linkBackup.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.linkBackup.Name = "linkBackup";
+            this.linkBackup.Size = new System.Drawing.Size(54, 23);
+            this.linkBackup.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkBackup.StyleManager = null;
+            this.linkBackup.TabIndex = 49;
+            this.linkBackup.Text = "Backup";
+            this.linkBackup.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkBackup.UseStyleColors = true;
+            this.linkBackup.Click += new System.EventHandler(this.linkBackupAddons_Click);
             // 
             // linkOpenBackupFolder
             // 
@@ -788,7 +788,7 @@ namespace AxTools.Forms
         private ToolStripMenuItem blackMarketTrackerToolStripMenuItem;
         private MetroCheckBox metroCheckBoxPluginShowIngameNotification;
         private MetroLink linkOpenBackupFolder;
-        private MetroLink linkBackupAddons;
+        private MetroLink linkBackup;
         private MetroLink linkClickerSettings;
         private MetroCheckBox checkBoxEnableCustomPlugins;
         private MetroButton buttonStartStopPlugin;

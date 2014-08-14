@@ -99,6 +99,10 @@ namespace AxTools.Classes
             {
                 TS3Directory = GetTeamspeakPath();
             }
+            if (string.IsNullOrWhiteSpace(UserID))
+            {
+                UserID = Environment.MachineName + "___" + Utils.GetRandomString(10).ToUpper();
+            }
         }
 
         internal void SaveJSON()

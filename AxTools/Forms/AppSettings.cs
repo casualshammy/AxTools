@@ -1,11 +1,13 @@
 ﻿using AxTools.Classes;
 using AxTools.Components;
+using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
 using MetroFramework;
 using MetroFramework.Forms;
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -216,12 +218,12 @@ namespace AxTools.Forms
             {
                 if (TextBox7.Text != string.Empty && Convert.ToUInt16(TextBox7.Text) >= 720)
                 {
-                    errorProvider1.Clear();
+                    errorProvider.Clear();
                     settings.WoWCustomWindowSize.X = Convert.ToUInt16(TextBox7.Text);
                 }
                 else
                 {
-                    errorProvider1.SetError(TextBox7, "Incorrect value! It must be bigger than 720px");
+                    errorProvider.SetError(TextBox7, "Incorrect value! It must be bigger than 720px");
                 }
             }
         }
@@ -232,12 +234,12 @@ namespace AxTools.Forms
             {
                 if (TextBox6.Text != string.Empty && Convert.ToUInt16(TextBox6.Text) >= 576)
                 {
-                    errorProvider1.Clear();
+                    errorProvider.Clear();
                     settings.WoWCustomWindowSize.Y = Convert.ToUInt16(TextBox6.Text);
                 }
                 else
                 {
-                    errorProvider1.SetError(TextBox6, "Incorrect value! It must be bigger than 576px");
+                    errorProvider.SetError(TextBox6, "Incorrect value! It must be bigger than 576px");
                 }
             }
         }
@@ -248,12 +250,12 @@ namespace AxTools.Forms
             {
                 if (TextBox5.Text != string.Empty && Convert.ToInt16(TextBox5.Text) >= 0)
                 {
-                    errorProvider1.Clear();
+                    errorProvider.Clear();
                     settings.WoWCustomWindowLocation.X = Convert.ToInt32(TextBox5.Text);
                 }
                 else
                 {
-                    errorProvider1.SetError(TextBox5, "Incorrect value! It must be bigger than zero");
+                    errorProvider.SetError(TextBox5, "Incorrect value! It must be bigger than zero");
                 }
             }
         }
@@ -264,12 +266,12 @@ namespace AxTools.Forms
             {
                 if (TextBox4.Text != string.Empty && Convert.ToInt32(TextBox4.Text) >= 0)
                 {
-                    errorProvider1.Clear();
+                    errorProvider.Clear();
                     settings.WoWCustomWindowLocation.Y = Convert.ToInt32(TextBox4.Text);
                 }
                 else
                 {
-                    errorProvider1.SetError(TextBox4, "Incorrect value! It must be bigger than zero");
+                    errorProvider.SetError(TextBox4, "Incorrect value! It must be bigger than zero");
                 }
             }
         }
@@ -595,13 +597,14 @@ namespace AxTools.Forms
             if (isSettingsLoaded)
             {
                 int parsedValue;
-                if (int.TryParse(textBoxNotifyIfBigLogFile.Text, out parsedValue))
+                if (int.TryParse(textBoxNotifyIfBigLogFile.Text, out parsedValue) && parsedValue > 0)
                 {
+                    ErrorProviderExt.ClearError(textBoxNotifyIfBigLogFile);
                     settings.WoWNotifyIfBigLogsSize = parsedValue;
                 }
                 else
                 {
-                    this.ShowTaskDialog("Incorrect value", "Value must be a number", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                    ErrorProviderExt.SetError(textBoxNotifyIfBigLogFile, "Value must be a number bigger than 0", Color.Red);
                 }
             }
         }

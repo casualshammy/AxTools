@@ -126,7 +126,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\ErrorProviderExt.cs" />
     <Compile Include="Helpers\VersionExt.cs" />
+    <Compile Include="Helpers\WoWLogsAndCacheManager.cs" />
     <Compile Include="Services\AddonsBackup.cs" />
     <Compile Include="Classes\Clicker.cs" />
     <Compile Include="Services\Pinger.cs" />

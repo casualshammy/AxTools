@@ -49,8 +49,8 @@ namespace AxTools.Forms
                                                    "Left-click to clear statistics\r\n"+
                                                    "Right-click to open pinger settings");
 
-            progressBarAddonsBackup.Size = linkBackupAddons.Size;
-            progressBarAddonsBackup.Location = linkBackupAddons.Location;
+            progressBarAddonsBackup.Size = linkBackup.Size;
+            progressBarAddonsBackup.Location = linkBackup.Location;
             progressBarAddonsBackup.Visible = false;
 
             Log.Print(String.Format("Launching... ({0})", Globals.AppVersion));
@@ -261,130 +261,11 @@ namespace AxTools.Forms
 
         private void LoadingStepAsync()
         {
-
-            #region Set registration name
-
-            while (string.IsNullOrWhiteSpace(Settings.Instance.UserID))
-            {
-                Invoke(new MethodInvoker(() => { Settings.Instance.UserID = InputBox.Input("Please enter your nickname:") ?? string.Empty; }));
-                if (!string.IsNullOrWhiteSpace(Settings.Instance.UserID))
-                {
-                    Settings.Instance.UserID += "_" + Utils.GetRandomString(10).ToUpper();
-                }
-            }
-            Log.Print("Registered for: " + Settings.Instance.UserID);
-
-            #endregion
-
-            #region Backup and delete wow logs
-
-            if (settings.WoWNotifyIfBigLogs && Directory.Exists(settings.WoWDirectory + "\\Logs") && WowProcess.GetAllWowProcesses().Count == 0)
-            {
-                long directorySize = Utils.CalcDirectorySize(settings.WoWDirectory + "\\Logs");
-                Log.Print("[WoW logs watcher] Log directory size: " + Math.Round((float) directorySize/1024/1024, 3, MidpointRounding.ToEven) + " MB");
-                if (directorySize > settings.WoWNotifyIfBigLogsSize * 1024 * 1024)
-                {
-                    DirectoryInfo rootDir = new DirectoryInfo(settings.WoWDirectory + "\\Logs").Root;
-                    DriveInfo drive = DriveInfo.GetDrives().FirstOrDefault(i => i.RootDirectory.FullName == rootDir.FullName);
-                    if (drive != null)
-                    {
-                        double freeSpace = Math.Round((float) drive.TotalFreeSpace/1024/1024, 3, MidpointRounding.ToEven);
-                        ShowNotifyIconMessage("Log directory is too large!", "Disk free space: " + freeSpace + " MB", ToolTipIcon.Warning);
-                        Utils.PlaySystemNotificationAsync();
-                    }
-                }
-            }
-
-            //if (settings.WoWDeleteLogs && Directory.Exists(settings.WoWDirectory + "\\Logs") && WowProcess.GetAllWowProcesses().Count == 0)
-            //{
-            //    //if (File.Exists(settings.WoWDirectory + "\\Logs\\WoWCombatLog.txt") || Utils.CalcDirectorySize(settings.WoWDirectory + "\\Logs") > 104857600)
-            //    //{
-            //    //    Utils.CheckCreateDir();
-            //    //    string zipPath = String.Format("{0}\\WoWLogs.zip", settings.WoWAddonsBackupPath);
-            //    //    try
-            //    //    {
-            //    //        if (File.Exists(zipPath))
-            //    //        {
-            //    //            File.Delete(zipPath);
-            //    //        }
-            //    //        try
-            //    //        {
-            //    //            using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
-            //    //            {
-            //    //                zip.CompressionLevel = (CompressionLevel)settings.WoWAddonsBackupCompressionLevel;
-            //    //                zip.AddDirectory(settings.WoWDirectory + "\\Logs");
-            //    //                zip.Save();
-            //    //            }
-            //    //            Log.Print(String.Format("[WoW logs] WoW combat log's backup was placed to \"{0}\"", zipPath));
-            //    //            string[] cLogFiles = Directory.GetFiles(settings.WoWDirectory + "\\Logs");
-            //    //            foreach (string i in cLogFiles)
-            //    //            {
-            //    //                try
-            //    //                {
-            //    //                    File.Delete(i);
-            //    //                    Log.Print("[WoW logs] Log file deleted: " + i);
-            //    //                }
-            //    //                catch (Exception ex)
-            //    //                {
-            //    //                    Log.Print(String.Format("[WoW logs] Error deleting log file \"{0}\": {1}", i, ex.Message), true);
-            //    //                }
-            //    //            }
-            //    //            notifyIconMain.ShowBalloonTip(10000, "WoW log files were deleted", "Backup was placed to " + settings.WoWAddonsBackupPath, ToolTipIcon.Info);
-            //    //        }
-            //    //        catch (Exception ex)
-            //    //        {
-            //    //            Log.Print(String.Format("[WoW logs] Can't backup wow combat log \"{0}\": {1}", zipPath, ex.Message), true);
-            //    //        }
-            //    //    }
-            //    //    catch (Exception ex)
-            //    //    {
-            //    //        Log.Print(String.Format("[WoW logs] Can't delete \"{0}\": {1}", zipPath, ex.Message), true);
-            //    //    }
-            //    //}
-            //}
-
-            #endregion
-
-            #region Processing creaturecache.wdb
-
-            if (settings.WoWWipeCreatureCache && Directory.Exists(settings.WoWDirectory + "\\Cache\\WDB"))
-            {
-                DirectoryInfo[] directories = new DirectoryInfo(settings.WoWDirectory + "\\Cache\\WDB").GetDirectories();
-                if (directories.Length > 0)
-                {
-                    foreach (DirectoryInfo i in directories)
-                    {
-                        try
-                        {
-                            if (File.Exists(i.FullName + "\\creaturecache.wdb"))
-                            {
-                                File.Delete(i.FullName + "\\creaturecache.wdb");
-                                Log.Print("[WoW cache] " + i.FullName + "\\creaturecache.wdb was deleted");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Print(String.Format("[WoW cache] Can't delete cache file ({0}): {1}", ex.Message, i.FullName));
-                        }
-                    }
-                }
-            }
-
-            #endregion
-
-            #region Loading plugins
-
+            Log.Print("[AxTools] Registered for: " + Settings.Instance.UserID);
+            WoWLogsAndCacheManager.StartupCheck();
             PluginManager.LoadPlugins();
-            if (settings.WoWPluginEnableCustom)
-            {
-                PluginManager.LoadPluginsFromDisk();
-            }
-
-            #endregion
-
-            //continue starting...
             BeginInvoke(new Action(LoadingStepSync));
-            Log.Print("AxTools :: preparation completed");
+            Log.Print("[AxTools] Initial loading is finished");
         }
 
         private void LoadingStepSync()
@@ -524,9 +405,26 @@ namespace AxTools.Forms
 
         private void linkBackupAddons_Click(object sender, EventArgs e)
         {
-            AddonsBackup_OnChangedState(-1);
-            Task.Factory.StartNew(AddonsBackup.MakeBackup)
-                .ContinueWith(l => AddonsBackup_OnChangedState(101));
+            ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
+            contextMenuStrip.Items.Add("Backup WoW AddOns", null, (o, args) =>
+            {
+                AddonsBackup_OnChangedState(-1);
+                Task.Factory.StartNew(AddonsBackup.MakeBackup)
+                    .ContinueWith(l => AddonsBackup_OnChangedState(101));
+            });
+            contextMenuStrip.Items.Add("Zip && clean WoW logs", null, (o, args) =>
+            {
+                AddonsBackup_OnChangedState(-1);
+                Task.Factory.StartNew(() =>
+                {
+                    WoWLogsAndCacheManager.StateChanged += AddonsBackup_OnChangedState;
+                    WoWLogsAndCacheManager.ZipAndCleanLogs();
+                    WoWLogsAndCacheManager.StateChanged -= AddonsBackup_OnChangedState;
+                })
+                    .ContinueWith(l => AddonsBackup_OnChangedState(101));
+            });
+            contextMenuStrip.Closed += (o, args) => contextMenuStrip.BeginInvoke(new MethodInvoker(contextMenuStrip.Dispose));
+            contextMenuStrip.Show(linkBackup, linkBackup.Size.Width, 0);
         }
 
         private void linkClickerSettings_Click(object sender, EventArgs e)
@@ -854,7 +752,7 @@ namespace AxTools.Forms
                 case -1:
                     BeginInvoke((MethodInvoker) delegate
                     {
-                        linkBackupAddons.Visible = false;
+                        linkBackup.Visible = false;
                         progressBarAddonsBackup.Value = 0;
                         progressBarAddonsBackup.Visible = true;
                     });
@@ -862,7 +760,7 @@ namespace AxTools.Forms
                 case 101:
                     BeginInvoke((MethodInvoker) delegate
                     {
-                        linkBackupAddons.Visible = true;
+                        linkBackup.Visible = true;
                         progressBarAddonsBackup.Visible = false;
                     });
                     break;
