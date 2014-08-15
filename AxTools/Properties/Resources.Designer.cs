@@ -123,6 +123,16 @@ namespace AxTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap archive {
+            get {
+                object obj = ResourceManager.GetObject("archive", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap BlackMarket {
             get {
                 object obj = ResourceManager.GetObject("BlackMarket", resourceCulture);
@@ -146,6 +156,16 @@ namespace AxTools.Properties {
         internal static System.Drawing.Bitmap close_26px_hl {
             get {
                 object obj = ResourceManager.GetObject("close_26px_hl", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap data_backup {
+            get {
+                object obj = ResourceManager.GetObject("data_backup", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

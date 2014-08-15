@@ -39,7 +39,6 @@ namespace AxTools.Forms
             notifyIconMain.Icon = Resources.AppIcon;
 
             cmbboxAccSelect.MouseWheel += delegate(object sender, MouseEventArgs args) { ((HandledMouseEventArgs) args).Handled = true; };
-            linkOpenBackupFolder.Location = new Point(metroTabPage1.Size.Width/2 - linkOpenBackupFolder.Size.Width/2, linkOpenBackupFolder.Location.Y);
             cmbboxAccSelect.Location = new Point(metroTabPage1.Size.Width/2 - cmbboxAccSelect.Size.Width/2, cmbboxAccSelect.Location.Y);
             linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width / 2 - linkEditWowAccounts.Size.Width / 2, linkEditWowAccounts.Location.Y);
 
@@ -391,40 +390,9 @@ namespace AxTools.Forms
             }
         }
 
-        private void linkOpenBackupFolder_Click(object sender, EventArgs e)
-        {
-            if (Directory.Exists(settings.WoWAddonsBackupPath))
-            {
-                Process.Start(settings.WoWAddonsBackupPath);
-            }
-            else
-            {
-                this.ShowTaskDialog("Can't open backup folder", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
-            }
-        }
-
         private void linkBackupAddons_Click(object sender, EventArgs e)
         {
-            ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
-            contextMenuStrip.Items.Add("Backup WoW AddOns", null, (o, args) =>
-            {
-                AddonsBackup_OnChangedState(-1);
-                Task.Factory.StartNew(AddonsBackup.MakeBackup)
-                    .ContinueWith(l => AddonsBackup_OnChangedState(101));
-            });
-            contextMenuStrip.Items.Add("Zip && clean WoW logs", null, (o, args) =>
-            {
-                AddonsBackup_OnChangedState(-1);
-                Task.Factory.StartNew(() =>
-                {
-                    WoWLogsAndCacheManager.StateChanged += AddonsBackup_OnChangedState;
-                    WoWLogsAndCacheManager.ZipAndCleanLogs();
-                    WoWLogsAndCacheManager.StateChanged -= AddonsBackup_OnChangedState;
-                })
-                    .ContinueWith(l => AddonsBackup_OnChangedState(101));
-            });
-            contextMenuStrip.Closed += (o, args) => contextMenuStrip.BeginInvoke(new MethodInvoker(contextMenuStrip.Dispose));
-            contextMenuStrip.Show(linkBackup, linkBackup.Size.Width, 0);
+            contextMenuStripBackupAndClean.Show(linkBackup, linkBackup.Size.Width, 0);
         }
 
         private void linkClickerSettings_Click(object sender, EventArgs e)
@@ -456,6 +424,49 @@ namespace AxTools.Forms
         private void linkEditWowAccounts_Click(object sender, EventArgs e)
         {
             new WowAccountsManager().ShowDialog(this);
+        }
+
+        private void toolStripMenuItemBackupWoWAddOns_Click(object sender, EventArgs e)
+        {
+            AddonsBackup_OnChangedState(-1);
+            Task.Factory.StartNew(AddonsBackup.MakeBackup)
+                .ContinueWith(l => AddonsBackup_OnChangedState(101));
+        }
+
+        private void toolStripMenuItemOpenBackupFolder_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(settings.WoWAddonsBackupPath))
+            {
+                Process.Start(settings.WoWAddonsBackupPath);
+            }
+            else
+            {
+                this.ShowTaskDialog("Can't open backup folder", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
+        }
+
+        private void toolStripMenuItemZipAndCleanWoWLogs_Click(object sender, EventArgs e)
+        {
+            AddonsBackup_OnChangedState(-1);
+            Task.Factory.StartNew(() =>
+            {
+                WoWLogsAndCacheManager.StateChanged += AddonsBackup_OnChangedState;
+                WoWLogsAndCacheManager.ZipAndCleanLogs();
+                WoWLogsAndCacheManager.StateChanged -= AddonsBackup_OnChangedState;
+            })
+                .ContinueWith(l => AddonsBackup_OnChangedState(101));
+        }
+
+        private void toolStripMenuItemOpenWoWLogsFolder_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(settings.WoWDirectory + "\\Logs"))
+            {
+                Process.Start(settings.WoWDirectory + "\\Logs");
+            }
+            else
+            {
+                this.ShowTaskDialog("Can't open WoW logs folder", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
         }
 
         #endregion
@@ -955,6 +966,6 @@ namespace AxTools.Forms
         }
 
         #endregion
-        
+
     }
 }

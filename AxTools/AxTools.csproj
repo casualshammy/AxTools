@@ -390,6 +390,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
+    <None Include="Resources\data_backup.png" />
+    <None Include="Resources\archive.png" />
     <None Include="Resources\close_26px_hl.png" />
     <None Include="Resources\close_26px.png" />
     <None Include="Resources\yellow_play_grey.png" />
