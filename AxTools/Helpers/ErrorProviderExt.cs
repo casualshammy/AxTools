@@ -16,10 +16,11 @@ namespace AxTools.Helpers
             if (!ControlColors.ContainsKey(control))
             {
                 ControlColors.Add(control, control.BackColor);
+                control.LostFocus += ControlOnLostFocus;
+                control.Disposed += ControlOnDisposed;
             }
             control.BackColor = color;
             ToolTip.Show(text, control, control.Width, control.Height);
-            control.LostFocus += ControlOnLostFocus;
         }
 
         internal static void ClearError(Control control)
@@ -29,13 +30,26 @@ namespace AxTools.Helpers
                 control.BackColor = ControlColors[control];
                 ToolTip.Hide(control);
                 ControlColors.Remove(control);
+                control.LostFocus -= ControlOnLostFocus;
+                control.Disposed -= ControlOnDisposed;
             }
         }
 
         private static void ControlOnLostFocus(object sender, EventArgs eventArgs)
         {
-            ((Control) sender).LostFocus -= ControlOnLostFocus;
-            ToolTip.Hide((Control) sender);
+            Control control = (Control) sender;
+            ToolTip.Hide(control);
+        }
+
+        private static void ControlOnDisposed(object sender, EventArgs eventArgs)
+        {
+            Control control = sender as Control;
+            if (control != null)
+            {
+                ControlColors.Remove(control);
+                control.LostFocus -= ControlOnLostFocus;
+                control.Disposed -= ControlOnDisposed;
+            }
         }
 
     }
