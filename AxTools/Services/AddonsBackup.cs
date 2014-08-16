@@ -215,9 +215,9 @@ namespace AxTools.Services
 
         private static void AddonsBackup_SaveProgress(object sender, SaveProgressEventArgs e)
         {
-            if (e.EntriesSaved != 0 && e.EntriesTotal != 0 && e.EntriesTotal >= e.EntriesSaved)
+            if (e.BytesTransferred != 0 && e.TotalBytesToTransfer != 0 && e.TotalBytesToTransfer >= e.BytesTransferred)
             {
-                int procent = 100*e.EntriesSaved/e.EntriesTotal;
+                int procent = (int) (100 * e.BytesTransferred / e.TotalBytesToTransfer);
                 if (procent != _prevProcent)
                 {
                     _prevProcent = procent;

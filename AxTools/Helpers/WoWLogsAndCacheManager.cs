@@ -1,14 +1,15 @@
-﻿using System;
+﻿using AxTools.Classes;
+using AxTools.Forms;
+using AxTools.WoW;
+using Ionic.Zip;
+using Ionic.Zlib;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using AxTools.Classes;
-using AxTools.Forms;
-using AxTools.WoW;
-using Ionic.Zip;
-using Ionic.Zlib;
 
 namespace AxTools.Helpers
 {
@@ -32,7 +33,6 @@ namespace AxTools.Helpers
                     if (drive != null)
                     {
                         double freeSpace = Math.Round((float)drive.TotalFreeSpace / 1024 / 1024, 3, MidpointRounding.ToEven);
-
                         MainForm.Instance.ShowNotifyIconMessage("Log directory is too large!", string.Format("Logs folder size: {0} MB\r\nDisk free space: {1} MB", logsFolserSizeInMegabytes, freeSpace), ToolTipIcon.Warning);
                         Utils.PlaySystemNotificationAsync();
                     }
@@ -64,7 +64,8 @@ namespace AxTools.Helpers
         {
             if (Directory.Exists(Settings.Instance.WoWDirectory + "\\Logs"))
             {
-                TaskDialog taskDialog = new TaskDialog("WoW client is blocking logs", "AxTools", "It's strongly recommended to close all WoW clients.\r\nSome files may not be deleted.\r\nProceed?", (int)TaskDialogButton.Yes + TaskDialogButton.No, TaskDialogIcon.Warning);
+                TaskDialog taskDialog = new TaskDialog("WoW client is blocking logs", "AxTools", "It's strongly recommended to close all WoW clients.\r\nSome files may not be deleted.\r\nProceed?",
+                    (int) TaskDialogButton.Yes + TaskDialogButton.No, TaskDialogIcon.Warning);
                 if (WowProcess.GetAllWowProcesses().Count == 0 || taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
                 {
                     string zipPath = String.Format(Settings.Instance.WoWDirectory + "\\Logs\\WoWLogs_{0:yyyyMMdd_HHmmss}.zip", DateTime.UtcNow);
@@ -72,13 +73,16 @@ namespace AxTools.Helpers
                     {
                         using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
                         {
-                            zip.CompressionLevel = (CompressionLevel)Settings.Instance.WoWAddonsBackupCompressionLevel;
+                            zip.CompressionLevel = (CompressionLevel) Settings.Instance.WoWAddonsBackupCompressionLevel;
                             foreach (string filePath in Directory.GetFiles(Settings.Instance.WoWDirectory + "\\Logs").Where(k => !k.Contains("WoWLogs_")))
                             {
                                 zip.AddFile(filePath);
                             }
                             zip.SaveProgress += SaveProgress;
+                            ProcessPriorityClass defaultProcessPriorityClass = Process.GetCurrentProcess().PriorityClass;
+                            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
                             zip.Save();
+                            Process.GetCurrentProcess().PriorityClass = defaultProcessPriorityClass;
                             zip.SaveProgress -= SaveProgress;
                         }
                         Log.Print(String.Format("[WoW logs] Logs were saved to [{0}]", zipPath));
@@ -86,7 +90,7 @@ namespace AxTools.Helpers
                         {
                             try
                             {
-                                File.WriteAllText(i, string.Empty, Encoding.UTF8);
+                                File.WriteAllBytes(i, new byte[0]);
                                 Log.Print("[WoW logs] Log file erased: " + i);
                             }
                             catch (Exception ex)
@@ -110,9 +114,9 @@ namespace AxTools.Helpers
         
         private static void SaveProgress(object sender, SaveProgressEventArgs e)
         {
-            if (e.EntriesSaved != 0 && e.EntriesTotal != 0 && e.EntriesTotal >= e.EntriesSaved)
+            if (e.BytesTransferred != 0 && e.TotalBytesToTransfer != 0 && e.TotalBytesToTransfer >= e.BytesTransferred)
             {
-                int procent = 100 * e.EntriesSaved / e.EntriesTotal;
+                int procent = (int) (100*e.BytesTransferred/e.TotalBytesToTransfer);
                 if (procent != _prevProcent)
                 {
                     _prevProcent = procent;

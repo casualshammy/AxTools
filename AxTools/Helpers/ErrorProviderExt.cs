@@ -37,8 +37,11 @@ namespace AxTools.Helpers
 
         private static void ControlOnLostFocus(object sender, EventArgs eventArgs)
         {
-            Control control = (Control) sender;
-            ToolTip.Hide(control);
+            Control control = sender as Control;
+            if (control != null)
+            {
+                ToolTip.Hide(control);
+            }
         }
 
         private static void ControlOnDisposed(object sender, EventArgs eventArgs)

@@ -45,7 +45,7 @@ namespace AxTools.Forms
             tabControl.SelectedIndex = 0;
             metroToolTip1.SetToolTip(labelPingNum, "This is ingame connection info. It's formatted as\r\n" +
                                                    "  [worst ping of the last 10]::[packet loss in the last 200 seconds]  \r\n" +
-                                                   "Left-click to clear statistics\r\n"+
+                                                   "Left-click to clear statistics\r\n" +
                                                    "Right-click to open pinger settings");
 
             progressBarAddonsBackup.Size = linkBackup.Size;

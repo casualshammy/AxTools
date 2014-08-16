@@ -188,7 +188,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 60);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
+            this.tabControl.SelectedIndex = 1;
             this.tabControl.Size = new System.Drawing.Size(429, 195);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.StyleManager = this.metroStyleManager1;
@@ -418,9 +418,9 @@ namespace AxTools.Forms
             // metroButtonLuaConsole
             // 
             this.metroButtonLuaConsole.Highlight = true;
-            this.metroButtonLuaConsole.Location = new System.Drawing.Point(199, 130);
+            this.metroButtonLuaConsole.Location = new System.Drawing.Point(143, 101);
             this.metroButtonLuaConsole.Name = "metroButtonLuaConsole";
-            this.metroButtonLuaConsole.Size = new System.Drawing.Size(88, 23);
+            this.metroButtonLuaConsole.Size = new System.Drawing.Size(135, 23);
             this.metroButtonLuaConsole.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroButtonLuaConsole.StyleManager = this.metroStyleManager1;
             this.metroButtonLuaConsole.TabIndex = 71;
@@ -431,9 +431,9 @@ namespace AxTools.Forms
             // metroButtonRadar
             // 
             this.metroButtonRadar.Highlight = true;
-            this.metroButtonRadar.Location = new System.Drawing.Point(132, 130);
+            this.metroButtonRadar.Location = new System.Drawing.Point(3, 101);
             this.metroButtonRadar.Name = "metroButtonRadar";
-            this.metroButtonRadar.Size = new System.Drawing.Size(61, 23);
+            this.metroButtonRadar.Size = new System.Drawing.Size(134, 52);
             this.metroButtonRadar.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroButtonRadar.StyleManager = this.metroStyleManager1;
             this.metroButtonRadar.TabIndex = 70;
@@ -444,9 +444,9 @@ namespace AxTools.Forms
             // metroButtonBlackMarketTracker
             // 
             this.metroButtonBlackMarketTracker.Highlight = true;
-            this.metroButtonBlackMarketTracker.Location = new System.Drawing.Point(3, 130);
+            this.metroButtonBlackMarketTracker.Location = new System.Drawing.Point(143, 130);
             this.metroButtonBlackMarketTracker.Name = "metroButtonBlackMarketTracker";
-            this.metroButtonBlackMarketTracker.Size = new System.Drawing.Size(123, 23);
+            this.metroButtonBlackMarketTracker.Size = new System.Drawing.Size(135, 23);
             this.metroButtonBlackMarketTracker.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroButtonBlackMarketTracker.StyleManager = this.metroStyleManager1;
             this.metroButtonBlackMarketTracker.TabIndex = 16;
@@ -457,9 +457,9 @@ namespace AxTools.Forms
             // buttonUnloadInjector
             // 
             this.buttonUnloadInjector.Highlight = true;
-            this.buttonUnloadInjector.Location = new System.Drawing.Point(293, 130);
+            this.buttonUnloadInjector.Location = new System.Drawing.Point(284, 101);
             this.buttonUnloadInjector.Name = "buttonUnloadInjector";
-            this.buttonUnloadInjector.Size = new System.Drawing.Size(125, 23);
+            this.buttonUnloadInjector.Size = new System.Drawing.Size(134, 52);
             this.buttonUnloadInjector.Style = MetroFramework.MetroColorStyle.Blue;
             this.buttonUnloadInjector.StyleManager = this.metroStyleManager1;
             this.buttonUnloadInjector.TabIndex = 15;
