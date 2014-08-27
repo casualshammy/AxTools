@@ -1,4 +1,8 @@
-﻿using System;
+﻿using AxTools.Classes;
+using AxTools.Helpers;
+using Ionic.Zip;
+using Ionic.Zlib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,10 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using AxTools.Classes;
-using AxTools.Helpers;
-using Ionic.Zip;
-using Ionic.Zlib;
 using Timer = System.Timers.Timer;
 
 namespace AxTools.Services
@@ -69,18 +69,10 @@ namespace AxTools.Services
                 _settings.WoWAddonsBackupLastDate = DateTime.UtcNow;
                 ProcessPriorityClass defaultProcessPriorityClass = Process.GetCurrentProcess().PriorityClass;
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
-                if (StateChanged != null)
-                {
-                    StateChanged(-1);
-                }
                 Task.Factory.StartNew(Start)
                     .ContinueWith(l =>
                     {
                         Process.GetCurrentProcess().PriorityClass = defaultProcessPriorityClass;
-                        if (StateChanged != null)
-                        {
-                            StateChanged(101);
-                        }
                     });
             }
         }
@@ -215,10 +207,10 @@ namespace AxTools.Services
 
         private static void AddonsBackup_SaveProgress(object sender, SaveProgressEventArgs e)
         {
-            if (e.BytesTransferred != 0 && e.TotalBytesToTransfer != 0 && e.TotalBytesToTransfer >= e.BytesTransferred)
+            if (e.EntriesTotal != 0)
             {
-                int procent = (int) (100 * e.BytesTransferred / e.TotalBytesToTransfer);
-                if (procent != _prevProcent)
+                int procent = e.EntriesSaved * 100 / e.EntriesTotal;
+                if (procent != _prevProcent && procent >= 0 && procent <= 100)
                 {
                     _prevProcent = procent;
                     if (StateChanged != null)

@@ -70,44 +70,44 @@ namespace AxTools.Forms
 
         private void ButtonDumpClick(object sender, EventArgs e)
         {
-            List<WowPlayer> wowUnits = new List<WowPlayer>();
-            List<WowObject> wowObjects = new List<WowObject>();
-            List<WowNpc> wowNpcs = new List<WowNpc>();
-            WoWPlayerMe localPlayer;
-            try
-            {
-                localPlayer = ObjectMgr.Pulse(wowObjects, wowUnits, wowNpcs);
-            }
-            catch (Exception ex)
-            {
-                Log.Print("Dump error: " + ex.Message, true);
-                return;
-            }
-            var sb = new StringBuilder("\r\nLocal player-----------------------------------------\r\n");
-            sb.AppendFormat("GUID: 0x{0:X}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; Realm: {5}; BgExit: {6}; IsLooting: {7}; Name: {8}\r\n",
-                            localPlayer.GUID, (uint)localPlayer.Address, localPlayer.Location, WoWManager.WoWProcess.PlayerZoneID,
-                            "dummy", WoWManager.WoWProcess.PlayerRealm, WoWManager.WoWProcess.IsBattlegroundFinished, WoWManager.WoWProcess.PlayerIsLooting, WoWManager.WoWProcess.PlayerName);
-            sb.AppendLine("Objects-----------------------------------------");
-            foreach (var i in wowObjects)
-            {
-                sb.AppendFormat("{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4:X}; Address: 0x{5:X}; EntryID: {6}\r\n", i.Name, i.GUID,
-                                i.Location, (int)i.Location.Distance(localPlayer.Location), i.OwnerGUID, (uint)i.Address, i.EntryID);
-            }
-            sb.AppendLine("Npcs-----------------------------------------");
-            foreach (var i in wowNpcs)
-            {
-                sb.AppendFormat("{0}; Location: {1}; Distance: {2}; HP:{3}; MaxHP:{4}; Address:0x{5:X}; GUID:0x{6:X}\r\n", i.Name, i.Location,
-                    (int)i.Location.Distance(localPlayer.Location), i.Health, i.HealthMax, (uint)i.Address, i.GUID);
-            }
-            sb.AppendLine("Players-----------------------------------------");
-            foreach (var i in wowUnits)
-            {
-                sb.AppendFormat(
-                    "{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; Address:{4:X}; Class:{5}; Level:{6}; HP:{7}; MaxHP:{8}; TargetGUID: 0x{9:X}; IsAlliance:{10}\r\n",
-                    i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), (uint)i.Address, i.Class, i.Level, i.Health, i.HealthMax,
-                    i.TargetGUID, i.IsAlliance);
-            }
-            Log.Print(sb.ToString());
+            //List<WowPlayer> wowUnits = new List<WowPlayer>();
+            //List<WowObject> wowObjects = new List<WowObject>();
+            //List<WowNpc> wowNpcs = new List<WowNpc>();
+            //WoWPlayerMe localPlayer;
+            //try
+            //{
+            //    localPlayer = ObjectMgr.Pulse(wowObjects, wowUnits, wowNpcs);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log.Print("Dump error: " + ex.Message, true);
+            //    return;
+            //}
+            //var sb = new StringBuilder("\r\nLocal player-----------------------------------------\r\n");
+            //sb.AppendFormat("GUID: 0x{0:X}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; Realm: {5}; BgExit: {6}; IsLooting: {7}; Name: {8}\r\n",
+            //                localPlayer.GUID, (uint)localPlayer.Address, localPlayer.Location, WoWManager.WoWProcess.PlayerZoneID,
+            //                "dummy", WoWManager.WoWProcess.PlayerRealm, WoWManager.WoWProcess.IsBattlegroundFinished, WoWManager.WoWProcess.PlayerIsLooting, WoWManager.WoWProcess.PlayerName);
+            //sb.AppendLine("Objects-----------------------------------------");
+            //foreach (var i in wowObjects)
+            //{
+            //    sb.AppendFormat("{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4:X}; Address: 0x{5:X}; EntryID: {6}\r\n", i.Name, i.GUID,
+            //                    i.Location, (int)i.Location.Distance(localPlayer.Location), i.OwnerGUID, (uint)i.Address, i.EntryID);
+            //}
+            //sb.AppendLine("Npcs-----------------------------------------");
+            //foreach (var i in wowNpcs)
+            //{
+            //    sb.AppendFormat("{0}; Location: {1}; Distance: {2}; HP:{3}; MaxHP:{4}; Address:0x{5:X}; GUID:0x{6:X}\r\n", i.Name, i.Location,
+            //        (int)i.Location.Distance(localPlayer.Location), i.Health, i.HealthMax, (uint)i.Address, i.GUID);
+            //}
+            //sb.AppendLine("Players-----------------------------------------");
+            //foreach (var i in wowUnits)
+            //{
+            //    sb.AppendFormat(
+            //        "{0} - GUID: 0x{1:X}; Location: {2}; Distance: {3}; Address:{4:X}; Class:{5}; Level:{6}; HP:{7}; MaxHP:{8}; TargetGUID: 0x{9:X}; IsAlliance:{10}\r\n",
+            //        i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), (uint)i.Address, i.Class, i.Level, i.Health, i.HealthMax,
+            //        i.TargetGUID, i.IsAlliance);
+            //}
+            //Log.Print(sb.ToString());
 
 
             //sb.AppendLine("Test-----------------------------------------");
@@ -141,9 +141,7 @@ namespace AxTools.Forms
             //            }
             //        });
             //}
-
-
-
+            WoWDXInject.MoveHook();
         }
         
         private void WowModulesFormClosing(object sender, FormClosingEventArgs e)

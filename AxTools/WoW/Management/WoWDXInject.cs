@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using WindowsFormsAero.TaskDialog;
@@ -98,6 +99,7 @@ namespace AxTools.WoW.Management
         {
             _wowProcess = process;
             _dxAddress = new DirectX3D(Process.GetProcessById(_wowProcess.ProcessID));
+            //GreyMagic.AllocatedMemory allocatedMemory = _wowProcess.Memory.CreateAllocatedMemory(20);
             _fasm = _wowProcess.Memory.Asm;
             _fasm.SetMemorySize(0x4096);
             _codeCavePtr = _wowProcess.Memory.AllocateMemory(CodeCaveSize);
@@ -139,8 +141,13 @@ namespace AxTools.WoW.Management
                 offset = 0x5;
                 _endSceneOriginalBytes = _wowProcess.Memory.ReadBytes(_dxAddress.HookPtr + (int)offset, 7);
             }
-            Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                BitConverter.ToString(_endSceneOriginalBytes), (uint)_dxAddress.HookPtr + offset), false, false);
+            IntPtr dxgiAddress = new IntPtr(0);
+            foreach (ProcessModule module in _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Where(module => module.ModuleName == "dxgi.dll"))
+            {
+                dxgiAddress = module.BaseAddress;
+            }
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}; it's dxgi.dll + {4:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
+                BitConverter.ToString(_endSceneOriginalBytes), (uint) _dxAddress.HookPtr + offset, (uint) (_dxAddress.HookPtr - (int) dxgiAddress)), false, false);
             // allocate memory to store injected code:
             _injectedCode = _wowProcess.Memory.AllocateMemory(2048);
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint)_injectedCode));
@@ -543,6 +550,49 @@ namespace AxTools.WoW.Management
                 list.Add(string.Concat("mov ", RegisterNames[ranNum], ", ", RegisterNames[ranNum]));
             }
             list.Add(asm);
+        }
+
+        internal static void MoveHook()
+        {
+            //int playclawHookAbsoluteAddress = _wowProcess.Memory.Read<int>(_dxAddress.HookPtr + 1) + (int)_dxAddress.HookPtr + 5;
+            //if (MessageBox.Show("playclawHookAbsoluteAddress" + playclawHookAbsoluteAddress.ToString("X"), "AxTools", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            //{
+            //    int internalFunctionAbsoluteAddress = _wowProcess.Memory.Read<int>(_dxAddress.HookPtr + 0x2E) + (int)_dxAddress.HookPtr + 0x2D + 5;
+            //    if (MessageBox.Show("internalFunctionAbsoluteAddress" + internalFunctionAbsoluteAddress.ToString("X"), "AxTools", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            //    {
+            //        string[] asm =
+            //        {
+            //            "jmp " + playclawHookAbsoluteAddress
+            //        };
+            //        InjectAsm(asm, (uint) internalFunctionAbsoluteAddress);
+            //        _wowProcess.Memory.WriteBytes(_dxAddress.HookPtr, new byte[] { 0x8B, 0xFF, 0x55, 0x8B, 0xEC });
+            //    }
+            //}
+
+            //byte[] origBytes = _wowProcess.Memory.ReadBytes(_dxAddress.HookPtr + 29, 5);
+            //IntPtr myCodeCave = _wowProcess.Memory.AllocateMemory(2048);
+            //string[] asm =
+            //{
+            //    "pushad",
+            //    "pushfd",
+            //    "jmp " + (playclawHookAbsoluteAddress + 3),
+            //    "popfd",
+            //    "popad"
+            //};
+            //int offset = InjectAsm(asm, (uint)myCodeCave);
+            //offset += _wowProcess.Memory.WriteBytes(myCodeCave + offset, origBytes);
+            //asm = new[]
+            //{
+            //    "jmp " + (_dxAddress.HookPtr + 29 + 5)
+            //};
+            //InjectAsm(asm, (uint)(myCodeCave + offset));
+            //MessageBox.Show(myCodeCave.ToInt32().ToString("X"));
+            //asm = new[]
+            //{
+            //    "jmp " + myCodeCave
+            //};
+            //_wowProcess.Memory.WriteBytes(_dxAddress.HookPtr, new byte[] { 0x8B, 0xFF, 0x55, 0x8B, 0xEC });
+            //InjectAsm(asm, (uint)(_dxAddress.HookPtr + 29));
         }
 
     }

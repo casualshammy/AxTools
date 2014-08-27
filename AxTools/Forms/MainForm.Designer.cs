@@ -122,6 +122,7 @@ namespace AxTools.Forms
             // 
             // woWRadarToolStripMenuItem
             // 
+            this.woWRadarToolStripMenuItem.Image = global::AxTools.Properties.Resources.radar;
             this.woWRadarToolStripMenuItem.Name = "woWRadarToolStripMenuItem";
             this.woWRadarToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.woWRadarToolStripMenuItem.Text = "WoW Radar";
@@ -418,9 +419,9 @@ namespace AxTools.Forms
             // metroButtonLuaConsole
             // 
             this.metroButtonLuaConsole.Highlight = true;
-            this.metroButtonLuaConsole.Location = new System.Drawing.Point(143, 101);
+            this.metroButtonLuaConsole.Location = new System.Drawing.Point(284, 101);
             this.metroButtonLuaConsole.Name = "metroButtonLuaConsole";
-            this.metroButtonLuaConsole.Size = new System.Drawing.Size(135, 23);
+            this.metroButtonLuaConsole.Size = new System.Drawing.Size(134, 52);
             this.metroButtonLuaConsole.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroButtonLuaConsole.StyleManager = this.metroStyleManager1;
             this.metroButtonLuaConsole.TabIndex = 71;
@@ -444,7 +445,7 @@ namespace AxTools.Forms
             // metroButtonBlackMarketTracker
             // 
             this.metroButtonBlackMarketTracker.Highlight = true;
-            this.metroButtonBlackMarketTracker.Location = new System.Drawing.Point(143, 130);
+            this.metroButtonBlackMarketTracker.Location = new System.Drawing.Point(143, 101);
             this.metroButtonBlackMarketTracker.Name = "metroButtonBlackMarketTracker";
             this.metroButtonBlackMarketTracker.Size = new System.Drawing.Size(135, 23);
             this.metroButtonBlackMarketTracker.Style = MetroFramework.MetroColorStyle.Blue;
@@ -456,10 +457,10 @@ namespace AxTools.Forms
             // 
             // buttonUnloadInjector
             // 
-            this.buttonUnloadInjector.Highlight = true;
-            this.buttonUnloadInjector.Location = new System.Drawing.Point(284, 101);
+            this.buttonUnloadInjector.Highlight = false;
+            this.buttonUnloadInjector.Location = new System.Drawing.Point(143, 130);
             this.buttonUnloadInjector.Name = "buttonUnloadInjector";
-            this.buttonUnloadInjector.Size = new System.Drawing.Size(134, 52);
+            this.buttonUnloadInjector.Size = new System.Drawing.Size(135, 23);
             this.buttonUnloadInjector.Style = MetroFramework.MetroColorStyle.Blue;
             this.buttonUnloadInjector.StyleManager = this.metroStyleManager1;
             this.buttonUnloadInjector.TabIndex = 15;

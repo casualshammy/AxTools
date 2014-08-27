@@ -82,9 +82,9 @@ namespace AxTools.Forms
             textBoxTeamspeak3Path.Text = settings.TS3Directory;
             textBoxVentriloPath.Text = settings.VentriloDirectory;
             textBoxWowPath.Text = settings.WoWDirectory;
-            metroStyleManager1.Style = settings.StyleColor;
+            styleManager.Style = settings.StyleColor;
             metroComboBoxStyle.SelectedIndex = (int)settings.StyleColor == 0 ? 0 : (int)settings.StyleColor - 1;
-            metroTabControl1.SelectedIndex = 0;
+            tabControl.SelectedIndex = 0;
             checkBoxMinimizeToTray.Checked = settings.MinimizeToTray;
 
             Icon = Resources.AppIcon;
@@ -105,39 +105,25 @@ namespace AxTools.Forms
             //CheckBox9
             try
             {
-                Microsoft.Win32.RegistryKey regVersion = Microsoft.Win32.Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
-                if (regVersion != null)
+                using (Microsoft.Win32.RegistryKey regVersion = Microsoft.Win32.Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run"))
                 {
-                    if (regVersion.GetValue("AxTools") == null | regVersion.GetValue("AxTools").ToString() != Application.ExecutablePath)
-                    {
-                        regVersion.Close();
-                        CheckBoxStartAxToolsWithWindows.Checked = false;
-                    }
-                    else
-                    {
-                        regVersion.Close();
-                        CheckBoxStartAxToolsWithWindows.Checked = true;
-                    }
-                }
-                else
-                {
-                    CheckBoxStartAxToolsWithWindows.Checked = false;
+                    CheckBoxStartAxToolsWithWindows.Checked = regVersion != null && regVersion.GetValue("AxTools") != null && regVersion.GetValue("AxTools").ToString() == Application.ExecutablePath;
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 CheckBoxStartAxToolsWithWindows.Checked = false;
+                Log.Print("Error occured then trying to open registry key [SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run]: " + ex.Message);
             }
             //tooltips
-            metroToolTip1.SetToolTip(CheckBox3, "Deletes creature cache file when possible");
-            metroToolTip1.SetToolTip(checkBoxNotifyIfBigLogFile, "Moves WoW log files to temporary folder\r\non AxTools' startup\r\nand deletes it on AxTools' shutdown");
-            metroToolTip1.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
+            toolTip.SetToolTip(checkBoxNotifyIfBigLogFile, "Displays a notification on AxTools startup\r\nif WoW logs folder's size exceeds X Megabytes");
+            toolTip.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
             isSettingsLoaded = true;
         }
 
         internal AppSettings(int tabPage) : this()
         {
-            metroTabControl1.SelectedIndex = tabPage;
+            tabControl.SelectedIndex = tabPage;
         }
 
         private void CheckBox9CheckedChanged(Object sender, EventArgs e)

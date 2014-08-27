@@ -47,6 +47,9 @@ namespace AxTools.WinAPI
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
+        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int memcmp(byte[] b1, byte[] b2, UIntPtr count);
+
         // ReSharper disable InconsistentNaming
         internal static int WS_CAPTION = 0xC00000;
         internal static int WS_THICKFRAME = 0x40000;

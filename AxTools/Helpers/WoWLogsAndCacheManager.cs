@@ -4,6 +4,7 @@ using AxTools.WoW;
 using Ionic.Zip;
 using Ionic.Zlib;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -111,7 +112,37 @@ namespace AxTools.Helpers
                 Utils.NotifyUser("WoW logs", "Logs directory doesn't exist", NotifyUserType.Error, true);
             }
         }
-        
+
+        internal static void DeleteAllLogsArchivesExceptNewest()
+        {
+            DirectoryInfo backupDirectory = new DirectoryInfo(Settings.Instance.WoWDirectory + "\\Logs");
+            List<FileInfo> backupFiles = backupDirectory.GetFileSystemInfos().Where(i => i.Name.Contains("WoWLogs_") && i is FileInfo).Cast<FileInfo>().ToList();
+            if (backupFiles.Count > 1)
+            {
+                // I place newest file to the end of list
+                backupFiles.Sort((first, second) =>
+                {
+                    if (first.CreationTimeUtc > second.CreationTimeUtc)
+                    {
+                        return 1;
+                    }
+                    return -1;
+                });
+                for (int i = 0; i < backupFiles.Count - 1; i++)
+                {
+                    try
+                    {
+                        backupFiles[i].Delete();
+                        Log.Print("[WoW logs] Old archive has been deleted [" + backupFiles[i].FullName + "]");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Print("[WoW logs] Can't delete old archive [" + backupFiles[i].FullName + "]: " + ex.Message);
+                    }
+                }
+            }
+        }
+
         private static void SaveProgress(object sender, SaveProgressEventArgs e)
         {
             if (e.BytesTransferred != 0 && e.TotalBytesToTransfer != 0 && e.TotalBytesToTransfer >= e.BytesTransferred)

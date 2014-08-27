@@ -73,5 +73,18 @@ namespace AxTools.Classes
             }
         }
 
+        /// <summary>
+        /// Very fast comparison of byte arrays (memcmp)
+        /// </summary>
+        /// <param name="b1"></param>
+        /// <param name="b2"></param>
+        /// <returns></returns>
+        public static bool SequenceEqual(this byte[] b1, byte[] b2)
+        {
+            if (b1 == b2) return true;
+            if (b1 == null || b2 == null || b1.Length != b2.Length) return false;
+            return WinAPI.NativeMethods.memcmp(b1, b2, new UIntPtr((uint) b1.Length)) == 0;
+        }
+
     }
 }

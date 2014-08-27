@@ -428,9 +428,8 @@ namespace AxTools.Forms
 
         private void toolStripMenuItemBackupWoWAddOns_Click(object sender, EventArgs e)
         {
-            AddonsBackup_OnChangedState(-1);
             Task.Factory.StartNew(AddonsBackup.MakeBackup)
-                .ContinueWith(l => AddonsBackup_OnChangedState(101));
+                .ContinueWith(l => this.ShowTaskDialog("Backup is complete", "New archive is placed to [" + settings.WoWAddonsBackupPath + "]", TaskDialogButton.OK, TaskDialogIcon.Information));
         }
 
         private void toolStripMenuItemOpenBackupFolder_Click(object sender, EventArgs e)
@@ -447,14 +446,21 @@ namespace AxTools.Forms
 
         private void toolStripMenuItemZipAndCleanWoWLogs_Click(object sender, EventArgs e)
         {
-            AddonsBackup_OnChangedState(-1);
             Task.Factory.StartNew(() =>
             {
                 WoWLogsAndCacheManager.StateChanged += AddonsBackup_OnChangedState;
                 WoWLogsAndCacheManager.ZipAndCleanLogs();
                 WoWLogsAndCacheManager.StateChanged -= AddonsBackup_OnChangedState;
             })
-                .ContinueWith(l => AddonsBackup_OnChangedState(101));
+                .ContinueWith(l =>
+                {
+                    TaskDialog taskDialog = new TaskDialog("Zip & clean WoW logs", "AxTools", "Do you want to delete old archives?", (int)TaskDialogButton.Yes + TaskDialogButton.No, TaskDialogIcon.Information);
+                    if (taskDialog.Show(this).CommonButton == Result.Yes)
+                    {
+                        WoWLogsAndCacheManager.DeleteAllLogsArchivesExceptNewest();
+                    }
+                    this.ShowTaskDialog("Zip & clean WoW logs", "Log files are erased. New archive is placed to [" + settings.WoWDirectory + "\\Logs]", TaskDialogButton.OK, TaskDialogIcon.Information);
+                });
         }
 
         private void toolStripMenuItemOpenWoWLogsFolder_Click(object sender, EventArgs e)
@@ -758,29 +764,28 @@ namespace AxTools.Forms
 
         private void AddonsBackup_OnChangedState(int procent)
         {
-            switch (procent)
+            if (procent == 100)
             {
-                case -1:
-                    BeginInvoke((MethodInvoker) delegate
+                BeginInvoke((MethodInvoker) delegate
+                {
+                    linkBackup.Visible = true;
+                    progressBarAddonsBackup.Visible = false;
+                });
+            }
+            else
+            {
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    if (linkBackup.Visible)
                     {
                         linkBackup.Visible = false;
-                        progressBarAddonsBackup.Value = 0;
+                    }
+                    progressBarAddonsBackup.Value = procent;
+                    if (!progressBarAddonsBackup.Visible)
+                    {
                         progressBarAddonsBackup.Visible = true;
-                    });
-                    break;
-                case 101:
-                    BeginInvoke((MethodInvoker) delegate
-                    {
-                        linkBackup.Visible = true;
-                        progressBarAddonsBackup.Visible = false;
-                    });
-                    break;
-                default:
-                    BeginInvoke((MethodInvoker) delegate
-                    {
-                        progressBarAddonsBackup.Value = procent;
-                    });
-                    break;
+                    }
+                });
             }
         }
 

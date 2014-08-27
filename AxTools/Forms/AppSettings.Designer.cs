@@ -57,7 +57,7 @@ namespace AxTools.Forms
             this.numericUpDownBackupCopiesToKeep = new System.Windows.Forms.NumericUpDown();
             this.label9 = new MetroFramework.Controls.MetroLabel();
             this.checkBoxAddonsBackup = new MetroFramework.Controls.MetroCheckBox();
-            this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
+            this.tabControl = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
             this.checkBoxMinimizeToTray = new MetroFramework.Controls.MetroCheckBox();
             this.linkSendLogToDev = new MetroFramework.Controls.MetroLink();
@@ -82,7 +82,7 @@ namespace AxTools.Forms
             this.textBoxNotifyIfBigLogFile = new System.Windows.Forms.TextBox();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
             this.metroComboBoxBackupCompressionLevel = new MetroFramework.Controls.MetroComboBox();
-            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
+            this.styleManager = new MetroFramework.Components.MetroStyleManager();
             this.metroLabel9 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel6 = new MetroFramework.Controls.MetroLabel();
             this.buttonBackupPath = new MetroFramework.Controls.MetroButton();
@@ -99,12 +99,12 @@ namespace AxTools.Forms
             this.metroLabel11 = new MetroFramework.Controls.MetroLabel();
             this.ComboBox_server_ip = new MetroFramework.Controls.MetroComboBox();
             this.Label3 = new MetroFramework.Controls.MetroLabel();
-            this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.toolTip = new MetroFramework.Components.MetroToolTip();
             this.GroupBox2.SuspendLayout();
             this.GroupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupTimer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupCopiesToKeep)).BeginInit();
-            this.metroTabControl1.SuspendLayout();
+            this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.metroTabPage5.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
@@ -170,6 +170,7 @@ namespace AxTools.Forms
             this.buttonVentriloPath.TabIndex = 28;
             this.buttonVentriloPath.Text = "...";
             this.buttonVentriloPath.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.buttonVentriloPath, "Click to select path...");
             this.buttonVentriloPath.Click += new System.EventHandler(this.Button9Click);
             // 
             // CheckBoxStartAxToolsWithWindows
@@ -205,6 +206,7 @@ namespace AxTools.Forms
             this.CheckBox3.TabIndex = 42;
             this.CheckBox3.Text = "Clear creature cache on WoW shutdown";
             this.CheckBox3.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.CheckBox3, "Deletes creature cache file on WoW shutdown");
             this.CheckBox3.UseStyleColors = true;
             this.CheckBox3.UseVisualStyleBackColor = true;
             // 
@@ -388,6 +390,7 @@ namespace AxTools.Forms
             this.labelClickerHotkey.TabIndex = 44;
             this.labelClickerHotkey.Text = "Clicker hotkey:";
             this.labelClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.labelClickerHotkey, "Key to switch clicker on/off. Works only if WoW window is active");
             this.labelClickerHotkey.UseStyleColors = true;
             // 
             // comboBoxClickerHotkey
@@ -405,6 +408,7 @@ namespace AxTools.Forms
             this.comboBoxClickerHotkey.StyleManager = null;
             this.comboBoxClickerHotkey.TabIndex = 45;
             this.comboBoxClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.comboBoxClickerHotkey, "Key to switch clicker on/off. Works only if WoW window is active");
             this.comboBoxClickerHotkey.SelectedIndexChanged += new System.EventHandler(this.ComboBoxClickerHotkeySelectedIndexChanged);
             // 
             // comboBoxWExecModule
@@ -422,6 +426,7 @@ namespace AxTools.Forms
             this.comboBoxWExecModule.StyleManager = null;
             this.comboBoxWExecModule.TabIndex = 51;
             this.comboBoxWExecModule.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.comboBoxWExecModule, "Key to switch active WoW plugin on/off. Works only if WoW window is active");
             this.comboBoxWExecModule.SelectedIndexChanged += new System.EventHandler(this.ComboBoxWExecModuleSelectedIndexChanged);
             // 
             // labelWExecModule
@@ -440,6 +445,7 @@ namespace AxTools.Forms
             this.labelWExecModule.TabIndex = 50;
             this.labelWExecModule.Text = "WoW plugin start/stop hotkey:";
             this.labelWExecModule.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.labelWExecModule, "Key to switch active WoW plugin on/off. Works only if WoW window is active");
             this.labelWExecModule.UseStyleColors = true;
             // 
             // comboBoxWExecLuaTimer
@@ -457,6 +463,8 @@ namespace AxTools.Forms
             this.comboBoxWExecLuaTimer.StyleManager = null;
             this.comboBoxWExecLuaTimer.TabIndex = 49;
             this.comboBoxWExecLuaTimer.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.comboBoxWExecLuaTimer, "Key to switch Lua console\'s loop execution on/off. Works only if WoW window is ac" +
+        "tive");
             this.comboBoxWExecLuaTimer.SelectedIndexChanged += new System.EventHandler(this.ComboBoxWExecLuaTimerSelectedIndexChanged);
             // 
             // labelWExecLuaTimer
@@ -475,6 +483,8 @@ namespace AxTools.Forms
             this.labelWExecLuaTimer.TabIndex = 48;
             this.labelWExecLuaTimer.Text = "Lua console\'s timer start/stop hotkey:";
             this.labelWExecLuaTimer.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.labelWExecLuaTimer, "Key to switch Lua console\'s loop execution on/off. Works only if WoW window is ac" +
+        "tive");
             this.labelWExecLuaTimer.UseStyleColors = true;
             // 
             // numericUpDownBackupTimer
@@ -494,6 +504,7 @@ namespace AxTools.Forms
             this.numericUpDownBackupTimer.Size = new System.Drawing.Size(49, 20);
             this.numericUpDownBackupTimer.TabIndex = 47;
             this.numericUpDownBackupTimer.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.toolTip.SetToolTip(this.numericUpDownBackupTimer, "Interval between backup attempts");
             this.numericUpDownBackupTimer.Value = new decimal(new int[] {
             5,
             0,
@@ -517,6 +528,7 @@ namespace AxTools.Forms
             this.Hours.TabIndex = 46;
             this.Hours.Text = "Timer (hours):";
             this.Hours.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.Hours, "Interval between backup attempts");
             this.Hours.UseStyleColors = true;
             // 
             // numericUpDownBackupCopiesToKeep
@@ -531,6 +543,7 @@ namespace AxTools.Forms
             this.numericUpDownBackupCopiesToKeep.Size = new System.Drawing.Size(49, 20);
             this.numericUpDownBackupCopiesToKeep.TabIndex = 44;
             this.numericUpDownBackupCopiesToKeep.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.toolTip.SetToolTip(this.numericUpDownBackupCopiesToKeep, "How many archives keep on disk");
             this.numericUpDownBackupCopiesToKeep.Value = new decimal(new int[] {
             5,
             0,
@@ -554,6 +567,7 @@ namespace AxTools.Forms
             this.label9.TabIndex = 43;
             this.label9.Text = "Copies to keep:";
             this.label9.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.label9, "How many archives keep on disk");
             this.label9.UseStyleColors = true;
             // 
             // checkBoxAddonsBackup
@@ -575,28 +589,28 @@ namespace AxTools.Forms
             this.checkBoxAddonsBackup.UseVisualStyleBackColor = true;
             this.checkBoxAddonsBackup.CheckedChanged += new System.EventHandler(this.CheckBoxAddonsBackupCheckedChanged);
             // 
-            // metroTabControl1
+            // tabControl
             // 
-            this.metroTabControl1.Controls.Add(this.metroTabPage1);
-            this.metroTabControl1.Controls.Add(this.metroTabPage5);
-            this.metroTabControl1.Controls.Add(this.metroTabPage3);
-            this.metroTabControl1.Controls.Add(this.metroTabPage4);
-            this.metroTabControl1.Controls.Add(this.metroTabPage2);
-            this.metroTabControl1.Controls.Add(this.metroTabPage7);
-            this.metroTabControl1.CustomBackground = false;
-            this.metroTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTabControl1.FontSize = MetroFramework.MetroTabControlSize.Medium;
-            this.metroTabControl1.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
-            this.metroTabControl1.Location = new System.Drawing.Point(20, 60);
-            this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 2;
-            this.metroTabControl1.Size = new System.Drawing.Size(565, 220);
-            this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTabControl1.StyleManager = this.metroStyleManager1;
-            this.metroTabControl1.TabIndex = 65;
-            this.metroTabControl1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTabControl1.UseStyleColors = true;
+            this.tabControl.Controls.Add(this.metroTabPage1);
+            this.tabControl.Controls.Add(this.metroTabPage5);
+            this.tabControl.Controls.Add(this.metroTabPage3);
+            this.tabControl.Controls.Add(this.metroTabPage4);
+            this.tabControl.Controls.Add(this.metroTabPage2);
+            this.tabControl.Controls.Add(this.metroTabPage7);
+            this.tabControl.CustomBackground = false;
+            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl.FontSize = MetroFramework.MetroTabControlSize.Medium;
+            this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
+            this.tabControl.Location = new System.Drawing.Point(20, 60);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 2;
+            this.tabControl.Size = new System.Drawing.Size(565, 220);
+            this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tabControl.StyleManager = this.styleManager;
+            this.tabControl.TabIndex = 65;
+            this.tabControl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tabControl.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.tabControl.UseStyleColors = true;
             // 
             // metroTabPage1
             // 
@@ -659,6 +673,7 @@ namespace AxTools.Forms
             this.linkSendLogToDev.TabIndex = 47;
             this.linkSendLogToDev.Text = "Send log to developer";
             this.linkSendLogToDev.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.linkSendLogToDev, "Send AxTools\'s log file to developer");
             this.linkSendLogToDev.UseStyleColors = true;
             this.linkSendLogToDev.Click += new System.EventHandler(this.linkSendLogToDev_Click);
             // 
@@ -677,6 +692,7 @@ namespace AxTools.Forms
             this.linkShowLog.TabIndex = 46;
             this.linkShowLog.Text = "Show log";
             this.linkShowLog.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.linkShowLog, "Open AxTools\'s log file");
             this.linkShowLog.UseStyleColors = true;
             this.linkShowLog.Click += new System.EventHandler(this.linkShowLog_Click);
             // 
@@ -794,6 +810,7 @@ namespace AxTools.Forms
             this.buttonWowPath.TabIndex = 57;
             this.buttonWowPath.Text = "...";
             this.buttonWowPath.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.buttonWowPath, "Click to select path...");
             this.buttonWowPath.Click += new System.EventHandler(this.buttonWowPath_Click);
             // 
             // textBoxWowPath
@@ -816,6 +833,7 @@ namespace AxTools.Forms
             this.buttonRaidcallPath.TabIndex = 55;
             this.buttonRaidcallPath.Text = "...";
             this.buttonRaidcallPath.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.buttonRaidcallPath, "Click to select path...");
             this.buttonRaidcallPath.Click += new System.EventHandler(this.ButtonRaidcallPathClick);
             // 
             // textBoxRaidcallPath
@@ -838,6 +856,7 @@ namespace AxTools.Forms
             this.buttonMumblePath.TabIndex = 53;
             this.buttonMumblePath.Text = "...";
             this.buttonMumblePath.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.buttonMumblePath, "Click to select path...");
             this.buttonMumblePath.Click += new System.EventHandler(this.ButtonMumblePathClick);
             // 
             // textBoxMumblePath
@@ -860,6 +879,7 @@ namespace AxTools.Forms
             this.buttonTeamspeak3Path.TabIndex = 51;
             this.buttonTeamspeak3Path.Text = "...";
             this.buttonTeamspeak3Path.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.buttonTeamspeak3Path, "Click to select path...");
             this.buttonTeamspeak3Path.Click += new System.EventHandler(this.ButtonTeamspeak3PathClick);
             // 
             // textBoxTeamspeak3Path
@@ -1032,16 +1052,16 @@ namespace AxTools.Forms
             this.metroComboBoxBackupCompressionLevel.Name = "metroComboBoxBackupCompressionLevel";
             this.metroComboBoxBackupCompressionLevel.Size = new System.Drawing.Size(152, 25);
             this.metroComboBoxBackupCompressionLevel.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroComboBoxBackupCompressionLevel.StyleManager = this.metroStyleManager1;
+            this.metroComboBoxBackupCompressionLevel.StyleManager = this.styleManager;
             this.metroComboBoxBackupCompressionLevel.TabIndex = 55;
             this.metroComboBoxBackupCompressionLevel.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroComboBoxBackupCompressionLevel.SelectedIndexChanged += new System.EventHandler(this.MetroComboBoxBackupCompressionLevelSelectedIndexChanged);
             // 
-            // metroStyleManager1
+            // styleManager
             // 
-            this.metroStyleManager1.OwnerForm = this;
-            this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.styleManager.OwnerForm = this;
+            this.styleManager.Style = MetroFramework.MetroColorStyle.Blue;
+            this.styleManager.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // metroLabel9
             // 
@@ -1090,6 +1110,7 @@ namespace AxTools.Forms
             this.buttonBackupPath.TabIndex = 49;
             this.buttonBackupPath.Text = "...";
             this.buttonBackupPath.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.buttonBackupPath, "Click to select path...");
             this.buttonBackupPath.Click += new System.EventHandler(this.ButtonBackupPathClick);
             // 
             // textBoxBackupPath
@@ -1331,26 +1352,26 @@ namespace AxTools.Forms
             this.Label3.Theme = MetroFramework.MetroThemeStyle.Light;
             this.Label3.UseStyleColors = true;
             // 
-            // metroToolTip1
+            // toolTip
             // 
-            this.metroToolTip1.AutoPopDelay = 10000;
-            this.metroToolTip1.InitialDelay = 500;
-            this.metroToolTip1.ReshowDelay = 100;
-            this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroToolTip1.StyleManager = null;
-            this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.AutoPopDelay = 10000;
+            this.toolTip.InitialDelay = 500;
+            this.toolTip.ReshowDelay = 100;
+            this.toolTip.Style = MetroFramework.MetroColorStyle.Blue;
+            this.toolTip.StyleManager = null;
+            this.toolTip.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // AppSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(605, 300);
-            this.Controls.Add(this.metroTabControl1);
+            this.Controls.Add(this.tabControl);
             this.Location = new System.Drawing.Point(0, 0);
             this.MaximizeBox = false;
             this.Name = "AppSettings";
             this.Resizable = false;
-            this.StyleManager = this.metroStyleManager1;
+            this.StyleManager = this.styleManager;
             this.Text = "Settings";
             this.GroupBox2.ResumeLayout(false);
             this.GroupBox2.PerformLayout();
@@ -1358,7 +1379,7 @@ namespace AxTools.Forms
             this.GroupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupTimer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupCopiesToKeep)).EndInit();
-            this.metroTabControl1.ResumeLayout(false);
+            this.tabControl.ResumeLayout(false);
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage1.PerformLayout();
             this.metroTabPage5.ResumeLayout(false);
@@ -1407,7 +1428,7 @@ namespace AxTools.Forms
         private MetroCheckBox checkBoxAddonsBackup;
         private System.Windows.Forms.NumericUpDown numericUpDownBackupTimer;
         private MetroLabel Hours;
-        private MetroTabControl metroTabControl1;
+        private MetroTabControl tabControl;
         private MetroTabPage metroTabPage1;
         private MetroTabPage metroTabPage2;
         private MetroTabPage metroTabPage3;
@@ -1426,8 +1447,8 @@ namespace AxTools.Forms
         private MetroLabel metroLabel4;
         private MetroLabel metroLabel3;
         private MetroLabel metroLabel2;
-        private MetroStyleManager metroStyleManager1;
-        private MetroToolTip metroToolTip1;
+        private MetroStyleManager styleManager;
+        private MetroToolTip toolTip;
         private MetroComboBox metroComboBoxBackupCompressionLevel;
         private MetroLabel metroLabel9;
         private MetroLabel metroLabel5;

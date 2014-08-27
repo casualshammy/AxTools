@@ -274,15 +274,15 @@ namespace AxTools.Forms
                             {
                                 if (i.Level == localPlayer.Level)
                                 {
-                                    graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
+                                    graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
                                 }
                                 else if (i.Level > localPlayer.Level)
                                 {
-                                    graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
+                                    graphics.DrawString(String.Concat(i.Class.ToString(), "+"), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
                                 }
                                 else
                                 {
-                                    graphics.DrawString(String.Concat(i.Class, "-"), DefaultFont, solidBrush, point);
+                                    graphics.DrawString(String.Concat(i.Class.ToString(), "-"), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
                                 }
                             }
                         }
@@ -346,11 +346,11 @@ namespace AxTools.Forms
                                 }
                                 else if (i.Level > localPlayer.Level)
                                 {
-                                    graphics.DrawString(String.Concat(i.Class, "+"), DefaultFont, solidBrush, point);
+                                    graphics.DrawString(String.Concat(i.Class.ToString(), "+"), DefaultFont, solidBrush, point);
                                 }
                                 else
                                 {
-                                    graphics.DrawString(String.Concat(i.Class, "-"), DefaultFont, solidBrush, point);
+                                    graphics.DrawString(String.Concat(i.Class.ToString(), "-"), DefaultFont, solidBrush, point);
                                 }
                             }
                         }
