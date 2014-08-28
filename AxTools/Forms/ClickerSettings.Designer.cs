@@ -33,7 +33,6 @@
             this.comboBoxClickerKey = new MetroFramework.Controls.MetroComboBox();
             this.metroLabel7 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel8 = new MetroFramework.Controls.MetroLabel();
-            this.labelError = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.num_clicker_interval)).BeginInit();
             this.SuspendLayout();
             // 
@@ -121,28 +120,19 @@
             this.metroLabel8.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLabel8.UseStyleColors = true;
             // 
-            // labelError
-            // 
-            this.labelError.AutoSize = true;
-            this.labelError.ForeColor = System.Drawing.Color.Red;
-            this.labelError.Location = new System.Drawing.Point(110, 82);
-            this.labelError.Name = "labelError";
-            this.labelError.Size = new System.Drawing.Size(156, 13);
-            this.labelError.TabIndex = 60;
-            this.labelError.Text = "Interval can\'t be less than 50ms";
-            // 
             // ClickerSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(293, 100);
-            this.Controls.Add(this.labelError);
+            this.ClientSize = new System.Drawing.Size(293, 92);
             this.Controls.Add(this.num_clicker_interval);
             this.Controls.Add(this.comboBoxClickerKey);
             this.Controls.Add(this.metroLabel7);
             this.Controls.Add(this.metroLabel8);
             this.DisplayHeader = false;
             this.Location = new System.Drawing.Point(0, 0);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "ClickerSettings";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.Resizable = false;
@@ -160,7 +150,6 @@
         private MetroFramework.Controls.MetroComboBox comboBoxClickerKey;
         private MetroFramework.Controls.MetroLabel metroLabel7;
         private MetroFramework.Controls.MetroLabel metroLabel8;
-        private System.Windows.Forms.Label labelError;
         private System.Windows.Forms.NumericUpDown num_clicker_interval;
     }
 }

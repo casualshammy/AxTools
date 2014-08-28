@@ -243,10 +243,6 @@
     </Compile>
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="WoW\WowRaidClassColors.cs" />
-    <Compile Include="WoW\DX\D3D11Device.cs" />
-    <Compile Include="WoW\DX\D3D9Device.cs" />
-    <Compile Include="WoW\DX\D3DDevice.cs" />
-    <Compile Include="WoW\DX\DirectX3D.cs" />
     <Compile Include="Classes\Utils.cs" />
     <Compile Include="Classes\Log.cs" />
     <Compile Include="Classes\Settings.cs" />

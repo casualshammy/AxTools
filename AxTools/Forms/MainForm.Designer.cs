@@ -61,7 +61,6 @@ namespace AxTools.Forms
             this.progressBarAddonsBackup = new MetroFramework.Controls.MetroProgressBar();
             this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             this.linkEditWowAccounts = new MetroFramework.Controls.MetroLink();
-            this.buttonLaunchWowWithoutAutopass = new MetroFramework.Controls.MetroButton();
             this.linkClickerSettings = new MetroFramework.Controls.MetroLink();
             this.linkBackup = new MetroFramework.Controls.MetroLink();
             this.cmbboxAccSelect = new AxTools.Components.MetroComboboxExt(this.components);
@@ -83,7 +82,6 @@ namespace AxTools.Forms
             this.tileTeamspeak3 = new AxTools.Components.MetroTileExt(this.components);
             this.tileMumble = new AxTools.Components.MetroTileExt(this.components);
             this.tileVentrilo = new AxTools.Components.MetroTileExt(this.components);
-            this.labelPingNum = new MetroFramework.Controls.MetroLabel();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.linkSettings = new MetroFramework.Controls.MetroLink();
             this.contextMenuStripBackupAndClean = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -92,12 +90,16 @@ namespace AxTools.Forms
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItemZipAndCleanWoWLogs = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.linkPing = new MetroFramework.Controls.MetroLink();
+            this.linkTitle = new MetroFramework.Controls.MetroLink();
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
             this.metroTabPage2.SuspendLayout();
             this.contextMenuStripBackupAndClean.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // notifyIconMain
@@ -187,10 +189,10 @@ namespace AxTools.Forms
             this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Bold;
             this.tabControl.HotTrack = true;
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
-            this.tabControl.Location = new System.Drawing.Point(20, 60);
+            this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 1;
-            this.tabControl.Size = new System.Drawing.Size(429, 195);
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(429, 193);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.StyleManager = this.metroStyleManager1;
             this.tabControl.TabIndex = 59;
@@ -202,7 +204,6 @@ namespace AxTools.Forms
             // 
             this.metroTabPage1.Controls.Add(this.progressBarAddonsBackup);
             this.metroTabPage1.Controls.Add(this.linkEditWowAccounts);
-            this.metroTabPage1.Controls.Add(this.buttonLaunchWowWithoutAutopass);
             this.metroTabPage1.Controls.Add(this.linkClickerSettings);
             this.metroTabPage1.Controls.Add(this.linkBackup);
             this.metroTabPage1.Controls.Add(this.cmbboxAccSelect);
@@ -214,7 +215,7 @@ namespace AxTools.Forms
             this.metroTabPage1.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage1.Margin = new System.Windows.Forms.Padding(0);
             this.metroTabPage1.Name = "metroTabPage1";
-            this.metroTabPage1.Size = new System.Drawing.Size(421, 156);
+            this.metroTabPage1.Size = new System.Drawing.Size(421, 154);
             this.metroTabPage1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage1.StyleManager = this.metroStyleManager1;
             this.metroTabPage1.TabIndex = 0;
@@ -253,7 +254,7 @@ namespace AxTools.Forms
             this.linkEditWowAccounts.CustomForeColor = false;
             this.linkEditWowAccounts.FontSize = MetroFramework.MetroLinkSize.Small;
             this.linkEditWowAccounts.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.linkEditWowAccounts.Location = new System.Drawing.Point(151, 47);
+            this.linkEditWowAccounts.Location = new System.Drawing.Point(151, 69);
             this.linkEditWowAccounts.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.linkEditWowAccounts.Name = "linkEditWowAccounts";
             this.linkEditWowAccounts.Size = new System.Drawing.Size(116, 23);
@@ -264,19 +265,6 @@ namespace AxTools.Forms
             this.linkEditWowAccounts.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkEditWowAccounts.UseStyleColors = true;
             this.linkEditWowAccounts.Click += new System.EventHandler(this.linkEditWowAccounts_Click);
-            // 
-            // buttonLaunchWowWithoutAutopass
-            // 
-            this.buttonLaunchWowWithoutAutopass.Highlight = true;
-            this.buttonLaunchWowWithoutAutopass.Location = new System.Drawing.Point(3, 73);
-            this.buttonLaunchWowWithoutAutopass.Name = "buttonLaunchWowWithoutAutopass";
-            this.buttonLaunchWowWithoutAutopass.Size = new System.Drawing.Size(415, 23);
-            this.buttonLaunchWowWithoutAutopass.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonLaunchWowWithoutAutopass.StyleManager = this.metroStyleManager1;
-            this.buttonLaunchWowWithoutAutopass.TabIndex = 57;
-            this.buttonLaunchWowWithoutAutopass.Text = "Launch WoW w/o autopass";
-            this.buttonLaunchWowWithoutAutopass.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.buttonLaunchWowWithoutAutopass.Click += new System.EventHandler(this.buttonLaunchWowWithoutAutopass_Click);
             // 
             // linkClickerSettings
             // 
@@ -324,7 +312,7 @@ namespace AxTools.Forms
             this.cmbboxAccSelect.FontWeight = MetroFramework.MetroLinkWeight.Regular;
             this.cmbboxAccSelect.FormattingEnabled = true;
             this.cmbboxAccSelect.ItemHeight = 23;
-            this.cmbboxAccSelect.Location = new System.Drawing.Point(76, 15);
+            this.cmbboxAccSelect.Location = new System.Drawing.Point(76, 37);
             this.cmbboxAccSelect.Name = "cmbboxAccSelect";
             this.cmbboxAccSelect.OverlayText = "Click to launch WoW using autopass...";
             this.cmbboxAccSelect.Size = new System.Drawing.Size(290, 29);
@@ -351,7 +339,7 @@ namespace AxTools.Forms
             this.metroTabPage3.HorizontalScrollbarSize = 10;
             this.metroTabPage3.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage3.Name = "metroTabPage3";
-            this.metroTabPage3.Size = new System.Drawing.Size(421, 156);
+            this.metroTabPage3.Size = new System.Drawing.Size(421, 154);
             this.metroTabPage3.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage3.StyleManager = this.metroStyleManager1;
             this.metroTabPage3.TabIndex = 2;
@@ -508,7 +496,7 @@ namespace AxTools.Forms
             this.metroTabPage2.HorizontalScrollbarSize = 10;
             this.metroTabPage2.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage2.Name = "metroTabPage2";
-            this.metroTabPage2.Size = new System.Drawing.Size(421, 156);
+            this.metroTabPage2.Size = new System.Drawing.Size(421, 154);
             this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage2.StyleManager = this.metroStyleManager1;
             this.metroTabPage2.TabIndex = 1;
@@ -663,28 +651,6 @@ namespace AxTools.Forms
             this.tileVentrilo.TileCount = 0;
             this.tileVentrilo.Click += new System.EventHandler(this.TileVentriloClick);
             // 
-            // labelPingNum
-            // 
-            this.labelPingNum.AutoSize = true;
-            this.labelPingNum.CustomBackground = false;
-            this.labelPingNum.CustomForeColor = false;
-            this.labelPingNum.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.labelPingNum.FontWeight = MetroFramework.MetroLabelWeight.Regular;
-            this.labelPingNum.ForeColor = System.Drawing.Color.BlueViolet;
-            this.labelPingNum.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelPingNum.Location = new System.Drawing.Point(184, 6);
-            this.labelPingNum.Name = "labelPingNum";
-            this.labelPingNum.Size = new System.Drawing.Size(108, 19);
-            this.labelPingNum.Style = MetroFramework.MetroColorStyle.Blue;
-            this.labelPingNum.StyleManager = this.metroStyleManager1;
-            this.labelPingNum.TabIndex = 63;
-            this.labelPingNum.Text = "[999ms]::[100%]";
-            this.labelPingNum.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroToolTip1.SetToolTip(this.labelPingNum, "Click to show connectivity info widget");
-            this.labelPingNum.UseStyleColors = true;
-            this.labelPingNum.Visible = false;
-            this.labelPingNum.MouseClick += new System.Windows.Forms.MouseEventHandler(this.LabelPingNumMouseClick);
-            // 
             // metroToolTip1
             // 
             this.metroToolTip1.AutoPopDelay = 10000;
@@ -760,16 +726,72 @@ namespace AxTools.Forms
             this.toolStripMenuItemOpenWoWLogsFolder.Text = "Open WoW logs folder";
             this.toolStripMenuItemOpenWoWLogsFolder.Click += new System.EventHandler(this.toolStripMenuItemOpenWoWLogsFolder_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::AxTools.Properties.Resources.AppIcon1;
+            this.pictureBox1.Location = new System.Drawing.Point(13, 6);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(20, 20);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 66;
+            this.pictureBox1.TabStop = false;
+            // 
+            // linkPing
+            // 
+            this.linkPing.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.linkPing.CustomBackground = false;
+            this.linkPing.CustomForeColor = false;
+            this.linkPing.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkPing.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.linkPing.Location = new System.Drawing.Point(253, 5);
+            this.linkPing.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.linkPing.Name = "linkPing";
+            this.linkPing.Size = new System.Drawing.Size(100, 20);
+            this.linkPing.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkPing.StyleManager = this.metroStyleManager1;
+            this.linkPing.TabIndex = 68;
+            this.linkPing.Text = "[999ms]::[100%]  |";
+            this.linkPing.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.linkPing.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroToolTip1.SetToolTip(this.linkPing, "This is ingame connection info. It\'s formatted as\r\n  [worst ping of the last 10]:" +
+        ":[packet loss in the last 200 seconds]  \r\nLeft-click to clear statistics\r\nRight-" +
+        "click to open pinger settings");
+            this.linkPing.UseStyleColors = true;
+            this.linkPing.MouseDown += new System.Windows.Forms.MouseEventHandler(this.linkPing_MouseDown);
+            // 
+            // linkTitle
+            // 
+            this.linkTitle.AutoSize = true;
+            this.linkTitle.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.linkTitle.CustomBackground = false;
+            this.linkTitle.CustomForeColor = false;
+            this.linkTitle.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkTitle.FontWeight = MetroFramework.MetroLinkWeight.Bold;
+            this.linkTitle.Location = new System.Drawing.Point(33, 5);
+            this.linkTitle.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.linkTitle.Name = "linkTitle";
+            this.linkTitle.Size = new System.Drawing.Size(55, 23);
+            this.linkTitle.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkTitle.StyleManager = this.metroStyleManager1;
+            this.linkTitle.TabIndex = 69;
+            this.linkTitle.Text = "AxTools";
+            this.linkTitle.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkTitle.UseStyleColors = true;
+            this.linkTitle.Click += new System.EventHandler(this.linkTitle_Click);
+            // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(469, 265);
+            this.ClientSize = new System.Drawing.Size(469, 243);
+            this.Controls.Add(this.linkTitle);
+            this.Controls.Add(this.linkPing);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.linkSettings);
             this.Controls.Add(this.tabControl);
-            this.Controls.Add(this.labelPingNum);
+            this.DisplayHeader = false;
             this.Location = new System.Drawing.Point(0, 0);
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Padding = new System.Windows.Forms.Padding(20, 60, 20, 10);
+            this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.Resizable = false;
             this.StyleManager = this.metroStyleManager1;
             this.Text = "AxTools";
@@ -783,6 +805,7 @@ namespace AxTools.Forms
             this.metroTabPage2.ResumeLayout(false);
             this.metroTabPage2.PerformLayout();
             this.contextMenuStripBackupAndClean.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -801,7 +824,6 @@ namespace AxTools.Forms
         private MetroComboboxExt comboBoxWowPlugins;
         private MetroComboboxExt cmbboxAccSelect;
         private MetroButton buttonUnloadInjector;
-        private MetroLabel labelPingNum;
         private MetroToolTip metroToolTip1;
         private MetroStyleManager metroStyleManager1;
         private ContextMenuStrip contextMenuStripMain;
@@ -825,7 +847,6 @@ namespace AxTools.Forms
         private MetroLink linkClickerSettings;
         private MetroCheckBox checkBoxEnableCustomPlugins;
         private MetroButton buttonStartStopPlugin;
-        private MetroButton buttonLaunchWowWithoutAutopass;
         private MetroLink linkEditWowAccounts;
         private MetroProgressBar progressBarAddonsBackup;
         private MetroLink linkSettings;
@@ -835,6 +856,9 @@ namespace AxTools.Forms
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem toolStripMenuItemZipAndCleanWoWLogs;
         private ToolStripMenuItem toolStripMenuItemOpenWoWLogsFolder;
+        private PictureBox pictureBox1;
+        private MetroLink linkPing;
+        private MetroLink linkTitle;
     }
 }
 

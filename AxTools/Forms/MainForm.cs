@@ -43,10 +43,6 @@ namespace AxTools.Forms
             linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width / 2 - linkEditWowAccounts.Size.Width / 2, linkEditWowAccounts.Location.Y);
 
             tabControl.SelectedIndex = 0;
-            metroToolTip1.SetToolTip(labelPingNum, "This is ingame connection info. It's formatted as\r\n" +
-                                                   "  [worst ping of the last 10]::[packet loss in the last 200 seconds]  \r\n" +
-                                                   "Left-click to clear statistics\r\n" +
-                                                   "Right-click to open pinger settings");
 
             progressBarAddonsBackup.Size = linkBackup.Size;
             progressBarAddonsBackup.Location = linkBackup.Location;
@@ -298,22 +294,6 @@ namespace AxTools.Forms
             }
         }
 
-        private void LabelPingNumMouseClick(object sender, MouseEventArgs e)
-        {
-            switch (e.Button)
-            {
-                case MouseButtons.Left:
-                    Pinger.Stop();
-                    labelPingNum.Text = "cleared";
-                    Pinger.Start();
-                    break;
-                case MouseButtons.Right:
-                    int pingerTabPageIndex = 5;
-                    new AppSettings(pingerTabPageIndex).ShowDialog(this);
-                    break;
-            }
-        }
-
         #endregion
 
         #region MainNotifyIconContextMenu
@@ -413,12 +393,6 @@ namespace AxTools.Forms
                     clickerSettings.Activate();
                 }
             }
-        }
-
-        private void buttonLaunchWowWithoutAutopass_Click(object sender, EventArgs e)
-        {
-            StartWoW();
-            Log.Print("WOW! buttonLaunchWowWithoutAutopass_Click!", true);
         }
 
         private void linkEditWowAccounts_Click(object sender, EventArgs e)
@@ -793,8 +767,8 @@ namespace AxTools.Forms
         {
             BeginInvoke(new MethodInvoker(() =>
             {
-                labelPingNum.Visible = enabled;
-                labelPingNum.Text = "[n/a]::[n/a]";
+                linkPing.Visible = enabled;
+                linkPing.Text = "[n/a]::[n/a]  |";
                 TBProgressBar.SetProgressValue(Handle, 1, 1);
                 TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
             }));
@@ -804,8 +778,8 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                labelPingNum.Text = string.Format("[{0}]::[{1}%]", (ping == -1 || ping == -2) ? "n/a" : ping + "ms", packetLoss);
-                labelPingNum.Location = new Point(Size.Width/2 - labelPingNum.Size.Width/2, labelPingNum.Location.Y);
+                linkPing.Text = string.Format("[{0}]::[{1}%]  |", (ping == -1 || ping == -2) ? "n/a" : ping + "ms", packetLoss);
+                //labelPingNum.Location = new Point(Size.Width / 2 - labelPingNum.Size.Width / 2, labelPingNum.Location.Y);
                 TBProgressBar.SetProgressValue(Handle, 1, 1);
                 if (packetLoss >= settings.PingerVeryBadPacketLoss || ping >= settings.PingerVeryBadPing)
                 {
@@ -971,6 +945,27 @@ namespace AxTools.Forms
         }
 
         #endregion
+
+        private void linkTitle_Click(object sender, EventArgs e)
+        {
+            contextMenuStripMain.Show(linkTitle, linkTitle.Size.Width, 0);
+        }
+
+        private void linkPing_MouseDown(object sender, MouseEventArgs e)
+        {
+            switch (e.Button)
+            {
+                case MouseButtons.Left:
+                    Pinger.Stop();
+                    linkPing.Text = "cleared";
+                    Pinger.Start();
+                    break;
+                case MouseButtons.Right:
+                    int pingerTabPageIndex = 5;
+                    new AppSettings(pingerTabPageIndex).ShowDialog(this);
+                    break;
+            }
+        }
 
     }
 }

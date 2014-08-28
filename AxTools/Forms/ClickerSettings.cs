@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using AxTools.Components;
+using AxTools.Helpers;
 using AxTools.Properties;
 using Settings = AxTools.Classes.Settings;
 
@@ -28,7 +29,6 @@ namespace AxTools.Forms
             }
             comboBoxClickerKey.Text = settings.ClickerKey.ToString();
             num_clicker_interval.Value = settings.ClickerInterval;
-            labelError.Visible = false;
             num_clicker_interval.TextChanged += num_clicker_interval_TextChanged;
             BeginInvoke((MethodInvoker)delegate
             {
@@ -53,12 +53,12 @@ namespace AxTools.Forms
                 int interval = Convert.ToInt32(num_clicker_interval.Value);
                 if (interval >= 50)
                 {
-                    labelError.Visible = false;
+                    ErrorProviderExt.SetError(num_clicker_interval, "Interval can't be less than 50ms", Color.Red);
                     settings.ClickerInterval = interval;
                 }
                 else
                 {
-                    labelError.Visible = true;
+                    ErrorProviderExt.ClearError(num_clicker_interval);
                 }
             }
         }
@@ -68,7 +68,14 @@ namespace AxTools.Forms
             if (IsHandleCreated)
             {
                 int interval;
-                labelError.Visible = !int.TryParse(num_clicker_interval.Text, out interval) || interval < 50;
+                if (!int.TryParse(num_clicker_interval.Text, out interval) || interval < 50)
+                {
+                    ErrorProviderExt.SetError(num_clicker_interval, "Interval can't be less than 50ms", Color.Red);
+                }
+                else
+                {
+                    ErrorProviderExt.ClearError(num_clicker_interval);
+                }
             }
         }
 

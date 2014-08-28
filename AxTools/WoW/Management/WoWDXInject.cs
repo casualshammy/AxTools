@@ -107,6 +107,12 @@ namespace AxTools.WoW.Management
             Log.Print(string.Format("{0}:{1} :: [WoW hook] DX version: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, _dxAddress.UsingDirectX11 ? 11 : 9), false, false);
             if (_dxAddress.UsingDirectX11)
             {
+                IntPtr dxgiAddress = new IntPtr(0);
+                foreach (ProcessModule module in _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Where(module => module.ModuleName == "dxgi.dll"))
+                {
+                    dxgiAddress = module.BaseAddress;
+                }
+                Log.Print("Present-DXGI=" + ((uint) (_dxAddress.HookPtr - (int) dxgiAddress)).ToString("X"));
                 offset = 0xB;
                 _endSceneOriginalBytes = _wowProcess.Memory.ReadBytes(_dxAddress.HookPtr + (int)offset, 5);
                 if (_endSceneOriginalBytes[0] != 0xA1)
@@ -138,16 +144,17 @@ namespace AxTools.WoW.Management
             }
             else
             {
+                IntPtr d3D9Address = new IntPtr(0);
+                foreach (ProcessModule module in _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Where(module => module.ModuleName == "d3d9.dll"))
+                {
+                    d3D9Address = module.BaseAddress;
+                }
+                Log.Print("Endscene-D3D9=" + ((uint) (_dxAddress.HookPtr - (int) d3D9Address)).ToString("X"));
                 offset = 0x5;
                 _endSceneOriginalBytes = _wowProcess.Memory.ReadBytes(_dxAddress.HookPtr + (int)offset, 7);
             }
-            IntPtr dxgiAddress = new IntPtr(0);
-            foreach (ProcessModule module in _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Where(module => module.ModuleName == "dxgi.dll"))
-            {
-                dxgiAddress = module.BaseAddress;
-            }
-            Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}; it's dxgi.dll + {4:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                BitConverter.ToString(_endSceneOriginalBytes), (uint) _dxAddress.HookPtr + offset, (uint) (_dxAddress.HookPtr - (int) dxgiAddress)), false, false);
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
+                BitConverter.ToString(_endSceneOriginalBytes), (uint) _dxAddress.HookPtr + offset), false, false);
             // allocate memory to store injected code:
             _injectedCode = _wowProcess.Memory.AllocateMemory(2048);
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint)_injectedCode));
