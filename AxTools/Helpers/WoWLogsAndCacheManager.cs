@@ -17,7 +17,6 @@ namespace AxTools.Helpers
     internal class WoWLogsAndCacheManager
     {
         private static int _prevProcent = -1;
-
         internal static event Action<int> StateChanged;
 
         internal static void StartupCheck()
@@ -145,9 +144,9 @@ namespace AxTools.Helpers
 
         private static void SaveProgress(object sender, SaveProgressEventArgs e)
         {
-            if (e.BytesTransferred != 0 && e.TotalBytesToTransfer != 0 && e.TotalBytesToTransfer >= e.BytesTransferred)
+            if (e.EntriesSaved != 0 && e.EntriesTotal != 0 && e.EntriesTotal >= e.EntriesSaved)
             {
-                int procent = (int) (100*e.BytesTransferred/e.TotalBytesToTransfer);
+                int procent = 100*e.EntriesSaved/e.EntriesTotal;
                 if (procent != _prevProcent)
                 {
                     _prevProcent = procent;

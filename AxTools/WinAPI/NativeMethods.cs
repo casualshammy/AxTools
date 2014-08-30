@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace AxTools.WinAPI
 {
@@ -26,17 +25,7 @@ namespace AxTools.WinAPI
         [DllImport("user32")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
-
-        [SuppressUnmanagedCodeSecurity, DllImport("kernel32")]
-        internal static extern IntPtr LoadLibrary(string libraryName);
-
-        [DllImport("kernel32", CharSet = CharSet.Auto)]
-        internal static extern IntPtr GetModuleHandle(string lpModuleName);
-
-        [DllImport("kernel32", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool FreeLibrary(IntPtr hModule);
-
+        
         [DllImportAttribute("winmm.dll", EntryPoint = "sndPlaySoundW")]
         [return: MarshalAsAttribute(UnmanagedType.Bool)]
         internal static extern bool sndPlaySoundW([InAttribute] [MarshalAsAttribute(UnmanagedType.LPWStr)] string pszSound, uint fuSound);

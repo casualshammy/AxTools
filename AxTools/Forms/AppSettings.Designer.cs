@@ -100,6 +100,7 @@ namespace AxTools.Forms
             this.ComboBox_server_ip = new MetroFramework.Controls.MetroComboBox();
             this.Label3 = new MetroFramework.Controls.MetroLabel();
             this.toolTip = new MetroFramework.Components.MetroToolTip();
+            this.linkTitle = new MetroFramework.Controls.MetroLink();
             this.GroupBox2.SuspendLayout();
             this.GroupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupTimer)).BeginInit();
@@ -601,7 +602,7 @@ namespace AxTools.Forms
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.FontSize = MetroFramework.MetroTabControlSize.Medium;
             this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
-            this.tabControl.Location = new System.Drawing.Point(20, 60);
+            this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 2;
             this.tabControl.Size = new System.Drawing.Size(565, 220);
@@ -1361,15 +1362,37 @@ namespace AxTools.Forms
             this.toolTip.StyleManager = null;
             this.toolTip.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
+            // linkTitle
+            // 
+            this.linkTitle.AutoSize = true;
+            this.linkTitle.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.linkTitle.CustomBackground = false;
+            this.linkTitle.CustomForeColor = false;
+            this.linkTitle.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkTitle.FontWeight = MetroFramework.MetroLinkWeight.Bold;
+            this.linkTitle.Location = new System.Drawing.Point(13, 5);
+            this.linkTitle.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.linkTitle.Name = "linkTitle";
+            this.linkTitle.Size = new System.Drawing.Size(55, 23);
+            this.linkTitle.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkTitle.StyleManager = this.styleManager;
+            this.linkTitle.TabIndex = 70;
+            this.linkTitle.Text = "Settings";
+            this.linkTitle.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkTitle.UseStyleColors = true;
+            // 
             // AppSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(605, 300);
+            this.ClientSize = new System.Drawing.Size(605, 270);
+            this.Controls.Add(this.linkTitle);
             this.Controls.Add(this.tabControl);
+            this.DisplayHeader = false;
             this.Location = new System.Drawing.Point(0, 0);
             this.MaximizeBox = false;
             this.Name = "AppSettings";
+            this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.Resizable = false;
             this.StyleManager = this.styleManager;
             this.Text = "Settings";
@@ -1393,6 +1416,7 @@ namespace AxTools.Forms
             this.metroTabPage7.ResumeLayout(false);
             this.metroTabPage7.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
         private MetroCheckBox checkBox_AntiAFK;
@@ -1471,5 +1495,6 @@ namespace AxTools.Forms
         private MetroLabel metroLabel13;
         private MetroCheckBox checkBoxMinimizeToTray;
         private System.Windows.Forms.TextBox textBoxNotifyIfBigLogFile;
+        private MetroLink linkTitle;
     }
 }

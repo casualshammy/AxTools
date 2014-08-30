@@ -83,6 +83,7 @@ namespace AxTools.Forms
             this.tileMumble = new AxTools.Components.MetroTileExt(this.components);
             this.tileVentrilo = new AxTools.Components.MetroTileExt(this.components);
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.linkPing = new MetroFramework.Controls.MetroLink();
             this.linkSettings = new MetroFramework.Controls.MetroLink();
             this.contextMenuStripBackupAndClean = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemBackupWoWAddOns = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,7 +92,6 @@ namespace AxTools.Forms
             this.toolStripMenuItemZipAndCleanWoWLogs = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.linkPing = new MetroFramework.Controls.MetroLink();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -192,7 +192,7 @@ namespace AxTools.Forms
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(429, 193);
+            this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.StyleManager = this.metroStyleManager1;
             this.tabControl.TabIndex = 59;
@@ -215,7 +215,7 @@ namespace AxTools.Forms
             this.metroTabPage1.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage1.Margin = new System.Windows.Forms.Padding(0);
             this.metroTabPage1.Name = "metroTabPage1";
-            this.metroTabPage1.Size = new System.Drawing.Size(421, 154);
+            this.metroTabPage1.Size = new System.Drawing.Size(421, 160);
             this.metroTabPage1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage1.StyleManager = this.metroStyleManager1;
             this.metroTabPage1.TabIndex = 0;
@@ -339,7 +339,7 @@ namespace AxTools.Forms
             this.metroTabPage3.HorizontalScrollbarSize = 10;
             this.metroTabPage3.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage3.Name = "metroTabPage3";
-            this.metroTabPage3.Size = new System.Drawing.Size(421, 154);
+            this.metroTabPage3.Size = new System.Drawing.Size(421, 160);
             this.metroTabPage3.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage3.StyleManager = this.metroStyleManager1;
             this.metroTabPage3.TabIndex = 2;
@@ -496,7 +496,7 @@ namespace AxTools.Forms
             this.metroTabPage2.HorizontalScrollbarSize = 10;
             this.metroTabPage2.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage2.Name = "metroTabPage2";
-            this.metroTabPage2.Size = new System.Drawing.Size(421, 154);
+            this.metroTabPage2.Size = new System.Drawing.Size(421, 160);
             this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage2.StyleManager = this.metroStyleManager1;
             this.metroTabPage2.TabIndex = 1;
@@ -660,6 +660,29 @@ namespace AxTools.Forms
             this.metroToolTip1.StyleManager = null;
             this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
+            // linkPing
+            // 
+            this.linkPing.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.linkPing.CustomBackground = false;
+            this.linkPing.CustomForeColor = false;
+            this.linkPing.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkPing.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.linkPing.Location = new System.Drawing.Point(253, 5);
+            this.linkPing.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.linkPing.Name = "linkPing";
+            this.linkPing.Size = new System.Drawing.Size(100, 20);
+            this.linkPing.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkPing.StyleManager = this.metroStyleManager1;
+            this.linkPing.TabIndex = 68;
+            this.linkPing.Text = "[999ms]::[100%]  |";
+            this.linkPing.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.linkPing.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroToolTip1.SetToolTip(this.linkPing, "This is ingame connection info. It\'s formatted as\r\n  [worst ping of the last 10]:" +
+        ":[packet loss in the last 200 seconds]  \r\nLeft-click to clear statistics\r\nRight-" +
+        "click to open pinger settings");
+            this.linkPing.UseStyleColors = true;
+            this.linkPing.MouseDown += new System.Windows.Forms.MouseEventHandler(this.linkPing_MouseDown);
+            // 
             // linkSettings
             // 
             this.linkSettings.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -676,6 +699,7 @@ namespace AxTools.Forms
             this.linkSettings.TabIndex = 65;
             this.linkSettings.Text = "settings";
             this.linkSettings.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroToolTip1.SetToolTip(this.linkSettings, "Click to open settings dialog");
             this.linkSettings.UseStyleColors = true;
             this.linkSettings.Click += new System.EventHandler(this.linkSettings_Click);
             // 
@@ -736,29 +760,6 @@ namespace AxTools.Forms
             this.pictureBox1.TabIndex = 66;
             this.pictureBox1.TabStop = false;
             // 
-            // linkPing
-            // 
-            this.linkPing.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.linkPing.CustomBackground = false;
-            this.linkPing.CustomForeColor = false;
-            this.linkPing.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.linkPing.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.linkPing.Location = new System.Drawing.Point(253, 5);
-            this.linkPing.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
-            this.linkPing.Name = "linkPing";
-            this.linkPing.Size = new System.Drawing.Size(100, 20);
-            this.linkPing.Style = MetroFramework.MetroColorStyle.Blue;
-            this.linkPing.StyleManager = this.metroStyleManager1;
-            this.linkPing.TabIndex = 68;
-            this.linkPing.Text = "[999ms]::[100%]  |";
-            this.linkPing.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.linkPing.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroToolTip1.SetToolTip(this.linkPing, "This is ingame connection info. It\'s formatted as\r\n  [worst ping of the last 10]:" +
-        ":[packet loss in the last 200 seconds]  \r\nLeft-click to clear statistics\r\nRight-" +
-        "click to open pinger settings");
-            this.linkPing.UseStyleColors = true;
-            this.linkPing.MouseDown += new System.Windows.Forms.MouseEventHandler(this.linkPing_MouseDown);
-            // 
             // linkTitle
             // 
             this.linkTitle.AutoSize = true;
@@ -781,7 +782,7 @@ namespace AxTools.Forms
             // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(469, 243);
+            this.ClientSize = new System.Drawing.Size(469, 234);
             this.Controls.Add(this.linkTitle);
             this.Controls.Add(this.linkPing);
             this.Controls.Add(this.pictureBox1);
@@ -791,7 +792,7 @@ namespace AxTools.Forms
             this.Location = new System.Drawing.Point(0, 0);
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
+            this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 5);
             this.Resizable = false;
             this.StyleManager = this.metroStyleManager1;
             this.Text = "AxTools";

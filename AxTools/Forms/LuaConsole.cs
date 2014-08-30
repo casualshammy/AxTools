@@ -1,18 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using AxTools.Classes;
+﻿using AxTools.Classes;
 using AxTools.Components;
 using AxTools.Properties;
+using AxTools.WoW;
+using AxTools.WoW.Management;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using AxTools.WoW;
-using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
 using Settings = AxTools.Classes.Settings;
 
 namespace AxTools.Forms

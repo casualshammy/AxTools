@@ -294,6 +294,27 @@ namespace AxTools.Forms
             }
         }
 
+        private void linkTitle_Click(object sender, EventArgs e)
+        {
+            contextMenuStripMain.Show(linkTitle, linkTitle.Size.Width, 0);
+        }
+
+        private void linkPing_MouseDown(object sender, MouseEventArgs e)
+        {
+            switch (e.Button)
+            {
+                case MouseButtons.Left:
+                    Pinger.Stop();
+                    linkPing.Text = "cleared";
+                    Pinger.Start();
+                    break;
+                case MouseButtons.Right:
+                    int pingerTabPageIndex = 5;
+                    new AppSettings(pingerTabPageIndex).ShowDialog(this);
+                    break;
+            }
+        }
+
         #endregion
 
         #region MainNotifyIconContextMenu
@@ -601,7 +622,7 @@ namespace AxTools.Forms
             }
             else
             {
-                Log.Print("Injector error: WoW injector isn't active", true);
+                Log.Print("Injector error: WoW injector isn't active");
                 this.ShowTaskDialog("Injector error", "WoW injector isn't active", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
         }
@@ -945,27 +966,6 @@ namespace AxTools.Forms
         }
 
         #endregion
-
-        private void linkTitle_Click(object sender, EventArgs e)
-        {
-            contextMenuStripMain.Show(linkTitle, linkTitle.Size.Width, 0);
-        }
-
-        private void linkPing_MouseDown(object sender, MouseEventArgs e)
-        {
-            switch (e.Button)
-            {
-                case MouseButtons.Left:
-                    Pinger.Stop();
-                    linkPing.Text = "cleared";
-                    Pinger.Start();
-                    break;
-                case MouseButtons.Right:
-                    int pingerTabPageIndex = 5;
-                    new AppSettings(pingerTabPageIndex).ShowDialog(this);
-                    break;
-            }
-        }
 
     }
 }

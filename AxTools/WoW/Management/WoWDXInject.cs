@@ -1,6 +1,5 @@
 ﻿using AxTools.Classes;
 using AxTools.Forms;
-using AxTools.WoW.DX;
 using AxTools.WoW.Management.ObjectManager;
 using Fasm;
 using System;
@@ -30,6 +29,8 @@ namespace AxTools.WoW.Management
         private static readonly string RandomVariableName = Utils.GetRandomString(10);
         private static readonly string OverlayFrameName = Utils.GetRandomString(10);
         private static readonly string[] RegisterNames = { "ah", "al", "bh", "bl", "ch", "cl", "dh", "dl", "eax", "ebx", "ecx", "edx" };
+        private static readonly int DX11PresentAddress = 0x21BD1;
+        private static readonly int DX9EndsceneAddress = 0x2279F;
         #region Ingame overlay initialization string
 
         private static readonly string InitializeIngameOverlay = ("if (AxToolsMainOverlayChildren == nil) then\r\n" +
@@ -93,68 +94,71 @@ namespace AxTools.WoW.Management
 
         #endregion
         private static ManagedFasm _fasm;
-        private static DirectX3D _dxAddress;
+        private static IntPtr _dxHookPtr;
+        //private static DirectX3D _dxAddress;
 
         internal static bool Apply(WowProcess process)
         {
             _wowProcess = process;
-            _dxAddress = new DirectX3D(Process.GetProcessById(_wowProcess.ProcessID));
+            //_dxAddress = new DirectX3D(Process.GetProcessById(_wowProcess.ProcessID));
             //GreyMagic.AllocatedMemory allocatedMemory = _wowProcess.Memory.CreateAllocatedMemory(20);
             _fasm = _wowProcess.Memory.Asm;
             _fasm.SetMemorySize(0x4096);
             _codeCavePtr = _wowProcess.Memory.AllocateMemory(CodeCaveSize);
             uint offset;
-            Log.Print(string.Format("{0}:{1} :: [WoW hook] DX version: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, _dxAddress.UsingDirectX11 ? 11 : 9), false, false);
-            if (_dxAddress.UsingDirectX11)
+            bool isDX11 = _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == "d3d11.dll");
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] DX version: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, isDX11 ? 11 : 9), false, false);
+            _dxHookPtr = IntPtr.Zero;
+            if (isDX11)
             {
-                IntPtr dxgiAddress = new IntPtr(0);
                 foreach (ProcessModule module in _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Where(module => module.ModuleName == "dxgi.dll"))
                 {
-                    dxgiAddress = module.BaseAddress;
+                    _dxHookPtr = module.BaseAddress + DX11PresentAddress;
                 }
-                Log.Print("Present-DXGI=" + ((uint) (_dxAddress.HookPtr - (int) dxgiAddress)).ToString("X"));
                 offset = 0xB;
-                _endSceneOriginalBytes = _wowProcess.Memory.ReadBytes(_dxAddress.HookPtr + (int)offset, 5);
-                if (_endSceneOriginalBytes[0] != 0xA1)
-                {
-                    if (_endSceneOriginalBytes[0] == 0xE9)
-                    {
-                        TaskDialogButton yesNo = TaskDialogButton.Yes + (int)TaskDialogButton.No;
-                        TaskDialog taskDialog = new TaskDialog("DirectX is already hooked by some tool", "AxTools", "Do you want to overwrite this hook? It may cause a crash!", yesNo, TaskDialogIcon.Warning);
-                        if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
-                        {
-                            Log.Print(
-                                string.Format("{0}:{1} :: [WoW hook] DX is already hooked, trying to overwrite, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                                    BitConverter.ToString(_endSceneOriginalBytes)), false, false);
-                        }
-                        else
-                        {
-                            Log.Print(
-                                string.Format("{0}:{1} :: [WoW hook] DX is already hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                                    BitConverter.ToString(_endSceneOriginalBytes)), false, false);
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        Log.Print(string.Format("{0}:{1} :: [WoW hook] Incorrect DX version, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_endSceneOriginalBytes)), true);
-                        return false;
-                    }
-                }
             }
             else
             {
-                IntPtr d3D9Address = new IntPtr(0);
                 foreach (ProcessModule module in _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Where(module => module.ModuleName == "d3d9.dll"))
                 {
-                    d3D9Address = module.BaseAddress;
+                    _dxHookPtr = module.BaseAddress + DX9EndsceneAddress;
                 }
-                Log.Print("Endscene-D3D9=" + ((uint) (_dxAddress.HookPtr - (int) d3D9Address)).ToString("X"));
-                offset = 0x5;
-                _endSceneOriginalBytes = _wowProcess.Memory.ReadBytes(_dxAddress.HookPtr + (int)offset, 7);
+                offset = 0x19;
+            }
+            if (_dxHookPtr == IntPtr.Zero)
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't find DX library!", _wowProcess.ProcessName, _wowProcess.ProcessID), true);
+                return false;
+            }
+            _endSceneOriginalBytes = _wowProcess.Memory.ReadBytes(_dxHookPtr + (int) offset, 5);
+            if (_endSceneOriginalBytes[0] != 0xA1)
+            {
+                if (_endSceneOriginalBytes[0] == 0xE9)
+                {
+                    TaskDialogButton yesNo = TaskDialogButton.Yes + (int)TaskDialogButton.No;
+                    TaskDialog taskDialog = new TaskDialog("DirectX is already hooked by some tool", "AxTools", "Do you want to overwrite this hook? It may cause a crash!", yesNo, TaskDialogIcon.Warning);
+                    if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
+                    {
+                        Log.Print(
+                            string.Format("{0}:{1} :: [WoW hook] DX is already hooked, trying to overwrite, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID,
+                                BitConverter.ToString(_endSceneOriginalBytes)), false, false);
+                    }
+                    else
+                    {
+                        Log.Print(
+                            string.Format("{0}:{1} :: [WoW hook] DX is already hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID,
+                                BitConverter.ToString(_endSceneOriginalBytes)), false, false);
+                        return false;
+                    }
+                }
+                else
+                {
+                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Incorrect DX version, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_endSceneOriginalBytes)), true);
+                    return false;
+                }
             }
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                BitConverter.ToString(_endSceneOriginalBytes), (uint) _dxAddress.HookPtr + offset), false, false);
+                BitConverter.ToString(_endSceneOriginalBytes), (uint)_dxHookPtr + offset), false, false);
             // allocate memory to store injected code:
             _injectedCode = _wowProcess.Memory.AllocateMemory(2048);
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint)_injectedCode));
@@ -187,14 +191,14 @@ namespace AxTools.WoW.Management
             _wowProcess.Memory.WriteBytes(_injectedCode + sizeAsm, _endSceneOriginalBytes);
             // injecting return to Endscene/Present
             asm.Clear();
-            asm.Add("jmp " + ((uint)_dxAddress.HookPtr + offset + (_dxAddress.UsingDirectX11 ? 5 : 7)));
+            asm.Add("jmp " + ((uint)_dxHookPtr + offset + (isDX11 ? 5 : 7)));
             InjectAsm(asm, (uint)(_injectedCode + sizeAsm + _endSceneOriginalBytes.Length));
             //
             asm.Clear();
             asm.Add("jmp " + (_injectedCode));
-            InjectAsm(asm, (uint)_dxAddress.HookPtr + offset);
+            InjectAsm(asm, (uint)_dxHookPtr + offset);
             Log.Print(string.Format("{0}:{1} :: [WoW hook] Successfully hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                BitConverter.ToString(_wowProcess.Memory.ReadBytes(_dxAddress.HookPtr + (int)offset, _dxAddress.UsingDirectX11 ? 5 : 7))));
+                BitConverter.ToString(_wowProcess.Memory.ReadBytes(_dxHookPtr + (int)offset, isDX11 ? 5 : 7))));
             return true;
         }
         
@@ -204,11 +208,12 @@ namespace AxTools.WoW.Management
             {
                 try
                 {
-                    uint offset = (uint) (_dxAddress.UsingDirectX11 ? 0xB : 0x5);
-                    _wowProcess.Memory.WriteBytes(_dxAddress.HookPtr + (int) offset, _endSceneOriginalBytes);
+                    bool isDX11 = _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == "d3d11.dll");
+                    uint offset = (uint)(isDX11 ? 0xB : 0x5);
+                    _wowProcess.Memory.WriteBytes(_dxHookPtr + (int)offset, _endSceneOriginalBytes);
                     Log.Print(
                         string.Format("{0}:{1} :: [WoW hook] Hook is deleted, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                            BitConverter.ToString(_wowProcess.Memory.ReadBytes(_dxAddress.HookPtr + (int) offset, _dxAddress.UsingDirectX11 ? 5 : 7))));
+                            BitConverter.ToString(_wowProcess.Memory.ReadBytes(_dxHookPtr + (int)offset, isDX11 ? 5 : 7))));
                 }
                 catch (Exception ex)
                 {
@@ -221,20 +226,20 @@ namespace AxTools.WoW.Management
                 }
                 catch
                 {
+
                 }
-                // ReSharper restore EmptyGeneralCatchClause
                 try
-                {
-                    _dxAddress.Device.Dispose();
-                    _dxAddress = null;
-                }
-                finally
                 {
                     _wowProcess.Memory.FreeMemory(_injectedCode);
                     _wowProcess.Memory.FreeMemory(_addresseInjection);
                     _wowProcess.Memory.FreeMemory(_retnInjectionAsm);
                     _wowProcess.Memory.FreeMemory(_codeCavePtr);
                 }
+                catch
+                {
+                    
+                }
+                // ReSharper restore EmptyGeneralCatchClause
             }
             else
             {

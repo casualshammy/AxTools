@@ -53,12 +53,12 @@ namespace AxTools.Forms
                 int interval = Convert.ToInt32(num_clicker_interval.Value);
                 if (interval >= 50)
                 {
-                    ErrorProviderExt.SetError(num_clicker_interval, "Interval can't be less than 50ms", Color.Red);
+                    ErrorProviderExt.ClearError(num_clicker_interval);
                     settings.ClickerInterval = interval;
                 }
                 else
                 {
-                    ErrorProviderExt.ClearError(num_clicker_interval);
+                    ErrorProviderExt.SetError(num_clicker_interval, "Interval can't be less than 50ms", Color.Red);
                 }
             }
         }
