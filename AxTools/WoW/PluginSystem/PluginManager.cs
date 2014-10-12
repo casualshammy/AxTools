@@ -150,10 +150,7 @@ namespace AxTools.WoW.PluginSystem
             Log.Print(string.Format("Plugin loaded: {0} {1}", Plugins.Last().Name, Plugins.Last().Version));
             Plugins.Add(new GoodsDestroyer());
             Log.Print(string.Format("Plugin loaded: {0} {1}", Plugins.Last().Name, Plugins.Last().Version));
-            if (Settings.Instance.WoWPluginEnableCustom)
-            {
-                LoadPluginsFromDisk();
-            }
+            LoadPluginsFromDisk();
         }
 
         private static void LoadPluginsFromDisk()

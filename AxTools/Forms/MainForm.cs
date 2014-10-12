@@ -10,6 +10,7 @@ using AxTools.WoW;
 using AxTools.WoW.Management;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.Plugins;
+using MetroFramework.Drawing;
 using MouseKeyboardActivityMonitor;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace AxTools.Forms
             linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width / 2 - linkEditWowAccounts.Size.Width / 2, linkEditWowAccounts.Location.Y);
 
             tabControl.SelectedIndex = 0;
-
+            
             progressBarAddonsBackup.Size = linkBackup.Size;
             progressBarAddonsBackup.Location = linkBackup.Location;
             progressBarAddonsBackup.Visible = false;
@@ -562,40 +563,57 @@ namespace AxTools.Forms
             SwitchWoWPlugin();
         }
 
-        private void metroCheckBoxPluginShowIngameNotification_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.WoWPluginShowIngameNotifications = metroCheckBoxPluginShowIngameNotification.Checked;
-        }
-
-        private void checkBoxEnableCustomPlugins_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.WoWPluginEnableCustom = checkBoxEnableCustomPlugins.Checked;
-        }
-
         private void ComboBoxWowPluginsSelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBoxWowPlugins.SelectedIndex == -1)
             {
-                metroToolTip1.SetToolTip(comboBoxWowPlugins, string.Empty);
+                metroToolTip1.SetToolTip(textBoxDetailedInfo, string.Empty);
+                textBoxDetailedInfo.Visible = false;
             }
             else
             {
-                string[] arr = PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text).Description.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
-                string text = string.Empty;
+                string fullDescription = PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text).Description;
+
+                string text = "";
                 int counter = 0;
-                foreach (string i in arr)
+                foreach (char i in fullDescription)
                 {
-                    text += i + " ";
-                    counter += i.Length + 1;
-                    if (counter >= 50)
+                    if (counter >= 50 && i.Equals(' '))
                     {
                         text += "\r\n";
                         counter = 0;
                     }
+                    else
+                    {
+                        text += i;
+                        counter++;
+                    }
                 }
-                metroToolTip1.SetToolTip(comboBoxWowPlugins, text);
+
+                //string[] arr = fullDescription.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+                //string text = string.Empty;
+                //int counter = 0;
+                //foreach (string i in arr)
+                //{
+                //    text += i + " ";
+                //    counter += i.Length + 1;
+                //    if (counter >= 50)
+                //    {
+                //        text += "\r\n";
+                //        counter = 0;
+                //    }
+                //}
+                metroToolTip1.SetToolTip(textBoxDetailedInfo, text);
+                textBoxDetailedInfo.Text = "Description: " + fullDescription;
+                textBoxDetailedInfo.ForeColor = MetroPaint.GetStyleColor(Style);
+                textBoxDetailedInfo.Visible = true;
             }
             UpdatePluginsShortcutsInTrayContextMenu();
+        }
+
+        private void textBoxDetailedInfo_MouseDown(object sender, MouseEventArgs e)
+        {
+            comboBoxWowPlugins.Focus();
         }
 
         private void MetroButtonBlackMarketTrackerClick(object sender, EventArgs e)
@@ -687,7 +705,7 @@ namespace AxTools.Forms
                 pluginsToolStripMenuItems.Add(toolStripMenuItem);
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
-            if (settings.WoWPluginEnableCustom && PluginManager.Plugins.Count > nativePlugins.Length)
+            if (PluginManager.Plugins.Count > nativePlugins.Length)
             {
                 ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Custom plugins") as ToolStripMenuItem;
                 if (customPlugins != null)
@@ -733,8 +751,6 @@ namespace AxTools.Forms
             checkBoxStartTeamspeak3WithWow.Checked = settings.TS3StartWithWoW;
             checkBoxStartRaidcallWithWow.Checked = settings.RaidcallStartWithWoW;
             checkBoxStartMumbleWithWow.Checked = settings.MumbleStartWithWoW;
-            metroCheckBoxPluginShowIngameNotification.Checked = settings.WoWPluginShowIngameNotifications;
-            checkBoxEnableCustomPlugins.Checked = settings.WoWPluginEnableCustom;
             buttonStartStopPlugin.Text = string.Format("{0} [{1}]", "Start", settings.WoWPluginHotkey);
         }
 
@@ -966,6 +982,6 @@ namespace AxTools.Forms
         }
 
         #endregion
-
+    
     }
 }

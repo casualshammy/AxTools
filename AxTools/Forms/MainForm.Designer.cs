@@ -65,9 +65,10 @@ namespace AxTools.Forms
             this.linkBackup = new MetroFramework.Controls.MetroLink();
             this.cmbboxAccSelect = new AxTools.Components.MetroComboboxExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
+            this.textBoxDetailedInfo = new System.Windows.Forms.TextBox();
+            this.line2 = new AxTools.Components.Line();
+            this.line1 = new AxTools.Components.Line();
             this.buttonStartStopPlugin = new MetroFramework.Controls.MetroButton();
-            this.checkBoxEnableCustomPlugins = new MetroFramework.Controls.MetroCheckBox();
-            this.metroCheckBoxPluginShowIngameNotification = new MetroFramework.Controls.MetroCheckBox();
             this.metroButtonLuaConsole = new MetroFramework.Controls.MetroButton();
             this.metroButtonRadar = new MetroFramework.Controls.MetroButton();
             this.metroButtonBlackMarketTracker = new MetroFramework.Controls.MetroButton();
@@ -191,7 +192,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
+            this.tabControl.SelectedIndex = 1;
             this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.StyleManager = this.metroStyleManager1;
@@ -324,9 +325,10 @@ namespace AxTools.Forms
             // 
             // metroTabPage3
             // 
+            this.metroTabPage3.Controls.Add(this.textBoxDetailedInfo);
+            this.metroTabPage3.Controls.Add(this.line2);
+            this.metroTabPage3.Controls.Add(this.line1);
             this.metroTabPage3.Controls.Add(this.buttonStartStopPlugin);
-            this.metroTabPage3.Controls.Add(this.checkBoxEnableCustomPlugins);
-            this.metroTabPage3.Controls.Add(this.metroCheckBoxPluginShowIngameNotification);
             this.metroTabPage3.Controls.Add(this.metroButtonLuaConsole);
             this.metroTabPage3.Controls.Add(this.metroButtonRadar);
             this.metroTabPage3.Controls.Add(this.metroButtonBlackMarketTracker);
@@ -350,12 +352,51 @@ namespace AxTools.Forms
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
             // 
+            // textBoxDetailedInfo
+            // 
+            this.textBoxDetailedInfo.BackColor = System.Drawing.Color.White;
+            this.textBoxDetailedInfo.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBoxDetailedInfo.Cursor = System.Windows.Forms.Cursors.Help;
+            this.textBoxDetailedInfo.ForeColor = System.Drawing.Color.Black;
+            this.textBoxDetailedInfo.Location = new System.Drawing.Point(3, 50);
+            this.textBoxDetailedInfo.Multiline = true;
+            this.textBoxDetailedInfo.Name = "textBoxDetailedInfo";
+            this.textBoxDetailedInfo.ReadOnly = true;
+            this.textBoxDetailedInfo.Size = new System.Drawing.Size(415, 34);
+            this.textBoxDetailedInfo.TabIndex = 78;
+            this.textBoxDetailedInfo.Visible = false;
+            this.textBoxDetailedInfo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBoxDetailedInfo_MouseDown);
+            // 
+            // line2
+            // 
+            this.line2.Location = new System.Drawing.Point(3, 90);
+            this.line2.MaximumSize = new System.Drawing.Size(2000, 2);
+            this.line2.MinimumSize = new System.Drawing.Size(0, 2);
+            this.line2.Name = "line2";
+            this.line2.Size = new System.Drawing.Size(415, 2);
+            this.line2.Style = MetroFramework.MetroColorStyle.Black;
+            this.line2.StyleManager = null;
+            this.line2.TabIndex = 77;
+            this.line2.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // line1
+            // 
+            this.line1.Location = new System.Drawing.Point(3, 93);
+            this.line1.MaximumSize = new System.Drawing.Size(2000, 2);
+            this.line1.MinimumSize = new System.Drawing.Size(0, 2);
+            this.line1.Name = "line1";
+            this.line1.Size = new System.Drawing.Size(415, 2);
+            this.line1.Style = MetroFramework.MetroColorStyle.Black;
+            this.line1.StyleManager = null;
+            this.line1.TabIndex = 76;
+            this.line1.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
             // buttonStartStopPlugin
             // 
             this.buttonStartStopPlugin.Highlight = true;
             this.buttonStartStopPlugin.Location = new System.Drawing.Point(338, 15);
             this.buttonStartStopPlugin.Name = "buttonStartStopPlugin";
-            this.buttonStartStopPlugin.Size = new System.Drawing.Size(80, 50);
+            this.buttonStartStopPlugin.Size = new System.Drawing.Size(80, 29);
             this.buttonStartStopPlugin.Style = MetroFramework.MetroColorStyle.Blue;
             this.buttonStartStopPlugin.StyleManager = this.metroStyleManager1;
             this.buttonStartStopPlugin.TabIndex = 74;
@@ -363,46 +404,6 @@ namespace AxTools.Forms
             this.buttonStartStopPlugin.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroToolTip1.SetToolTip(this.buttonStartStopPlugin, "Start/stop plugin");
             this.buttonStartStopPlugin.Click += new System.EventHandler(this.buttonStartStopPlugin_Click);
-            // 
-            // checkBoxEnableCustomPlugins
-            // 
-            this.checkBoxEnableCustomPlugins.AutoSize = true;
-            this.checkBoxEnableCustomPlugins.CustomBackground = false;
-            this.checkBoxEnableCustomPlugins.CustomForeColor = false;
-            this.checkBoxEnableCustomPlugins.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.checkBoxEnableCustomPlugins.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxEnableCustomPlugins.Location = new System.Drawing.Point(189, 50);
-            this.checkBoxEnableCustomPlugins.Name = "checkBoxEnableCustomPlugins";
-            this.checkBoxEnableCustomPlugins.Size = new System.Drawing.Size(143, 15);
-            this.checkBoxEnableCustomPlugins.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxEnableCustomPlugins.StyleManager = this.metroStyleManager1;
-            this.checkBoxEnableCustomPlugins.TabIndex = 73;
-            this.checkBoxEnableCustomPlugins.Text = "Enable custom plugins";
-            this.checkBoxEnableCustomPlugins.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroToolTip1.SetToolTip(this.checkBoxEnableCustomPlugins, "Enable plugins from \"plugins\" folder");
-            this.checkBoxEnableCustomPlugins.UseStyleColors = true;
-            this.checkBoxEnableCustomPlugins.UseVisualStyleBackColor = true;
-            this.checkBoxEnableCustomPlugins.CheckedChanged += new System.EventHandler(this.checkBoxEnableCustomPlugins_CheckedChanged);
-            // 
-            // metroCheckBoxPluginShowIngameNotification
-            // 
-            this.metroCheckBoxPluginShowIngameNotification.AutoSize = true;
-            this.metroCheckBoxPluginShowIngameNotification.CustomBackground = false;
-            this.metroCheckBoxPluginShowIngameNotification.CustomForeColor = false;
-            this.metroCheckBoxPluginShowIngameNotification.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.metroCheckBoxPluginShowIngameNotification.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.metroCheckBoxPluginShowIngameNotification.Location = new System.Drawing.Point(3, 50);
-            this.metroCheckBoxPluginShowIngameNotification.Name = "metroCheckBoxPluginShowIngameNotification";
-            this.metroCheckBoxPluginShowIngameNotification.Size = new System.Drawing.Size(159, 15);
-            this.metroCheckBoxPluginShowIngameNotification.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroCheckBoxPluginShowIngameNotification.StyleManager = this.metroStyleManager1;
-            this.metroCheckBoxPluginShowIngameNotification.TabIndex = 72;
-            this.metroCheckBoxPluginShowIngameNotification.Text = "Show ingame notification";
-            this.metroCheckBoxPluginShowIngameNotification.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroToolTip1.SetToolTip(this.metroCheckBoxPluginShowIngameNotification, "Show various plugins notifications in UIError channel");
-            this.metroCheckBoxPluginShowIngameNotification.UseStyleColors = true;
-            this.metroCheckBoxPluginShowIngameNotification.UseVisualStyleBackColor = true;
-            this.metroCheckBoxPluginShowIngameNotification.CheckedChanged += new System.EventHandler(this.metroCheckBoxPluginShowIngameNotification_CheckedChanged);
             // 
             // metroButtonLuaConsole
             // 
@@ -843,10 +844,8 @@ namespace AxTools.Forms
         private MetroCheckBox checkBoxStartMumbleWithWow;
         private ToolStripMenuItem stopActivePluginorPresshotkeyToolStripMenuItem;
         private ToolStripMenuItem blackMarketTrackerToolStripMenuItem;
-        private MetroCheckBox metroCheckBoxPluginShowIngameNotification;
         private MetroLink linkBackup;
         private MetroLink linkClickerSettings;
-        private MetroCheckBox checkBoxEnableCustomPlugins;
         private MetroButton buttonStartStopPlugin;
         private MetroLink linkEditWowAccounts;
         private MetroProgressBar progressBarAddonsBackup;
@@ -860,6 +859,9 @@ namespace AxTools.Forms
         private PictureBox pictureBox1;
         private MetroLink linkPing;
         private MetroLink linkTitle;
+        private Line line2;
+        private Line line1;
+        private TextBox textBoxDetailedInfo;
     }
 }
 

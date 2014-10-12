@@ -79,6 +79,7 @@ namespace AxTools.Forms
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
+            this.checkBoxPluginsShowIngameNotifications = new MetroFramework.Controls.MetroCheckBox();
             this.textBoxNotifyIfBigLogFile = new System.Windows.Forms.TextBox();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
             this.metroComboBoxBackupCompressionLevel = new MetroFramework.Controls.MetroComboBox();
@@ -218,7 +219,7 @@ namespace AxTools.Forms
             this.CheckBox7.CustomForeColor = false;
             this.CheckBox7.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.CheckBox7.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBox7.Location = new System.Drawing.Point(3, 126);
+            this.CheckBox7.Location = new System.Drawing.Point(3, 140);
             this.CheckBox7.Name = "CheckBox7";
             this.CheckBox7.Size = new System.Drawing.Size(155, 19);
             this.CheckBox7.Style = MetroFramework.MetroColorStyle.Blue;
@@ -236,7 +237,7 @@ namespace AxTools.Forms
             this.GroupBox2.Controls.Add(this.TextBox5);
             this.GroupBox2.Controls.Add(this.Label5);
             this.GroupBox2.Controls.Add(this.Label6);
-            this.GroupBox2.Location = new System.Drawing.Point(292, 101);
+            this.GroupBox2.Location = new System.Drawing.Point(292, 115);
             this.GroupBox2.Name = "GroupBox2";
             this.GroupBox2.Size = new System.Drawing.Size(120, 80);
             this.GroupBox2.TabIndex = 13;
@@ -300,7 +301,7 @@ namespace AxTools.Forms
             this.GroupBox1.Controls.Add(this.TextBox7);
             this.GroupBox1.Controls.Add(this.Label7);
             this.GroupBox1.Controls.Add(this.Label8);
-            this.GroupBox1.Location = new System.Drawing.Point(166, 101);
+            this.GroupBox1.Location = new System.Drawing.Point(166, 115);
             this.GroupBox1.Name = "GroupBox1";
             this.GroupBox1.Size = new System.Drawing.Size(120, 80);
             this.GroupBox1.TabIndex = 12;
@@ -364,7 +365,7 @@ namespace AxTools.Forms
             this.CheckBox6.CustomForeColor = false;
             this.CheckBox6.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.CheckBox6.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBox6.Location = new System.Drawing.Point(3, 101);
+            this.CheckBox6.Location = new System.Drawing.Point(3, 115);
             this.CheckBox6.Name = "CheckBox6";
             this.CheckBox6.Size = new System.Drawing.Size(157, 19);
             this.CheckBox6.Style = MetroFramework.MetroColorStyle.Blue;
@@ -605,7 +606,7 @@ namespace AxTools.Forms
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 2;
-            this.tabControl.Size = new System.Drawing.Size(565, 220);
+            this.tabControl.Size = new System.Drawing.Size(565, 234);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.StyleManager = this.styleManager;
             this.tabControl.TabIndex = 65;
@@ -628,7 +629,7 @@ namespace AxTools.Forms
             this.metroTabPage1.HorizontalScrollbarSize = 10;
             this.metroTabPage1.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage1.Name = "metroTabPage1";
-            this.metroTabPage1.Size = new System.Drawing.Size(557, 181);
+            this.metroTabPage1.Size = new System.Drawing.Size(557, 195);
             this.metroTabPage1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage1.StyleManager = null;
             this.metroTabPage1.TabIndex = 0;
@@ -666,7 +667,7 @@ namespace AxTools.Forms
             this.linkSendLogToDev.CustomForeColor = false;
             this.linkSendLogToDev.FontSize = MetroFramework.MetroLinkSize.Small;
             this.linkSendLogToDev.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.linkSendLogToDev.Location = new System.Drawing.Point(424, 162);
+            this.linkSendLogToDev.Location = new System.Drawing.Point(424, 172);
             this.linkSendLogToDev.Name = "linkSendLogToDev";
             this.linkSendLogToDev.Size = new System.Drawing.Size(130, 23);
             this.linkSendLogToDev.Style = MetroFramework.MetroColorStyle.Blue;
@@ -685,7 +686,7 @@ namespace AxTools.Forms
             this.linkShowLog.CustomForeColor = false;
             this.linkShowLog.FontSize = MetroFramework.MetroLinkSize.Small;
             this.linkShowLog.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.linkShowLog.Location = new System.Drawing.Point(343, 162);
+            this.linkShowLog.Location = new System.Drawing.Point(343, 172);
             this.linkShowLog.Name = "linkShowLog";
             this.linkShowLog.Size = new System.Drawing.Size(75, 23);
             this.linkShowLog.Style = MetroFramework.MetroColorStyle.Blue;
@@ -770,7 +771,7 @@ namespace AxTools.Forms
             this.metroTabPage5.HorizontalScrollbarSize = 10;
             this.metroTabPage5.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage5.Name = "metroTabPage5";
-            this.metroTabPage5.Size = new System.Drawing.Size(557, 181);
+            this.metroTabPage5.Size = new System.Drawing.Size(557, 195);
             this.metroTabPage5.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage5.StyleManager = null;
             this.metroTabPage5.TabIndex = 4;
@@ -965,6 +966,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage3
             // 
+            this.metroTabPage3.Controls.Add(this.checkBoxPluginsShowIngameNotifications);
             this.metroTabPage3.Controls.Add(this.textBoxNotifyIfBigLogFile);
             this.metroTabPage3.Controls.Add(this.CheckBox3);
             this.metroTabPage3.Controls.Add(this.checkBoxNotifyIfBigLogFile);
@@ -980,7 +982,7 @@ namespace AxTools.Forms
             this.metroTabPage3.HorizontalScrollbarSize = 10;
             this.metroTabPage3.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage3.Name = "metroTabPage3";
-            this.metroTabPage3.Size = new System.Drawing.Size(557, 181);
+            this.metroTabPage3.Size = new System.Drawing.Size(557, 195);
             this.metroTabPage3.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage3.StyleManager = null;
             this.metroTabPage3.TabIndex = 2;
@@ -990,6 +992,26 @@ namespace AxTools.Forms
             this.metroTabPage3.VerticalScrollbarBarColor = true;
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
+            // 
+            // checkBoxPluginsShowIngameNotifications
+            // 
+            this.checkBoxPluginsShowIngameNotifications.AutoSize = true;
+            this.checkBoxPluginsShowIngameNotifications.CustomBackground = false;
+            this.checkBoxPluginsShowIngameNotifications.CustomForeColor = false;
+            this.checkBoxPluginsShowIngameNotifications.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.checkBoxPluginsShowIngameNotifications.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.checkBoxPluginsShowIngameNotifications.Location = new System.Drawing.Point(3, 90);
+            this.checkBoxPluginsShowIngameNotifications.Name = "checkBoxPluginsShowIngameNotifications";
+            this.checkBoxPluginsShowIngameNotifications.Size = new System.Drawing.Size(236, 19);
+            this.checkBoxPluginsShowIngameNotifications.Style = MetroFramework.MetroColorStyle.Blue;
+            this.checkBoxPluginsShowIngameNotifications.StyleManager = null;
+            this.checkBoxPluginsShowIngameNotifications.TabIndex = 43;
+            this.checkBoxPluginsShowIngameNotifications.Text = "Plugins: Show ingame notifications";
+            this.checkBoxPluginsShowIngameNotifications.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.checkBoxPluginsShowIngameNotifications, "Show various plugins notifications in game\r\n(it appears on recordings/streams)");
+            this.checkBoxPluginsShowIngameNotifications.UseStyleColors = true;
+            this.checkBoxPluginsShowIngameNotifications.UseVisualStyleBackColor = true;
+            this.checkBoxPluginsShowIngameNotifications.CheckedChanged += new System.EventHandler(this.metroCheckBox1_CheckedChanged);
             // 
             // textBoxNotifyIfBigLogFile
             // 
@@ -1019,7 +1041,7 @@ namespace AxTools.Forms
             this.metroTabPage4.HorizontalScrollbarSize = 10;
             this.metroTabPage4.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage4.Name = "metroTabPage4";
-            this.metroTabPage4.Size = new System.Drawing.Size(557, 181);
+            this.metroTabPage4.Size = new System.Drawing.Size(557, 195);
             this.metroTabPage4.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage4.StyleManager = null;
             this.metroTabPage4.TabIndex = 3;
@@ -1137,7 +1159,7 @@ namespace AxTools.Forms
             this.metroTabPage2.HorizontalScrollbarSize = 10;
             this.metroTabPage2.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage2.Name = "metroTabPage2";
-            this.metroTabPage2.Size = new System.Drawing.Size(557, 181);
+            this.metroTabPage2.Size = new System.Drawing.Size(557, 195);
             this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage2.StyleManager = null;
             this.metroTabPage2.TabIndex = 1;
@@ -1167,7 +1189,7 @@ namespace AxTools.Forms
             this.metroTabPage7.HorizontalScrollbarSize = 10;
             this.metroTabPage7.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage7.Name = "metroTabPage7";
-            this.metroTabPage7.Size = new System.Drawing.Size(557, 181);
+            this.metroTabPage7.Size = new System.Drawing.Size(557, 195);
             this.metroTabPage7.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage7.StyleManager = null;
             this.metroTabPage7.TabIndex = 6;
@@ -1385,14 +1407,14 @@ namespace AxTools.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(605, 270);
+            this.ClientSize = new System.Drawing.Size(605, 274);
             this.Controls.Add(this.linkTitle);
             this.Controls.Add(this.tabControl);
             this.DisplayHeader = false;
             this.Location = new System.Drawing.Point(0, 0);
             this.MaximizeBox = false;
             this.Name = "AppSettings";
-            this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
+            this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 10);
             this.Resizable = false;
             this.StyleManager = this.styleManager;
             this.Text = "Settings";
@@ -1496,5 +1518,6 @@ namespace AxTools.Forms
         private MetroCheckBox checkBoxMinimizeToTray;
         private System.Windows.Forms.TextBox textBoxNotifyIfBigLogFile;
         private MetroLink linkTitle;
+        private MetroCheckBox checkBoxPluginsShowIngameNotifications;
     }
 }

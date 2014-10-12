@@ -86,6 +86,7 @@ namespace AxTools.Forms
             metroComboBoxStyle.SelectedIndex = (int)settings.StyleColor == 0 ? 0 : (int)settings.StyleColor - 1;
             tabControl.SelectedIndex = 0;
             checkBoxMinimizeToTray.Checked = settings.MinimizeToTray;
+            checkBoxPluginsShowIngameNotifications.Checked = settings.WoWPluginShowIngameNotifications;
 
             Icon = Resources.AppIcon;
             checkBox_AntiAFK.Checked = settings.WoWAntiKick;
@@ -592,6 +593,14 @@ namespace AxTools.Forms
                 {
                     ErrorProviderExt.SetError(textBoxNotifyIfBigLogFile, "Value must be a number bigger than 0", Color.Red);
                 }
+            }
+        }
+
+        private void metroCheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (isSettingsLoaded)
+            {
+                settings.WoWPluginShowIngameNotifications = checkBoxPluginsShowIngameNotifications.Checked;
             }
         }
     

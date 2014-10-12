@@ -363,26 +363,23 @@ namespace AxTools.Classes
         [JsonProperty(Order = 50, PropertyName = "WoWPluginShowIngameNotifications")]
         internal bool WoWPluginShowIngameNotifications = true;
 
-        [JsonProperty(Order = 51, PropertyName = "WoWPluginEnableCustom")]
-        internal bool WoWPluginEnableCustom = false;
-
         #endregion
 
         #region Pinger
 
-        [JsonProperty(Order = 52, PropertyName = "PingerServerID")]
+        [JsonProperty(Order = 51, PropertyName = "PingerServerID")]
         internal int PingerServerID = 1;
 
-        [JsonProperty(Order = 53, PropertyName = "PingerBadPing")]
+        [JsonProperty(Order = 52, PropertyName = "PingerBadPing")]
         internal int PingerBadPing = 125;
 
-        [JsonProperty(Order = 54, PropertyName = "PingerBadPacketLoss")]
+        [JsonProperty(Order = 53, PropertyName = "PingerBadPacketLoss")]
         internal int PingerBadPacketLoss = 5;
 
-        [JsonProperty(Order = 55, PropertyName = "PingerVeryBadPing")]
+        [JsonProperty(Order = 54, PropertyName = "PingerVeryBadPing")]
         internal int PingerVeryBadPing = 250;
 
-        [JsonProperty(Order = 56, PropertyName = "PingerVeryBadPacketLoss")]
+        [JsonProperty(Order = 55, PropertyName = "PingerVeryBadPacketLoss")]
         internal int PingerVeryBadPacketLoss = 10;
 
         #endregion

@@ -339,9 +339,6 @@ namespace AxTools.Classes
                                         case "WowPluginsShowIngameNotifications":
                                             settings.WoWPluginShowIngameNotifications = Convert.ToBoolean(strArray[1]);
                                             break;
-                                        case "EnableCustomPlugins":
-                                            settings.WoWPluginEnableCustom = Convert.ToBoolean(strArray[1]);
-                                            break;
                                     }
                                 }
                                 catch (Exception ex)

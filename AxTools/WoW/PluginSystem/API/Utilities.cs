@@ -37,7 +37,10 @@ namespace AxTools.WoW.PluginSystem.API
         /// <param name="color">Text color</param>
         public static void ShowIngameNotify(string text, string wowIcon, Color color)
         {
-            WoWDXInject.ShowOverlayText(text, wowIcon, color);
+            if (Settings.Instance.WoWPluginShowIngameNotifications)
+            {
+                WoWDXInject.ShowOverlayText(text, wowIcon, color);
+            }
         }
 
     }
