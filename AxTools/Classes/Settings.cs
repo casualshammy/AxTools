@@ -160,11 +160,11 @@ namespace AxTools.Classes
         [JsonProperty(Order = 8, PropertyName = "WoWWipeCreatureCache")]
         internal bool WoWWipeCreatureCache = false;
 
-        [JsonProperty(Order = 9, PropertyName = "WoWNotifyIfBigLogs")]
-        internal bool WoWNotifyIfBigLogs = false;
+        //[JsonProperty(Order = 9, PropertyName = "WoWNotifyIfBigLogs")]
+        //internal bool WoWNotifyIfBigLogs = false;
 
-        [JsonProperty(Order = 10, PropertyName = "WoWNotifyIfBigLogsSize")]
-        internal int WoWNotifyIfBigLogsSize = 500;
+        //[JsonProperty(Order = 10, PropertyName = "WoWNotifyIfBigLogsSize")]
+        //internal int WoWNotifyIfBigLogsSize = 500;
 
         [JsonProperty(Order = 11, PropertyName = "WoWCustomizeWindow")]
         internal bool WoWCustomizeWindow = false;

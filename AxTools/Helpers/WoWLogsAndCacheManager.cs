@@ -21,23 +21,6 @@ namespace AxTools.Helpers
 
         internal static void StartupCheck()
         {
-            if (Settings.Instance.WoWNotifyIfBigLogs && Directory.Exists(Settings.Instance.WoWDirectory + "\\Logs") && WowProcess.GetAllWowProcesses().Count == 0)
-            {
-                long directorySize = Utils.CalcDirectorySize(Settings.Instance.WoWDirectory + "\\Logs");
-                double logsFolserSizeInMegabytes = Math.Round((float)directorySize / 1024 / 1024, 3, MidpointRounding.ToEven);
-                Log.Print("[WoW logs watcher] Log directory size: " + logsFolserSizeInMegabytes + " MB");
-                if (directorySize > Settings.Instance.WoWNotifyIfBigLogsSize * 1024 * 1024)
-                {
-                    DirectoryInfo rootDir = new DirectoryInfo(Settings.Instance.WoWDirectory + "\\Logs").Root;
-                    DriveInfo drive = DriveInfo.GetDrives().FirstOrDefault(i => i.RootDirectory.FullName == rootDir.FullName);
-                    if (drive != null)
-                    {
-                        double freeSpace = Math.Round((float)drive.TotalFreeSpace / 1024 / 1024, 3, MidpointRounding.ToEven);
-                        MainForm.Instance.ShowNotifyIconMessage("Log directory is too large!", string.Format("Logs folder size: {0} MB\r\nDisk free space: {1} MB", logsFolserSizeInMegabytes, freeSpace), ToolTipIcon.Warning);
-                        Utils.PlaySystemNotificationAsync();
-                    }
-                }
-            }
             DeleteCreatureCache();
         }
 

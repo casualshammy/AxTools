@@ -29,7 +29,6 @@ namespace AxTools.Forms
         private void InitializeComponent()
         {
             this.checkBox_AntiAFK = new MetroFramework.Controls.MetroCheckBox();
-            this.checkBoxNotifyIfBigLogFile = new MetroFramework.Controls.MetroCheckBox();
             this.textBoxVentriloPath = new System.Windows.Forms.TextBox();
             this.buttonVentriloPath = new MetroFramework.Controls.MetroButton();
             this.CheckBoxStartAxToolsWithWindows = new MetroFramework.Controls.MetroCheckBox();
@@ -80,7 +79,6 @@ namespace AxTools.Forms
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
             this.checkBoxPluginsShowIngameNotifications = new MetroFramework.Controls.MetroCheckBox();
-            this.textBoxNotifyIfBigLogFile = new System.Windows.Forms.TextBox();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
             this.metroComboBoxBackupCompressionLevel = new MetroFramework.Controls.MetroComboBox();
             this.styleManager = new MetroFramework.Components.MetroStyleManager();
@@ -133,24 +131,6 @@ namespace AxTools.Forms
             this.checkBox_AntiAFK.UseStyleColors = true;
             this.checkBox_AntiAFK.UseVisualStyleBackColor = true;
             this.checkBox_AntiAFK.CheckedChanged += new System.EventHandler(this.CheckBox1CheckedChanged);
-            // 
-            // checkBoxNotifyIfBigLogFile
-            // 
-            this.checkBoxNotifyIfBigLogFile.AutoSize = true;
-            this.checkBoxNotifyIfBigLogFile.CustomBackground = false;
-            this.checkBoxNotifyIfBigLogFile.CustomForeColor = false;
-            this.checkBoxNotifyIfBigLogFile.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.checkBoxNotifyIfBigLogFile.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxNotifyIfBigLogFile.Location = new System.Drawing.Point(3, 40);
-            this.checkBoxNotifyIfBigLogFile.Name = "checkBoxNotifyIfBigLogFile";
-            this.checkBoxNotifyIfBigLogFile.Size = new System.Drawing.Size(433, 19);
-            this.checkBoxNotifyIfBigLogFile.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxNotifyIfBigLogFile.StyleManager = null;
-            this.checkBoxNotifyIfBigLogFile.TabIndex = 18;
-            this.checkBoxNotifyIfBigLogFile.Text = "Display a notification if WoW log folder size exceeds                  MB";
-            this.checkBoxNotifyIfBigLogFile.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.checkBoxNotifyIfBigLogFile.UseStyleColors = true;
-            this.checkBoxNotifyIfBigLogFile.UseVisualStyleBackColor = true;
             // 
             // textBoxVentriloPath
             // 
@@ -967,9 +947,7 @@ namespace AxTools.Forms
             // metroTabPage3
             // 
             this.metroTabPage3.Controls.Add(this.checkBoxPluginsShowIngameNotifications);
-            this.metroTabPage3.Controls.Add(this.textBoxNotifyIfBigLogFile);
             this.metroTabPage3.Controls.Add(this.CheckBox3);
-            this.metroTabPage3.Controls.Add(this.checkBoxNotifyIfBigLogFile);
             this.metroTabPage3.Controls.Add(this.GroupBox2);
             this.metroTabPage3.Controls.Add(this.CheckBox6);
             this.metroTabPage3.Controls.Add(this.CheckBox7);
@@ -1000,7 +978,7 @@ namespace AxTools.Forms
             this.checkBoxPluginsShowIngameNotifications.CustomForeColor = false;
             this.checkBoxPluginsShowIngameNotifications.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxPluginsShowIngameNotifications.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxPluginsShowIngameNotifications.Location = new System.Drawing.Point(3, 90);
+            this.checkBoxPluginsShowIngameNotifications.Location = new System.Drawing.Point(3, 40);
             this.checkBoxPluginsShowIngameNotifications.Name = "checkBoxPluginsShowIngameNotifications";
             this.checkBoxPluginsShowIngameNotifications.Size = new System.Drawing.Size(236, 19);
             this.checkBoxPluginsShowIngameNotifications.Style = MetroFramework.MetroColorStyle.Blue;
@@ -1012,15 +990,6 @@ namespace AxTools.Forms
             this.checkBoxPluginsShowIngameNotifications.UseStyleColors = true;
             this.checkBoxPluginsShowIngameNotifications.UseVisualStyleBackColor = true;
             this.checkBoxPluginsShowIngameNotifications.CheckedChanged += new System.EventHandler(this.metroCheckBox1_CheckedChanged);
-            // 
-            // textBoxNotifyIfBigLogFile
-            // 
-            this.textBoxNotifyIfBigLogFile.Location = new System.Drawing.Point(349, 40);
-            this.textBoxNotifyIfBigLogFile.Name = "textBoxNotifyIfBigLogFile";
-            this.textBoxNotifyIfBigLogFile.Size = new System.Drawing.Size(58, 20);
-            this.textBoxNotifyIfBigLogFile.TabIndex = 6;
-            this.textBoxNotifyIfBigLogFile.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxNotifyIfBigLogFile.TextChanged += new System.EventHandler(this.textBoxNotifyIfBigLogFile_TextChanged);
             // 
             // metroTabPage4
             // 
@@ -1442,7 +1411,6 @@ namespace AxTools.Forms
 
         }
         private MetroCheckBox checkBox_AntiAFK;
-        private MetroCheckBox checkBoxNotifyIfBigLogFile;
         private System.Windows.Forms.TextBox textBoxVentriloPath;
         private MetroButton buttonVentriloPath;
         private MetroCheckBox CheckBoxStartAxToolsWithWindows;
@@ -1516,7 +1484,6 @@ namespace AxTools.Forms
         private MetroLabel metroLabel14;
         private MetroLabel metroLabel13;
         private MetroCheckBox checkBoxMinimizeToTray;
-        private System.Windows.Forms.TextBox textBoxNotifyIfBigLogFile;
         private MetroLink linkTitle;
         private MetroCheckBox checkBoxPluginsShowIngameNotifications;
     }

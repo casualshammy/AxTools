@@ -26,7 +26,6 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             CheckBoxStartAxToolsWithWindows.CheckedChanged += CheckBox9CheckedChanged;
-            checkBoxNotifyIfBigLogFile.CheckedChanged += CheckBox5CheckedChanged;
             CheckBox7.CheckedChanged += CheckBox7CheckedChanged;
             CheckBox6.CheckedChanged += CheckBox6CheckedChanged;
             TextBox7.TextChanged += TextBox7TextChanged;
@@ -90,8 +89,6 @@ namespace AxTools.Forms
 
             Icon = Resources.AppIcon;
             checkBox_AntiAFK.Checked = settings.WoWAntiKick;
-            checkBoxNotifyIfBigLogFile.Checked = settings.WoWNotifyIfBigLogs;
-            textBoxNotifyIfBigLogFile.Text = settings.WoWNotifyIfBigLogsSize.ToString();
             CheckBox7.Checked = settings.WoWCustomWindowNoBorder;
             CheckBox6.Checked = settings.WoWCustomizeWindow;
             foreach (Control i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
@@ -117,7 +114,6 @@ namespace AxTools.Forms
                 Log.Print("Error occured then trying to open registry key [SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run]: " + ex.Message);
             }
             //tooltips
-            toolTip.SetToolTip(checkBoxNotifyIfBigLogFile, "Displays a notification on AxTools startup\r\nif WoW logs folder's size exceeds X Megabytes");
             toolTip.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
             isSettingsLoaded = true;
         }
@@ -168,14 +164,6 @@ namespace AxTools.Forms
                         Log.Print("app_sett.CheckBox9.CheckedChanged_2: " + ex.Message, true);
                     }
                 }
-            }
-        }
-
-        private void CheckBox5CheckedChanged(Object sender, EventArgs e)
-        {
-            if (isSettingsLoaded)
-            {
-                settings.WoWNotifyIfBigLogs = checkBoxNotifyIfBigLogFile.Checked;
             }
         }
 
@@ -576,23 +564,6 @@ namespace AxTools.Forms
             if (isSettingsLoaded)
             {
                 settings.MinimizeToTray = checkBoxMinimizeToTray.Checked;
-            }
-        }
-
-        private void textBoxNotifyIfBigLogFile_TextChanged(object sender, EventArgs e)
-        {
-            if (isSettingsLoaded)
-            {
-                int parsedValue;
-                if (int.TryParse(textBoxNotifyIfBigLogFile.Text, out parsedValue) && parsedValue > 0)
-                {
-                    ErrorProviderExt.ClearError(textBoxNotifyIfBigLogFile);
-                    settings.WoWNotifyIfBigLogsSize = parsedValue;
-                }
-                else
-                {
-                    ErrorProviderExt.SetError(textBoxNotifyIfBigLogFile, "Value must be a number bigger than 0", Color.Red);
-                }
             }
         }
 
