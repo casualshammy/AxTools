@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
+using System.Windows.Forms;
 using AxTools.Classes;
+using Newtonsoft.Json;
 
 namespace AxTools.WoW.Management.ObjectManager
 {
@@ -26,6 +30,45 @@ namespace AxTools.WoW.Management.ObjectManager
         }
 
         internal static readonly Dictionary<ulong, string> Names = new Dictionary<ulong, string>();
+
+        //static WowPlayer()
+        //{
+        //    // todo
+        //    if (Settings.Instance.UserID == "Axio-5GDMJHD20R")
+        //    {
+        //        Stopwatch stopwatch = Stopwatch.StartNew();
+        //        if (File.Exists(Globals.CfgPath + "\\WoWNames.json"))
+        //        {
+        //            string rawText = File.ReadAllText(Globals.CfgPath + "\\WoWNames.json", Encoding.UTF8);
+        //            Names = JsonConvert.DeserializeObject<Dictionary<ulong, string>>(rawText);
+        //            Log.Print("WowPlayer names cache loading finished, loaded " + Names.Count + " entries, this took " + stopwatch.ElapsedMilliseconds + "ms");
+        //        }
+        //        Application.ApplicationExit += ApplicationOnApplicationExit;
+        //    }
+        //}
+
+        //private static void ApplicationOnApplicationExit(object sender, EventArgs eventArgs)
+        //{
+        //    Application.ApplicationExit -= ApplicationOnApplicationExit;
+        //    try
+        //    {
+        //        Stopwatch stopwatch = Stopwatch.StartNew();
+        //        string json = JsonConvert.SerializeObject(Names, Formatting.Indented);
+        //        try
+        //        {
+        //            File.WriteAllText(Globals.CfgPath + "\\WoWNames.json", json, Encoding.UTF8);
+        //            Log.Print("WowPlayer names cache is saved, total " + Names.Count + " entries, this took " + stopwatch.ElapsedMilliseconds + "ms");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Log.Print("WowPlayer names cache writing error: " + ex.Message, true);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log.Print("WowPlayer names cache serialization error: " + ex.Message, true);
+        //    }
+        //}
 
         internal readonly IntPtr Address;
 

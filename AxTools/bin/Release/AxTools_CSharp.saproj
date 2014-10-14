@@ -90,6 +90,13 @@
                                 <Namespace>AxTools.WoW.PluginSystem.API</Namespace>
                                 <Name>Utilities</Name>
                             </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>Class</ItemType>
+                                <Namespace>AxTools.Classes</Namespace>
+                                <Name>Settings</Name>
+                            </Token>
                         </Exclusion>
                     </Pruning>
                     <Obfuscation Obfuscate="1">
@@ -392,6 +399,10 @@
                         <Exclusion />
                     </Obfuscation>
                 </Merging>
+            </Assembly>
+            <Assembly AssemblyName="Newtonsoft.Json, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+                <Merging />
+                <Embedding />
             </Assembly>
         </Assemblies>
     </Configuration>

@@ -29,10 +29,11 @@ namespace AxTools.Classes
                     {
                         if (_instance == null)
                         {
-                            string settingsFile = Globals.CfgPath + "//settings.json";
+                            string settingsFile = Globals.CfgPath + "\\settings.json";
                             if (File.Exists(settingsFile))
                             {
-                                _instance = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(settingsFile, Encoding.UTF8));
+                                string rawText = File.ReadAllText(settingsFile, Encoding.UTF8);
+                                _instance = JsonConvert.DeserializeObject<Settings>(rawText);
                                 Log.Print("Settings file is loaded");
                             }
                             else
@@ -122,7 +123,7 @@ namespace AxTools.Classes
             }
             string json = sb.ToString();
             Utils.CheckCreateDir();
-            File.WriteAllText(Globals.CfgPath + "//settings.json", json, Encoding.UTF8);
+            File.WriteAllText(Globals.CfgPath + "\\settings.json", json, Encoding.UTF8);
             Log.Print("Settings file has been updated, time: " + stopwatch.ElapsedMilliseconds + "ms");
         }
 
@@ -476,7 +477,6 @@ namespace AxTools.Classes
                 {
                     if (regVersion != null && regVersion.GetValue("InstallPath") != null)
                     {
-                        // D:\World of Warcraft\
                         string raw = regVersion.GetValue("InstallPath").ToString();
                         return raw.Replace("\"", String.Empty).Replace("World of Warcraft\\", "World of Warcraft");
                     }
