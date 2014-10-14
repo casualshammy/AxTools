@@ -29,22 +29,29 @@ namespace WoWGold_Notifier
         private readonly Action navigate;
         private readonly Action printTime;
         private readonly AutoResetEvent are;
+        private DateTime lastReportedAboutError = DateTime.UtcNow;
         private readonly string logFilePath = Application.StartupPath + "\\log.txt";
-        private readonly string site = "https://supply.elfmoney.ru/";
+        private readonly string site = "https://supply.elfmoney.ru";
         // ReSharper disable InconsistentNaming
         private static readonly int FEATURE_DISABLE_NAVIGATION_SOUNDS = 21;
         private static readonly int SET_FEATURE_ON_PROCESS = 0x00000002;
         // ReSharper restore InconsistentNaming
+        private readonly Stopwatch stopwatch;
 
         public MainForm()
         {
             InitializeComponent();
             DisableIEClickSounds();
+            stopwatch = new Stopwatch();
             WebRequest.DefaultWebProxy = null;
             webBrowser1.DocumentCompleted += WebBrowserOnDocumentCompleted;
             are = new AutoResetEvent(true);
             navigate = () => webBrowser1.Navigate(site);
-            printTime = () => { label1.Text = String.Format("Last updated: {0:HH:mm:ss}", DateTime.Now); };
+            printTime = () =>
+            {
+                label1.Text = String.Format("Last updated: {0:HH:mm:ss.fff}", DateTime.Now);
+                labelPerformance.Text = "Performance: " + stopwatch.ElapsedMilliseconds + "ms";
+            };
             notifyIcon = new NotifyIcon {Icon = Icon.FromHandle(Resources.coins.GetHicon()), Visible = true, Text = "WoWGold Notifier"};
             timer.Elapsed += TimerOnElapsed;
             timer.Start();
@@ -73,6 +80,7 @@ namespace WoWGold_Notifier
                                     {
                                         string href = btn.Descendants("a").ToArray()[0].Attributes["href"].Value;
                                         webBrowser1.Navigate(site + href);
+                                        Log("Trying to bind: " + site + href);
                                         SendSMS(server + " - " + amount);
                                     }
                                 }
@@ -111,7 +119,11 @@ namespace WoWGold_Notifier
             if (threadCount > 50)
             {
                 Log("WoWGold.Ru: Something went wrong! (>50 threads)");
-                SendSMS("WoWGold.Ru: Something went wrong! (>50 threads)");
+                if ((DateTime.UtcNow - lastReportedAboutError).TotalSeconds > 60)
+                {
+                    SendSMS("WoWGold.Ru: Something went wrong! (>50 threads)");
+                    lastReportedAboutError = DateTime.UtcNow;
+                }
             }
             lock (_lock)
             {
@@ -120,6 +132,8 @@ namespace WoWGold_Notifier
                     Log("WoWGold.Ru: Something went wrong!");
                     //SendSMS("WoWGold.Ru: Something went wrong!");
                 }
+                //ProxyEnabled = !ProxyEnabled;
+                stopwatch.Restart();
                 webBrowser1.Invoke(navigate);
             }
         }
@@ -167,6 +181,6 @@ namespace WoWGold_Notifier
             timer.Stop();
             webBrowser1.Invoke(navigate);
         }
-    
+        
     }
 }

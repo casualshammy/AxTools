@@ -39,6 +39,7 @@ namespace WoWGold_Notifier
             this.labelThreads = new System.Windows.Forms.Label();
             this.buttonLog = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.labelPerformance = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // webBrowser1
@@ -63,7 +64,7 @@ namespace WoWGold_Notifier
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(993, 9);
+            this.label1.Location = new System.Drawing.Point(993, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(117, 13);
             this.label1.TabIndex = 2;
@@ -72,7 +73,7 @@ namespace WoWGold_Notifier
             // labelThreads
             // 
             this.labelThreads.AutoSize = true;
-            this.labelThreads.Location = new System.Drawing.Point(1025, 22);
+            this.labelThreads.Location = new System.Drawing.Point(1021, 17);
             this.labelThreads.Name = "labelThreads";
             this.labelThreads.Size = new System.Drawing.Size(58, 13);
             this.labelThreads.TabIndex = 3;
@@ -98,9 +99,19 @@ namespace WoWGold_Notifier
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // labelPerformance
+            // 
+            this.labelPerformance.AutoSize = true;
+            this.labelPerformance.Location = new System.Drawing.Point(993, 30);
+            this.labelPerformance.Name = "labelPerformance";
+            this.labelPerformance.Size = new System.Drawing.Size(110, 13);
+            this.labelPerformance.TabIndex = 6;
+            this.labelPerformance.Text = "Performance: 1000ms";
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(1458, 320);
+            this.Controls.Add(this.labelPerformance);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.buttonLog);
             this.Controls.Add(this.labelThreads);
@@ -123,6 +134,7 @@ namespace WoWGold_Notifier
         private Label labelThreads;
         private Button buttonLog;
         private Button button1;
+        private Label labelPerformance;
     }
 }
 
