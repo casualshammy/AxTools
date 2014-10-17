@@ -9,32 +9,32 @@ namespace AxTools.WoW.Management.ObjectManager
     /// </summary>
     public sealed class WowObject
     {
-        internal static readonly Dictionary<ulong, string> Names = new Dictionary<ulong, string>();
+        internal static readonly Dictionary<UInt128, string> Names = new Dictionary<UInt128, string>();
 
-        private ulong mGUID;
+        private UInt128 mGUID;
 
-        internal ulong GUID
+        internal UInt128 GUID
         {
             get
             {
-                if (mGUID == 0)
+                if (mGUID == UInt128.Zero)
                 {
-                    mGUID = WoWManager.WoWProcess.Memory.Read<ulong>(Address + WowBuildInfo.ObjectGUID);
+                    mGUID = WoWManager.WoWProcess.Memory.Read<UInt128>(Address + WowBuildInfo.ObjectGUID);
                 }
                 return mGUID;
             }
         }
 
-        private ulong mOwnerGUID;
+        private UInt128 mOwnerGUID;
 
-        internal ulong OwnerGUID
+        internal UInt128 OwnerGUID
         {
             get
             {
-                if (mOwnerGUID == 0)
+                if (mOwnerGUID == UInt128.Zero)
                 {
                     IntPtr tempOwner = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfo.GameObjectOwnerGUIDBase);
-                    mOwnerGUID = WoWManager.WoWProcess.Memory.Read<ulong>(tempOwner + WowBuildInfo.GameObjectOwnerGUIDOffset);
+                    mOwnerGUID = WoWManager.WoWProcess.Memory.Read<UInt128>(tempOwner + WowBuildInfo.GameObjectOwnerGUIDOffset);
                 }
                 return mOwnerGUID;
             }
@@ -86,22 +86,21 @@ namespace AxTools.WoW.Management.ObjectManager
             {
                 if (mEntryID == 0)
                 {
-                    IntPtr descriptors = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + 0x4);
+                    IntPtr descriptors = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfo.GameObjectOwnerGUIDBase);
                     mEntryID = WoWManager.WoWProcess.Memory.Read<uint>(descriptors + WowBuildInfo.GameObjectEntryID);
                 }
                 return mEntryID;
             }
         }
 
-        private uint mAnimation;
-
-        internal uint Animation
+        private byte mAnimation;
+        internal byte Animation
         {
             get
             {
                 if (mAnimation == 0)
                 {
-                    mAnimation = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfo.GameObjectAnimation);
+                    mAnimation = WoWManager.WoWProcess.Memory.Read<byte>(Address + WowBuildInfo.GameObjectAnimation);
                 }
                 return mAnimation;
             }

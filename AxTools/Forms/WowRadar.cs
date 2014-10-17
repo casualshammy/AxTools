@@ -50,7 +50,7 @@ namespace AxTools.Forms
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private readonly List<WowPlayer> wowPlayers = new List<WowPlayer>();
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
-        private readonly Dictionary<ulong, Point> objectsPointsInRadarCoords = new Dictionary<ulong, Point>();
+        private readonly Dictionary<UInt128, Point> objectsPointsInRadarCoords = new Dictionary<UInt128, Point>();
 
         private WoWPlayerMe localPlayer;
         private WowPlayer[] friends;
@@ -149,12 +149,12 @@ namespace AxTools.Forms
                         foreach (WowObject i in objects.Where(i => i.Location.Distance(localPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
                         {
                             WoWDXInject.Interact(i.GUID);
-                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, i.Name, i.GUID), false, false);
+                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, i.Name, i.GUID), false, false);
                         }
                         foreach (WowNpc i in npcs.Where(i => i.Location.Distance(localPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
                         {
                             WoWDXInject.Interact(i.GUID);
-                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3:X})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, i.Name, i.GUID), false, false);
+                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, i.Name, i.GUID), false, false);
                         }
                     }
                     bool soundAlarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);
@@ -609,7 +609,7 @@ namespace AxTools.Forms
 
         private void MeasureTooltip(Point mousePosition)
         {
-            foreach (KeyValuePair<ulong, Point> pair in objectsPointsInRadarCoords)
+            foreach (KeyValuePair<UInt128, Point> pair in objectsPointsInRadarCoords)
             {
                 if (Math.Abs(pair.Value.X - mousePosition.X) < 4 && Math.Abs(pair.Value.Y - mousePosition.Y) < 4)
                 {
@@ -697,7 +697,7 @@ namespace AxTools.Forms
 
         private void PictureBoxMainMouseClick(object sender, MouseEventArgs e)
         {
-            foreach (KeyValuePair<ulong, Point> pair in objectsPointsInRadarCoords)
+            foreach (KeyValuePair<UInt128, Point> pair in objectsPointsInRadarCoords)
             {
                 if (Math.Abs(pair.Value.X - e.X) < 4 && Math.Abs(pair.Value.Y - e.Y) < 4)
                 {

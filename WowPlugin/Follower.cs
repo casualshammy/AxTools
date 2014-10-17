@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
@@ -102,7 +103,7 @@ namespace TestPlugin
 
         private List<WowPlayer> players;
         private WoWPlayerMe locaPlayer;
-        private ulong guid;
+        private UInt128 guid;
 
     }
 }

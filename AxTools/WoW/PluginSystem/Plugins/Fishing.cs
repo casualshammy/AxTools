@@ -97,7 +97,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         break;
                     }
                     bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == localPlayer.GUID);
-                    if (bobber != null && bobber.Animation == 4456449)
+                    if (bobber != null && bobber.Animation == 1) //4456449
                     {
                         Log.Print(String.Format("{0}:{1} :: [{2}] Got bit!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
                         Thread.Sleep(250);

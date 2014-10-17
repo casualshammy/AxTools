@@ -82,7 +82,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 foreach (WowObject i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(localPlayer.Location) <= 10))
                 {
                     WoWDXInject.Interact(i.GUID);
-                    Log.Print(string.Format("{0}:{1} :: [{2}] Interacting with {3} (0x{4:X})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, i.Name, i.GUID), false, false);
+                    Log.Print(string.Format("{0}:{1} :: [{2}] Interacting with {3} ({4})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, i.Name, i.GUID), false, false);
                 }
             }
 

@@ -14,7 +14,7 @@ namespace AxTools.WoW.Management.ObjectManager
             Address = pAddress;
         }
 
-        internal static readonly Dictionary<ulong, string> Names = new Dictionary<ulong, string>();
+        internal static readonly Dictionary<UInt128, string> Names = new Dictionary<UInt128, string>();
 
         internal IntPtr Address;
 
@@ -31,14 +31,14 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
-        private ulong mGUID;
-        internal ulong GUID
+        private UInt128 mGUID;
+        internal UInt128 GUID
         {
             get
             {
-                if (mGUID == 0)
+                if (mGUID == UInt128.Zero)
                 {
-                    mGUID = WoWManager.WoWProcess.Memory.Read<ulong>(Address + WowBuildInfo.ObjectGUID);
+                    mGUID = WoWManager.WoWProcess.Memory.Read<UInt128>(Address + WowBuildInfo.ObjectGUID);
                 }
                 return mGUID;
             }

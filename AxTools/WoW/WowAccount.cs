@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using AxTools.Classes;
+﻿using AxTools.Classes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;

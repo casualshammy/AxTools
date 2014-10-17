@@ -2,21 +2,22 @@
 
 namespace AxTools.WoW.Management.ObjectManager
 {
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Explicit)]
     internal struct WowPlayerInfo
     {
-        internal readonly ulong TargetGUID; // 0x58
-        private readonly uint unk1, unk2, unk3, unk4, unk5, unk6;
-        private readonly byte unkb1;
-        internal readonly byte Class; // 0x72
-        private readonly short unks1;
-        private readonly uint unk8, unk9;
-        internal readonly uint Health; // 0x84
-        private readonly uint unk10, unk11, unk12, unk13, unk14;
-        internal readonly uint HealthMax; // 0x9C
-        private readonly uint unk21, unk22, unk23, unk24, unk25, unk26, unk27, unk28, unk29, unk30, unk31, unk32, unk33, unk34, unk35;
-        internal readonly uint Level; // 0xDC
-        private readonly uint unk41;
-        internal readonly uint FactionTemplate; // 0xE4
+        [FieldOffset(0xA0)]
+        internal readonly UInt128 TargetGUID;
+        [FieldOffset(0xEC)]
+        internal readonly uint Health;
+        [FieldOffset(0xF0)]
+        internal readonly uint Power;
+        [FieldOffset(0x108)]
+        internal readonly uint HealthMax;
+        [FieldOffset(0x10C)]
+        internal readonly uint PowerMax;
+        [FieldOffset(0x154)]
+        internal readonly uint Level;
+        [FieldOffset(0x15C)]
+        internal readonly uint FactionTemplate;
     }
 }

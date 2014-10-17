@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
+using AxTools.Classes;
 
 namespace AxTools.WoW
 {
@@ -67,25 +70,48 @@ namespace AxTools.WoW
             }
         }
 
+        private readonly object isValidBuildLocker = new object();
         private int isValidBuild;
         internal bool IsValidBuild
         {
             get
             {
-                if (Memory == null) return false;
-                if (isValidBuild == -1)
+                if (Memory != null)
                 {
-                    try
+                    if (isValidBuild == -1)
                     {
-                        uint variable = Memory.Read<uint>(Memory.ImageBase + WowBuildInfo.WowBuildAddress);
-                        isValidBuild = WowBuildInfo.WowBuild == variable ? 1 : 0;
+                        lock (isValidBuildLocker)
+                        {
+                            if (isValidBuild == -1)
+                            {
+                                try
+                                {
+                                    Stopwatch stopwatch = Stopwatch.StartNew();
+                                    Log.Print(String.Format("{0}:{1} :: [WoW hook] Reference hash: {2}", Process.ProcessName, ProcessID, BitConverter.ToString(WowBuildInfo.WoWHash)));
+                                    using (SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider())
+                                    {
+                                        using (FileStream fileStream = File.Open(Process.Modules[0].FileName, FileMode.Open, FileAccess.Read))
+                                        {
+                                            byte[] hash = provider.ComputeHash(fileStream);
+                                            isValidBuild = hash.SequenceEqual(WowBuildInfo.WoWHash) ? 1 : 0;
+                                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Actual hash:    {2}", Process.ProcessName, ProcessID, BitConverter.ToString(hash)));
+                                        }
+                                    }
+                                    Log.Print(String.Format("{0}:{1} :: [WoW hook] Hash is computed, took {2}ms", Process.ProcessName, ProcessID, stopwatch.ElapsedMilliseconds));
+
+                                    //uint variable = Memory.Read<uint>(Memory.ImageBase + WowBuildInfo.WowBuildAddress);
+                                    //isValidBuild = WowBuildInfo.WowBuild == variable ? 1 : 0;
+                                }
+                                catch
+                                {
+                                    isValidBuild = 0;
+                                }
+                            }
+                        }
                     }
-                    catch
-                    {
-                        isValidBuild = 0;
-                    }
+                    return isValidBuild == 1;
                 }
-                return isValidBuild == 1;
+                return false;
             }
         }
 

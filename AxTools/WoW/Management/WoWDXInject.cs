@@ -402,10 +402,10 @@ namespace AxTools.WoW.Management
             }
         }
 
-        internal static void MoveTo(WowPoint point)
+        internal static unsafe void MoveTo(WowPoint point)
         {
             IntPtr ctmPoint = _wowProcess.Memory.AllocateMemory(0x4 * 3);
-            IntPtr ctmGUID = _wowProcess.Memory.AllocateMemory(0x4 * 2);
+            IntPtr ctmGUID = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
             _wowProcess.Memory.Write(ctmPoint, point.X);
             _wowProcess.Memory.Write(ctmPoint + 0x4, point.Y);
             _wowProcess.Memory.Write(ctmPoint + 0x8, point.Z);
@@ -438,20 +438,17 @@ namespace AxTools.WoW.Management
             }
         }
 
-        internal static void TargetUnit(ulong guid)
+        internal static unsafe void TargetUnit(UInt128 guid)
         {
             lock (FASMLock)
             {
-                uint dwHiWord = (uint)(guid >> 32);
-                uint dwLoWord = (uint)guid;
-                string[] asm = {
-                    "mov eax, " + dwHiWord,
-                    "push eax",
-                    "mov eax, " + dwLoWord,
-                    "push eax",
-                    "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.SelectTarget),
-                    "call eax",
-                    "add esp, 0x8",
+                IntPtr address = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
+                _wowProcess.Memory.Write(address, guid);
+                string[] asm =
+                {
+                    "push " + address,
+                    "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.TargetUnit),
+                    "add esp, 0x4",
                     "retn"
                 };
                 try
@@ -466,20 +463,17 @@ namespace AxTools.WoW.Management
             }
         }
 
-        internal static void Interact(ulong guid)
+        internal static unsafe void Interact(UInt128 guid)
         {
             lock (FASMLock)
             {
-                uint dwHiWord = (uint)(guid >> 32);
-                uint dwLoWord = (uint)guid;
-                string[] asm = {
-                    "mov eax, " + dwHiWord,
-                    "push eax",
-                    "mov eax, " + dwLoWord,
-                    "push eax",
-                    "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.Interact),
-                    "call eax",
-                    "add esp, 0x8",
+                IntPtr address = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
+                _wowProcess.Memory.Write(address, guid);
+                string[] asm =
+                {
+                    "push " + address,
+                    "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.Interact),
+                    "add esp, 0x4",
                     "retn"
                 };
                 try

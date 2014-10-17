@@ -15,7 +15,7 @@ namespace AxTools.WoW.PluginSystem.API
             WoWDXInject.Interact(wowNpc.GUID);
         }
 
-        public static void Interact(ulong guid)
+        public static void Interact(UInt128 guid)
         {
             WoWDXInject.Interact(guid);
         }

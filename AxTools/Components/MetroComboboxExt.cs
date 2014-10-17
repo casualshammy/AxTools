@@ -1,9 +1,8 @@
-﻿using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Text;
-using System.Windows.Forms;
-using MetroFramework.Controls;
+﻿using MetroFramework.Controls;
 using MetroFramework.Drawing;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace AxTools.Components
 {

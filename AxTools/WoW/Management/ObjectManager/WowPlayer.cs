@@ -1,11 +1,8 @@
-﻿using System;
+﻿using AxTools.Classes;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
-using AxTools.Classes;
-using Newtonsoft.Json;
 
 namespace AxTools.WoW.Management.ObjectManager
 {
@@ -14,26 +11,39 @@ namespace AxTools.WoW.Management.ObjectManager
     /// </summary>
     public class WowPlayer
     {
-        internal WowPlayer(IntPtr pAddress, ulong guid)
+        internal WowPlayer(IntPtr pAddress, UInt128 guid)
         {
             Address = pAddress;
             MGUID = guid;
             IntPtr desc = WoWManager.WoWProcess.Memory.Read<IntPtr>(pAddress + WowBuildInfo.UnitDescriptors);
-            WowPlayerInfo info = WoWManager.WoWProcess.Memory.Read<WowPlayerInfo>(desc + WowBuildInfo.UnitTargetGUID);
+            WowPlayerInfo info = WoWManager.WoWProcess.Memory.Read<WowPlayerInfo>(desc);
             TargetGUID = info.TargetGUID;
             Health = info.Health;
             HealthMax = info.HealthMax;
             Level = info.Level;
             IsAlliance = info.FactionTemplate == 0x89b || info.FactionTemplate == 0x65d || info.FactionTemplate == 0x73 || info.FactionTemplate == 4 || info.FactionTemplate == 3 || info.FactionTemplate == 1 ||
                          info.FactionTemplate == 2401;
-            Class = (WowPlayerClass) info.Class;
         }
 
-        internal static readonly Dictionary<ulong, string> Names = new Dictionary<ulong, string>();
+        internal WowPlayer(IntPtr pAddress)
+        {
+            Address = pAddress;
+            IntPtr desc = WoWManager.WoWProcess.Memory.Read<IntPtr>(pAddress + WowBuildInfo.UnitDescriptors);
+            WowPlayerInfo info = WoWManager.WoWProcess.Memory.Read<WowPlayerInfo>(desc);
+            TargetGUID = info.TargetGUID;
+            Health = info.Health;
+            HealthMax = info.HealthMax;
+            Level = info.Level;
+            IsAlliance = info.FactionTemplate == 0x89b || info.FactionTemplate == 0x65d || info.FactionTemplate == 0x73 || info.FactionTemplate == 4 || info.FactionTemplate == 3 || info.FactionTemplate == 1 ||
+                         info.FactionTemplate == 2401;
+        }
+
+        internal static readonly Dictionary<UInt128, string> Names = new Dictionary<UInt128, string>();
+        internal static readonly Dictionary<UInt128, WowPlayerClass> Classes = new Dictionary<UInt128, WowPlayerClass>();
 
         //static WowPlayer()
         //{
-        //    // todo
+        //    
         //    if (Settings.Instance.UserID == "Axio-5GDMJHD20R")
         //    {
         //        Stopwatch stopwatch = Stopwatch.StartNew();
@@ -75,7 +85,7 @@ namespace AxTools.WoW.Management.ObjectManager
         /// <summary>
         ///     The GUID of the object this unit is targeting.
         /// </summary>
-        public readonly ulong TargetGUID;
+        public readonly UInt128 TargetGUID;
 
         internal readonly bool IsAlliance;
 
@@ -97,19 +107,74 @@ namespace AxTools.WoW.Management.ObjectManager
         /// <summary>
         ///     Gets the class of the unit.
         /// </summary>
-        internal WowPlayerClass Class;
-
-        protected ulong MGUID;
-        public ulong GUID
+        internal WowPlayerClass Class
         {
             get
             {
-                if (MGUID == 0)
+                WowPlayerClass temp;
+                if (!Classes.TryGetValue(GUID, out temp))
                 {
-                    MGUID = WoWManager.WoWProcess.Memory.Read<ulong>(Address + WowBuildInfo.ObjectGUID);
+                    try
+                    {
+                        IntPtr unitCachePoiter = GetUnitCachePointer();
+                        if (unitCachePoiter != IntPtr.Zero)
+                        {
+                            // todo
+                            temp = (WowPlayerClass) WoWManager.WoWProcess.Memory.Read<uint>(unitCachePoiter + 120);
+                            if ((int) temp != 0)
+                            {
+                                Classes.Add(GUID, temp);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        return WowPlayerClass.War;
+                    }
+                }
+                return temp;
+            }
+        }
+
+        protected UInt128 MGUID;
+        public UInt128 GUID
+        {
+            get
+            {
+                if (MGUID == UInt128.Zero)
+                {
+                    MGUID = WoWManager.WoWProcess.Memory.Read<UInt128>(Address + WowBuildInfo.ObjectGUID);
                 }
                 return MGUID;
             }
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        internal struct UnitCacheEntry
+        {
+            [FieldOffset(16)]
+            internal readonly UInt128 GUID;
+            [FieldOffset(112)]
+            internal readonly uint Race;
+            [FieldOffset(120)]
+            internal readonly uint Class;
+        }
+
+        private IntPtr GetUnitCachePointer()
+        {
+            IntPtr next = WoWManager.WoWProcess.Memory.Read<IntPtr>((IntPtr)(WowBuildInfo.UnitNameCachePointer), true);
+            IntPtr ptr = next;
+            while (true)
+            {
+                UnitCacheEntry tempUnitCacheEntry = WoWManager.WoWProcess.Memory.Read<UnitCacheEntry>(ptr);
+                if (tempUnitCacheEntry.GUID == GUID)
+                {
+                    return ptr;
+                }
+                ptr = WoWManager.WoWProcess.Memory.Read<IntPtr>(ptr);
+                if (ptr == next) break;
+            }
+            return IntPtr.Zero;
         }
 
         internal string Name
@@ -121,37 +186,19 @@ namespace AxTools.WoW.Management.ObjectManager
                 {
                     try
                     {
-                        uint nameMask = WoWManager.WoWProcess.Memory.Read<uint>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfo.UnitNameCachePointer +
-                                                                    WowBuildInfo.UnitNameMaskOffset);
-                        uint nameBase = WoWManager.WoWProcess.Memory.Read<uint>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfo.UnitNameCachePointer +
-                                                                    WowBuildInfo.UnitNameBaseOffset);
-                        uint var4 = nameMask;
-                        uint var5 = nameBase;
-                        nameMask &= (uint) GUID;
-                        nameMask += nameMask*2;
-                        nameMask = (nameBase + (nameMask*4) + 4);
-                        nameMask = WoWManager.WoWProcess.Memory.Read<uint>((IntPtr) (nameMask + 4));
-                        while (WoWManager.WoWProcess.Memory.Read<uint>((IntPtr) nameMask) != (uint) GUID)
+                        IntPtr unitCachePoiter = GetUnitCachePointer();
+                        if (unitCachePoiter != IntPtr.Zero)
                         {
-                            nameBase = (uint) GUID;
-                            nameBase &= var4;
-                            nameBase += nameBase*2;
-                            nameBase = WoWManager.WoWProcess.Memory.Read<uint>((IntPtr) (var5 + (nameBase*4)));
-                            nameBase += nameMask;
-                            nameMask = WoWManager.WoWProcess.Memory.Read<uint>((IntPtr) (nameBase + 4));
-                        }
-                        byte[] nameBytes = WoWManager.WoWProcess.Memory.ReadBytes((IntPtr) (nameMask + WowBuildInfo.UnitNameStringOffset), 80);
-                        temp = Encoding.UTF8.GetString(nameBytes).Split('\0')[0];
-                        if (!string.IsNullOrWhiteSpace(temp))
-                        {
-                            Names.Add(GUID, temp);
-                        }
-                        else
-                        {
-                            Log.Print("Null name!", true);
+                            // todo
+                            byte[] name = WoWManager.WoWProcess.Memory.ReadBytes(unitCachePoiter + 33, 80);
+                            temp = Encoding.UTF8.GetString(name).Split('\0')[0];
+                            if (!string.IsNullOrWhiteSpace(temp))
+                            {
+                                Names.Add(GUID, temp);
+                            }
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         return string.Empty;
                     }
@@ -160,7 +207,6 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
-        // We don't use System.Nullable<> because it's for 40% slower
         private bool mLocationRead;
         private WowPoint mLocation;
         public WowPoint Location

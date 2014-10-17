@@ -153,9 +153,9 @@ namespace AxTools.WoW
             {
                 WowProcess process = (WowProcess)wowProcess;
                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Attaching...", process.ProcessName, process.ProcessID));
-                for (int i = 0; i < 120; i++)
+                for (int i = 0; i < 600; i++)
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                     if (process.MainWindowHandle != IntPtr.Zero)
                     {
                         if (Settings.Instance.WoWCustomizeWindow)
