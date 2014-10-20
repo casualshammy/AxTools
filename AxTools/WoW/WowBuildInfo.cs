@@ -18,7 +18,7 @@
 
         internal static readonly int LastHardwareAction = 0xC3061C; // CGGameUI::UpdatePlayerAFK / WRITE
         internal static readonly int IsInGame = 0xD9133E; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound)
-        internal static readonly int IsBattlegroundFinished = 0xDC3050; // Script_GetBattlefieldWinner (2)
+        internal static readonly int IsBattlegroundFinished = 0xDF0228; // Script_GetBattlefieldWinner (2)
         internal static readonly int PlayerName = 0xED3928; // ClientServices::GetCharacterName (or Script_UnitName/GetPlayerName)
         internal static readonly int PlayerRealm = 0xED3AD6; // Гордунни = D0 93 D0 BE D1 80 D0 B4 D1 83 D0 BD D0 BD D0 B8 // Черный Шрам = D0 A7 D0 B5 D1 80 D0 BD D1 8B D0 B9 20 D0 A8 D1 80 D0 B0 D0 BC
         internal static readonly int PlayerZoneID = 0xD91388; // CGGameUI::NewZoneFeedback (16) (or Script_GetRaidRosterInfo (101))
@@ -61,7 +61,7 @@
         internal static readonly int GameObjectOwnerGUIDBase = 0x4;
         internal static readonly int GameObjectOwnerGUIDOffset = 0x30;
         internal static readonly int GameObjectAnimation = 0x104;
-        internal static readonly int GameObjectEntryID = 0x28; // 0x24?
+        internal static readonly int GameObjectEntryID = 0x24;
         internal static readonly int GameObjectNameBase = 0x26C;
         internal static readonly int GameObjectNameOffset = 0xB4;
         internal static readonly int GameObjectLocation = 0x138;
@@ -78,9 +78,8 @@
         internal static readonly int UnitChannelingID = 0xF58; // Script_UnitChannelInfo //
         internal static readonly int UnitLocation = 0xA50;
         internal static readonly int UnitRotation = UnitLocation + 0x10;
-        internal static readonly int UnitNameMaskOffset = 0x024;
-        internal static readonly int UnitNameBaseOffset = 0x18;
-        internal static readonly int UnitNameStringOffset = 0x21;
+        internal static readonly int UnitNameCacheGUIDOffset = 0x10;
+        internal static readonly int UnitNameCacheNameOffset = 0x21;
 
         #endregion
 

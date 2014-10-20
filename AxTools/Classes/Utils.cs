@@ -185,27 +185,27 @@ namespace AxTools.Classes
                                             break;
                                         case "x":
                                         case "wow_wnd.pos.x":
-                                            settings.WoWCustomWindowLocation.X = Convert.ToInt32(strArray[1]);
+                                            settings.WoWCustomWindowRectangle.X = Convert.ToInt32(strArray[1]);
                                             break;
                                         case "y":
                                         case "wow_wnd.pos.y":
-                                            settings.WoWCustomWindowLocation.Y = Convert.ToInt32(strArray[1]);
+                                            settings.WoWCustomWindowRectangle.Y = Convert.ToInt32(strArray[1]);
                                             break;
                                         case "WowWindowLocation":
-                                            settings.WoWCustomWindowLocation.X = Convert.ToInt32(strArray[2].Substring(0, strArray[2].Length - 2));
-                                            settings.WoWCustomWindowLocation.Y = Convert.ToInt32(strArray[3].Substring(0, strArray[3].Length - 1));
+                                            settings.WoWCustomWindowRectangle.X = Convert.ToInt32(strArray[2].Substring(0, strArray[2].Length - 2));
+                                            settings.WoWCustomWindowRectangle.Y = Convert.ToInt32(strArray[3].Substring(0, strArray[3].Length - 1));
                                             break;
                                         case "cx":
                                         case "wow_wnd.width":
-                                            settings.WoWCustomWindowSize.X = Convert.ToUInt16(strArray[1]);
+                                            settings.WoWCustomWindowRectangle.Width = Convert.ToUInt16(strArray[1]);
                                             break;
                                         case "cy":
                                         case "wow_wnd.height":
-                                            settings.WoWCustomWindowSize.Y = Convert.ToUInt16(strArray[1]);
+                                            settings.WoWCustomWindowRectangle.Height = Convert.ToUInt16(strArray[1]);
                                             break;
                                         case "WowWindowSize":
-                                            settings.WoWCustomWindowSize.X = Convert.ToInt32(strArray[2].Substring(0, strArray[2].Length - 2));
-                                            settings.WoWCustomWindowSize.Y = Convert.ToInt32(strArray[3].Substring(0, strArray[3].Length - 1));
+                                            settings.WoWCustomWindowRectangle.Width = Convert.ToInt32(strArray[2].Substring(0, strArray[2].Length - 2));
+                                            settings.WoWCustomWindowRectangle.Height = Convert.ToInt32(strArray[3].Substring(0, strArray[3].Length - 1));
                                             break;
                                         case "StartVentriloWithWow":
                                             settings.VentriloStartWithWoW = Convert.ToBoolean(strArray[1]);
@@ -351,6 +351,7 @@ namespace AxTools.Classes
                     File.Delete(Globals.CfgPath + "//.settings");
                     Settings.Instance.SaveJSON();
                 }
+
             }
             catch (Exception ex)
             {

@@ -96,10 +96,10 @@ namespace AxTools.Forms
                 i.Enabled = CheckBox6.Checked;
             }
             CheckBox3.Checked = settings.WoWWipeCreatureCache;
-            TextBox7.Text = settings.WoWCustomWindowSize.X.ToString();
-            TextBox6.Text = settings.WoWCustomWindowSize.Y.ToString();
-            TextBox5.Text = settings.WoWCustomWindowLocation.X.ToString();
-            TextBox4.Text = settings.WoWCustomWindowLocation.Y.ToString();
+            TextBox7.Text = settings.WoWCustomWindowRectangle.Width.ToString();
+            TextBox6.Text = settings.WoWCustomWindowRectangle.Height.ToString();
+            TextBox5.Text = settings.WoWCustomWindowRectangle.X.ToString();
+            TextBox4.Text = settings.WoWCustomWindowRectangle.Y.ToString();
             //CheckBox9
             try
             {
@@ -194,7 +194,7 @@ namespace AxTools.Forms
                 if (TextBox7.Text != string.Empty && Convert.ToUInt16(TextBox7.Text) >= 720)
                 {
                     ErrorProviderExt.ClearError(TextBox7);
-                    settings.WoWCustomWindowSize.X = Convert.ToUInt16(TextBox7.Text);
+                    settings.WoWCustomWindowRectangle.Width = Convert.ToUInt16(TextBox7.Text);
                 }
                 else
                 {
@@ -210,7 +210,7 @@ namespace AxTools.Forms
                 if (TextBox6.Text != string.Empty && Convert.ToUInt16(TextBox6.Text) >= 576)
                 {
                     ErrorProviderExt.ClearError(TextBox6);
-                    settings.WoWCustomWindowSize.Y = Convert.ToUInt16(TextBox6.Text);
+                    settings.WoWCustomWindowRectangle.Height = Convert.ToUInt16(TextBox6.Text);
                 }
                 else
                 {
@@ -226,7 +226,7 @@ namespace AxTools.Forms
                 if (TextBox5.Text != string.Empty && Convert.ToInt16(TextBox5.Text) >= 0)
                 {
                     ErrorProviderExt.ClearError(TextBox5);
-                    settings.WoWCustomWindowLocation.X = Convert.ToInt32(TextBox5.Text);
+                    settings.WoWCustomWindowRectangle.X = Convert.ToInt32(TextBox5.Text);
                 }
                 else
                 {
@@ -242,7 +242,7 @@ namespace AxTools.Forms
                 if (TextBox4.Text != string.Empty && Convert.ToInt32(TextBox4.Text) >= 0)
                 {
                     ErrorProviderExt.ClearError(TextBox4);
-                    settings.WoWCustomWindowLocation.Y = Convert.ToInt32(TextBox4.Text);
+                    settings.WoWCustomWindowRectangle.Y = Convert.ToInt32(TextBox4.Text);
                 }
                 else
                 {

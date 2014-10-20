@@ -163,14 +163,11 @@ namespace AxTools.Classes
         [JsonProperty(Order = 11, PropertyName = "WoWCustomizeWindow")]
         internal bool WoWCustomizeWindow = false;
 
-        [JsonProperty(Order = 12, PropertyName = "WoWCustomWindowSize")]
-        internal Point WoWCustomWindowSize = new Point(800, 600);
+        [JsonProperty(Order = 12, PropertyName = "WoWCustomWindowRectangle")]
+        internal Rectangle WoWCustomWindowRectangle = new Rectangle(0, 0, 1366, 733);
 
         [JsonProperty(Order = 13, PropertyName = "WoWCustomWindowNoBorder")]
         internal bool WoWCustomWindowNoBorder = false;
-
-        [JsonProperty(Order = 14, PropertyName = "WoWCustomWindowLocation")]
-        internal Point WoWCustomWindowLocation = Point.Empty;
 
         #endregion
 

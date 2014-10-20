@@ -87,17 +87,17 @@ namespace AxTools.WoW
                                 try
                                 {
                                     Stopwatch stopwatch = Stopwatch.StartNew();
-                                    Log.Print(String.Format("{0}:{1} :: [WoW hook] Reference hash: {2}", Process.ProcessName, ProcessID, BitConverter.ToString(WowBuildInfo.WoWHash)));
                                     using (SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider())
                                     {
                                         using (FileStream fileStream = File.Open(Process.Modules[0].FileName, FileMode.Open, FileAccess.Read))
                                         {
                                             byte[] hash = provider.ComputeHash(fileStream);
                                             isValidBuild = hash.SequenceEqual(WowBuildInfo.WoWHash) ? 1 : 0;
-                                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Actual hash:    {2}", Process.ProcessName, ProcessID, BitConverter.ToString(hash)));
+                                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Reference hash: {2}", Process.ProcessName, ProcessID, BitConverter.ToString(WowBuildInfo.WoWHash)), false, false);
+                                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Actual hash:    {2}", Process.ProcessName, ProcessID, BitConverter.ToString(hash)), false, false);
+                                            Log.Print(String.Format("{0}:{1} :: [WoW hook] Hash is computed, took {2}ms", Process.ProcessName, ProcessID, stopwatch.ElapsedMilliseconds));
                                         }
                                     }
-                                    Log.Print(String.Format("{0}:{1} :: [WoW hook] Hash is computed, took {2}ms", Process.ProcessName, ProcessID, stopwatch.ElapsedMilliseconds));
 
                                     //uint variable = Memory.Read<uint>(Memory.ImageBase + WowBuildInfo.WowBuildAddress);
                                     //isValidBuild = WowBuildInfo.WowBuild == variable ? 1 : 0;

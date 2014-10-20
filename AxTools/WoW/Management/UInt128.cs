@@ -31,7 +31,7 @@ namespace AxTools.WoW.Management
             if (obj == null || GetType() != obj.GetType())
                 return false;
             UInt128 int128 = (UInt128) obj;
-            return (long) int128.High == (long) High && (long) int128.Low == (long) Low;
+            return int128.High == High && int128.Low == Low;
         }
 
         public override int GetHashCode()
@@ -41,7 +41,9 @@ namespace AxTools.WoW.Management
 
         public override string ToString()
         {
-            return "[" + High + ", " + Low + "]";
+            // ReSharper disable ImpureMethodCallOnReadonlyValueField
+            return "[" + High.ToString("X") + ", " + Low.ToString("X") + "]";
+            // ReSharper restore ImpureMethodCallOnReadonlyValueField
         }
 
     }

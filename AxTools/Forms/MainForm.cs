@@ -530,7 +530,8 @@ namespace AxTools.Forms
             Process.Start(new ProcessStartInfo
             {
                 WorkingDirectory = settings.TS3Directory,
-                FileName = cPath
+                FileName = cPath,
+                Arguments = "-nosingleinstance"
             });
             Log.Print("TS3 process started");
         }

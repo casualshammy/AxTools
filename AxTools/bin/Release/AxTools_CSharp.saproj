@@ -97,6 +97,13 @@
                                 <Namespace>AxTools.Classes</Namespace>
                                 <Name>Settings</Name>
                             </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>ValueType</ItemType>
+                                <Namespace>AxTools.WoW.Management</Namespace>
+                                <Name>UInt128</Name>
+                            </Token>
                         </Exclusion>
                     </Pruning>
                     <Obfuscation Obfuscate="1">
@@ -170,6 +177,13 @@
                                 <ItemType>Class</ItemType>
                                 <Namespace>AxTools.WoW.PluginSystem.API</Namespace>
                                 <Name>Utilities</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>ValueType</ItemType>
+                                <Namespace>AxTools.WoW.Management</Namespace>
+                                <Name>UInt128</Name>
                             </Token>
                         </Exclusion>
                     </Obfuscation>

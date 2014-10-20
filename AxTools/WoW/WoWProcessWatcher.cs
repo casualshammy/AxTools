@@ -167,9 +167,11 @@ namespace AxTools.WoW
                                     int styleWow = NativeMethods.GetWindowLong(process.MainWindowHandle, NativeMethods.GWL_STYLE) & ~(NativeMethods.WS_CAPTION | NativeMethods.WS_THICKFRAME);
                                     NativeMethods.SetWindowLong(process.MainWindowHandle, NativeMethods.GWL_STYLE, styleWow);
                                 }
-                                NativeMethods.SetWindowPos(process.MainWindowHandle, (IntPtr)SpecialWindowHandles.HWND_NOTOPMOST,
-                                    Settings.Instance.WoWCustomWindowLocation.X, Settings.Instance.WoWCustomWindowLocation.Y, Settings.Instance.WoWCustomWindowSize.X, Settings.Instance.WoWCustomWindowSize.Y,
-                                    SetWindowPosFlags.SWP_SHOWWINDOW);
+                                //NativeMethods.SetWindowPos(process.MainWindowHandle, (IntPtr)SpecialWindowHandles.HWND_NOTOPMOST,
+                                //    Settings.Instance.WoWCustomWindowLocation.X, Settings.Instance.WoWCustomWindowLocation.Y, Settings.Instance.WoWCustomWindowSize.X, Settings.Instance.WoWCustomWindowSize.Y,
+                                //    SetWindowPosFlags.SWP_SHOWWINDOW);
+                                NativeMethods.MoveWindow(process.MainWindowHandle, Settings.Instance.WoWCustomWindowRectangle.X, Settings.Instance.WoWCustomWindowRectangle.Y,
+                                    Settings.Instance.WoWCustomWindowRectangle.Width, Settings.Instance.WoWCustomWindowRectangle.Height, false);
                                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Window style is changed", process.ProcessName, process.ProcessID));
                             }
                             catch (Exception ex)

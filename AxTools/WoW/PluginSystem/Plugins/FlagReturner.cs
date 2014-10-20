@@ -61,11 +61,19 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public void OnPulse()
         {
-            uint zone = WoWManager.WoWProcess.PlayerZoneID;
-            if (zone != currentZone)
+            // todo: delete try..catch
+            try
             {
-                OnZoneChanged(zone);
-                currentZone = zone;
+                uint zone = WoWManager.WoWProcess.PlayerZoneID;
+                if (zone != currentZone)
+                {
+                    OnZoneChanged(zone);
+                    currentZone = zone;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Print(string.Format("{0}:{1} :: [{2}] TODO error0: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
             }
             if (searchingObjects.Length > 0)
             {
@@ -79,10 +87,26 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     Log.Print(string.Format("{0}:{1} :: [{2}] Pulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
                     return;
                 }
-                foreach (WowObject i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(localPlayer.Location) <= 10))
+                // todo: delete try..catch
+                try
                 {
-                    WoWDXInject.Interact(i.GUID);
-                    Log.Print(string.Format("{0}:{1} :: [{2}] Interacting with {3} ({4})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, i.Name, i.GUID), false, false);
+                    foreach (WowObject i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(localPlayer.Location) <= 10))
+                    {
+                        // todo: delete try..catch
+                        try
+                        {
+                            WoWDXInject.Interact(i.GUID);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Print(string.Format("{0}:{1} :: [{2}] TODO error1: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
+                        }
+                        Log.Print(string.Format("{0}:{1} :: [{2}] Interacting with {3} ({4})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, i.Name, i.GUID), false, false);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Print(string.Format("{0}:{1} :: [{2}] TODO error2: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
                 }
             }
 

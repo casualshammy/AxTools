@@ -39,6 +39,9 @@ namespace AxTools.WinAPI
         [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int memcmp(byte[] b1, byte[] b2, UIntPtr count);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool MoveWindow(IntPtr hWnd, int x, int y, int nWidth, int nHeight, bool bRepaint);
+
         // ReSharper disable InconsistentNaming
         internal static int WS_CAPTION = 0xC00000;
         internal static int WS_THICKFRAME = 0x40000;
