@@ -142,6 +142,7 @@ namespace AxTools.Forms
                 {
                     //todo: delete Log.Print()
                     Log.Print(String.Format("{0}:{1} :: [Radar] 1", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
+                    Log.Print(String.Format("{0}:{1} :: [Radar] 1-1: {2}:{3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, localPlayer == null, ObjectMgr.Pulse() == null), false, false);
                     friends = wowPlayers.Where(i => i.IsAlliance == localPlayer.IsAlliance).ToArray();
                     //todo: delete Log.Print()
                     Log.Print(String.Format("{0}:{1} :: [Radar] 2", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);

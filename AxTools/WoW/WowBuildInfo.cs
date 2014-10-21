@@ -30,7 +30,7 @@
         internal static readonly int PlayerPtr = 0xD24058; // ClntObjMgrGetActivePlayerObj
         internal static readonly int GlueState = 0xC96340;
         internal static readonly int FocusedWidget = 0xC302D0;
-        internal static readonly int PlayerGUID = 0xD34208;
+        //internal static readonly int PlayerGUID = 0xD34208;
 
         #endregion
 
