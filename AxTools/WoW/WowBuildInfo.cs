@@ -11,7 +11,7 @@
         {
             0x4F, 0xAA, 0x11, 0xAA, 0x50, 0x70, 0x36, 0x41, 0x76, 0x7C, 0x6B, 0x56, 0xF5, 0x3A, 0x78, 0x6F, 0xF2, 0xFB, 0xE8, 0xCA, 0x12, 0x76, 0xAB, 0xCD, 0xE9, 0xD0, 0x32, 0x33, 0x2A, 0x31, 0x74, 0x14
         };
-
+        
         #endregion
         
         #region Static infos
@@ -52,7 +52,7 @@
         internal static readonly int ObjectManagerNextObject = 0x3C;
         internal static readonly int ObjectType = 0xC;
         //internal static readonly int LocalGUID = 0xE8;
-        internal static readonly int ObjectGUID = 0x28;
+        internal const int ObjectGUID = 0x28; // declared as const because it used in WoWObjectsInfo
 
         #endregion
 
@@ -60,11 +60,11 @@
 
         internal static readonly int GameObjectOwnerGUIDBase = 0x4;
         internal static readonly int GameObjectOwnerGUIDOffset = 0x30;
-        internal static readonly int GameObjectAnimation = 0x104;
+        //internal static readonly int GameObjectAnimation = 0x104;
         internal static readonly int GameObjectEntryID = 0x24;
         internal static readonly int GameObjectNameBase = 0x26C;
         internal static readonly int GameObjectNameOffset = 0xB4;
-        internal static readonly int GameObjectLocation = 0x138;
+        //internal static readonly int GameObjectLocation = 0x138;
 
         #endregion
 

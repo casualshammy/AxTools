@@ -148,6 +148,9 @@
     <Compile Include="Updater\UpdaterService.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
     <Compile Include="WoW\IWoWModule.cs" />
+    <Compile Include="WoW\Management\ObjectManager\WoWObjectInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="WoW\Management\UInt128.cs" />
     <Compile Include="WoW\WoWAntiKick.cs" />
     <Compile Include="WoW\WoWProcessWatcher.cs" />

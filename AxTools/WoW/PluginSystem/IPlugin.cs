@@ -41,14 +41,9 @@ namespace AxTools.WoW.PluginSystem
         string WowIcon { get; }
 
         /// <summary>
-        ///     Needed interval between pulses
-        /// </summary>
-        //bool RequestingCancel { get; set; }
-
-        /// <summary>
         ///     Work or configuration windows to display when the user presses the "config" button
         /// </summary>
-        void OnConfig();
+        //void OnConfig();
 
         /// <summary>
         ///     Work to be done when the plugin is loaded by the bot on startup

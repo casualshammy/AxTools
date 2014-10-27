@@ -140,53 +140,31 @@ namespace AxTools.Forms
                 }
                 try
                 {
-                    //todo: delete Log.Print()
-                    Log.Print(String.Format("{0}:{1} :: [Radar] 1", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
-                    Log.Print(String.Format("{0}:{1} :: [Radar] 1-1: {2}:{3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, localPlayer == null, ObjectMgr.Pulse() == null), false, false);
                     friends = wowPlayers.Where(i => i.IsAlliance == localPlayer.IsAlliance).ToArray();
-                    //todo: delete Log.Print()
-                    Log.Print(String.Format("{0}:{1} :: [Radar] 2", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
                     enemies = wowPlayers.Except(friends).ToArray();
-                    //todo: delete Log.Print()
-                    Log.Print(String.Format("{0}:{1} :: [Radar] 3", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
                     objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                    //todo: delete Log.Print()
-                    Log.Print(String.Format("{0}:{1} :: [Radar] 4", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
                     npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                    //todo: delete Log.Print()
-                    Log.Print(String.Format("{0}:{1} :: [Radar] 5", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
                     if (!WoWManager.WoWProcess.PlayerIsLooting && localPlayer.CastingSpellID == 0)
                     {
-                        //todo: delete Log.Print()
-                        Log.Print(String.Format("{0}:{1} :: [Radar] 6", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
+                        // ReSharper disable once ImpureMethodCallOnReadonlyValueField
                         foreach (WowObject i in objects.Where(i => i.Location.Distance(localPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
                         {
-                            //todo: delete Log.Print()
-                            Log.Print(String.Format("{0}:{1} :: [Radar] 7", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
                             WoWDXInject.Interact(i.GUID);
                             Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, i.Name, i.GUID), false, false);
                         }
                         foreach (WowNpc i in npcs.Where(i => i.Location.Distance(localPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
                         {
-                            //todo: delete Log.Print()
-                            Log.Print(String.Format("{0}:{1} :: [Radar] 8", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
                             WoWDXInject.Interact(i.GUID);
                             Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, i.Name, i.GUID), false, false);
                         }
                     }
-                    //todo: delete Log.Print()
-                    Log.Print(String.Format("{0}:{1} :: [Radar] 9", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
                     bool soundAlarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);
-                    //todo: delete Log.Print()
-                    Log.Print(String.Format("{0}:{1} :: [Radar] 10", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
                     if (!soundAlarmPrevState && soundAlarm)
                     {
                         Task.Factory.StartNew(PlayAlarmFile);
                     }
                     soundAlarmPrevState = soundAlarm;
                     shouldDrawObjects = true;
-                    //todo: delete Log.Print()
-                    Log.Print(String.Format("{0}:{1} :: [Radar] 11", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID), false, false);
                     BeginInvoke(refreshRadar);
                 }
                 catch (Exception ex)

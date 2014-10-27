@@ -49,11 +49,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         #region Events
 
-        public void OnConfig()
-        {
-            throw new NotImplementedException();
-        }
-
         public void OnStart()
         {
             currentZone = 0;
@@ -109,39 +104,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     Log.Print(string.Format("{0}:{1} :: [{2}] TODO error2: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
                 }
             }
-
-
-
-            //if (WoWManager.WoWProcess.IsBattlegroundFinished != 0)
-            //{
-            //    Log.Print(string.Format("{0}:{1} :: [{2}] Plugin is stopped: the battle has ended", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
-            //    MainForm.Instance.ShowNotifyIconMessage("[" + Name + "] Plugin is stopped", "The battle has ended", ToolTipIcon.Info);
-            //    PluginManager.StopPlugin(true, true);
-            //    return;
-            //}
-            //uint zone = WoWManager.WoWProcess.PlayerZoneID;
-            //if (zone != searchingZone)
-            //{
-            //    Log.Print(string.Format("{0}:{1} :: [{2}] Plugin is stopped: zone changed to {3} ({4})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, zoneText, zone));
-            //    MainForm.Instance.ShowNotifyIconMessage("[" + Name + "] Plugin is stopped", string.Format("Zone changed to {0} ({1})", zoneText, zone), ToolTipIcon.Info);
-            //    PluginManager.StopPlugin(true, true);
-            //    return;
-            //}
-            //WoWPlayerMe localPlayer;
-            //try
-            //{
-            //    localPlayer = ObjectMgr.Pulse(wowObjects);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Log.Print(string.Format("{0}:{1} :: [{2}] Pulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
-            //    return;
-            //}
-            //foreach (WowObject i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(localPlayer.Location) <= 10))
-            //{
-            //    WoWDXInject.Interact(i.GUID);
-            //    Log.Print(string.Format("{0}:{1} :: [{2}] Interacting with {3} (0x{4:X})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, i.Name, i.GUID), false, false);
-            //}
         }
 
         public void OnStop()

@@ -180,5 +180,6 @@ namespace AxTools.WoW
                 return Memory.Read<byte>(Memory.ImageBase + WowBuildInfo.PlayerIsLooting) != 0;
             }
         }
+    
     }
 }

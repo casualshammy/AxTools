@@ -9,21 +9,32 @@ namespace AxTools.WoW.Management.ObjectManager
     /// </summary>
     public sealed class WowObject
     {
+        internal WowObject(IntPtr pAddress)
+        {
+            Address = pAddress;
+            WoWObjectsInfo info = WoWManager.WoWProcess.Memory.Read<WoWObjectsInfo>(Address);
+            GUID = info.GUID;
+            Bobbing = info.Bobbing == 1;
+            Location = info.Location;
+        }
+
+        internal readonly IntPtr Address;
+
         internal static readonly Dictionary<UInt128, string> Names = new Dictionary<UInt128, string>();
 
-        private UInt128 mGUID;
+        //private UInt128 mGUID;
 
-        internal UInt128 GUID
-        {
-            get
-            {
-                if (mGUID == UInt128.Zero)
-                {
-                    mGUID = WoWManager.WoWProcess.Memory.Read<UInt128>(Address + WowBuildInfo.ObjectGUID);
-                }
-                return mGUID;
-            }
-        }
+        internal readonly UInt128 GUID;
+        //{
+        //    get
+        //    {
+        //        if (mGUID == UInt128.Zero)
+        //        {
+        //            mGUID = WoWManager.WoWProcess.Memory.Read<UInt128>(Address + WowBuildInfo.ObjectGUID);
+        //        }
+        //        return mGUID;
+        //    }
+        //}
 
         private UInt128 mOwnerGUID;
 
@@ -64,20 +75,20 @@ namespace AxTools.WoW.Management.ObjectManager
         }
 
         // We don't use System.Nullable<> because it's for 40% slower
-        private bool mLocationRead;
-        private WowPoint mLocation;
-        internal WowPoint Location
-        {
-            get
-            {
-                if (!mLocationRead)
-                {
-                    mLocation = WoWManager.WoWProcess.Memory.Read<WowPoint>(Address + WowBuildInfo.GameObjectLocation);
-                    mLocationRead = true;
-                }
-                return mLocation;
-            }
-        }
+        //private bool mLocationRead;
+        //private WowPoint mLocation;
+        internal readonly WowPoint Location;
+        //{
+        //    get
+        //    {
+        //        if (!mLocationRead)
+        //        {
+        //            mLocation = WoWManager.WoWProcess.Memory.Read<WowPoint>(Address + WowBuildInfo.GameObjectLocation);
+        //            mLocationRead = true;
+        //        }
+        //        return mLocation;
+        //    }
+        //}
 
         private uint mEntryID;
         internal uint EntryID
@@ -93,25 +104,18 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
-        private byte mAnimation;
-        internal byte Animation
-        {
-            get
-            {
-                if (mAnimation == 0)
-                {
-                    mAnimation = WoWManager.WoWProcess.Memory.Read<byte>(Address + WowBuildInfo.GameObjectAnimation);
-                }
-                return mAnimation;
-            }
-        }
-
-        internal IntPtr Address;
-
-        internal WowObject(IntPtr pAddress)
-        {
-            Address = pAddress;
-        }
+        //private byte mAnimation;
+        internal readonly bool Bobbing;
+        //{
+        //    get
+        //    {
+        //        if (mAnimation == 0)
+        //        {
+        //            mAnimation = WoWManager.WoWProcess.Memory.Read<byte>(Address + WowBuildInfo.GameObjectAnimation);
+        //        }
+        //        return mAnimation;
+        //    }
+        //}
 
     }
 }

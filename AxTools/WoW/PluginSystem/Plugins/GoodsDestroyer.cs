@@ -51,11 +51,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         #region Events
 
-        public void OnConfig()
-        {
-            throw new NotImplementedException();
-        }
-
         public void OnStart()
         {
             state = 0;
