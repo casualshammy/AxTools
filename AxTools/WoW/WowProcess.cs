@@ -102,8 +102,9 @@ namespace AxTools.WoW
                                     //uint variable = Memory.Read<uint>(Memory.ImageBase + WowBuildInfo.WowBuildAddress);
                                     //isValidBuild = WowBuildInfo.WowBuild == variable ? 1 : 0;
                                 }
-                                catch
+                                catch (Exception ex)
                                 {
+                                    Log.Print(String.Format("{0}:{1} :: [WoW hook] IsValidBuild error: {2}", Process.ProcessName, ProcessID, ex.Message), true);
                                     isValidBuild = 0;
                                 }
                             }

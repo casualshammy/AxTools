@@ -5,44 +5,42 @@
 
         #region Build info
 
-        //internal static readonly int WowBuild = 19033;
-        //internal static readonly int WowBuildAddress = 0x2543BB0;
+        // BUILD: 19116
         internal static readonly byte[] WoWHash =
         {
-            0x4F, 0xAA, 0x11, 0xAA, 0x50, 0x70, 0x36, 0x41, 0x76, 0x7C, 0x6B, 0x56, 0xF5, 0x3A, 0x78, 0x6F, 0xF2, 0xFB, 0xE8, 0xCA, 0x12, 0x76, 0xAB, 0xCD, 0xE9, 0xD0, 0x32, 0x33, 0x2A, 0x31, 0x74, 0x14
+            0xEF, 0xB1, 0x83, 0x77, 0x36, 0x3F, 0xA5, 0x47, 0x08, 0x92, 0xD4, 0x7A, 0xE2, 0x82, 0x52, 0xD3, 0x20, 0x03, 0x48, 0x7C, 0x92, 0x85, 0xD4, 0x3E, 0xE4, 0x1E, 0x46, 0xC0, 0xF3, 0x94, 0xF1, 0x51
         };
         
         #endregion
         
         #region Static infos
 
-        internal static readonly int LastHardwareAction = 0xC3061C; // CGGameUI::UpdatePlayerAFK / WRITE
-        internal static readonly int IsInGame = 0xD9133E; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound)
-        internal static readonly int IsBattlegroundFinished = 0xDF0228; // Script_GetBattlefieldWinner (2)
-        internal static readonly int PlayerName = 0xED3928; // ClientServices::GetCharacterName (or Script_UnitName/GetPlayerName)
-        internal static readonly int PlayerRealm = 0xED3AD6; // Гордунни = D0 93 D0 BE D1 80 D0 B4 D1 83 D0 BD D0 BD D0 B8 // Черный Шрам = D0 A7 D0 B5 D1 80 D0 BD D1 8B D0 B9 20 D0 A8 D1 80 D0 B0 D0 BC
-        internal static readonly int PlayerZoneID = 0xD91388; // CGGameUI::NewZoneFeedback (16) (or Script_GetRaidRosterInfo (101))
-        internal static readonly int PlayerIsLooting = 0xE021B0; // CGPlayer_C::IsLooting (17) (or Script_SetLootPortrait (32) or Script_GetContainerPurchaseInfo)
+        internal static readonly int LastHardwareAction = 0xC32744; // CGGameUI::UpdatePlayerAFK / WRITE
+        internal static readonly int IsInGame = 0xD936DE; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound)
+        internal static readonly int IsBattlegroundFinished = 0xDF25C8; // Script_GetBattlefieldWinner (2)
+        internal static readonly int PlayerName = 0xED5CD0; // ClientServices::GetCharacterName (or Script_UnitName/GetPlayerName)
+        internal static readonly int PlayerRealm = 0xED5E7E; // Гордунни = D0 93 D0 BE D1 80 D0 B4 D1 83 D0 BD D0 BD D0 B8 // Черный Шрам = D0 A7 D0 B5 D1 80 D0 BD D1 8B D0 B9 20 D0 A8 D1 80 D0 B0 D0 BC
+        internal static readonly int PlayerZoneID = 0xD93728; // CGGameUI::NewZoneFeedback (16) (or Script_GetRaidRosterInfo (101))
+        internal static readonly int PlayerIsLooting = 0xE04550; // CGPlayer_C::IsLooting (17) (or Script_SetLootPortrait (32) or Script_GetContainerPurchaseInfo)
         internal static readonly int BlackMarketNumItems = 0xE10758;
         internal static readonly int BlackMarketItems = 0xE1075C;
-        internal static readonly int UnitNameCachePointer = 0xC8B574;// + 0x8;
-        internal static readonly int ObjectManager = 0xCB6CC8; // ClntObjMgrPush (7)
-        internal static readonly int PlayerPtr = 0xD24058; // ClntObjMgrGetActivePlayerObj
-        internal static readonly int GlueState = 0xC96340;
-        internal static readonly int FocusedWidget = 0xC302D0;
-        //internal static readonly int PlayerGUID = 0xD34208;
+        internal static readonly int UnitNameCachePointer = 0xC8D914;// + 0x8;
+        internal static readonly int ObjectManager = 0xCB9068; // ClntObjMgrPush (7)
+        internal static readonly int PlayerPtr = 0xD263F8; // ClntObjMgrGetActivePlayerObj
+        internal static readonly int GlueState = 0xC986E0;
+        internal static readonly int FocusedWidget = 0xC323F8;
 
         #endregion
 
         #region Injected methods
 
-        internal static readonly int ClntObjMgrGetActivePlayerObj = 0x39F7; // ClntObjMgrGetActivePlayerObj
-        internal static readonly int LuaDoStringAddress = 0x240C9; // FrameScript_ExecuteBuffer
-        internal static readonly int LuaGetLocalizedTextAddress = 0x2D7060; // FrameScript_GetLocalizedText
-        internal static readonly int TargetUnit = 0x903527; // CGGameUI::Target
-        internal static readonly int Interact = 0x90577C; // CGGameUI::Interact
-        internal static readonly int HandleTerrainClick = 0x245853; // Spell_C__HandleTerrainClick
-        internal static readonly int ClickToMove = 0x2E57A9; // CGUnit_C::InitializeTrackingState
+        internal static readonly int ClntObjMgrGetActivePlayerObj = 0x3A23; // ClntObjMgrGetActivePlayerObj
+        internal static readonly int LuaDoStringAddress = 0x242E9; // FrameScript_ExecuteBuffer
+        internal static readonly int LuaGetLocalizedTextAddress = 0x2D8A8D; // FrameScript_GetLocalizedText
+        internal static readonly int TargetUnit = 0x905323; // CGGameUI::Target
+        internal static readonly int Interact = 0x907577; // CGGameUI::Interact
+        internal static readonly int HandleTerrainClick = 0x247284; // Spell_C__HandleTerrainClick
+        internal static readonly int ClickToMove = 0x2E74A5; // CGUnit_C::InitializeTrackingState
 
         #endregion
 
