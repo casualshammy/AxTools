@@ -14,13 +14,7 @@ namespace AxTools.Forms
             InitializeComponent();
             Icon = Resources.AppIcon;
             metroStyleManager1.Style = Settings.Instance.StyleColor;
-            comboBoxWowAccounts.Items.Clear();
-            foreach (WoWAccount i in WoWAccount.AllAccounts)
-            {
-                comboBoxWowAccounts.Items.Add(i.Login);
-            }
-            textBoxWowAccountLogin.Text = "Login";
-            textBoxWowAccountPassword.Text = "Password";
+            UpdateControls();
         }
 
         private void metroButtonWowAccountSaveUpdate_Click(object sender, EventArgs e)
@@ -28,19 +22,16 @@ namespace AxTools.Forms
             WoWAccount wowAccount = WoWAccount.AllAccounts.FirstOrDefault(i => i.Login == textBoxWowAccountLogin.Text);
             if (wowAccount != null)
             {
-                wowAccount.Password = textBoxWowAccountPassword.Text;
+                int index = WoWAccount.AllAccounts.IndexOf(wowAccount);
+                WoWAccount.AllAccounts[index] = new WoWAccount(textBoxWowAccountLogin.Text, textBoxWowAccountPassword.Text);
+                // WoWAccount.AllAccounts.RemoveAt(index);                                                                             // we do so because <WoWAccount.AllAccounts>
+                // WoWAccount.AllAccounts.Insert(index, new WoWAccount(textBoxWowAccountLogin.Text, textBoxWowAccountPassword.Text));  // should raise <CollectionChanged> event
             }
             else
             {
                 WoWAccount.AllAccounts.Add(new WoWAccount(textBoxWowAccountLogin.Text, textBoxWowAccountPassword.Text));
             }
-            comboBoxWowAccounts.Items.Clear();
-            foreach (WoWAccount i in WoWAccount.AllAccounts)
-            {
-                comboBoxWowAccounts.Items.Add(i.Login);
-            }
-            textBoxWowAccountLogin.Text = "Login";
-            textBoxWowAccountPassword.Text = "Password";
+            UpdateControls();
         }
 
         private void metroButtonWowAccountDelete_Click(object sender, EventArgs e)
@@ -50,13 +41,7 @@ namespace AxTools.Forms
             {
                 WoWAccount.AllAccounts.Remove(wowAccount);
             }
-            comboBoxWowAccounts.Items.Clear();
-            foreach (WoWAccount i in WoWAccount.AllAccounts)
-            {
-                comboBoxWowAccounts.Items.Add(i.Login);
-            }
-            textBoxWowAccountLogin.Text = "Login";
-            textBoxWowAccountPassword.Text = "Password";
+            UpdateControls();
         }
 
         private void textBoxWowAccountLogin_TextChanged(object sender, EventArgs e)
@@ -82,6 +67,17 @@ namespace AxTools.Forms
                 textBoxWowAccountPassword.Text = new String('*', WoWAccount.AllAccounts[comboBoxWowAccounts.SelectedIndex].Password.Length);
             }
             
+        }
+
+        private void UpdateControls()
+        {
+            comboBoxWowAccounts.Items.Clear();
+            foreach (WoWAccount i in WoWAccount.AllAccounts)
+            {
+                comboBoxWowAccounts.Items.Add(i.Login);
+            }
+            textBoxWowAccountLogin.Text = "Login";
+            textBoxWowAccountPassword.Text = "Password";
         }
 
     }
