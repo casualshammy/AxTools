@@ -42,7 +42,7 @@ namespace AxTools
                     }
                     else
                     {
-                        TaskDialog.Show("This program works only on Windows 7 or higher", "AxTools", "Sorry...", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                        MessageBox.Show("This program works only on Windows 7 or higher", "AxTools", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else

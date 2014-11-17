@@ -112,3 +112,4 @@ F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.exe
 F:\Dropbox\Projects\AxTools\AxTools\bin\Release\Newtonsoft.Json.dll
 F:\Dropbox\Projects\AxTools\AxTools\bin\Release\Newtonsoft.Json.xml
 F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.csprojResolveAssemblyReference.cache
+F:\Dropbox\Projects\AxTools\AxTools\obj\x86\Release\AxTools.WoW.PluginSystem.Plugins.FishingSettings.resources

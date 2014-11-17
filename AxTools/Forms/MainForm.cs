@@ -111,15 +111,15 @@ namespace AxTools.Forms
         {
             if (e.KeyCode == settings.ClickerHotkey)
             {
-                KeyboardHook_ClickerHotkey();
+                BeginInvoke((MethodInvoker)KeyboardHook_ClickerHotkey);
             }
             else if (e.KeyCode == settings.WoWPluginHotkey)
             {
-                KeyboardHook_PrecompiledModulesHotkey();
+                BeginInvoke((MethodInvoker)KeyboardHook_PrecompiledModulesHotkey);
             }
             else if (e.KeyCode == settings.LuaTimerHotkey)
             {
-                KeyboardHook_LuaTimerHotkey();
+                BeginInvoke((MethodInvoker)KeyboardHook_LuaTimerHotkey);
             }
             //else if (e.KeyCode == Keys.L && NativeMethods.GetForegroundWindow() == Handle)
             //{

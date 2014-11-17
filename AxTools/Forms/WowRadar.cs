@@ -144,18 +144,36 @@ namespace AxTools.Forms
                     enemies = wowPlayers.Except(friends).ToArray();
                     objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
                     npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                    if (!WoWManager.WoWProcess.PlayerIsLooting && localPlayer.CastingSpellID == 0)
+                    if (!WoWManager.WoWProcess.PlayerIsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
                     {
+                        UInt128 interactGUID = UInt128.Zero;
+                        double interactDistance = 11;
+                        string interactName = string.Empty;
                         // ReSharper disable once ImpureMethodCallOnReadonlyValueField
-                        foreach (WowObject i in objects.Where(i => i.Location.Distance(localPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
+                        foreach (WowObject i in objects.Where(i => RadarKOSFindInteract.Contains(i.Name)))
                         {
-                            WoWDXInject.Interact(i.GUID);
-                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, i.Name, i.GUID), false, false);
+                            double distance = i.Location.Distance(localPlayer.Location);
+                            if (distance < interactDistance)
+                            {
+                                interactGUID = i.GUID;
+                                interactDistance = distance;
+                                interactName = i.Name;
+                            }
                         }
-                        foreach (WowNpc i in npcs.Where(i => i.Location.Distance(localPlayer.Location) < 10 && RadarKOSFindInteract.Contains(i.Name)))
+                        foreach (WowNpc i in npcs.Where(i => RadarKOSFindInteract.Contains(i.Name)))
                         {
-                            WoWDXInject.Interact(i.GUID);
-                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, i.Name, i.GUID), false, false);
+                            double distance = i.Location.Distance(localPlayer.Location);
+                            if (distance < interactDistance)
+                            {
+                                interactGUID = i.GUID;
+                                interactDistance = distance;
+                                interactName = i.Name;
+                            }
+                        }
+                        if (interactGUID != UInt128.Zero)
+                        {
+                            WoWDXInject.Interact(interactGUID);
+                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, interactName, interactGUID), false, false);
                         }
                     }
                     bool soundAlarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);

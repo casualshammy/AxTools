@@ -56,6 +56,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
             state = 0;
             bobber = null;
             iterationStartTime = Environment.TickCount;
+            FishingSettings.InitializeBait(out Bait, out SpecialBait);
+            lureBait = "if (not GetWeaponEnchantInfo()) then " +
+                       "if (GetItemCount(\"" + Bait + "\") > 0) then UseItemByName(\"" + Bait + "\") end end";
+            lureSpecialBait = "if (not UnitBuff(\"player\", \"" + SpecialBait + "\")) then " +
+                              "if (GetItemCount(\"" + SpecialBait + "\") > 0) then UseItemByName(\"" + SpecialBait + "\") end end";
         }
 
         public void OnPulse()
@@ -125,6 +130,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     {
                         Log.Print(String.Format("{0}:{1} :: [{2}] Looted, applying lure...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
                         WoWDXInject.LuaDoString(lure);
+                        WoWDXInject.LuaDoString(lureBait);
+                        WoWDXInject.LuaDoString(lureSpecialBait);
                         Thread.Sleep(500);
                         state = 0;
                     }
@@ -153,6 +160,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private readonly List<WowObject> wowObjects = new List<WowObject>();
 
         private int iterationStartTime;
+
+        internal string Bait = string.Empty;
+
+        internal string SpecialBait = string.Empty;
+
+        private string lureBait;
+
+        private string lureSpecialBait;
 
         #endregion
 
