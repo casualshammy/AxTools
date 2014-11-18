@@ -45,9 +45,19 @@ namespace AxTools.WoW.PluginSystem.Plugins
             get { return "Interface\\\\Icons\\\\achievement_bg_winwsg"; }
         }
 
+        public bool ConfigAvailable
+        {
+            get { return false; }
+        }
+
         #endregion
 
         #region Events
+
+        public void OnConfig()
+        {
+            
+        }
 
         public void OnStart()
         {

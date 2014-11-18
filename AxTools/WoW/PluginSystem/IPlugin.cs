@@ -41,9 +41,14 @@ namespace AxTools.WoW.PluginSystem
         string WowIcon { get; }
 
         /// <summary>
+        ///     
+        /// </summary>
+        bool ConfigAvailable { get; }
+
+        /// <summary>
         ///     Work or configuration windows to display when the user presses the "config" button
         /// </summary>
-        //void OnConfig();
+        void OnConfig();
 
         /// <summary>
         ///     Work to be done when the plugin is loaded by the bot on startup

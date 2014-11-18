@@ -1,6 +1,6 @@
 ﻿namespace AxTools.WoW.PluginSystem.Plugins
 {
-    partial class FishingSettings
+    partial class FishingConfig
     {
         /// <summary>
         /// Required designer variable.
@@ -90,11 +90,11 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(238, 23);
             this.button1.TabIndex = 4;
-            this.button1.Text = "Launch";
+            this.button1.Text = "Save";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // FishingSettings
+            // FishingConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -107,9 +107,8 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FishingSettings";
+            this.Name = "FishingConfig";
             this.Text = "FishingSettings";
-            this.Load += new System.EventHandler(this.FishingSettings_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

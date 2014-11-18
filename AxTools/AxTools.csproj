@@ -152,11 +152,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WoW\Management\UInt128.cs" />
-    <Compile Include="WoW\PluginSystem\Plugins\FishingSettings.cs">
+    <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WoW\PluginSystem\Plugins\FishingSettings.Designer.cs">
-      <DependentUpon>FishingSettings.cs</DependentUpon>
+    <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.Designer.cs">
+      <DependentUpon>FishingConfig.cs</DependentUpon>
     </Compile>
     <Compile Include="WoW\WoWAntiKick.cs" />
     <Compile Include="WoW\WoWProcessWatcher.cs" />
@@ -372,8 +372,8 @@
       <DependentUpon>WowRadarOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="WoW\PluginSystem\Plugins\FishingSettings.resx">
-      <DependentUpon>FishingSettings.cs</DependentUpon>
+    <EmbeddedResource Include="WoW\PluginSystem\Plugins\FishingConfig.resx">
+      <DependentUpon>FishingConfig.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="app.manifest" />
@@ -405,6 +405,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
+    <None Include="Resources\pluginSettingsLight.png" />
+    <None Include="Resources\pluginSettings.png" />
     <None Include="Resources\1410198466_672392-info-20_light.png" />
     <None Include="Resources\1410198466_672392-info-20.png" />
     <None Include="Resources\data_backup.png" />

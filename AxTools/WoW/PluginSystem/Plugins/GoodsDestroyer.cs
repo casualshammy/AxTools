@@ -47,9 +47,19 @@ namespace AxTools.WoW.PluginSystem.Plugins
             get { return "Interface\\\\Icons\\\\inv_misc_gem_bloodgem_01"; }
         }
 
+        public bool ConfigAvailable
+        {
+            get { return false; }
+        }
+
         #endregion
 
         #region Events
+
+        public void OnConfig()
+        {
+            
+        }
 
         public void OnStart()
         {

@@ -41,10 +41,10 @@ namespace AxTools.Forms
 
             cmbboxAccSelect.MouseWheel += delegate(object sender, MouseEventArgs args) { ((HandledMouseEventArgs) args).Handled = true; };
             cmbboxAccSelect.Location = new Point(metroTabPage1.Size.Width/2 - cmbboxAccSelect.Size.Width/2, cmbboxAccSelect.Location.Y);
-            linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width / 2 - linkEditWowAccounts.Size.Width / 2, linkEditWowAccounts.Location.Y);
+            linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width/2 - linkEditWowAccounts.Size.Width/2, linkEditWowAccounts.Location.Y);
 
             tabControl.SelectedIndex = 0;
-            
+
             progressBarAddonsBackup.Size = linkBackup.Size;
             progressBarAddonsBackup.Location = linkBackup.Location;
             progressBarAddonsBackup.Visible = false;
@@ -99,10 +99,10 @@ namespace AxTools.Forms
 
         private readonly Settings settings = Settings.Instance;
         //
-        private readonly List<ToolStripMenuItem> pluginsToolStripMenuItems = new List<ToolStripMenuItem>(); 
+        private readonly List<ToolStripMenuItem> pluginsToolStripMenuItems = new List<ToolStripMenuItem>();
 
         #endregion
-        
+
         #region Keyboard hook
 
         private KeyboardHookListener keyboardHook;
@@ -111,19 +111,19 @@ namespace AxTools.Forms
         {
             if (e.KeyCode == settings.ClickerHotkey)
             {
-                BeginInvoke((MethodInvoker)KeyboardHook_ClickerHotkey);
+                BeginInvoke((MethodInvoker) KeyboardHook_ClickerHotkey);
             }
             else if (e.KeyCode == settings.WoWPluginHotkey)
             {
-                BeginInvoke((MethodInvoker)KeyboardHook_PrecompiledModulesHotkey);
+                BeginInvoke((MethodInvoker) KeyboardHook_PrecompiledModulesHotkey);
             }
             else if (e.KeyCode == settings.LuaTimerHotkey)
             {
-                BeginInvoke((MethodInvoker)KeyboardHook_LuaTimerHotkey);
+                BeginInvoke((MethodInvoker) KeyboardHook_LuaTimerHotkey);
             }
             //else if (e.KeyCode == Keys.L && NativeMethods.GetForegroundWindow() == Handle)
             //{
-                
+
             //}
         }
 
@@ -328,7 +328,7 @@ namespace AxTools.Forms
         {
             foreach (IPlugin plugin in PluginManager.Plugins)
             {
-                ToolStripItem[] items = contextMenuStripMain.Items.Find("NativeN" + plugin.Name, true);  //contextMenuStripMain.Items["NativeN" + plugin.Name] as ToolStripMenuItem;
+                ToolStripItem[] items = contextMenuStripMain.Items.Find("NativeN" + plugin.Name, true); //contextMenuStripMain.Items["NativeN" + plugin.Name] as ToolStripMenuItem;
                 foreach (ToolStripMenuItem item in items)
                 {
                     item.ShortcutKeyDisplayString = item.Text == comboBoxWowPlugins.Text ? settings.WoWPluginHotkey.ToString() : null;
@@ -454,7 +454,7 @@ namespace AxTools.Forms
             })
                 .ContinueWith(l =>
                 {
-                    TaskDialog taskDialog = new TaskDialog("Zip & clean WoW logs", "AxTools", "Do you want to delete old archives?", (int)TaskDialogButton.Yes + TaskDialogButton.No, TaskDialogIcon.Information);
+                    TaskDialog taskDialog = new TaskDialog("Zip & clean WoW logs", "AxTools", "Do you want to delete old archives?", (int) TaskDialogButton.Yes + TaskDialogButton.No, TaskDialogIcon.Information);
                     if (taskDialog.Show(this).CommonButton == Result.Yes)
                     {
                         WoWLogsAndCacheManager.DeleteAllLogsArchivesExceptNewest();
@@ -513,7 +513,7 @@ namespace AxTools.Forms
             else
             {
                 new TaskDialog("Executable not found", "AxTools",
-                               "Can't locate \"ts3client_win64.exe\"/\"ts3client_win32.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
+                    "Can't locate \"ts3client_win64.exe\"/\"ts3client_win32.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
             }
             Process.Start(new ProcessStartInfo
@@ -532,7 +532,8 @@ namespace AxTools.Forms
                 new TaskDialog("Executable not found", "AxTools", "Can't locate \"mumble.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                 return;
             }
-            Process.Start(new ProcessStartInfo {
+            Process.Start(new ProcessStartInfo
+            {
                 WorkingDirectory = settings.MumbleDirectory,
                 FileName = settings.MumbleDirectory + "\\mumble.exe"
             });
@@ -562,7 +563,7 @@ namespace AxTools.Forms
         #endregion
 
         #region WowPluginsTab
-        
+
         private void buttonStartStopPlugin_Click(object sender, EventArgs e)
         {
             SwitchWoWPlugin();
@@ -612,6 +613,8 @@ namespace AxTools.Forms
                 textBoxDetailedInfo.Text = "Description: " + fullDescription;
                 textBoxDetailedInfo.ForeColor = MetroPaint.GetStyleColor(Style);
                 textBoxDetailedInfo.Visible = true;
+
+                buttonPluginSettings.Enabled = PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text).ConfigAvailable;
             }
             UpdatePluginsShortcutsInTrayContextMenu();
         }
@@ -650,6 +653,11 @@ namespace AxTools.Forms
             }
         }
 
+        private void buttonPluginSettings_Click(object sender, EventArgs e)
+        {
+            PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text).OnConfig();
+        }
+
         #endregion
 
         #region Events()
@@ -675,7 +683,7 @@ namespace AxTools.Forms
             ToolStripItem[] items = contextMenuStripMain.Items.Find("World of Warcraft", false);
             if (items.Length > 0)
             {
-                ToolStripMenuItem launchWoW = (ToolStripMenuItem)items[0];
+                ToolStripMenuItem launchWoW = (ToolStripMenuItem) items[0];
                 launchWoW.DropDownItems.Cast<ToolStripMenuItem>().ToList().ForEach(l => l.Dispose());
                 foreach (WoWAccount wowAccount in WoWAccount.AllAccounts)
                 {
@@ -694,7 +702,7 @@ namespace AxTools.Forms
             comboBoxWowPlugins.Items.AddRange(PluginManager.Plugins.Select(i => i.Name).Cast<object>().ToArray());
 
             contextMenuStripMain.Items.Clear();
-            
+
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
             {
                 woWRadarToolStripMenuItem,
@@ -790,7 +798,7 @@ namespace AxTools.Forms
             }
             else
             {
-                BeginInvoke((MethodInvoker)delegate
+                BeginInvoke((MethodInvoker) delegate
                 {
                     if (linkBackup.Visible)
                     {
@@ -987,7 +995,7 @@ namespace AxTools.Forms
         }
 
         #endregion
-    
-    }
 
     }
+
+}

@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using AxTools.Classes;
 using AxTools.Properties;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
+using Newtonsoft.Json;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
@@ -47,20 +51,30 @@ namespace AxTools.WoW.PluginSystem.Plugins
             get { return "Interface\\\\Icons\\\\trade_fishing"; }
         }
 
+        public bool ConfigAvailable
+        {
+            get { return true; }
+        }
+
         #endregion
 
         #region Events
 
+        public void OnConfig()
+        {
+            FishingConfig.Open();
+        }
+
         public void OnStart()
         {
+            LoadSettings();
             state = 0;
             bobber = null;
             iterationStartTime = Environment.TickCount;
-            FishingSettings.InitializeBait(out Bait, out SpecialBait);
             lureBait = "if (not GetWeaponEnchantInfo()) then " +
-                       "if (GetItemCount(\"" + Bait + "\") > 0) then UseItemByName(\"" + Bait + "\") end end";
-            lureSpecialBait = "if (not UnitBuff(\"player\", \"" + SpecialBait + "\")) then " +
-                              "if (GetItemCount(\"" + SpecialBait + "\") > 0) then UseItemByName(\"" + SpecialBait + "\") end end";
+                       "if (GetItemCount(\"" + Baits.Bait + "\") > 0) then UseItemByName(\"" + Baits.Bait + "\") end end";
+            lureSpecialBait = "if (not UnitBuff(\"player\", \"" + Baits.SpecialBait + "\")) then " +
+                              "if (GetItemCount(\"" + Baits.SpecialBait + "\") > 0) then UseItemByName(\"" + Baits.SpecialBait + "\") end end";
         }
 
         public void OnPulse()
@@ -161,15 +175,58 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         private int iterationStartTime;
 
-        internal string Bait = string.Empty;
-
-        internal string SpecialBait = string.Empty;
+        internal FishingSettings Baits;
 
         private string lureBait;
 
         private string lureSpecialBait;
 
         #endregion
+
+        [JsonObject(MemberSerialization.OptIn)]
+        internal struct FishingSettings
+        {
+            [JsonProperty(PropertyName = "Bait")]
+            internal string Bait;
+
+            [JsonProperty(PropertyName = "SpecialBait")]
+            internal string SpecialBait;
+        }
+
+        internal void SaveSettings()
+        {
+            StringBuilder sb = new StringBuilder(1024);
+            using (StringWriter sw = new StringWriter(sb, CultureInfo.InvariantCulture))
+            {
+                using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
+                {
+                    JsonSerializer js = new JsonSerializer();
+                    jsonWriter.Formatting = Formatting.Indented;
+                    jsonWriter.IndentChar = ' ';
+                    jsonWriter.Indentation = 4;
+                    js.Serialize(jsonWriter, Baits);
+                }
+            }
+            string json = sb.ToString();
+            Utils.CheckCreateDir();
+            string mySettingsDir = Globals.PluginsSettingsPath + "\\Fishing";
+            if (!Directory.Exists(mySettingsDir))
+            {
+                Directory.CreateDirectory(mySettingsDir);
+            }
+            File.WriteAllText(mySettingsDir + "\\FishingSettings.json", json, Encoding.UTF8);
+        }
+
+        internal void LoadSettings()
+        {
+            string mySettingsDir = Globals.PluginsSettingsPath + "\\Fishing";
+            string mySettingsFile = mySettingsDir + "\\FishingSettings.json";
+            if (File.Exists(mySettingsFile))
+            {
+                string rawText = File.ReadAllText(mySettingsFile, Encoding.UTF8);
+                Baits = JsonConvert.DeserializeObject<FishingSettings>(rawText);
+            }
+        }
 
     }
 }

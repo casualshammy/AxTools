@@ -94,6 +94,7 @@ namespace AxTools.Forms
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
+            this.buttonPluginSettings = new System.Windows.Forms.Button();
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -325,6 +326,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage3
             // 
+            this.metroTabPage3.Controls.Add(this.buttonPluginSettings);
             this.metroTabPage3.Controls.Add(this.textBoxDetailedInfo);
             this.metroTabPage3.Controls.Add(this.line2);
             this.metroTabPage3.Controls.Add(this.line1);
@@ -472,7 +474,7 @@ namespace AxTools.Forms
             this.comboBoxWowPlugins.Location = new System.Drawing.Point(3, 15);
             this.comboBoxWowPlugins.Name = "comboBoxWowPlugins";
             this.comboBoxWowPlugins.OverlayText = "Click to select plugin...";
-            this.comboBoxWowPlugins.Size = new System.Drawing.Size(329, 29);
+            this.comboBoxWowPlugins.Size = new System.Drawing.Size(294, 29);
             this.comboBoxWowPlugins.Style = MetroFramework.MetroColorStyle.Blue;
             this.comboBoxWowPlugins.StyleManager = this.metroStyleManager1;
             this.comboBoxWowPlugins.TabIndex = 6;
@@ -781,6 +783,18 @@ namespace AxTools.Forms
             this.linkTitle.UseStyleColors = true;
             this.linkTitle.Click += new System.EventHandler(this.linkTitle_Click);
             // 
+            // buttonPluginSettings
+            // 
+            this.buttonPluginSettings.BackgroundImage = global::AxTools.Properties.Resources.pluginSettings;
+            this.buttonPluginSettings.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.buttonPluginSettings.Enabled = false;
+            this.buttonPluginSettings.Location = new System.Drawing.Point(303, 15);
+            this.buttonPluginSettings.Name = "buttonPluginSettings";
+            this.buttonPluginSettings.Size = new System.Drawing.Size(29, 29);
+            this.buttonPluginSettings.TabIndex = 80;
+            this.buttonPluginSettings.UseVisualStyleBackColor = true;
+            this.buttonPluginSettings.Click += new System.EventHandler(this.buttonPluginSettings_Click);
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(469, 234);
@@ -862,6 +876,7 @@ namespace AxTools.Forms
         private Line line2;
         private Line line1;
         private TextBox textBoxDetailedInfo;
+        private Button buttonPluginSettings;
     }
 }
 
