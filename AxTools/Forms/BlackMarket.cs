@@ -102,16 +102,28 @@ namespace AxTools.Forms
         {
             private readonly uint MarketID;
             private readonly uint unk1;
-            internal readonly uint Entry;
-            private readonly uint unk2;
+            public readonly uint Entry;
             private readonly uint Quantity;
-            private readonly uint unk3;
-            internal readonly ulong minBid;
+            private readonly ulong unk3;
+            private readonly uint unk4;
+            private readonly uint unk5;
+            private readonly uint unk6;
+            private readonly uint unk7;
+            private readonly uint unk8;
+            private readonly uint unk9;
+            private readonly uint unk91;
+            private readonly uint unk92;
+            private readonly uint unk93;
+            private readonly uint unk94;
+            private readonly uint unk95;
+            private readonly uint unk96;
+            public readonly ulong minBid;
             private readonly ulong minIncrement;
-            internal readonly ulong currBid;
-            internal readonly uint TimeLeft;
-            [MarshalAs(UnmanagedType.Bool)] private readonly bool YouHaveHighBid;
-            internal readonly uint NumBids;
+            public readonly ulong currBid;
+            public readonly uint TimeLeft;
+            [MarshalAs(UnmanagedType.Bool)]
+            private readonly bool YouHaveHighBid;
+            public readonly uint NumBids;
         }
 
     }

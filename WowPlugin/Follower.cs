@@ -22,7 +22,7 @@ namespace TestPlugin
 
         public Version Version
         {
-            get { return new Version(1, 0); }
+            get { return new Version(2, 0); }
         }
 
         public string Author
@@ -54,23 +54,32 @@ namespace TestPlugin
             get { return string.Empty; }
         }
 
+        public bool ConfigAvailable
+        {
+            get { return false; }
+        }
+
         #endregion
 
         #region Events
 
         public void OnConfig()
         {
-            throw new NotImplementedException();
+            
         }
 
         public void OnStart()
         {
-            players = new List<WowPlayer>();
-            locaPlayer = ObjMgr.Pulse(players);
-            WowPlayer myTarget = players.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
-            if (myTarget != null)
+            WoWPlayerMe locaPlayer = ObjMgr.Pulse(players, npcs);
+            WowPlayer myTargetPlayer = players.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
+            WowNpc myTargetNpc = npcs.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
+            if (myTargetPlayer != null)
             {
-                guid = myTarget.GUID;
+                guid = myTargetPlayer.GUID;
+            }
+            else if (myTargetNpc != null)
+            {
+                guid = myTargetNpc.GUID;
             }
             else
             {
@@ -80,15 +89,23 @@ namespace TestPlugin
 
         public void OnPulse()
         {
-            locaPlayer = ObjMgr.Pulse(players);
+            WoWPlayerMe locaPlayer = ObjMgr.Pulse(players, npcs);
             if (locaPlayer.Health > 0)
             {
-                WowPlayer unit = players.FirstOrDefault(i => i.Health > 0 && i.GUID == guid);
-                if (unit != null)
+                WowPlayer unitPlayer = players.FirstOrDefault(i => i.Health > 0 && i.GUID == guid);
+                WowNpc unitNpc = npcs.FirstOrDefault(i => i.Health > 0 && i.GUID == guid);
+                if (unitPlayer != null)
                 {
-                    if (unit.Location.Distance(locaPlayer.Location) > 5)
+                    if (unitPlayer.Location.Distance(locaPlayer.Location) > 5)
                     {
-                        Functions.MoveTo(unit.Location);
+                        Functions.MoveTo(unitPlayer.Location);
+                    }
+                }
+                else if (unitNpc != null)
+                {
+                    if (unitNpc.Location.Distance(locaPlayer.Location) > 5)
+                    {
+                        Functions.MoveTo(unitNpc.Location);
                     }
                 }
             }
@@ -101,8 +118,8 @@ namespace TestPlugin
 
         #endregion
 
-        private List<WowPlayer> players;
-        private WoWPlayerMe locaPlayer;
+        private readonly List<WowPlayer> players = new List<WowPlayer>();
+        private readonly List<WowNpc> npcs = new List<WowNpc>();
         private UInt128 guid;
 
     }

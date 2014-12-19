@@ -84,6 +84,36 @@ namespace AxTools.WoW.Management
             return Pulse();
         }
 
+        internal static WoWPlayerMe Pulse(List<WowPlayer> wowPlayers, List<WowNpc> wowNpcs)
+        {
+            wowPlayers.Clear();
+            wowNpcs.Clear();
+            WoWPlayerMe localPlayer = Pulse();
+            UInt128 playerGUID = localPlayer.GUID;
+            IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfo.ObjectManager);
+            IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfo.ObjectManagerFirstObject);
+            for (int i = _memory.Read<int>(currObject + WowBuildInfo.ObjectType);
+                (i < 10) && (i > 0);
+                i = _memory.Read<int>(currObject + WowBuildInfo.ObjectType))
+            {
+                switch (i)
+                {
+                    case 3:
+                        wowNpcs.Add(new WowNpc(currObject));
+                        break;
+                    case 4:
+                        UInt128 objectGUID = _memory.Read<UInt128>(currObject + WowBuildInfo.ObjectGUID);
+                        if (objectGUID != playerGUID)
+                        {
+                            wowPlayers.Add(new WowPlayer(currObject, objectGUID));
+                        }
+                        break;
+                }
+                currObject = _memory.Read<IntPtr>(currObject + WowBuildInfo.ObjectManagerNextObject);
+            }
+            return localPlayer;
+        }
+
         internal static WoWPlayerMe Pulse(List<WowObject> wowObjects)
         {
             wowObjects.Clear();

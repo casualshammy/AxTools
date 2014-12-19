@@ -71,10 +71,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
             state = 0;
             bobber = null;
             iterationStartTime = Environment.TickCount;
-            lureBait = "if (not GetWeaponEnchantInfo()) then " +
-                       "if (GetItemCount(\"" + Baits.Bait + "\") > 0) then UseItemByName(\"" + Baits.Bait + "\") end end";
-            lureSpecialBait = "if (not UnitBuff(\"player\", \"" + Baits.SpecialBait + "\")) then " +
-                              "if (GetItemCount(\"" + Baits.SpecialBait + "\") > 0) then UseItemByName(\"" + Baits.SpecialBait + "\") end end";
+            lureSpecialBait = "if (not UnitBuff(\"player\", \"" + fishingSettings.SpecialBait + "\")) then " +
+                              "if (GetItemCount(\"" + fishingSettings.SpecialBait + "\") > 0) then UseItemByName(\"" + fishingSettings.SpecialBait + "\") end end";
         }
 
         public void OnPulse()
@@ -143,9 +141,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     if (!WoWManager.WoWProcess.PlayerIsLooting)
                     {
                         Log.Print(String.Format("{0}:{1} :: [{2}] Looted, applying lure...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
-                        WoWDXInject.LuaDoString(lure);
-                        WoWDXInject.LuaDoString(lureBait);
-                        WoWDXInject.LuaDoString(lureSpecialBait);
+                        if (fishingSettings.UseBestBait)
+                        {
+                            WoWDXInject.LuaDoString(lureBait);
+                        }
+                        if (fishingSettings.UseSpecialBait)
+                        {
+                            WoWDXInject.LuaDoString(lureSpecialBait);
+                        }
                         Thread.Sleep(500);
                         state = 0;
                     }
@@ -161,11 +164,18 @@ namespace AxTools.WoW.PluginSystem.Plugins
         #endregion
 
         #region Variables
-
+        
         private int state;
 
-        private readonly string lure = "if (GetInventoryItemCooldown(\"player\", 1) == 0 and not GetWeaponEnchantInfo()) then " +
-                                       "if (IsEquippedItem(33820)) then UseItemByName(33820) elseif (IsEquippedItem(88710)) then UseItemByName(88710) end end";
+        private readonly string lureBait = "if (not GetWeaponEnchantInfo()) then " +
+                                           "if (GetItemCount(118391) > 0) then local name = GetItemInfo(118391); UseItemByName(name) " +                    // Королевский червяк
+                                           "elseif (IsEquippedItem(88710) and GetInventoryItemCooldown(\"player\", 1) == 0) then UseInventoryItem(1) " +    // Шляпа Ната
+                                           "elseif (GetItemCount(68049) > 0) then local name = GetItemInfo(68049); UseItemByName(name) " +                  // Термостойкая вращающаяся наживка
+                                           "elseif (GetItemCount(34861) > 0) then local name = GetItemInfo(34861); UseItemByName(name) " +                  // Заостренный рыболовный крючок
+                                           "elseif (IsEquippedItem(33820) and GetInventoryItemCooldown(\"player\", 1) == 0) then UseInventoryItem(1) " +    // Видавшая виды рыболовная шапка
+                                           "elseif (GetItemCount(6529) > 0) then local name = GetItemInfo(6529); UseItemByName(name) " +                    // Блесна
+                                           " end" +
+                                           " end";
 
         private readonly string castFishing = "if (not UnitAffectingCombat(\"player\")) then CastSpellByName(\"Рыбная ловля\") end";
 
@@ -175,19 +185,23 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         private int iterationStartTime;
 
-        internal FishingSettings Baits;
-
-        private string lureBait;
+        // ReSharper disable once InconsistentNaming
+        internal FishingSettings fishingSettings;
 
         private string lureSpecialBait;
 
         #endregion
 
+        #region Settings
+
         [JsonObject(MemberSerialization.OptIn)]
         internal struct FishingSettings
         {
-            [JsonProperty(PropertyName = "Bait")]
-            internal string Bait;
+            [JsonProperty(PropertyName = "UseBestBait")]
+            internal bool UseBestBait;
+
+            [JsonProperty(PropertyName = "UseSpecialBait")]
+            internal bool UseSpecialBait;
 
             [JsonProperty(PropertyName = "SpecialBait")]
             internal string SpecialBait;
@@ -204,7 +218,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     jsonWriter.Formatting = Formatting.Indented;
                     jsonWriter.IndentChar = ' ';
                     jsonWriter.Indentation = 4;
-                    js.Serialize(jsonWriter, Baits);
+                    js.Serialize(jsonWriter, fishingSettings);
                 }
             }
             string json = sb.ToString();
@@ -224,9 +238,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
             if (File.Exists(mySettingsFile))
             {
                 string rawText = File.ReadAllText(mySettingsFile, Encoding.UTF8);
-                Baits = JsonConvert.DeserializeObject<FishingSettings>(rawText);
+                fishingSettings = JsonConvert.DeserializeObject<FishingSettings>(rawText);
             }
         }
+
+        #endregion
 
     }
 }

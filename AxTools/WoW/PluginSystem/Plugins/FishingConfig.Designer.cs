@@ -28,32 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.comboBoxBait = new System.Windows.Forms.ComboBox();
             this.comboBoxSpecialBait = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.checkBoxUseBestBait = new System.Windows.Forms.CheckBox();
+            this.checkBoxUseSpecialBait = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
-            // 
-            // comboBoxBait
-            // 
-            this.comboBoxBait.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxBait.FormattingEnabled = true;
-            this.comboBoxBait.Items.AddRange(new object[] {
-            "",
-            "Термостойкая вращающаяся наживка",
-            "Королевский червяк"});
-            this.comboBoxBait.Location = new System.Drawing.Point(83, 12);
-            this.comboBoxBait.Name = "comboBoxBait";
-            this.comboBoxBait.Size = new System.Drawing.Size(167, 21);
-            this.comboBoxBait.TabIndex = 0;
             // 
             // comboBoxSpecialBait
             // 
             this.comboBoxSpecialBait.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxSpecialBait.FormattingEnabled = true;
             this.comboBoxSpecialBait.Items.AddRange(new object[] {
-            "",
             "Наживка на глубинного угря-мешкорота",
             "Наживка для толстопузика",
             "Наживка для хлыстохвоста Черноводья",
@@ -61,49 +46,50 @@
             "Наживка для слепого озерного осетра",
             "Наживка для огненного аммонита",
             "Наживка для морского скорпиона"});
-            this.comboBoxSpecialBait.Location = new System.Drawing.Point(83, 39);
+            this.comboBoxSpecialBait.Location = new System.Drawing.Point(140, 35);
             this.comboBoxSpecialBait.Name = "comboBoxSpecialBait";
-            this.comboBoxSpecialBait.Size = new System.Drawing.Size(167, 21);
+            this.comboBoxSpecialBait.Size = new System.Drawing.Size(229, 21);
             this.comboBoxSpecialBait.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(28, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Bait:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 42);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Special bait:";
             // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(12, 66);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(238, 23);
+            this.button1.Size = new System.Drawing.Size(357, 23);
             this.button1.TabIndex = 4;
             this.button1.Text = "Save";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // checkBoxUseBestBait
+            // 
+            this.checkBoxUseBestBait.AutoSize = true;
+            this.checkBoxUseBestBait.Location = new System.Drawing.Point(12, 12);
+            this.checkBoxUseBestBait.Name = "checkBoxUseBestBait";
+            this.checkBoxUseBestBait.Size = new System.Drawing.Size(106, 17);
+            this.checkBoxUseBestBait.TabIndex = 5;
+            this.checkBoxUseBestBait.Text = "Use the best bait";
+            this.checkBoxUseBestBait.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxUseSpecialBait
+            // 
+            this.checkBoxUseSpecialBait.AutoSize = true;
+            this.checkBoxUseSpecialBait.Location = new System.Drawing.Point(12, 37);
+            this.checkBoxUseSpecialBait.Name = "checkBoxUseSpecialBait";
+            this.checkBoxUseSpecialBait.Size = new System.Drawing.Size(122, 17);
+            this.checkBoxUseSpecialBait.TabIndex = 6;
+            this.checkBoxUseSpecialBait.Text = "Use the special bait:";
+            this.checkBoxUseSpecialBait.UseVisualStyleBackColor = true;
+            // 
             // FishingConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(262, 97);
+            this.ClientSize = new System.Drawing.Size(381, 97);
+            this.Controls.Add(this.checkBoxUseSpecialBait);
+            this.Controls.Add(this.checkBoxUseBestBait);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBoxSpecialBait);
-            this.Controls.Add(this.comboBoxBait);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -116,10 +102,9 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox comboBoxBait;
         private System.Windows.Forms.ComboBox comboBoxSpecialBait;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox checkBoxUseBestBait;
+        private System.Windows.Forms.CheckBox checkBoxUseSpecialBait;
     }
 }

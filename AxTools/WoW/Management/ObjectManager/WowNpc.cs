@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 
 namespace AxTools.WoW.Management.ObjectManager
@@ -32,7 +33,7 @@ namespace AxTools.WoW.Management.ObjectManager
         }
 
         private UInt128 mGUID;
-        internal UInt128 GUID
+        public UInt128 GUID
         {
             get
             {
@@ -70,7 +71,7 @@ namespace AxTools.WoW.Management.ObjectManager
         // We don't use System.Nullable<> because it's for 40% slower
         private bool mLocationRead;
         private WowPoint mLocation;
-        internal WowPoint Location
+        public WowPoint Location
         {
             get
             {
@@ -84,7 +85,7 @@ namespace AxTools.WoW.Management.ObjectManager
         }
 
         private uint mHealth = UInt32.MaxValue;
-        internal uint Health
+        public uint Health
         {
             get
             {
@@ -106,6 +107,21 @@ namespace AxTools.WoW.Management.ObjectManager
                     mHealthMax = WoWManager.WoWProcess.Memory.Read<uint>(Descriptors + WowBuildInfo.UnitHealthMax);
                 }
                 return mHealthMax;
+            }
+        }
+
+        private int lootable = -1;
+        public bool Lootable
+        {
+            get
+            {
+                if (lootable == -1)
+                {
+                    // todo
+                    BitVector32 dynamicFlags = WoWManager.WoWProcess.Memory.Read<BitVector32>(Descriptors + 0x28);
+                    lootable = dynamicFlags[0x2] ? 1 : 0;
+                }
+                return lootable != 0;
             }
         }
 

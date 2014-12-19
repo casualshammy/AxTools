@@ -47,7 +47,7 @@ namespace AxTools.Classes
             {
                 byte[] iv = new byte[cryptoProvider.BlockSize / 8];
                 Array.Copy(bytes, 0, iv, 0, iv.Length);
-                using (var decrypter = cryptoProvider.CreateDecryptor(TruncateHash(key, cryptoProvider.KeySize / 8), iv))
+                using (ICryptoTransform decrypter = cryptoProvider.CreateDecryptor(TruncateHash(key, cryptoProvider.KeySize / 8), iv))
                 {
                     using (MemoryStream memoryStream = new MemoryStream())
                     {

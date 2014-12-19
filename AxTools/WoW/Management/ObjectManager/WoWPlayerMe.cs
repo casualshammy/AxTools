@@ -77,5 +77,13 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
+        public bool IsLooting
+        {
+            get
+            {
+                return WoWManager.WoWProcess.PlayerIsLooting;
+            }
+        }
+    
     }
 }

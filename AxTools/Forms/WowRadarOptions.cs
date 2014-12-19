@@ -1,4 +1,5 @@
-﻿using AxTools.Classes;
+﻿using System.Globalization;
+using AxTools.Classes;
 using AxTools.Components;
 using AxTools.WoW;
 using AxTools.WoW.Management;
@@ -193,8 +194,10 @@ namespace AxTools.Forms
                 List<WowObject> objectsWithUniqueNames = objectList.DistinctBy(i => i.Name).ToList();
                 objectsWithUniqueNames.Sort(delegate(WowObject wo1, WowObject wo2)
                 {
+                    // ReSharper disable ImpureMethodCallOnReadonlyValueField
                     double distance1 = wo1.Location.Distance(localPlayer.Location);
                     double distance2 = wo2.Location.Distance(localPlayer.Location);
+                    // ReSharper restore ImpureMethodCallOnReadonlyValueField
                     return distance1.CompareTo(distance2);
                 });
                 comboboxObjects.Items.AddRange(objectsWithUniqueNames.Select(i => i.Name).Cast<object>().ToArray());
@@ -214,7 +217,8 @@ namespace AxTools.Forms
                 openFileDialog.InitialDirectory = Globals.UserfilesPath;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    List<ObjectToFind> list = JsonConvert.DeserializeObject<List<ObjectToFind>>(File.ReadAllText(openFileDialog.FileName, Encoding.UTF8));
+                    string rawText = File.ReadAllText(openFileDialog.FileName, Encoding.UTF8);
+                    List<ObjectToFind> list = JsonConvert.DeserializeObject<List<ObjectToFind>>(rawText);
                     dataGridViewObjects.Rows.Clear();
                     foreach (ObjectToFind i in list)
                     {
@@ -238,7 +242,19 @@ namespace AxTools.Forms
                 saveFileDialog.AddExtension = true;
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string json = JsonConvert.SerializeObject(settings.WoWRadarList);
+                    StringBuilder sb = new StringBuilder(1024);
+                    using (StringWriter sw = new StringWriter(sb, CultureInfo.InvariantCulture))
+                    {
+                        using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
+                        {
+                            JsonSerializer js = new JsonSerializer();
+                            jsonWriter.Formatting = Formatting.Indented;
+                            jsonWriter.IndentChar = ' ';
+                            jsonWriter.Indentation = 4;
+                            js.Serialize(jsonWriter, settings.WoWRadarList);
+                        }
+                    }
+                    string json = sb.ToString();
                     File.WriteAllText(saveFileDialog.FileName, json, Encoding.UTF8);
                 }
             }

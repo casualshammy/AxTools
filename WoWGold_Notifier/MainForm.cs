@@ -38,6 +38,9 @@ namespace WoWGold_Notifier
         // ReSharper restore InconsistentNaming
         private readonly Stopwatch stopwatch;
 
+        private const string ButtonToClickText = "Выполнить";
+        private const string ServerName = "Гордунни";
+
         public MainForm()
         {
             InitializeComponent();
@@ -68,15 +71,15 @@ namespace WoWGold_Notifier
                     if (!orders.Contains(node.Attributes["data-id"].Value))
                     {
                         HtmlNode btn = node.Descendants("td").ToArray()[7];
-                        if (btn.InnerText.Contains("Продать"))
+                        if (btn.InnerText.Contains(ButtonToClickText))
                         {
                             string server = node.Descendants("td").ToArray()[2].InnerText;
-                            if (server.Contains("Гордунни") && shouldInformUser)
+                            if (server.Contains(ServerName) && shouldInformUser)
                             {
                                 string amount = node.Descendants("td").ToArray()[4].InnerText;
                                 try
                                 {
-                                    if (btn.InnerText.Contains("Продать"))
+                                    if (btn.InnerText.Contains(ButtonToClickText))
                                     {
                                         string href = btn.Descendants("a").ToArray()[0].Attributes["href"].Value;
                                         webBrowser1.Navigate(site + href);
@@ -116,7 +119,7 @@ namespace WoWGold_Notifier
         {
             int threadCount = Process.GetCurrentProcess().Threads.Count;
             BeginInvoke((Action) (() => { labelThreads.Text = "Threads: " + threadCount; }));
-            if (threadCount > 50)
+            if (threadCount > 100)
             {
                 Log("WoWGold.Ru: Something went wrong! (>50 threads)");
                 if ((DateTime.UtcNow - lastReportedAboutError).TotalSeconds > 60)
