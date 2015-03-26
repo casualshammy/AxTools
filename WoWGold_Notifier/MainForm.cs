@@ -10,12 +10,10 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
 using WoWGold_Notifier.Properties;
 using WoWGold_Notifier.WinAPI;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
-using Timer = System.Timers.Timer;
 
 namespace WoWGold_Notifier
 {
@@ -23,49 +21,55 @@ namespace WoWGold_Notifier
     {
         private readonly List<string> orders = new List<string>();
         private readonly NotifyIcon notifyIcon;
-        private readonly Timer timer = new Timer(1000);
-        private readonly object _lock = new object();
+        private readonly Thread timerThread;
+        private bool _lock = true;
         private bool shouldInformUser;
-        private readonly Action navigate;
-        private readonly Action printTime;
-        private readonly AutoResetEvent are;
-        private DateTime lastReportedAboutError = DateTime.UtcNow;
         private readonly string logFilePath = Application.StartupPath + "\\log.txt";
-        private readonly string site = "https://supply.elfmoney.ru";
-        // ReSharper disable InconsistentNaming
-        private static readonly int FEATURE_DISABLE_NAVIGATION_SOUNDS = 21;
-        private static readonly int SET_FEATURE_ON_PROCESS = 0x00000002;
-        // ReSharper restore InconsistentNaming
         private readonly Stopwatch stopwatch;
-
+        private CookieContainer cookies;
+        private static int _timerDefaultInterval = 100;
+        private static readonly Uri SITE = new Uri("https://supply.elfmoney.ru");
         private const string ButtonToClickText = "Выполнить";
         private const string ServerName = "Гордунни";
 
         public MainForm()
         {
             InitializeComponent();
-            DisableIEClickSounds();
             stopwatch = new Stopwatch();
             WebRequest.DefaultWebProxy = null;
             webBrowser1.DocumentCompleted += WebBrowserOnDocumentCompleted;
-            are = new AutoResetEvent(true);
-            navigate = () => webBrowser1.Navigate(site);
-            printTime = () =>
-            {
-                label1.Text = String.Format("Last updated: {0:HH:mm:ss.fff}", DateTime.Now);
-                labelPerformance.Text = "Performance: " + stopwatch.ElapsedMilliseconds + "ms";
-            };
+            webBrowser1.ScriptErrorsSuppressed = true;
+            cookies = GetUriCookieContainer(SITE);
             notifyIcon = new NotifyIcon {Icon = Icon.FromHandle(Resources.coins.GetHicon()), Visible = true, Text = "WoWGold Notifier"};
-            timer.Elapsed += TimerOnElapsed;
-            timer.Start();
+            timerThread = new Thread(TimerThreadFunc);
+            timerThread.Start();
         }
 
         private void WebBrowserOnDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
+            cookies = GetUriCookieContainer(SITE);
+        }
+
+        private void ProcessPage()
+        {
             try
             {
+                string source = HttpGet(SITE);
+                if (source.Contains("503 Service Temporarily Unavailable"))
+                {
+                    labelResponse.Text = "Response: 503 Error";
+                    _timerDefaultInterval += 10;
+                }
+                else if (!source.Contains(ButtonToClickText))
+                {
+                    labelResponse.Text = "Response: Auth error?";
+                }
+                else
+                {
+                    labelResponse.Text = "Response: 200 OK";
+                }
                 HtmlDocument p = new HtmlDocument { OptionDefaultStreamEncoding = Encoding.UTF8 };
-                p.Load(webBrowser1.DocumentStream);
+                p.LoadHtml(source);
                 foreach (HtmlNode node in p.DocumentNode.Descendants("tr").Where(i => i.Attributes.Contains("data-id")).Reverse())
                 {
                     if (!orders.Contains(node.Attributes["data-id"].Value))
@@ -82,8 +86,8 @@ namespace WoWGold_Notifier
                                     if (btn.InnerText.Contains(ButtonToClickText))
                                     {
                                         string href = btn.Descendants("a").ToArray()[0].Attributes["href"].Value;
-                                        webBrowser1.Navigate(site + href);
-                                        Log("Trying to bind: " + site + href);
+                                        HttpGet(new Uri(SITE + href));
+                                        Log("Trying to bind: " + SITE + href);
                                         SendSMS(server + " - " + amount);
                                     }
                                 }
@@ -106,50 +110,68 @@ namespace WoWGold_Notifier
                     }
                 }
                 shouldInformUser = true;
-                Invoke(printTime);
+                //PrintStatsInvoke();
             }
             catch (Exception ex)
             {
-                Log("WebBrowserOnDocumentCompleted error: " + ex.Message);
+                Log("ProcessPage error: " + ex.Message);
             }
-            are.Set();
         }
 
-        private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        private string HttpGet(Uri uri)
         {
-            int threadCount = Process.GetCurrentProcess().Threads.Count;
-            BeginInvoke((Action) (() => { labelThreads.Text = "Threads: " + threadCount; }));
-            if (threadCount > 100)
+            HttpWebRequest req = (HttpWebRequest) WebRequest.Create(uri);
+            req.Method = "GET";
+            req.UserAgent = "Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))";
+            req.CookieContainer = cookies;
+            using (WebResponse response = req.GetResponse())
             {
-                Log("WoWGold.Ru: Something went wrong! (>50 threads)");
-                if ((DateTime.UtcNow - lastReportedAboutError).TotalSeconds > 60)
+                using (Stream responseStream = response.GetResponseStream())
                 {
-                    SendSMS("WoWGold.Ru: Something went wrong! (>50 threads)");
-                    lastReportedAboutError = DateTime.UtcNow;
+                    if (responseStream != null)
+                    {
+                        using (StreamReader reader = new StreamReader(responseStream))
+                        {
+                            return reader.ReadToEnd();
+                        }
+                    }
+                    return string.Empty;
                 }
             }
-            lock (_lock)
+        }
+
+        private void TimerThreadFunc()
+        {
+            while (_lock)
             {
-                if (!are.WaitOne(10000))
-                {
-                    Log("WoWGold.Ru: Something went wrong!");
-                    //SendSMS("WoWGold.Ru: Something went wrong!");
-                }
-                //ProxyEnabled = !ProxyEnabled;
                 stopwatch.Restart();
-                webBrowser1.Invoke(navigate);
+                ProcessPage();
+                long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+                BeginInvoke((Action) (() =>
+                {
+                    label1.Text = String.Format("Last updated: {0:HH:mm:ss.fff}", DateTime.Now);
+                    labelPerformance.Text = "Performance: " + elapsedMilliseconds + "ms";
+                    labelThreads.Text = "Interval: " + _timerDefaultInterval;
+                }));
+                int counter = (int) (_timerDefaultInterval - stopwatch.ElapsedMilliseconds);
+                if (counter > 0)
+                {
+                    Thread.Sleep(counter);
+                }
             }
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            _lock = false;
+            timerThread.Join(5000);
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
         }
 
         private void buttonGoToSite_Click(object sender, EventArgs e)
         {
-            Process.Start(site);
+            Process.Start(SITE.ToString());
         }
 
         private void SendSMS(string text)
@@ -169,11 +191,6 @@ namespace WoWGold_Notifier
             File.AppendAllLines(logFilePath, new[] {DateTime.UtcNow.ToString("dd.MM.yyyy HH:mm:ss.fff   ") + text}, Encoding.UTF8);
         }
 
-        private void DisableIEClickSounds()
-        {
-            NativeMethods.CoInternetSetFeatureEnabled(FEATURE_DISABLE_NAVIGATION_SOUNDS, SET_FEATURE_ON_PROCESS, true);
-        }
-
         private void buttonLog_Click(object sender, EventArgs e)
         {
             Process.Start(logFilePath);
@@ -181,8 +198,46 @@ namespace WoWGold_Notifier
 
         private void button1_Click(object sender, EventArgs e)
         {
-            timer.Stop();
-            webBrowser1.Invoke(navigate);
+            webBrowser1.Navigate(SITE);
+        }
+
+
+        [DllImport("wininet.dll", SetLastError = true)]
+        public static extern bool InternetGetCookieEx(string url, string cookieName, StringBuilder cookieData, ref int size, Int32 dwFlags, IntPtr lpReserved);
+
+        private const Int32 InternetCookieHttponly = 0x2000;
+
+        /// <summary>
+        /// Gets the URI cookie container.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <returns></returns>
+        public static CookieContainer GetUriCookieContainer(Uri uri)
+        {
+            CookieContainer cookies = null;
+            // Determine the size of the cookie
+            int datasize = 8192 * 16;
+            StringBuilder cookieData = new StringBuilder(datasize);
+            if (!InternetGetCookieEx(uri.ToString(), null, cookieData, ref datasize, InternetCookieHttponly, IntPtr.Zero))
+            {
+                if (datasize < 0)
+                    return null;
+                // Allocate stringbuilder large enough to hold the cookie
+                cookieData = new StringBuilder(datasize);
+                if (!InternetGetCookieEx(
+                    uri.ToString(),
+                    null, cookieData,
+                    ref datasize,
+                    InternetCookieHttponly,
+                    IntPtr.Zero))
+                    return null;
+            }
+            if (cookieData.Length > 0)
+            {
+                cookies = new CookieContainer();
+                cookies.SetCookies(uri, cookieData.ToString().Replace(';', ','));
+            }
+            return cookies;
         }
         
     }

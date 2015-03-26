@@ -5,21 +5,21 @@ namespace AxTools.WoW.Management.ObjectManager
     [StructLayout(LayoutKind.Explicit)]
     internal struct WowPlayerInfo
     {
-        [FieldOffset(0xA0)]
+        [FieldOffset(WowBuildInfo.UnitTargetGUID)]
         internal readonly UInt128 TargetGUID;
-        [FieldOffset(0xE1)]
+        [FieldOffset(WowBuildInfo.UnitClass)]
         internal WowPlayerClass Class;
-        [FieldOffset(0xEC)]
+        [FieldOffset(WowBuildInfo.UnitHealth)]
         internal readonly uint Health;
-        [FieldOffset(0xF0)]
+        [FieldOffset(WowBuildInfo.UnitPower)]
         internal readonly uint Power;
-        [FieldOffset(0x108)]
+        [FieldOffset(WowBuildInfo.UnitHealthMax)]
         internal readonly uint HealthMax;
-        [FieldOffset(0x10C)]
+        [FieldOffset(WowBuildInfo.UnitPowerMax)]
         internal readonly uint PowerMax;
-        [FieldOffset(0x154)]
+        [FieldOffset(WowBuildInfo.UnitLevel)]
         internal readonly uint Level;
-        [FieldOffset(0x15C)]
+        [FieldOffset(WowBuildInfo.UnitRace)]
         internal readonly uint Race;
     }
 }

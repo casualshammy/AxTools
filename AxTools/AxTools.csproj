@@ -175,7 +175,7 @@
     <Compile Include="WoW\PluginSystem\Plugins\Fishing.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\FlagReturner.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyer.cs" />
-    <Compile Include="WoW\WowTerrainClickStruct.cs" />
+    <Compile Include="WoW\TerrainClickStruct.cs" />
     <Compile Include="Components\BorderedMetroForm.cs">
       <SubType>Form</SubType>
     </Compile>

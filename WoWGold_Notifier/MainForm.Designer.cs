@@ -40,6 +40,7 @@ namespace WoWGold_Notifier
             this.buttonLog = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.labelPerformance = new System.Windows.Forms.Label();
+            this.labelResponse = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // webBrowser1
@@ -95,7 +96,7 @@ namespace WoWGold_Notifier
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(132, 23);
             this.button1.TabIndex = 5;
-            this.button1.Text = "Stop timer/refresh page";
+            this.button1.Text = "Refresh page";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -108,9 +109,19 @@ namespace WoWGold_Notifier
             this.labelPerformance.TabIndex = 6;
             this.labelPerformance.Text = "Performance: 1000ms";
             // 
+            // labelResponse
+            // 
+            this.labelResponse.AutoSize = true;
+            this.labelResponse.Location = new System.Drawing.Point(813, 4);
+            this.labelResponse.Name = "labelResponse";
+            this.labelResponse.Size = new System.Drawing.Size(79, 13);
+            this.labelResponse.TabIndex = 7;
+            this.labelResponse.Text = "Response: 420";
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(1458, 320);
+            this.Controls.Add(this.labelResponse);
             this.Controls.Add(this.labelPerformance);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.buttonLog);
@@ -135,6 +146,7 @@ namespace WoWGold_Notifier
         private Button buttonLog;
         private Button button1;
         private Label labelPerformance;
+        private Label labelResponse;
     }
 }
 

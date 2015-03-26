@@ -123,20 +123,12 @@ namespace AxTools.WoW
                 try
                 {
                     if (Memory == null) return false;
-                    return Memory.Read<byte>(Memory.ImageBase + WowBuildInfo.IsInGame) == 1;
+                    return Memory.Read<byte>(Memory.ImageBase + WowBuildInfo.GameState) == 1;
                 }
                 catch
                 {
                     return false;
                 }
-            }
-        }
-
-        internal uint IsBattlegroundFinished
-        {
-            get
-            {
-                return Memory.Read<uint>(Memory.ImageBase + WowBuildInfo.IsBattlegroundFinished);
             }
         }
 

@@ -8,10 +8,10 @@ namespace AxTools.WoW.Management.ObjectManager
         [FieldOffset(WowBuildInfo.ObjectGUID)]
         internal readonly UInt128 GUID;
 
-        [FieldOffset(0x104)]
+        [FieldOffset(WowBuildInfo.GameObjectIsBobbing)]
         internal readonly byte Bobbing;
 
-        [FieldOffset(0x138)]
+        [FieldOffset(WowBuildInfo.GameObjectLocation)]
         internal readonly WowPoint Location;
     }
 }

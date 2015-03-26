@@ -10,7 +10,7 @@ namespace AxTools.WoW.Management.ObjectManager
         public readonly float Y;
         public readonly float Z;
 
-        internal WowPoint(float x, float y, float z)
+        public WowPoint(float x, float y, float z)
         {
             X = x;
             Y = y;

@@ -855,7 +855,7 @@ namespace AxTools.Forms
                 if (e.Delta > 0)
                 {
                     // ReSharper disable CompareOfFloatsByEqualityOperator
-                    if (zoomR == 0.25F) return;
+                    if (zoomR == 0.125F) return;
                     // ReSharper restore CompareOfFloatsByEqualityOperator
                     zoomR = zoomR / 2;
                     SaveCheckBoxes(null, EventArgs.Empty);

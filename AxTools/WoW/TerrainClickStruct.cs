@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 
 namespace AxTools.WoW
@@ -6,14 +7,14 @@ namespace AxTools.WoW
     [StructLayout(LayoutKind.Sequential)]
     public struct TerrainClickStruct
     {
-        internal ulong misc;
+        internal UInt128 misc;
         internal WowPoint loc;
         [MarshalAs(UnmanagedType.U4)]
         internal MouseButton button;
 
-        internal static TerrainClickStruct FromWowPoint(WowPoint wowPoint)
+        public static TerrainClickStruct FromWowPoint(WowPoint wowPoint)
         {
-            return new TerrainClickStruct {misc = 0, loc = wowPoint, button = MouseButton.None | MouseButton.Left};
+            return new TerrainClickStruct {misc = UInt128.Zero, loc = wowPoint, button = MouseButton.None | MouseButton.Left};
         }
     }
 }

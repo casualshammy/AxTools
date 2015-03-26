@@ -104,6 +104,13 @@
                                 <Namespace>AxTools.WoW.Management</Namespace>
                                 <Name>UInt128</Name>
                             </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>ValueType</ItemType>
+                                <Namespace>AxTools.WoW</Namespace>
+                                <Name>TerrainClickStruct</Name>
+                            </Token>
                         </Exclusion>
                     </Pruning>
                     <Obfuscation Obfuscate="1">
@@ -184,6 +191,13 @@
                                 <ItemType>ValueType</ItemType>
                                 <Namespace>AxTools.WoW.Management</Namespace>
                                 <Name>UInt128</Name>
+                            </Token>
+                            <Token Table="WholeType">
+                                <Assembly>AxTools</Assembly>
+                                <Module>AxTools.exe</Module>
+                                <ItemType>ValueType</ItemType>
+                                <Namespace>AxTools.WoW</Namespace>
+                                <Name>TerrainClickStruct</Name>
                             </Token>
                         </Exclusion>
                     </Obfuscation>

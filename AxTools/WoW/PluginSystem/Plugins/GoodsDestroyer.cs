@@ -59,6 +59,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         public void OnConfig()
         {
             
+
         }
 
         public void OnStart()

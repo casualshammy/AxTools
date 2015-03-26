@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace AxTools.WoW.Management.ObjectManager
 {
@@ -110,35 +109,6 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
-        //[StructLayout(LayoutKind.Explicit)]
-        //private struct UnitCacheEntry
-        //{
-        //    [FieldOffset(16)]
-        //    internal readonly UInt128 GUID;
-        //    [FieldOffset(112)]
-        //    private readonly uint Race;
-        //    [FieldOffset(120)]
-        //    private readonly uint Class;
-        //}
-
-        private IntPtr GetUnitCachePointer()
-        {
-            IntPtr next = WoWManager.WoWProcess.Memory.Read<IntPtr>((IntPtr)(WowBuildInfo.UnitNameCachePointer), true);
-            IntPtr ptr = next;
-            while (true)
-            {
-                UInt128 guid = WoWManager.WoWProcess.Memory.Read<UInt128>(ptr + WowBuildInfo.UnitNameCacheGUIDOffset);
-                //UnitCacheEntry tempUnitCacheEntry = WoWManager.WoWProcess.Memory.Read<UnitCacheEntry>(ptr);
-                if (guid == GUID)
-                {
-                    return ptr;
-                }
-                ptr = WoWManager.WoWProcess.Memory.Read<IntPtr>(ptr);
-                if (ptr == next) break;
-            }
-            return IntPtr.Zero;
-        }
-
         internal string Name
         {
             get
@@ -148,16 +118,13 @@ namespace AxTools.WoW.Management.ObjectManager
                 {
                     try
                     {
-                        IntPtr unitCachePoiter = GetUnitCachePointer();
-                        if (unitCachePoiter != IntPtr.Zero)
+                        ushort serverID = (ushort) ((GUID.Low >> 42) & 0x1FFF);
+                        // ReSharper disable ImpureMethodCallOnReadonlyValueField
+                        temp = WoWDXInject.GetFunctionReturn("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
+                        // ReSharper restore ImpureMethodCallOnReadonlyValueField
+                        if (!string.IsNullOrWhiteSpace(temp))
                         {
-                            temp = WoWManager.WoWProcess.Memory.ReadString(unitCachePoiter + WowBuildInfo.UnitNameCacheNameOffset, Encoding.UTF8, 80);
-                            //byte[] name = WoWManager.WoWProcess.Memory.ReadBytes(unitCachePoiter + WowBuildInfo.UnitNameCacheNameOffset, 80);
-                            //temp = Encoding.UTF8.GetString(name).Split('\0')[0];
-                            if (!string.IsNullOrWhiteSpace(temp))
-                            {
-                                Names.Add(GUID, temp);
-                            }
+                            Names.Add(GUID, temp);
                         }
                     }
                     catch
