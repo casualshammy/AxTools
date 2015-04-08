@@ -14,7 +14,7 @@ namespace AxTools.Classes
         internal static readonly string PluginsPath = Application.StartupPath + "\\plugins";
         internal static readonly string PluginsAssembliesPath = Application.StartupPath + "\\pluginsAssemblies";
         internal static readonly string PluginsSettingsPath = Application.StartupPath + "\\pluginsSettings";
-        internal static readonly string DropboxPath = "https://dl.dropboxusercontent.com/u/33646867/axtools";
+        internal static readonly string DropboxPath = "http://109.120.165.239:1255/axtools";
         internal static readonly string UpdateFilePath = DropboxPath + "/__update";
         internal static readonly VersionExt AppVersion = new VersionExt(Assembly.GetExecutingAssembly().GetName().Version);
         internal static readonly GlobalHooker GlobalHooker = new GlobalHooker();

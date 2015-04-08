@@ -32,7 +32,6 @@ namespace AxTools.Forms
             this.textBoxVentriloPath = new System.Windows.Forms.TextBox();
             this.buttonVentriloPath = new MetroFramework.Controls.MetroButton();
             this.CheckBoxStartAxToolsWithWindows = new MetroFramework.Controls.MetroCheckBox();
-            this.CheckBox3 = new MetroFramework.Controls.MetroCheckBox();
             this.CheckBox7 = new MetroFramework.Controls.MetroCheckBox();
             this.GroupBox2 = new System.Windows.Forms.GroupBox();
             this.TextBox4 = new System.Windows.Forms.TextBox();
@@ -172,25 +171,6 @@ namespace AxTools.Forms
             this.CheckBoxStartAxToolsWithWindows.Theme = MetroFramework.MetroThemeStyle.Light;
             this.CheckBoxStartAxToolsWithWindows.UseStyleColors = true;
             this.CheckBoxStartAxToolsWithWindows.UseVisualStyleBackColor = true;
-            // 
-            // CheckBox3
-            // 
-            this.CheckBox3.AutoSize = true;
-            this.CheckBox3.CustomBackground = false;
-            this.CheckBox3.CustomForeColor = false;
-            this.CheckBox3.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.CheckBox3.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.CheckBox3.Location = new System.Drawing.Point(3, 65);
-            this.CheckBox3.Name = "CheckBox3";
-            this.CheckBox3.Size = new System.Drawing.Size(271, 19);
-            this.CheckBox3.Style = MetroFramework.MetroColorStyle.Blue;
-            this.CheckBox3.StyleManager = null;
-            this.CheckBox3.TabIndex = 42;
-            this.CheckBox3.Text = "Clear creature cache on WoW shutdown";
-            this.CheckBox3.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.CheckBox3, "Deletes creature cache file on WoW shutdown");
-            this.CheckBox3.UseStyleColors = true;
-            this.CheckBox3.UseVisualStyleBackColor = true;
             // 
             // CheckBox7
             // 
@@ -947,7 +927,6 @@ namespace AxTools.Forms
             // metroTabPage3
             // 
             this.metroTabPage3.Controls.Add(this.checkBoxPluginsShowIngameNotifications);
-            this.metroTabPage3.Controls.Add(this.CheckBox3);
             this.metroTabPage3.Controls.Add(this.GroupBox2);
             this.metroTabPage3.Controls.Add(this.CheckBox6);
             this.metroTabPage3.Controls.Add(this.CheckBox7);
@@ -1414,7 +1393,6 @@ namespace AxTools.Forms
         private System.Windows.Forms.TextBox textBoxVentriloPath;
         private MetroButton buttonVentriloPath;
         private MetroCheckBox CheckBoxStartAxToolsWithWindows;
-        private MetroCheckBox CheckBox3;
         private MetroCheckBox CheckBox7;
         private System.Windows.Forms.GroupBox GroupBox2;
         private System.Windows.Forms.TextBox TextBox4;

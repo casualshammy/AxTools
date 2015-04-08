@@ -32,7 +32,6 @@ namespace AxTools.Forms
             TextBox6.TextChanged += TextBox6TextChanged;
             TextBox5.TextChanged += TextBox5TextChanged;
             TextBox4.TextChanged += TextBox4TextChanged;
-            CheckBox3.CheckedChanged += CheckBox3CheckedChanged;
 
             foreach (Keys i in new[] {
                 Keys.None, Keys.F1, Keys.F2, Keys.F3, Keys.F4, Keys.F5, Keys.F6, Keys.F7, Keys.F8, Keys.F9, Keys.F10, Keys.F11,
@@ -95,7 +94,6 @@ namespace AxTools.Forms
             {
                 i.Enabled = CheckBox6.Checked;
             }
-            CheckBox3.Checked = settings.WoWWipeCreatureCache;
             TextBox7.Text = settings.WoWCustomWindowRectangle.Width.ToString();
             TextBox6.Text = settings.WoWCustomWindowRectangle.Height.ToString();
             TextBox5.Text = settings.WoWCustomWindowRectangle.X.ToString();
@@ -248,14 +246,6 @@ namespace AxTools.Forms
                 {
                     ErrorProviderExt.SetError(TextBox4, "Incorrect value! It must be bigger than zero", Color.Red);
                 }
-            }
-        }
-
-        private void CheckBox3CheckedChanged(Object sender, EventArgs e)
-        {
-            if (isSettingsLoaded)
-            {
-                settings.WoWWipeCreatureCache = CheckBox3.Checked;
             }
         }
 

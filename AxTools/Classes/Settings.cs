@@ -157,9 +157,6 @@ namespace AxTools.Classes
         [JsonProperty(Order = 7, PropertyName = "WoWAntiKick")]
         internal bool WoWAntiKick = true;
 
-        [JsonProperty(Order = 8, PropertyName = "WoWWipeCreatureCache")]
-        internal bool WoWWipeCreatureCache = false;
-
         [JsonProperty(Order = 11, PropertyName = "WoWCustomizeWindow")]
         internal bool WoWCustomizeWindow = false;
 

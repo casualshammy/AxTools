@@ -2,12 +2,15 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace axtools_updater
 {
     static class Program
     {
+        private static readonly DirectoryInfo Directory = new DirectoryInfo(Application.StartupPath + "\\update");
+
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>
@@ -16,7 +19,7 @@ namespace axtools_updater
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            if (Directory.Exists(Application.StartupPath + "\\update"))
+            if (Directory.Exists)
             {
                 NonUIUpdate();
             }
@@ -28,14 +31,13 @@ namespace axtools_updater
 
         private static void NonUIUpdate()
         {
-            DirectoryInfo directory = new DirectoryInfo(Application.StartupPath + "\\update");
-            foreach (FileInfo i in directory.GetFileSystemInfos().Where(i => i is FileInfo).Cast<FileInfo>())
+            foreach (FileInfo i in Directory.GetFileSystemInfos().Where(i => i is FileInfo).Cast<FileInfo>())
             {
                 File.Delete(Application.StartupPath + "\\" + i.Name);
                 File.Move(i.FullName, Application.StartupPath + "\\" + i.Name);
             }
-            directory.Delete(true);
             DeleteUnusedFiles();
+            Directory.Delete(true);
             Process.Start(new ProcessStartInfo
             {
                 FileName = Application.StartupPath + "\\AxTools.exe",
@@ -45,11 +47,7 @@ namespace axtools_updater
 
         internal static void DeleteUnusedFiles()
         {
-            string[] filesToDelete =
-            {
-                "GreyMagic.dll", "WindowsFormsAero.dll", "MouseKeyboardActivityMonitor.dll", "EQATEC.Profiler.RuntimeFullNet.dll", "app.eqconfig", "axtools_updater.exe", "ICSharpCode.SharpZipLib.dll",
-                "wol.jnlp", "Microsoft.WindowsAPICodePack.dll", "Microsoft.WindowsAPICodePack.Shell.dll"
-            };
+            string[] filesToDelete = File.ReadAllText(Application.StartupPath + "\\__delete", Encoding.UTF8).Split(',');
             foreach (string i in filesToDelete)
             {
                 try

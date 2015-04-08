@@ -18,30 +18,6 @@ namespace AxTools.Helpers
         private static int _prevProcent = -1;
         internal static event Action<int> StateChanged;
 
-        internal static void StartupCheck()
-        {
-            DeleteCreatureCache();
-        }
-
-        internal static void DeleteCreatureCache()
-        {
-            if (Settings.Instance.WoWWipeCreatureCache && Directory.Exists(Settings.Instance.WoWDirectory + "\\Cache\\WDB"))
-            {
-                foreach (DirectoryInfo i in new DirectoryInfo(Settings.Instance.WoWDirectory + "\\Cache\\WDB").GetDirectories().Where(i => File.Exists(i.FullName + "\\creaturecache.wdb")))
-                {
-                    try
-                    {
-                        File.Delete(i.FullName + "\\creaturecache.wdb");
-                        Log.Print("[Cache cleaner] " + i.FullName + "\\creaturecache.wdb was deleted");
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Print("[Cache cleaner] Can't delete cache file [" + i.FullName + "\\creaturecache.wdb] :" + ex.Message);
-                    }
-                }
-            }
-        }
-
         internal static void ZipAndCleanLogs()
         {
             if (Directory.Exists(Settings.Instance.WoWDirectory + "\\Logs"))

@@ -1,30 +1,21 @@
-﻿using System;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Text;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace AxTools.Updater
 {
-    [Serializable]
-    [DataContract(Name = "UpdateInfo")]
+    [JsonObject(MemberSerialization.OptIn)]
     internal class UpdateInfo
     {
         internal static UpdateInfo InitializeFromJSON(string s)
         {
-            UpdateInfo updateInfo;
-            byte[] bytes = Encoding.UTF8.GetBytes(s);
-            using (MemoryStream memoryStream = new MemoryStream(bytes))
-            {
-                updateInfo = (UpdateInfo) new DataContractJsonSerializer(typeof (UpdateInfo)).ReadObject(memoryStream);
-            }
-            return updateInfo;
+            return JsonConvert.DeserializeObject<UpdateInfo>(s);
         }
 
-        [DataMember(Name = "Version")]
+        [JsonProperty(Order = 0, PropertyName = "Version")]
         internal Version Version;
 
-        [DataMember(Name = "DownloadList")]
-        internal string[] DownloadList;
+        [JsonProperty(Order = 1, PropertyName = "PanicMode")]
+        internal bool PanicMode;
+
     }
 }

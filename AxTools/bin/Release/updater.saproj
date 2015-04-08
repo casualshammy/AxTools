@@ -12,7 +12,7 @@
             <Debugging />
         </Options>
         <ApplicationName />
-        <Destination DestinationFileName="..\..\..\..\..\Public\axtools\Updater.exe" />
+        <Destination DestinationFileName=".\distr\Updater.exe" />
         <Assemblies>
             <Assembly AssemblyName="updater, Culture=neutral, PublicKeyToken=null">
                 <Merging>

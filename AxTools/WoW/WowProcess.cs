@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AxTools.Classes;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using AxTools.Classes;
 
 namespace AxTools.WoW
 {
@@ -98,9 +98,6 @@ namespace AxTools.WoW
                                             Log.Print(String.Format("{0}:{1} :: [WoW hook] Hash is computed, took {2}ms", Process.ProcessName, ProcessID, stopwatch.ElapsedMilliseconds));
                                         }
                                     }
-
-                                    //uint variable = Memory.Read<uint>(Memory.ImageBase + WowBuildInfo.WowBuildAddress);
-                                    //isValidBuild = WowBuildInfo.WowBuild == variable ? 1 : 0;
                                 }
                                 catch (Exception ex)
                                 {

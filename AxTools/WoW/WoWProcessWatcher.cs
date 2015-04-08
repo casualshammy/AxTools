@@ -1,6 +1,5 @@
 ﻿using AxTools.Classes;
 using AxTools.Forms;
-using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW.Management;
 using GreyMagic;
@@ -134,7 +133,6 @@ namespace AxTools.WoW
                     {
                         Log.Print(String.Format("{0}:{1} :: [Process watcher] Closed WoW process not found", name, pid), true);
                     }
-                    WoWLogsAndCacheManager.DeleteCreatureCache();
                 }
             }
             catch (Exception ex)

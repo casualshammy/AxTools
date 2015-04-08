@@ -12,7 +12,7 @@
             <Debugging />
         </Options>
         <ApplicationName />
-        <Destination DestinationFileName="..\..\..\..\..\Public\axtools\AxTools.exe" />
+        <Destination DestinationFileName=".\distr\AxTools.exe" />
         <Assemblies>
             <Assembly AssemblyName="AxTools, Culture=neutral, PublicKeyToken=null">
                 <Merging>

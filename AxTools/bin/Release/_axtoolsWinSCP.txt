@@ -1,0 +1,8 @@
+option batch on
+option confirm off
+
+# open ftp connection
+open sftp://root:-F$tmu(>nsjm68=X@109.120.165.239
+
+# synchronize files from server
+synchronize -criteria=either -transfer=binary remote "F:\Dropbox\Projects\AxTools\AxTools\bin\Release\distr" "/usr/local/nginx/html/axtools"

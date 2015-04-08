@@ -7,53 +7,59 @@ namespace WoWCombatLogWatcher
 {
     class Program
     {
-        private static FileSystemWatcher fileSystemWatcher = new FileSystemWatcher("C:\\Program Files (x86)\\World of Warcraft\\Logs", "WoWCombatLog.txt");
-        private static List<int> dateTimes = new List<int>();
-        private static Timer timer = new Timer(1000);
-        private static int eventsNum = -1;
+        private static readonly FileSystemWatcher FileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "WoWCombatLog.txt");
+        private static readonly List<int> DateTimes = new List<int>();
+        private static readonly Timer Timer = new Timer(1000);
+        private static int _eventsNum = -1;
+        private static int _maxEventsNum;
 
-        static void Main(string[] args)
+        static void Main()
         {
-            fileSystemWatcher.IncludeSubdirectories = false;
-            fileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite;
-            fileSystemWatcher.Changed += FileSystemWatcherOnChanged;
-            fileSystemWatcher.EnableRaisingEvents = true;
+            FileSystemWatcher.IncludeSubdirectories = false;
+            FileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite;
+            FileSystemWatcher.Changed += FileSystemWatcherOnChanged;
+            FileSystemWatcher.EnableRaisingEvents = true;
 
-            timer.Elapsed += timer_Elapsed;
-            timer.Start();
+            Timer.Elapsed += timer_Elapsed;
+            Timer.Start();
 
             Console.ReadLine();
 
-            fileSystemWatcher.EnableRaisingEvents = false;
-            fileSystemWatcher.Dispose();
+            FileSystemWatcher.EnableRaisingEvents = false;
+            FileSystemWatcher.Dispose();
 
-            timer.Stop();
-            timer.Dispose();
+            Timer.Stop();
+            Timer.Dispose();
         }
 
         static void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             int now = Environment.TickCount;
-            for (int i = 0; i < dateTimes.Count; i++)
+            for (int i = 0; i < DateTimes.Count; i++)
             {
-                if (now - dateTimes[i] > 60000)
+                if (now - DateTimes[i] > 60000)
                 {
-                    dateTimes.RemoveAt(i);
+                    DateTimes.RemoveAt(i);
                 }
             }
-            if (dateTimes.Count != eventsNum)
+            if (DateTimes.Count != _eventsNum)
             {
                 Console.Clear();
                 Console.SetCursorPosition(0, 0);
-                Console.WriteLine("Writes/min: " + dateTimes.Count);
-                eventsNum = dateTimes.Count;
+                Console.WriteLine("Writes/min: " + DateTimes.Count);
+                Console.WriteLine("Max writes/min: " + _maxEventsNum);
+                _eventsNum = DateTimes.Count;
+                if (_maxEventsNum < DateTimes.Count)
+                {
+                    _maxEventsNum = DateTimes.Count;
+                }
             }
             
         }
 
         private static void FileSystemWatcherOnChanged(object sender, FileSystemEventArgs fileSystemEventArgs)
         {
-            dateTimes.Add(Environment.TickCount);
+            DateTimes.Add(Environment.TickCount);
         }
     }
 }

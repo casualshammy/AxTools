@@ -121,7 +121,6 @@ namespace AxTools.Updater
                 Log.Print("[Updater] Fetching info error: " + ex.Message + " :: " + ex.GetType(), true);
                 return;
             }
-            
             if (!String.IsNullOrWhiteSpace(updateString))
             {
                 UpdateInfo updateInfo = UpdateInfo.InitializeFromJSON(updateString);

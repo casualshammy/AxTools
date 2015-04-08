@@ -262,7 +262,6 @@ namespace AxTools.Forms
         private void LoadingStepAsync()
         {
             Log.Print("[AxTools] Registered for: " + Settings.Instance.UserID);
-            WoWLogsAndCacheManager.StartupCheck();
             PluginManager.LoadPlugins();
             BeginInvoke(new Action(LoadingStepSync));
             Log.Print("[AxTools] Initial loading is finished");
@@ -284,6 +283,8 @@ namespace AxTools.Forms
             Changes.ShowChangesIfNeeded();
             UpdaterService.Start();
             Log.Print("AxTools started succesfully");
+            //todo
+            TaskDialog.Show("<WARDEN> IS RAMPAGED", "AxTools", "Lua functions are blocked", TaskDialogButton.OK, TaskDialogIcon.SecurityWarning);
         }
 
         private void linkSettings_Click(object sender, EventArgs e)

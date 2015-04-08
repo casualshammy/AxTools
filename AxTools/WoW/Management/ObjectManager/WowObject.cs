@@ -22,22 +22,13 @@ namespace AxTools.WoW.Management.ObjectManager
 
         internal static readonly Dictionary<UInt128, string> Names = new Dictionary<UInt128, string>();
 
-        //private UInt128 mGUID;
-
         internal readonly UInt128 GUID;
-        //{
-        //    get
-        //    {
-        //        if (mGUID == UInt128.Zero)
-        //        {
-        //            mGUID = WoWManager.WoWProcess.Memory.Read<UInt128>(Address + WowBuildInfo.ObjectGUID);
-        //        }
-        //        return mGUID;
-        //    }
-        //}
+
+        internal readonly WowPoint Location;
+
+        internal readonly bool Bobbing;
 
         private UInt128 mOwnerGUID;
-
         internal UInt128 OwnerGUID
         {
             get
@@ -74,22 +65,6 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
-        // We don't use System.Nullable<> because it's for 40% slower
-        //private bool mLocationRead;
-        //private WowPoint mLocation;
-        internal readonly WowPoint Location;
-        //{
-        //    get
-        //    {
-        //        if (!mLocationRead)
-        //        {
-        //            mLocation = WoWManager.WoWProcess.Memory.Read<WowPoint>(Address + WowBuildInfo.GameObjectLocation);
-        //            mLocationRead = true;
-        //        }
-        //        return mLocation;
-        //    }
-        //}
-
         private uint mEntryID;
         internal uint EntryID
         {
@@ -103,19 +78,6 @@ namespace AxTools.WoW.Management.ObjectManager
                 return mEntryID;
             }
         }
-
-        //private byte mAnimation;
-        internal readonly bool Bobbing;
-        //{
-        //    get
-        //    {
-        //        if (mAnimation == 0)
-        //        {
-        //            mAnimation = WoWManager.WoWProcess.Memory.Read<byte>(Address + WowBuildInfo.GameObjectAnimation);
-        //        }
-        //        return mAnimation;
-        //    }
-        //}
 
     }
 }

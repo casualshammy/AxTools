@@ -1,89 +1,48 @@
-﻿using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using AxTools.Classes;
-using AxTools.Forms;
 using AxTools.WoW.Management.ObjectManager;
-using Binarysharp.MemoryManagement;
-using Binarysharp.MemoryManagement.Assembly;
-using Binarysharp.MemoryManagement.Native;
 using Fasm;
+using GreyMagic;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using WindowsFormsAero.TaskDialog;
-using GreyMagic;
-using GreyMagic.Native;
-using SafeMemoryHandle = GreyMagic.SafeMemoryHandle;
 
 namespace AxTools.WoW.Management
 {
     internal static class WoWDXInject
     {
         private static WowProcess _wowProcess;
+        private static ManagedFasm _fasm;
         private static byte[] _hookOriginalBytes;
-        private static readonly int CodeCaveSize = 0x256;
-        private static readonly byte[] Eraser = new byte[CodeCaveSize];
         private static IntPtr _injectedCode;
         private static IntPtr _addresseInjection;
         private static IntPtr _retnInjectionAsm;
-        private static IntPtr _codeCavePtr;
+        private static IntPtr _hookPtr;
 
         private static readonly object FASMLock = new object();
         private static readonly string RandomVariableName = Utils.GetRandomString(10);
         private static readonly string OverlayFrameName = Utils.GetRandomString(10);
         private static readonly string[] RegisterNames = { "ah", "al", "bh", "bl", "ch", "cl", "dh", "dl", "eax", "ebx", "ecx", "edx" };
-        //private static readonly int DX11PresentAddress = 0x21BD1;
-        //private static readonly int DX9EndsceneAddress = 0x2279F;
         
-        private static ManagedFasm _fasm;
-        private static IntPtr _hookPtr;
-
         internal static bool Apply(WowProcess process)
         {
             _wowProcess = process;
             _fasm = _wowProcess.Memory.Asm;
             _fasm.SetMemorySize(0x4096);
-            _codeCavePtr = _wowProcess.Memory.AllocateMemory(CodeCaveSize);
-            //uint offset;
-            //bool isDX11 = _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == "d3d11.dll");
-            //Log.Print(string.Format("{0}:{1} :: [WoW hook] DX version: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, isDX11 ? 11 : 9), false, false);
-            _hookPtr = _wowProcess.Memory.ImageBase + WowBuildInfo.CGWorldFrameRender + 3; // 3 because it's start of <mov> instruction after <push ebp>, <mov ebp, esp>
-            //if (isDX11)
-            //{
-            //    foreach (ProcessModule module in _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Where(module => module.ModuleName == "dxgi.dll"))
-            //    {
-            //        _hookPtr = module.BaseAddress + DX11PresentAddress;
-            //    }
-            //    offset = 0xB;
-            //}
-            //else
-            //{
-            //    foreach (ProcessModule module in _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Where(module => module.ModuleName == "d3d9.dll"))
-            //    {
-            //        _hookPtr = module.BaseAddress + DX9EndsceneAddress;
-            //    }
-            //    offset = 0x19;
-            //}
-            //if (_hookPtr == IntPtr.Zero)
-            //{
-            //    Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't find DX library!", _wowProcess.ProcessName, _wowProcess.ProcessID), true);
-            //    return false;
-            //}
+            _hookPtr = _wowProcess.Memory.ImageBase + WowBuildInfo.CGWorldFrameRender + 3; // 3 because it's length of <<push ebp>, <mov ebp, esp>> before <mov> instruction
             _hookOriginalBytes = _wowProcess.Memory.ReadBytes(_hookPtr, 5);
             if (_hookOriginalBytes[0] == 0xA1)
             {
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
                     BitConverter.ToString(_hookOriginalBytes), _hookPtr.ToInt32()), false, false);
-                // allocate memory to store injected code:
-                _injectedCode = _wowProcess.Memory.AllocateMemory(2048);
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint) _injectedCode));
+                _injectedCode = _wowProcess.Memory.AllocateMemory(512);
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint)_injectedCode));
                 // allocate memory the new injection code pointer:
                 _addresseInjection = _wowProcess.Memory.AllocateMemory(0x4);
                 _wowProcess.Memory.Write(_addresseInjection, 0);
@@ -96,46 +55,42 @@ namespace AxTools.WoW.Management
                 List<string> asm = new List<string>();
                 RandomizeOpcode(asm, "pushad");
                 RandomizeOpcode(asm, "pushfd");
-                RandomizeOpcode(asm, "@start:");
                 RandomizeOpcode(asm, "mov eax, [" + _addresseInjection + "]");
                 RandomizeOpcode(asm, "test eax, eax");
                 RandomizeOpcode(asm, "je @out");
-                //RandomizeOpcode(asm, "mov ecx, 1");
-                //RandomizeOpcode(asm, "cmp ecx, [" + _addresseInjection + "]");
-                //RandomizeOpcode(asm, "jne @clear");         // переход если (ax)<>len
-                //RandomizeOpcode(asm, "jmp @SwitchToTwo");   // переход если (ax)=len
-                //RandomizeOpcode(asm, "@SwitchToTwo:");
-                RandomizeOpcode(asm, "mov edx, " + _addresseInjection);
-                RandomizeOpcode(asm, "mov ecx, 2");
-                RandomizeOpcode(asm, "mov [edx], ecx");
-                RandomizeOpcode(asm, "@loop:");
-                RandomizeOpcode(asm, "mov ecx, 3");
-                RandomizeOpcode(asm, "cmp ecx, [" + _addresseInjection + "]");
-                RandomizeOpcode(asm, "jne @loop");
+                RandomizeOpcode(asm, "mov eax, [" + _addresseInjection + "]");
+                RandomizeOpcode(asm, "call eax");
+                RandomizeOpcode(asm, "mov [" + _retnInjectionAsm + "], eax");
                 RandomizeOpcode(asm, "mov edx, " + _addresseInjection);
                 RandomizeOpcode(asm, "mov ecx, 0");
                 RandomizeOpcode(asm, "mov [edx], ecx");
                 RandomizeOpcode(asm, "@out:");
                 RandomizeOpcode(asm, "popfd");
                 RandomizeOpcode(asm, "popad");
-
                 int sizeAsm = InjectAsm(asm, (uint) _injectedCode);
                 // injecting trampouline
                 _wowProcess.Memory.WriteBytes(_injectedCode + sizeAsm, _hookOriginalBytes);
                 // injecting return to Endscene/Present
                 asm.Clear();
-                asm.Add("jmp " + ((uint) _hookPtr + offset + (isDX11 ? 5 : 7)));
+                asm.Add("jmp " + ((uint) _hookPtr + 5)); // 5 is <jmp> instruction length
                 InjectAsm(asm, (uint) (_injectedCode + sizeAsm + _hookOriginalBytes.Length));
-                //
+                // apply hook
                 asm.Clear();
                 asm.Add("jmp " + (_injectedCode));
-                InjectAsm(asm, (uint) _hookPtr + offset);
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Successfully hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                    BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr + (int) offset, isDX11 ? 5 : 7))));
+                InjectAsm(asm, (uint) _hookPtr);
+                //
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                for (int i = 0; i < 1000; i++)
+                {
+                    AllocatedMemoryInLastSegment memory = AllocatedMemoryInLastSegment.Find(0x200);
+                    memory.Dispose();
+                }
+                Log.Print("Stopwatch: " + stopwatch.ElapsedMilliseconds);
+                //
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Successfully hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr, 5))));
                 return true;
             }
-            Log.Print(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_hookOriginalBytes)),
-                false, false);
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_hookOriginalBytes)), false, false);
             return false;
         }
         
@@ -145,38 +100,31 @@ namespace AxTools.WoW.Management
             {
                 try
                 {
-                    bool isDX11 = _wowProcess.Memory.Process.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == "d3d11.dll");
-                    uint offset = (uint)(isDX11 ? 0xB : 0x5);
-                    _wowProcess.Memory.WriteBytes(_hookPtr + (int)offset, _hookOriginalBytes);
-                    Log.Print(
-                        string.Format("{0}:{1} :: [WoW hook] Hook is deleted, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                            BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr + (int)offset, isDX11 ? 5 : 7))));
+                    _wowProcess.Memory.WriteBytes(_hookPtr, _hookOriginalBytes);
+                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Hook is deleted, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr, 5))));
                 }
                 catch (Exception ex)
                 {
                     Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't delete hook, WoW client is closed? ({2})", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message));
                 }
-                // ReSharper disable EmptyGeneralCatchClause
                 try
                 {
                     _fasm.Dispose();
                 }
-                catch
+                catch (Exception ex)
                 {
-
+                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't dispose FASM assembler ({2})", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message));
                 }
                 try
                 {
                     _wowProcess.Memory.FreeMemory(_injectedCode);
                     _wowProcess.Memory.FreeMemory(_addresseInjection);
                     _wowProcess.Memory.FreeMemory(_retnInjectionAsm);
-                    _wowProcess.Memory.FreeMemory(_codeCavePtr);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    
+                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't free memory with hook ({2})", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message));
                 }
-                // ReSharper restore EmptyGeneralCatchClause
             }
             else
             {
@@ -184,26 +132,64 @@ namespace AxTools.WoW.Management
             }
         }
 
+        private class AllocatedMemoryInLastSegment : IDisposable
+        {
+            // ReSharper disable InconsistentNaming
+            private IntPtr Address;
+            private readonly uint Length;
+            private readonly uint ReferenceProtectionType;
+            private const uint PAGE_EXECUTE_READWRITE = 64;
+            private static int offset;
+            // ReSharper restore InconsistentNaming
+            
+            private AllocatedMemoryInLastSegment(IntPtr address, uint length)
+            {
+                Address = address;
+                Length = length;
+                if (!VirtualProtectEx(_wowProcess.Memory.ProcessHandle, address, (UIntPtr) length, PAGE_EXECUTE_READWRITE, out ReferenceProtectionType))
+                {
+                    throw new Exception("Can't change memory protection type, address: 0x" + Address.ToInt32().ToString("X") + ", length: " + length);
+                }
+            }
+
+            public void Dispose()
+            {
+                _wowProcess.Memory.WriteBytes(Address, new byte[Length]);
+                uint temp;
+                if (!VirtualProtectEx(_wowProcess.Memory.ProcessHandle, Address, (UIntPtr)Length, ReferenceProtectionType, out temp))
+                {
+                    throw new Exception("Can't change memory protection type (dispose), address: 0x" + Address.ToInt32().ToString("X") + ", length: " + Length);
+                }
+            }
+
+            public static AllocatedMemoryInLastSegment Find(int length)
+            {
+                byte[] emptyBytes = new byte[length];
+                int start = (int) (_wowProcess.Memory.ImageBase + _wowProcess.Memory.Process.MainModule.ModuleMemorySize - 100 - emptyBytes.Length - offset);
+                int end = (int)_wowProcess.Memory.ImageBase;
+                for (int i = start; i > end; i--)
+                {
+                    byte[] temp = _wowProcess.Memory.ReadBytes((IntPtr)i, emptyBytes.Length);
+                    if (temp.SequenceEqual(emptyBytes))
+                    {
+                        //Log.Print("AllocatedMemory: Found address: 0x" + i.ToString("X"));
+                        offset += length;
+                        return new AllocatedMemoryInLastSegment((IntPtr)i, (uint)length);
+                    }
+                }
+                throw new Exception("AllocatedMemory: can't find memory!");
+            }
+
+            [DllImport("kernel32.dll")]
+            private static extern bool VirtualProtectEx(SafeMemoryHandle hProcess, IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+
+        }
+          
         internal static void LuaDoString(string command)
         {
-            //todo
+            // cdecl
+            // todo
             return;
-            //using (MemorySharp sharp = new MemorySharp(Process.GetProcessesByName("Wow")[0].Id))
-            //{
-            //    //sharp[_wowProcess.Memory.ImageBase + WowBuildInfo.TargetUnit].Execute(CallingConventions.Cdecl, guid);
-            //    try
-            //    {
-            //        sharp.Assembly.Execute(sharp.Modules.MainModule.BaseAddress + WowBuildInfo.LuaDoStringAddress, CallingConventions.Cdecl, command, command, 0);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        MessageBox.Show(ex.Message);
-            //    }
-            //}
-            //return;
-
-            
-
             lock (FASMLock)
             {
                 byte[] bytesCommand = Encoding.UTF8.GetBytes(command);
@@ -237,7 +223,8 @@ namespace AxTools.WoW.Management
 
         internal static string GetLocalizedText(string commandLine)
         {
-            //todo
+            // thiscall
+            // todo
             return string.Empty;
             lock (FASMLock)
             {
@@ -270,6 +257,7 @@ namespace AxTools.WoW.Management
 
         internal static string GetFunctionReturn(string function)
         {
+            // cdecl + thiscall
             //todo
             return string.Empty;
             lock (FASMLock)
@@ -397,39 +385,11 @@ namespace AxTools.WoW.Management
         internal static unsafe void TerrainClick(TerrainClickStruct clickStruct)
         {
             // cdecl
-            try
-            {
-                IntPtr locationPtr = _wowProcess.Memory.AllocateMemory(sizeof(TerrainClickStruct));
-                _wowProcess.Memory.Write(locationPtr, clickStruct);
-                using (MemorySharp sharp = new MemorySharp(_wowProcess.ProcessID))
-                {
-                    using (AssemblyTransaction transaction = sharp.Assembly.BeginTransaction())
-                    {
-                        transaction.AddLine("mov eax, " + locationPtr);
-                        transaction.AddLine("push eax");
-                        transaction.AddLine("mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.HandleTerrainClick));
-                        transaction.AddLine("call eax");
-                        transaction.AddLine("add esp, 0x4");
-                        transaction.AddLine("retn");
-                    }
-                }
-                _wowProcess.Memory.FreeMemory(locationPtr);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-
-
-
-            //todo
-            return;
-            IntPtr ctmPoint = _wowProcess.Memory.AllocateMemory(sizeof(TerrainClickStruct));
-            _wowProcess.Memory.Write(ctmPoint, clickStruct);
+            IntPtr terrainClickStructPtr = _wowProcess.Memory.AllocateMemory(sizeof (TerrainClickStruct));
+            _wowProcess.Memory.Write(terrainClickStructPtr, clickStruct);
             string[] asm =
             {
-                "mov eax, " + ctmPoint,
+                "mov eax, " + terrainClickStructPtr,
                 "push eax",
                 "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.HandleTerrainClick),
                 "call eax",
@@ -440,410 +400,28 @@ namespace AxTools.WoW.Management
             {
                 InjectVoid(asm);
             }
-            catch
+            catch (Exception ex)
             {
-                // ReSharper disable once RedundantJumpStatement
-                return;
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] TerrainClick error: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message), true);
             }
             finally
             {
-                _wowProcess.Memory.FreeMemory(ctmPoint);
+                _wowProcess.Memory.FreeMemory(terrainClickStructPtr);
             }
         }
-
-        //todo
-        private static MemorySharp _sharp;
-        private static ThreadContext SuspendThreadAndFindGoodEIP()
-        {
-            uint baseAddress = (uint) _wowProcess.Memory.ImageBase;
-            int size = _wowProcess.Memory.Process.MainModule.ModuleMemorySize;
-            if (_sharp == null)
-            {
-                _sharp = new MemorySharp(_wowProcess.ProcessID);
-            }
-            _sharp.Threads.MainThread.Suspend();
-            ThreadContext oldContext = _sharp.Threads.MainThread.Context;
-            for (int i = 0; i < 1000; i++)
-            {
-                if (oldContext.Eip <= 0 || oldContext.Eip <= baseAddress || oldContext.Eip >= baseAddress + size)
-                {
-                    _sharp.Threads.MainThread.Resume();
-                    Thread.Sleep(1);
-                    _sharp.Threads.MainThread.Suspend();
-                    oldContext = _sharp.Threads.MainThread.Context;
-                }
-                else
-                {
-                    return oldContext;
-                }
-            }
-            throw new Exception("EIP not found!");
-        }
-
-        //todo
-        private static IntPtr _prevCodeCave = IntPtr.Zero;
-        private static AllocatedMemory FindGoodCodecave(int needBytes)
-        {
-            if (_prevCodeCave != IntPtr.Zero)
-            {
-                byte[] bytes = _wowProcess.Memory.ReadBytes(_prevCodeCave, needBytes);
-                if (bytes.SequenceEqual(new byte[needBytes]))
-                {
-                    return new AllocatedMemory(_prevCodeCave, needBytes);
-                }
-            }
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < needBytes; i++)
-            {
-                sb.Append("00 ");
-            }
-            string patternString = sb.ToString().Trim();
-            Pattern zeroBytes = Pattern.FromTextstyle("Free space", patternString, new AddModifier(0), new LeaModifier(LeaType.SimpleAddress));
-            try
-            {
-                IntPtr address = IntPtr.Zero;
-                foreach (IntPtr i in zeroBytes.Find(_wowProcess.Memory, 0, 0xFFFFFF))
-                {
-                    address = i;
-                    break;
-                }
-                address = _wowProcess.Memory.ImageBase + (int) address;
-                _prevCodeCave = address;
-                return new AllocatedMemory(_prevCodeCave, needBytes);
-            }
-            catch (Exception)
-            {
-                throw new Exception("Can't find memory for codecave!");
-            }
-        }
-
-        private class Pattern
-        {
-            public string Name { get; private set; }
-            public byte[] Bytes { get; private set; }
-            public bool[] Mask { get; private set; }
-            const int CacheSize = 0x500;
-            public List<IModifier> Modifiers = new List<IModifier>();
-
-            private bool DataCompare(byte[] data, uint dataOffset)
-            {
-                return !Mask.Where((t, i) => t && Bytes[i] != data[dataOffset + i]).Any();
-            }
-
-            private IEnumerable<IntPtr> FindStart(ExternalProcessReader bm, int startAddress, int endAddress)
-            {
-                var mainModule = bm.Process.MainModule;
-                var start = mainModule.BaseAddress + startAddress;
-                var size = Math.Min(mainModule.ModuleMemorySize, endAddress);
-                var patternLength = Bytes.Length;
-                for (int i = (size - patternLength); i >= 0; i -= (CacheSize - patternLength))
-                {
-                    byte[] cache = bm.ReadBytes(start + i, CacheSize > size - i ? size - i : CacheSize);
-                    for (uint i2 = 0; i2 < (cache.Length - patternLength); i2++)
-                    {
-                        if (DataCompare(cache, i2))
-                        {
-                            yield return start + (int)(i + i2);
-                        }
-                    }
-                }
-            }
-
-            public IEnumerable<IntPtr> Find(ExternalProcessReader bm, int startAddress, int endAddress)
-            {
-                foreach (IntPtr intPtr in FindStart(bm, startAddress, endAddress))
-                {
-                    IntPtr start = intPtr;
-                    foreach (IModifier modifier in Modifiers)
-                    {
-                        start = modifier.Apply(bm, start);
-                    }
-                    yield return start - (int) bm.Process.MainModule.BaseAddress;
-                }
-            }
-
-            public static Pattern FromTextstyle(string name, string pattern, params IModifier[] modifiers)
-            {
-                var ret = new Pattern { Name = name };
-                if (modifiers != null)
-                    ret.Modifiers = modifiers.ToList();
-                var split = pattern.Split(' ');
-                int index = 0;
-                ret.Bytes = new byte[split.Length];
-                ret.Mask = new bool[split.Length];
-                foreach (var token in split)
-                {
-                    if (token.Length > 2)
-                        throw new InvalidDataException("Invalid token: " + token);
-                    if (token.Contains("?"))
-                        ret.Mask[index++] = false;
-                    else
-                    {
-                        byte data = byte.Parse(token, NumberStyles.HexNumber);
-                        ret.Bytes[index] = data;
-                        ret.Mask[index] = true;
-                        index++;
-                    }
-                }
-                return ret;
-            }
-        }
-
-        private interface IModifier
-        {
-            IntPtr Apply(ExternalProcessReader bm, IntPtr address);
-        }
-
-        private class AddModifier : IModifier
-        {
-            public uint Offset { get; private set; }
-
-            public AddModifier(uint val)
-            {
-                Offset = val;
-            }
-
-            public IntPtr Apply(ExternalProcessReader bm, IntPtr addr)
-            {
-                return (addr + (int)Offset);
-            }
-        }
-
-        private enum LeaType
-        {
-            Byte,
-            Word,
-            Dword,
-            E8,
-            SimpleAddress
-        }
-
-        private class LeaModifier : IModifier
-        {
-            public LeaType Type { get; private set; }
-
-            public LeaModifier()
-            {
-                Type = LeaType.Dword;
-            }
-
-            public LeaModifier(LeaType type)
-            {
-                Type = type;
-            }
-
-            public IntPtr Apply(ExternalProcessReader bm, IntPtr address)
-            {
-                switch (Type)
-                {
-                    case LeaType.Byte:
-                        return (IntPtr)bm.Read<byte>(address);
-                    case LeaType.Word:
-                        return (IntPtr)bm.Read<ushort>(address);
-                    case LeaType.Dword:
-                        return (IntPtr)bm.Read<uint>(address);
-                    case LeaType.E8:
-                        return address + 4 + bm.Read<int>(address); // 4 = <call instruction size> - <E8>
-                    case LeaType.SimpleAddress:
-                        return address;
-                }
-                throw new InvalidDataException("Unknown LeaType");
-            }
-        }
-
-        private class AllocatedMemory : IDisposable
-        {
-            public readonly IntPtr Address;
-            private readonly uint prevMemoryProtectionType;
-            private readonly UIntPtr len;
-
-            public AllocatedMemory(IntPtr address, int length)
-            {
-                Address = address;
-                len = (UIntPtr) length;
-                VirtualProtectEx(_wowProcess.Memory.ProcessHandle, Address, len, (uint)MemoryProtectionType.PAGE_EXECUTE_READWRITE, out prevMemoryProtectionType);
-            }
-
-            public void Dispose()
-            {
-                uint temp;
-                VirtualProtectEx(_wowProcess.Memory.ProcessHandle, Address, len, prevMemoryProtectionType, out temp);
-                Log.Print("Memory address disposed: 0x" + Address.ToInt32().ToString("X"));
-            }
-
-            [DllImport("kernel32.dll")]
-            private static extern bool VirtualProtectEx(SafeMemoryHandle hProcess, IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
-
-        }
-
-        
 
         internal static unsafe void MoveTo(WowPoint point)
         {
-            //try
-            //{
-            //    IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr)WowBuildInfo.PlayerPtr, true);
-            //    IntPtr locationPtr = _wowProcess.Memory.AllocateMemory(0x4 * 3);
-            //    IntPtr guidPtr = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
-            //    _wowProcess.Memory.Write(locationPtr, point.X);
-            //    _wowProcess.Memory.Write(locationPtr + 0x4, point.Y);
-            //    _wowProcess.Memory.Write(locationPtr + 0x8, point.Z);
-            //    using (MemorySharp sharp = new MemorySharp(_wowProcess.ProcessID))
-            //    {
-            //        //IntPtr p = _wowProcess.Memory.AllocateMemory(0x1000);
-            //        //MessageBox.Show(((uint) p).ToString("X"));
-            //        //_wowProcess.Memory.Write(_addresseInjection, 1);
-            //        //sharp.Assembly.InjectAndExecute(new[]
-            //        //{
-            //        //    "@start:",
-            //        //    "mov ecx, 2",
-            //        //    "cmp ecx, [" + _addresseInjection + "]",
-            //        //    "jne @start",
-
-            //        //    "mov ecx, " + localPlayerPtr,
-            //        //    "mov eax, " + guidPtr,
-            //        //    "mov edx, " + locationPtr,
-            //        //    "push 0",
-            //        //    "push edx",
-            //        //    "push eax",
-            //        //    "push 4",
-            //        //    "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.ClickToMove),
-            //        //    "mov edx, " + _addresseInjection,
-            //        //    "mov ecx, 3",
-            //        //    "mov [edx], ecx",
-            //        //    "retn"
-            //        //}, p);
-            //        //_wowProcess.Memory.FreeMemory(p);
-            //        using (AssemblyTransaction transaction = sharp.Assembly.BeginTransaction())
-            //        {
-            //            transaction.AddLine("mov ecx, " + localPlayerPtr);
-            //            transaction.AddLine("mov eax, " + guidPtr);
-            //            transaction.AddLine("mov edx, " + locationPtr);
-            //            transaction.AddLine("push 0");
-            //            transaction.AddLine("push edx");
-            //            transaction.AddLine("push eax");
-            //            transaction.AddLine("push 4");
-            //            transaction.AddLine("call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.ClickToMove));
-            //            transaction.AddLine("retn");
-            //        }
-            //    }
-            //    _wowProcess.Memory.FreeMemory(locationPtr);
-            //    _wowProcess.Memory.FreeMemory(guidPtr);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
-
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            for (int i = 0; i < 100; i++)
-            {
-                try
-                {
-                    IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr)WowBuildInfo.PlayerPtr, true);
-                    IntPtr locationPtr = _wowProcess.Memory.AllocateMemory(0x4 * 3);
-                    IntPtr guidPtr = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
-                    _wowProcess.Memory.Write(locationPtr, point.X);
-                    _wowProcess.Memory.Write(locationPtr + 0x4, point.Y);
-                    _wowProcess.Memory.Write(locationPtr + 0x8, point.Z);
-                    using (MemorySharp sharp = new MemorySharp(_wowProcess.ProcessID))
-                    {
-                        IntPtr p = _wowProcess.Memory.AllocateMemory(0x1000);
-                        _wowProcess.Memory.Write(_addresseInjection, 1);
-                        sharp.Assembly.InjectAndExecute(new[]
-                        {
-                            "@start:",
-                            "mov ecx, 2",
-                            "cmp ecx, [" + _addresseInjection + "]",
-                            "jne @start",
-
-                            "mov ecx, " + localPlayerPtr,
-                            "mov eax, " + guidPtr,
-                            "mov edx, " + locationPtr,
-                            "push 0",
-                            "push edx",
-                            "push eax",
-                            "push 4",
-                            "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.ClickToMove),
-                            "mov edx, " + _addresseInjection,
-                            "mov ecx, 3",
-                            "mov [edx], ecx",
-                            "retn"
-                        }, p);
-                        _wowProcess.Memory.FreeMemory(p);
-                        //using (AssemblyTransaction transaction = sharp.Assembly.BeginTransaction())
-                        //{
-                        //    transaction.AddLine("mov ecx, " + localPlayerPtr);
-                        //    transaction.AddLine("mov eax, " + guidPtr);
-                        //    transaction.AddLine("mov edx, " + locationPtr);
-                        //    transaction.AddLine("push 0");
-                        //    transaction.AddLine("push edx");
-                        //    transaction.AddLine("push eax");
-                        //    transaction.AddLine("push 4");
-                        //    transaction.AddLine("call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.ClickToMove));
-                        //    transaction.AddLine("retn");
-                        //}
-                    }
-                    _wowProcess.Memory.FreeMemory(locationPtr);
-                    _wowProcess.Memory.FreeMemory(guidPtr);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            
-            //IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr)WowBuildInfo.PlayerPtr, true);
-            //IntPtr locationPtr = _wowProcess.Memory.AllocateMemory(0x4 * 3);
-            //IntPtr guidPtr = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
-            //_wowProcess.Memory.Write(locationPtr, point.X);
-            //_wowProcess.Memory.Write(locationPtr + 0x4, point.Y);
-            //_wowProcess.Memory.Write(locationPtr + 0x8, point.Z);
-            //ThreadContext threadContext = SuspendThreadAndFindGoodEIP();
-            //_fasm.Clear();
-            //_fasm.AddLine("push " + threadContext.Eip);
-            //_fasm.AddLine("pushad");
-            //_fasm.AddLine("pushfd");
-            //_fasm.AddLine("mov ecx, " + localPlayerPtr);
-            //_fasm.AddLine("mov eax, " + guidPtr);
-            //_fasm.AddLine("mov edx, " + locationPtr);
-            //_fasm.AddLine("push 0");
-            //_fasm.AddLine("push edx");
-            //_fasm.AddLine("push eax");
-            //_fasm.AddLine("push 4");
-            //_fasm.AddLine("call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.ClickToMove));
-            //_fasm.AddLine("popfd");
-            //_fasm.AddLine("popad");
-            //_fasm.AddLine("retn");
-            //AllocatedMemory codeCave = FindGoodCodecave(_fasm.Assemble().Length + 1);
-            //_fasm.Inject((uint)codeCave.Address);
-            //threadContext.Eip = (uint) codeCave.Address;
-
-            //_sharp.Threads.MainThread.Context = threadContext;
-            //_sharp.Threads.MainThread.Resume();
-            //Task.Factory.StartNew(() =>
-            //{
-            //    Thread.Sleep(2000);
-            //    codeCave.Dispose();
-            //});
-            }
-            Log.Print("stopwatch: " + stopwatch.ElapsedMilliseconds);
-
-
-
-
-            //todo
-            return;
-            IntPtr ctmPoint = _wowProcess.Memory.AllocateMemory(0x4 * 3);
-            IntPtr ctmGUID = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
-            _wowProcess.Memory.Write(ctmPoint, point.X);
-            _wowProcess.Memory.Write(ctmPoint + 0x4, point.Y);
-            _wowProcess.Memory.Write(ctmPoint + 0x8, point.Z);
+            // thiscall
+            IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr) WowBuildInfo.PlayerPtr, true);
+            IntPtr locationPtr = _wowProcess.Memory.AllocateMemory(0x4 * 3);
+            IntPtr guidPtr = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
+            _wowProcess.Memory.Write(locationPtr, point);
             string[] asm =
             {
-                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.ClntObjMgrGetActivePlayerObj),
-                "mov ecx, eax",
-                "mov eax, " + ctmGUID,
-                "mov edx, " + ctmPoint,
+                "mov ecx, " + localPlayerPtr,
+                "mov eax, " + guidPtr,
+                "mov edx, " + locationPtr,
                 "push 0",
                 "push edx",
                 "push eax",
@@ -855,131 +433,122 @@ namespace AxTools.WoW.Management
             {
                 InjectVoid(asm);
             }
-            catch
+            catch (Exception ex)
             {
-                // ReSharper disable once RedundantJumpStatement
-                return;
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] MoveTo error: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message), true);
             }
             finally
             {
-                _wowProcess.Memory.FreeMemory(ctmPoint);
-                _wowProcess.Memory.FreeMemory(ctmGUID);
+                _wowProcess.Memory.FreeMemory(locationPtr);
+                _wowProcess.Memory.FreeMemory(guidPtr);
             }
         }
 
         internal static unsafe void TargetUnit(UInt128 guid)
         {
             // cdecl
+            IntPtr guidPtr = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
+            _wowProcess.Memory.Write(guidPtr, guid);
+            string[] asm =
+            {
+                "push " + guidPtr,
+                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.TargetUnit),
+                "add esp, 0x4",
+                "retn"
+            };
             try
             {
-                IntPtr address = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
-                _wowProcess.Memory.Write(address, guid);
-                using (MemorySharp sharp = new MemorySharp(_wowProcess.ProcessID))
-                {
-                    using (AssemblyTransaction transaction = sharp.Assembly.BeginTransaction())
-                    {
-                        transaction.AddLine("push " + address);
-                        transaction.AddLine("call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.TargetUnit));
-                        transaction.AddLine("add esp, 0x4");
-                        transaction.AddLine("retn");
-                    }
-                }
-                _wowProcess.Memory.FreeMemory(address);
+                InjectVoid(asm);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] TargetUnit error: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message), true);
             }
-
-
-
-
-            //todo
-            return;
-            lock (FASMLock)
+            finally
             {
-                IntPtr address = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
-                _wowProcess.Memory.Write(address, guid);
-                string[] asm =
-                {
-                    "push " + address,
-                    "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.TargetUnit),
-                    "add esp, 0x4",
-                    "retn"
-                };
-                try
-                {
-                    InjectVoid(asm);
-                }
-                catch
-                {
-                    // ReSharper disable once RedundantJumpStatement
-                    return;
-                }
+                _wowProcess.Memory.FreeMemory(guidPtr);
             }
         }
 
         internal static unsafe void Interact(UInt128 guid)
         {
-            //todo
-            return;
-            lock (FASMLock)
+            IntPtr guidPtr = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
+            _wowProcess.Memory.Write(guidPtr, guid);
+            string[] asm =
             {
-                IntPtr address = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
-                _wowProcess.Memory.Write(address, guid);
-                string[] asm =
-                {
-                    "push " + address,
-                    "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.Interact),
-                    "add esp, 0x4",
-                    "retn"
-                };
-                try
-                {
-                    InjectVoid(asm);
-                }
-                catch
-                {
-                    // ReSharper disable once RedundantJumpStatement
-                    return;
-                }
+                "push " + guidPtr,
+                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.Interact),
+                "add esp, 0x4",
+                "retn"
+            };
+            try
+            {
+                InjectVoid(asm);
+            }
+            catch (Exception ex)
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Interact error: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message), true);
+            }
+            finally
+            {
+                _wowProcess.Memory.FreeMemory(guidPtr);
             }
         }
 
         private static void InjectVoid(IEnumerable<string> asm)
         {
-            InjectAsm(asm, (uint)_codeCavePtr);
-            _wowProcess.Memory.Write(_addresseInjection, (int)_codeCavePtr);
-            while (_wowProcess.Memory.Read<uint>(_addresseInjection) > 0)
+            lock (FASMLock)
             {
-                Thread.Sleep(1);
+                _fasm.Clear();
+                foreach (string str in asm)
+                {
+                    _fasm.AddLine(str);
+                }
+                int size = _fasm.Assemble().Length;
+                IntPtr address = _wowProcess.Memory.AllocateMemory(size);
+                _fasm.Inject((uint)address);
+                _wowProcess.Memory.Write(_addresseInjection, (int)address);
+                while (_wowProcess.Memory.Read<uint>(_addresseInjection) > 0)
+                {
+                    Thread.Sleep(1);
+                }
+                _wowProcess.Memory.FreeMemory(address);
             }
-            _wowProcess.Memory.WriteBytes(_codeCavePtr, Eraser);
         }
 
         private static string InjectReturn(IEnumerable<string> asm)
         {
-            _wowProcess.Memory.Write(_retnInjectionAsm, 0);
-            InjectAsm(asm, (uint)_codeCavePtr);
-            _wowProcess.Memory.Write(_addresseInjection, (int)_codeCavePtr);
-            while (_wowProcess.Memory.Read<uint>(_addresseInjection) > 0)
+            lock (FASMLock)
             {
-                Thread.Sleep(1);
-            }
-            List<byte> retnByte = new List<byte>();
-            uint dwAddress = _wowProcess.Memory.Read<uint>(_retnInjectionAsm);
-            if (dwAddress != 0)
-            {
-                byte buf = _wowProcess.Memory.Read<byte>((IntPtr)dwAddress);
-                while (buf != 0)
+                _wowProcess.Memory.Write(_retnInjectionAsm, 0);
+                _fasm.Clear();
+                foreach (string str in asm)
                 {
-                    retnByte.Add(buf);
-                    dwAddress = dwAddress + 1;
-                    buf = _wowProcess.Memory.Read<byte>((IntPtr)dwAddress);
+                    _fasm.AddLine(str);
                 }
+                int size = _fasm.Assemble().Length;
+                IntPtr address = _wowProcess.Memory.AllocateMemory(size);
+                _fasm.Inject((uint) address);
+                _wowProcess.Memory.Write(_addresseInjection, (int)address);
+                while (_wowProcess.Memory.Read<uint>(_addresseInjection) > 0)
+                {
+                    Thread.Sleep(1);
+                }
+                List<byte> retnByte = new List<byte>();
+                uint dwAddress = _wowProcess.Memory.Read<uint>(_retnInjectionAsm);
+                if (dwAddress != 0)
+                {
+                    byte buf = _wowProcess.Memory.Read<byte>((IntPtr)dwAddress);
+                    while (buf != 0)
+                    {
+                        retnByte.Add(buf);
+                        dwAddress = dwAddress + 1;
+                        buf = _wowProcess.Memory.Read<byte>((IntPtr)dwAddress);
+                    }
+                }
+                _wowProcess.Memory.FreeMemory(address);
+                return Encoding.UTF8.GetString(retnByte.ToArray());
             }
-            _wowProcess.Memory.WriteBytes(_codeCavePtr, Eraser);
-            return Encoding.UTF8.GetString(retnByte.ToArray());
         }
 
         private static int InjectAsm(IEnumerable<string> asm, uint dwAddress)
@@ -1014,49 +583,6 @@ namespace AxTools.WoW.Management
                 list.Add(string.Concat("mov ", RegisterNames[ranNum], ", ", RegisterNames[ranNum]));
             }
             list.Add(asm);
-        }
-
-        internal static void MoveHook()
-        {
-            //int playclawHookAbsoluteAddress = _wowProcess.Memory.Read<int>(_dxAddress.HookPtr + 1) + (int)_dxAddress.HookPtr + 5;
-            //if (MessageBox.Show("playclawHookAbsoluteAddress" + playclawHookAbsoluteAddress.ToString("X"), "AxTools", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            //{
-            //    int internalFunctionAbsoluteAddress = _wowProcess.Memory.Read<int>(_dxAddress.HookPtr + 0x2E) + (int)_dxAddress.HookPtr + 0x2D + 5;
-            //    if (MessageBox.Show("internalFunctionAbsoluteAddress" + internalFunctionAbsoluteAddress.ToString("X"), "AxTools", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            //    {
-            //        string[] asm =
-            //        {
-            //            "jmp " + playclawHookAbsoluteAddress
-            //        };
-            //        InjectAsm(asm, (uint) internalFunctionAbsoluteAddress);
-            //        _wowProcess.Memory.WriteBytes(_dxAddress.HookPtr, new byte[] { 0x8B, 0xFF, 0x55, 0x8B, 0xEC });
-            //    }
-            //}
-
-            //byte[] origBytes = _wowProcess.Memory.ReadBytes(_dxAddress.HookPtr + 29, 5);
-            //IntPtr myCodeCave = _wowProcess.Memory.AllocateMemory(2048);
-            //string[] asm =
-            //{
-            //    "pushad",
-            //    "pushfd",
-            //    "jmp " + (playclawHookAbsoluteAddress + 3),
-            //    "popfd",
-            //    "popad"
-            //};
-            //int offset = InjectAsm(asm, (uint)myCodeCave);
-            //offset += _wowProcess.Memory.WriteBytes(myCodeCave + offset, origBytes);
-            //asm = new[]
-            //{
-            //    "jmp " + (_dxAddress.HookPtr + 29 + 5)
-            //};
-            //InjectAsm(asm, (uint)(myCodeCave + offset));
-            //MessageBox.Show(myCodeCave.ToInt32().ToString("X"));
-            //asm = new[]
-            //{
-            //    "jmp " + myCodeCave
-            //};
-            //_wowProcess.Memory.WriteBytes(_dxAddress.HookPtr, new byte[] { 0x8B, 0xFF, 0x55, 0x8B, 0xEC });
-            //InjectAsm(asm, (uint)(_dxAddress.HookPtr + 29));
         }
 
     }
