@@ -1,15 +1,10 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using System.Windows.Forms;
-using AxTools.Classes;
+﻿using AxTools.Classes;
 using AxTools.WoW.Management.ObjectManager;
 using Fasm;
-using GreyMagic;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -20,15 +15,20 @@ namespace AxTools.WoW.Management
         private static WowProcess _wowProcess;
         private static ManagedFasm _fasm;
         private static byte[] _hookOriginalBytes;
-        private static IntPtr _injectedCode;
-        private static IntPtr _addresseInjection;
-        private static IntPtr _retnInjectionAsm;
+        private static IntPtr _loopCodePtr;
+        private static IntPtr _customFunctionPtr;
+        private static IntPtr _returnValuePtr;
         private static IntPtr _hookPtr;
-
+        private static int _loopCodeSize;
+        private const int CustomFunctionSize = 0x256;
+        private static uint _referenceProtectionType;
+        private static readonly byte[] Eraser = new byte[CustomFunctionSize];
+        private static IntPtr _codeCavePtr;
         private static readonly object FASMLock = new object();
         private static readonly string RandomVariableName = Utils.GetRandomString(10);
         private static readonly string OverlayFrameName = Utils.GetRandomString(10);
         private static readonly string[] RegisterNames = { "ah", "al", "bh", "bl", "ch", "cl", "dh", "dl", "eax", "ebx", "ecx", "edx" };
+        private const uint PAGE_EXECUTE_READWRITE = 64;
         
         internal static bool Apply(WowProcess process)
         {
@@ -41,52 +41,54 @@ namespace AxTools.WoW.Management
             {
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
                     BitConverter.ToString(_hookOriginalBytes), _hookPtr.ToInt32()), false, false);
-                _injectedCode = _wowProcess.Memory.AllocateMemory(512);
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint)_injectedCode));
                 // allocate memory the new injection code pointer:
-                _addresseInjection = _wowProcess.Memory.AllocateMemory(0x4);
-                _wowProcess.Memory.Write(_addresseInjection, 0);
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] User code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint) _addresseInjection));
+                _customFunctionPtr = _wowProcess.Memory.AllocateMemory(0x4);
+                _wowProcess.Memory.Write(_customFunctionPtr, 0);
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] User code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint) _customFunctionPtr));
                 // allocate memory the pointer return value:
-                _retnInjectionAsm = _wowProcess.Memory.AllocateMemory(0x4);
-                _wowProcess.Memory.Write(_retnInjectionAsm, 0);
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Return value code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint) _retnInjectionAsm));
+                _returnValuePtr = _wowProcess.Memory.AllocateMemory(0x4);
+                _wowProcess.Memory.Write(_returnValuePtr, 0);
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Return value code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint) _returnValuePtr));
                 // injecting loop
                 List<string> asm = new List<string>();
                 RandomizeOpcode(asm, "pushad");
                 RandomizeOpcode(asm, "pushfd");
-                RandomizeOpcode(asm, "mov eax, [" + _addresseInjection + "]");
+                RandomizeOpcode(asm, "mov eax, [" + _customFunctionPtr + "]");
                 RandomizeOpcode(asm, "test eax, eax");
                 RandomizeOpcode(asm, "je @out");
-                RandomizeOpcode(asm, "mov eax, [" + _addresseInjection + "]");
+                RandomizeOpcode(asm, "mov eax, [" + _customFunctionPtr + "]");
                 RandomizeOpcode(asm, "call eax");
-                RandomizeOpcode(asm, "mov [" + _retnInjectionAsm + "], eax");
-                RandomizeOpcode(asm, "mov edx, " + _addresseInjection);
+                RandomizeOpcode(asm, "mov [" + _returnValuePtr + "], eax");
+                RandomizeOpcode(asm, "mov edx, " + _customFunctionPtr);
                 RandomizeOpcode(asm, "mov ecx, 0");
                 RandomizeOpcode(asm, "mov [edx], ecx");
                 RandomizeOpcode(asm, "@out:");
                 RandomizeOpcode(asm, "popfd");
                 RandomizeOpcode(asm, "popad");
-                int sizeAsm = InjectAsm(asm, (uint) _injectedCode);
-                // injecting trampouline
-                _wowProcess.Memory.WriteBytes(_injectedCode + sizeAsm, _hookOriginalBytes);
-                // injecting return to Endscene/Present
-                asm.Clear();
-                asm.Add("jmp " + ((uint) _hookPtr + 5)); // 5 is <jmp> instruction length
-                InjectAsm(asm, (uint) (_injectedCode + sizeAsm + _hookOriginalBytes.Length));
-                // apply hook
-                asm.Clear();
-                asm.Add("jmp " + (_injectedCode));
-                InjectAsm(asm, (uint) _hookPtr);
-                //
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                for (int i = 0; i < 1000; i++)
+                _fasm.Clear();
+                foreach (string str in asm)
                 {
-                    AllocatedMemoryInLastSegment memory = AllocatedMemoryInLastSegment.Find(0x200);
-                    memory.Dispose();
+                    _fasm.AddLine(str);
                 }
-                Log.Print("Stopwatch: " + stopwatch.ElapsedMilliseconds);
-                //
+                int sizeAsm = _fasm.Assemble().Length;
+                _loopCodeSize = sizeAsm + 5 + 5;
+                _loopCodePtr = GetPointerForLoopCode(); // 5 for original instruction, 5 for return jmp
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint) _loopCodePtr));
+                _fasm.Inject((uint) _loopCodePtr);
+                // injecting trampouline
+                _wowProcess.Memory.WriteBytes(_loopCodePtr + sizeAsm, _hookOriginalBytes);
+                // injecting return to Endscene/Present
+                _fasm.Clear();
+                _fasm.AddLine("jmp " + ((uint)_hookPtr + 5)); // 5 is <jmp> instruction length
+                _fasm.Inject((uint) (_loopCodePtr + sizeAsm + _hookOriginalBytes.Length));
+                // apply hook
+                _fasm.Clear();
+                _fasm.AddLine("jmp " + _loopCodePtr);
+                _fasm.Inject((uint) _hookPtr);
+                // Allocating codecave
+                _codeCavePtr = GetPointerForCustomFunction();
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Custom function address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint) _codeCavePtr));
+                // Report about success :)
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Successfully hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr, 5))));
                 return true;
             }
@@ -117,13 +119,24 @@ namespace AxTools.WoW.Management
                 }
                 try
                 {
-                    _wowProcess.Memory.FreeMemory(_injectedCode);
-                    _wowProcess.Memory.FreeMemory(_addresseInjection);
-                    _wowProcess.Memory.FreeMemory(_retnInjectionAsm);
+                    _wowProcess.Memory.FreeMemory(_customFunctionPtr);
+                    _wowProcess.Memory.FreeMemory(_returnValuePtr);
                 }
                 catch (Exception ex)
                 {
                     Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't free memory with hook ({2})", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message));
+                }
+                try
+                {
+                    _wowProcess.Memory.WriteBytes(_loopCodePtr, new byte[_loopCodeSize]);
+                    _wowProcess.Memory.WriteBytes(_codeCavePtr, Eraser);
+                    uint temp;
+                    WinAPI.NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _loopCodePtr, (UIntPtr) _loopCodeSize, _referenceProtectionType, out temp);
+                    WinAPI.NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _codeCavePtr, (UIntPtr)CustomFunctionSize, _referenceProtectionType, out temp);
+                }
+                catch (Exception ex)
+                {
+                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't free memory with hook (2) ({2})", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message), true);
                 }
             }
             else
@@ -132,59 +145,56 @@ namespace AxTools.WoW.Management
             }
         }
 
-        private class AllocatedMemoryInLastSegment : IDisposable
+        private static IntPtr GetPointerForLoopCode()
         {
-            // ReSharper disable InconsistentNaming
-            private IntPtr Address;
-            private readonly uint Length;
-            private readonly uint ReferenceProtectionType;
-            private const uint PAGE_EXECUTE_READWRITE = 64;
-            private static int offset;
-            // ReSharper restore InconsistentNaming
-            
-            private AllocatedMemoryInLastSegment(IntPtr address, uint length)
+            byte[] emptyBytes = new byte[_loopCodeSize];
+            int start = (int)(_wowProcess.Memory.ImageBase + _wowProcess.Memory.Process.MainModule.ModuleMemorySize - 100 - emptyBytes.Length);
+            int end = (int)_wowProcess.Memory.ImageBase;
+            int pageSize = Environment.SystemPageSize;
+            for (int i = start; i > end; i--)
             {
-                Address = address;
-                Length = length;
-                if (!VirtualProtectEx(_wowProcess.Memory.ProcessHandle, address, (UIntPtr) length, PAGE_EXECUTE_READWRITE, out ReferenceProtectionType))
-                {
-                    throw new Exception("Can't change memory protection type, address: 0x" + Address.ToInt32().ToString("X") + ", length: " + length);
-                }
-            }
-
-            public void Dispose()
-            {
-                _wowProcess.Memory.WriteBytes(Address, new byte[Length]);
-                uint temp;
-                if (!VirtualProtectEx(_wowProcess.Memory.ProcessHandle, Address, (UIntPtr)Length, ReferenceProtectionType, out temp))
-                {
-                    throw new Exception("Can't change memory protection type (dispose), address: 0x" + Address.ToInt32().ToString("X") + ", length: " + Length);
-                }
-            }
-
-            public static AllocatedMemoryInLastSegment Find(int length)
-            {
-                byte[] emptyBytes = new byte[length];
-                int start = (int) (_wowProcess.Memory.ImageBase + _wowProcess.Memory.Process.MainModule.ModuleMemorySize - 100 - emptyBytes.Length - offset);
-                int end = (int)_wowProcess.Memory.ImageBase;
-                for (int i = start; i > end; i--)
+                if (i % pageSize == 0)
                 {
                     byte[] temp = _wowProcess.Memory.ReadBytes((IntPtr)i, emptyBytes.Length);
                     if (temp.SequenceEqual(emptyBytes))
                     {
-                        //Log.Print("AllocatedMemory: Found address: 0x" + i.ToString("X"));
-                        offset += length;
-                        return new AllocatedMemoryInLastSegment((IntPtr)i, (uint)length);
+                        if (WinAPI.NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, (IntPtr) i, (UIntPtr) _loopCodeSize, PAGE_EXECUTE_READWRITE, out _referenceProtectionType))
+                        {
+                            return (IntPtr)i;
+                        }
+                        Log.Print(string.Format("{0}:{1} :: [WoW hook] GetPointerForLoopCode: Can't change memory protection type: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, i));
+                        throw new Exception("GetPointerForLoopCode: Can't change memory protection type!");
                     }
                 }
-                throw new Exception("AllocatedMemory: can't find memory!");
             }
-
-            [DllImport("kernel32.dll")]
-            private static extern bool VirtualProtectEx(SafeMemoryHandle hProcess, IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
-
+            throw new Exception("GetPointerForLoopCode: can't find memory!");
         }
-          
+
+        private static IntPtr GetPointerForCustomFunction()
+        {
+            byte[] emptyBytes = new byte[CustomFunctionSize];
+            int start = (int) (_wowProcess.Memory.ImageBase + _wowProcess.Memory.Process.MainModule.ModuleMemorySize - 100 - emptyBytes.Length - _loopCodeSize);
+            int end = (int) _wowProcess.Memory.ImageBase;
+            int pageSize = Environment.SystemPageSize;
+            for (int i = start; i > end; i--)
+            {
+                if (i%pageSize == 0)
+                {
+                    byte[] temp = _wowProcess.Memory.ReadBytes((IntPtr)i, emptyBytes.Length);
+                    if (temp.SequenceEqual(emptyBytes))
+                    {
+                        if (WinAPI.NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, (IntPtr) i, (UIntPtr) CustomFunctionSize, PAGE_EXECUTE_READWRITE, out _referenceProtectionType))
+                        {
+                            return (IntPtr) i;
+                        }
+                        Log.Print(string.Format("{0}:{1} :: [WoW hook] GetPointerForCustomFunction: Can't change memory protection type: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, i));
+                        throw new Exception("GetPointerForCustomFunction: Can't change memory protection type!");
+                    }
+                }
+            }
+            throw new Exception("GetPointerForCustomFunction: can't find memory!");
+        }
+
         internal static void LuaDoString(string command)
         {
             // cdecl
@@ -504,15 +514,13 @@ namespace AxTools.WoW.Management
                 {
                     _fasm.AddLine(str);
                 }
-                int size = _fasm.Assemble().Length;
-                IntPtr address = _wowProcess.Memory.AllocateMemory(size);
-                _fasm.Inject((uint)address);
-                _wowProcess.Memory.Write(_addresseInjection, (int)address);
-                while (_wowProcess.Memory.Read<uint>(_addresseInjection) > 0)
+                _fasm.Inject((uint)_codeCavePtr);
+                _wowProcess.Memory.Write(_customFunctionPtr, (int)_codeCavePtr);
+                while (_wowProcess.Memory.Read<uint>(_customFunctionPtr) > 0)
                 {
                     Thread.Sleep(1);
                 }
-                _wowProcess.Memory.FreeMemory(address);
+                _wowProcess.Memory.WriteBytes(_codeCavePtr, Eraser);
             }
         }
 
@@ -520,22 +528,20 @@ namespace AxTools.WoW.Management
         {
             lock (FASMLock)
             {
-                _wowProcess.Memory.Write(_retnInjectionAsm, 0);
+                _wowProcess.Memory.Write(_returnValuePtr, 0);
                 _fasm.Clear();
                 foreach (string str in asm)
                 {
                     _fasm.AddLine(str);
                 }
-                int size = _fasm.Assemble().Length;
-                IntPtr address = _wowProcess.Memory.AllocateMemory(size);
-                _fasm.Inject((uint) address);
-                _wowProcess.Memory.Write(_addresseInjection, (int)address);
-                while (_wowProcess.Memory.Read<uint>(_addresseInjection) > 0)
+                _fasm.Inject((uint)_codeCavePtr);
+                _wowProcess.Memory.Write(_customFunctionPtr, (int)_codeCavePtr);
+                while (_wowProcess.Memory.Read<uint>(_customFunctionPtr) > 0)
                 {
                     Thread.Sleep(1);
                 }
                 List<byte> retnByte = new List<byte>();
-                uint dwAddress = _wowProcess.Memory.Read<uint>(_retnInjectionAsm);
+                uint dwAddress = _wowProcess.Memory.Read<uint>(_returnValuePtr);
                 if (dwAddress != 0)
                 {
                     byte buf = _wowProcess.Memory.Read<byte>((IntPtr)dwAddress);
@@ -546,31 +552,11 @@ namespace AxTools.WoW.Management
                         buf = _wowProcess.Memory.Read<byte>((IntPtr)dwAddress);
                     }
                 }
-                _wowProcess.Memory.FreeMemory(address);
+                _wowProcess.Memory.WriteBytes(_codeCavePtr, Eraser);
                 return Encoding.UTF8.GetString(retnByte.ToArray());
             }
         }
 
-        private static int InjectAsm(IEnumerable<string> asm, uint dwAddress)
-        {
-            int size;
-            _fasm.Clear();
-            foreach (string str in asm)
-            {
-                _fasm.AddLine(str);
-            }
-            try
-            {
-                size = _fasm.Assemble().Length;
-                _fasm.Inject(dwAddress);
-            }
-            catch
-            {
-                size = 0;
-            }
-            return size;
-        }
-        
         private static void RandomizeOpcode(ICollection<string> list, string asm)
         {
             if (Utils.Rnd.Next(2) == 0)
