@@ -1,4 +1,6 @@
-﻿using AxTools.Classes;
+﻿using WindowsFormsAero.TaskDialog;
+using AxTools.Classes;
+using AxTools.Forms;
 using AxTools.WoW.Management.ObjectManager;
 using Fasm;
 using System;
@@ -27,17 +29,17 @@ namespace AxTools.WoW.Management
         private static readonly object FASMLock = new object();
         private static readonly string RandomVariableName = Utils.GetRandomString(10);
         private static readonly string OverlayFrameName = Utils.GetRandomString(10);
-        private static readonly string[] RegisterNames = { "ah", "al", "bh", "bl", "ch", "cl", "dh", "dl", "eax", "ebx", "ecx", "edx" };
+        private static readonly string[] RegisterNames = {"ah", "al", "bh", "bl", "ch", "cl", "dh", "dl", "eax", "ebx", "ecx", "edx"};
         private const uint PAGE_EXECUTE_READWRITE = 64;
         
-        internal static bool Apply(WowProcess process)
+        internal static void Apply(WowProcess process, bool forceOverwriteE9 = false)
         {
             _wowProcess = process;
             _fasm = _wowProcess.Memory.Asm;
             _fasm.SetMemorySize(0x4096);
             _hookPtr = _wowProcess.Memory.ImageBase + WowBuildInfo.CGWorldFrameRender + 3; // 3 because it's length of <<push ebp>, <mov ebp, esp>> before <mov> instruction
             _hookOriginalBytes = _wowProcess.Memory.ReadBytes(_hookPtr, 5);
-            if (_hookOriginalBytes[0] == 0xA1)
+            if (forceOverwriteE9 || _hookOriginalBytes[0] == 0xA1)
             {
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
                     BitConverter.ToString(_hookOriginalBytes), _hookPtr.ToInt32()), false, false);
@@ -79,21 +81,35 @@ namespace AxTools.WoW.Management
                 _wowProcess.Memory.WriteBytes(_loopCodePtr + sizeAsm, _hookOriginalBytes);
                 // injecting return to Endscene/Present
                 _fasm.Clear();
-                _fasm.AddLine("jmp " + ((uint)_hookPtr + 5)); // 5 is <jmp> instruction length
+                _fasm.AddLine("jmp " + ((uint) _hookPtr + 5)); // 5 is <jmp> instruction length
                 _fasm.Inject((uint) (_loopCodePtr + sizeAsm + _hookOriginalBytes.Length));
+                // Allocating codecave
+                _codeCavePtr = GetPointerForCustomFunction();
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Custom function address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint)_codeCavePtr));
                 // apply hook
                 _fasm.Clear();
                 _fasm.AddLine("jmp " + _loopCodePtr);
                 _fasm.Inject((uint) _hookPtr);
-                // Allocating codecave
-                _codeCavePtr = GetPointerForCustomFunction();
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Custom function address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint) _codeCavePtr));
                 // Report about success :)
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Successfully hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr, 5))));
-                return true;
             }
-            Log.Print(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_hookOriginalBytes)), false, false);
-            return false;
+            else if (_hookOriginalBytes[0] == 0xE9)
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render is already hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_hookOriginalBytes)));
+                MainForm.Instance.Activate();
+                TaskDialogButton taskDialogButton = TaskDialogButton.Yes | TaskDialogButton.No;
+                TaskDialog taskDialog = new TaskDialog("Found another injector", "AxTools", "Do you want AxTools to try to inject? It can cause a crash!", taskDialogButton, TaskDialogIcon.Warning);
+                if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
+                {
+                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Trying to build hook chain...", _wowProcess.ProcessName, _wowProcess.ProcessID));
+                    Apply(process, true);
+                }
+            }
+            else
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_hookOriginalBytes)));
+                throw new Exception("Hook point has invalid signature! Restart WoW.");
+            }
         }
         
         internal static void Release()
@@ -167,6 +183,7 @@ namespace AxTools.WoW.Management
                     }
                 }
             }
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] GetPointerForLoopCode: can't find memory!", _wowProcess.ProcessName, _wowProcess.ProcessID));
             throw new Exception("GetPointerForLoopCode: can't find memory!");
         }
 
@@ -192,6 +209,7 @@ namespace AxTools.WoW.Management
                     }
                 }
             }
+            Log.Print(string.Format("{0}:{1} :: [WoW hook] GetPointerForCustomFunction: can't find memory!", _wowProcess.ProcessName, _wowProcess.ProcessID));
             throw new Exception("GetPointerForCustomFunction: can't find memory!");
         }
 
