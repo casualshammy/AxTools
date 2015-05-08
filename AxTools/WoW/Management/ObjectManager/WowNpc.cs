@@ -117,8 +117,7 @@ namespace AxTools.WoW.Management.ObjectManager
             {
                 if (lootable == -1)
                 {
-                    // todo
-                    BitVector32 dynamicFlags = WoWManager.WoWProcess.Memory.Read<BitVector32>(Descriptors + 0x28);
+                    BitVector32 dynamicFlags = WoWManager.WoWProcess.Memory.Read<BitVector32>(Descriptors + WowBuildInfo.NpcDynamicFlags);
                     lootable = dynamicFlags[0x2] ? 1 : 0;
                 }
                 return lootable != 0;

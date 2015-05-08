@@ -22,8 +22,8 @@ namespace AxTools.Services
         private static int _lastPacketLoss;
 
         /// <summary>
-        ///     First parameter is ping
-        ///     Second is packet loss
+        ///     The first parameter is ping
+        ///     The second is packet loss
         /// </summary>
         internal static event Action<int, int> DataChanged;
 

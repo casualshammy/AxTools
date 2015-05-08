@@ -90,16 +90,15 @@ namespace AxTools.Services
                     {
                         Log.Print("BackupAddons :: Backup directory created");
                         DeleteOldFiles();
-                        Exception zip = Zip();
-                        if (zip == null)
+                        try
                         {
-                            //Log.Print("BackupAddons :: Backup successfully created");
-                            //ReportToUser("Backup successful", "Backup file was stored in " + _settings.WoWAddonsBackupPath, false, trayMode);
+                            Zip();
+                            Log.Print("BackupAddons :: Backup is successfully created");
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            Log.Print("BackupAddons :: Backup error: Zipping failed: " + zip.Message, true);
-                            Utils.NotifyUser("Backup error", zip.Message, NotifyUserType.Error, true);
+                            Log.Print("BackupAddons :: Backup error: Zipping failed: " + ex.Message, true);
+                            Utils.NotifyUser("Backup error", ex.Message, NotifyUserType.Error, true);
                         }
                     }
                     else
@@ -181,28 +180,20 @@ namespace AxTools.Services
             }
         }
 
-        private static Exception Zip()
+        private static void Zip()
         {
             string zipPath = String.Format("{0}\\AddonsBackup_{1:yyyyMMdd_HHmmss}.zip", _settings.WoWAddonsBackupPath, DateTime.UtcNow);
             Log.Print("BackupAddons :: Zipping to file: " + zipPath);
-            try
+            using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
             {
-                using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
-                {
-                    zip.CompressionLevel = (CompressionLevel)_settings.WoWAddonsBackupCompressionLevel;
-                    zip.AddDirectory(_settings.WoWDirectory + "\\WTF", "\\WTF");
-                    zip.AddDirectory(_settings.WoWDirectory + "\\Interface", "\\Interface");
-                    zip.SaveProgress += AddonsBackup_SaveProgress;
-                    zip.Save();
-                    zip.SaveProgress -= AddonsBackup_SaveProgress;
-                }
-                GC.Collect();
-                return null;
+                zip.CompressionLevel = (CompressionLevel)_settings.WoWAddonsBackupCompressionLevel;
+                zip.AddDirectory(_settings.WoWDirectory + "\\WTF", "\\WTF");
+                zip.AddDirectory(_settings.WoWDirectory + "\\Interface", "\\Interface");
+                zip.SaveProgress += AddonsBackup_SaveProgress;
+                zip.Save();
+                zip.SaveProgress -= AddonsBackup_SaveProgress;
             }
-            catch (Exception ex)
-            {
-                return ex;
-            }
+            GC.Collect();
         }
 
         private static void AddonsBackup_SaveProgress(object sender, SaveProgressEventArgs e)

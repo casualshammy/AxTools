@@ -121,7 +121,7 @@ namespace AxTools.Classes
 
         internal static bool FontIsInstalled(string fontName)
         {
-            using (var fontsCollection = new InstalledFontCollection())
+            using (InstalledFontCollection fontsCollection = new InstalledFontCollection())
             {
                 return fontsCollection.Families.Any(i => i.Name == fontName);
             }

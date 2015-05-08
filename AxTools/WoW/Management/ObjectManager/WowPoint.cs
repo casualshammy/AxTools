@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
 
 namespace AxTools.WoW.Management.ObjectManager
@@ -17,6 +18,7 @@ namespace AxTools.WoW.Management.ObjectManager
             Z = z;
         }
 
+        [Pure]
         public double Distance(WowPoint p)
         {
             return Math.Sqrt((X - p.X)*(X - p.X) + (Y - p.Y)*(Y - p.Y) + (Z - p.Z)*(Z - p.Z));

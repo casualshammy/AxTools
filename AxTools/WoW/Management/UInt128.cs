@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using AxTools.Classes;
+﻿using System.Runtime.InteropServices;
 
 namespace AxTools.WoW.Management
 {

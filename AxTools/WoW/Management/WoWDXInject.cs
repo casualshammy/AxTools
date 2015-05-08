@@ -1,6 +1,4 @@
-﻿using WindowsFormsAero.TaskDialog;
-using AxTools.Classes;
-using AxTools.Forms;
+﻿using AxTools.Classes;
 using AxTools.WoW.Management.ObjectManager;
 using Fasm;
 using System;
@@ -31,15 +29,17 @@ namespace AxTools.WoW.Management
         private static readonly string OverlayFrameName = Utils.GetRandomString(10);
         private static readonly string[] RegisterNames = {"ah", "al", "bh", "bl", "ch", "cl", "dh", "dl", "eax", "ebx", "ecx", "edx"};
         private const uint PAGE_EXECUTE_READWRITE = 64;
+        // todo: delete this variable
+        internal static bool UnsafeInjectIsEnabled = false;
         
-        internal static void Apply(WowProcess process, bool forceOverwriteE9 = false)
+        internal static void Apply(WowProcess process)
         {
             _wowProcess = process;
             _fasm = _wowProcess.Memory.Asm;
             _fasm.SetMemorySize(0x4096);
             _hookPtr = _wowProcess.Memory.ImageBase + WowBuildInfo.CGWorldFrameRender + 3; // 3 because it's length of <<push ebp>, <mov ebp, esp>> before <mov> instruction
             _hookOriginalBytes = _wowProcess.Memory.ReadBytes(_hookPtr, 5);
-            if (forceOverwriteE9 || _hookOriginalBytes[0] == 0xA1)
+            if (_hookOriginalBytes[0] == 0xA1)
             {
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
                     BitConverter.ToString(_hookOriginalBytes), _hookPtr.ToInt32()), false, false);
@@ -73,16 +73,14 @@ namespace AxTools.WoW.Management
                     _fasm.AddLine(str);
                 }
                 int sizeAsm = _fasm.Assemble().Length;
-                _loopCodeSize = sizeAsm + 5 + 5;
-                _loopCodePtr = GetPointerForLoopCode(); // 5 for original instruction, 5 for return jmp
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint) _loopCodePtr));
+                _loopCodeSize = sizeAsm + 5 + 5; // 5 for original instruction, 5 for return jmp
+                _loopCodePtr = GetPointerForLoopCode();
                 _fasm.Inject((uint) _loopCodePtr);
-                // injecting trampouline
                 _wowProcess.Memory.WriteBytes(_loopCodePtr + sizeAsm, _hookOriginalBytes);
-                // injecting return to Endscene/Present
                 _fasm.Clear();
                 _fasm.AddLine("jmp " + ((uint) _hookPtr + 5)); // 5 is <jmp> instruction length
                 _fasm.Inject((uint) (_loopCodePtr + sizeAsm + _hookOriginalBytes.Length));
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint)_loopCodePtr));
                 // Allocating codecave
                 _codeCavePtr = GetPointerForCustomFunction();
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Custom function address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint)_codeCavePtr));
@@ -93,22 +91,10 @@ namespace AxTools.WoW.Management
                 // Report about success :)
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Successfully hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr, 5))));
             }
-            else if (_hookOriginalBytes[0] == 0xE9)
-            {
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render is already hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_hookOriginalBytes)));
-                MainForm.Instance.Activate();
-                TaskDialogButton taskDialogButton = TaskDialogButton.Yes | TaskDialogButton.No;
-                TaskDialog taskDialog = new TaskDialog("Found another injector", "AxTools", "Do you want AxTools to try to inject? It can cause a crash!", taskDialogButton, TaskDialogIcon.Warning);
-                if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
-                {
-                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Trying to build hook chain...", _wowProcess.ProcessName, _wowProcess.ProcessID));
-                    Apply(process, true);
-                }
-            }
             else
             {
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_hookOriginalBytes)));
-                throw new Exception("Hook point has invalid signature! Restart WoW.");
+                throw new Exception("Hook point has invalid signature! Please restart WoW.");
             }
         }
         
@@ -215,116 +201,117 @@ namespace AxTools.WoW.Management
 
         internal static void LuaDoString(string command)
         {
-            // cdecl
-            // todo
-            return;
-            lock (FASMLock)
+            if (!UnsafeInjectIsEnabled)
             {
-                byte[] bytesCommand = Encoding.UTF8.GetBytes(command);
-                IntPtr address = _wowProcess.Memory.AllocateMemory(bytesCommand.Length + 1);
-                _wowProcess.Memory.WriteBytes(address, bytesCommand);
-                string[] asm = {
-                    "mov eax, " + address,
-                    "push 0",
-                    "push eax",
-                    "push eax",
-                    "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaDoStringAddress),
-                    "call eax",
-                    "add esp, 0xC",
-                    "retn"
-                };
-                try
-                {
-                    InjectVoid(asm);
-                }
-                catch
-                {
-                    // ReSharper disable once RedundantJumpStatement
-                    return;
-                }
-                finally
-                {
-                    _wowProcess.Memory.FreeMemory(address);
-                }
+                return;
+            }
+            // cdecl
+            byte[] bytesCommand = Encoding.UTF8.GetBytes(command);
+            IntPtr address = _wowProcess.Memory.AllocateMemory(bytesCommand.Length + 1);
+            _wowProcess.Memory.WriteBytes(address, bytesCommand);
+            string[] asm =
+            {
+                "mov eax, " + address,
+                "push 0",
+                "push eax",
+                "push eax",
+                "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaDoStringAddress),
+                "call eax",
+                "add esp, 0xC",
+                "retn"
+            };
+            try
+            {
+                InjectVoid(asm);
+            }
+            catch (Exception ex)
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] LuaDoString error: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message), true);
+            }
+            finally
+            {
+                _wowProcess.Memory.FreeMemory(address);
             }
         }
 
         internal static string GetLocalizedText(string commandLine)
         {
-            // thiscall
-            // todo
-            return string.Empty;
-            lock (FASMLock)
+            if (!UnsafeInjectIsEnabled)
             {
-                byte[] command = Encoding.UTF8.GetBytes(commandLine);
-                IntPtr address = _wowProcess.Memory.AllocateMemory(command.Length + 1);
-                _wowProcess.Memory.WriteBytes(address, command);
-                string[] asm = {
-                    "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.ClntObjMgrGetActivePlayerObj),
-                    "mov ecx, eax",
-                    "push -1",
-                    "mov edx, " + address,
-                    "push edx",
-                    "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaGetLocalizedTextAddress),
-                    "retn"
-                };
-                try
-                {
-                    return InjectReturn(asm);
-                }
-                catch
-                {
-                    return null;
-                }
-                finally
-                {
-                    _wowProcess.Memory.FreeMemory(address);
-                }
+                return string.Empty;
+            }
+            // thiscall
+            IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr)WowBuildInfo.PlayerPtr, true);
+            byte[] bytesCommand = Encoding.UTF8.GetBytes(commandLine);
+            IntPtr address = _wowProcess.Memory.AllocateMemory(bytesCommand.Length + 1);
+            _wowProcess.Memory.WriteBytes(address, bytesCommand);
+            string[] asm =
+            {
+                "mov ecx, " + localPlayerPtr,
+                "push -1",
+                "mov edx, " + address,
+                "push edx",
+                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaGetLocalizedTextAddress),
+                "retn"
+            };
+            try
+            {
+                return InjectReturn(asm);
+            }
+            catch (Exception ex)
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] GetLocalizedText error: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message), true);
+                return string.Empty;
+            }
+            finally
+            {
+                _wowProcess.Memory.FreeMemory(address);
             }
         }
 
         internal static string GetFunctionReturn(string function)
         {
-            // cdecl + thiscall
-            //todo
-            return string.Empty;
-            lock (FASMLock)
+            if (!UnsafeInjectIsEnabled)
             {
-                byte[] commandRequest = Encoding.UTF8.GetBytes(RandomVariableName + "=" + function);
-                byte[] commandRetrieve = Encoding.UTF8.GetBytes(RandomVariableName);
-                IntPtr addressRequest = _wowProcess.Memory.AllocateMemory(commandRequest.Length + 1);
-                IntPtr addressRetrieve = _wowProcess.Memory.AllocateMemory(commandRetrieve.Length + 1);
-                _wowProcess.Memory.WriteBytes(addressRequest, commandRequest);
-                _wowProcess.Memory.WriteBytes(addressRetrieve, commandRetrieve);
-                string[] asm = {
-                    "mov eax, " + addressRequest,
-                    "push 0",
-                    "push eax",
-                    "push eax",
-                    "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaDoStringAddress),
-                    "call eax",
-                    "add esp, 0xC",
-                    "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.ClntObjMgrGetActivePlayerObj),
-                    "mov ecx, eax",
-                    "push -1",
-                    "mov edx, " + addressRetrieve,
-                    "push edx",
-                    "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaGetLocalizedTextAddress),
-                    "retn"
-                };
-                try
-                {
-                    return InjectReturn(asm);
-                }
-                catch
-                {
-                    return null;
-                }
-                finally
-                {
-                    _wowProcess.Memory.FreeMemory(addressRetrieve);
-                    _wowProcess.Memory.FreeMemory(addressRequest);
-                }
+                return string.Empty;
+            }
+            // cdecl + thiscall
+            IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr)WowBuildInfo.PlayerPtr, true);
+            byte[] commandRequest = Encoding.UTF8.GetBytes(RandomVariableName + "=" + function);
+            byte[] commandRetrieve = Encoding.UTF8.GetBytes(RandomVariableName);
+            IntPtr addressRequest = _wowProcess.Memory.AllocateMemory(commandRequest.Length + 1);
+            IntPtr addressRetrieve = _wowProcess.Memory.AllocateMemory(commandRetrieve.Length + 1);
+            _wowProcess.Memory.WriteBytes(addressRequest, commandRequest);
+            _wowProcess.Memory.WriteBytes(addressRetrieve, commandRetrieve);
+            string[] asm =
+            {
+                "mov eax, " + addressRequest,
+                "push 0",
+                "push eax",
+                "push eax",
+                "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaDoStringAddress),
+                "call eax",
+                "add esp, 0xC",
+                "mov ecx, " + localPlayerPtr,
+                "push -1",
+                "mov edx, " + addressRetrieve,
+                "push edx",
+                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaGetLocalizedTextAddress),
+                "retn"
+            };
+            try
+            {
+                return InjectReturn(asm);
+            }
+            catch (Exception ex)
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] GetFunctionReturn error: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, ex.Message), true);
+                return string.Empty;
+            }
+            finally
+            {
+                _wowProcess.Memory.FreeMemory(addressRetrieve);
+                _wowProcess.Memory.FreeMemory(addressRequest);
             }
         }
 

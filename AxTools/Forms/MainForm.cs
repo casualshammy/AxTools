@@ -282,9 +282,12 @@ namespace AxTools.Forms
             startupOverlay.Close();
             Changes.ShowChangesIfNeeded();
             UpdaterService.Start();
+            TaskDialogButton yesNo = TaskDialogButton.Yes | TaskDialogButton.No;
+            if (new TaskDialog("Do you want to enable LUA functions?", "AxTools", "It is potentially unsafe, but seems to be good enough", yesNo, TaskDialogIcon.Information).Show(this).CommonButton == Result.Yes)
+            {
+                WoWDXInject.UnsafeInjectIsEnabled = true;
+            }
             Log.Print("AxTools started succesfully");
-            //todo
-            TaskDialog.Show("<WARDEN> IS RAMPAGED", "AxTools", "Lua functions are blocked", TaskDialogButton.OK, TaskDialogIcon.SecurityWarning);
         }
 
         private void linkSettings_Click(object sender, EventArgs e)

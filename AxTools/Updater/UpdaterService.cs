@@ -1,4 +1,7 @@
-﻿using System;
+﻿using AxTools.Classes;
+using AxTools.Forms;
+using Ionic.Zip;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -7,9 +10,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using AxTools.Classes;
-using AxTools.Forms;
-using Ionic.Zip;
 
 namespace AxTools.Updater
 {
@@ -118,7 +118,7 @@ namespace AxTools.Updater
             }
             catch (Exception ex)
             {
-                Log.Print("[Updater] Fetching info error: " + ex.Message + " :: " + ex.GetType(), true);
+                Log.Print(string.Format("[Updater] Fetching info error ({0}): {1}", ex.GetType(), ex.Message), true);
                 return;
             }
             if (!String.IsNullOrWhiteSpace(updateString))

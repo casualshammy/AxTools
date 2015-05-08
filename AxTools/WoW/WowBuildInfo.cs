@@ -31,7 +31,6 @@
 
         #region Injected methods
 
-        internal static readonly int ClntObjMgrGetActivePlayerObj = 0x3B0E; // ClntObjMgrGetActivePlayerObj
         internal static readonly int LuaDoStringAddress = 0x250D1; // FrameScript_ExecuteBuffer
         internal static readonly int LuaGetLocalizedTextAddress = 0x2E9FC9; // FrameScript_GetLocalizedText
         internal static readonly int TargetUnit = 0x946FC0; // CGGameUI::Target
@@ -88,8 +87,9 @@
 
         internal static readonly int NpcNameBase = 0xC04;
         internal static readonly int NpcNameOffset = 0x7C;
+        internal const int NpcDynamicFlags = 0x28;
 
         #endregion
-    
+
     }
 }

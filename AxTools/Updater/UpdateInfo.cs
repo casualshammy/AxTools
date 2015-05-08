@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using AxTools.Helpers;
+using Newtonsoft.Json;
 
 namespace AxTools.Updater
 {
@@ -12,7 +12,7 @@ namespace AxTools.Updater
         }
 
         [JsonProperty(Order = 0, PropertyName = "Version")]
-        internal Version Version;
+        internal VersionExt Version;
 
         [JsonProperty(Order = 1, PropertyName = "PanicMode")]
         internal bool PanicMode;

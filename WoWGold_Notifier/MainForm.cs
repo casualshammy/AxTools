@@ -31,6 +31,7 @@ namespace WoWGold_Notifier
         private static readonly Uri SITE = new Uri("https://supply.elfmoney.ru");
         private const string ButtonToClickText = "Выполнить";
         private const string ServerName = "Гордунни";
+        private const int MaxValue = 40000;
 
         public MainForm()
         {
@@ -68,7 +69,7 @@ namespace WoWGold_Notifier
                 {
                     labelResponse.Text = "Response: 200 OK";
                 }
-                HtmlDocument p = new HtmlDocument { OptionDefaultStreamEncoding = Encoding.UTF8 };
+                HtmlDocument p = new HtmlDocument {OptionDefaultStreamEncoding = Encoding.UTF8};
                 p.LoadHtml(source);
                 foreach (HtmlNode node in p.DocumentNode.Descendants("tr").Where(i => i.Attributes.Contains("data-id")).Reverse())
                 {
@@ -80,37 +81,39 @@ namespace WoWGold_Notifier
                             string server = node.Descendants("td").ToArray()[2].InnerText;
                             if (server.Contains(ServerName) && shouldInformUser)
                             {
-                                string amount = node.Descendants("td").ToArray()[4].InnerText;
-                                try
+                                int amount = int.Parse(node.Descendants("td").ToArray()[4].InnerText.Split(',')[0]);
+                                if (amount > 0 && amount <= MaxValue)
                                 {
-                                    if (btn.InnerText.Contains(ButtonToClickText))
+                                    try
                                     {
-                                        string href = btn.Descendants("a").ToArray()[0].Attributes["href"].Value;
-                                        HttpGet(new Uri(SITE + href));
-                                        Log("Trying to bind: " + SITE + href);
-                                        SendSMS(server + " - " + amount);
+                                        if (btn.InnerText.Contains(ButtonToClickText))
+                                        {
+                                            string href = btn.Descendants("a").ToArray()[0].Attributes["href"].Value;
+                                            HttpGet(new Uri(SITE + href));
+                                            Log("Trying to bind: " + SITE + href);
+                                            SendSMS(server + " - " + amount);
+                                        }
                                     }
+                                    catch (Exception ex)
+                                    {
+                                        Log("Click error: " + ex.Message);
+                                    }
+                                    SystemSounds.Exclamation.Play();
+                                    notifyIcon.ShowBalloonTip(30000, "WoWGold - New Order!", server + " - " + amount, ToolTipIcon.Warning);
+                                    FLASHWINFO flashwinfo = new FLASHWINFO
+                                    {
+                                        cbSize = (uint) Marshal.SizeOf(typeof (FLASHWINFO)),
+                                        hwnd = Handle,
+                                        dwFlags = FlashWindowFlags.FLASHW_TRAY | FlashWindowFlags.FLASHW_TIMERNOFG
+                                    };
+                                    NativeMethods.FlashWindowEx(ref flashwinfo);
                                 }
-                                catch (Exception ex)
-                                {
-                                    Log("Click error: " + ex.Message);
-                                }
-                                SystemSounds.Exclamation.Play();
-                                notifyIcon.ShowBalloonTip(30000, "WoWGold - New Order!", server + " - " + amount, ToolTipIcon.Warning);
-                                FLASHWINFO flashwinfo = new FLASHWINFO
-                                {
-                                    cbSize = (uint)Marshal.SizeOf(typeof(FLASHWINFO)),
-                                    hwnd = Handle,
-                                    dwFlags = FlashWindowFlags.FLASHW_TRAY | FlashWindowFlags.FLASHW_TIMERNOFG
-                                };
-                                NativeMethods.FlashWindowEx(ref flashwinfo);
                             }
                             orders.Add(node.Attributes["data-id"].Value);
                         }
                     }
                 }
                 shouldInformUser = true;
-                //PrintStatsInvoke();
             }
             catch (Exception ex)
             {
@@ -149,7 +152,7 @@ namespace WoWGold_Notifier
                 long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
                 BeginInvoke((Action) (() =>
                 {
-                    label1.Text = String.Format("Last updated: {0:HH:mm:ss.fff}", DateTime.Now);
+                    label1.Text = string.Format("Last updated: {0:HH:mm:ss.fff}", DateTime.Now);
                     labelPerformance.Text = "Performance: " + elapsedMilliseconds + "ms";
                     labelThreads.Text = "Interval: " + _timerDefaultInterval;
                 }));
@@ -224,12 +227,7 @@ namespace WoWGold_Notifier
                     return null;
                 // Allocate stringbuilder large enough to hold the cookie
                 cookieData = new StringBuilder(datasize);
-                if (!InternetGetCookieEx(
-                    uri.ToString(),
-                    null, cookieData,
-                    ref datasize,
-                    InternetCookieHttponly,
-                    IntPtr.Zero))
+                if (!InternetGetCookieEx(uri.ToString(), null, cookieData, ref datasize, InternetCookieHttponly, IntPtr.Zero))
                     return null;
             }
             if (cookieData.Length > 0)

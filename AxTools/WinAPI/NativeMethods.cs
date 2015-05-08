@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using GreyMagic;
 
 namespace AxTools.WinAPI
 {
@@ -41,6 +42,9 @@ namespace AxTools.WinAPI
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool MoveWindow(IntPtr hWnd, int x, int y, int nWidth, int nHeight, bool bRepaint);
+
+        [DllImport("kernel32.dll")]
+        internal static extern bool VirtualProtectEx(SafeMemoryHandle hProcess, IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
 
         // ReSharper disable InconsistentNaming
         internal static int WS_CAPTION = 0xC00000;
