@@ -31,13 +31,16 @@
 
         #region Injected methods
 
-        internal static readonly int LuaDoStringAddress = 0x250D1; // FrameScript_ExecuteBuffer
-        internal static readonly int LuaGetLocalizedTextAddress = 0x2E9FC9; // FrameScript_GetLocalizedText
-        internal static readonly int TargetUnit = 0x946FC0; // CGGameUI::Target
-        internal static readonly int Interact = 0x949215; // CGGameUI::Interact
-        internal static readonly int HandleTerrainClick = 0x256A04; // Spell_C__HandleTerrainClick
-        internal static readonly int ClickToMove = 0x2F9C96; // CGUnit_C::InitializeTrackingState // Wow.exe+2F9D1C
-        internal static readonly int CGWorldFrameRender = 0x267B4A;
+        internal static readonly int FrameScript_ExecuteBuffer = 0x250D1;
+        internal static readonly int FrameScript_GetLocalizedText = 0x2E9FC9;
+        internal static readonly int CGGameUI_Target = 0x946FC0;
+        internal static readonly int CGGameUI_Interact = 0x949215;
+        internal static readonly int Spell_C_HandleTerrainClick = 0x256A04;
+        internal static readonly int CGUnit_C_InitializeTrackingState = 0x2F9C96;
+        internal const int WorldFrameRender = 0x267B4A;
+        internal const int HookPtr = WorldFrameRender + 0x4C;
+        internal const int HookLength = 5;
+        internal const string HookPattern = "8B C7 5F 5E 5D";
 
         #endregion
 

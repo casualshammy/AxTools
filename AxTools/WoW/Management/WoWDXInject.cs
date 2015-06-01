@@ -29,17 +29,15 @@ namespace AxTools.WoW.Management
         private static readonly string OverlayFrameName = Utils.GetRandomString(10);
         private static readonly string[] RegisterNames = {"ah", "al", "bh", "bl", "ch", "cl", "dh", "dl", "eax", "ebx", "ecx", "edx"};
         private const uint PAGE_EXECUTE_READWRITE = 64;
-        // todo: delete this variable
-        internal static bool UnsafeInjectIsEnabled = false;
         
         internal static void Apply(WowProcess process)
         {
             _wowProcess = process;
             _fasm = _wowProcess.Memory.Asm;
             _fasm.SetMemorySize(0x4096);
-            _hookPtr = _wowProcess.Memory.ImageBase + WowBuildInfo.CGWorldFrameRender + 3; // 3 because it's length of <<push ebp>, <mov ebp, esp>> before <mov> instruction
-            _hookOriginalBytes = _wowProcess.Memory.ReadBytes(_hookPtr, 5);
-            if (_hookOriginalBytes[0] == 0xA1)
+            _hookPtr = _wowProcess.Memory.ImageBase + WowBuildInfo.HookPtr;
+            _hookOriginalBytes = _wowProcess.Memory.ReadBytes(_hookPtr, WowBuildInfo.HookLength);
+            if (HookPtrSignatureIsValid(_hookOriginalBytes))
             {
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Original bytes: {2}, address: 0x{3:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
                     BitConverter.ToString(_hookOriginalBytes), _hookPtr.ToInt32()), false, false);
@@ -73,13 +71,13 @@ namespace AxTools.WoW.Management
                     _fasm.AddLine(str);
                 }
                 int sizeAsm = _fasm.Assemble().Length;
-                _loopCodeSize = sizeAsm + 5 + 5; // 5 for original instruction, 5 for return jmp
+                _loopCodeSize = sizeAsm + WowBuildInfo.HookLength + 5; // 5 for return jmp
                 _loopCodePtr = GetPointerForLoopCode();
                 _fasm.Inject((uint) _loopCodePtr);
                 _wowProcess.Memory.WriteBytes(_loopCodePtr + sizeAsm, _hookOriginalBytes);
                 _fasm.Clear();
-                _fasm.AddLine("jmp " + ((uint) _hookPtr + 5)); // 5 is <jmp> instruction length
-                _fasm.Inject((uint) (_loopCodePtr + sizeAsm + _hookOriginalBytes.Length));
+                _fasm.AddLine("jmp " + ((uint) _hookPtr + WowBuildInfo.HookLength));
+                _fasm.Inject((uint) (_loopCodePtr + sizeAsm + WowBuildInfo.HookLength));
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Loop code address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (uint)_loopCodePtr));
                 // Allocating codecave
                 _codeCavePtr = GetPointerForCustomFunction();
@@ -89,7 +87,7 @@ namespace AxTools.WoW.Management
                 _fasm.AddLine("jmp " + _loopCodePtr);
                 _fasm.Inject((uint) _hookPtr);
                 // Report about success :)
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Successfully hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr, 5))));
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Successfully hooked, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr, WowBuildInfo.HookLength))));
             }
             else
             {
@@ -105,7 +103,7 @@ namespace AxTools.WoW.Management
                 try
                 {
                     _wowProcess.Memory.WriteBytes(_hookPtr, _hookOriginalBytes);
-                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Hook is deleted, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr, 5))));
+                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Hook is deleted, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(_wowProcess.Memory.ReadBytes(_hookPtr, WowBuildInfo.HookLength))));
                 }
                 catch (Exception ex)
                 {
@@ -145,6 +143,33 @@ namespace AxTools.WoW.Management
             {
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Can't delete hook: WoW client has been finished", _wowProcess.ProcessName, _wowProcess.ProcessID));
             }
+        }
+
+        private static bool HookPtrSignatureIsValid(byte[] originalBytes)
+        {
+            string[] split = WowBuildInfo.HookPattern.Split(' ');
+            if (originalBytes.Length != split.Length)
+            {
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] HookPtrSignatureIsValid: reference and actual length are different", _wowProcess.ProcessName, _wowProcess.ProcessID));
+                return false;
+            }
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (split[i].Length != 2)
+                {
+                    Log.Print(string.Format("{0}:{1} :: [WoW hook] HookPtrSignatureIsValid: invalid reference format: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, split[i]));
+                    return false;
+                }
+                if (split[i] != "??")
+                {
+                    byte b = byte.Parse(split[i], NumberStyles.HexNumber);
+                    if (b != originalBytes[i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         private static IntPtr GetPointerForLoopCode()
@@ -201,10 +226,6 @@ namespace AxTools.WoW.Management
 
         internal static void LuaDoString(string command)
         {
-            if (!UnsafeInjectIsEnabled)
-            {
-                return;
-            }
             // cdecl
             byte[] bytesCommand = Encoding.UTF8.GetBytes(command);
             IntPtr address = _wowProcess.Memory.AllocateMemory(bytesCommand.Length + 1);
@@ -215,7 +236,7 @@ namespace AxTools.WoW.Management
                 "push 0",
                 "push eax",
                 "push eax",
-                "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaDoStringAddress),
+                "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.FrameScript_ExecuteBuffer),
                 "call eax",
                 "add esp, 0xC",
                 "retn"
@@ -236,10 +257,6 @@ namespace AxTools.WoW.Management
 
         internal static string GetLocalizedText(string commandLine)
         {
-            if (!UnsafeInjectIsEnabled)
-            {
-                return string.Empty;
-            }
             // thiscall
             IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr)WowBuildInfo.PlayerPtr, true);
             byte[] bytesCommand = Encoding.UTF8.GetBytes(commandLine);
@@ -251,7 +268,7 @@ namespace AxTools.WoW.Management
                 "push -1",
                 "mov edx, " + address,
                 "push edx",
-                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaGetLocalizedTextAddress),
+                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.FrameScript_GetLocalizedText),
                 "retn"
             };
             try
@@ -271,10 +288,6 @@ namespace AxTools.WoW.Management
 
         internal static string GetFunctionReturn(string function)
         {
-            if (!UnsafeInjectIsEnabled)
-            {
-                return string.Empty;
-            }
             // cdecl + thiscall
             IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr)WowBuildInfo.PlayerPtr, true);
             byte[] commandRequest = Encoding.UTF8.GetBytes(RandomVariableName + "=" + function);
@@ -289,14 +302,14 @@ namespace AxTools.WoW.Management
                 "push 0",
                 "push eax",
                 "push eax",
-                "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaDoStringAddress),
+                "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.FrameScript_ExecuteBuffer),
                 "call eax",
                 "add esp, 0xC",
                 "mov ecx, " + localPlayerPtr,
                 "push -1",
                 "mov edx, " + addressRetrieve,
                 "push edx",
-                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.LuaGetLocalizedTextAddress),
+                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.FrameScript_GetLocalizedText),
                 "retn"
             };
             try
@@ -406,7 +419,7 @@ namespace AxTools.WoW.Management
             {
                 "mov eax, " + terrainClickStructPtr,
                 "push eax",
-                "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.HandleTerrainClick),
+                "mov eax, " + (_wowProcess.Memory.ImageBase + WowBuildInfo.Spell_C_HandleTerrainClick),
                 "call eax",
                 "add esp, 0x4",
                 "retn"
@@ -441,7 +454,7 @@ namespace AxTools.WoW.Management
                 "push edx",
                 "push eax",
                 "push 4",
-                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.ClickToMove),
+                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.CGUnit_C_InitializeTrackingState),
                 "retn"
             };
             try
@@ -467,7 +480,7 @@ namespace AxTools.WoW.Management
             string[] asm =
             {
                 "push " + guidPtr,
-                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.TargetUnit),
+                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.CGGameUI_Target),
                 "add esp, 0x4",
                 "retn"
             };
@@ -492,7 +505,7 @@ namespace AxTools.WoW.Management
             string[] asm =
             {
                 "push " + guidPtr,
-                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.Interact),
+                "call " + (_wowProcess.Memory.ImageBase + WowBuildInfo.CGGameUI_Interact),
                 "add esp, 0x4",
                 "retn"
             };
@@ -562,7 +575,7 @@ namespace AxTools.WoW.Management
             }
         }
 
-        private static void RandomizeOpcode(ICollection<string> list, string asm)
+        private static void RandomizeOpcode(List<string> list, string asm)
         {
             if (Utils.Rnd.Next(2) == 0)
             {

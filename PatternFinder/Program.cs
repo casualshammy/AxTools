@@ -12,7 +12,7 @@ namespace PatternFinder
     {
         static void Main()
         {
-            Process[] wowProcess = Process.GetProcessesByName("Wow");
+            Process[] wowProcess = Process.GetProcessesByName("Wow-64");
             if (wowProcess.Length == 0)
             {
                 Console.WriteLine("!!! No WoW process found!");
@@ -21,26 +21,46 @@ namespace PatternFinder
             }
             Pattern[] patterns =
             {
-                Pattern.FromTextstyle("lua_protectedparser", "55 8B EC 83 EC 14 83 7D 14 00 75 07 ?? ?? ?? ?? ?? ?? ?? FF 75 10 8D 45 EC", new AddModifier(0), new LeaModifier(LeaType.SimpleAddress)),
-                Pattern.FromTextstyle("GlueState", "83 3d ?? ?? ?? ?? ?? 75 ?? e8 ?? ?? ?? ?? 8b 10 8b c8 ff 62 5c c3", new AddModifier(2), new LeaModifier()),
-                Pattern.FromTextstyle("GameState", "80 3d ?? ?? ?? ?? ?? 74 ?? 50 b9 ?? ?? ?? ?? e8 ?? ?? ?? ?? 85 c0 74 ?? 8b 40 08 83 f8 02 74 ?? 83 f8 01 75 ?? b0 01 c3 32 c0 c3", new AddModifier(2), new LeaModifier()),
-                Pattern.FromTextstyle("FocusedWidget", "3b 05 ?? ?? ?? ?? 0f 94 c1 51 ff 75 08 e8 ?? ?? ?? ?? 33 c0 83 c4 10 40 5d c3", new AddModifier(2), new LeaModifier()),
-                Pattern.FromTextstyle("BlackMarketNumItems", "55 8b ec 8b 0d ?? ?? ?? ?? 33 c0 56 85 c9 74 15 8b 15 ?? ?? ?? ?? 8b 32 3b 75 08 74 0b 40 83 c2 70", new AddModifier(5), new LeaModifier()),
-                Pattern.FromTextstyle("BlackMarketItems", "55 8b ec 8b 0d ?? ?? ?? ?? 33 c0 56 85 c9 74 15 8b 15 ?? ?? ?? ?? 8b 32 3b 75 08 74 0b 40 83 c2 70", new AddModifier(18), new LeaModifier()),
-                Pattern.FromTextstyle("LastHardwareAction", "55 8b ec a1 ?? ?? ?? ?? 6a 00 50 ff 75 08 e8 ?? ?? ?? ?? 8b c8 e8 ?? ?? ?? ?? 33 c0 5d c3", new AddModifier(4), new LeaModifier()),
-                Pattern.FromTextstyle("ObjectManager", "a1 ?? ?? ?? ?? c3 55 8b ec a1 ?? ?? ?? ?? 85 c0 74 17 ff 75 08 68 18 01 00 00", new AddModifier(1), new LeaModifier()),
-                Pattern.FromTextstyle("PlayerIsLooting", "e8 ?? ?? ?? ?? 03 05 ?? ?? ?? ?? c6 05 ?? ?? ?? ?? 00 a3 ?? ?? ?? ?? c3", new AddModifier(13), new LeaModifier()),
-                Pattern.FromTextstyle("PlayerName", "0f be 05 ?? ?? ?? ?? f7 d8 1b c0 25 ?? ?? ?? ?? c3 a0 ?? ?? ?? ?? c3", new AddModifier(3), new LeaModifier()),
-                Pattern.FromTextstyle("PlayerZoneID", "8b 15 ?? ?? ?? ?? 3b 15 ?? ?? ?? ?? 75 06 a0 ?? ?? ?? ?? c3", new AddModifier(2), new LeaModifier()),
-                Pattern.FromTextstyle("PlayerPtr", "55 8b ec a1 ?? ?? ?? ?? 83 ec 10 85 c0 75 26 8d 45 f0 50 e8 ?? ?? ?? ?? 68 ce 00 00 00 68", new AddModifier(4), new LeaModifier()),
-                Pattern.FromTextstyle("ClntObjMgrGetActivePlayerObj", "55 8b ec 83 ec 10 56 e8 ?? ?? ?? ?? 33 f6 3b c6 0F 84 07 01 00 00 8B 88 24 01 00 00", new AddModifier(8), new LeaModifier(LeaType.E8)),
-                Pattern.FromTextstyle("LuaDoStringAddress", "74 0c 6a 00 50 50 e8 ?? ?? ?? ?? 83 c4 0c 33 c0 5d c3", new AddModifier(7), new LeaModifier(LeaType.E8)),
-                Pattern.FromTextstyle("LuaGetLocalizedTextAddress", "83 c4 14 6a ff 8d 45 e0 50 8b ce e8 ?? ?? ?? ?? 5e c9 c2 04 00", new AddModifier(12), new LeaModifier(LeaType.E8)),
-                Pattern.FromTextstyle("TargetUnit", "C1 E8 1A 83 E0 3F 0F BE F0 F7 DE 1B F6 81 E6 ?? ?? ?? ?? F7 DE 1B F6 68 ?? ?? ?? ?? F7 DE E8 ?? ?? ?? ?? 56 FF 75 08 E8", new AddModifier(31), new LeaModifier(LeaType.E8)),
-                Pattern.FromTextstyle("Interact", "8D 45 F0 a5 50 75 0A e8 ?? ?? ?? ?? e9 ?? ?? ?? ?? e8 ?? ?? ?? ?? e9 ?? ?? ?? ?? 8B 83 30 02 00 00", new AddModifier(18), new LeaModifier(LeaType.E8)),
-                Pattern.FromTextstyle("HandleTerrainClick", "39 73 1C 0F 85 92 00 00 00 53 e8 ?? ?? ?? ?? 59 84 C0 74 07", new AddModifier(11), new LeaModifier(LeaType.E8)),
-                Pattern.FromTextstyle("ClickToMove", "F3 0F 11 04 24 FF 75 08 8B CE 68 ?? ?? ?? ?? 6A 04 e8 ?? ?? ?? ?? 5E 5d C2 04 00", new AddModifier(18), new LeaModifier(LeaType.E8)),
-                Pattern.FromTextstyle("CGWorldFrame::Render", "55 8b ec a1 ?? ?? ?? ?? 8b 80 d8 00 00 00 56 57 33 ff 47 a8 01 75 ?? 85 c0 75 ?? 33 c9", new AddModifier(0), new LeaModifier(LeaType.SimpleAddress))
+                // x64
+                Pattern.FromTextstyle("GlueState", "B9 E8 03 00 00 E8 ?? ?? ?? ?? 83 3D ?? ?? ?? ?? 00 75 14 83 3D ?? ?? ?? ?? 02 75 0B 80 7B 24 00 74 05 E8 ?? ?? ?? ?? 48 83 C4 20 5B C3", new AddModifier(21), new LeaModifier(LeaType.Cmp)),
+                Pattern.FromTextstyle("GameState", "80 3D ?? ?? ?? ?? 00 75 18 81 3D ?? ?? ?? ?? 00 02 00 00 74 0C 83 3D ?? ?? ?? ?? 0F 74 03 32 C0 C3 B0 01 C3", new AddModifier(2), new LeaModifier(LeaType.Cmp)),
+                Pattern.FromTextstyle("FocusedWidget", "8D 48 05 E8 ?? ?? ?? ?? 85 C0 74 AA 48 8B 05 ?? ?? ?? ?? 48 85 C0 75 18 F6 87 40 03 00 00 01 74 0F 48 8B CF E8 ?? ?? ?? ?? 48 8B 05", new AddModifier(15), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("BlackMarketNumItems", "48 39 45 20 0F 8E ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? 48 89 B4 24 88 00 00 00 4C 89 7C 24 50 E8 ?? ?? ?? ?? 33 F6 8B C6 8B D6 48 89 35 ?? ?? ?? ??", new AddModifier(13), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("BlackMarketItems", "48 39 45 20 0F 8E ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? 48 89 B4 24 88 00 00 00 4C 89 7C 24 50 E8 ?? ?? ?? ?? 33 F6 8B C6 8B D6 48 89 35 ?? ?? ?? ??", new AddModifier(44), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("LastHardwareAction", "48 83 EC 28 2B 0D ?? ?? ?? ?? 8D 81 20 6C FB FF 85 C0 78 65 8D 81 C0 88 E4 FF 85 C0 78 4E E8", new AddModifier(6), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("TickCount", "66 0F EF C0 8B C1 F3 48 0F 2A C0 89 0D ?? ?? ?? ?? C7 05 ?? ?? ?? ?? 00 00 00 00", new AddModifier(13), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("ObjectManager", "48 83 EC 28 44 0F B6 C1 48 8B 0D ?? ?? ?? ?? 48 85 C9 74 15 BA 00 02 00 00 E8 ?? ?? ?? ?? 84 C0 74 07 B0 01 48 83 C4 28 C3 32 C0 48 83 C4 28 C3", new AddModifier(11), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("PlayerIsLooting", "74 15 44 88 05 ?? ?? ?? ?? 44 88 05 ?? ?? ?? ?? B9 8F 00 00 00 EB 05 B9 8E 00 00 00 E8 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 85 C0 75 3B", new AddModifier(5), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("PlayerName", "E8 ?? ?? ?? ?? 85 C0 75 6C 48 83 C7 21 E8 ?? ?? ?? ?? 41 B8 FF FF FF 7F 48 8B C8 48 8B D7 E8", new AddModifier(14), new LeaModifier(LeaType.E8), new AddModifier(5), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("PlayerZoneID", "41 0F B7 06 A8 0C 74 6D 40 84 C5 74 68 8B D5 EB 66 41 0F B7 56 18 EB 06 8B 15 ?? ?? ?? ?? 48 8D 0D", new AddModifier(26), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("PlayerPtr", "74 15 44 88 05 ?? ?? ?? ?? 44 88 05 ?? ?? ?? ?? B9 8F 00 00 00 EB 05 B9 8E 00 00 00 E8 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 85 C0 75 3B", new AddModifier(36), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("FrameScript_ExecuteBuffer", "E8 ?? ?? ?? ?? 48 85 C0 74 13 80 38 00 74 0E 45 33 C0 48 8B D0 48 8B C8 E8 ?? ?? ?? ?? 33 C0 48 83 C4 20 5B C3", new AddModifier(25), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("FrameScript_GetLocalizedText", "BA 20 00 00 00 89 44 24 20 E8 ?? ?? ?? ?? 48 8D 54 24 30 41 83 C8 FF 48 8B CF E8 ?? ?? ?? ?? 48 8B 5C 24 60 48 83 C4 50", new AddModifier(27), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("CGGameUI_Target", "41 83 E0 3F 45 84 C0 48 0F 44 C3 48 85 C0 0F 95 C3 E8 ?? ?? ?? ?? 8B D3 48 8B CF E8", new AddModifier(18), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("CGGameUI_Interact", "83 7B 10 01 48 8B CB 75 10 E8 ?? ?? ?? ?? B8 01 00 00 00 48 83 C4 20 5B C3 E8 ?? ?? ?? ?? B8 01 00 00 00 48 83 C4 20 5B C3", new AddModifier(26), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("CGUnit_C_InitializeTrackingState", "48 8D 55 E7 48 8B CF E8 ?? ?? ?? ?? 48 8B BC 24 B0 00 00 00 B8 01 00 00 00 48 8B 9C 24 B8 00 00 00", new AddModifier(8), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("CGWorldFrame_Render", "4C 8D 4C 24 30 E8 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? 33 D2 E8 ?? ?? ?? ?? 48 8D 54 24 30 B9 67 00 00 00 E8", new AddModifier(20), new LeaModifier(LeaType.E8))
+
+                // x86
+                //Pattern.FromTextstyle("GlueState", "83 3d ?? ?? ?? ?? ?? 75 ?? e8 ?? ?? ?? ?? 8b 10 8b c8 ff 62 5c c3", new AddModifier(2), new LeaModifier()),
+                //Pattern.FromTextstyle("GameState", "80 3d ?? ?? ?? ?? ?? 74 ?? 50 b9 ?? ?? ?? ?? e8 ?? ?? ?? ?? 85 c0 74 ?? 8b 40 08 83 f8 02 74 ?? 83 f8 01 75 ?? b0 01 c3 32 c0 c3", new AddModifier(2), new LeaModifier()),
+                //Pattern.FromTextstyle("FocusedWidget", "3b 05 ?? ?? ?? ?? 0f 94 c1 51 ff 75 08 e8 ?? ?? ?? ?? 33 c0 83 c4 10 40 5d c3", new AddModifier(2), new LeaModifier()),
+                //Pattern.FromTextstyle("BlackMarketNumItems", "55 8b ec 8b 0d ?? ?? ?? ?? 33 c0 56 85 c9 74 15 8b 15 ?? ?? ?? ?? 8b 32 3b 75 08 74 0b 40 83 c2 70", new AddModifier(5), new LeaModifier()),
+                //Pattern.FromTextstyle("BlackMarketItems", "55 8b ec 8b 0d ?? ?? ?? ?? 33 c0 56 85 c9 74 15 8b 15 ?? ?? ?? ?? 8b 32 3b 75 08 74 0b 40 83 c2 70", new AddModifier(18), new LeaModifier()),
+                //Pattern.FromTextstyle("LastHardwareAction", "55 8b ec a1 ?? ?? ?? ?? 6a 00 50 ff 75 08 e8 ?? ?? ?? ?? 8b c8 e8 ?? ?? ?? ?? 33 c0 5d c3", new AddModifier(4), new LeaModifier()),
+                //Pattern.FromTextstyle("ObjectManager", "a1 ?? ?? ?? ?? c3 55 8b ec a1 ?? ?? ?? ?? 85 c0 74 17 ff 75 08 68 18 01 00 00", new AddModifier(1), new LeaModifier()),
+                //Pattern.FromTextstyle("PlayerIsLooting", "e8 ?? ?? ?? ?? 03 05 ?? ?? ?? ?? c6 05 ?? ?? ?? ?? 00 a3 ?? ?? ?? ?? c3", new AddModifier(13), new LeaModifier()),
+                //Pattern.FromTextstyle("PlayerName", "0f be 05 ?? ?? ?? ?? f7 d8 1b c0 25 ?? ?? ?? ?? c3 a0 ?? ?? ?? ?? c3", new AddModifier(3), new LeaModifier()),
+                //Pattern.FromTextstyle("PlayerZoneID", "8b 15 ?? ?? ?? ?? 3b 15 ?? ?? ?? ?? 75 06 a0 ?? ?? ?? ?? c3", new AddModifier(2), new LeaModifier()),
+                //Pattern.FromTextstyle("PlayerPtr", "55 8b ec a1 ?? ?? ?? ?? 83 ec 10 85 c0 75 26 8d 45 f0 50 e8 ?? ?? ?? ?? 68 ce 00 00 00 68", new AddModifier(4), new LeaModifier()),
+                //Pattern.FromTextstyle("ClntObjMgrGetActivePlayerObj", "55 8b ec 83 ec 10 56 e8 ?? ?? ?? ?? 33 f6 3b c6 0F 84 07 01 00 00 8B 88 24 01 00 00", new AddModifier(8), new LeaModifier(LeaType.E8)),
+                //Pattern.FromTextstyle("LuaDoStringAddress", "74 0c 6a 00 50 50 e8 ?? ?? ?? ?? 83 c4 0c 33 c0 5d c3", new AddModifier(7), new LeaModifier(LeaType.E8)),
+                //Pattern.FromTextstyle("LuaGetLocalizedTextAddress", "83 c4 14 6a ff 8d 45 e0 50 8b ce e8 ?? ?? ?? ?? 5e c9 c2 04 00", new AddModifier(12), new LeaModifier(LeaType.E8)),
+                //Pattern.FromTextstyle("TargetUnit", "C1 E8 1A 83 E0 3F 0F BE F0 F7 DE 1B F6 81 E6 ?? ?? ?? ?? F7 DE 1B F6 68 ?? ?? ?? ?? F7 DE E8 ?? ?? ?? ?? 56 FF 75 08 E8", new AddModifier(31), new LeaModifier(LeaType.E8)),
+                //Pattern.FromTextstyle("Interact", "8D 45 F0 a5 50 75 0A e8 ?? ?? ?? ?? e9 ?? ?? ?? ?? e8 ?? ?? ?? ?? e9 ?? ?? ?? ?? 8B 83 30 02 00 00", new AddModifier(18), new LeaModifier(LeaType.E8)),
+                //Pattern.FromTextstyle("HandleTerrainClick", "39 73 1C 0F 85 92 00 00 00 53 e8 ?? ?? ?? ?? 59 84 C0 74 07", new AddModifier(11), new LeaModifier(LeaType.E8)),
+                //Pattern.FromTextstyle("ClickToMove", "F3 0F 11 04 24 FF 75 08 8B CE 68 ?? ?? ?? ?? 6A 04 e8 ?? ?? ?? ?? 5E 5d C2 04 00", new AddModifier(18), new LeaModifier(LeaType.E8)),
+                //Pattern.FromTextstyle("CGWorldFrame::Render", "55 8b ec a1 ?? ?? ?? ?? 8b 80 d8 00 00 00 56 57 33 ff 47 a8 01 75 ?? 85 c0 75 ?? 33 c9", new AddModifier(0), new LeaModifier(LeaType.SimpleAddress))
             };
             string reportFilePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\result.txt";
             File.Delete(reportFilePath);
@@ -56,13 +76,13 @@ namespace PatternFinder
                         {
                             if (!alreadyFound)
                             {
-                                Console.WriteLine(pattern.Name + ": 0x" + intPtr.ToInt32().ToString("X"));
+                                Console.WriteLine(pattern.Name + ": 0x" + intPtr.ToInt64().ToString("X"));
                             }
                             else
                             {
-                                Console.WriteLine("!!!  " + pattern.Name + ": 0x" + intPtr.ToInt32().ToString("X"));
+                                Console.WriteLine("!!!  " + pattern.Name + ": 0x" + intPtr.ToInt64().ToString("X"));
                             }
-                            File.AppendAllLines(reportFilePath, new[] {"internal static readonly int " + pattern.Name + " = 0x" + intPtr.ToInt32().ToString("X") + ";"});
+                            File.AppendAllLines(reportFilePath, new[] {"internal const int " + pattern.Name + " = 0x" + intPtr.ToInt64().ToString("X") + ";"});
                             alreadyFound = true;
                         }
                     }
@@ -88,7 +108,7 @@ namespace PatternFinder
         public string Name { get; private set; }
         public byte[] Bytes { get; private set; }
         public bool[] Mask { get; private set; }
-        const int CacheSize = 0x500;
+        const long CacheSize = 0x500;
         public List<IModifier> Modifiers = new List<IModifier>();
 
         private bool DataCompare(byte[] data, uint dataOffset)
@@ -98,16 +118,16 @@ namespace PatternFinder
 
         private IEnumerable<IntPtr> FindStart(ExternalProcessReader bm)
         {
-            var mainModule = bm.Process.MainModule;
-            var start = mainModule.BaseAddress;
-            var size = mainModule.ModuleMemorySize;
-            var patternLength = Bytes.Length;
+            ProcessModule mainModule = bm.Process.MainModule;
+            IntPtr start = mainModule.BaseAddress;
+            long size = mainModule.ModuleMemorySize;
+            long patternLength = Bytes.LongLength;
 
             List<IntPtr> addresses = new List<IntPtr>();
 
-            for (uint i = 0; i < size - patternLength; i += (uint)(CacheSize - patternLength))
+            for (long i = 0; i < size - patternLength; i += (CacheSize - patternLength))
             {
-                byte[] cache = bm.ReadBytes(start + (int)i, CacheSize > size - i ? size - (int)i : CacheSize);
+                byte[] cache = bm.ReadBytes(start + (int)i, (int) (CacheSize > size - i ? size - i : CacheSize));
                 for (uint i2 = 0; i2 < (cache.Length - patternLength); i2++)
                 {
                     if (DataCompare(cache, i2))
@@ -132,7 +152,7 @@ namespace PatternFinder
                 {
                     start = modifier.Apply(bm, start);
                 }
-                yield return start - (int)bm.Process.MainModule.BaseAddress;
+                yield return new IntPtr((long) start - (long) bm.Process.MainModule.BaseAddress);
             }
         }
 
@@ -189,17 +209,13 @@ namespace PatternFinder
         Word,
         Dword,
         E8,
-        SimpleAddress
+        SimpleAddress,
+        Cmp
     }
 
     public class LeaModifier : IModifier
     {
         public LeaType Type { get; private set; }
-
-        public LeaModifier()
-        {
-            Type = LeaType.Dword;
-        }
 
         public LeaModifier(LeaType type)
         {
@@ -220,6 +236,8 @@ namespace PatternFinder
                     return address + 4 + bm.Read<int>(address); // 4 = <call instruction size> - <E8>
                 case LeaType.SimpleAddress:
                     return address;
+                case LeaType.Cmp:
+                    return address + 5 + bm.Read<int>(address);
             }
             throw new InvalidDataException("Unknown LeaType");
         }

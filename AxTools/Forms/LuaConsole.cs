@@ -126,9 +126,9 @@ namespace AxTools.Forms
                 return;
             }
             var sb = new StringBuilder("\r\nLocal player-----------------------------------------\r\n");
-            sb.AppendFormat("GUID: 0x{0}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; Realm: {5}; {6}; IsLooting: {7}; Name: {8}\r\n",
+            sb.AppendFormat("GUID: 0x{0}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; Realm: {5}; GUID bytes: {6}; IsLooting: {7}; Name: {8}\r\n",
                             localPlayer.GUID, (uint)localPlayer.Address, localPlayer.Location, WoWManager.WoWProcess.PlayerZoneID,
-                            "dummy", WoWManager.WoWProcess.PlayerRealm, "N/A", WoWManager.WoWProcess.PlayerIsLooting, WoWManager.WoWProcess.PlayerName);
+                            "dummy", WoWManager.WoWProcess.PlayerRealm, BitConverter.ToString(WoWManager.WoWProcess.Memory.ReadBytes(localPlayer.Address + WowBuildInfo.ObjectGUID, 16)), WoWManager.WoWProcess.PlayerIsLooting, WoWManager.WoWProcess.PlayerName);
             sb.AppendLine("Objects-----------------------------------------");
             foreach (var i in wowObjects)
             {
