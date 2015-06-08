@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AxTools.Forms;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
-using AxTools.Forms;
 using WindowsFormsAero.TaskDialog;
 
 namespace AxTools.Classes
@@ -11,25 +11,41 @@ namespace AxTools.Classes
     internal static class Log
     {
         internal static bool HaveErrors = false;
-        private static readonly object PLock = new object();
-        private static readonly StringBuilder PStringBuilder = new StringBuilder();
+        private static readonly object _lock = new object();
+        private static readonly StringBuilder _stringBuilder = new StringBuilder();
+        private const string INFO_PREFIX_PATTERN = @"dd.MM.yyyy HH:mm:ss.fff [IN\FO] "; //  "d", "f", "F", "g", "h", "H", "K", "m", "M", "s", "t", "y", "z", ":", "/"
+        private const string ERROR_PREFIX_PATTERN = @"dd.MM.yyyy HH:mm:ss.fff [ERROR] "; // "d", "f", "F", "g", "h", "H", "K", "m", "M", "s", "t", "y", "z", ":", "/"
+        
+        internal static void Info(string text, bool flush = true)
+        {
+            Print(text, false, flush);
+        }
+
+        internal static void Error(string text, bool flush = true)
+        {
+            Print(text, true, flush);
+        }
 
         internal static void Print(string text, bool isError = false, bool flush = true)
         {
             try
             {
-                lock (PLock)
+                lock (_lock)
                 {
                     if (isError)
                     {
                         HaveErrors = true;
+                        _stringBuilder.AppendLine(string.Concat(DateTime.UtcNow.ToString(ERROR_PREFIX_PATTERN), text));
                     }
-                    PStringBuilder.AppendLine(string.Concat(DateTime.UtcNow.ToString("dd.MM.yyyy HH:mm:ss.fff"), isError ? " !! " : " // ", text));
-                    if (flush || PStringBuilder.Length >= 32768)
+                    else
+                    {
+                        _stringBuilder.AppendLine(string.Concat(DateTime.UtcNow.ToString(INFO_PREFIX_PATTERN), text));
+                    }
+                    if (flush || _stringBuilder.Length >= 32768)
                     {
                         Utils.CheckCreateDir();
-						File.AppendAllText(Globals.LogFileName, PStringBuilder.ToString(), Encoding.UTF8);
-						PStringBuilder.Clear();
+						File.AppendAllText(Globals.LogFileName, _stringBuilder.ToString(), Encoding.UTF8);
+						_stringBuilder.Clear();
                     }
                 }
             }

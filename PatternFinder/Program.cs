@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using GreyMagic;
 
 namespace PatternFinder
 {
@@ -64,7 +63,8 @@ namespace PatternFinder
             };
             string reportFilePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\result.txt";
             File.Delete(reportFilePath);
-            using (ExternalProcessReader epr = new ExternalProcessReader(wowProcess[0]))
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            using (MemoryManagement.MemoryManager epr = new MemoryManagement.MemoryManager(wowProcess[0]))
             {
                 int counter = 0;
                 foreach (Pattern pattern in patterns)
@@ -99,6 +99,7 @@ namespace PatternFinder
                 }
                 Console.WriteLine();
             }
+            Console.WriteLine("Stopwatch: " + stopwatch.ElapsedMilliseconds + "ms");
             Console.ReadLine();
         }
     }
@@ -116,7 +117,7 @@ namespace PatternFinder
             return !Mask.Where((t, i) => t && Bytes[i] != data[dataOffset + i]).Any();
         }
 
-        private IEnumerable<IntPtr> FindStart(ExternalProcessReader bm)
+        private IEnumerable<IntPtr> FindStart(MemoryManagement.MemoryManager bm)
         {
             ProcessModule mainModule = bm.Process.MainModule;
             IntPtr start = mainModule.BaseAddress;
@@ -143,7 +144,7 @@ namespace PatternFinder
             throw new InvalidDataException(string.Format("Pattern {0} not found", Name));
         }
 
-        public IEnumerable<IntPtr> Find(ExternalProcessReader bm)
+        public IEnumerable<IntPtr> Find(MemoryManagement.MemoryManager bm)
         {
             foreach (IntPtr intPtr in FindStart(bm))
             {
@@ -185,7 +186,7 @@ namespace PatternFinder
 
     public interface IModifier
     {
-        IntPtr Apply(ExternalProcessReader bm, IntPtr address);
+        IntPtr Apply(MemoryManagement.MemoryManager bm, IntPtr address);
     }
 
     public class AddModifier : IModifier
@@ -197,7 +198,7 @@ namespace PatternFinder
             Offset = val;
         }
 
-        public IntPtr Apply(ExternalProcessReader bm, IntPtr addr)
+        public IntPtr Apply(MemoryManagement.MemoryManager bm, IntPtr addr)
         {
             return (addr + (int)Offset);
         }
@@ -222,7 +223,7 @@ namespace PatternFinder
             Type = type;
         }
 
-        public IntPtr Apply(ExternalProcessReader bm, IntPtr address)
+        public IntPtr Apply(MemoryManagement.MemoryManager bm, IntPtr address)
         {
             switch (Type)
             {

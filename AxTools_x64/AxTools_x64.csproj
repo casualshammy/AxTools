@@ -122,7 +122,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\.NET libs\MetroFramework.dll</HintPath>
     </Reference>
-    <Reference Include="MouseKeyboardActivityMonitor_x64">
+    <Reference Include="MouseKeyboardActivityMonitor_x64, Version=3.0.1.9571, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\.NET libs\MouseKeyboardActivityMonitor_x64.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -147,6 +148,11 @@
       <DependentUpon>Line.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ErrorProviderExt.cs" />
+    <Compile Include="Helpers\KeyboardListener.cs" />
+    <Compile Include="Helpers\MemoryManagement\Imports.cs" />
+    <Compile Include="Helpers\MemoryManagement\MarshalCache.cs" />
+    <Compile Include="Helpers\MemoryManagement\MemoryManager.cs" />
+    <Compile Include="Helpers\MemoryManagement\SafeHandle.cs" />
     <Compile Include="Helpers\VersionExt.cs" />
     <Compile Include="Helpers\WoWLogsAndCacheManager.cs" />
     <Compile Include="Services\AddonsBackup.cs" />

@@ -47,7 +47,6 @@ namespace AxTools.Forms
         bool isDragging;
         float zoomR = 0.5F;
         private readonly int halfOfPictureboxSize;
-        private bool flicker;
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private readonly List<WowPlayer> wowPlayers = new List<WowPlayer>();
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
@@ -61,6 +60,7 @@ namespace AxTools.Forms
         private readonly Thread thread;
         private volatile bool isRunning;
         private volatile bool shouldDrawObjects;
+        private bool flicker;
 
         public WowRadar()
         {
@@ -102,6 +102,13 @@ namespace AxTools.Forms
             mouseHookListener = new MouseHookListener(Globals.GlobalHooker);
             mouseHookListener.MouseWheel += mouseHookListener_MouseWheel;
             mouseHookListener.Start();
+
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(5000);
+                BeginInvoke((MethodInvoker) (() => { labelHint.Visible = false; }));
+            });
+
             Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
@@ -358,7 +365,10 @@ namespace AxTools.Forms
                                 pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
                             }
                             graphics.FillPolygon(solidBrush, pts);
-                            graphics.DrawPolygon(i.TargetGUID == localPlayer.GUID ? whitePen : pen, pts);
+                            if (!flicker || i.TargetGUID != localPlayer.GUID)
+                            {
+                                graphics.DrawPolygon(pen, pts);
+                            }
                             objectsPointsInRadarCoords.Add(i.GUID, point);
                             point.X += 3;
                             point.Y += 3;

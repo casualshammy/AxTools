@@ -280,6 +280,7 @@ namespace AxTools.Forms
                 Keys key;
                 if (Enum.TryParse(comboBoxClickerHotkey.Text, true, out key))
                 {
+                    KeyboardListener.ChangeKey(settings.ClickerHotkey, key);
                     settings.ClickerHotkey = key;
                 }
             }
@@ -292,6 +293,7 @@ namespace AxTools.Forms
                 Keys key;
                 if (Enum.TryParse(comboBoxWExecLuaTimer.Text, true, out key))
                 {
+                    KeyboardListener.ChangeKey(settings.LuaTimerHotkey, key);
                     settings.LuaTimerHotkey = key;
                 }
             }
@@ -304,6 +306,7 @@ namespace AxTools.Forms
                 Keys key;
                 if (Enum.TryParse(comboBoxWExecModule.Text, true, out key))
                 {
+                    KeyboardListener.ChangeKey(settings.WoWPluginHotkey, key);
                     settings.WoWPluginHotkey = key;
                 }
             }

@@ -64,9 +64,12 @@ namespace AxTools.Services
         {
             lock (Lock)
             {
-                _timer.Elapsed -= TimerOnElapsed;
-                _timer.Stop();
-                _timer.Close();
+                if (_timer != null)
+                {
+                    _timer.Elapsed -= TimerOnElapsed;
+                    _timer.Stop();
+                    _timer.Close();
+                }
                 if (StateChanged != null)
                 {
                     StateChanged(false);

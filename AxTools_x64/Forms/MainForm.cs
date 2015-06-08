@@ -40,6 +40,7 @@ namespace AxTools.Forms
             notifyIconMain.Icon = Resources.AppIcon;
 
             cmbboxAccSelect.MouseWheel += delegate(object sender, MouseEventArgs args) { ((HandledMouseEventArgs) args).Handled = true; };
+            cmbboxAccSelect.KeyDown += delegate(object sender, KeyEventArgs args) { args.SuppressKeyPress = true; };
             cmbboxAccSelect.Location = new Point(metroTabPage1.Size.Width/2 - cmbboxAccSelect.Size.Width/2, cmbboxAccSelect.Location.Y);
             linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width/2 - linkEditWowAccounts.Size.Width/2, linkEditWowAccounts.Location.Y);
 
@@ -105,19 +106,17 @@ namespace AxTools.Forms
 
         #region Keyboard hook
 
-        private KeyboardHookListener keyboardHook;
-
-        private void KeyboardHookKeyDown(object sender, KeyEventArgs e)
+        private void KeyboardHookKeyDown(Keys key)
         {
-            if (e.KeyCode == settings.ClickerHotkey)
+            if (key == settings.ClickerHotkey)
             {
                 BeginInvoke((MethodInvoker) KeyboardHook_ClickerHotkey);
             }
-            else if (e.KeyCode == settings.WoWPluginHotkey)
+            else if (key == settings.WoWPluginHotkey)
             {
                 BeginInvoke((MethodInvoker) KeyboardHook_PrecompiledModulesHotkey);
             }
-            else if (e.KeyCode == settings.LuaTimerHotkey)
+            else if (key == settings.LuaTimerHotkey)
             {
                 BeginInvoke((MethodInvoker) KeyboardHook_LuaTimerHotkey);
             }
@@ -215,11 +214,7 @@ namespace AxTools.Forms
                 i.Dispose();
                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, i.ProcessID));
             }
-            if (keyboardHook != null && keyboardHook.Enabled)
-            {
-                keyboardHook.Dispose();
-                Log.Print("Keyboard hook disposed");
-            }
+            KeyboardListener.Stop();
             Log.Print("AxTools closed");
             SendLogToDeveloper();
         }
@@ -271,13 +266,19 @@ namespace AxTools.Forms
         {
             OnPluginsLoaded();
             AddonsBackup.StartService();
-            Pinger.Start();
+            if (settings.PingerServerID == 0)
+            {
+                Pinger.Stop();
+            }
+            else
+            {
+                Pinger.Start();
+            }
             WoWProcessWatcher.StartWatcher();
             TrayIconAnimation.Initialize(notifyIconMain);
 
-            keyboardHook = new KeyboardHookListener(Globals.GlobalHooker);
-            keyboardHook.KeyDown += KeyboardHookKeyDown;
-            keyboardHook.Enabled = true;
+            KeyboardListener.KeyPressed += KeyboardHookKeyDown;
+            KeyboardListener.Start(new[] {settings.ClickerHotkey, settings.LuaTimerHotkey, settings.WoWPluginHotkey});
 
             startupOverlay.Close();
             Changes.ShowChangesIfNeeded();

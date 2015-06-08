@@ -72,7 +72,6 @@ namespace AxTools.WoW.Management
                     {
                         _wowProcess.Memory.FreeMemory(keyValuePair.Key);
                         entriesToRemove.Add(keyValuePair.Key);
-                        Log.Print(string.Format("{0}:{1} :: [WoW hook] Memory freed: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, keyValuePair.Key.ToInt64()), false, false);
                     }
                 }
                 foreach (IntPtr intPtr in entriesToRemove)
@@ -126,6 +125,9 @@ namespace AxTools.WoW.Management
 
         private static byte[] CreateEpilogue()
         {
+            //byte[] staAddrBytesOne = BitConverter.GetBytes(startAddress.ToInt64());
+            //byte[] staAddrBytesTwo = BitConverter.GetBytes(startAddress.ToInt64() + 4);
+            //byte[] staAddrBytesThree = BitConverter.GetBytes(startAddress.ToInt64() + 8);
             byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength);
             byte[] firstInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render).ToInt64());
             byte[] secondInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render + 4).ToInt64());
@@ -158,8 +160,15 @@ namespace AxTools.WoW.Management
                 0xB8, originalCode[8], originalCode[9], originalCode[10], originalCode[11],                                                                 // mov eax, value // +34
                 0x2E, 0xA3, thirdInt[0], thirdInt[1], thirdInt[2], thirdInt[3], thirdInt[4], thirdInt[5], thirdInt[6], thirdInt[7],                         // mov address, eax // +44
                 0x90,                                                                                                                                       // nop (for fun)
-                0x48, 0xB8, originalPtr[0], originalPtr[1], originalPtr[2], originalPtr[3], originalPtr[4], originalPtr[5], originalPtr[6], originalPtr[7], // movabs rax, 0xAAAAAAAAAAAAAAAA
-                0xFF, 0xE0                                                                                                                                  // jmp rax
+                //0xB8, 0x48, 0xB8, originalPtr[0], originalPtr[1],                                                                                                                                           // mov eax, value // +4
+                //0x2E, 0xA3, staAddrBytesOne[0], staAddrBytesOne[1], staAddrBytesOne[2], staAddrBytesOne[3], staAddrBytesOne[4], staAddrBytesOne[5], staAddrBytesOne[6], staAddrBytesOne[7],                 // mov address, eax // +14
+                //0xB8,originalPtr[2], originalPtr[3], originalPtr[4], originalPtr[5],                                                                                                                        // mov eax, value // +4
+                //0x2E, 0xA3, staAddrBytesTwo[0], staAddrBytesTwo[1], staAddrBytesTwo[2], staAddrBytesTwo[3], staAddrBytesTwo[4], staAddrBytesTwo[5], staAddrBytesTwo[6], staAddrBytesTwo[7],                 // mov address, eax // +29
+                //0xB8,originalPtr[6], originalPtr[7], 0xFF, 0xE0 ,                                                                                                                                           // mov eax, value // +4
+                //0x2E, 0xA3, staAddrBytesThree[0], staAddrBytesThree[1], staAddrBytesThree[2], staAddrBytesThree[3], staAddrBytesThree[4], staAddrBytesThree[5], staAddrBytesThree[6], staAddrBytesThree[7], // mov address, eax // +29
+                0x90,                                                                                                                                                                                       // nop (for fun)
+                0x48, 0xB8, originalPtr[0], originalPtr[1], originalPtr[2], originalPtr[3], originalPtr[4], originalPtr[5], originalPtr[6], originalPtr[7],                                                 // movabs rax, 0xAAAAAAAAAAAAAAAA
+                0xFF, 0xE0                                                                                                                                                                                  // jmp rax
             };
             return code;
         }
@@ -193,28 +202,27 @@ namespace AxTools.WoW.Management
         internal static void LuaDoString(string command)
         {
             byte[] commandBytes = Encoding.UTF8.GetBytes(command);
-            IntPtr commandAddress = _wowProcess.Memory.AllocateMemory(commandBytes.Length + 1);
-            _wowProcess.Memory.WriteBytes(commandAddress, commandBytes);
-            byte[] commandAddressBytes = BitConverter.GetBytes(commandAddress.ToInt32());
+            IntPtr cmdAddr = _wowProcess.Memory.AllocateMemory(commandBytes.Length + 1);
+            _wowProcess.Memory.WriteBytes(cmdAddr, commandBytes);
+            byte[] cmdAddrBytes = BitConverter.GetBytes(cmdAddr.ToInt64());
             byte[] luaFunctionPtr = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.FrameScript_ExecuteBuffer).ToInt64());
             byte[] byteCode =
                 CreatePrologue()
                 .Concat(new byte[]
                 {
-                    0x48, 0x83, 0xEC, 0x20, // sub rsp, 20h // +32
-                    0x48, 0xC7, 0xC1, commandAddressBytes[0], commandAddressBytes[1], commandAddressBytes[2], commandAddressBytes[3], // mov rcx, 0xAAAAAAAA // +39
-                    0x48, 0xC7, 0xC2, commandAddressBytes[0], commandAddressBytes[1], commandAddressBytes[2], commandAddressBytes[3], // mov rdx, 0xAAAAAAAA // 46
-                    0x49, 0xC7, 0xC0, 0x00, 0x00, 0x00, 0x00, // mov r8, 0x0 // +53
-                    0x48, 0xB8, luaFunctionPtr[0], luaFunctionPtr[1], luaFunctionPtr[2], luaFunctionPtr[3], luaFunctionPtr[4], luaFunctionPtr[5], luaFunctionPtr[6], luaFunctionPtr[7],
-                    // movabs rax, 0xAAAAAAAAAAAAAAAA // +63
+                    0x48, 0x83, 0xEC, 0x20, // sub rsp, 0x20
+                    0x48, 0xB9, cmdAddrBytes[0], cmdAddrBytes[1], cmdAddrBytes[2], cmdAddrBytes[3], cmdAddrBytes[4], cmdAddrBytes[5], cmdAddrBytes[6], cmdAddrBytes[7], // mov rcx, 8bytes
+                    0x48, 0xBA, cmdAddrBytes[0], cmdAddrBytes[1], cmdAddrBytes[2], cmdAddrBytes[3], cmdAddrBytes[4], cmdAddrBytes[5], cmdAddrBytes[6], cmdAddrBytes[7], // mov rdx, 8bytes
+                    0x49, 0xC7, 0xC0, 0x00, 0x00, 0x00, 0x00, // mov r8, 0x0
+                    0x48, 0xB8, luaFunctionPtr[0], luaFunctionPtr[1], luaFunctionPtr[2], luaFunctionPtr[3], luaFunctionPtr[4], luaFunctionPtr[5], luaFunctionPtr[6], luaFunctionPtr[7], // movabs rax, 8bytes
                     0xFF, 0xD0, // call rax
-                    0x48, 0x83, 0xC4, 0x20 // add rsp, 20h // +69
+                    0x48, 0x83, 0xC4, 0x20 // add rsp, 0x20
                 })
                 .Concat(CreateEpilogue()).ToArray();
             IntPtr mem = _wowProcess.Memory.AllocateMemory(byteCode.Length);
             _wowProcess.Memory.WriteBytes(mem, byteCode);
             ExecuteWait(mem);
-            EnqueueAllocatedMemoryForWipe(mem, commandAddress);
+            EnqueueAllocatedMemoryForWipe(mem, cmdAddr);
         }
 
         internal static string GetLocalizedText(string commandLine)
@@ -225,14 +233,14 @@ namespace AxTools.WoW.Management
         internal static unsafe string GetFunctionReturn(string function)
         {
             IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr) WowBuildInfoX64.PlayerPtr, true);
-            byte[] commandRequest = Encoding.UTF8.GetBytes(RandomVariableName + "=" + function);
-            byte[] commandRetrieve = Encoding.UTF8.GetBytes(RandomVariableName);
-            IntPtr addressRequest = _wowProcess.Memory.AllocateMemory(commandRequest.Length + 1);
-            IntPtr addressRetrieve = _wowProcess.Memory.AllocateMemory(commandRetrieve.Length + 1);
-            _wowProcess.Memory.WriteBytes(addressRequest, commandRequest);
-            _wowProcess.Memory.WriteBytes(addressRetrieve, commandRetrieve);
-            byte[] commandRequestBytes = BitConverter.GetBytes(addressRequest.ToInt32());
-            byte[] commandRetrieveBytes = BitConverter.GetBytes(addressRetrieve.ToInt64());
+            byte[] cmdRequest = Encoding.UTF8.GetBytes(RandomVariableName + "=" + function);
+            byte[] cmdRetrieve = Encoding.UTF8.GetBytes(RandomVariableName);
+            IntPtr addrRequest = _wowProcess.Memory.AllocateMemory(cmdRequest.Length + 1);
+            IntPtr addrRetrieve = _wowProcess.Memory.AllocateMemory(cmdRetrieve.Length + 1);
+            _wowProcess.Memory.WriteBytes(addrRequest, cmdRequest);
+            _wowProcess.Memory.WriteBytes(addrRetrieve, cmdRetrieve);
+            byte[] cmdRequestBytes = BitConverter.GetBytes(addrRequest.ToInt64());
+            byte[] cmdRetrieveBytes = BitConverter.GetBytes(addrRetrieve.ToInt64());
             byte[] localPlayerPtrBytes = BitConverter.GetBytes(localPlayerPtr.ToInt64());
             byte[] executeBufferPtr = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.FrameScript_ExecuteBuffer).ToInt64());
             byte[] getLocalizedTextPtr = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.FrameScript_GetLocalizedText).ToInt64());
@@ -243,15 +251,15 @@ namespace AxTools.WoW.Management
                 .Concat(new byte[]
                 {
                     0x48, 0x83, 0xEC, 0x20, // sub rsp, 20h
-                    0x48, 0xC7, 0xC1, commandRequestBytes[0], commandRequestBytes[1], commandRequestBytes[2], commandRequestBytes[3], // mov rcx, 0xAAAAAAAA
-                    0x48, 0xC7, 0xC2, commandRequestBytes[0], commandRequestBytes[1], commandRequestBytes[2], commandRequestBytes[3], // mov rdx, 0xAAAAAAAA
+                    0x48, 0xB9, cmdRequestBytes[0], cmdRequestBytes[1], cmdRequestBytes[2], cmdRequestBytes[3], cmdRequestBytes[4], cmdRequestBytes[5], cmdRequestBytes[6], cmdRequestBytes[7], // mov rcx, 8bytes
+                    0x48, 0xBA, cmdRequestBytes[0], cmdRequestBytes[1], cmdRequestBytes[2], cmdRequestBytes[3], cmdRequestBytes[4], cmdRequestBytes[5], cmdRequestBytes[6], cmdRequestBytes[7], // mov rdx, 8bytes
                     0x49, 0xC7, 0xC0, 0x00, 0x00, 0x00, 0x00, // mov r8, 0x0
                     0x48, 0xB8, executeBufferPtr[0], executeBufferPtr[1], executeBufferPtr[2], executeBufferPtr[3], executeBufferPtr[4], executeBufferPtr[5], executeBufferPtr[6], executeBufferPtr[7], // movabs rax, value
                     0xFF, 0xD0, // call rax
                     0x48, 0x83, 0xC4, 0x20, // add rsp, 20h
                     0x48, 0x83, 0xEC, 0x20, // sub rsp, 20h
                     0x48, 0xB9, localPlayerPtrBytes[0], localPlayerPtrBytes[1], localPlayerPtrBytes[2], localPlayerPtrBytes[3], localPlayerPtrBytes[4], localPlayerPtrBytes[5], localPlayerPtrBytes[6], localPlayerPtrBytes[7], // mov rcx, value
-                    0x48, 0xBA, commandRetrieveBytes[0], commandRetrieveBytes[1], commandRetrieveBytes[2], commandRetrieveBytes[3], commandRetrieveBytes[4], commandRetrieveBytes[5], commandRetrieveBytes[6], commandRetrieveBytes[7], // mov rdx, value
+                    0x48, 0xBA, cmdRetrieveBytes[0], cmdRetrieveBytes[1], cmdRetrieveBytes[2], cmdRetrieveBytes[3], cmdRetrieveBytes[4], cmdRetrieveBytes[5], cmdRetrieveBytes[6], cmdRetrieveBytes[7], // mov rdx, value
                     0x49, 0xC7, 0xC0, 0xFF, 0xFF, 0xFF, 0xFF, // mov r8, -1
                     0x48, 0xB8, getLocalizedTextPtr[0], getLocalizedTextPtr[1], getLocalizedTextPtr[2], getLocalizedTextPtr[3], getLocalizedTextPtr[4], getLocalizedTextPtr[5], getLocalizedTextPtr[6], getLocalizedTextPtr[7], // movabs rax, value
                     0xFF, 0xD0, // call rax
@@ -274,7 +282,7 @@ namespace AxTools.WoW.Management
                     buf = _wowProcess.Memory.Read<byte>(dwAddress);
                 }
             }
-            EnqueueAllocatedMemoryForWipe(addressRequest, addressRetrieve, ptrToResult, mem);
+            EnqueueAllocatedMemoryForWipe(addrRequest, addrRetrieve, ptrToResult, mem);
             return Encoding.UTF8.GetString(retnByte.ToArray());
         }
 

@@ -114,13 +114,6 @@ namespace AxTools.WoW.PluginSystem
             while (_shouldPulse)
             {
                 _balancingStopwatch.Restart();
-                //if (!WoWManager.Hooked)
-                //{
-                //    Log.Print(String.Format("{0}:{1} :: [{2}] Plugin is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name));
-                //    MainForm.Instance.ShowNotifyIconMessage("[" + ActivePlugin.Name + "] Plugin is stopped", "The player isn't active or not in the game", ToolTipIcon.Error);
-                //    Task.Factory.StartNew(() => StopPlugin(true));
-                //    return;
-                //}
                 if (WoWManager.WoWProcess.IsInGame)
                 {
                     try

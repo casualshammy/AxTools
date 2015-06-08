@@ -37,9 +37,9 @@
         internal static readonly int CGGameUI_Target = 0x6709D0;
         internal static readonly int CGGameUI_Interact = 0x674170;
         internal static readonly int CGUnit_C_InitializeTrackingState = 0x4FF410;
-        internal const int CGWorldFrame_Render = 0x40C650;
+        internal const int CGWorldFrame_Render = 0x682180;
         internal const int HookLength = 12;
-        internal static readonly byte[] HookPattern = {0x48, 0x89, 0x74, 0x24, 0x10, 0x57, 0x48, 0x83, 0xEC, 0x20, 0x48, 0x8B};
+        internal static readonly byte[] HookPattern = { 0x48, 0x89, 0x5C, 0x24, 0x08, 0x48, 0x89, 0x74, 0x24, 0x10, 0x57, 0x48 };
 
         #endregion
 

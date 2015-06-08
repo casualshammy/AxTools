@@ -49,6 +49,7 @@ namespace AxTools.Forms
             this.textBoxDetailedInfo = new System.Windows.Forms.TextBox();
             this.checkBoxObjects = new AxTools.Components.CheckBoxExt(this.components);
             this.checkBoxNpcs = new AxTools.Components.CheckBoxExt(this.components);
+            this.labelHint = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxClose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRadarSettings)).BeginInit();
@@ -174,10 +175,21 @@ namespace AxTools.Forms
             this.checkBoxNpcs.UseVisualStyleBackColor = true;
             this.checkBoxNpcs.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxNpcsMouseClickExtended);
             // 
+            // labelHint
+            // 
+            this.labelHint.AutoSize = true;
+            this.labelHint.ForeColor = System.Drawing.SystemColors.Control;
+            this.labelHint.Location = new System.Drawing.Point(3, 3);
+            this.labelHint.Name = "labelHint";
+            this.labelHint.Size = new System.Drawing.Size(123, 39);
+            this.labelHint.TabIndex = 41;
+            this.labelHint.Text = "Left click: target/interact\r\nRight click: move to\r\nMouse wheel: zoom";
+            // 
             // WowRadar
             // 
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(225, 274);
+            this.Controls.Add(this.labelHint);
             this.Controls.Add(this.textBoxDetailedInfo);
             this.Controls.Add(this.checkBoxCorpses);
             this.Controls.Add(this.pictureBoxRadarSettings);
@@ -217,5 +229,6 @@ namespace AxTools.Forms
         private MetroToolTip toolTip1;
         private CheckBox checkBoxCorpses;
         private TextBox textBoxDetailedInfo;
+        private Label labelHint;
     }
 }
