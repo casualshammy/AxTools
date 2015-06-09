@@ -1,8 +1,8 @@
 ﻿using AxTools.Classes;
 using AxTools.Forms;
+using AxTools.Helpers.MemoryManagement;
 using AxTools.WinAPI;
 using AxTools.WoW.Management;
-using GreyMagic;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -175,7 +175,7 @@ namespace AxTools.WoW
                         }
                         try
                         {
-                            process.Memory = new ExternalProcessReader(Process.GetProcessById(process.ProcessID));
+                            process.Memory = new MemoryManager(Process.GetProcessById(process.ProcessID));
                             Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager initialized, base address 0x{2:X}", process.ProcessName, process.ProcessID, process.Memory.ImageBase.ToInt64()));
                             if (!process.IsValidBuild)
                             {

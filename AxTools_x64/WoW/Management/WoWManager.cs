@@ -1,9 +1,9 @@
 ﻿using AxTools.Classes;
 using AxTools.Forms;
 using AxTools.Helpers;
+using AxTools.Helpers.MemoryManagement;
 using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem;
-using GreyMagic;
 using System;
 using System.Diagnostics;
 
@@ -37,7 +37,7 @@ namespace AxTools.WoW.Management
                             WoWProcess = wowProcess;
                             if (WoWProcess.Memory == null)
                             {
-                                WoWProcess.Memory = new ExternalProcessReader(Process.GetProcessById(WoWProcess.ProcessID));
+                                WoWProcess.Memory = new MemoryManager(Process.GetProcessById(WoWProcess.ProcessID));
                             }
                             try
                             {

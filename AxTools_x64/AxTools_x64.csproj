@@ -108,9 +108,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GreyMagic_x64">
-      <HintPath>..\..\.NET libs\GreyMagic_x64.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.TextEditor">
       <HintPath>..\..\.NET libs\ICSharpCode.TextEditor.dll</HintPath>
     </Reference>

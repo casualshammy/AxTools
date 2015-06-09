@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using AxTools.Helpers.MemoryManagement;
 
 namespace AxTools.WoW
 {
@@ -37,7 +38,7 @@ namespace AxTools.WoW
         }
 
         internal int ProcessID;
-        internal GreyMagic.ExternalProcessReader Memory;
+        internal MemoryManager Memory;
 
         private readonly WoWAntiKick woWAntiKick;
 

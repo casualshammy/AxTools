@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using AxTools.Helpers.MemoryManagement;
 using AxTools.WoW.Management.ObjectManager;
-using GreyMagic;
 
 namespace AxTools.WoW.Management
 {
     internal static class ObjectMgr
     {
-        private static ExternalProcessReader _memory;
+        private static MemoryManager _memory;
         
         internal static void Initialize(WowProcess process)
         {

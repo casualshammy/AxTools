@@ -28,11 +28,11 @@ namespace AxTools.WoW.Management
             _wowProcess = process;
             TimerForMemory.Elapsed += TimerForMemory_OnElapsed;
             TimerForMemory.Start();
-            byte[] hookOriginalBytes = _wowProcess.Memory.ReadBytes((IntPtr)WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength, true);
+            byte[] hookOriginalBytes = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
             if (HookPtrSignatureIsValid(hookOriginalBytes))
             {
                 Log.Print(string.Format("{0}:{1} :: [WoW hook] Signature is valid, address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                    (_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render).ToInt64()), false, false);
+                    (_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr).ToInt64()), false, false);
             }
             else
             {
@@ -128,10 +128,10 @@ namespace AxTools.WoW.Management
             //byte[] staAddrBytesOne = BitConverter.GetBytes(startAddress.ToInt64());
             //byte[] staAddrBytesTwo = BitConverter.GetBytes(startAddress.ToInt64() + 4);
             //byte[] staAddrBytesThree = BitConverter.GetBytes(startAddress.ToInt64() + 8);
-            byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength);
-            byte[] firstInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render).ToInt64());
-            byte[] secondInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render + 4).ToInt64());
-            byte[] thirdInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render + 8).ToInt64());
+            byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
+            byte[] firstInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr).ToInt64());
+            byte[] secondInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr + 4).ToInt64());
+            byte[] thirdInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr + 8).ToInt64());
             byte[] originalPtr = firstInt;
             byte[] code =
             {
@@ -175,7 +175,7 @@ namespace AxTools.WoW.Management
 
         private static void ExecuteWait(IntPtr injectedFunction)
         {
-            byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength);
+            byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
             if (HookPtrSignatureIsValid(originalCode))
             {
                 byte[] hookJmpBytes = BitConverter.GetBytes(injectedFunction.ToInt64());
@@ -185,13 +185,13 @@ namespace AxTools.WoW.Management
                     0xFF, 0xE0                                                                                                                                          // jmp rax
                 };
                 uint lpflOldProtect;
-                WinAPI.NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, (UIntPtr)WowBuildInfoX64.HookLength, PAGE_EXECUTE_READWRITE, out lpflOldProtect);
-                _wowProcess.Memory.WriteBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, byteCode);
-                while (!_wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength).SequenceEqual(originalCode))
+                WinAPI.NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, (UIntPtr)WowBuildInfoX64.HookLength, PAGE_EXECUTE_READWRITE, out lpflOldProtect);
+                _wowProcess.Memory.WriteBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, byteCode);
+                while (!_wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength).SequenceEqual(originalCode))
                 {
                     Thread.Sleep(1);
                 }
-                WinAPI.NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, (UIntPtr)WowBuildInfoX64.HookLength, lpflOldProtect, out lpflOldProtect);
+                WinAPI.NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, (UIntPtr)WowBuildInfoX64.HookLength, lpflOldProtect, out lpflOldProtect);
             }
             else
             {
@@ -232,7 +232,7 @@ namespace AxTools.WoW.Management
 
         internal static unsafe string GetFunctionReturn(string function)
         {
-            IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr) WowBuildInfoX64.PlayerPtr, true);
+            IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>(_wowProcess.Memory.ImageBase + WowBuildInfoX64.PlayerPtr);
             byte[] cmdRequest = Encoding.UTF8.GetBytes(RandomVariableName + "=" + function);
             byte[] cmdRetrieve = Encoding.UTF8.GetBytes(RandomVariableName);
             IntPtr addrRequest = _wowProcess.Memory.AllocateMemory(cmdRequest.Length + 1);
@@ -370,7 +370,7 @@ namespace AxTools.WoW.Management
 
         internal static void MoveTo(WowPoint point)
         {
-            IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>((IntPtr)WowBuildInfoX64.PlayerPtr, true);
+            IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>(_wowProcess.Memory.ImageBase + WowBuildInfoX64.PlayerPtr);
             byte[] localPlayerPtrBytes = BitConverter.GetBytes(localPlayerPtr.ToInt64());
             IntPtr locationPtr = _wowProcess.Memory.AllocateMemory(0x4 * 3);
             _wowProcess.Memory.Write(locationPtr, point);
