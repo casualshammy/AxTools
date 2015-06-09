@@ -1,7 +1,6 @@
-﻿using System.Reflection;
+﻿using AxTools.Helpers;
+using System.Reflection;
 using System.Windows.Forms;
-using AxTools.Helpers;
-using MouseKeyboardActivityMonitor.WinApi;
 
 namespace AxTools.Classes
 {
@@ -17,7 +16,6 @@ namespace AxTools.Classes
         internal static readonly string DropboxPath = "http://109.120.165.239:1255/axtools";
         internal static readonly string UpdateFilePath = DropboxPath + "/__update";
         internal static readonly VersionExt AppVersion = new VersionExt(Assembly.GetExecutingAssembly().GetName().Version);
-        internal static readonly GlobalHooker GlobalHooker = new GlobalHooker();
 
         internal static readonly SrvAddress[] GameServers =
         {

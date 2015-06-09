@@ -11,7 +11,6 @@ using AxTools.WoW.Management;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.Plugins;
 using MetroFramework.Drawing;
-using MouseKeyboardActivityMonitor;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;

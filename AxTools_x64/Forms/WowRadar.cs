@@ -3,7 +3,6 @@ using AxTools.Properties;
 using AxTools.WoW;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
-using MouseKeyboardActivityMonitor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,7 +21,7 @@ namespace AxTools.Forms
 {
     internal partial class WowRadar : Form, IWoWModule
     {
-        private readonly MouseHookListener mouseHookListener;
+        //private readonly MouseHookListener mouseHookListener;
         private bool processMouseWheelEvents;
 
         private static readonly HashSet<string> RadarKOSFind = new HashSet<string>();
@@ -99,9 +98,8 @@ namespace AxTools.Forms
             checkBoxCorpses.CheckedChanged += SaveCheckBoxes;
 
             thread = new Thread(Redraw);
-            mouseHookListener = new MouseHookListener(Globals.GlobalHooker);
-            mouseHookListener.MouseWheel += mouseHookListener_MouseWheel;
-            mouseHookListener.Start();
+            MouseWheel += OnMouseWheel;
+            pictureBoxMain.MouseWheel += OnMouseWheel;
 
             Task.Factory.StartNew(() =>
             {
@@ -590,6 +588,9 @@ namespace AxTools.Forms
             enemyBrush.Dispose();
             grayBrush.Dispose();
 
+            MouseWheel -= OnMouseWheel;
+            pictureBoxMain.MouseWheel -= OnMouseWheel;
+
             isRunning = false;
             if (!thread.Join(5000))
             {
@@ -598,10 +599,6 @@ namespace AxTools.Forms
             else
             {
                 Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
-            }
-            if (mouseHookListener != null && mouseHookListener.Enabled)
-            {
-                mouseHookListener.Dispose();
             }
             Log.Print(String.Format("{0}:{1} :: [Radar] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
@@ -863,11 +860,11 @@ namespace AxTools.Forms
             }
         }
 
-        private void mouseHookListener_MouseWheel(object sender, MouseEventArgs e)
+        private void OnMouseWheel(object sender, MouseEventArgs mouseEventArgs)
         {
             if (processMouseWheelEvents)
             {
-                if (e.Delta > 0)
+                if (mouseEventArgs.Delta > 0)
                 {
                     // ReSharper disable CompareOfFloatsByEqualityOperator
                     if (zoomR == 0.125F) return;
