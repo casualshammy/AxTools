@@ -135,14 +135,14 @@ namespace AxTools.Forms
             if (Clicker.Enabled)
             {
                 Clicker.Stop();
-                WowProcess cProcess = WowProcess.GetAllWoWProcesses().FirstOrDefault(i => i.MainWindowHandle == Clicker.Handle);
+                WowProcess cProcess = WowProcess.List.FirstOrDefault(i => i.MainWindowHandle == Clicker.Handle);
                 Log.Print(cProcess != null
                     ? String.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
                     : "UNKNOWN:null :: [Clicker] Disabled");
             }
             else
             {
-                WowProcess cProcess = WowProcess.GetAllWoWProcesses().FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
+                WowProcess cProcess = WowProcess.List.FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
                 if (cProcess != null)
                 {
                     Clicker.Start(settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr) settings.ClickerKey);
@@ -154,7 +154,7 @@ namespace AxTools.Forms
 
         private void KeyboardHook_PrecompiledModulesHotkey()
         {
-            if (WowProcess.GetAllWoWProcesses().Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+            if (WowProcess.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
             {
                 SwitchWoWPlugin();
             }
@@ -163,7 +163,7 @@ namespace AxTools.Forms
         private void KeyboardHook_LuaTimerHotkey()
         {
             LuaConsole pForm = Utils.FindForm<LuaConsole>();
-            if (pForm != null && WowProcess.GetAllWoWProcesses().Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+            if (pForm != null && WowProcess.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
             {
                 pForm.SwitchTimer();
             }
@@ -207,7 +207,7 @@ namespace AxTools.Forms
                 WoWManager.Unhook();
                 Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
-            foreach (WowProcess i in WowProcess.GetAllWoWProcesses())
+            foreach (WowProcess i in WowProcess.List)
             {
                 string name = i.ProcessName;
                 i.Dispose();
@@ -373,7 +373,7 @@ namespace AxTools.Forms
         private void TrayContextMenu_PluginClicked(IPlugin plugin)
         {
             comboBoxWowPlugins.SelectedIndex = PluginManager.Plugins.IndexOf(plugin);
-            if (!WoWManager.Hooked && WowProcess.GetAllWoWProcesses().Count != 1)
+            if (!WoWManager.Hooked && WowProcess.List.Count != 1)
             {
                 Activate();
             }

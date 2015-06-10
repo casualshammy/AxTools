@@ -23,7 +23,12 @@ namespace AxTools.WoW.Management
         private static readonly object MemoryWaitingToBeFreedLock = new object();
         private static readonly Timer TimerForMemory = new Timer(1000);
         
-        internal static void Apply(WowProcess process)
+        /// <summary>
+        ///     
+        /// </summary>
+        /// <param name="process">Ref to <see cref="WowProcess"/> we want to inject</param>
+        /// <returns>True if successful, false if hook point's signature is invalid</returns>
+        internal static bool Apply(WowProcess process)
         {
             _wowProcess = process;
             TimerForMemory.Elapsed += TimerForMemory_OnElapsed;
@@ -31,14 +36,11 @@ namespace AxTools.WoW.Management
             byte[] hookOriginalBytes = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
             if (HookPtrSignatureIsValid(hookOriginalBytes))
             {
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Signature is valid, address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID,
-                    (_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr).ToInt64()), false, false);
+                Log.Print(string.Format("{0}:{1} :: [WoW hook] Signature is valid, address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr).ToInt64()));
+                return true;
             }
-            else
-            {
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(hookOriginalBytes)));
-                throw new Exception("Hook point has invalid signature! Please restart WoW.");
-            }
+            Log.Error(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(hookOriginalBytes)));
+            return false;
         }
         
         internal static void Release()

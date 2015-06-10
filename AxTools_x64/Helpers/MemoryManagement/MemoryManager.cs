@@ -16,7 +16,7 @@ namespace AxTools.Helpers.MemoryManagement
         ///     The process handle.
         /// </value>
         /// <remarks>Created 2012-02-15</remarks>
-        public SafeMemHandle ProcessHandle;
+        public SafeMemoryHandle ProcessHandle;
 
         /// <summary>
         ///     Gets the process.
@@ -312,17 +312,17 @@ namespace AxTools.Helpers.MemoryManagement
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [SuppressUnmanagedCodeSecurity]
-        private static extern bool ReadProcessMemory(SafeMemHandle hProcess, IntPtr lpBaseAddress, byte* lpBuffer, int dwSize, out int lpNumberOfBytesRead);
+        private static extern bool ReadProcessMemory(SafeMemoryHandle hProcess, IntPtr lpBaseAddress, byte* lpBuffer, int dwSize, out int lpNumberOfBytesRead);
 
         [DllImport("Kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
         private static extern void MoveMemory(void* dest, void* src, int size);
 
         [DllImport("kernel32.dll")]
         [SuppressUnmanagedCodeSecurity]
-        private static extern bool VirtualProtectEx(SafeMemHandle hProcess, IntPtr lpAddress, IntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+        private static extern bool VirtualProtectEx(SafeMemoryHandle hProcess, IntPtr lpAddress, IntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [SuppressUnmanagedCodeSecurity]
-        private static extern bool WriteProcessMemory(SafeMemHandle hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int nSize, out int lpNumberOfBytesWritten);
+        private static extern bool WriteProcessMemory(SafeMemoryHandle hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int nSize, out int lpNumberOfBytesWritten);
     }
 }

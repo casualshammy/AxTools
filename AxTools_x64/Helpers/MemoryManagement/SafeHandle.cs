@@ -9,15 +9,15 @@ namespace AxTools.Helpers.MemoryManagement
 {
     [HostProtection(MayLeakOnAbort = true)]
     [SuppressUnmanagedCodeSecurity]
-    public class SafeMemHandle : SafeHandleZeroOrMinusOneIsInvalid
+    public class SafeMemoryHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
-        public SafeMemHandle() : base(true)
+        public SafeMemoryHandle() : base(true)
         {
 
         }
 
         [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-        public SafeMemHandle(IntPtr handle) : base(true)
+        public SafeMemoryHandle(IntPtr handle) : base(true)
         {
             SetHandle(handle);
         }

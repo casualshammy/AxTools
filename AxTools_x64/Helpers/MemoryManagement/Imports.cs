@@ -41,7 +41,7 @@ namespace AxTools.Helpers.MemoryManagement
         /// <returns>If the function succeeds, the return value is an open handle to the specified process.</returns>
         /// <remarks>Created 2012-01-17 13:00 by Nesox.</remarks>
         [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern SafeMemHandle OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
+        internal static extern SafeMemoryHandle OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
 
         /// <summary>
         ///     Loads the specified module into the address space of the calling process.
@@ -129,7 +129,7 @@ namespace AxTools.Helpers.MemoryManagement
         /// </returns>
         /// <remarks>Created 2012-02-15</remarks>
         [DllImport("kernel32", EntryPoint = "VirtualAllocEx")]
-        internal static extern IntPtr VirtualAllocEx(SafeMemHandle hProcess, uint dwAddress, int nSize, MemoryAllocationType dwAllocationType, MemoryProtectionType dwProtect);
+        internal static extern IntPtr VirtualAllocEx(SafeMemoryHandle hProcess, uint dwAddress, int nSize, MemoryAllocationType dwAllocationType, MemoryProtectionType dwProtect);
 
         /// <summary>
         ///     Releases, decommits, or releases and decommits a region of memory within the virtual address space of a specified
@@ -181,7 +181,7 @@ namespace AxTools.Helpers.MemoryManagement
         ///     Created 2012-02-15.
         /// </remarks>
         [DllImport("kernel32", EntryPoint = "VirtualFreeEx")]
-        internal static extern bool VirtualFreeEx(SafeMemHandle hProcess, IntPtr dwAddress, int nSize, MemoryFreeType dwFreeType);
+        internal static extern bool VirtualFreeEx(SafeMemoryHandle hProcess, IntPtr dwAddress, int nSize, MemoryFreeType dwFreeType);
     }
 
     // ReSharper disable InconsistentNaming

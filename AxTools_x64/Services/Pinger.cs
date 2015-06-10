@@ -34,9 +34,9 @@ namespace AxTools.Services
 
         internal static bool Enabled
         {
-            get
+            get 
             {
-                return _timer.Enabled;
+                return _timer != null && _timer.Enabled;
             }
         }
 

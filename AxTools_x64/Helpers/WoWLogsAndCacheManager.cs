@@ -24,7 +24,7 @@ namespace AxTools.Helpers
             {
                 TaskDialog taskDialog = new TaskDialog("WoW client is blocking logs", "AxTools", "It's strongly recommended to close all WoW clients.\r\nSome files may not be deleted.\r\nProceed?",
                     (int) TaskDialogButton.Yes + TaskDialogButton.No, TaskDialogIcon.Warning);
-                if (WowProcess.GetAllWoWProcesses().Count == 0 || taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
+                if (WowProcess.List.Count == 0 || taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
                 {
                     string zipPath = String.Format(Settings.Instance.WoWDirectory + "\\Logs\\WoWLogs_{0:yyyyMMdd_HHmmss}.zip", DateTime.UtcNow);
                     try

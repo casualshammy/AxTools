@@ -29,11 +29,18 @@ namespace AxTools.WoW
 
         private static readonly List<WowProcess> SharedList = new List<WowProcess>();
         private static readonly object SharedLock = new object();
-        internal static List<WowProcess> GetAllWoWProcesses()
+
+        /// <summary>
+        ///     List of all <see cref="WowProcess"/> running on computer
+        /// </summary>
+        internal static List<WowProcess> List
         {
-            lock (SharedLock)
+            get
             {
-                return SharedList;
+                lock (SharedLock)
+                {
+                    return SharedList;
+                }
             }
         }
 

@@ -69,10 +69,12 @@ namespace AxTools.Services
                 _settings.WoWAddonsBackupLastDate = DateTime.UtcNow;
                 ProcessPriorityClass defaultProcessPriorityClass = Process.GetCurrentProcess().PriorityClass;
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
+                Log.Info("[BackupAddons] Process priority is changed to " + Process.GetCurrentProcess().PriorityClass);
                 Task.Factory.StartNew(Start)
                     .ContinueWith(l =>
                     {
                         Process.GetCurrentProcess().PriorityClass = defaultProcessPriorityClass;
+                        Log.Info("[BackupAddons] Process priority is changed to " + Process.GetCurrentProcess().PriorityClass);
                     });
             }
         }
@@ -84,35 +86,35 @@ namespace AxTools.Services
             switch (checkWTFDirectoryResult)
             {
                 case CheckWTFDirectoryResult.OK:
-                    Log.Print("BackupAddons :: Starting...");
+                    Log.Info("[BackupAddons] Starting...");
                     Exception backupDir = CreateBackupDir();
                     if (backupDir == null)
                     {
-                        Log.Print("BackupAddons :: Backup directory created");
+                        Log.Info("[BackupAddons] Backup directory created");
                         DeleteOldFiles();
                         try
                         {
                             Zip();
-                            Log.Print("BackupAddons :: Backup is successfully created");
+                            Log.Info("[BackupAddons] Backup is successfully created");
                         }
                         catch (Exception ex)
                         {
-                            Log.Print("BackupAddons :: Backup error: Zipping failed: " + ex.Message, true);
+                            Log.Error("[BackupAddons] Backup error: Zipping failed: " + ex.Message);
                             Utils.NotifyUser("Backup error", ex.Message, NotifyUserType.Error, true);
                         }
                     }
                     else
                     {
-                        Log.Print("BackupAddons :: Can't create backup directory: " + backupDir.Message, true);
+                        Log.Error("[BackupAddons] Can't create backup directory: " + backupDir.Message);
                         Utils.NotifyUser("Backup error", "Can't create backup dir:\r\n" + backupDir.Message, NotifyUserType.Error, true);
                     }
                     break;
                 case CheckWTFDirectoryResult.WTFDirIsNotFound:
-                    Log.Print("Backup error: WTF directory isn't found");
+                    Log.Info("Backup error: WTF directory isn't found");
                     Utils.NotifyUser("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
                     break;
                 case CheckWTFDirectoryResult.WTFDirIsTooLarge:
-                    Log.Print("Backup error: WTF directory is too large", true);
+                    Log.Info("Backup error: WTF directory is too large");
                     Utils.NotifyUser("Backup error", "WTF directory is too large (> 1GB)", NotifyUserType.Error, true);
                     break;
             }
@@ -153,7 +155,7 @@ namespace AxTools.Services
         {
             DirectoryInfo backupDirectory = new DirectoryInfo(_settings.WoWAddonsBackupPath);
             List<FileInfo> backupFiles = backupDirectory.GetFileSystemInfos().Where(i => i.Name.Contains("AddonsBackup_") && i is FileInfo).Cast<FileInfo>().ToList();
-            Log.Print("BackupAddons :: Total backup files: " + backupFiles.Count);
+            Log.Info("[BackupAddons] Total backup files: " + backupFiles.Count);
             if (backupFiles.Count >= _settings.WoWAddonsBackupNumberOfArchives)
             {
                 // I place newest file to the end of list
@@ -170,11 +172,11 @@ namespace AxTools.Services
                     try
                     {
                         backupFiles[i].Delete();
-                        Log.Print("BackupAddons :: Old backup file is deleted: " + backupFiles[i].Name);
+                        Log.Info("[BackupAddons] Old backup file is deleted: " + backupFiles[i].Name);
                     }
                     catch (Exception ex)
                     {
-                        Log.Print("BackupAddons :: Can't delete old file: " + ex.Message, true);
+                        Log.Error("[BackupAddons] Can't delete old file: " + ex.Message);
                     }
                 }
             }
@@ -183,7 +185,7 @@ namespace AxTools.Services
         private static void Zip()
         {
             string zipPath = String.Format("{0}\\AddonsBackup_{1:yyyyMMdd_HHmmss}.zip", _settings.WoWAddonsBackupPath, DateTime.UtcNow);
-            Log.Print("BackupAddons :: Zipping to file: " + zipPath);
+            Log.Info("[BackupAddons] Zipping to file: " + zipPath);
             using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
             {
                 zip.CompressionLevel = (CompressionLevel)_settings.WoWAddonsBackupCompressionLevel;

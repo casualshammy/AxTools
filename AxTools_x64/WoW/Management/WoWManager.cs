@@ -24,10 +24,10 @@ namespace AxTools.WoW.Management
         /// </returns>
         internal static bool HookWoWAndNotifyUserIfError()
         {
-            int index = WowProcess.GetAllWoWProcesses().Count == 1 ? 0 : ProcessSelection.SelectProcess();
+            int index = WowProcess.List.Count == 1 ? 0 : ProcessSelection.SelectProcess();
             if (index != -1)
             {
-                WowProcess wowProcess = WowProcess.GetAllWoWProcesses()[index];
+                WowProcess wowProcess = WowProcess.List[index];
                 if (!Hooked)
                 {
                     if (wowProcess.IsValidBuild)
@@ -41,15 +41,18 @@ namespace AxTools.WoW.Management
                             }
                             try
                             {
-                                WoWDXInject.Apply(WoWProcess);
-                                ObjectMgr.Initialize(WoWProcess);
-                                Hooked = true;
-                                return true;
+                                if (WoWDXInject.Apply(WoWProcess))
+                                {
+                                    ObjectMgr.Initialize(WoWProcess);
+                                    Hooked = true;
+                                    return true;
+                                }
+                                throw new Exception("Hook point has invalid signature! Please restart WoW.");
                             }
                             catch (Exception ex)
                             {
-                                Utils.NotifyUser("Injecting error", ex.Message + "\r\n\r\nSee log for info", NotifyUserType.Error, true);   // WoWDXInject.Apply() writes error to log by himself;
-                                return false;                                                                                               // ObjectMgr.Initialize() can't throw an error;
+                                Utils.NotifyUser("Injecting error", ex.Message + "\r\n\r\nSee log for info", NotifyUserType.Error, true);
+                                return false;
                             }
                         }
                         Log.Print(String.Format("{0}:{1} :: [WoW hook] Player isn't logged in", wowProcess.ProcessName, wowProcess.ProcessID));

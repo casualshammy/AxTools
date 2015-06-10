@@ -64,7 +64,7 @@ namespace AxTools.WoW
                         break;
                     case "wow-64":
                         WowProcess process = new WowProcess(i.Id);
-                        WowProcess.GetAllWoWProcesses().Add(process);
+                        WowProcess.List.Add(process);
                         Log.Print(String.Format("{0}:{1} :: [Process watcher] Process added", i.ProcessName, i.Id));
                         Task.Factory.StartNew(OnWowProcessStartup, process);
                         break;
@@ -86,8 +86,8 @@ namespace AxTools.WoW
                 else if (processName == "wow-64.exe")
                 {
                     WowProcess wowProcess = new WowProcess(processId);
-                    WowProcess.GetAllWoWProcesses().Add(wowProcess);
-                    Log.Print(String.Format("{0}:{1} :: [Process watcher] Process started, {2} total", wowProcess.ProcessName, wowProcess.ProcessID, WowProcess.GetAllWoWProcesses().Count));
+                    WowProcess.List.Add(wowProcess);
+                    Log.Print(String.Format("{0}:{1} :: [Process watcher] Process started, {2} total", wowProcess.ProcessName, wowProcess.ProcessID, WowProcess.List.Count));
                     Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
                 }
             }
@@ -109,7 +109,7 @@ namespace AxTools.WoW
                 {
                     int pid = Convert.ToInt32(e.NewEvent["ProcessID"]);
                     string name = e.NewEvent["ProcessName"].ToString().Substring(0, e.NewEvent["ProcessName"].ToString().Length - 4);
-                    WowProcess pWowProcess = WowProcess.GetAllWoWProcesses().FirstOrDefault(x => x.ProcessID == pid);
+                    WowProcess pWowProcess = WowProcess.List.FirstOrDefault(x => x.ProcessID == pid);
                     if (pWowProcess != null)
                     {
                         if (WoWManager.Hooked && WoWManager.WoWProcess.ProcessID == pWowProcess.ProcessID)
@@ -119,9 +119,9 @@ namespace AxTools.WoW
                         }
                         pWowProcess.Dispose();
                         Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, pid));
-                        if (WowProcess.GetAllWoWProcesses().Remove(pWowProcess))
+                        if (WowProcess.List.Remove(pWowProcess))
                         {
-                            Log.Print(String.Format("{0}:{1} :: [Process watcher] Process closed, {2} total", name, pid, WowProcess.GetAllWoWProcesses().Count));
+                            Log.Print(String.Format("{0}:{1} :: [Process watcher] Process closed, {2} total", name, pid, WowProcess.List.Count));
                         }
                         else
                         {
