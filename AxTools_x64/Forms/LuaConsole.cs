@@ -44,7 +44,7 @@ namespace AxTools.Forms
             textBoxLuaCode.Text = settings.WoWLuaConsoleLastText;
             settings.LuaTimerHotkeyChanged += LuaTimerHotkeyChanged;
             LuaTimerHotkeyChanged(settings.LuaTimerHotkey);
-            Log.Print(string.Format("{0}:{1} :: [Lua console] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0}:{1} :: [Lua console] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void TimerLuaElapsed(object sender, ElapsedEventArgs e)
@@ -53,7 +53,7 @@ namespace AxTools.Forms
             {
                 if (!settings.WoWLuaConsoleIgnoreGameState)
                 {
-                    Log.Print(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName,
+                    Log.Info(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName,
                         WoWManager.WoWProcess.ProcessID));
                     MainForm.Instance.ShowNotifyIconMessage("Lua console's timer is stopped", "The player isn't active or not in the game", ToolTipIcon.Error);
                     Invoke(new Action(() => InvokeOnClick(pictureBoxStop, EventArgs.Empty)));
@@ -122,7 +122,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print("Dump error: " + ex.Message, true);
+                Log.Error("Dump error: " + ex.Message);
                 return;
             }
             var sb = new StringBuilder("\r\nLocal player-----------------------------------------\r\n");
@@ -149,7 +149,7 @@ namespace AxTools.Forms
                     i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), (uint)i.Address, i.Class, i.Level, i.Health, i.HealthMax,
                     i.TargetGUID, i.IsAlliance);
             }
-            Log.Print(sb.ToString());
+            Log.Info(sb.ToString());
 
 
             //sb.AppendLine("Test-----------------------------------------");
@@ -194,7 +194,7 @@ namespace AxTools.Forms
             }
             settings.WoWLuaConsoleLastText = textBoxLuaCode.Text;
             settings.LuaTimerHotkeyChanged -= LuaTimerHotkeyChanged;
-            Log.Print(string.Format("{0}:{1} :: [Lua console] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0}:{1} :: [Lua console] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void PictureBoxOpenLuaFileClick(object sender, EventArgs e)
@@ -320,13 +320,13 @@ namespace AxTools.Forms
                 WoWDXInject.ShowOverlayText("LTimer is started", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 102, 0));
                 //WoWDXInject.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is started\", 0.0, 1.0, 0.0)");
             }
-            Log.Print(string.Format("{0}:{1} :: [Lua console] Lua timer enabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0}:{1} :: [Lua console] Lua timer enabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void pictureBoxStop_Click(object sender, EventArgs e)
         {
             timerLua.Enabled = false;
-            Log.Print(WoWManager.WoWProcess != null
+            Log.Info(WoWManager.WoWProcess != null
                           ? string.Format("{0}:{1} :: [Lua console] Lua timer disabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID)
                           : "UNKNOWN:null :: Lua timer disabled");
             if (settings.WoWLuaConsoleShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)

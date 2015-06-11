@@ -88,7 +88,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
+                Log.Error(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
             }
 
             checkBoxFriends.CheckedChanged += SaveCheckBoxes;
@@ -107,7 +107,7 @@ namespace AxTools.Forms
                 BeginInvoke((MethodInvoker) (() => { labelHint.Visible = false; }));
             });
 
-            Log.Print(String.Format("{0}:{1} :: [Radar] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(String.Format("{0}:{1} :: [Radar] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void Redraw()
@@ -127,7 +127,7 @@ namespace AxTools.Forms
                     }
                     catch (Exception ex)
                     {
-                        Log.Print(String.Format("{0}:{1} :: [Radar] OOG drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true, false);
+                        Log.Error(String.Format("{0}:{1} :: [Radar] OOG drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                     }
                     Thread.Sleep(100);
                     continue;
@@ -138,7 +138,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Print(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true, false);
+                    Log.Error(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
                     Thread.Sleep(100);
@@ -179,7 +179,7 @@ namespace AxTools.Forms
                         if (interactGUID != UInt128.Zero)
                         {
                             WoWDXInject.Interact(interactGUID);
-                            Log.Print(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, interactName, interactGUID), false, false);
+                            Log.Info(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, interactName, interactGUID));
                         }
                     }
                     bool soundAlarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);
@@ -193,7 +193,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Print(String.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true, false);
+                    Log.Error(String.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
                     Thread.Sleep(100);
@@ -205,7 +205,7 @@ namespace AxTools.Forms
                     Thread.Sleep(counter);
                 }
             }
-            Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(String.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void PictureBox1Paint(object sender, PaintEventArgs e)
@@ -494,7 +494,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Print(String.Format("{0}:{1} :: Radar: Drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
+                    Log.Error(String.Format("{0}:{1} :: Radar: Drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                 }
             }
             else
@@ -594,13 +594,13 @@ namespace AxTools.Forms
             isRunning = false;
             if (!thread.Join(5000))
             {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, thread.ThreadState), true);
+                Log.Error(String.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, thread.ThreadState));
             }
             else
             {
-                Log.Print(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+                Log.Info(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
-            Log.Print(String.Format("{0}:{1} :: [Radar] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(String.Format("{0}:{1} :: [Radar] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void RadarLoad(object sender, EventArgs e)

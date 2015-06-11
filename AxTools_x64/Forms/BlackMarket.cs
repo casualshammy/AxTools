@@ -20,7 +20,7 @@ namespace AxTools.Forms
             Icon = Resources.AppIcon;
             metroStyleManager1.Style = Settings.Instance.StyleColor;
             timerUpdateList.Enabled = true;
-            Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Opened", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0}:{1} :: [BlackMarket tracker] Opened", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
         
         private DateTime lastRefresh = DateTime.UtcNow;
@@ -29,7 +29,7 @@ namespace AxTools.Forms
         private void BlackMarketFormClosing(object sender, FormClosingEventArgs e)
         {
             timerUpdateList.Enabled = false;
-            Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0}:{1} :: [BlackMarket tracker] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void MetroLinkRefreshClick(object sender, EventArgs e)
@@ -70,18 +70,18 @@ namespace AxTools.Forms
                     }
                     catch (Exception ex)
                     {
-                        Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Refresh error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
+                        Log.Error(string.Format("{0}:{1} :: [BlackMarket tracker] Refresh error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                     }
                     finally
                     {
                         Invoke(new Action(waitingOverlay.Close));
-                        Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Refresh time: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Environment.TickCount - startTime));
+                        Log.Info(string.Format("{0}:{1} :: [BlackMarket tracker] Refresh time: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Environment.TickCount - startTime));
                     }
                 });
             }
             else
             {
-                Log.Print(string.Format("{0}:{1} :: [BlackMarket tracker] Nothing to scan!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+                Log.Info(string.Format("{0}:{1} :: [BlackMarket tracker] Nothing to scan!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
                 this.ShowTaskDialog("Items are zero", "Are you sure the black market window open?", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
         }

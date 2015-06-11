@@ -34,12 +34,12 @@ namespace AxTools.Classes
                             {
                                 string rawText = File.ReadAllText(settingsFile, Encoding.UTF8);
                                 _instance = JsonConvert.DeserializeObject<Settings>(rawText);
-                                Log.Print("Settings file is loaded");
+                                Log.Info("Settings file is loaded");
                             }
                             else
                             {
                                 _instance = new Settings();
-                                Log.Print("Settings file is not found!");
+                                Log.Info("Settings file is not found!");
                             }
                             _instance.ValidateAndFix();
                         }
@@ -124,7 +124,7 @@ namespace AxTools.Classes
             string json = sb.ToString();
             Utils.CheckCreateDir();
             File.WriteAllText(Globals.CfgPath + "\\settings.json", json, Encoding.UTF8);
-            Log.Print("Settings file has been updated, time: " + stopwatch.ElapsedMilliseconds + "ms");
+            Log.Info("Settings file has been updated, time: " + stopwatch.ElapsedMilliseconds + "ms");
         }
 
         #region General

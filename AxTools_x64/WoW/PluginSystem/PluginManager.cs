@@ -45,11 +45,11 @@ namespace AxTools.WoW.PluginSystem
                     try
                     {
                         ActivePlugin.OnStart();
-                        Log.Print(String.Format("{0}:{1} :: [{2}] Plugin is started", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name));
+                        Log.Info(String.Format("{0}:{1} :: [{2}] Plugin is started", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name));
                     }
                     catch (Exception ex)
                     {
-                        Log.Print(string.Format("Plugin OnStart error [{0}]: {1}", ActivePlugin.Name, ex.Message), true);
+                        Log.Error(string.Format("Plugin OnStart error [{0}]: {1}", ActivePlugin.Name, ex.Message));
                     }
                     _balancingStopwatch = new Stopwatch();
                     if (Settings.Instance.WoWPluginShowIngameNotifications)
@@ -83,13 +83,13 @@ namespace AxTools.WoW.PluginSystem
                     try
                     {
                         ActivePlugin.OnStop();
-                        Log.Print(WoWManager.WoWProcess != null
+                        Log.Info(WoWManager.WoWProcess != null
                             ? string.Format("{0}:{1} :: [{2}] Plugin is stopped", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name)
                             : string.Format("UNKNOWN:null :: [{0}] Plugin is stopped", ActivePlugin.Name));
                     }
                     catch (Exception ex)
                     {
-                        Log.Print(string.Format("Can't shutdown plugin [{0}]: {1}", ActivePlugin.Name, ex.Message), true);
+                        Log.Error(string.Format("Can't shutdown plugin [{0}]: {1}", ActivePlugin.Name, ex.Message));
                     }
                     if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
                     {
@@ -122,7 +122,7 @@ namespace AxTools.WoW.PluginSystem
                     }
                     catch (Exception ex)
                     {
-                        Log.Print(String.Format("{0}:{1} :: [{2}] OnPulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name, ex.Message), true);
+                        Log.Error(String.Format("{0}:{1} :: [{2}] OnPulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name, ex.Message));
                     }
                 }
                 int shouldWait = (int) (_intervalBetweenPulses - _balancingStopwatch.ElapsedMilliseconds);
@@ -138,11 +138,11 @@ namespace AxTools.WoW.PluginSystem
         internal static void LoadPlugins()
         {
             Plugins.Add(new Fishing());
-            Log.Print(string.Format("Plugin loaded: {0} {1}", Plugins.Last().Name, Plugins.Last().Version));
+            Log.Info(string.Format("Plugin loaded: {0} {1}", Plugins.Last().Name, Plugins.Last().Version));
             Plugins.Add(new FlagReturner());
-            Log.Print(string.Format("Plugin loaded: {0} {1}", Plugins.Last().Name, Plugins.Last().Version));
+            Log.Info(string.Format("Plugin loaded: {0} {1}", Plugins.Last().Name, Plugins.Last().Version));
             Plugins.Add(new GoodsDestroyer());
-            Log.Print(string.Format("Plugin loaded: {0} {1}", Plugins.Last().Name, Plugins.Last().Version));
+            Log.Info(string.Format("Plugin loaded: {0} {1}", Plugins.Last().Name, Plugins.Last().Version));
             LoadPluginsFromDisk();
         }
 
@@ -163,7 +163,7 @@ namespace AxTools.WoW.PluginSystem
                         {
                             foreach (object error in results.Errors)
                             {
-                                Log.Print("Compiler Error: " + error);
+                                Log.Info("Compiler Error: " + error);
                             }
                             haveError = true;
                         }
@@ -180,17 +180,17 @@ namespace AxTools.WoW.PluginSystem
                                         if (!string.IsNullOrWhiteSpace(temp.Name))
                                         {
                                             Plugins.Add(temp);
-                                            Log.Print(string.Format("Plugin loaded: {0} {1}", temp.Name, temp.Version));
+                                            Log.Info(string.Format("Plugin loaded: {0} {1}", temp.Name, temp.Version));
                                         }
                                         else
                                         {
-                                            Log.Print(string.Format("Can't load plugin [{0}]: [Name] is empty", temp.Name));
+                                            Log.Info(string.Format("Can't load plugin [{0}]: [Name] is empty", temp.Name));
                                             haveError = true;
                                         }
                                     }
                                     else
                                     {
-                                        Log.Print(string.Format("Can't load plugin [{0}]: already loaded", temp.Name));
+                                        Log.Info(string.Format("Can't load plugin [{0}]: already loaded", temp.Name));
                                     }
                                 }
                             }
@@ -199,7 +199,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 catch (Exception ex)
                 {
-                    Log.Print(ex.Message, true);
+                    Log.Error(ex.Message);
                 }
             }
             if (haveError)

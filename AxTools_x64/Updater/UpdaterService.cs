@@ -52,7 +52,7 @@ namespace AxTools.Updater
                 }
                 catch (Exception ex)
                 {
-                    Log.Print("[Updater] Can't download archive: " + ex.Message, true);
+                    Log.Error("[Updater] Can't download archive: " + ex.Message);
                     return;
                 }
                 try
@@ -61,7 +61,7 @@ namespace AxTools.Updater
                 }
                 catch (Exception ex)
                 {
-                    Log.Print("[Updater] Can't download updater: " + ex.Message, true);
+                    Log.Error("[Updater] Can't download updater: " + ex.Message);
                     return;
                 }
             }
@@ -80,7 +80,7 @@ namespace AxTools.Updater
             }
             catch (Exception ex)
             {
-                Log.Print("[Updater] Can't extract archive: " + ex.Message);
+                Log.Info("[Updater] Can't extract archive: " + ex.Message);
                 return;
             }
             TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No), TaskDialogIcon.Information);
@@ -89,20 +89,20 @@ namespace AxTools.Updater
             {
                 try
                 {
-                    Log.Print("[Updater] Closing for update...");
+                    Log.Info("[Updater] Closing for update...");
                     Application.ApplicationExit += ApplicationOnApplicationExit;
                     MainForm.Instance.BeginInvoke(new Action(MainForm.Instance.Close));
                 }
                 catch (Exception ex)
                 {
-                    Log.Print("[Updater] Update error: " + ex.Message, true);
+                    Log.Error("[Updater] Update error: " + ex.Message);
                 }
             }
         }
 
         private static void CheckForUpdates()
         {
-            Log.Print("[Updater] Checking for updates");
+            Log.Info("[Updater] Checking for updates");
             string updateString;
             try
             {
@@ -113,12 +113,12 @@ namespace AxTools.Updater
             }
             catch (WebException webException)
             {
-                Log.Print("[Updater] Fetching info error: " + webException.Message);
+                Log.Info("[Updater] Fetching info error: " + webException.Message);
                 return;
             }
             catch (Exception ex)
             {
-                Log.Print(string.Format("[Updater] Fetching info error ({0}): {1}", ex.GetType(), ex.Message), true);
+                Log.Error(string.Format("[Updater] Fetching info error ({0}): {1}", ex.GetType(), ex.Message));
                 return;
             }
             if (!String.IsNullOrWhiteSpace(updateString))
@@ -128,7 +128,7 @@ namespace AxTools.Updater
                 {
                     if (Globals.AppVersion.Build != updateInfo.Version.Build || Globals.AppVersion.Minor != updateInfo.Version.Minor || Globals.AppVersion.Major != updateInfo.Version.Major)
                     {
-                        Log.Print("[Updater] New version found: " + updateInfo.Version);
+                        Log.Info("[Updater] New version found: " + updateInfo.Version);
                         Timer.Elapsed -= timer_Elapsed;
                         DownloadExtractUpdate();
                     }
@@ -136,7 +136,7 @@ namespace AxTools.Updater
             }
             else
             {
-                Log.Print("[Updater] Update file fetched, but it's empty!", true);
+                Log.Error("[Updater] Update file fetched, but it's empty!");
             }
         }
 

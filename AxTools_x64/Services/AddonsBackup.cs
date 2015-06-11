@@ -25,7 +25,11 @@ namespace AxTools.Services
         /// <summary>
         ///     Parameter: -1 means backup is started; 101 means backup is finished; another value means backup progress in %
         /// </summary>
-        internal static event Action<int> StateChanged;
+        //internal static event Action<int> StateChanged;
+
+        internal static event Action<bool> IsRunningChanged;
+
+        internal static event Action<int> ProgressPercentageChanged;
 
         internal static void StartService()
         {
@@ -94,6 +98,10 @@ namespace AxTools.Services
                         DeleteOldFiles();
                         try
                         {
+                            if (IsRunningChanged != null)
+                            {
+                                IsRunningChanged(true);
+                            }
                             Zip();
                             Log.Info("[BackupAddons] Backup is successfully created");
                         }
@@ -101,6 +109,13 @@ namespace AxTools.Services
                         {
                             Log.Error("[BackupAddons] Backup error: Zipping failed: " + ex.Message);
                             Utils.NotifyUser("Backup error", ex.Message, NotifyUserType.Error, true);
+                        }
+                        finally
+                        {
+                            if (IsRunningChanged != null)
+                            {
+                                IsRunningChanged(false);
+                            }
                         }
                     }
                     else
@@ -206,9 +221,9 @@ namespace AxTools.Services
                 if (procent != _prevProcent && procent >= 0 && procent <= 100)
                 {
                     _prevProcent = procent;
-                    if (StateChanged != null)
+                    if (ProgressPercentageChanged != null)
                     {
-                        StateChanged(procent);
+                        ProgressPercentageChanged(procent);
                     }
                 }
             }
@@ -220,6 +235,6 @@ namespace AxTools.Services
             WTFDirIsNotFound,
             WTFDirIsTooLarge,
         }
-    
+
     }
 }

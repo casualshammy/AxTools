@@ -36,7 +36,7 @@ namespace AxTools.WoW.Management
             byte[] hookOriginalBytes = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
             if (HookPtrSignatureIsValid(hookOriginalBytes))
             {
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Signature is valid, address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr).ToInt64()));
+                Log.Info(string.Format("{0}:{1} :: [WoW hook] Signature is valid, address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr).ToInt64()));
                 return true;
             }
             Log.Error(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(hookOriginalBytes)));
@@ -49,11 +49,11 @@ namespace AxTools.WoW.Management
             TimerForMemory.Stop();
             if (MemoryWaitingToBeFreed.Count > 0 && !_wowProcess.Memory.Process.HasExited)
             {
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] Memory isn't freed, waiting... (1000ms)", _wowProcess.ProcessName, _wowProcess.ProcessID), true);
+                Log.Error(string.Format("{0}:{1} :: [WoW hook] Memory isn't freed, waiting... (1000ms)", _wowProcess.ProcessName, _wowProcess.ProcessID));
                 Thread.Sleep(1000); // waiting for <TimerForMemory>
                 if (MemoryWaitingToBeFreed.Count > 0)
                 {
-                    Log.Print(string.Format("{0}:{1} :: [WoW hook] Memory leak, count: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, MemoryWaitingToBeFreed.Count), true);
+                    Log.Error(string.Format("{0}:{1} :: [WoW hook] Memory leak, count: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, MemoryWaitingToBeFreed.Count));
                 }
             }
             lock (MemoryWaitingToBeFreedLock)
@@ -197,7 +197,7 @@ namespace AxTools.WoW.Management
             }
             else
             {
-                Log.Print(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame::Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(originalCode)));
+                Log.Info(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame::Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(originalCode)));
             }
         }
 

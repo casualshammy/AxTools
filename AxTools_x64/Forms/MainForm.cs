@@ -49,7 +49,7 @@ namespace AxTools.Forms
             progressBarAddonsBackup.Location = linkBackup.Location;
             progressBarAddonsBackup.Visible = false;
 
-            Log.Print(String.Format("Launching... ({0})", Globals.AppVersion));
+            Log.Info(String.Format("Launching... ({0})", Globals.AppVersion));
             Icon = Resources.AppIcon;
             Utils.Legacy();
             OnSettingsLoaded();
@@ -60,7 +60,7 @@ namespace AxTools.Forms
             PluginManager.PluginStateChanged += PluginManagerOnPluginStateChanged;
             Pinger.DataChanged += Pinger_DataChanged;
             Pinger.StateChanged += PingerOnStateChanged;
-            AddonsBackup.StateChanged += AddonsBackup_OnChangedState;
+            AddonsBackup.IsRunningChanged += AddonsBackup_IsRunningChanged;
             WoWAccount.AllAccounts.CollectionChanged += WoWAccounts_CollectionChanged;
 
             Task.Factory.StartNew(LoadingStepAsync);
@@ -136,7 +136,7 @@ namespace AxTools.Forms
             {
                 Clicker.Stop();
                 WowProcess cProcess = WowProcess.List.FirstOrDefault(i => i.MainWindowHandle == Clicker.Handle);
-                Log.Print(cProcess != null
+                Log.Info(cProcess != null
                     ? String.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
                     : "UNKNOWN:null :: [Clicker] Disabled");
             }
@@ -146,7 +146,7 @@ namespace AxTools.Forms
                 if (cProcess != null)
                 {
                     Clicker.Start(settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr) settings.ClickerKey);
-                    Log.Print(string.Format("{0}:{1} :: [Clicker] Enabled, interval {2}ms, window handle 0x{3:X}", cProcess.ProcessName, cProcess.ProcessID,
+                    Log.Info(string.Format("{0}:{1} :: [Clicker] Enabled, interval {2}ms, window handle 0x{3:X}", cProcess.ProcessName, cProcess.ProcessID,
                         settings.ClickerInterval, (uint) cProcess.MainWindowHandle));
                 }
             }
@@ -187,7 +187,7 @@ namespace AxTools.Forms
             PluginManager.PluginStateChanged -= PluginManagerOnPluginStateChanged;
             Pinger.DataChanged -= Pinger_DataChanged;
             Pinger.StateChanged += PingerOnStateChanged;
-            AddonsBackup.StateChanged -= AddonsBackup_OnChangedState;
+            AddonsBackup.IsRunningChanged -= AddonsBackup_IsRunningChanged;
             //
             settings.MainWindowLocation = Location;
             //save settings
@@ -200,21 +200,21 @@ namespace AxTools.Forms
             Pinger.Stop();
             //stop watching process trace
             WoWProcessWatcher.StopWatcher();
-            Log.Print("WoW processes trace watching is stopped");
+            Log.Info("WoW processes trace watching is stopped");
             // release hook 
             if (WoWManager.Hooked)
             {
                 WoWManager.Unhook();
-                Log.Print(String.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+                Log.Info(String.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
             foreach (WowProcess i in WowProcess.List)
             {
                 string name = i.ProcessName;
                 i.Dispose();
-                Log.Print(String.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, i.ProcessID));
+                Log.Info(String.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, i.ProcessID));
             }
             KeyboardListener.Stop();
-            Log.Print("AxTools closed");
+            Log.Info("AxTools closed");
             SendLogToDeveloper();
         }
 
@@ -255,10 +255,10 @@ namespace AxTools.Forms
 
         private void LoadingStepAsync()
         {
-            Log.Print("[AxTools] Registered for: " + Settings.Instance.UserID);
+            Log.Info("[AxTools] Registered for: " + Settings.Instance.UserID);
             PluginManager.LoadPlugins();
             BeginInvoke(new Action(LoadingStepSync));
-            Log.Print("[AxTools] Initial loading is finished");
+            Log.Info("[AxTools] Initial loading is finished");
         }
 
         private void LoadingStepSync()
@@ -282,7 +282,7 @@ namespace AxTools.Forms
             startupOverlay.Close();
             Changes.ShowChangesIfNeeded();
             UpdaterService.Start();
-            Log.Print("AxTools started succesfully");
+            Log.Info("AxTools started succesfully");
         }
 
         private void linkSettings_Click(object sender, EventArgs e)
@@ -495,7 +495,7 @@ namespace AxTools.Forms
                 WorkingDirectory = settings.RaidcallDirectory,
                 FileName = settings.RaidcallDirectory + "\\raidcall.exe"
             });
-            Log.Print("Raidcall process started");
+            Log.Info("Raidcall process started");
         }
 
         private void TileTeamspeak3Click(object sender, EventArgs e)
@@ -521,7 +521,7 @@ namespace AxTools.Forms
                 FileName = cPath,
                 Arguments = "-nosingleinstance"
             });
-            Log.Print("TS3 process started");
+            Log.Info("TS3 process started");
         }
 
         private void TileMumbleClick(object sender, EventArgs e)
@@ -536,7 +536,7 @@ namespace AxTools.Forms
                 WorkingDirectory = settings.MumbleDirectory,
                 FileName = settings.MumbleDirectory + "\\mumble.exe"
             });
-            Log.Print("Mumble process started");
+            Log.Info("Mumble process started");
         }
 
         private void checkBoxStartVenriloWithWow_CheckedChanged(object sender, EventArgs e)
@@ -643,7 +643,7 @@ namespace AxTools.Forms
             if (WoWManager.Hooked)
             {
                 WoWManager.Unhook();
-                Log.Print(String.Format("{0}:{1} :: Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+                Log.Info(String.Format("{0}:{1} :: Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
             if (!WoWManager.Hooked)
             {
@@ -784,7 +784,7 @@ namespace AxTools.Forms
             }));
         }
 
-        private void AddonsBackup_OnChangedState(int procent)
+        private void AddonsBackup_IsRunningChanged(bool isRunning)
         {
             if (procent == 100)
             {
@@ -881,7 +881,7 @@ namespace AxTools.Forms
                         counter--;
                     }
                 });
-                Log.Print("Ventrilo process started");
+                Log.Info("Ventrilo process started");
             }
             else
             {
@@ -976,7 +976,7 @@ namespace AxTools.Forms
                 }
                 catch
                 {
-                    Log.Print("Plugin task failed to cancel", true);
+                    Log.Error("Plugin task failed to cancel");
                     Utils.NotifyUser("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
                 }
             }

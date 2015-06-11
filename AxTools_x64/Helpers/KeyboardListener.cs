@@ -52,7 +52,7 @@ namespace AxTools.Helpers
         internal static void Stop()
         {
             _timer.Stop();
-            Log.Print("[KeyboardListener] Total CPU time: " + _stopwatch.ElapsedMilliseconds + "ms", true);
+            Log.Error("[KeyboardListener] Total CPU time: " + _stopwatch.ElapsedMilliseconds + "ms");
         }
 
         /// <summary>

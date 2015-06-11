@@ -36,9 +36,9 @@ namespace AxTools
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
                         OnStartup();
-                        Log.Print("Loading main window...");
+                        Log.Info("Loading main window...");
                         Application.Run((MainForm.Instance = new MainForm()));
-                        Log.Print("Application is closed");
+                        Log.Info("Application is closed");
                     }
                     else
                     {

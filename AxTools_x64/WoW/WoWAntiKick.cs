@@ -34,12 +34,12 @@ namespace AxTools.WoW
                         {
                             maxTime = Utils.Rnd.Next(150000, 280000);
                             wowProcess.Memory.Write(wowProcess.Memory.ImageBase + WowBuildInfoX64.LastHardwareAction, tickCount);
-                            Log.Print(String.Format("{0}:{1} :: [Anti-AFK] Action emulated, next MaxTime: {2}", wowProcess.ProcessName, wowProcess.ProcessID, maxTime));
+                            Log.Info(String.Format("{0}:{1} :: [Anti-AFK] Action emulated, next MaxTime: {2}", wowProcess.ProcessName, wowProcess.ProcessID, maxTime));
                         }
                     }
                     catch (Exception ex)
                     {
-                        Log.Print(String.Format("{0}:{1} :: [Anti-AFK] Can't emulate action: {2}", wowProcess.ProcessName, wowProcess.ProcessID, ex.Message), true);
+                        Log.Error(String.Format("{0}:{1} :: [Anti-AFK] Can't emulate action: {2}", wowProcess.ProcessName, wowProcess.ProcessID, ex.Message));
                     }
                 }
             }

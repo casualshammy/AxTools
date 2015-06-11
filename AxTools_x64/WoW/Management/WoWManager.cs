@@ -55,11 +55,11 @@ namespace AxTools.WoW.Management
                                 return false;
                             }
                         }
-                        Log.Print(String.Format("{0}:{1} :: [WoW hook] Player isn't logged in", wowProcess.ProcessName, wowProcess.ProcessID));
+                        Log.Info(String.Format("{0}:{1} :: [WoW hook] Player isn't logged in", wowProcess.ProcessName, wowProcess.ProcessID));
                         Utils.NotifyUser("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
                         return false;
                     }
-                    Log.Print(String.Format("{0}:{1} :: [WoW hook] Incorrect WoW build", wowProcess.ProcessName, wowProcess.ProcessID), true);
+                    Log.Error(String.Format("{0}:{1} :: [WoW hook] Incorrect WoW build", wowProcess.ProcessName, wowProcess.ProcessID));
                     Utils.NotifyUser("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
                     return false;
                 }
@@ -88,11 +88,11 @@ namespace AxTools.WoW.Management
             }
 
             WoWDXInject.Release();
-            Log.Print(string.Format("{0}:{1} :: [WoW hook] Total objects cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowObject.Names.Count), false, false);
+            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total objects cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowObject.Names.Count));
             WowObject.Names.Clear();
-            Log.Print(string.Format("{0}:{1} :: [WoW hook] Total players cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowPlayer.Names.Count), false, false);
+            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total players cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowPlayer.Names.Count));
             WowPlayer.Names.Clear();
-            Log.Print(string.Format("{0}:{1} :: [WoW hook] Total NPC cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowNpc.Names.Count));
+            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total NPC cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowNpc.Names.Count));
             WowNpc.Names.Clear();
             Hooked = false;
         }

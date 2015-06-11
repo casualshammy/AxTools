@@ -78,7 +78,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
             catch (Exception ex)
             {
-                Log.Print(string.Format("{0}:{1} :: [{2}] TODO error0: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
+                Log.Error(string.Format("{0}:{1} :: [{2}] TODO error0: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
             }
             if (searchingObjects.Length > 0)
             {
@@ -89,7 +89,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 }
                 catch (Exception ex)
                 {
-                    Log.Print(string.Format("{0}:{1} :: [{2}] Pulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
+                    Log.Error(string.Format("{0}:{1} :: [{2}] Pulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
                     return;
                 }
                 // todo: delete try..catch
@@ -104,14 +104,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         }
                         catch (Exception ex)
                         {
-                            Log.Print(string.Format("{0}:{1} :: [{2}] TODO error1: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
+                            Log.Error(string.Format("{0}:{1} :: [{2}] TODO error1: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
                         }
-                        Log.Print(string.Format("{0}:{1} :: [{2}] Interacting with {3} ({4})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, i.Name, i.GUID), false, false);
+                        Log.Info(string.Format("{0}:{1} :: [{2}] Interacting with {3} ({4})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, i.Name, i.GUID));
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.Print(string.Format("{0}:{1} :: [{2}] TODO error2: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message), true);
+                    Log.Error(string.Format("{0}:{1} :: [{2}] TODO error2: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
                 }
             }
         }

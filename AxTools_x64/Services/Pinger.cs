@@ -108,7 +108,7 @@ namespace AxTools.Services
                 }
                 catch (Exception ex)
                 {
-                    Log.Print("[Pinger] " + ex.Message, true);
+                    Log.Error("[Pinger] " + ex.Message);
                 }
                 finally
                 {

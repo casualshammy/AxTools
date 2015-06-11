@@ -59,7 +59,7 @@ namespace AxTools.WoW
                                 IntPtr enterCode = new IntPtr(0x0D);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYDOWN, enterCode, IntPtr.Zero);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYUP, enterCode, IntPtr.Zero);
-                                Log.Print(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", wowProcess.ProcessName, wowProcess.ProcessID, wowAccount.Login));
+                                Log.Info(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", wowProcess.ProcessName, wowProcess.ProcessID, wowAccount.Login));
                                 break;
                             }
                         }
@@ -69,7 +69,7 @@ namespace AxTools.WoW
                 }
                 catch (Exception ex)
                 {
-                    Log.Print(string.Format("{0}:{1} :: [Account manager] Internal error: {2}", process.ProcessName, process.Id, ex.Message), true);
+                    Log.Error(string.Format("{0}:{1} :: [Account manager] Internal error: {2}", process.ProcessName, process.Id, ex.Message));
                 }
             }
         }

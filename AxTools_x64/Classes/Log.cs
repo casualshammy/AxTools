@@ -1,11 +1,9 @@
-﻿using AxTools.Forms;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Timers;
-using WindowsFormsAero.TaskDialog;
 
 namespace AxTools.Classes
 {
@@ -40,59 +38,6 @@ namespace AxTools.Classes
             {
                 _stringBuilder.AppendLine(string.Concat(DateTime.UtcNow.ToString(DATETIME_PREFIX_PATTERN), ERROR_PREFIX_PATTERN, text));
             }
-        }
-
-        /// <summary>
-        ///     Deprecated
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="isError"></param>
-        /// <param name="flush"></param>
-        internal static void Print(string text, bool isError = false, bool flush = true)
-        {
-            try
-            {
-                lock (_lock)
-                {
-                    if (isError)
-                    {
-                        HaveErrors = true;
-                        _stringBuilder.AppendLine(string.Concat(DateTime.UtcNow.ToString(DATETIME_PREFIX_PATTERN), ERROR_PREFIX_PATTERN, text));
-                    }
-                    else
-                    {
-                        _stringBuilder.AppendLine(string.Concat(DateTime.UtcNow.ToString(DATETIME_PREFIX_PATTERN), INFO_PREFIX_PATTERN, text));
-                    }
-                    if (flush || _stringBuilder.Length >= 32768)
-                    {
-                        Utils.CheckCreateDir();
-						File.AppendAllText(Globals.LogFileName, _stringBuilder.ToString(), Encoding.UTF8);
-						_stringBuilder.Clear();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                if (MainForm.Instance != null)
-                {
-                    MainForm.Instance.ShowTaskDialog("Log file writing error", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
-                }
-                else
-                {
-                    new TaskDialog("Log file writing error", "AxTools", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop).Show();
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Deprecated
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="isError"></param>
-        /// <param name="flush"></param>
-        internal static void Print(object text, bool isError = false, bool flush = true)
-        {
-            Print(text.ToString(), isError, flush);
         }
 
         internal static void SendViaEmail(string subject)

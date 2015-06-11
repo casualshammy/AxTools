@@ -109,7 +109,7 @@ namespace AxTools.Forms
             catch (Exception ex)
             {
                 CheckBoxStartAxToolsWithWindows.Checked = false;
-                Log.Print("Error occured then trying to open registry key [SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run]: " + ex.Message);
+                Log.Error("Error occured then trying to open registry key [SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run]: " + ex.Message);
             }
             //tooltips
             toolTip.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
@@ -139,7 +139,7 @@ namespace AxTools.Forms
                     }
                     catch (Exception ex)
                     {
-                        Log.Print("app_sett.CheckBox9.CheckedChanged_1: " + ex.Message, true);
+                        Log.Error("app_sett.CheckBox9.CheckedChanged_1: " + ex.Message);
                     }
                 }
                 else
@@ -159,7 +159,7 @@ namespace AxTools.Forms
                     }
                     catch (Exception ex)
                     {
-                        Log.Print("app_sett.CheckBox9.CheckedChanged_2: " + ex.Message, true);
+                        Log.Error("app_sett.CheckBox9.CheckedChanged_2: " + ex.Message);
                     }
                 }
             }
@@ -482,7 +482,7 @@ namespace AxTools.Forms
                         }
                         catch (Exception ex)
                         {
-                            Log.Print("Can't send log: " + ex.Message, true);
+                            Log.Error("Can't send log: " + ex.Message);
                             this.ShowTaskDialog("Can't send log", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
                         }
                         finally

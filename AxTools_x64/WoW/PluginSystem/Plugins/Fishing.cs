@@ -10,7 +10,6 @@ using AxTools.Classes;
 using AxTools.Properties;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
-using AxTools.WoW.PluginSystem.API;
 using Newtonsoft.Json;
 
 namespace AxTools.WoW.PluginSystem.Plugins
@@ -81,12 +80,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
             if (Environment.TickCount - iterationStartTime > 25000)
             {
                 state = 0;
-                Log.Print(String.Format("{0}:{1} :: [{2}] Timeout has expired", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
+                Log.Info(String.Format("{0}:{1} :: [{2}] Timeout has expired", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
             }
             switch (state)
             {
                 case 0:
-                    Log.Print(String.Format("{0}:{1} :: [{2}] Cast fishing...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
+                    Log.Info(String.Format("{0}:{1} :: [{2}] Cast fishing...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
                     WoWDXInject.LuaDoString(castFishing);
                     Thread.Sleep(1500);
                     state = 1;
@@ -100,19 +99,19 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     }
                     catch (Exception ex)
                     {
-                        Log.Print(String.Format("{0}:{1} :: [Fishing] Pulse error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message), true);
+                        Log.Error(String.Format("{0}:{1} :: [Fishing] Pulse error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                         break;
                     }
                     if (localPlayer.ChannelSpellID == 0)
                     {
-                        Log.Print(String.Format("{0}:{1} :: [{2}] Player isn't fishing, recast...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
+                        Log.Info(String.Format("{0}:{1} :: [{2}] Player isn't fishing, recast...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
                         state = 0;
                         break;
                     }
                     bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == localPlayer.GUID);
                     if (bobber != null && bobber.Bobbing) //4456449
                     {
-                        Log.Print(String.Format("{0}:{1} :: [{2}] Got bit!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
+                        Log.Info(String.Format("{0}:{1} :: [{2}] Got bit!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
                         Thread.Sleep(Utils.Rnd.Next(500, 1000));
                         state = 2;
                     }
@@ -120,14 +119,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 case 2:
                     if (bobber != null)
                     {
-                        Log.Print(String.Format("{0}:{1} :: [{2}] Interacting...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
+                        Log.Info(String.Format("{0}:{1} :: [{2}] Interacting...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
                         WoWDXInject.Interact(bobber.GUID);
                         bobber = null;
                         state = 3;
                     }
                     else
                     {
-                        Log.Print(String.Format("{0}:{1} :: [{2}] Bobber isn't found, recast...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
+                        Log.Info(String.Format("{0}:{1} :: [{2}] Bobber isn't found, recast...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
                         state = 0;
                     }
                     break;
@@ -135,7 +134,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     if (WoWManager.WoWProcess.PlayerIsLooting)
                     {
                         state = 4;
-                        Log.Print(String.Format("{0}:{1} :: [{2}] Looting...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
+                        Log.Info(String.Format("{0}:{1} :: [{2}] Looting...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
                     }
                     break;
                 case 4:
@@ -145,11 +144,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         if (Utils.Rnd.Next(0, 25) == 0)
                         {
                             int breakTime = Utils.Rnd.Next(15, 45);
-                            Log.Print(string.Format("{0}:{1} :: [{2}] I'm human! Let's have a break ({3} sec)", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, breakTime));
+                            Log.Info(string.Format("{0}:{1} :: [{2}] I'm human! Let's have a break ({3} sec)", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, breakTime));
                             Thread.Sleep(breakTime * 1000);
                         }
                         //
-                        Log.Print(String.Format("{0}:{1} :: [{2}] Looted, applying lure...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
+                        Log.Info(String.Format("{0}:{1} :: [{2}] Looted, applying lure...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name));
                         if (fishingSettings.UseBestBait)
                         {
                             WoWDXInject.LuaDoString(lureBait);

@@ -77,7 +77,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             if (Environment.TickCount - iterationStartTime > 5000)
             {
-                Log.Print(String.Format("{0}:{1} :: [{2}] Timeout has expired (nothing to do?), state: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, state));
+                Log.Info(String.Format("{0}:{1} :: [{2}] Timeout has expired (nothing to do?), state: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, state));
                 state = 0;
             }
             switch (state)
@@ -98,7 +98,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     }
                     else
                     {
-                        Log.Print("This character can't mill, prospect or disenchant!", false, false);
+                        Log.Info("This character can't mill, prospect or disenchant!");
                     }
                     iterationStartTime = Environment.TickCount;
                     state = 1;

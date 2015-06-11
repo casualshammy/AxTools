@@ -23,7 +23,7 @@ namespace AxTools.Helpers
             if (Directory.Exists(Settings.Instance.WoWDirectory + "\\Logs"))
             {
                 TaskDialog taskDialog = new TaskDialog("WoW client is blocking logs", "AxTools", "It's strongly recommended to close all WoW clients.\r\nSome files may not be deleted.\r\nProceed?",
-                    (int) TaskDialogButton.Yes + TaskDialogButton.No, TaskDialogIcon.Warning);
+                    (int)TaskDialogButton.Yes + TaskDialogButton.No, TaskDialogIcon.Warning);
                 if (WowProcess.List.Count == 0 || taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
                 {
                     string zipPath = String.Format(Settings.Instance.WoWDirectory + "\\Logs\\WoWLogs_{0:yyyyMMdd_HHmmss}.zip", DateTime.UtcNow);
@@ -31,7 +31,7 @@ namespace AxTools.Helpers
                     {
                         using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
                         {
-                            zip.CompressionLevel = (CompressionLevel) Settings.Instance.WoWAddonsBackupCompressionLevel;
+                            zip.CompressionLevel = (CompressionLevel)Settings.Instance.WoWAddonsBackupCompressionLevel;
                             foreach (string filePath in Directory.GetFiles(Settings.Instance.WoWDirectory + "\\Logs").Where(k => !k.Contains("WoWLogs_")))
                             {
                                 zip.AddFile(filePath);
@@ -43,23 +43,23 @@ namespace AxTools.Helpers
                             Process.GetCurrentProcess().PriorityClass = defaultProcessPriorityClass;
                             zip.SaveProgress -= SaveProgress;
                         }
-                        Log.Print(String.Format("[WoW logs] Logs were saved to [{0}]", zipPath));
+                        Log.Info(String.Format("[WoW logs] Logs were saved to [{0}]", zipPath));
                         foreach (string i in Directory.GetFiles(Settings.Instance.WoWDirectory + "\\Logs").Where(k => !k.Contains("WoWLogs_")))
                         {
                             try
                             {
                                 File.WriteAllBytes(i, new byte[0]);
-                                Log.Print("[WoW logs] Log file erased: " + i);
+                                Log.Info("[WoW logs] Log file erased: " + i);
                             }
                             catch (Exception ex)
                             {
-                                Log.Print(String.Format("[WoW logs] Error occured while erasing log file [{0}]: {1}", i, ex.Message));
+                                Log.Info(String.Format("[WoW logs] Error occured while erasing log file [{0}]: {1}", i, ex.Message));
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        Log.Print(String.Format("[WoW logs] Can't backup WoW logs [{0}]: {1}", zipPath, ex.Message), true);
+                        Log.Error(String.Format("[WoW logs] Can't backup WoW logs [{0}]: {1}", zipPath, ex.Message));
                         Utils.NotifyUser("WoW logs", "Can't backup WoW logs [" + zipPath + "]: " + ex.Message, NotifyUserType.Error, true);
                     }
                 }
@@ -90,11 +90,11 @@ namespace AxTools.Helpers
                     try
                     {
                         backupFiles[i].Delete();
-                        Log.Print("[WoW logs] Old archive has been deleted [" + backupFiles[i].FullName + "]");
+                        Log.Info("[WoW logs] Old archive has been deleted [" + backupFiles[i].FullName + "]");
                     }
                     catch (Exception ex)
                     {
-                        Log.Print("[WoW logs] Can't delete old archive [" + backupFiles[i].FullName + "]: " + ex.Message);
+                        Log.Info("[WoW logs] Can't delete old archive [" + backupFiles[i].FullName + "]: " + ex.Message);
                     }
                 }
             }
@@ -104,7 +104,7 @@ namespace AxTools.Helpers
         {
             if (e.EntriesSaved != 0 && e.EntriesTotal != 0 && e.EntriesTotal >= e.EntriesSaved)
             {
-                int procent = 100*e.EntriesSaved/e.EntriesTotal;
+                int procent = 100 * e.EntriesSaved / e.EntriesTotal;
                 if (procent != _prevProcent)
                 {
                     _prevProcent = procent;
@@ -115,6 +115,6 @@ namespace AxTools.Helpers
                 }
             }
         }
-    
+
     }
 }

@@ -15,7 +15,7 @@ namespace AxTools.WoW.PluginSystem.API
         /// <param name="text"></param>
         public static void LogPrint(object text)
         {
-            Log.Print(String.Format("{0}:{1} :: [Plugin: {2}] {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginManager.ActivePlugin.Name, text));
+            Log.Info(String.Format("{0}:{1} :: [Plugin: {2}] {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginManager.ActivePlugin.Name, text));
         }
 
         /// <summary>
