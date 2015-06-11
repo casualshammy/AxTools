@@ -156,6 +156,7 @@
     <Compile Include="Components\TaskbarProgressbar\ThumbnailProgressState.cs" />
     <Compile Include="Helpers\NotifyUserType.cs" />
     <Compile Include="Helpers\TrayIconAnimation.cs" />
+    <Compile Include="Services\PingerHelpers\PingResult.cs" />
     <Compile Include="Updater\UpdateInfo.cs" />
     <Compile Include="Updater\UpdaterService.cs" />
     <Compile Include="WoW\AutoLogin.cs" />

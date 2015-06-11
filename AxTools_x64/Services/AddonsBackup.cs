@@ -21,14 +21,7 @@ namespace AxTools.Services
         private static bool _isBackingUp;
         private static Timer _timer;
         private static bool _serviceIsStarted;
-
-        /// <summary>
-        ///     Parameter: -1 means backup is started; 101 means backup is finished; another value means backup progress in %
-        /// </summary>
-        //internal static event Action<int> StateChanged;
-
         internal static event Action<bool> IsRunningChanged;
-
         internal static event Action<int> ProgressPercentageChanged;
 
         internal static void StartService()
@@ -40,10 +33,6 @@ namespace AxTools.Services
                 _timer.Start();
                 _serviceIsStarted = true;
             }
-            else
-            {
-                throw new Exception("AddonBackup service is already started!");
-            }
         }
 
         internal static void StopService()
@@ -53,10 +42,6 @@ namespace AxTools.Services
                 _timer.Elapsed -= Timer_OnElapsed;
                 _timer.Close();
                 _serviceIsStarted = false;
-            }
-            else
-            {
-                throw new Exception("AddonBackup service isn't running!");
             }
         }
 

@@ -4,6 +4,7 @@ using AxTools.Components.TaskbarProgressbar;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
+using AxTools.Services.PingerHelpers;
 using AxTools.Updater;
 using AxTools.WinAPI;
 using AxTools.WoW;
@@ -58,8 +59,8 @@ namespace AxTools.Forms
 
             settings.WoWPluginHotkeyChanged += WoWPluginHotkeyChanged;
             PluginManager.PluginStateChanged += PluginManagerOnPluginStateChanged;
-            Pinger.DataChanged += Pinger_DataChanged;
-            Pinger.StateChanged += PingerOnStateChanged;
+            Pinger.PingResultArrived += Pinger_DataChanged;
+            Pinger.IsEnabledChanged += PingerOnStateChanged;
             AddonsBackup.IsRunningChanged += AddonsBackup_IsRunningChanged;
             WoWAccount.AllAccounts.CollectionChanged += WoWAccounts_CollectionChanged;
 
@@ -185,8 +186,8 @@ namespace AxTools.Forms
             //
             settings.WoWPluginHotkeyChanged -= WoWPluginHotkeyChanged;
             PluginManager.PluginStateChanged -= PluginManagerOnPluginStateChanged;
-            Pinger.DataChanged -= Pinger_DataChanged;
-            Pinger.StateChanged += PingerOnStateChanged;
+            Pinger.PingResultArrived -= Pinger_DataChanged;
+            Pinger.IsEnabledChanged += PingerOnStateChanged;
             AddonsBackup.IsRunningChanged -= AddonsBackup_IsRunningChanged;
             //
             settings.MainWindowLocation = Location;
@@ -801,18 +802,17 @@ namespace AxTools.Forms
             }));
         }
 
-        private void Pinger_DataChanged(int ping, int packetLoss)
+        private void Pinger_DataChanged(PingResult pingResult)
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                linkPing.Text = string.Format("[{0}]::[{1}%]  |", (ping == -1 || ping == -2) ? "n/a" : ping + "ms", packetLoss);
-                //labelPingNum.Location = new Point(Size.Width / 2 - labelPingNum.Size.Width / 2, labelPingNum.Location.Y);
+                linkPing.Text = string.Format("[{0}]::[{1}%]  |", (pingResult.Ping == -1 || pingResult.Ping == -2) ? "n/a" : pingResult.Ping + "ms", pingResult.PacketLoss);
                 TBProgressBar.SetProgressValue(Handle, 1, 1);
-                if (packetLoss >= settings.PingerVeryBadPacketLoss || ping >= settings.PingerVeryBadPing)
+                if (pingResult.PacketLoss >= settings.PingerVeryBadPacketLoss || pingResult.Ping >= settings.PingerVeryBadPing)
                 {
                     TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
                 }
-                else if (packetLoss >= settings.PingerBadPacketLoss || ping >= settings.PingerBadPing)
+                else if (pingResult.PacketLoss >= settings.PingerBadPacketLoss || pingResult.Ping >= settings.PingerBadPing)
                 {
                     TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
                 }

@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Timers;
 using AxTools.Classes;
+using AxTools.Services.PingerHelpers;
 using Timer = System.Timers.Timer;
 
 namespace AxTools.Services
@@ -21,16 +22,12 @@ namespace AxTools.Services
         private static int _lastPing;
         private static int _lastPacketLoss;
 
-        /// <summary>
-        ///     The first parameter is ping
-        ///     The second is packet loss
-        /// </summary>
-        internal static event Action<int, int> DataChanged;
+        internal static event Action<PingResult> PingResultArrived;
 
         /// <summary>
         ///     True if pinger is active, false otherwise
         /// </summary>
-        internal static event Action<bool> StateChanged;
+        internal static event Action<bool> IsEnabledChanged;
 
         internal static bool Enabled
         {
@@ -53,9 +50,9 @@ namespace AxTools.Services
                 _timer = new Timer(2000);
                 _timer.Elapsed += TimerOnElapsed;
                 _timer.Start();
-                if (StateChanged != null)
+                if (IsEnabledChanged != null)
                 {
-                    StateChanged(true);
+                    IsEnabledChanged(true);
                 }
             }
         }
@@ -70,9 +67,9 @@ namespace AxTools.Services
                     _timer.Stop();
                     _timer.Close();
                 }
-                if (StateChanged != null)
+                if (IsEnabledChanged != null)
                 {
-                    StateChanged(false);
+                    IsEnabledChanged(false);
                 }
             }
         }
@@ -97,9 +94,9 @@ namespace AxTools.Services
                         int packetLoss = _pingList.Count(x => x == -1);
                         if (ping != _lastPing || packetLoss != _lastPacketLoss)
                         {
-                            if (DataChanged != null)
+                            if (PingResultArrived != null)
                             {
-                                DataChanged(ping, packetLoss);
+                                PingResultArrived(new PingResult(ping, packetLoss));
                             }
                             _lastPing = ping;
                             _lastPacketLoss = packetLoss;
@@ -116,6 +113,6 @@ namespace AxTools.Services
                 }
             }
         }
-    
+
     }
 }
