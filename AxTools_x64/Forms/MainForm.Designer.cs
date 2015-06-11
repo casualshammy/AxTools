@@ -91,7 +91,6 @@ namespace AxTools.Forms
             this.toolStripMenuItemBackupWoWAddOns = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemOpenBackupFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItemZipAndCleanWoWLogs = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
@@ -724,7 +723,6 @@ namespace AxTools.Forms
             this.toolStripMenuItemBackupWoWAddOns,
             this.toolStripMenuItemOpenBackupFolder,
             this.toolStripSeparator3,
-            this.toolStripMenuItemZipAndCleanWoWLogs,
             this.toolStripMenuItemOpenWoWLogsFolder});
             this.contextMenuStripBackupAndClean.Name = "contextMenuStripMain";
             this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 98);
@@ -748,15 +746,6 @@ namespace AxTools.Forms
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(191, 6);
-            // 
-            // toolStripMenuItemZipAndCleanWoWLogs
-            // 
-            this.toolStripMenuItemZipAndCleanWoWLogs.Image = global::AxTools.Properties.Resources.archive;
-            this.toolStripMenuItemZipAndCleanWoWLogs.Name = "toolStripMenuItemZipAndCleanWoWLogs";
-            this.toolStripMenuItemZipAndCleanWoWLogs.ShortcutKeyDisplayString = "";
-            this.toolStripMenuItemZipAndCleanWoWLogs.Size = new System.Drawing.Size(194, 22);
-            this.toolStripMenuItemZipAndCleanWoWLogs.Text = "ZIP && clean WoW logs";
-            this.toolStripMenuItemZipAndCleanWoWLogs.Click += new System.EventHandler(this.toolStripMenuItemZipAndCleanWoWLogs_Click);
             // 
             // toolStripMenuItemOpenWoWLogsFolder
             // 
@@ -868,7 +857,6 @@ namespace AxTools.Forms
         private ToolStripMenuItem toolStripMenuItemBackupWoWAddOns;
         private ToolStripMenuItem toolStripMenuItemOpenBackupFolder;
         private ToolStripSeparator toolStripSeparator3;
-        private ToolStripMenuItem toolStripMenuItemZipAndCleanWoWLogs;
         private ToolStripMenuItem toolStripMenuItemOpenWoWLogsFolder;
         private PictureBox pictureBox1;
         private MetroLink linkPing;

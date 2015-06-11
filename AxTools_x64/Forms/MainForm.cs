@@ -443,25 +443,6 @@ namespace AxTools.Forms
             }
         }
 
-        private void toolStripMenuItemZipAndCleanWoWLogs_Click(object sender, EventArgs e)
-        {
-            Task.Factory.StartNew(() =>
-            {
-                WoWLogsAndCacheManager.StateChanged += AddonsBackup_OnChangedState;
-                WoWLogsAndCacheManager.ZipAndCleanLogs();
-                WoWLogsAndCacheManager.StateChanged -= AddonsBackup_OnChangedState;
-            })
-                .ContinueWith(l =>
-                {
-                    TaskDialog taskDialog = new TaskDialog("Zip & clean WoW logs", "AxTools", "Do you want to delete old archives?", (int) TaskDialogButton.Yes + TaskDialogButton.No, TaskDialogIcon.Information);
-                    if (taskDialog.Show(this).CommonButton == Result.Yes)
-                    {
-                        WoWLogsAndCacheManager.DeleteAllLogsArchivesExceptNewest();
-                    }
-                    this.ShowTaskDialog("Zip & clean WoW logs", "Log files are erased. New archive is placed to [" + settings.WoWDirectory + "\\Logs]", TaskDialogButton.OK, TaskDialogIcon.Information);
-                });
-        }
-
         private void toolStripMenuItemOpenWoWLogsFolder_Click(object sender, EventArgs e)
         {
             if (Directory.Exists(settings.WoWDirectory + "\\Logs"))
@@ -786,29 +767,27 @@ namespace AxTools.Forms
 
         private void AddonsBackup_IsRunningChanged(bool isRunning)
         {
-            if (procent == 100)
+            BeginInvoke((MethodInvoker) delegate
             {
-                BeginInvoke((MethodInvoker) delegate
+                linkBackup.Visible = !isRunning;
+                progressBarAddonsBackup.Visible = isRunning;
+                if (isRunning)
                 {
-                    linkBackup.Visible = true;
-                    progressBarAddonsBackup.Visible = false;
-                });
-            }
-            else
+                    AddonsBackup.ProgressPercentageChanged += AddonsBackup_ProgressPercentageChanged;
+                }
+                else
+                {
+                    AddonsBackup.ProgressPercentageChanged -= AddonsBackup_ProgressPercentageChanged;
+                }
+            });
+        }
+
+        private void AddonsBackup_ProgressPercentageChanged(int percent)
+        {
+            BeginInvoke((MethodInvoker) delegate
             {
-                BeginInvoke((MethodInvoker) delegate
-                {
-                    if (linkBackup.Visible)
-                    {
-                        linkBackup.Visible = false;
-                    }
-                    progressBarAddonsBackup.Value = procent;
-                    if (!progressBarAddonsBackup.Visible)
-                    {
-                        progressBarAddonsBackup.Visible = true;
-                    }
-                });
-            }
+                progressBarAddonsBackup.Value = percent;
+            });
         }
 
         private void PingerOnStateChanged(bool enabled)
