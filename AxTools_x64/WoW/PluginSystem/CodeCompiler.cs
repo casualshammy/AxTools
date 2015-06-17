@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using Microsoft.CSharp;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,8 +10,6 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
-using AxTools.Classes;
-using Microsoft.CSharp;
 
 namespace AxTools.WoW.PluginSystem
 {

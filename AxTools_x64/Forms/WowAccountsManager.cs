@@ -3,7 +3,7 @@ using System.Linq;
 using AxTools.Components;
 using AxTools.Properties;
 using AxTools.WoW;
-using Settings = AxTools.Classes.Settings;
+using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
 {

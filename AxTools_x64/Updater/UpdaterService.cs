@@ -1,5 +1,5 @@
-﻿using AxTools.Classes;
-using AxTools.Forms;
+﻿using AxTools.Forms;
+using AxTools.Helpers;
 using Ionic.Zip;
 using System;
 using System.Diagnostics;
@@ -41,7 +41,7 @@ namespace AxTools.Updater
 
         private static void DownloadExtractUpdate()
         {
-            Utils.CheckCreateDir();
+            AppSpecUtils.CheckCreateDir();
             string zipFile = Globals.TempPath + "\\__update.zip";
             File.Delete(zipFile);
             using (WebClient webClient = new WebClient())

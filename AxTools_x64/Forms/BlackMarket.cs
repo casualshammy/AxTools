@@ -1,14 +1,14 @@
 ﻿using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using AxTools.Classes;
 using AxTools.Components;
+using AxTools.Helpers;
 using AxTools.Properties;
 using System;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.WoW;
 using AxTools.WoW.Management;
-using Settings = AxTools.Classes.Settings;
+using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
 {

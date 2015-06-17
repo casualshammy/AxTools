@@ -1,5 +1,4 @@
-﻿using AxTools.Classes;
-using AxTools.Helpers;
+﻿using AxTools.Helpers;
 using Ionic.Zip;
 using Ionic.Zlib;
 using System;
@@ -93,7 +92,7 @@ namespace AxTools.Services
                         catch (Exception ex)
                         {
                             Log.Error("[BackupAddons] Backup error: Zipping failed: " + ex.Message);
-                            Utils.NotifyUser("Backup error", ex.Message, NotifyUserType.Error, true);
+                            AppSpecUtils.NotifyUser("Backup error", ex.Message, NotifyUserType.Error, true);
                         }
                         finally
                         {
@@ -106,16 +105,16 @@ namespace AxTools.Services
                     else
                     {
                         Log.Error("[BackupAddons] Can't create backup directory: " + backupDir.Message);
-                        Utils.NotifyUser("Backup error", "Can't create backup dir:\r\n" + backupDir.Message, NotifyUserType.Error, true);
+                        AppSpecUtils.NotifyUser("Backup error", "Can't create backup dir:\r\n" + backupDir.Message, NotifyUserType.Error, true);
                     }
                     break;
                 case CheckWTFDirectoryResult.WTFDirIsNotFound:
                     Log.Info("Backup error: WTF directory isn't found");
-                    Utils.NotifyUser("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
+                    AppSpecUtils.NotifyUser("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
                     break;
                 case CheckWTFDirectoryResult.WTFDirIsTooLarge:
                     Log.Info("Backup error: WTF directory is too large");
-                    Utils.NotifyUser("Backup error", "WTF directory is too large (> 1GB)", NotifyUserType.Error, true);
+                    AppSpecUtils.NotifyUser("Backup error", "WTF directory is too large (> 1GB)", NotifyUserType.Error, true);
                     break;
             }
             _isBackingUp = false;

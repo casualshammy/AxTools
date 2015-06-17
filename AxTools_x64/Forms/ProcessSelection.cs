@@ -1,5 +1,5 @@
-﻿using AxTools.Classes;
-using AxTools.Components;
+﻿using AxTools.Components;
+using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW;
 using System;

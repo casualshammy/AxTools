@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using AxTools.Classes;
 using AxTools.Components;
+using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW;
 using AxTools.WoW.Management;
@@ -13,7 +13,7 @@ using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.WoW.Management.ObjectManager;
-using Settings = AxTools.Classes.Settings;
+using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
 {
@@ -200,7 +200,7 @@ namespace AxTools.Forms
         private void PictureBoxOpenLuaFileClick(object sender, EventArgs e)
         {
             Select();
-            Utils.CheckCreateDir();
+            AppSpecUtils.CheckCreateDir();
             using (OpenFileDialog p = new OpenFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = Globals.UserfilesPath })
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
@@ -231,7 +231,7 @@ namespace AxTools.Forms
         private void PictureBoxSaveLuaFileClick(object sender, EventArgs e)
         {
             Select();
-            Utils.CheckCreateDir();
+            AppSpecUtils.CheckCreateDir();
             using (SaveFileDialog p = new SaveFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = Globals.UserfilesPath })
             {
                 if (p.ShowDialog(this) == DialogResult.OK)

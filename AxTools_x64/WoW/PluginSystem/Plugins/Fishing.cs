@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using AxTools.Classes;
+using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
@@ -230,7 +230,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 }
             }
             string json = sb.ToString();
-            Utils.CheckCreateDir();
+            AppSpecUtils.CheckCreateDir();
             string mySettingsDir = Globals.PluginsSettingsPath + "\\Fishing";
             if (!Directory.Exists(mySettingsDir))
             {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Threading;
-using AxTools.Classes;
+using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW.Management;
 

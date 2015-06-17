@@ -1,4 +1,4 @@
-﻿using AxTools.Classes;
+﻿using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;

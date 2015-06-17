@@ -1,10 +1,10 @@
-﻿using AxTools.Classes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
 
 namespace AxTools.WoW

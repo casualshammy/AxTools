@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
-using AxTools.Classes;
 using AxTools.Components;
+using AxTools.Helpers;
 using AxTools.WoW;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
@@ -212,7 +212,7 @@ namespace AxTools.Forms
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                Utils.CheckCreateDir();
+                AppSpecUtils.CheckCreateDir();
                 openFileDialog.Filter = @"JSON file|*.json";
                 openFileDialog.InitialDirectory = Globals.UserfilesPath;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -236,7 +236,7 @@ namespace AxTools.Forms
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                Utils.CheckCreateDir();
+                AppSpecUtils.CheckCreateDir();
                 saveFileDialog.Filter = @"JSON file|*.json";
                 saveFileDialog.InitialDirectory = Globals.UserfilesPath;
                 saveFileDialog.AddExtension = true;

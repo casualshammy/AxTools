@@ -1,5 +1,5 @@
-﻿using AxTools.Classes;
-using AxTools.Forms;
+﻿using AxTools.Forms;
+using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
 using AxTools.WinAPI;
 using AxTools.WoW.Management;

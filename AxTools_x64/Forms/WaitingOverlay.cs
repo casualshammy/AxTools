@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using AxTools.Classes;
+using AxTools.Helpers;
 using MetroFramework.Drawing;
 using MetroFramework.Forms;
 

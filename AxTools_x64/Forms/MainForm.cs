@@ -1,5 +1,4 @@
-﻿using AxTools.Classes;
-using AxTools.Components;
+﻿using AxTools.Components;
 using AxTools.Components.TaskbarProgressbar;
 using AxTools.Helpers;
 using AxTools.Properties;
@@ -25,7 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using Settings = AxTools.Classes.Settings;
+using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
 {
@@ -52,7 +51,7 @@ namespace AxTools.Forms
 
             Log.Info(String.Format("Launching... ({0})", Globals.AppVersion));
             Icon = Resources.AppIcon;
-            Utils.Legacy();
+            AppSpecUtils.Legacy();
             OnSettingsLoaded();
             WoWAccounts_CollectionChanged(null, null); // initial load wowaccounts
             WebRequest.DefaultWebProxy = null;
@@ -937,13 +936,13 @@ namespace AxTools.Forms
                         }
                         else
                         {
-                            Utils.NotifyUser("Plugin error", "Player isn't logged in", NotifyUserType.Error, true);
+                            AppSpecUtils.NotifyUser("Plugin error", "Player isn't logged in", NotifyUserType.Error, true);
                         }
                     }
                 }
                 else
                 {
-                    Utils.NotifyUser("Plugin error", "You didn't select valid plugin", NotifyUserType.Error, true);
+                    AppSpecUtils.NotifyUser("Plugin error", "You didn't select valid plugin", NotifyUserType.Error, true);
                 }
             }
             else
@@ -956,7 +955,7 @@ namespace AxTools.Forms
                 catch
                 {
                     Log.Error("Plugin task failed to cancel");
-                    Utils.NotifyUser("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
+                    AppSpecUtils.NotifyUser("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
                 }
             }
             buttonStartStopPlugin.Enabled = true;

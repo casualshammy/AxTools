@@ -1,5 +1,4 @@
-﻿using AxTools.Classes;
-using AxTools.Components;
+﻿using AxTools.Components;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
@@ -13,7 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using Settings = AxTools.Classes.Settings;
+using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
 {

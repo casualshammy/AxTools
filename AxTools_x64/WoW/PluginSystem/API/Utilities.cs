@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using AxTools.Classes;
 using AxTools.Forms;
+using AxTools.Helpers;
 using AxTools.WoW.Management;
 
 namespace AxTools.WoW.PluginSystem.API

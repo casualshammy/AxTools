@@ -1,5 +1,4 @@
-﻿using AxTools.Classes;
-using AxTools.Forms;
+﻿using AxTools.Forms;
 using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
 using AxTools.WoW.Management.ObjectManager;
@@ -51,16 +50,16 @@ namespace AxTools.WoW.Management
                             }
                             catch (Exception ex)
                             {
-                                Utils.NotifyUser("Injecting error", ex.Message + "\r\n\r\nSee log for info", NotifyUserType.Error, true);
+                                AppSpecUtils.NotifyUser("Injecting error", ex.Message + "\r\n\r\nSee log for info", NotifyUserType.Error, true);
                                 return false;
                             }
                         }
                         Log.Info(String.Format("{0}:{1} :: [WoW hook] Player isn't logged in", wowProcess.ProcessName, wowProcess.ProcessID));
-                        Utils.NotifyUser("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
+                        AppSpecUtils.NotifyUser("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
                         return false;
                     }
                     Log.Error(String.Format("{0}:{1} :: [WoW hook] Incorrect WoW build", wowProcess.ProcessName, wowProcess.ProcessID));
-                    Utils.NotifyUser("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
+                    AppSpecUtils.NotifyUser("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
                     return false;
                 }
                 return true;

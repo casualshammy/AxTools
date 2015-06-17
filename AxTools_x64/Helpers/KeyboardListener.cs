@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Forms;
-using AxTools.Classes;
 using Timer = System.Timers.Timer;
 
 namespace AxTools.Helpers
@@ -15,12 +14,13 @@ namespace AxTools.Helpers
         private static readonly Timer _timer;
         private static KeyExt[] _keys;
         private static readonly Stopwatch _stopwatch;
+        private static int _startTime;
 
         /// <summary>
         ///     Key pressed
         /// </summary>
         internal static event Action<Keys> KeyPressed;
-
+        
         static KeyboardListener()
         {
             _stopwatch = new Stopwatch();
@@ -34,6 +34,7 @@ namespace AxTools.Helpers
         /// <param name="keyArray">Array of <see cref="System.Windows.Forms.Keys"/> to handle</param>
         internal static void Start(Keys[] keyArray)
         {
+            _startTime = Environment.TickCount;
             List<KeyExt> pKeyExts = new List<KeyExt>();
             foreach (Keys key in keyArray)
             {
@@ -52,7 +53,7 @@ namespace AxTools.Helpers
         internal static void Stop()
         {
             _timer.Stop();
-            Log.Error("[KeyboardListener] Total CPU time: " + _stopwatch.ElapsedMilliseconds + "ms");
+            Log.Error("[KeyboardListener] CPU perf: " + (_stopwatch.ElapsedMilliseconds*100/(float) _startTime) + "% (ms/ms*100)");
         }
 
         /// <summary>

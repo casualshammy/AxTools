@@ -1,5 +1,5 @@
-﻿using AxTools.Classes;
-using AxTools.Forms;
+﻿using AxTools.Forms;
+using AxTools.Helpers;
 using AxTools.WoW.Management;
 using AxTools.WoW.PluginSystem.Plugins;
 using System;

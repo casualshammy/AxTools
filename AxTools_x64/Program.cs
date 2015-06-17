@@ -1,11 +1,11 @@
-﻿using AxTools.Classes;
-using AxTools.Forms;
+﻿using AxTools.Forms;
 using System;
 using System.IO;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.Helpers;
 
 namespace AxTools
 {

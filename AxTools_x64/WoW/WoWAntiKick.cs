@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Timers;
-using AxTools.Classes;
+using AxTools.Helpers;
 
 namespace AxTools.WoW
 {

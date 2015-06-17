@@ -1,4 +1,4 @@
-﻿using AxTools.Classes;
+﻿using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW;
 using AxTools.WoW.Management;
@@ -15,7 +15,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Settings = AxTools.Classes.Settings;
+using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
 {
@@ -610,7 +610,7 @@ namespace AxTools.Forms
             thread.Start();
             if (!File.Exists(Globals.UserfilesPath + "\\alarm.wav"))
             {
-                Utils.CheckCreateDir();
+                AppSpecUtils.CheckCreateDir();
                 Task.Factory.StartNew(() =>
                 {
                     using (WebClient pWebClient = new WebClient())

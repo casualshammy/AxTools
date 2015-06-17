@@ -6,13 +6,12 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
-using AxTools.Classes;
 using AxTools.Components;
 using AxTools.Properties;
 using MetroFramework;
 using MetroFramework.Components;
 using MetroFramework.Controls;
-using Settings = AxTools.Classes.Settings;
+using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
 {

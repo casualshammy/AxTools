@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Timers;
-using AxTools.Classes;
+using AxTools.Helpers;
 using AxTools.Services.PingerHelpers;
 using Timer = System.Timers.Timer;
 

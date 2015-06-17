@@ -1,10 +1,10 @@
 ﻿using System.Drawing;
 using System.Net;
 using System.Threading.Tasks;
-using AxTools.Classes;
 using AxTools.Components;
+using AxTools.Helpers;
 using AxTools.Properties;
-using Settings = AxTools.Classes.Settings;
+using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
 {
@@ -33,7 +33,7 @@ namespace AxTools.Forms
             {
                 Task.Factory.StartNew(() =>
                 {
-                    Utils.CheckCreateDir();
+                    AppSpecUtils.CheckCreateDir();
                     using (WebClient pWebClient = new WebClient())
                     {
                         pWebClient.DownloadFile(Globals.DropboxPath + "/changes.jpg", Globals.TempPath + "\\changes.jpg");

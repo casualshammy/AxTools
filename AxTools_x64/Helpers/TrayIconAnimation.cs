@@ -1,6 +1,6 @@
-﻿using AxTools.Classes;
-using AxTools.Forms;
+﻿using AxTools.Forms;
 using AxTools.Properties;
+using AxTools.Services;
 using AxTools.WoW.PluginSystem;
 using System.Drawing;
 using System.Timers;

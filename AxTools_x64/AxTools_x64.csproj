@@ -140,6 +140,7 @@
     <Compile Include="Components\Line.Designer.cs">
       <DependentUpon>Line.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AppSpecUtils.cs" />
     <Compile Include="Helpers\ErrorProviderExt.cs" />
     <Compile Include="Helpers\KeyboardListener.cs" />
     <Compile Include="Helpers\MemoryManagement\Imports.cs" />
@@ -148,7 +149,7 @@
     <Compile Include="Helpers\MemoryManagement\SafeHandle.cs" />
     <Compile Include="Helpers\VersionExt.cs" />
     <Compile Include="Services\AddonsBackup.cs" />
-    <Compile Include="Classes\Clicker.cs" />
+    <Compile Include="Services\Clicker.cs" />
     <Compile Include="Services\Pinger.cs" />
     <Compile Include="Components\TaskbarProgressbar\CTaskbarList.cs" />
     <Compile Include="Components\TaskbarProgressbar\ITaskbarList3.cs" />
@@ -192,7 +193,7 @@
     <Compile Include="Components\BorderedMetroForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Classes\Globals.cs" />
+    <Compile Include="Helpers\Globals.cs" />
     <Compile Include="WoW\Management\ObjectManager\WowPlayerInfo.cs" />
     <Compile Include="Components\CheckBoxExt.cs">
       <SubType>Component</SubType>
@@ -270,17 +271,17 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="WoW\WowRaidClassColors.cs" />
-    <Compile Include="Classes\Utils.cs" />
-    <Compile Include="Classes\Log.cs" />
-    <Compile Include="Classes\Settings.cs" />
+    <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Helpers\Log.cs" />
+    <Compile Include="Helpers\Settings.cs" />
     <Compile Include="WoW\WowAccount.cs" />
     <Compile Include="WoW\Management\ObjectManager\WowNpc.cs" />
     <Compile Include="WoW\Management\ObjectManager\WowObject.cs" />
     <Compile Include="WoW\Management\ObjectManager\WowPoint.cs" />
     <Compile Include="WoW\WowProcess.cs" />
-    <Compile Include="Classes\Crypt.cs" />
+    <Compile Include="Helpers\Crypt.cs" />
     <Compile Include="WoW\Management\ObjectManager\WowPlayer.cs" />
     <Compile Include="Forms\WaitingOverlay.cs">
       <SubType>Form</SubType>
@@ -299,7 +300,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Classes\SrvAddress.cs" />
+    <Compile Include="Services\PingerHelpers\SrvAddress.cs" />
     <Compile Include="Forms\LuaConsole.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -518,6 +519,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
