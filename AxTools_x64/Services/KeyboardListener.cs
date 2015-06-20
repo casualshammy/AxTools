@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Timers;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
-namespace AxTools.Helpers
+namespace AxTools.Services
 {
     internal static class KeyboardListener
     {
@@ -27,7 +28,7 @@ namespace AxTools.Helpers
             _timer = new Timer(50);
             _timer.Elapsed += TimerOnElapsed;
         }
-
+        
         /// <summary>
         ///     Start keyboar listening
         /// </summary>
@@ -53,7 +54,7 @@ namespace AxTools.Helpers
         internal static void Stop()
         {
             _timer.Stop();
-            Log.Error("[KeyboardListener] CPU perf: " + (_stopwatch.ElapsedMilliseconds*100/(float) _startTime) + "% (ms/ms*100)");
+            Log.Error("[KeyboardListener] CPU perf: " + (_stopwatch.ElapsedMilliseconds*100/(float) (Environment.TickCount - _startTime)) + "% (ms/ms*100)");
         }
 
         /// <summary>
