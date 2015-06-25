@@ -49,6 +49,7 @@ namespace AxTools.Updater
                 try
                 {
                     webClient.DownloadFile(Globals.UpdateFilePath + ".zip", zipFile);
+                    Log.Info("[Updater] Package is downloaded!");
                 }
                 catch (Exception ex)
                 {
@@ -58,6 +59,7 @@ namespace AxTools.Updater
                 try
                 {
                     webClient.DownloadFile(Globals.DropboxPath + "/Updater.exe", Application.StartupPath + "\\Updater.exe");
+                    Log.Info("[Updater] Updater executable is downloaded!");
                 }
                 catch (Exception ex)
                 {
@@ -73,10 +75,12 @@ namespace AxTools.Updater
             updateDirectoryInfo.Create();
             try
             {
+                string path = Application.StartupPath + "\\update";
                 using (ZipFile zip = new ZipFile(zipFile, Encoding.UTF8))
                 {
-                    zip.ExtractAll(Application.StartupPath + "\\update", ExtractExistingFileAction.OverwriteSilently);
+                    zip.ExtractAll(path, ExtractExistingFileAction.OverwriteSilently);
                 }
+                Log.Info("[Updater] Package is extracted to " + path);
             }
             catch (Exception ex)
             {
@@ -102,7 +106,7 @@ namespace AxTools.Updater
 
         private static void CheckForUpdates()
         {
-            Log.Info("[Updater] Checking for updates");
+            Log.Info("[Updater] Let's check for updates!");
             string updateString;
             try
             {
@@ -123,15 +127,31 @@ namespace AxTools.Updater
             }
             if (!String.IsNullOrWhiteSpace(updateString))
             {
-                UpdateInfo updateInfo = UpdateInfo.InitializeFromJSON(updateString);
-                if (updateInfo != null)
+                try
                 {
-                    if (Globals.AppVersion.Build != updateInfo.Version.Build || Globals.AppVersion.Minor != updateInfo.Version.Minor || Globals.AppVersion.Major != updateInfo.Version.Major)
+                    UpdateInfo updateInfo = UpdateInfo.InitializeFromJSON(updateString);
+                    if (updateInfo != null)
                     {
-                        Log.Info("[Updater] New version found: " + updateInfo.Version);
-                        Timer.Elapsed -= timer_Elapsed;
-                        DownloadExtractUpdate();
+                        Log.Info("[Updater] Server version: <" + updateInfo.Version + ">, local version: <" + Globals.AppVersion + ">");
+                        if (Globals.AppVersion != updateInfo.Version)
+                        {
+                            Log.Info("[Updater] Downloading new version...");
+                            Timer.Elapsed -= timer_Elapsed;
+                            DownloadExtractUpdate();
+                        }
+                        else
+                        {
+                            Log.Info("[Updater] No update is needed");
+                        }
                     }
+                    else
+                    {
+                        Log.Error("[Updater] UpdateInfo has invalid format!");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("[Updater] Update file fetched, but it has invalid format: " + ex.Message);
                 }
             }
             else

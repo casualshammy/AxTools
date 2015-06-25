@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace AxTools.Helpers.MemoryManagement
 {
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     public static class MarshalCache<T>
     {
         /// <summary> The size of the Type </summary>

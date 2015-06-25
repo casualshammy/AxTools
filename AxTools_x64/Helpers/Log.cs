@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.Mail;
+using System.Reflection;
 using System.Text;
 using System.Timers;
 
@@ -40,6 +41,7 @@ namespace AxTools.Helpers
             }
         }
 
+        [Obfuscation(Exclude = false, Feature = "constants")]
         internal static void SendViaEmail(string subject)
         {
             using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587))

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 
 namespace AxTools.Helpers.MemoryManagement
 {
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     internal static class Imports
     {
         /// <summary>
@@ -186,6 +188,7 @@ namespace AxTools.Helpers.MemoryManagement
 
     // ReSharper disable InconsistentNaming
 
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     [Flags]
     public enum ProcessAccessFlags
     {
@@ -285,6 +288,7 @@ namespace AxTools.Helpers.MemoryManagement
         PROCESS_VM_WRITE = 0x0020,
     }
 
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     public enum Protection
     {
         /// <summary>
@@ -385,6 +389,7 @@ namespace AxTools.Helpers.MemoryManagement
         PAGE_WRITECOMBINE = 0x400
     }
 
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     [Flags]
     public enum LoadLibraryFlags : uint
     {
@@ -495,6 +500,7 @@ namespace AxTools.Helpers.MemoryManagement
     /// <summary>
     ///     Values that determine how memory is allocated.
     /// </summary>
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     public enum MemoryAllocationType
     {
         /// <summary>
@@ -555,6 +561,7 @@ namespace AxTools.Helpers.MemoryManagement
     ///     Values that determine how a block of memory is protected.
     /// </summary>
     [Flags]
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     public enum MemoryProtectionType
     {
         /// <summary>
@@ -649,6 +656,7 @@ namespace AxTools.Helpers.MemoryManagement
     ///     Values that determine how a block of memory is freed.
     /// </summary>
     [Flags]
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     public enum MemoryFreeType
     {
         /// <summary>

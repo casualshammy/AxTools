@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32.SafeHandles;
+﻿using System.Reflection;
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
@@ -7,6 +8,7 @@ using System.Security.Permissions;
 
 namespace AxTools.Helpers.MemoryManagement
 {
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     [HostProtection(MayLeakOnAbort = true)]
     [SuppressUnmanagedCodeSecurity]
     public class SafeMemoryHandle : SafeHandleZeroOrMinusOneIsInvalid

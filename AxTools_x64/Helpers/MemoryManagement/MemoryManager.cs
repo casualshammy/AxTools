@@ -1,12 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Security;
 
 namespace AxTools.Helpers.MemoryManagement
 {
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     internal unsafe sealed class MemoryManager : IDisposable
     {
         /// <summary>

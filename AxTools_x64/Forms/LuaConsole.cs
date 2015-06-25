@@ -20,7 +20,7 @@ namespace AxTools.Forms
     internal partial class LuaConsole : BorderedMetroForm, IWoWModule
     {
         private readonly Settings settings = Settings.Instance;
-        internal static bool TimerEnabled = false;
+        internal static bool TimerEnabled { get; private set; }
         private readonly System.Timers.Timer timerLua = new System.Timers.Timer(1000);
 
         public LuaConsole()
@@ -39,12 +39,17 @@ namespace AxTools.Forms
             metroCheckBoxIgnoreGameState.Checked = settings.WoWLuaConsoleIgnoreGameState;
             metroTextBoxTimerInterval.Text = settings.WoWLuaConsoleTimerInterval.ToString();
             metroCheckBoxShowIngameNotifications.Checked = settings.WoWLuaConsoleShowIngameNotifications;
-            metroToolTip1.SetToolTip(pictureBoxRunOnce, "Execute script once");
-            metroToolTip1.SetToolTip(pictureBoxSettings, "Open settings");
+            metroToolTip1.SetToolTip(metroLinkRunScriptOnce, "Execute script once");
+            metroToolTip1.SetToolTip(metroLinkSettings, "Open settings");
             textBoxLuaCode.Text = settings.WoWLuaConsoleLastText;
             settings.LuaTimerHotkeyChanged += LuaTimerHotkeyChanged;
             LuaTimerHotkeyChanged(settings.LuaTimerHotkey);
             Log.Info(string.Format("{0}:{1} :: [Lua console] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+        }
+
+        internal void SwitchTimer()
+        {
+            InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty);
         }
 
         private void TimerLuaElapsed(object sender, ElapsedEventArgs e)
@@ -56,7 +61,7 @@ namespace AxTools.Forms
                     Log.Info(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName,
                         WoWManager.WoWProcess.ProcessID));
                     MainForm.Instance.ShowNotifyIconMessage("Lua console's timer is stopped", "The player isn't active or not in the game", ToolTipIcon.Error);
-                    Invoke(new Action(() => InvokeOnClick(pictureBoxStop, EventArgs.Empty)));
+                    Invoke(new Action(() => InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty)));
                     return;
                 }
                 return;
@@ -70,46 +75,18 @@ namespace AxTools.Forms
 
         private void ButtonDumpClick(object sender, EventArgs e)
         {
-            //List<WowObject> wowObjects = new List<WowObject>();
-            //WoWPlayerMe me = ObjectMgr.Pulse(wowObjects);
-            //Log.Print(me.GUID);
-            //Log.Print(me.TargetGUID);
-            //Log.Print(me.Name);
-            //Log.Print(me.Health);
-            //Log.Print(me.HealthMax);
-            //Log.Print(me.Level);
-            //Log.Print(me.IsAlliance);
-            //Log.Print(me.Location);
-            //Log.Print(me.Class);
-            //Log.Print(me.Address);
-            //IntPtr desc = WoWManager.WoWProcess.Memory.Read<IntPtr>(me.Address + WowBuildInfo.UnitDescriptors);
-            //Log.Print(desc.ToInt32().ToString("X"));
-            //Log.Print("------");
-            //Log.Print(wowObjects[0].Name);
-            //Log.Print(wowObjects[0].Location);
-            //Log.Print(wowObjects[0].GUID);
-            //Log.Print(wowObjects[0].EntryID);
-            //Log.Print(wowObjects[0].Animation);
-            //Log.Print(wowObjects[0].OwnerGUID);
-
-            //WoWPlayerMe me = ObjectMgr.Pulse();
-            //if (me != null)
+            //for (int k = 0; k < 3; k++)
             //{
-            //    Log.Print(me.Name);
-            //    Log.Print(me.CastingSpellID);
-            //    Log.Print(me.ChannelSpellID);
-            //    Log.Print(me.GUID);
-            //    Log.Print(me.Health);
-            //    Log.Print(me.HealthMax);
-            //    Log.Print(me.IsAlliance);
-            //    Log.Print(me.Level);
-            //    Log.Print(me.Location);
-            //    Log.Print(me.TargetGUID);
+            //    byte[] b = { };
+            //    Stopwatch stopwatch = Stopwatch.StartNew();
+            //    for (int i = 0; i < 10000000; i++)
+            //    {
+            //        b = WoWDXInject.CreatePrologue();
+            //    }
+            //    stopwatch.Stop();
+            //    Log.Info(b.Length + " // " + stopwatch.ElapsedMilliseconds + "ms");
             //}
-            //else
-            //{
-            //    Log.Print("me == null");
-            //}
+            //return;
 
 
             List<WowPlayer> wowUnits = new List<WowPlayer>();
@@ -190,7 +167,7 @@ namespace AxTools.Forms
         {
             if (timerLua.Enabled)
             {
-                InvokeOnClick(pictureBoxStop, EventArgs.Empty);
+                InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty);
             }
             settings.WoWLuaConsoleLastText = textBoxLuaCode.Text;
             settings.LuaTimerHotkeyChanged -= LuaTimerHotkeyChanged;
@@ -268,16 +245,32 @@ namespace AxTools.Forms
 
         private void LuaTimerHotkeyChanged(Keys key)
         {
-            metroToolTip1.SetToolTip(pictureBoxRunLoop, string.Format("Enable loop script execution\r\nHotkey: [{0}]", key));
-            metroToolTip1.SetToolTip(pictureBoxStop, string.Format("Disable loop script execution\r\nHotkey: [{0}]", key));
+            metroToolTip1.SetToolTip(metroLinkEnableCyclicExecution, string.Format("Enable/disable cyclic script execution\r\nHotkey: [{0}]", key));
         }
 
-        internal void SwitchTimer()
+        private void SetupTimerControls(bool timerActive)
         {
-            InvokeOnClick(timerLua.Enabled ? pictureBoxStop : pictureBoxRunLoop, EventArgs.Empty);
+            if (timerActive)
+            {
+                textBoxLuaCode.IsReadOnly = true;
+                metroLinkEnableCyclicExecution.Text = "Disable cyclic execution";
+                metroLinkSettings.Enabled = false;
+                metroPanelTimerOptions.Visible = false;
+            }
+            else
+            {
+                textBoxLuaCode.IsReadOnly = false;
+                metroLinkEnableCyclicExecution.Text = "Enable cyclic execution";
+                metroLinkSettings.Enabled = true;
+            }
         }
 
-        private void pictureBoxRunOnce_Click(object sender, EventArgs e)
+        private void metroLinkSettings_Click(object sender, EventArgs e)
+        {
+            metroPanelTimerOptions.Visible = !metroPanelTimerOptions.Visible;
+        }
+
+        private void metroLinkRunScriptOnce_Click(object sender, EventArgs e)
         {
             if (textBoxLuaCode.Text.Trim().Length != 0)
             {
@@ -288,83 +281,54 @@ namespace AxTools.Forms
                 }
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 WoWDXInject.LuaDoString(textBoxLuaCode.Text);
-                labelRequestTime.Text = string.Format("Script has taken {0}ms to complete", stopwatch.ElapsedMilliseconds);
+                labelRequestTime.Text = string.Format("{0}ms", stopwatch.ElapsedMilliseconds);
                 labelRequestTime.Visible = true;
             }
         }
 
-        private void pictureBoxRunLoop_Click(object sender, EventArgs e)
+        private void metroLinkEnableCyclicExecution_Click(object sender, EventArgs e)
         {
-            labelRequestTime.Visible = false;
-            if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
+            if (TimerEnabled)
             {
-                new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
-                return;
-            }
-            if (!Int32.TryParse(metroTextBoxTimerInterval.Text, out settings.WoWLuaConsoleTimerInterval) || settings.WoWLuaConsoleTimerInterval < 50)
-            {
-                TaskDialog.Show("Incorrect input!", "AxTools", "Interval must be a number more or equal 50", TaskDialogButton.OK, TaskDialogIcon.Warning);
-                return;
-            }
-            if (textBoxLuaCode.Text.Trim().Length == 0)
-            {
-                new TaskDialog("Error!", "AxTools", "Script is empty", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
-                return;
-            }
-            timerLua.Interval = settings.WoWLuaConsoleTimerInterval;
-            TimerEnabled = true;
-            SetupTimerControls(true);
-            timerLua.Enabled = true;
-            if (settings.WoWLuaConsoleShowIngameNotifications)
-            {
-                WoWDXInject.ShowOverlayText("LTimer is started", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 102, 0));
-                //WoWDXInject.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is started\", 0.0, 1.0, 0.0)");
-            }
-            Log.Info(string.Format("{0}:{1} :: [Lua console] Lua timer enabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
-        }
-
-        private void pictureBoxStop_Click(object sender, EventArgs e)
-        {
-            timerLua.Enabled = false;
-            Log.Info(WoWManager.WoWProcess != null
-                          ? string.Format("{0}:{1} :: [Lua console] Lua timer disabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID)
-                          : "UNKNOWN:null :: Lua timer disabled");
-            if (settings.WoWLuaConsoleShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
-            {
-                WoWDXInject.ShowOverlayText("LTimer is stopped", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 0, 0));
-                //WoWDXInject.LuaDoString("UIErrorsFrame:AddMessage(\"Lua timer is stopped\", 1.0, 0.4, 0.0)");
-            }
-            TimerEnabled = false;
-            SetupTimerControls(false);
-        }
-
-        private void SetupTimerControls(bool timerActive)
-        {
-            if (timerActive)
-            {
-                textBoxLuaCode.IsReadOnly = true;
-                pictureBoxStop.Enabled = true;
-                pictureBoxSettings.Enabled = false;
-                pictureBoxRunLoop.Enabled = false;
-                pictureBoxStop.Image = Resources.yellow_stop;
-                pictureBoxSettings.Image = Resources.yellow_record_grey;
-                pictureBoxRunLoop.Image = Resources.yellow_forward_grey;
+                timerLua.Enabled = false;
+                Log.Info(WoWManager.WoWProcess != null
+                              ? string.Format("{0}:{1} :: [Lua console] Lua timer disabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID)
+                              : "UNKNOWN:null :: Lua timer disabled");
+                if (settings.WoWLuaConsoleShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
+                {
+                    WoWDXInject.ShowOverlayText("LTimer is stopped", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 0, 0));
+                }
+                TimerEnabled = false;
+                SetupTimerControls(false);
             }
             else
             {
-                textBoxLuaCode.IsReadOnly = false;
-                pictureBoxStop.Enabled = false;
-                pictureBoxSettings.Enabled = true;
-                pictureBoxRunLoop.Enabled = true;
-                pictureBoxStop.Image = Resources.yellow_stop_grey;
-                pictureBoxSettings.Image = Resources.yellow_record;
-                pictureBoxRunLoop.Image = Resources.yellow_forward;
+                labelRequestTime.Visible = false;
+                if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
+                {
+                    new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
+                    return;
+                }
+                if (!Int32.TryParse(metroTextBoxTimerInterval.Text, out settings.WoWLuaConsoleTimerInterval) || settings.WoWLuaConsoleTimerInterval < 50)
+                {
+                    TaskDialog.Show("Incorrect input!", "AxTools", "Interval must be a number more or equal 50", TaskDialogButton.OK, TaskDialogIcon.Warning);
+                    return;
+                }
+                if (textBoxLuaCode.Text.Trim().Length == 0)
+                {
+                    new TaskDialog("Error!", "AxTools", "Script is empty", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
+                    return;
+                }
+                timerLua.Interval = settings.WoWLuaConsoleTimerInterval;
+                TimerEnabled = true;
+                SetupTimerControls(true);
+                timerLua.Enabled = true;
+                if (settings.WoWLuaConsoleShowIngameNotifications)
+                {
+                    WoWDXInject.ShowOverlayText("LTimer is started", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 102, 0));
+                }
+                Log.Info(string.Format("{0}:{1} :: [Lua console] Lua timer enabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
-        }
-
-        private void pictureBoxSettings_Click(object sender, EventArgs e)
-        {
-            metroPanelTimerOptions.Visible = !metroPanelTimerOptions.Visible;
         }
 
     }

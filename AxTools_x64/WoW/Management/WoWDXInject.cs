@@ -1,4 +1,5 @@
-﻿using AxTools.Helpers;
+﻿using System.Reflection;
+using AxTools.Helpers;
 using AxTools.WoW.Management.ObjectManager;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ using Timer = System.Timers.Timer;
 
 namespace AxTools.WoW.Management
 {
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
+    [Obfuscation(Exclude = false, Feature = "constants")]
     internal static class WoWDXInject
     {
         private static WowProcess _wowProcess;
@@ -100,7 +103,7 @@ namespace AxTools.WoW.Management
             return originalBytes.SequenceEqual(WowBuildInfoX64.HookPattern);
         }
 
-        private static byte[] CreatePrologue()
+        internal static byte[] CreatePrologue()
         {
             return new byte[]
             {

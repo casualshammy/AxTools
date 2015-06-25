@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using AxTools.Helpers.MemoryManagement;
 using AxTools.WoW.Management.ObjectManager;
 
 namespace AxTools.WoW.Management
 {
+    [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     internal static class ObjectMgr
     {
         private static MemoryManager _memory;
@@ -117,29 +119,15 @@ namespace AxTools.WoW.Management
         internal static WoWPlayerMe Pulse(List<WowObject> wowObjects)
         {
             wowObjects.Clear();
-            //WoWPlayerMe localPlayer = null;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            //UInt128 playerGUID = _memory.Read<UInt128>(_memory.ImageBase + WowBuildInfo.PlayerGUID);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
             for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
                 (i < 10) && (i > 0);
                 i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
             {
-                switch (i)
+                if (i == 5)
                 {
-                    case 4:
-                        //if (localPlayer == null)
-                        //{
-                        //    UInt128 objectGUID = _memory.Read<UInt128>(currObject + WowBuildInfo.ObjectGUID);
-                        //    if (objectGUID == playerGUID)
-                        //    {
-                        //        localPlayer = new WoWPlayerMe(currObject, playerGUID);
-                        //    }
-                        //}
-                        break;
-                    case 5:
-                        wowObjects.Add(new WowObject(currObject));
-                        break;
+                    wowObjects.Add(new WowObject(currObject));
                 }
                 currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
             }
