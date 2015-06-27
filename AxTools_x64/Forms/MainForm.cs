@@ -90,7 +90,7 @@ namespace AxTools.Forms
                 base.WndProc(ref m);
             }
         }
-
+        
         #region Variables
 
         //another
@@ -770,6 +770,7 @@ namespace AxTools.Forms
             BeginInvoke((MethodInvoker) delegate
             {
                 linkBackup.Visible = !isRunning;
+                progressBarAddonsBackup.Value = 0;
                 progressBarAddonsBackup.Visible = isRunning;
                 if (isRunning)
                 {

@@ -1,11 +1,11 @@
-﻿using System.Reflection;
-using AxTools.Helpers;
+﻿using AxTools.Helpers;
 using AxTools.WoW.Management.ObjectManager;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Timers;
@@ -42,7 +42,7 @@ namespace AxTools.WoW.Management
                 Log.Info(string.Format("{0}:{1} :: [WoW hook] Signature is valid, address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr).ToInt64()));
                 return true;
             }
-            Log.Error(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame__Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(hookOriginalBytes)));
+            Log.Error(string.Format("{0}:{1} :: [WoW hook] Hook point has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(hookOriginalBytes)));
             return false;
         }
         

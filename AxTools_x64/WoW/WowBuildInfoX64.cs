@@ -10,7 +10,7 @@ namespace AxTools.WoW
 
         internal static readonly byte[] WoWHash =
         {
-            0x55, 0x62, 0x2F, 0x5E, 0xE2, 0x1D, 0xD6, 0xE9, 0x29, 0x6E, 0xE8, 0x77, 0xAC, 0xB8, 0x59, 0x5C, 0x7D, 0x64, 0x94, 0xBB, 0xE7, 0xB3, 0xB1, 0x50, 0xB0, 0x02, 0x4F, 0x5C, 0xC0, 0x8B, 0x06, 0x5E
+            0xBA, 0x7F, 0x47, 0x20, 0x32, 0x25, 0xFC, 0x50, 0xA8, 0xCE, 0x3E, 0xA8, 0xEA, 0xBF, 0x5C, 0xED, 0xB8, 0x22, 0xD8, 0x06, 0xD0, 0x43, 0xFF, 0xBE, 0x6F, 0xFB, 0x89, 0x49, 0x0B, 0xC3, 0x49, 0x99
         };
         
         #endregion
@@ -27,7 +27,7 @@ namespace AxTools.WoW
         internal static readonly int BlackMarketNumItems = 0x173C348; // [uint]
         internal static readonly int BlackMarketItems = 0x173C350; // [IntPtr]
         internal static readonly int ObjectManager = 0x14CB4B0; // ClntObjMgrPush (7)
-        internal static readonly int PlayerPtr = 0x15EC500; // ClntObjMgrGetActivePlayerObj
+        internal static readonly int PlayerPtr = 0x15EC500; // [IntPtr] ClntObjMgrGetActivePlayerObj
         internal static readonly int GlueState = 0x14B4AB4; // dword
         internal static readonly int FocusedWidget = 0x142D1E8; // qword
         
@@ -35,12 +35,12 @@ namespace AxTools.WoW
 
         #region Injected methods
 
-        internal static readonly int FrameScript_ExecuteBuffer = 0x3CA00;
-        internal static readonly int FrameScript_GetLocalizedText = 0x54AB70;
-        internal static readonly int CGGameUI_Target = 0x6E0670;
-        internal static readonly int CGGameUI_Interact = 0x6E3340;
-        internal static readonly int CGUnit_C_InitializeTrackingState = 0x567730;
-        internal const int HookAddr = 0x6F33D0;
+        internal static readonly int FrameScript_ExecuteBuffer = 0x3C9A0;
+        internal static readonly int FrameScript_GetLocalizedText = 0x54AD80;
+        internal static readonly int CGGameUI_Target = 0x6E0360;
+        internal static readonly int CGGameUI_Interact = 0x6E3030;
+        internal static readonly int CGUnit_C_InitializeTrackingState = 0x567970;
+        internal const int HookAddr = 0x6F30C0;
         internal const int HookLength = 12;
         internal static readonly byte[] HookPattern = {0x48, 0x89, 0x5C, 0x24, 0x08, 0x48, 0x89, 0x74, 0x24, 0x10, 0x57, 0x48};
 
