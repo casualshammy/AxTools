@@ -1,9 +1,10 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace AxTools.WoW.Management
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct UInt128
+    public struct UInt128 : IEquatable<UInt128>
     {
         public readonly ulong High;
         public readonly ulong Low;
@@ -18,25 +19,30 @@ namespace AxTools.WoW.Management
 
         public static bool operator ==(UInt128 a, UInt128 b)
         {
-            return a.Equals(b);
+            return a.High == b.High && a.Low == b.Low;
         }
 
         public static bool operator !=(UInt128 a, UInt128 b)
         {
-            return !a.Equals(b);
+            return !(a == b);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType())
-                return false;
-            UInt128 int128 = (UInt128) obj;
-            return int128.High == High && int128.Low == Low;
+            return GetType() == obj.GetType() && Equals((UInt128) obj);
+        }
+
+        public bool Equals(UInt128 other)
+        {
+            return this == other;
         }
 
         public override int GetHashCode()
         {
-            return High.GetHashCode() | Low.GetHashCode();
+            unchecked
+            {
+                return (High.GetHashCode() * 397) ^ Low.GetHashCode();
+            }
         }
 
         public override string ToString()

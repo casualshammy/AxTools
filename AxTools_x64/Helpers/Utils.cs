@@ -1,4 +1,5 @@
-﻿using AxTools.WinAPI;
+﻿using System.Drawing;
+using AxTools.WinAPI;
 using System;
 using System.Drawing.Text;
 using System.IO;
@@ -86,6 +87,16 @@ namespace AxTools.Helpers
         internal static void PlaySystemNotificationAsync()
         {
             Task.Factory.StartNew(() => NativeMethods.sndPlaySoundW("SystemNotification", 65536 | 2));  //SND_ALIAS = 65536; SND_NODEFAULT = 2;);
+        }
+
+        internal static Image Base64ToImage(string base64)
+        {
+            byte[] byteBuffer = Convert.FromBase64String(base64);
+            using (MemoryStream memoryStream = new MemoryStream(byteBuffer))
+            {
+                memoryStream.Position = 0;
+                return Image.FromStream(memoryStream);
+            }
         }
 
     }

@@ -179,7 +179,7 @@ namespace AxTools.Forms
                         if (interactGUID != UInt128.Zero)
                         {
                             WoWDXInject.Interact(interactGUID);
-                            Log.Info(string.Format("{0}:{1} :: [Radar] Interacted with {2} (0x{3})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, interactName, interactGUID));
+                            Log.Info(string.Format("{0}:{1} :: [Radar] Interacted with {2} {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, interactName, interactGUID));
                         }
                     }
                     bool soundAlarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);

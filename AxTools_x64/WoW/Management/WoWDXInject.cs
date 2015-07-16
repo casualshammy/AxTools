@@ -1,4 +1,5 @@
 ﻿using AxTools.Helpers;
+using AxTools.WinAPI;
 using AxTools.WoW.Management.ObjectManager;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,16 @@ namespace AxTools.WoW.Management
         private static readonly string RandomVariableName = Utils.GetRandomString(10);
         private static readonly string OverlayFrameName = Utils.GetRandomString(10);
         private const uint PAGE_EXECUTE_READWRITE = 64;
-
         private static readonly Dictionary<IntPtr, int> MemoryWaitingToBeFreed = new Dictionary<IntPtr, int>();
         private static readonly object MemoryWaitingToBeFreedLock = new object();
         private static readonly Timer TimerForMemory = new Timer(1000);
-        
+        private static readonly object _executeLock = new object();
+
+        static WoWDXInject()
+        {
+            TimerForMemory.Elapsed += TimerForMemory_OnElapsed;
+        }
+
         /// <summary>
         ///     
         /// </summary>
@@ -34,7 +40,6 @@ namespace AxTools.WoW.Management
         internal static bool Apply(WowProcess process)
         {
             _wowProcess = process;
-            TimerForMemory.Elapsed += TimerForMemory_OnElapsed;
             TimerForMemory.Start();
             byte[] hookOriginalBytes = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
             if (HookPtrSignatureIsValid(hookOriginalBytes))
@@ -48,12 +53,16 @@ namespace AxTools.WoW.Management
         
         internal static void Release()
         {
-            TimerForMemory.Elapsed -= TimerForMemory_OnElapsed;
             TimerForMemory.Stop();
-            if (MemoryWaitingToBeFreed.Count > 0 && !_wowProcess.Memory.Process.HasExited)
+            if (!_wowProcess.Memory.Process.HasExited)
             {
-                Log.Error(string.Format("{0}:{1} :: [WoW hook] Memory isn't freed, waiting... (1000ms)", _wowProcess.ProcessName, _wowProcess.ProcessID));
-                Thread.Sleep(1000); // waiting for <TimerForMemory>
+                int counter = 10;
+                while (MemoryWaitingToBeFreed.Count > 0 && counter > 0)
+                {
+                    FreeOldAllocatedMemory();
+                    counter--;
+                    Thread.Sleep(200);
+                }
                 if (MemoryWaitingToBeFreed.Count > 0)
                 {
                     Log.Error(string.Format("{0}:{1} :: [WoW hook] Memory leak, count: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, MemoryWaitingToBeFreed.Count));
@@ -66,6 +75,27 @@ namespace AxTools.WoW.Management
         }
 
         private static void TimerForMemory_OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            FreeOldAllocatedMemory();
+        }
+
+        /// <summary>
+        ///     You should call it STRICTLY after ExecuteWait. ExecuteWait has a lock.
+        /// </summary>
+        /// <param name="addresses"></param>
+        private static void EnqueueAllocatedMemoryForWipe(params IntPtr[] addresses)
+        {
+            int currentTime = Environment.TickCount;
+            lock (MemoryWaitingToBeFreedLock)
+            {
+                foreach (IntPtr intPtr in addresses)
+                {
+                    MemoryWaitingToBeFreed.Add(intPtr, currentTime);
+                }
+            }
+        }
+
+        private static void FreeOldAllocatedMemory()
         {
             lock (MemoryWaitingToBeFreedLock)
             {
@@ -82,18 +112,6 @@ namespace AxTools.WoW.Management
                 foreach (IntPtr intPtr in entriesToRemove)
                 {
                     MemoryWaitingToBeFreed.Remove(intPtr);
-                }
-            }
-        }
-
-        private static void EnqueueAllocatedMemoryForWipe(params IntPtr[] addresses)
-        {
-            int currentTime = Environment.TickCount;
-            lock (MemoryWaitingToBeFreedLock)
-            {
-                foreach (IntPtr intPtr in addresses)
-                {
-                    MemoryWaitingToBeFreed.Add(intPtr, currentTime);
                 }
             }
         }
@@ -180,28 +198,44 @@ namespace AxTools.WoW.Management
 
         private static void ExecuteWait(IntPtr injectedFunction)
         {
-            byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
-            if (HookPtrSignatureIsValid(originalCode))
+            lock (_executeLock)
             {
-                byte[] hookJmpBytes = BitConverter.GetBytes(injectedFunction.ToInt64());
-                byte[] byteCode =
+                byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
+                if (HookPtrSignatureIsValid(originalCode))
                 {
-                    0x48, 0xB8, hookJmpBytes[0], hookJmpBytes[1], hookJmpBytes[2], hookJmpBytes[3], hookJmpBytes[4], hookJmpBytes[5], hookJmpBytes[6], hookJmpBytes[7], // movabs rax, 0xAAAAAAAAAAAAAAAA
-                    0xFF, 0xE0                                                                                                                                          // jmp rax
-                };
-                uint lpflOldProtect;
-                WinAPI.NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, (UIntPtr)WowBuildInfoX64.HookLength, PAGE_EXECUTE_READWRITE, out lpflOldProtect);
-                _wowProcess.Memory.WriteBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, byteCode);
-                while (!_wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength).SequenceEqual(originalCode))
-                {
-                    Thread.Sleep(1);
+                    byte[] hookJmpBytes = BitConverter.GetBytes(injectedFunction.ToInt64());
+                    byte[] byteCode =
+                    {
+                        0x48, 0xB8, hookJmpBytes[0], hookJmpBytes[1], hookJmpBytes[2], hookJmpBytes[3], hookJmpBytes[4], hookJmpBytes[5], hookJmpBytes[6], hookJmpBytes[7], // movabs rax, 0xAAAAAAAAAAAAAAAA
+                        0xFF, 0xE0 // jmp rax
+                    };
+                    uint lpflOldProtect;
+                    NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, (UIntPtr) WowBuildInfoX64.HookLength, PAGE_EXECUTE_READWRITE, out lpflOldProtect);
+                    _wowProcess.Memory.WriteBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, byteCode);
+                    int counter = 0;
+                    while (!_wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength).SequenceEqual(originalCode))
+                    {
+                        Thread.Sleep(1);
+                        counter++;
+                        if (counter == 1000 && IsWoWWindowMinimized())
+                        {
+                            AppSpecUtils.NotifyUser("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Please activate WoW window!", NotifyUserType.Warn, true);
+                        }
+                    }
+                    NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, (UIntPtr) WowBuildInfoX64.HookLength, lpflOldProtect, out lpflOldProtect);
                 }
-                WinAPI.NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, (UIntPtr)WowBuildInfoX64.HookLength, lpflOldProtect, out lpflOldProtect);
+                else
+                {
+                    Log.Info(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame::Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(originalCode)));
+                }
             }
-            else
-            {
-                Log.Info(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame::Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(originalCode)));
-            }
+        }
+
+        private static bool IsWoWWindowMinimized()
+        {
+            int wsMinimize = 0x20000000;
+            long style = NativeMethods.GetWindowLong64(_wowProcess.MainWindowHandle, NativeMethods.GWL_STYLE);
+            return (style & wsMinimize) != 0;
         }
 
         internal static void LuaDoString(string command)

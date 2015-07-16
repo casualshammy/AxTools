@@ -1,7 +1,5 @@
-﻿using AxTools.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
@@ -14,8 +12,6 @@ namespace AxTools.Services
     {
         private static readonly Timer _timer;
         private static KeyExt[] _keys;
-        private static readonly Stopwatch _stopwatch;
-        private static int _startTime;
 
         /// <summary>
         ///     Key pressed
@@ -24,7 +20,6 @@ namespace AxTools.Services
         
         static KeyboardListener()
         {
-            _stopwatch = new Stopwatch();
             _timer = new Timer(50);
             _timer.Elapsed += TimerOnElapsed;
         }
@@ -35,7 +30,6 @@ namespace AxTools.Services
         /// <param name="keyArray">Array of <see cref="System.Windows.Forms.Keys"/> to handle</param>
         internal static void Start(Keys[] keyArray)
         {
-            _startTime = Environment.TickCount;
             List<KeyExt> pKeyExts = new List<KeyExt>();
             foreach (Keys key in keyArray)
             {
@@ -54,7 +48,6 @@ namespace AxTools.Services
         internal static void Stop()
         {
             _timer.Stop();
-            Log.Error("[KeyboardListener] CPU perf: " + (_stopwatch.ElapsedMilliseconds*100/(float) (Environment.TickCount - _startTime)) + "% (ms/ms*100)");
         }
 
         /// <summary>
@@ -76,7 +69,6 @@ namespace AxTools.Services
 
         private static void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _stopwatch.Start();
             foreach (KeyExt keyExt in _keys)
             {
                 bool pressed = (GetAsyncKeyState((int) keyExt.Key) & 0x8000) != 0;
@@ -86,7 +78,6 @@ namespace AxTools.Services
                 }
                 keyExt.Pressed = pressed;
             }
-            _stopwatch.Stop();
         }
 
         private class KeyExt

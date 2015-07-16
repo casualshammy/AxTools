@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-using AxTools.Components;
+﻿using AxTools.Components;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW;
 using AxTools.WoW.Management;
+using AxTools.WoW.Management.ObjectManager;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -12,7 +13,6 @@ using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using AxTools.WoW.Management.ObjectManager;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
@@ -22,6 +22,8 @@ namespace AxTools.Forms
         private readonly Settings settings = Settings.Instance;
         internal static bool TimerEnabled { get; private set; }
         private readonly System.Timers.Timer timerLua = new System.Timers.Timer(1000);
+        private const string MetroLinkEnableCyclicExecutionTextEnable = "<Enable cyclic execution>";
+        private const string MetroLinkEnableCyclicExecutionTextDisable = "<Disable cyclic execution>";
 
         public LuaConsole()
         {
@@ -35,6 +37,7 @@ namespace AxTools.Forms
             metroPanelTimerOptions.Visible = false;
             Size = settings.WoWLuaConsoleWindowSize;
             metroStyleManager1.Style = settings.StyleColor;
+            metroLinkEnableCyclicExecution.Text = MetroLinkEnableCyclicExecutionTextEnable;
             metroCheckBoxRandomize.Checked = settings.WoWLuaConsoleTimerRnd;
             metroCheckBoxIgnoreGameState.Checked = settings.WoWLuaConsoleIgnoreGameState;
             metroTextBoxTimerInterval.Text = settings.WoWLuaConsoleTimerInterval.ToString();
@@ -58,8 +61,7 @@ namespace AxTools.Forms
             {
                 if (!settings.WoWLuaConsoleIgnoreGameState)
                 {
-                    Log.Info(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName,
-                        WoWManager.WoWProcess.ProcessID));
+                    Log.Info(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
                     MainForm.Instance.ShowNotifyIconMessage("Lua console's timer is stopped", "The player isn't active or not in the game", ToolTipIcon.Error);
                     Invoke(new Action(() => InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty)));
                     return;
@@ -183,23 +185,7 @@ namespace AxTools.Forms
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
                     string text = File.ReadAllText(p.FileName, Encoding.UTF8);
-                    if (text.Contains("### Interval=") || text.Contains("----- Interval="))
-                    {
-                        using (StringReader cStringReader = new StringReader(text))
-                        {
-                            string readLine = cStringReader.ReadLine();
-                            if (readLine != null)
-                            {
-                                settings.WoWLuaConsoleTimerInterval = Convert.ToInt32(readLine.Split('=')[1]);
-                                metroTextBoxTimerInterval.Text = settings.WoWLuaConsoleTimerInterval.ToString();
-                            }
-                            textBoxLuaCode.Text = cStringReader.ReadToEnd();
-                        }
-                    }
-                    else
-                    {
-                        textBoxLuaCode.Text = text;
-                    }
+                    ParseLuaScript(text);
                     textBoxLuaCode.Invalidate(true);
                 }
             }
@@ -215,6 +201,27 @@ namespace AxTools.Forms
                 {
                     File.WriteAllText(p.FileName, string.Format("----- Interval={0}\r\n{1}", settings.WoWLuaConsoleTimerInterval, textBoxLuaCode.Text), Encoding.UTF8);
                 }
+            }
+        }
+
+        private void ParseLuaScript(string text)
+        {
+            if (text.Contains("### Interval=") || text.Contains("----- Interval="))
+            {
+                using (StringReader cStringReader = new StringReader(text))
+                {
+                    string readLine = cStringReader.ReadLine();
+                    if (readLine != null)
+                    {
+                        settings.WoWLuaConsoleTimerInterval = Convert.ToInt32(readLine.Split('=')[1]);
+                        metroTextBoxTimerInterval.Text = settings.WoWLuaConsoleTimerInterval.ToString();
+                    }
+                    textBoxLuaCode.Text = cStringReader.ReadToEnd();
+                }
+            }
+            else
+            {
+                textBoxLuaCode.Text = text;
             }
         }
 
@@ -253,14 +260,14 @@ namespace AxTools.Forms
             if (timerActive)
             {
                 textBoxLuaCode.IsReadOnly = true;
-                metroLinkEnableCyclicExecution.Text = "Disable cyclic execution";
+                metroLinkEnableCyclicExecution.Text = MetroLinkEnableCyclicExecutionTextDisable;
                 metroLinkSettings.Enabled = false;
                 metroPanelTimerOptions.Visible = false;
             }
             else
             {
                 textBoxLuaCode.IsReadOnly = false;
-                metroLinkEnableCyclicExecution.Text = "Enable cyclic execution";
+                metroLinkEnableCyclicExecution.Text = MetroLinkEnableCyclicExecutionTextEnable;
                 metroLinkSettings.Enabled = true;
             }
         }

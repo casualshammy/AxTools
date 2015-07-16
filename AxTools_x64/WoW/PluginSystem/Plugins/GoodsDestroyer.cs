@@ -128,6 +128,24 @@ namespace AxTools.WoW.PluginSystem.Plugins
         #region Variables
 
         private readonly string mill =
+            "local t = {\r\n" +
+            "    \"Массовое измельчение горгрондской мухоловки\",\r\n" +
+            "    \"Массовое измельчение звездоцвета\",\r\n" +
+            "    \"Массовое измельчение морозноцвета\",\r\n" +
+            "    \"Массовое измельчение награндского стрелоцвета\",\r\n" +
+            "    \"Массовое измельчение пламецвета\",\r\n" +
+            "    \"Массовое измельчение таладорской орхидеи\",\r\n" +
+            "};\r\n" +
+            "local numTradeSkills = GetNumTradeSkills();\r\n" +
+            "if (numTradeSkills > 0) then\r\n" +
+            "    for i = 1, numTradeSkills do\r\n" +
+            "        local skillName, skillType, numAvailable, isExpanded, serviceType, numSkillUps, indentLevel, showProgressBar, currentRank, maxRank, startingRank = GetTradeSkillInfo(i);\r\n" +
+            "        if (tContains(t, skillName) and numAvailable > 0) then\r\n" +
+            "            DoTradeSkill(i, numAvailable);\r\n" +
+            "            return;\r\n" +
+            "        end\r\n" +
+            "    end\r\n" +
+            "end\r\n" +
             "for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local name, cCount = GetContainerItemInfo(bag, bag_slot); local id = GetContainerItemID(bag, bag_slot); if (name) then if (tContains(AxToolsHerbsIDs, id) and cCount >= 5) then CastSpellByID(51005); UseContainerItem(bag, bag_slot); return; end end end end";
 
         private readonly string disenchant =

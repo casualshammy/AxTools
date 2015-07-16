@@ -403,6 +403,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Ashran.lua" />
     <None Include="Resources\repeat_7959.png" />
   </ItemGroup>
   <ItemGroup>
@@ -419,6 +420,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
+    <None Include="Resources\Ashran.txt" />
+    <None Include="Resources\1435959119_add-item.png" />
     <None Include="Resources\pluginSettingsLight.png" />
     <None Include="Resources\pluginSettings.png" />
     <None Include="Resources\1410198466_672392-info-20_light.png" />

@@ -178,6 +178,10 @@ namespace AxTools.WoW
                 return Memory.Read<byte>(Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting) != 0;
             }
         }
-    
+
+        public override string ToString()
+        {
+            return string.Concat("[", ProcessName, ":", ProcessID, "]");
+        }
     }
 }

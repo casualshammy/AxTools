@@ -1,4 +1,5 @@
-﻿using AxTools.Helpers;
+﻿using System.Reflection;
+using AxTools.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
@@ -39,6 +40,8 @@ namespace AxTools.WoW
             }
         }
 
+        [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
+        [Obfuscation(Exclude = false, Feature = "constants")]
         private static ObservableCollection<WoWAccount> Load()
         {
             try
@@ -64,6 +67,8 @@ namespace AxTools.WoW
             }
         }
 
+        [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
+        [Obfuscation(Exclude = false, Feature = "constants")]
         private static void WoWAccounts_Changed(object sender, NotifyCollectionChangedEventArgs e)
         {
             try

@@ -70,7 +70,6 @@ namespace AxTools.Forms
             // pictureBoxClose
             // 
             this.pictureBoxClose.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxClose.Image")));
-            this.pictureBoxClose.ImageOnHover = ((System.Drawing.Image)(resources.GetObject("pictureBoxClose.ImageOnHover")));
             this.pictureBoxClose.Location = new System.Drawing.Point(205, 0);
             this.pictureBoxClose.Margin = new System.Windows.Forms.Padding(1);
             this.pictureBoxClose.Name = "pictureBoxClose";
@@ -83,7 +82,6 @@ namespace AxTools.Forms
             // pictureBoxRadarSettings
             // 
             this.pictureBoxRadarSettings.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxRadarSettings.Image")));
-            this.pictureBoxRadarSettings.ImageOnHover = ((System.Drawing.Image)(resources.GetObject("pictureBoxRadarSettings.ImageOnHover")));
             this.pictureBoxRadarSettings.Location = new System.Drawing.Point(183, 0);
             this.pictureBoxRadarSettings.Margin = new System.Windows.Forms.Padding(1);
             this.pictureBoxRadarSettings.Name = "pictureBoxRadarSettings";

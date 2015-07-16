@@ -63,10 +63,10 @@ namespace AxTools.Forms
             this.textBoxLuaCode.AutoScroll = true;
             this.textBoxLuaCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxLuaCode.IsReadOnly = false;
-            this.textBoxLuaCode.Location = new System.Drawing.Point(20, 44);
+            this.textBoxLuaCode.Location = new System.Drawing.Point(39, 44);
             this.textBoxLuaCode.Name = "textBoxLuaCode";
             this.textBoxLuaCode.ShowVRuler = false;
-            this.textBoxLuaCode.Size = new System.Drawing.Size(610, 290);
+            this.textBoxLuaCode.Size = new System.Drawing.Size(591, 290);
             this.textBoxLuaCode.TabIndex = 4;
             // 
             // buttonDump
@@ -213,8 +213,7 @@ namespace AxTools.Forms
             // pictureBoxOpenLuaFile
             // 
             this.pictureBoxOpenLuaFile.Image = global::AxTools.Properties.Resources.document_open;
-            this.pictureBoxOpenLuaFile.ImageOnHover = global::AxTools.Properties.Resources.DocumentOpenLight;
-            this.pictureBoxOpenLuaFile.Location = new System.Drawing.Point(20, 16);
+            this.pictureBoxOpenLuaFile.Location = new System.Drawing.Point(11, 44);
             this.pictureBoxOpenLuaFile.Name = "pictureBoxOpenLuaFile";
             this.pictureBoxOpenLuaFile.Size = new System.Drawing.Size(22, 22);
             this.pictureBoxOpenLuaFile.TabIndex = 55;
@@ -225,8 +224,7 @@ namespace AxTools.Forms
             // pictureBoxSaveLuaFile
             // 
             this.pictureBoxSaveLuaFile.Image = global::AxTools.Properties.Resources.document_save;
-            this.pictureBoxSaveLuaFile.ImageOnHover = global::AxTools.Properties.Resources.DocumentSaveLight;
-            this.pictureBoxSaveLuaFile.Location = new System.Drawing.Point(48, 16);
+            this.pictureBoxSaveLuaFile.Location = new System.Drawing.Point(11, 72);
             this.pictureBoxSaveLuaFile.Name = "pictureBoxSaveLuaFile";
             this.pictureBoxSaveLuaFile.Size = new System.Drawing.Size(22, 22);
             this.pictureBoxSaveLuaFile.TabIndex = 56;
@@ -267,13 +265,13 @@ namespace AxTools.Forms
             this.metroLinkRunScriptOnce.CustomForeColor = false;
             this.metroLinkRunScriptOnce.FontSize = MetroFramework.MetroLinkSize.Small;
             this.metroLinkRunScriptOnce.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.metroLinkRunScriptOnce.Location = new System.Drawing.Point(76, 15);
+            this.metroLinkRunScriptOnce.Location = new System.Drawing.Point(39, 15);
             this.metroLinkRunScriptOnce.Name = "metroLinkRunScriptOnce";
-            this.metroLinkRunScriptOnce.Size = new System.Drawing.Size(93, 23);
+            this.metroLinkRunScriptOnce.Size = new System.Drawing.Size(109, 23);
             this.metroLinkRunScriptOnce.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroLinkRunScriptOnce.StyleManager = this.metroStyleManager1;
             this.metroLinkRunScriptOnce.TabIndex = 62;
-            this.metroLinkRunScriptOnce.Text = "Run script once";
+            this.metroLinkRunScriptOnce.Text = "<Run script once>";
             this.metroLinkRunScriptOnce.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLinkRunScriptOnce.UseStyleColors = true;
             this.metroLinkRunScriptOnce.Click += new System.EventHandler(this.metroLinkRunScriptOnce_Click);
@@ -284,13 +282,13 @@ namespace AxTools.Forms
             this.metroLinkEnableCyclicExecution.CustomForeColor = false;
             this.metroLinkEnableCyclicExecution.FontSize = MetroFramework.MetroLinkSize.Small;
             this.metroLinkEnableCyclicExecution.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.metroLinkEnableCyclicExecution.Location = new System.Drawing.Point(175, 15);
+            this.metroLinkEnableCyclicExecution.Location = new System.Drawing.Point(154, 15);
             this.metroLinkEnableCyclicExecution.Name = "metroLinkEnableCyclicExecution";
-            this.metroLinkEnableCyclicExecution.Size = new System.Drawing.Size(135, 23);
+            this.metroLinkEnableCyclicExecution.Size = new System.Drawing.Size(155, 23);
             this.metroLinkEnableCyclicExecution.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroLinkEnableCyclicExecution.StyleManager = this.metroStyleManager1;
             this.metroLinkEnableCyclicExecution.TabIndex = 63;
-            this.metroLinkEnableCyclicExecution.Text = "Enable cyclic execution";
+            this.metroLinkEnableCyclicExecution.Text = "<Enable cyclic execution>";
             this.metroLinkEnableCyclicExecution.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLinkEnableCyclicExecution.UseStyleColors = true;
             this.metroLinkEnableCyclicExecution.Click += new System.EventHandler(this.metroLinkEnableCyclicExecution_Click);
@@ -301,13 +299,13 @@ namespace AxTools.Forms
             this.metroLinkSettings.CustomForeColor = false;
             this.metroLinkSettings.FontSize = MetroFramework.MetroLinkSize.Small;
             this.metroLinkSettings.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.metroLinkSettings.Location = new System.Drawing.Point(316, 15);
+            this.metroLinkSettings.Location = new System.Drawing.Point(315, 15);
             this.metroLinkSettings.Name = "metroLinkSettings";
-            this.metroLinkSettings.Size = new System.Drawing.Size(53, 23);
+            this.metroLinkSettings.Size = new System.Drawing.Size(69, 23);
             this.metroLinkSettings.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroLinkSettings.StyleManager = this.metroStyleManager1;
             this.metroLinkSettings.TabIndex = 64;
-            this.metroLinkSettings.Text = "Settings";
+            this.metroLinkSettings.Text = "<Settings>";
             this.metroLinkSettings.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLinkSettings.UseStyleColors = true;
             this.metroLinkSettings.Click += new System.EventHandler(this.metroLinkSettings_Click);

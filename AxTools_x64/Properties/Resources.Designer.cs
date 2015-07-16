@@ -63,6 +63,16 @@ namespace AxTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _1435959119_add_item {
+            get {
+                object obj = ResourceManager.GetObject("_1435959119_add_item", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap achievement_bg_winwsg {
             get {
                 object obj = ResourceManager.GetObject("achievement_bg_winwsg", resourceCulture);
@@ -153,16 +163,6 @@ namespace AxTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap close_26px_hl {
-            get {
-                object obj = ResourceManager.GetObject("close_26px_hl", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap data_backup {
             get {
                 object obj = ResourceManager.GetObject("data_backup", resourceCulture);
@@ -186,26 +186,6 @@ namespace AxTools.Properties {
         internal static System.Drawing.Bitmap document_save {
             get {
                 object obj = ResourceManager.GetObject("document_save", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap DocumentOpenLight {
-            get {
-                object obj = ResourceManager.GetObject("DocumentOpenLight", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap DocumentSaveLight {
-            get {
-                object obj = ResourceManager.GetObject("DocumentSaveLight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -243,16 +223,6 @@ namespace AxTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap pluginSettingsLight {
-            get {
-                object obj = ResourceManager.GetObject("pluginSettingsLight", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap radar {
             get {
                 object obj = ResourceManager.GetObject("radar", resourceCulture);
@@ -266,16 +236,6 @@ namespace AxTools.Properties {
         internal static System.Drawing.Bitmap Settings20px {
             get {
                 object obj = ResourceManager.GetObject("Settings20px", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap SettingsLight20px {
-            get {
-                object obj = ResourceManager.GetObject("SettingsLight20px", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
