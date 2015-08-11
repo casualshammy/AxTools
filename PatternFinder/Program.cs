@@ -71,6 +71,7 @@ namespace PatternFinder
                 object locker = new object();
                 Parallel.ForEach(patterns, pattern =>
                 {
+                    string consoleOutput = null;
                     try
                     {
                         bool alreadyFound = false;
@@ -78,11 +79,11 @@ namespace PatternFinder
                         {
                             if (!alreadyFound)
                             {
-                                Console.WriteLine(pattern.Name + ": 0x" + intPtr.ToInt64().ToString("X"));
+                                consoleOutput = pattern.Name + ": 0x" + intPtr.ToInt64().ToString("X");
                             }
                             else
                             {
-                                Console.WriteLine("!!!  " + pattern.Name + ": 0x" + intPtr.ToInt64().ToString("X"));
+                                consoleOutput = "!!!  " + pattern.Name + ": 0x" + intPtr.ToInt64().ToString("X");
                             }
                             File.AppendAllLines(reportFilePath, new[] { "internal const int " + pattern.Name + " = 0x" + intPtr.ToInt64().ToString("X") + ";" });
                             alreadyFound = true;
@@ -90,11 +91,12 @@ namespace PatternFinder
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("!!!  " + ex.Message);
+                        consoleOutput = "!!!  " + ex.Message;
                     }
                     counter++;
                     lock (locker)
                     {
+                        Console.WriteLine(consoleOutput);
                         int cursorTop = Console.CursorTop;
                         int cursorLeft = Console.CursorLeft;
                         Console.SetCursorPosition(0, Console.CursorTop);

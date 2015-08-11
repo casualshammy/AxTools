@@ -179,7 +179,7 @@ namespace AxTools.WoW
                             Log.Info(String.Format("{0}:{1} :: [WoW hook] Memory manager initialized, base address 0x{2:X}", process.ProcessName, process.ProcessID, process.Memory.ImageBase.ToInt64()));
                             if (!process.IsValidBuild)
                             {
-                                Log.Error(String.Format("{0}:{1} :: [WoW hook] Memory manager: invalid WoW executable", process.ProcessName, process.ProcessID));
+                                Log.Info(String.Format("{0}:{1} :: [WoW hook] Memory manager: invalid WoW executable", process.ProcessName, process.ProcessID));
                                 MainForm.Instance.ShowNotifyIconMessage("Incorrect WoW version", "Injector is locked, please wait for update", ToolTipIcon.Warning);
                                 Utils.PlaySystemNotificationAsync();
                             }

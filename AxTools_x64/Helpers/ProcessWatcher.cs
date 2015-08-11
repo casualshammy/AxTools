@@ -1,110 +1,155 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Timers;
+using System.Windows.Forms;
+using Timer = System.Timers.Timer;
 
 namespace AxTools.Helpers
 {
-    internal class ProcessWatcher : IDisposable
+    /// <summary>
+    ///     Just attach your handler to events and enjoy!
+    /// </summary>
+    internal static class ProcessWatcher
     {
         private static readonly Timer _timer = new Timer(1000);
-        private static Dictionary<string, Process[]> lib = new Dictionary<string, Process[]>();
-        private string processName;
+        private static Dictionary<int, string> _cache = new Dictionary<int, string>();
+        private static readonly object _lock = new object();
+
+        private static Action<Process> _processStarted;
+        /// <summary>
+        ///     You should dispose this <see cref="Process"/> instance
+        /// </summary>
+        internal static event Action<Process> ProcessStarted
+        {
+            add
+            {
+                lock (_lock)
+                {
+                    RefreshCache();
+                    _processStarted += value;
+                    CheckTimerIsNeeded();
+                }
+            }
+            remove
+            {
+                lock (_lock)
+                {
+                    _processStarted -= value;
+                    CheckTimerIsNeeded();
+                }
+            }
+        }
+
+        private static Action<int,string> _processExited;
+        internal static event Action<int, string> ProcessExited
+        {
+            add
+            {
+                lock (_lock)
+                {
+                    RefreshCache();
+                    _processExited += value;
+                    CheckTimerIsNeeded();
+                }
+            }
+            remove
+            {
+                lock (_lock)
+                {
+                    _processExited -= value;
+                    CheckTimerIsNeeded();
+                }
+            }
+        }
+
+        private static Stopwatch stopwatch = new Stopwatch();
+        private static int counter = 0;
 
         static ProcessWatcher()
         {
             _timer.Elapsed += _timer_Elapsed;
+            Application.ApplicationExit += ApplicationOnApplicationExit;
+        }
+
+        private static void ApplicationOnApplicationExit(object sender, EventArgs eventArgs)
+        {
+            Application.ApplicationExit -= ApplicationOnApplicationExit;
+            Log.Info("ProcessWatcher: Elpsd: " + stopwatch.ElapsedMilliseconds + "ms, counter: " + counter);
         }
 
         private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            
+            stopwatch.Start();
+            Dictionary<int, string> actualProcessInfos = new Dictionary<int, string>();
+            foreach (Process process in Process.GetProcesses())
+            {
+                actualProcessInfos.Add(process.Id, process.ProcessName);
+                if (!_cache.ContainsKey(process.Id) && _processStarted != null)
+                {
+                    _processStarted(process);
+                }
+                else
+                {
+                    process.Dispose();
+                }
+            }
+            if (_processExited != null)
+            {
+                foreach (KeyValuePair<int, string> processInfo in _cache.Except(actualProcessInfos))
+                {
+                    if (_processExited != null)
+                    {
+                        _processExited(processInfo.Key, processInfo.Value);
+                    }
+                }
+            }
+            _cache = actualProcessInfos;
+            stopwatch.Stop();
+            counter++;
         }
 
-        internal ProcessWatcher(string procName)
+        private static void CheckTimerIsNeeded()
         {
-            lib.Add(procName, Process.GetProcessesByName(procName));
-            if (!_timer.Enabled)
+            if (_processExited == null && _processStarted == null && _timer.Enabled)
+            {
+                _timer.Stop();
+            }
+            if ((_processExited != null || _processStarted != null) && !_timer.Enabled)
             {
                 _timer.Start();
             }
         }
 
-        public void Dispose()
+        private static void RefreshCache()
         {
-            
+            _timer_Elapsed(null, null);
         }
 
-        private static readonly uint processEntrySize = (UInt32) Marshal.SizeOf(typeof (PROCESSENTRY32));
-        internal static List<uint> GetAllProcesses()
-        {
-            List<uint> list = new List<uint>();
-            IntPtr handleToSnapshot = IntPtr.Zero;
-            try
-            {
-                PROCESSENTRY32 procEntry = new PROCESSENTRY32 {dwSize = processEntrySize};
-                handleToSnapshot = CreateToolhelp32Snapshot(SnapshotFlags.Process | SnapshotFlags.NoHeaps, 0);
-                if (Process32First(handleToSnapshot, ref procEntry))
-                {
-                    do
-                    {
-                        list.Add(procEntry.th32ProcessID);
-                    } while (Process32Next(handleToSnapshot, ref procEntry));
-                }
-                else
-                {
-                    throw new Exception(string.Format("Failed with win32 error code {0}", Marshal.GetLastWin32Error()));
-                }
-            }
-            finally
-            {
-                CloseHandle(handleToSnapshot);
-            }
-            return list;
-        }
+        //private class KeyValuePairEqualityComparer : IEqualityComparer<KeyValuePair<int, string>>
+        //{
 
-        [Flags]
-        private enum SnapshotFlags : uint
-        {
-            HeapList = 0x00000001,
-            Process = 0x00000002,
-            Thread = 0x00000004,
-            Module = 0x00000008,
-            Module32 = 0x00000010,
-            Inherit = 0x80000000,
-            All = 0x0000001F,
-            NoHeaps = 0x40000000
-        }
-        
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        private struct PROCESSENTRY32
-        {
-            const int MAX_PATH = 260;
-            internal UInt32 dwSize;
-            private UInt32 cntUsage;
-            internal UInt32 th32ProcessID;
-            private IntPtr th32DefaultHeapID;
-            private UInt32 th32ModuleID;
-            private UInt32 cntThreads;
-            private UInt32 th32ParentProcessID;
-            private Int32 pcPriClassBase;
-            private UInt32 dwFlags;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
-            internal string szExeFile;
-        }
+        //    public bool Equals(KeyValuePair<int, string> b1, KeyValuePair<int, string> b2)
+        //    {
+        //        if (b1.Height == b2.Height & b1.Length == b2.Length
+        //                            & b1.Width == b2.Width)
+        //        {
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
+        //    }
 
-        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern IntPtr CreateToolhelp32Snapshot([In]SnapshotFlags dwFlags, [In]UInt32 th32ProcessID);
 
-        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool Process32First([In]IntPtr hSnapshot, ref PROCESSENTRY32 lppe);
+        //    public int GetHashCode(KeyValuePair<int, string> bx)
+        //    {
+        //        return bx.GetHashCode();
+        //    }
 
-        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool Process32Next([In]IntPtr hSnapshot, ref PROCESSENTRY32 lppe);
+        //}
 
-        [DllImport("kernel32", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool CloseHandle([In] IntPtr hObject);
     }
 }

@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AxTools_x64", "AxTools_x64\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AxTools_Dll_x64", "AxTools_Dll_x64\AxTools_Dll_x64.vcxproj", "{EE9D5C4F-74A4-4D5B-8E9B-DF9E71E5239A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_PathPlayer", "C:\Program Files (x86)\AxTools\plugins\PathPlayer\WoWPlugin_PathPlayer.csproj", "{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -244,6 +246,27 @@ Global
 		{EE9D5C4F-74A4-4D5B-8E9B-DF9E71E5239A}.Template|x64.Build.0 = Release|x64
 		{EE9D5C4F-74A4-4D5B-8E9B-DF9E71E5239A}.Template|x86.ActiveCfg = Release|Win32
 		{EE9D5C4F-74A4-4D5B-8E9B-DF9E71E5239A}.Template|x86.Build.0 = Release|Win32
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Release|Win32.ActiveCfg = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Release|x64.ActiveCfg = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Release|x86.ActiveCfg = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Template|Any CPU.ActiveCfg = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Template|Any CPU.Build.0 = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Template|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Template|Mixed Platforms.Build.0 = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Template|Win32.ActiveCfg = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Template|x64.ActiveCfg = Release|Any CPU
+		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38}.Template|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

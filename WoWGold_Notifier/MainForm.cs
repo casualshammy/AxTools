@@ -28,7 +28,7 @@ namespace WoWGold_Notifier
         private readonly Stopwatch stopwatch;
         private CookieContainer cookies;
         private static int _timerDefaultInterval = 100;
-        private static readonly Uri SITE = new Uri("https://supply.elfmoney.ru");
+        private static readonly Uri SITE = new Uri("http://supply.elfmoney.ru");
         private const string ButtonToClickText = "Выполнить";
         private const string ServerName = "Гордунни";
         private const int MaxValue = 40000;
@@ -41,6 +41,7 @@ namespace WoWGold_Notifier
             webBrowser1.DocumentCompleted += WebBrowserOnDocumentCompleted;
             webBrowser1.ScriptErrorsSuppressed = true;
             cookies = GetUriCookieContainer(SITE);
+            ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
             notifyIcon = new NotifyIcon {Icon = Icon.FromHandle(Resources.coins.GetHicon()), Visible = true, Text = "WoWGold Notifier"};
             timerThread = new Thread(TimerThreadFunc);
             timerThread.Start();
