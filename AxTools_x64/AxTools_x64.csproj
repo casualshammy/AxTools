@@ -180,8 +180,7 @@
     <Compile Include="WoW\Management\WoWManager.cs" />
     <Compile Include="WoW\MouseButton.cs" />
     <Compile Include="WoW\PluginSystem\API\ObjMgr.cs" />
-    <Compile Include="WoW\PluginSystem\API\Functions.cs" />
-    <Compile Include="WoW\PluginSystem\API\Lua.cs" />
+    <Compile Include="WoW\PluginSystem\API\GameFunctions.cs" />
     <Compile Include="WoW\PluginSystem\API\Utilities.cs" />
     <Compile Include="WoW\PluginSystem\CodeCompiler.cs" />
     <Compile Include="WoW\PluginSystem\IPlugin.cs" />

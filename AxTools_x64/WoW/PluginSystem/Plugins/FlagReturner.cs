@@ -160,7 +160,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
             if (searchingObjects.Length > 0)
             {
-                string zoneText = Lua.GetFunctionReturn("GetZoneText()");
+                string zoneText = GameFunctions.Lua_GetFunctionReturn("GetZoneText()");
                 Utilities.LogPrint("We're in " + zoneText + ", searching for " + searchingObjects.AsString());
                 Utilities.ShowNotifyMessage("[" + Name + "] ", zoneText + ": " + searchingObjects.AsString(), ToolTipIcon.Info);
                 Utils.PlaySystemNotificationAsync();

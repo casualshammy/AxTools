@@ -1,4 +1,10 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using AxTools.Properties;
+using AxTools.WoW.Management;
+using AxTools.WoW.Management.ObjectManager;
+using AxTools.WoW.PluginSystem.API;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
@@ -6,12 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using AxTools.Helpers;
-using AxTools.Properties;
-using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
-using AxTools.WoW.PluginSystem.API;
-using Newtonsoft.Json;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
@@ -174,8 +174,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         #region Variables
         
-        private int state;
-
         private readonly string lureBait = "if (not GetWeaponEnchantInfo()) then " +
                                            "if (GetItemCount(118391) > 0) then local name = GetItemInfo(118391); UseItemByName(name) " +                    // Королевский червяк
                                            "elseif (IsEquippedItem(88710) and GetInventoryItemCooldown(\"player\", 1) == 0) then UseInventoryItem(1) " +    // Шляпа Ната
@@ -187,17 +185,13 @@ namespace AxTools.WoW.PluginSystem.Plugins
                                            " end";
 
         private readonly string castFishing = "if (not UnitAffectingCombat(\"player\")) then CastSpellByName(\"Рыбная ловля\") end";
-
         private WowObject bobber;
-
         private readonly List<WowObject> wowObjects = new List<WowObject>();
-
         private int iterationStartTime;
-
         // ReSharper disable once InconsistentNaming
         internal FishingSettings fishingSettings;
-
         private string lureSpecialBait;
+        private int state;
 
         #endregion
 

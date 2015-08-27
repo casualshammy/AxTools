@@ -28,6 +28,7 @@ namespace WoWGold_Notifier
         private readonly Stopwatch stopwatch;
         private CookieContainer cookies;
         private static int _timerDefaultInterval = 100;
+        private const int TIMER_INTERVAL = 100;
         private static readonly Uri SITE = new Uri("http://supply.elfmoney.ru");
         private const string ButtonToClickText = "Выполнить";
         private const string ServerName = "Гордунни";
@@ -52,15 +53,21 @@ namespace WoWGold_Notifier
             cookies = GetUriCookieContainer(SITE);
         }
 
+        private void On503Error()
+        {
+            labelResponse.Text = "Response: 503 Error";
+            _timerDefaultInterval += 5;
+        }
+
         private void ProcessPage()
         {
+            _timerDefaultInterval = Math.Max(_timerDefaultInterval - 1, TIMER_INTERVAL);
             try
             {
                 string source = HttpGet(SITE);
                 if (source.Contains("503 Service Temporarily Unavailable"))
                 {
-                    labelResponse.Text = "Response: 503 Error";
-                    _timerDefaultInterval += 10;
+                    On503Error();
                 }
                 else if (!source.Contains(ButtonToClickText))
                 {
@@ -118,6 +125,10 @@ namespace WoWGold_Notifier
             }
             catch (Exception ex)
             {
+                if (ex.Message.Contains("(503)"))
+                {
+                    On503Error();
+                }
                 Log("ProcessPage error: " + ex.Message);
             }
         }

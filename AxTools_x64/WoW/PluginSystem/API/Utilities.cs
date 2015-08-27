@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Forms;
 using AxTools.Helpers;
@@ -41,6 +42,22 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 WoWDXInject.ShowOverlayText(text, wowIcon, color);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static IntPtr MainWindowHandle
+        {
+            get
+            {
+                return MainForm.Instance.Handle;
+            }
+        }
+
+        public static void RequestPluginStopAsync()
+        {
+            Task.Factory.StartNew(PluginManager.StopPlugin);
         }
 
     }

@@ -12,7 +12,6 @@ using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.Plugins;
 using MetroFramework.Drawing;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -98,8 +97,6 @@ namespace AxTools.Forms
         private WaitingOverlay startupOverlay;
 
         private readonly Settings settings = Settings.Instance;
-        //
-        private readonly List<ToolStripMenuItem> pluginsToolStripMenuItems = new List<ToolStripMenuItem>();
 
         #endregion
 
@@ -694,7 +691,14 @@ namespace AxTools.Forms
             {
                 IPlugin plugin = i;
                 ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate { TrayContextMenu_PluginClicked(plugin); }, "NativeN" + plugin.Name);
-                pluginsToolStripMenuItems.Add(toolStripMenuItem);
+                if (plugin.ConfigAvailable)
+                {
+                    toolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("Settings", null, delegate
+                    {
+                        plugin.OnConfig();
+                    }));
+                    toolStripMenuItem.Click += (sender, args) => contextMenuStripMain.Hide();
+                }
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
             if (PluginManager.Plugins.Count > nativePlugins.Length)
@@ -706,7 +710,14 @@ namespace AxTools.Forms
                     {
                         IPlugin plugin = i;
                         ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate { TrayContextMenu_PluginClicked(plugin); }, "NativeN" + plugin.Name);
-                        pluginsToolStripMenuItems.Add(toolStripMenuItem);
+                        if (plugin.ConfigAvailable)
+                        {
+                            toolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("Settings", null, delegate
+                            {
+                                plugin.OnConfig();
+                            }));
+                            toolStripMenuItem.Click += (sender, args) => contextMenuStripMain.Hide();
+                        }
                         customPlugins.DropDownItems.Add(toolStripMenuItem);
                     }
                 }
@@ -973,5 +984,4 @@ namespace AxTools.Forms
         #endregion
 
     }
-
 }

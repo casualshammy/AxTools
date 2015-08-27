@@ -247,11 +247,6 @@ namespace AxTools.WoW.Management
             EnqueueAllocatedMemoryForWipe(mem, cmdAddr);
         }
 
-        internal static string GetLocalizedText(string commandLine)
-        {
-            return string.Empty;
-        }
-
         internal static unsafe string GetFunctionReturn(string function)
         {
             IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>(_wowProcess.Memory.ImageBase + WowBuildInfoX64.PlayerPtr);
@@ -389,13 +384,13 @@ namespace AxTools.WoW.Management
             LuaDoString(initializeIngameOverlay + "\r\n" + function);
         }
 
-        internal static void MoveTo(WowPoint point)
+        internal static unsafe void MoveTo(WowPoint point)
         {
             if (GetFunctionReturn("GetCVar(\"autointeract\")") == "1")
             {
                 IntPtr playerPtr = _wowProcess.Memory.Read<IntPtr>(_wowProcess.Memory.ImageBase + WowBuildInfoX64.PlayerPtr);
                 byte[] playerPtrBytes = BitConverter.GetBytes(playerPtr.ToInt64());
-                IntPtr locationPtr = _wowProcess.Memory.AllocateMemory(0x4 * 3);
+                IntPtr locationPtr = _wowProcess.Memory.AllocateMemory(sizeof(WowPoint));
                 _wowProcess.Memory.Write(locationPtr, point);
                 byte[] locationPtrBytes = BitConverter.GetBytes(locationPtr.ToInt64());
                 byte[] functionPtr = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGUnit_C_InitializeTrackingState).ToInt64());
@@ -414,18 +409,10 @@ namespace AxTools.WoW.Management
                 ExecuteWait(mem);
                 EnqueueAllocatedMemoryForWipe(mem, locationPtr);
             }
-            //IntPtr ctmAction = _wowProcess.Memory.ImageBase + 0x160A9E0;
-            //IntPtr ctmPoint = ctmAction + 0x78;
-            //if (GetFunctionReturn("GetCVar(\"autointeract\")") == "1")
-            //{
-            //    _wowProcess.Memory.Write(ctmPoint, point);
-            //    _wowProcess.Memory.Write(ctmAction, (uint)4);
-            //}
-            //else
-            //{
-            //    //AppSpecUtils.NotifyUser("Attention!", "Please activate ClickToMove!", NotifyUserType.Warn, true);
-            //}
-            //return;
+            else
+            {
+                throw new InvalidOperationException("You should enable ClickToMove first");
+            }
         }
 
         internal static unsafe void TargetUnit(UInt128 guid)

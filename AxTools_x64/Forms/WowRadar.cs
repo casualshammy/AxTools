@@ -15,6 +15,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
@@ -741,7 +742,7 @@ namespace AxTools.Forms
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
-                            WoWDXInject.MoveTo(unit.Location);
+                            MoveToWrapper(unit.Location);
                         }
                         break;
                     }
@@ -754,7 +755,7 @@ namespace AxTools.Forms
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
-                            WoWDXInject.MoveTo(npc.Location);
+                            MoveToWrapper(npc.Location);
                         }
                         break;
                     }
@@ -767,7 +768,7 @@ namespace AxTools.Forms
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
-                            WoWDXInject.MoveTo(wowObject.Location);
+                            MoveToWrapper(wowObject.Location);
                         }
                         break;
                     }
@@ -882,6 +883,21 @@ namespace AxTools.Forms
                 }
             }
         }
-    
+
+        private void MoveToWrapper(WowPoint point)
+        {
+            bool shouldDisableCTM = false;
+            if (!GameFunctions.Lua_IsCTMEnabled())
+            {
+                shouldDisableCTM = true;
+                GameFunctions.Lua_EnableCTM();
+            }
+            WoWDXInject.MoveTo(point);
+            if (shouldDisableCTM)
+            {
+                GameFunctions.Lua_DisableCTM();
+            }
+        }
+
     }
 }

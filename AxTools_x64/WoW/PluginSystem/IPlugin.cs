@@ -16,11 +16,6 @@ namespace AxTools.WoW.PluginSystem
         Version Version { get; }
 
         /// <summary>
-        ///     The creator of this plugin
-        /// </summary>
-        string Author { get; }
-
-        /// <summary>
         ///     Description to display on the plugin interface
         /// </summary>
         string Description { get; }
