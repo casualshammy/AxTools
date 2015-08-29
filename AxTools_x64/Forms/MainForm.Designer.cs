@@ -64,16 +64,15 @@ namespace AxTools.Forms
             this.linkBackup = new MetroFramework.Controls.MetroLink();
             this.cmbboxAccSelect = new AxTools.Components.MetroComboboxExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
+            this.olvPlugins = new BrightIdeasSoftware.ObjectListView();
+            this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.buttonPluginSettings = new System.Windows.Forms.Button();
-            this.textBoxDetailedInfo = new System.Windows.Forms.TextBox();
-            this.line2 = new AxTools.Components.Line();
-            this.line1 = new AxTools.Components.Line();
             this.buttonStartStopPlugin = new MetroFramework.Controls.MetroButton();
             this.metroButtonLuaConsole = new MetroFramework.Controls.MetroButton();
             this.metroButtonRadar = new MetroFramework.Controls.MetroButton();
             this.metroButtonBlackMarketTracker = new MetroFramework.Controls.MetroButton();
             this.buttonUnloadInjector = new MetroFramework.Controls.MetroButton();
-            this.comboBoxWowPlugins = new AxTools.Components.MetroComboboxExt(this.components);
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.checkBoxStartTeamspeak3WithWow = new MetroFramework.Controls.MetroCheckBox();
             this.checkBoxStartMumbleWithWow = new MetroFramework.Controls.MetroCheckBox();
@@ -97,6 +96,7 @@ namespace AxTools.Forms
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.olvPlugins)).BeginInit();
             this.metroTabPage2.SuspendLayout();
             this.contextMenuStripBackupAndClean.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -191,7 +191,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
+            this.tabControl.SelectedIndex = 1;
             this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.StyleManager = this.metroStyleManager1;
@@ -324,16 +324,13 @@ namespace AxTools.Forms
             // 
             // metroTabPage3
             // 
+            this.metroTabPage3.Controls.Add(this.olvPlugins);
             this.metroTabPage3.Controls.Add(this.buttonPluginSettings);
-            this.metroTabPage3.Controls.Add(this.textBoxDetailedInfo);
-            this.metroTabPage3.Controls.Add(this.line2);
-            this.metroTabPage3.Controls.Add(this.line1);
             this.metroTabPage3.Controls.Add(this.buttonStartStopPlugin);
             this.metroTabPage3.Controls.Add(this.metroButtonLuaConsole);
             this.metroTabPage3.Controls.Add(this.metroButtonRadar);
             this.metroTabPage3.Controls.Add(this.metroButtonBlackMarketTracker);
             this.metroTabPage3.Controls.Add(this.buttonUnloadInjector);
-            this.metroTabPage3.Controls.Add(this.comboBoxWowPlugins);
             this.metroTabPage3.CustomBackground = false;
             this.metroTabPage3.HorizontalScrollbar = false;
             this.metroTabPage3.HorizontalScrollbarBarColor = true;
@@ -352,6 +349,48 @@ namespace AxTools.Forms
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
             // 
+            // objectListView1
+            // 
+            this.olvPlugins.AllColumns.Add(this.olvColumn1);
+            this.olvPlugins.AllColumns.Add(this.olvColumn2);
+            this.olvPlugins.AllowColumnReorder = true;
+            this.olvPlugins.CheckBoxes = true;
+            this.olvPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvColumn1,
+            this.olvColumn2});
+            this.olvPlugins.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvPlugins.FullRowSelect = true;
+            this.olvPlugins.HeaderWordWrap = true;
+            this.olvPlugins.HideSelection = false;
+            this.olvPlugins.IncludeColumnHeadersInCopy = true;
+            this.olvPlugins.Location = new System.Drawing.Point(3, 15);
+            this.olvPlugins.Name = "objectListView1";
+            this.olvPlugins.ShowGroups = false;
+            this.olvPlugins.Size = new System.Drawing.Size(294, 142);
+            this.olvPlugins.TabIndex = 81;
+            this.olvPlugins.UseAlternatingBackColors = true;
+            this.olvPlugins.UseCompatibleStateImageBehavior = false;
+            this.olvPlugins.UseFilterIndicator = true;
+            this.olvPlugins.UseFiltering = true;
+            this.olvPlugins.UseHotItem = true;
+            this.olvPlugins.View = System.Windows.Forms.View.Details;
+            // 
+            // olvColumn1
+            // 
+            this.olvColumn1.AspectName = "Name";
+            this.olvColumn1.MaximumWidth = 217;
+            this.olvColumn1.MinimumWidth = 217;
+            this.olvColumn1.Text = "Name";
+            this.olvColumn1.Width = 217;
+            // 
+            // olvColumn2
+            // 
+            this.olvColumn2.AspectName = "ConfigAvailable";
+            this.olvColumn2.MaximumWidth = 55;
+            this.olvColumn2.MinimumWidth = 55;
+            this.olvColumn2.Text = "Settings";
+            this.olvColumn2.Width = 55;
+            // 
             // buttonPluginSettings
             // 
             this.buttonPluginSettings.BackgroundImage = global::AxTools.Properties.Resources.pluginSettings;
@@ -363,45 +402,6 @@ namespace AxTools.Forms
             this.buttonPluginSettings.TabIndex = 80;
             this.buttonPluginSettings.UseVisualStyleBackColor = true;
             this.buttonPluginSettings.Click += new System.EventHandler(this.buttonPluginSettings_Click);
-            // 
-            // textBoxDetailedInfo
-            // 
-            this.textBoxDetailedInfo.BackColor = System.Drawing.Color.White;
-            this.textBoxDetailedInfo.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBoxDetailedInfo.Cursor = System.Windows.Forms.Cursors.Help;
-            this.textBoxDetailedInfo.ForeColor = System.Drawing.Color.Black;
-            this.textBoxDetailedInfo.Location = new System.Drawing.Point(3, 50);
-            this.textBoxDetailedInfo.Multiline = true;
-            this.textBoxDetailedInfo.Name = "textBoxDetailedInfo";
-            this.textBoxDetailedInfo.ReadOnly = true;
-            this.textBoxDetailedInfo.Size = new System.Drawing.Size(415, 34);
-            this.textBoxDetailedInfo.TabIndex = 78;
-            this.textBoxDetailedInfo.Visible = false;
-            this.textBoxDetailedInfo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBoxDetailedInfo_MouseDown);
-            // 
-            // line2
-            // 
-            this.line2.Location = new System.Drawing.Point(3, 90);
-            this.line2.MaximumSize = new System.Drawing.Size(2000, 2);
-            this.line2.MinimumSize = new System.Drawing.Size(0, 2);
-            this.line2.Name = "line2";
-            this.line2.Size = new System.Drawing.Size(415, 2);
-            this.line2.Style = MetroFramework.MetroColorStyle.Black;
-            this.line2.StyleManager = null;
-            this.line2.TabIndex = 77;
-            this.line2.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // line1
-            // 
-            this.line1.Location = new System.Drawing.Point(3, 93);
-            this.line1.MaximumSize = new System.Drawing.Size(2000, 2);
-            this.line1.MinimumSize = new System.Drawing.Size(0, 2);
-            this.line1.Name = "line1";
-            this.line1.Size = new System.Drawing.Size(415, 2);
-            this.line1.Style = MetroFramework.MetroColorStyle.Black;
-            this.line1.StyleManager = null;
-            this.line1.TabIndex = 76;
-            this.line1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // buttonStartStopPlugin
             // 
@@ -420,9 +420,9 @@ namespace AxTools.Forms
             // metroButtonLuaConsole
             // 
             this.metroButtonLuaConsole.Highlight = true;
-            this.metroButtonLuaConsole.Location = new System.Drawing.Point(284, 101);
+            this.metroButtonLuaConsole.Location = new System.Drawing.Point(303, 79);
             this.metroButtonLuaConsole.Name = "metroButtonLuaConsole";
-            this.metroButtonLuaConsole.Size = new System.Drawing.Size(134, 52);
+            this.metroButtonLuaConsole.Size = new System.Drawing.Size(115, 23);
             this.metroButtonLuaConsole.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroButtonLuaConsole.StyleManager = this.metroStyleManager1;
             this.metroButtonLuaConsole.TabIndex = 71;
@@ -433,9 +433,9 @@ namespace AxTools.Forms
             // metroButtonRadar
             // 
             this.metroButtonRadar.Highlight = true;
-            this.metroButtonRadar.Location = new System.Drawing.Point(3, 101);
+            this.metroButtonRadar.Location = new System.Drawing.Point(303, 50);
             this.metroButtonRadar.Name = "metroButtonRadar";
-            this.metroButtonRadar.Size = new System.Drawing.Size(134, 52);
+            this.metroButtonRadar.Size = new System.Drawing.Size(115, 23);
             this.metroButtonRadar.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroButtonRadar.StyleManager = this.metroStyleManager1;
             this.metroButtonRadar.TabIndex = 70;
@@ -446,9 +446,9 @@ namespace AxTools.Forms
             // metroButtonBlackMarketTracker
             // 
             this.metroButtonBlackMarketTracker.Highlight = true;
-            this.metroButtonBlackMarketTracker.Location = new System.Drawing.Point(143, 101);
+            this.metroButtonBlackMarketTracker.Location = new System.Drawing.Point(303, 108);
             this.metroButtonBlackMarketTracker.Name = "metroButtonBlackMarketTracker";
-            this.metroButtonBlackMarketTracker.Size = new System.Drawing.Size(135, 23);
+            this.metroButtonBlackMarketTracker.Size = new System.Drawing.Size(115, 23);
             this.metroButtonBlackMarketTracker.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroButtonBlackMarketTracker.StyleManager = this.metroStyleManager1;
             this.metroButtonBlackMarketTracker.TabIndex = 16;
@@ -459,38 +459,15 @@ namespace AxTools.Forms
             // buttonUnloadInjector
             // 
             this.buttonUnloadInjector.Highlight = false;
-            this.buttonUnloadInjector.Location = new System.Drawing.Point(143, 130);
+            this.buttonUnloadInjector.Location = new System.Drawing.Point(303, 137);
             this.buttonUnloadInjector.Name = "buttonUnloadInjector";
-            this.buttonUnloadInjector.Size = new System.Drawing.Size(135, 23);
+            this.buttonUnloadInjector.Size = new System.Drawing.Size(115, 20);
             this.buttonUnloadInjector.Style = MetroFramework.MetroColorStyle.Blue;
             this.buttonUnloadInjector.StyleManager = this.metroStyleManager1;
             this.buttonUnloadInjector.TabIndex = 15;
-            this.buttonUnloadInjector.Text = "Select another process";
+            this.buttonUnloadInjector.Text = "Another process...";
             this.buttonUnloadInjector.Theme = MetroFramework.MetroThemeStyle.Light;
             this.buttonUnloadInjector.Click += new System.EventHandler(this.ButtonUnloadInjectorClick);
-            // 
-            // comboBoxWowPlugins
-            // 
-            this.comboBoxWowPlugins.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxWowPlugins.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxWowPlugins.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.comboBoxWowPlugins.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxWowPlugins.FormattingEnabled = true;
-            this.comboBoxWowPlugins.ItemHeight = 23;
-            this.comboBoxWowPlugins.Items.AddRange(new object[] {
-            "Fishing",
-            "Capture flags/orbs on the battlefields",
-            "Milling/disenchanting/prospecting"});
-            this.comboBoxWowPlugins.Location = new System.Drawing.Point(3, 15);
-            this.comboBoxWowPlugins.Name = "comboBoxWowPlugins";
-            this.comboBoxWowPlugins.OverlayText = "Click to select plugin...";
-            this.comboBoxWowPlugins.Size = new System.Drawing.Size(294, 29);
-            this.comboBoxWowPlugins.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxWowPlugins.StyleManager = this.metroStyleManager1;
-            this.comboBoxWowPlugins.TabIndex = 6;
-            this.comboBoxWowPlugins.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroToolTip1.SetToolTip(this.comboBoxWowPlugins, "Click to select plugin");
-            this.comboBoxWowPlugins.SelectedIndexChanged += new System.EventHandler(this.ComboBoxWowPluginsSelectedIndexChanged);
             // 
             // metroTabPage2
             // 
@@ -724,7 +701,7 @@ namespace AxTools.Forms
             this.toolStripSeparator3,
             this.toolStripMenuItemOpenWoWLogsFolder});
             this.contextMenuStripBackupAndClean.Name = "contextMenuStripMain";
-            this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 98);
+            this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 76);
             // 
             // toolStripMenuItemBackupWoWAddOns
             // 
@@ -805,7 +782,7 @@ namespace AxTools.Forms
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage1.PerformLayout();
             this.metroTabPage3.ResumeLayout(false);
-            this.metroTabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.olvPlugins)).EndInit();
             this.metroTabPage2.ResumeLayout(false);
             this.metroTabPage2.PerformLayout();
             this.contextMenuStripBackupAndClean.ResumeLayout(false);
@@ -825,7 +802,6 @@ namespace AxTools.Forms
         private MetroTileExt tileMumble;
         private MetroTileExt tileVentrilo;
         private MetroTabPage metroTabPage3;
-        private MetroComboboxExt comboBoxWowPlugins;
         private MetroComboboxExt cmbboxAccSelect;
         private MetroButton buttonUnloadInjector;
         private MetroToolTip metroToolTip1;
@@ -860,10 +836,10 @@ namespace AxTools.Forms
         private PictureBox pictureBox1;
         private MetroLink linkPing;
         private MetroLink linkTitle;
-        private Line line2;
-        private Line line1;
-        private TextBox textBoxDetailedInfo;
         private Button buttonPluginSettings;
+        private BrightIdeasSoftware.ObjectListView olvPlugins;
+        private BrightIdeasSoftware.OLVColumn olvColumn1;
+        private BrightIdeasSoftware.OLVColumn olvColumn2;
     }
 }
 

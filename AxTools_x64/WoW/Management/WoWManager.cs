@@ -81,9 +81,9 @@ namespace AxTools.WoW.Management
             LuaConsole pLuaInjector = Utils.FindForm<LuaConsole>();
             if (pLuaInjector != null) pLuaInjector.Close();
 
-            if (PluginManager.ActivePlugin != null)
+            if (PluginManager.ActivePlugins.Count != 0)
             {
-                PluginManager.StopPlugin();
+                PluginManager.StopPlugins();
             }
 
             WoWDXInject.Release();

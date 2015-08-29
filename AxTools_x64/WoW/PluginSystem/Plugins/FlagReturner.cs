@@ -38,8 +38,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public Image TrayIcon { get { return Resources.achievement_bg_winwsg; } }
 
-        public int Interval { get { return 50; } }
-
         public string WowIcon
         {
             get { return "Interface\\\\Icons\\\\achievement_bg_winwsg"; }
@@ -62,6 +60,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         public void OnStart()
         {
             currentZone = 0;
+            (timer = this.CreateTimer(50, OnPulse)).Start();
         }
 
         public void OnPulse()
@@ -118,7 +117,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public void OnStop()
         {
-            
+            timer.Dispose();
         }
 
         #endregion
@@ -126,10 +125,9 @@ namespace AxTools.WoW.PluginSystem.Plugins
         #region Variables
 
         private uint currentZone;
-
         private string[] searchingObjects;
-
         private readonly List<WowObject> wowObjects = new List<WowObject>();
+        private SingleThreadTimer timer;
 
         #endregion
 
@@ -161,13 +159,13 @@ namespace AxTools.WoW.PluginSystem.Plugins
             if (searchingObjects.Length > 0)
             {
                 string zoneText = GameFunctions.Lua_GetFunctionReturn("GetZoneText()");
-                Utilities.LogPrint("We're in " + zoneText + ", searching for " + searchingObjects.AsString());
+                this.LogPrint("We're in " + zoneText + ", searching for " + searchingObjects.AsString());
                 Utilities.ShowNotifyMessage("[" + Name + "] ", zoneText + ": " + searchingObjects.AsString(), ToolTipIcon.Info);
                 Utils.PlaySystemNotificationAsync();
             }
             else
             {
-                Utilities.LogPrint("Unknown battlefield, ID:" + zone);
+                this.LogPrint("Unknown battlefield, ID:" + zone);
                 Utilities.ShowNotifyMessage("[" + Name + "]", "Unknown battlefield. I don't know what to do in this zone...", ToolTipIcon.Warning);
                 Utils.PlaySystemNotificationAsync();
             }

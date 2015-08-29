@@ -4,6 +4,7 @@ using System.Threading;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW.Management;
+using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
@@ -37,11 +38,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public Image TrayIcon { get { return Resources.inv_misc_gem_bloodgem_01; } }
 
-        public int Interval
-        {
-            get { return 50; }
-        }
-
         public string WowIcon
         {
             get { return "Interface\\\\Icons\\\\inv_misc_gem_bloodgem_01"; }
@@ -71,6 +67,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 "AxToolsDisenchantWeapon = \"Оружие\";" +
                 "AxToolsDisenchantArmor = \"Доспехи\";" +
                 "AxToolsOreIDs = {2770, 2771, 2772, 10620, 3858, 23424, 23425, 36909, 36912, 36910, 52185, 53038, 52183, 72093, 72094, 72103, 72092};");
+            (timer = this.CreateTimer(50, OnPulse)).Start();
         }
 
         public void OnPulse()
@@ -120,7 +117,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public void OnStop()
         {
-            
+            timer.Dispose();
         }
 
         #endregion
@@ -157,6 +154,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private int state;
 
         private int iterationStartTime;
+
+        private SingleThreadTimer timer;
 
         #endregion
 

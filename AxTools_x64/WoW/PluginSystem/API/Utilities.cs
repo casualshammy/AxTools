@@ -13,10 +13,11 @@ namespace AxTools.WoW.PluginSystem.API
         /// <summary>
         /// Makes a record to the log. WoW process name, process id and plugin name included
         /// </summary>
+        /// <param name="plugin"></param>
         /// <param name="text"></param>
-        public static void LogPrint(object text)
+        public static void LogPrint(this IPlugin plugin, object text)
         {
-            Log.Info(String.Format("{0} [Plugin: {1}] {2}", WoWManager.WoWProcess, PluginManager.ActivePlugin.Name, text));
+            Log.Info(String.Format("{0} [Plugin: {1}] {2}", WoWManager.WoWProcess, plugin.Name, text));
         }
 
         /// <summary>
@@ -55,9 +56,19 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
-        public static void RequestPluginStopAsync()
+        public static void RequestPluginsStopAsync()
         {
-            Task.Factory.StartNew(PluginManager.StopPlugin);
+            Task.Factory.StartNew(PluginManager.StopPlugins);
+        }
+
+        public static SingleThreadTimer CreateTimer(this IPlugin plugin, int interval, Action action)
+        {
+            return new SingleThreadTimer(interval, action) {Plugin = plugin};
+        }
+
+        public static string GetRandomString(int size)
+        {
+            return Utils.GetRandomString(size);
         }
 
     }

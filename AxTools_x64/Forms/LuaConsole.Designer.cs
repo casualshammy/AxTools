@@ -50,6 +50,7 @@ namespace AxTools.Forms
             this.metroLinkRunScriptOnce = new MetroFramework.Controls.MetroLink();
             this.metroLinkEnableCyclicExecution = new MetroFramework.Controls.MetroLink();
             this.metroLinkSettings = new MetroFramework.Controls.MetroLink();
+            this.hotItemStyle1 = new BrightIdeasSoftware.HotItemStyle();
             this.metroPanelTimerOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOpenLuaFile)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSaveLuaFile)).BeginInit();
@@ -310,6 +311,11 @@ namespace AxTools.Forms
             this.metroLinkSettings.UseStyleColors = true;
             this.metroLinkSettings.Click += new System.EventHandler(this.metroLinkSettings_Click);
             // 
+            // hotItemStyle1
+            // 
+            this.hotItemStyle1.BackColor = System.Drawing.Color.PeachPuff;
+            this.hotItemStyle1.ForeColor = System.Drawing.Color.MediumBlue;
+            // 
             // LuaConsole
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -359,6 +365,7 @@ namespace AxTools.Forms
         private MetroFramework.Controls.MetroLink metroLinkSettings;
         private MetroFramework.Controls.MetroLink metroLinkEnableCyclicExecution;
         private MetroFramework.Controls.MetroLink metroLinkRunScriptOnce;
+        private BrightIdeasSoftware.HotItemStyle hotItemStyle1;
     }
 }
 

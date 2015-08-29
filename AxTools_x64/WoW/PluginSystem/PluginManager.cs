@@ -5,11 +5,9 @@ using AxTools.WoW.PluginSystem.Plugins;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using WindowsFormsAero.TaskDialog;
 
 namespace AxTools.WoW.PluginSystem
@@ -18,45 +16,44 @@ namespace AxTools.WoW.PluginSystem
     {
         internal static List<IPlugin> Plugins = new List<IPlugin>();
 
-        internal static IPlugin ActivePlugin { private set; get; }
-
-        private static volatile bool _shouldPulse;
-
-        private static int _intervalBetweenPulses;
-
-        private static Stopwatch _balancingStopwatch;
+        private static List<IPlugin> _activePlugins = new List<IPlugin>();
+        internal static List<IPlugin> ActivePlugins { get { return _activePlugins; } }
 
         private static readonly object _lock = new object();
 
         internal static event Action PluginStateChanged;
 
-        private static Thread _pluginThread;
-
-        internal static void StartPlugin(IPlugin plugin)
+        internal static void StartPlugins(IEnumerable<IPlugin> plugins)
         {
             lock (_lock)
             {
-                if (ActivePlugin == null)
+                if (_activePlugins.Count == 0)
                 {
-                    ActivePlugin = plugin;
-                    _intervalBetweenPulses = plugin.Interval;
-                    _shouldPulse = true;
-                    _pluginThread = new Thread(PluginPulse) {IsBackground = true};
-                    try
+                    _activePlugins = plugins.ToList();
+                    foreach (IPlugin plugin in _activePlugins)
                     {
-                        ActivePlugin.OnStart();
-                        Log.Info(String.Format("{0}:{1} :: [{2}] Plugin is started", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name));
+                        try
+                        {
+                            plugin.OnStart();
+                            Log.Info(String.Format("{0}:{1} :: [{2}] Plugin is started", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, plugin.Name));
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(string.Format("Plugin OnStart error [{0}]: {1}", plugin.Name, ex.Message));
+                        }
+                            
                     }
-                    catch (Exception ex)
-                    {
-                        Log.Error(string.Format("Plugin OnStart error [{0}]: {1}", ActivePlugin.Name, ex.Message));
-                    }
-                    _balancingStopwatch = new Stopwatch();
                     if (Settings.Instance.WoWPluginShowIngameNotifications)
                     {
-                        WoWDXInject.ShowOverlayText("Plugin <" + ActivePlugin.Name + "> is started", ActivePlugin.WowIcon, Color.FromArgb(255, 102, 0));
+                        if (_activePlugins.Count == 1)
+                        {
+                            WoWDXInject.ShowOverlayText("Plugin <" + _activePlugins.First().Name + "> is started", _activePlugins.First().WowIcon, Color.FromArgb(255, 102, 0));
+                        }
+                        else
+                        {
+                            WoWDXInject.ShowOverlayText("Plugins are started", "", Color.FromArgb(255, 102, 0));
+                        }
                     }
-                    _pluginThread.Start();
                     if (PluginStateChanged != null)
                     {
                         PluginStateChanged();
@@ -69,34 +66,38 @@ namespace AxTools.WoW.PluginSystem
             }
         }
 
-        internal static void StopPlugin()
+        internal static void StopPlugins()
         {
             lock (_lock)
             {
-                if (ActivePlugin != null)
+                if (_activePlugins.Count != 0)
                 {
-                    _shouldPulse = false;
-                    if (!_pluginThread.Join(5000))
+                    foreach (IPlugin plugin in _activePlugins)
                     {
-                        throw new Exception("Can't stop plugin!");
-                    }
-                    try
-                    {
-                        ActivePlugin.OnStop();
-                        Log.Info(WoWManager.WoWProcess != null
-                            ? string.Format("{0}:{1} :: [{2}] Plugin is stopped", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name)
-                            : string.Format("UNKNOWN:null :: [{0}] Plugin is stopped", ActivePlugin.Name));
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(string.Format("Can't shutdown plugin [{0}]: {1}", ActivePlugin.Name, ex.Message));
+                        try
+                        {
+                            plugin.OnStop();
+                            Log.Info(WoWManager.WoWProcess != null
+                                ? string.Format("{0}:{1} :: [{2}] Plugin is stopped", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, plugin.Name)
+                                : string.Format("UNKNOWN:null :: [{0}] Plugin is stopped", plugin.Name));
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(string.Format("Can't shutdown plugin [{0}]: {1}", plugin.Name, ex.Message));
+                        }
                     }
                     if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
                     {
-                        WoWDXInject.ShowOverlayText("Plugin <" + ActivePlugin.Name + "> is stopped", ActivePlugin.WowIcon, Color.FromArgb(255, 0, 0));
+                        if (_activePlugins.Count == 1)
+                        {
+                            WoWDXInject.ShowOverlayText("Plugin <" + _activePlugins.First().Name + "> is stopped", _activePlugins.First().WowIcon, Color.FromArgb(255, 0, 0));
+                        }
+                        else
+                        {
+                            WoWDXInject.ShowOverlayText("Plugins are stopped", "", Color.FromArgb(255, 102, 0));
+                        }
                     }
-                    _pluginThread = null;
-                    ActivePlugin = null;
+                    _activePlugins.Clear();
                     if (PluginStateChanged != null)
                     {
                         PluginStateChanged();
@@ -105,32 +106,6 @@ namespace AxTools.WoW.PluginSystem
                 else
                 {
                     throw new Exception("ActivePlugin is null!");
-                }
-            }
-        }
-
-        private static void PluginPulse()
-        {
-            while (_shouldPulse)
-            {
-                _balancingStopwatch.Restart();
-                if (WoWManager.WoWProcess.IsInGame)
-                {
-                    try
-                    {
-                        ActivePlugin.OnPulse();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(String.Format("{0}:{1} :: [{2}] OnPulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ActivePlugin.Name, ex.Message));
-                    }
-                }
-                int shouldWait = (int) (_intervalBetweenPulses - _balancingStopwatch.ElapsedMilliseconds);
-                while (shouldWait > 0 && _shouldPulse)
-                {
-                    int t = Math.Min(shouldWait, 100);
-                    shouldWait -= t;
-                    Thread.Sleep(t);
                 }
             }
         }

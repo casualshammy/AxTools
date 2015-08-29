@@ -10,7 +10,7 @@ using AxTools.WoW;
 using AxTools.WoW.Management;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.Plugins;
-using MetroFramework.Drawing;
+using BrightIdeasSoftware;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -61,6 +61,9 @@ namespace AxTools.Forms
             Pinger.IsEnabledChanged += PingerOnStateChanged;
             AddonsBackup.IsRunningChanged += AddonsBackup_IsRunningChanged;
             WoWAccount.AllAccounts.CollectionChanged += WoWAccounts_CollectionChanged;
+            olvPlugins.SelectedIndexChanged += objectListView1_SelectedIndexChanged;
+            olvPlugins.CellToolTipShowing += objectListView1_CellToolTipShowing;
+            olvPlugins.DoubleClick += OlvPluginsOnDoubleClick;
 
             Task.Factory.StartNew(LoadingStepAsync);
             BeginInvoke((MethodInvoker) delegate
@@ -324,14 +327,14 @@ namespace AxTools.Forms
         {
             foreach (IPlugin plugin in PluginManager.Plugins)
             {
-                ToolStripItem[] items = contextMenuStripMain.Items.Find("NativeN" + plugin.Name, true); //contextMenuStripMain.Items["NativeN" + plugin.Name] as ToolStripMenuItem;
+                ToolStripItem[] items = contextMenuStripMain.Items.Find("NativeN" + plugin.Name, true);
                 foreach (ToolStripMenuItem item in items)
                 {
-                    item.ShortcutKeyDisplayString = item.Text == comboBoxWowPlugins.Text ? settings.WoWPluginHotkey.ToString() : null;
-                    item.Enabled = PluginManager.ActivePlugin == null;
+                    item.ShortcutKeyDisplayString = olvPlugins.CheckedObjects.Cast<IPlugin>().FirstOrDefault(i => i.Name == item.Text) != null ? settings.WoWPluginHotkey.ToString() : null;
+                    item.Enabled = PluginManager.ActivePlugins.Count == 0;
                 }
             }
-            stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManager.ActivePlugin != null;
+            stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManager.ActivePlugins.Count != 0;
             stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = settings.WoWPluginHotkey.ToString();
         }
 
@@ -361,7 +364,7 @@ namespace AxTools.Forms
 
         private void stopActivePluginorPresshotkeyToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            if (PluginManager.ActivePlugin != null)
+            if (PluginManager.ActivePlugins.Count != 0)
             {
                 SwitchWoWPlugin();
             }
@@ -369,7 +372,8 @@ namespace AxTools.Forms
 
         private void TrayContextMenu_PluginClicked(IPlugin plugin)
         {
-            comboBoxWowPlugins.SelectedIndex = PluginManager.Plugins.IndexOf(plugin);
+            olvPlugins.UncheckAll();
+            olvPlugins.CheckObject(plugin);
             if (!WoWManager.Hooked && WowProcess.List.Count != 1)
             {
                 Activate();
@@ -545,62 +549,7 @@ namespace AxTools.Forms
         {
             SwitchWoWPlugin();
         }
-
-        private void ComboBoxWowPluginsSelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBoxWowPlugins.SelectedIndex == -1)
-            {
-                metroToolTip1.SetToolTip(textBoxDetailedInfo, string.Empty);
-                textBoxDetailedInfo.Visible = false;
-            }
-            else
-            {
-                string fullDescription = PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text).Description;
-
-                string text = "";
-                int counter = 0;
-                foreach (char i in fullDescription)
-                {
-                    if (counter >= 50 && i.Equals(' '))
-                    {
-                        text += "\r\n";
-                        counter = 0;
-                    }
-                    else
-                    {
-                        text += i;
-                        counter++;
-                    }
-                }
-
-                //string[] arr = fullDescription.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
-                //string text = string.Empty;
-                //int counter = 0;
-                //foreach (string i in arr)
-                //{
-                //    text += i + " ";
-                //    counter += i.Length + 1;
-                //    if (counter >= 50)
-                //    {
-                //        text += "\r\n";
-                //        counter = 0;
-                //    }
-                //}
-                metroToolTip1.SetToolTip(textBoxDetailedInfo, text);
-                textBoxDetailedInfo.Text = "Description: " + fullDescription;
-                textBoxDetailedInfo.ForeColor = MetroPaint.GetStyleColor(Style);
-                textBoxDetailedInfo.Visible = true;
-
-                buttonPluginSettings.Enabled = PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text).ConfigAvailable;
-            }
-            UpdatePluginsShortcutsInTrayContextMenu();
-        }
-
-        private void textBoxDetailedInfo_MouseDown(object sender, MouseEventArgs e)
-        {
-            comboBoxWowPlugins.Focus();
-        }
-
+        
         private void MetroButtonBlackMarketTrackerClick(object sender, EventArgs e)
         {
             StartWoWModule<BlackMarket>();
@@ -631,7 +580,47 @@ namespace AxTools.Forms
 
         private void buttonPluginSettings_Click(object sender, EventArgs e)
         {
-            PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text).OnConfig();
+            IPlugin plugin = olvPlugins.SelectedObject as IPlugin;
+            if (plugin != null)
+            {
+                plugin.OnConfig();
+            }
+        }
+
+        private void objectListView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            IPlugin plugin = olvPlugins.SelectedObject as IPlugin;
+            if (plugin != null)
+            {
+                buttonPluginSettings.Enabled = plugin.ConfigAvailable;
+            }
+        }
+
+        private void objectListView1_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
+        {
+            IPlugin plugin = e.Model as IPlugin;
+            if (plugin != null)
+            {
+                e.IsBalloon = true;
+                e.StandardIcon = ToolTipControl.StandardIcons.InfoLarge;
+                e.Title = plugin.Name;
+                e.Text = plugin.Description + "\r\nVersion: " + plugin.Version;
+            }
+        }
+
+        private void ObjectListView1OnItemChecked(object sender, ItemCheckedEventArgs itemCheckedEventArgs)
+        {
+            settings.EnabledPluginsList = olvPlugins.CheckedObjects.Cast<IPlugin>().Select(l => l.Name).ToList();
+            BeginInvoke(new MethodInvoker(UpdatePluginsShortcutsInTrayContextMenu));
+        }
+
+        private void OlvPluginsOnDoubleClick(object sender, EventArgs eventArgs)
+        {
+            IPlugin plugin = olvPlugins.SelectedObject as IPlugin;
+            if (plugin != null && plugin.ConfigAvailable)
+            {
+                plugin.OnConfig();
+            }
         }
 
         #endregion
@@ -674,11 +663,14 @@ namespace AxTools.Forms
 
         private void OnPluginsLoaded()
         {
-            comboBoxWowPlugins.Items.Clear();
-            comboBoxWowPlugins.Items.AddRange(PluginManager.Plugins.Select(i => i.Name).Cast<object>().ToArray());
+            olvPlugins.SetObjects(PluginManager.Plugins);
+            foreach (IPlugin i in PluginManager.Plugins.Where(i => settings.EnabledPluginsList.Contains(i.Name)))
+            {
+                olvPlugins.CheckObject(i);
+            }
+            olvPlugins.ItemChecked += ObjectListView1OnItemChecked;
 
             contextMenuStripMain.Items.Clear();
-
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
             {
                 woWRadarToolStripMenuItem,
@@ -690,15 +682,13 @@ namespace AxTools.Forms
             foreach (IPlugin i in PluginManager.Plugins.Where(i => nativePlugins.Contains(i.GetType())))
             {
                 IPlugin plugin = i;
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate { TrayContextMenu_PluginClicked(plugin); }, "NativeN" + plugin.Name);
-                if (plugin.ConfigAvailable)
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
+                toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
                 {
-                    toolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("Settings", null, delegate
-                    {
-                        plugin.OnConfig();
-                    }));
-                    toolStripMenuItem.Click += (sender, args) => contextMenuStripMain.Hide();
-                }
+                    if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
+                    else if (plugin.ConfigAvailable) plugin.OnConfig();
+                };
+                toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
             if (PluginManager.Plugins.Count > nativePlugins.Length)
@@ -709,15 +699,13 @@ namespace AxTools.Forms
                     foreach (IPlugin i in PluginManager.Plugins.Where(i => !nativePlugins.Contains(i.GetType())))
                     {
                         IPlugin plugin = i;
-                        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, delegate { TrayContextMenu_PluginClicked(plugin); }, "NativeN" + plugin.Name);
-                        if (plugin.ConfigAvailable)
+                        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
+                        toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
                         {
-                            toolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("Settings", null, delegate
-                            {
-                                plugin.OnConfig();
-                            }));
-                            toolStripMenuItem.Click += (sender, args) => contextMenuStripMain.Hide();
-                        }
+                            if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
+                            else if (plugin.ConfigAvailable) plugin.OnConfig();
+                        };
+                        toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
                         customPlugins.DropDownItems.Add(toolStripMenuItem);
                     }
                 }
@@ -761,8 +749,8 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugin == null ? "Start" : "Stop", settings.WoWPluginHotkey);
-                comboBoxWowPlugins.Enabled = PluginManager.ActivePlugin == null;
+                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugins.Count == 0 ? "Start" : "Stop", settings.WoWPluginHotkey);
+                olvPlugins.Enabled = PluginManager.ActivePlugins.Count == 0;
                 UpdatePluginsShortcutsInTrayContextMenu();
             });
         }
@@ -771,7 +759,7 @@ namespace AxTools.Forms
         {
             BeginInvoke(new MethodInvoker(() =>
             {
-                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugin == null ? "Start" : "Stop", key);
+                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugins.Count == 0 ? "Start" : "Stop", key);
                 UpdatePluginsShortcutsInTrayContextMenu();
             }));
         }
@@ -936,15 +924,15 @@ namespace AxTools.Forms
         private void SwitchWoWPlugin()
         {
             buttonStartStopPlugin.Enabled = false;
-            if (PluginManager.ActivePlugin == null)
+            if (PluginManager.ActivePlugins.Count == 0)
             {
-                if (comboBoxWowPlugins.SelectedIndex != -1)
+                if (olvPlugins.CheckedObjects.Count != 0)
                 {
                     if (WoWManager.Hooked || WoWManager.HookWoWAndNotifyUserIfError())
                     {
                         if (WoWManager.WoWProcess.IsInGame)
                         {
-                            PluginManager.StartPlugin(PluginManager.Plugins.First(i => i.Name == comboBoxWowPlugins.Text));
+                            PluginManager.StartPlugins(olvPlugins.CheckedObjects.Cast<IPlugin>());
                         }
                         else
                         {
@@ -961,7 +949,7 @@ namespace AxTools.Forms
             {
                 try
                 {
-                    PluginManager.StopPlugin();
+                    PluginManager.StopPlugins();
                     //GC.Collect();
                 }
                 catch

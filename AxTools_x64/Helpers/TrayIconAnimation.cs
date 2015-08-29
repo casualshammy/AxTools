@@ -69,7 +69,7 @@ namespace AxTools.Helpers
 
         private static void ActualizingPhase()
         {
-            if (LuaConsole.TimerEnabled && PluginManager.ActivePlugin != null)
+            if (LuaConsole.TimerEnabled && PluginManager.ActivePlugins.Count != 0)
             {
                 _notifyIcon.Icon = AppIconPluginOnLuaOn;
             }
@@ -77,7 +77,7 @@ namespace AxTools.Helpers
             {
                 _notifyIcon.Icon = AppIconPluginOffLuaOn;
             }
-            else if (PluginManager.ActivePlugin != null)
+            else if (PluginManager.ActivePlugins.Count != 0)
             {
                 _notifyIcon.Icon = AppIconPluginOnLuaOff;
             }

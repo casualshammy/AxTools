@@ -26,11 +26,6 @@ namespace AxTools.WoW.PluginSystem
         Image TrayIcon { get; }
 
         /// <summary>
-        ///     Needed interval between pulses
-        /// </summary>
-        int Interval { get; }
-
-        /// <summary>
         ///     Icon in format "Interface\\\\Icons\\\\trade_fishing"
         /// </summary>
         string WowIcon { get; }
@@ -51,13 +46,9 @@ namespace AxTools.WoW.PluginSystem
         void OnStart();
 
         /// <summary>
-        ///     Work to be done when the plugin is pulsed each frame
-        /// </summary>
-        void OnPulse();
-
-        /// <summary>
         ///     Work to be done when the bot is shutdown/closed
         /// </summary>
         void OnStop();
+
     }
 }

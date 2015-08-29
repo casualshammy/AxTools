@@ -49,6 +49,7 @@ namespace AxTools.Forms
             LuaTimerHotkeyChanged(settings.LuaTimerHotkey);
             Log.Info(string.Format("{0}:{1} :: [Lua console] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
+        
 
         internal void SwitchTimer()
         {

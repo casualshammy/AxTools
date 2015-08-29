@@ -42,11 +42,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public Image TrayIcon { get { return Resources.trade_fishing; } }
 
-        public int Interval
-        {
-            get { return 100; }
-        }
-
         public string WowIcon
         {
             get { return "Interface\\\\Icons\\\\trade_fishing"; }
@@ -74,6 +69,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
             iterationStartTime = Environment.TickCount;
             lureSpecialBait = "if (not UnitBuff(\"player\", \"" + fishingSettings.SpecialBait + "\")) then " +
                               "if (GetItemCount(\"" + fishingSettings.SpecialBait + "\") > 0) then UseItemByName(\"" + fishingSettings.SpecialBait + "\") end end";
+            timer = this.CreateTimer(100, OnPulse);
+            timer.Start();
         }
 
         public void OnPulse()
@@ -81,12 +78,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
             if (Environment.TickCount - iterationStartTime > 25000)
             {
                 state = 0;
-                Utilities.LogPrint("Timeout has expired");
+                this.LogPrint("Timeout has expired");
             }
             switch (state)
             {
                 case 0:
-                    Utilities.LogPrint("Cast fishing...");
+                    this.LogPrint("Cast fishing...");
                     WoWDXInject.LuaDoString(castFishing);
                     Thread.Sleep(1500);
                     state = 1;
@@ -105,14 +102,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     }
                     if (localPlayer.ChannelSpellID == 0)
                     {
-                        Utilities.LogPrint("Player isn't fishing, recast...");
+                        this.LogPrint("Player isn't fishing, recast...");
                         state = 0;
                         break;
                     }
                     bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == localPlayer.GUID);
                     if (bobber != null && bobber.Bobbing) //4456449
                     {
-                        Utilities.LogPrint("Got bit!");
+                        this.LogPrint("Got bit!");
                         Thread.Sleep(Utils.Rnd.Next(500, 1000));
                         state = 2;
                     }
@@ -120,14 +117,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 case 2:
                     if (bobber != null)
                     {
-                        Utilities.LogPrint("Interacting...");
+                        this.LogPrint("Interacting...");
                         WoWDXInject.Interact(bobber.GUID);
                         bobber = null;
                         state = 3;
                     }
                     else
                     {
-                        Utilities.LogPrint("Bobber isn't found, recast...");
+                        this.LogPrint("Bobber isn't found, recast...");
                         state = 0;
                     }
                     break;
@@ -135,7 +132,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     if (WoWManager.WoWProcess.PlayerIsLooting)
                     {
                         state = 4;
-                        Utilities.LogPrint("Looting...");
+                        this.LogPrint("Looting...");
                     }
                     break;
                 case 4:
@@ -145,11 +142,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         if (Utils.Rnd.Next(0, 25) == 0)
                         {
                             int breakTime = Utils.Rnd.Next(15, 45);
-                            Utilities.LogPrint(string.Format("I'm human! Let's have a break ({0} sec)", breakTime));
+                            this.LogPrint(string.Format("I'm human! Let's have a break ({0} sec)", breakTime));
                             Thread.Sleep(breakTime * 1000);
                         }
                         //
-                        Utilities.LogPrint("Looted, applying lure...");
+                        this.LogPrint("Looted, applying lure...");
                         if (fishingSettings.UseSpecialBait)
                         {
                             WoWDXInject.LuaDoString(lureSpecialBait);
@@ -167,7 +164,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public void OnStop()
         {
-            
+            timer.Dispose();
         }
 
         #endregion
@@ -192,6 +189,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         internal FishingSettings fishingSettings;
         private string lureSpecialBait;
         private int state;
+        private SingleThreadTimer timer;
 
         #endregion
 

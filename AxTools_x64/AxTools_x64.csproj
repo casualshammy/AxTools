@@ -123,6 +123,9 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ObjectListView">
+      <HintPath>..\..\.NET libs\ObjectListView.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -166,6 +169,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WoW\Management\UInt128.cs" />
+    <Compile Include="WoW\PluginSystem\API\SingleThreadTimer.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.cs">
       <SubType>Form</SubType>
     </Compile>
