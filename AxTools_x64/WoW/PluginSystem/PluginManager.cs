@@ -35,7 +35,7 @@ namespace AxTools.WoW.PluginSystem
                         try
                         {
                             plugin.OnStart();
-                            Log.Info(string.Format("{0}:{1} :: [{2}] Plugin is started", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, plugin.Name));
+                            Log.Info(string.Format("{0} [{1}] Plugin is started", WoWManager.WoWProcess, plugin.Name));
                         }
                         catch (Exception ex)
                         {
@@ -78,12 +78,12 @@ namespace AxTools.WoW.PluginSystem
                         {
                             plugin.OnStop();
                             Log.Info(WoWManager.WoWProcess != null
-                                ? string.Format("{0}:{1} :: [{2}] Plugin is stopped", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, plugin.Name)
-                                : string.Format("UNKNOWN:null :: [{0}] Plugin is stopped", plugin.Name));
+                                ? string.Format("{0} [{1}] Plugin is stopped", WoWManager.WoWProcess, plugin.Name)
+                                : string.Format("[UNKNOWN] [{0}] Plugin is stopped", plugin.Name));
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(string.Format("Can't shutdown plugin [{0}]: {1}", plugin.Name, ex.Message));
+                            Log.Error(string.Format("{0} Can't shutdown plugin [{1}]: {2}", WoWManager.WoWProcess, plugin.Name, ex.Message));
                         }
                     }
                     if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)

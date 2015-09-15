@@ -25,8 +25,8 @@ namespace WoWPlugin_SpellGroundClicker
 
         public static void MouseEvent(MouseEventFlags value)
         {
-            Point position = GetCursorPosition();
-            mouse_event((int) value, position.X, position.Y, 0, 0);
+            Point point = GetCursorPosition();
+            mouse_event((int) value, point.X, point.Y, 0, 0);
         }
 
         [DllImport("user32.dll", EntryPoint = "SetCursorPos")]

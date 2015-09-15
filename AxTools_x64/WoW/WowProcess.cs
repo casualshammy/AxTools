@@ -101,15 +101,15 @@ namespace AxTools.WoW
                                         {
                                             byte[] hash = provider.ComputeHash(fileStream);
                                             isValidBuild = hash.SequenceEqual(WowBuildInfoX64.WoWHash) ? 1 : 0;
-                                            Log.Info(string.Format("{0}:{1} :: [WoW hook] Reference hash: {2}", Process.ProcessName, ProcessID, BitConverter.ToString(WowBuildInfoX64.WoWHash)));
-                                            Log.Info(string.Format("{0}:{1} :: [WoW hook] Actual hash:    {2}", Process.ProcessName, ProcessID, BitConverter.ToString(hash)));
-                                            Log.Info(string.Format("{0}:{1} :: [WoW hook] Hash is computed, took {2}ms", Process.ProcessName, ProcessID, stopwatch.ElapsedMilliseconds));
+                                            Log.Info(string.Format("{0} [WoW hook] Reference hash: {1}", ToString(), BitConverter.ToString(WowBuildInfoX64.WoWHash)));
+                                            Log.Info(string.Format("{0} [WoW hook] Actual hash:    {1}", ToString(), BitConverter.ToString(hash)));
+                                            Log.Info(string.Format("{0} [WoW hook] Hash is computed, took {1}ms", ToString(), stopwatch.ElapsedMilliseconds));
                                         }
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    Log.Error(string.Format("{0}:{1} :: [WoW hook] IsValidBuild error: {2}", Process.ProcessName, ProcessID, ex.Message));
+                                    Log.Error(string.Format("{0} [WoW hook] IsValidBuild error: {1}", ToString(), ex.Message));
                                     isValidBuild = 0;
                                 }
                             }
