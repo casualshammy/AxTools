@@ -17,7 +17,7 @@ namespace AxTools.WoW.PluginSystem.API
         /// <param name="text"></param>
         public static void LogPrint(this IPlugin plugin, object text)
         {
-            Log.Info(String.Format("{0} [Plugin: {1}] {2}", WoWManager.WoWProcess, plugin.Name, text));
+            Log.Info(string.Format("{0} [Plugin: {1}] {2}", WoWManager.WoWProcess, plugin.Name, text));
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static SingleThreadTimer CreateTimer(this IPlugin plugin, int interval, Action action)
         {
-            return new SingleThreadTimer(interval, action) {Plugin = plugin};
+            return new SingleThreadTimer(interval, action) { PluginName = plugin.Name };
         }
 
         public static string GetRandomString(int size)

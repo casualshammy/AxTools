@@ -74,7 +74,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             if (Environment.TickCount - iterationStartTime > 5000)
             {
-                Log.Info(String.Format("{0}:{1} :: [{2}] Timeout has expired (nothing to do?), state: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, state));
+                Log.Info(string.Format("{0}:{1} :: [{2}] Timeout has expired (nothing to do?), state: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, state));
                 state = 0;
             }
             switch (state)

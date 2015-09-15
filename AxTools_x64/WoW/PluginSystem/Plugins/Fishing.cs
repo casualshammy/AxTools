@@ -73,7 +73,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             timer.Start();
         }
 
-        public void OnPulse()
+        private void OnPulse()
         {
             if (Environment.TickCount - iterationStartTime > 25000)
             {
@@ -83,11 +83,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
             switch (state)
             {
                 case 0:
-                    this.LogPrint("Cast fishing...");
-                    WoWDXInject.LuaDoString(castFishing);
-                    Thread.Sleep(1500);
-                    state = 1;
-                    iterationStartTime = Environment.TickCount;
+                    if (!WoWManager.WoWProcess.PlayerIsLooting)
+                    {
+                        this.LogPrint("Cast fishing...");
+                        WoWDXInject.LuaDoString(castFishing);
+                        Thread.Sleep(1500);
+                        state = 1;
+                        iterationStartTime = Environment.TickCount;
+                    }
                     break;
                 case 1:
                     WoWPlayerMe localPlayer;
@@ -97,7 +100,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(String.Format("{0}:{1} :: [Fishing] Pulse error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                        Log.Error(string.Format("{0}:{1} :: [Fishing] Pulse error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                         break;
                     }
                     if (localPlayer.ChannelSpellID == 0)

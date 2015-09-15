@@ -16,7 +16,7 @@ namespace AxTools.WoW.PluginSystem.API
         private Thread thread;
 
         // optional variable
-        public IPlugin Plugin;
+        public string PluginName;
 
         public SingleThreadTimer(int interval, Action action)
         {
@@ -42,7 +42,7 @@ namespace AxTools.WoW.PluginSystem.API
                 flag = false;
                 if (!thread.Join(5000))
                 {
-                    throw new Exception(String.Format("{0}:{1} :: [{2}] SingleThreadTimer: Can't stop!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Plugin != null ? Plugin.Name : ""));
+                    throw new Exception(string.Format("{0}:{1} :: [{2}] SingleThreadTimer: Can't stop!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? ""));
                 }
                 thread = null;
             }
@@ -61,7 +61,7 @@ namespace AxTools.WoW.PluginSystem.API
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(String.Format("{0}:{1} :: [{2}] SingleThreadTimer error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Plugin != null ? Plugin.Name : "", ex.Message));
+                        Log.Error(string.Format("{0}:{1} :: [{2}] SingleThreadTimer error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? "", ex.Message));
                     }
                 }
                 int shouldWait = (int) (interval - balancingStopwatch.ElapsedMilliseconds);

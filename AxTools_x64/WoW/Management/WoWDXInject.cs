@@ -41,10 +41,10 @@ namespace AxTools.WoW.Management
         {
             _wowProcess = process;
             TimerForMemory.Start();
-            byte[] hookOriginalBytes = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
+            byte[] hookOriginalBytes = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength);
             if (HookPtrSignatureIsValid(hookOriginalBytes))
             {
-                Log.Info(string.Format("{0}:{1} :: [WoW hook] Signature is valid, address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr).ToInt64()));
+                Log.Info(string.Format("{0}:{1} :: [WoW hook] Signature is valid, address: 0x{2:X}", _wowProcess.ProcessName, _wowProcess.ProcessID, (_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render).ToInt64()));
                 return true;
             }
             Log.Error(string.Format("{0}:{1} :: [WoW hook] Hook point has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(hookOriginalBytes)));
@@ -123,10 +123,10 @@ namespace AxTools.WoW.Management
 
         private static byte[] CreateByteCode(byte[] userFunction)
         {
-            byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
-            byte[] firstInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr).ToInt64());
-            byte[] secondInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr + 4).ToInt64());
-            byte[] thirdInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr + 8).ToInt64());
+            byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength);
+            byte[] firstInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render).ToInt64());
+            byte[] secondInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render + 4).ToInt64());
+            byte[] thirdInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render + 8).ToInt64());
             byte[] originalPtr = firstInt;
             byte[] ret = new byte[]
             {
@@ -186,7 +186,7 @@ namespace AxTools.WoW.Management
         {
             lock (_executeLock)
             {
-                byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength);
+                byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength);
                 if (HookPtrSignatureIsValid(originalCode))
                 {
                     byte[] hookJmpBytes = BitConverter.GetBytes(injectedFunction.ToInt64());
@@ -196,10 +196,10 @@ namespace AxTools.WoW.Management
                         0xFF, 0xE0 // jmp rax
                     };
                     uint lpflOldProtect;
-                    NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, (UIntPtr) WowBuildInfoX64.HookLength, PAGE_EXECUTE_READWRITE, out lpflOldProtect);
-                    _wowProcess.Memory.WriteBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, byteCode);
+                    NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, (UIntPtr) WowBuildInfoX64.HookLength, PAGE_EXECUTE_READWRITE, out lpflOldProtect);
+                    _wowProcess.Memory.WriteBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, byteCode);
                     int counter = 0;
-                    while (!_wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, WowBuildInfoX64.HookLength).SequenceEqual(originalCode))
+                    while (!_wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength).SequenceEqual(originalCode))
                     {
                         Thread.Sleep(1);
                         counter++;
@@ -208,7 +208,7 @@ namespace AxTools.WoW.Management
                             AppSpecUtils.NotifyUser("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Please activate WoW window!", NotifyUserType.Warn, true);
                         }
                     }
-                    NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.HookAddr, (UIntPtr) WowBuildInfoX64.HookLength, lpflOldProtect, out lpflOldProtect);
+                    NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, (UIntPtr) WowBuildInfoX64.HookLength, lpflOldProtect, out lpflOldProtect);
                 }
                 else
                 {

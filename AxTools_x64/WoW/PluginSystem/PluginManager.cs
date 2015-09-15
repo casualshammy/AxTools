@@ -35,7 +35,7 @@ namespace AxTools.WoW.PluginSystem
                         try
                         {
                             plugin.OnStart();
-                            Log.Info(String.Format("{0}:{1} :: [{2}] Plugin is started", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, plugin.Name));
+                            Log.Info(string.Format("{0}:{1} :: [{2}] Plugin is started", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, plugin.Name));
                         }
                         catch (Exception ex)
                         {

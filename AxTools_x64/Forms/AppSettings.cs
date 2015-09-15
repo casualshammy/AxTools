@@ -120,7 +120,7 @@ namespace AxTools.Forms
             tabControl.SelectedIndex = tabPage;
         }
 
-        private void CheckBox9CheckedChanged(Object sender, EventArgs e)
+        private void CheckBox9CheckedChanged(object sender, EventArgs e)
         {
             if (isSettingsLoaded)
             {
@@ -164,7 +164,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void CheckBox7CheckedChanged(Object sender, EventArgs e)
+        private void CheckBox7CheckedChanged(object sender, EventArgs e)
         {
             if (isSettingsLoaded)
             {
@@ -172,7 +172,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void CheckBox6CheckedChanged(Object sender, EventArgs e)
+        private void CheckBox6CheckedChanged(object sender, EventArgs e)
         {
             if (isSettingsLoaded)
             {
@@ -184,7 +184,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void TextBox7TextChanged(Object sender, EventArgs e)
+        private void TextBox7TextChanged(object sender, EventArgs e)
         {
             if (isSettingsLoaded)
             {
@@ -200,7 +200,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void TextBox6TextChanged(Object sender, EventArgs e)
+        private void TextBox6TextChanged(object sender, EventArgs e)
         {
             if (isSettingsLoaded)
             {
@@ -216,7 +216,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void TextBox5TextChanged(Object sender, EventArgs e)
+        private void TextBox5TextChanged(object sender, EventArgs e)
         {
             if (isSettingsLoaded)
             {
@@ -232,7 +232,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void TextBox4TextChanged(Object sender, EventArgs e)
+        private void TextBox4TextChanged(object sender, EventArgs e)
         {
             if (isSettingsLoaded)
             {

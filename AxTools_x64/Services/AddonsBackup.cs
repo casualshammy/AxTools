@@ -183,7 +183,7 @@ namespace AxTools.Services
 
         private static void Zip()
         {
-            string zipPath = String.Format("{0}\\AddonsBackup_{1:yyyyMMdd_HHmmss}.zip", _settings.WoWAddonsBackupPath, DateTime.UtcNow);
+            string zipPath = string.Format("{0}\\AddonsBackup_{1:yyyyMMdd_HHmmss}.zip", _settings.WoWAddonsBackupPath, DateTime.UtcNow);
             Log.Info("[BackupAddons] Zipping to file: " + zipPath);
             using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
             {

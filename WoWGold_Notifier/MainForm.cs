@@ -27,12 +27,17 @@ namespace WoWGold_Notifier
         private readonly string logFilePath = Application.StartupPath + "\\log.txt";
         private readonly Stopwatch stopwatch;
         private CookieContainer cookies;
-        private static int _timerDefaultInterval = 100;
+        private static int _timerStartInterval = 500;
         private const int TIMER_INTERVAL = 100;
         private static readonly Uri SITE = new Uri("http://supply.elfmoney.ru");
         private const string ButtonToClickText = "Выполнить";
-        private const string ServerName = "Гордунни";
+        private readonly string[] serverNames =
+        {
+            "Гордунни",
+            "Черный Шрам"
+        };
         private const int MaxValue = 40000;
+        private bool useProxy;
 
         public MainForm()
         {
@@ -56,20 +61,21 @@ namespace WoWGold_Notifier
         private void On503Error()
         {
             labelResponse.Text = "Response: 503 Error";
-            _timerDefaultInterval += 5;
+            _timerStartInterval += 5;
         }
 
         private void ProcessPage()
         {
-            _timerDefaultInterval = Math.Max(_timerDefaultInterval - 1, TIMER_INTERVAL);
+            _timerStartInterval = Math.Max(_timerStartInterval - 1, TIMER_INTERVAL);
             try
             {
+                useProxy = !useProxy;
                 string source = HttpGet(SITE);
                 if (source.Contains("503 Service Temporarily Unavailable"))
                 {
                     On503Error();
                 }
-                else if (!source.Contains(ButtonToClickText))
+                else if (!source.Contains(ButtonToClickText) && !source.Contains("Выполняется"))
                 {
                     labelResponse.Text = "Response: Auth error?";
                 }
@@ -87,7 +93,7 @@ namespace WoWGold_Notifier
                         if (btn.InnerText.Contains(ButtonToClickText))
                         {
                             string server = node.Descendants("td").ToArray()[2].InnerText;
-                            if (server.Contains(ServerName) && shouldInformUser)
+                            if (shouldInformUser && serverNames.Any(l => server.Contains(l)))
                             {
                                 int amount = int.Parse(node.Descendants("td").ToArray()[4].InnerText.Split(',')[0]);
                                 if (amount > 0 && amount <= MaxValue)
@@ -136,6 +142,10 @@ namespace WoWGold_Notifier
         private string HttpGet(Uri uri)
         {
             HttpWebRequest req = (HttpWebRequest) WebRequest.Create(uri);
+            //if (useProxy)
+            //{
+            //    req.Proxy = new WebProxy(new Uri(Proxy), true);
+            //}
             req.Method = "GET";
             req.UserAgent = "Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))";
             req.CookieContainer = cookies;
@@ -166,9 +176,9 @@ namespace WoWGold_Notifier
                 {
                     label1.Text = string.Format("Last updated: {0:HH:mm:ss.fff}", DateTime.Now);
                     labelPerformance.Text = "Performance: " + elapsedMilliseconds + "ms";
-                    labelThreads.Text = "Interval: " + _timerDefaultInterval;
+                    labelThreads.Text = "Interval: " + _timerStartInterval;
                 }));
-                int counter = (int) (_timerDefaultInterval - stopwatch.ElapsedMilliseconds);
+                int counter = (int) (_timerStartInterval - stopwatch.ElapsedMilliseconds);
                 if (counter > 0)
                 {
                     Thread.Sleep(counter);

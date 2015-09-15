@@ -64,7 +64,7 @@ namespace AxTools.Forms
             if (comboBoxWowAccounts.SelectedIndex != -1)
             {
                 textBoxWowAccountLogin.Text = WoWAccount.AllAccounts[comboBoxWowAccounts.SelectedIndex].Login;
-                textBoxWowAccountPassword.Text = new String('*', WoWAccount.AllAccounts[comboBoxWowAccounts.SelectedIndex].Password.Length);
+                textBoxWowAccountPassword.Text = new string('*', WoWAccount.AllAccounts[comboBoxWowAccounts.SelectedIndex].Password.Length);
             }
             
         }

@@ -48,7 +48,7 @@ namespace AxTools.Forms
             progressBarAddonsBackup.Location = linkBackup.Location;
             progressBarAddonsBackup.Visible = false;
 
-            Log.Info(String.Format("Launching... ({0})", Globals.AppVersion));
+            Log.Info(string.Format("Launching... ({0})", Globals.AppVersion));
             Icon = Resources.AppIcon;
             AppSpecUtils.Legacy();
             OnSettingsLoaded();
@@ -137,7 +137,7 @@ namespace AxTools.Forms
                 Clicker.Stop();
                 WowProcess cProcess = WowProcess.List.FirstOrDefault(i => i.MainWindowHandle == Clicker.Handle);
                 Log.Info(cProcess != null
-                    ? String.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
+                    ? string.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
                     : "UNKNOWN:null :: [Clicker] Disabled");
             }
             else
@@ -205,13 +205,13 @@ namespace AxTools.Forms
             if (WoWManager.Hooked)
             {
                 WoWManager.Unhook();
-                Log.Info(String.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+                Log.Info(string.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
             foreach (WowProcess i in WowProcess.List)
             {
                 string name = i.ProcessName;
                 i.Dispose();
-                Log.Info(String.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, i.ProcessID));
+                Log.Info(string.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, i.ProcessID));
             }
             KeyboardListener.Stop();
             Log.Info("AxTools closed");
@@ -328,10 +328,14 @@ namespace AxTools.Forms
             foreach (IPlugin plugin in PluginManager.Plugins)
             {
                 ToolStripItem[] items = contextMenuStripMain.Items.Find("NativeN" + plugin.Name, true);
-                foreach (ToolStripMenuItem item in items)
+                foreach (ToolStripItem toolStripItem in items)
                 {
-                    item.ShortcutKeyDisplayString = olvPlugins.CheckedObjects.Cast<IPlugin>().FirstOrDefault(i => i.Name == item.Text) != null ? settings.WoWPluginHotkey.ToString() : null;
-                    item.Enabled = PluginManager.ActivePlugins.Count == 0;
+                    ToolStripMenuItem item = toolStripItem as ToolStripMenuItem;
+                    if (item != null)
+                    {
+                        item.ShortcutKeyDisplayString = olvPlugins.CheckedObjects.Cast<IPlugin>().FirstOrDefault(i => i.Name == item.Text) != null ? settings.WoWPluginHotkey.ToString() : null;
+                        item.Enabled = PluginManager.ActivePlugins.Count == 0;
+                    }
                 }
             }
             stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManager.ActivePlugins.Count != 0;
@@ -570,7 +574,7 @@ namespace AxTools.Forms
             if (WoWManager.Hooked)
             {
                 WoWManager.Unhook();
-                Log.Info(String.Format("{0}:{1} :: Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+                Log.Info(string.Format("{0}:{1} :: Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
             if (!WoWManager.Hooked)
             {
@@ -617,9 +621,16 @@ namespace AxTools.Forms
         private void OlvPluginsOnDoubleClick(object sender, EventArgs eventArgs)
         {
             IPlugin plugin = olvPlugins.SelectedObject as IPlugin;
-            if (plugin != null && plugin.ConfigAvailable)
+            if (plugin != null)
             {
-                plugin.OnConfig();
+                if (plugin.ConfigAvailable)
+                {
+                    plugin.OnConfig();
+                }
+                else
+                {
+                    AppSpecUtils.NotifyUser("This plugin hasn't settings dialog", null, NotifyUserType.Info, false);
+                }
             }
         }
 
@@ -687,6 +698,7 @@ namespace AxTools.Forms
                 {
                     if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
                     else if (plugin.ConfigAvailable) plugin.OnConfig();
+                    contextMenuStripMain.Hide();
                 };
                 toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
@@ -704,6 +716,7 @@ namespace AxTools.Forms
                         {
                             if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
                             else if (plugin.ConfigAvailable) plugin.OnConfig();
+                            contextMenuStripMain.Hide();
                         };
                         toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
                         customPlugins.DropDownItems.Add(toolStripMenuItem);
@@ -841,17 +854,20 @@ namespace AxTools.Forms
                     int counter = 300;
                     while (counter > 0)
                     {
-                        process.Refresh();
-                        if (process.MainWindowHandle != (IntPtr) 0)
+                        if (process != null)
                         {
-                            IntPtr windowHandle = NativeMethods.FindWindow(null, "Ventrilo");
-                            if (windowHandle != IntPtr.Zero)
+                            process.Refresh();
+                            if (process.MainWindowHandle != (IntPtr) 0)
                             {
-                                IntPtr connectButtonHandle = NativeMethods.FindWindowEx(windowHandle, IntPtr.Zero, "Button", "C&onnect");
-                                if (connectButtonHandle != IntPtr.Zero)
+                                IntPtr windowHandle = NativeMethods.FindWindow(null, "Ventrilo");
+                                if (windowHandle != IntPtr.Zero)
                                 {
-                                    NativeMethods.PostMessage(connectButtonHandle, WM_MESSAGE.WM_BM_CLICK, IntPtr.Zero, IntPtr.Zero);
-                                    break;
+                                    IntPtr connectButtonHandle = NativeMethods.FindWindowEx(windowHandle, IntPtr.Zero, "Button", "C&onnect");
+                                    if (connectButtonHandle != IntPtr.Zero)
+                                    {
+                                        NativeMethods.PostMessage(connectButtonHandle, WM_MESSAGE.WM_BM_CLICK, IntPtr.Zero, IntPtr.Zero);
+                                        break;
+                                    }
                                 }
                             }
                         }

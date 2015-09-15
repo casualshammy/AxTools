@@ -248,7 +248,7 @@ namespace AxTools.Forms
 
         private void metroTextBoxTimerInterval_TextChanged(object sender, EventArgs e)
         {
-            Int32.TryParse(metroTextBoxTimerInterval.Text, out settings.WoWLuaConsoleTimerInterval);
+            int.TryParse(metroTextBoxTimerInterval.Text, out settings.WoWLuaConsoleTimerInterval);
         }
 
         private void LuaTimerHotkeyChanged(Keys key)
@@ -317,7 +317,7 @@ namespace AxTools.Forms
                     new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                     return;
                 }
-                if (!Int32.TryParse(metroTextBoxTimerInterval.Text, out settings.WoWLuaConsoleTimerInterval) || settings.WoWLuaConsoleTimerInterval < 50)
+                if (!int.TryParse(metroTextBoxTimerInterval.Text, out settings.WoWLuaConsoleTimerInterval) || settings.WoWLuaConsoleTimerInterval < 50)
                 {
                     TaskDialog.Show("Incorrect input!", "AxTools", "Interval must be a number more or equal 50", TaskDialogButton.OK, TaskDialogIcon.Warning);
                     return;

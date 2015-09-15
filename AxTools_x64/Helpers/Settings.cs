@@ -129,7 +129,7 @@ namespace AxTools.Helpers
         #region General
 
         [JsonProperty(Order = 0, PropertyName = "UserID")]
-        internal string UserID = String.Empty;
+        internal string UserID = string.Empty;
 
         [JsonProperty(Order = 1, PropertyName = "LastUsedVersion")]
         internal VersionExt LastUsedVersion = new VersionExt(0, 0, 0);
@@ -148,7 +148,7 @@ namespace AxTools.Helpers
         #region WoW
 
         [JsonProperty(Order = 5, PropertyName = "WoWDirectory")]
-        internal string WoWDirectory = String.Empty;
+        internal string WoWDirectory = string.Empty;
 
         [JsonProperty(Order = 6, PropertyName = "WoWAccounts")]
         internal byte[] WoWAccounts = new byte[0];
@@ -183,7 +183,7 @@ namespace AxTools.Helpers
         #region VoIP
 
         [JsonProperty(Order = 18, PropertyName = "MumbleDirectory")]
-        internal string MumbleDirectory = String.Empty;
+        internal string MumbleDirectory = string.Empty;
 
         [JsonProperty(Order = 19, PropertyName = "MumbleStartWithWoW")]
         internal bool MumbleStartWithWoW = false;
@@ -191,7 +191,7 @@ namespace AxTools.Helpers
 
 
         [JsonProperty(Order = 20, PropertyName = "RaidcallDirectory")]
-        internal string RaidcallDirectory = String.Empty;
+        internal string RaidcallDirectory = string.Empty;
 
         [JsonProperty(Order = 21, PropertyName = "RaidcallStartWithWoW")]
         internal bool RaidcallStartWithWoW = false;
@@ -199,7 +199,7 @@ namespace AxTools.Helpers
 
 
         [JsonProperty(Order = 22, PropertyName = "TS3Directory")]
-        internal string TS3Directory = String.Empty;
+        internal string TS3Directory = string.Empty;
 
         [JsonProperty(Order = 23, PropertyName = "TS3StartWithWoW")]
         internal bool TS3StartWithWoW = false;
@@ -207,7 +207,7 @@ namespace AxTools.Helpers
 
 
         [JsonProperty(Order = 24, PropertyName = "VentriloDirectory")]
-        internal string VentriloDirectory = String.Empty;
+        internal string VentriloDirectory = string.Empty;
 
         [JsonProperty(Order = 25, PropertyName = "VentriloStartWithWoW")]
         internal bool VentriloStartWithWoW = false;
@@ -386,13 +386,13 @@ namespace AxTools.Helpers
                     if (regVersion != null && regVersion.GetValue("") != null)
                     {
                         string raw = regVersion.GetValue("").ToString();
-                        return raw.Replace("\"", String.Empty).Replace("\\ts3client_win64.exe %1", String.Empty).Replace("\\ts3client_win32.exe %1", String.Empty);
+                        return raw.Replace("\"", string.Empty).Replace("\\ts3client_win64.exe %1", string.Empty).Replace("\\ts3client_win32.exe %1", string.Empty);
                     }
-                    return String.Empty;
+                    return string.Empty;
                 }
                 catch
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }
@@ -407,13 +407,13 @@ namespace AxTools.Helpers
                     {
                         // "C:\Program Files\RaidCall\StartRC.exe" "%1"
                         string raw = regVersion.GetValue("").ToString();
-                        return raw.Replace("\"", String.Empty).Replace("\\StartRC.exe %1", String.Empty);
+                        return raw.Replace("\"", string.Empty).Replace("\\StartRC.exe %1", string.Empty);
                     }
-                    return String.Empty;
+                    return string.Empty;
                 }
                 catch
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }
@@ -427,13 +427,13 @@ namespace AxTools.Helpers
                     if (regVersion != null && regVersion.GetValue("") != null)
                     {
                         string raw = regVersion.GetValue("").ToString();
-                        return raw.Replace("\"", String.Empty).Replace("\\Ventrilo.exe -l%1", String.Empty).Replace("PROGRA~1", "Program Files").Replace("PROGRA~2", "Program Files (x86)");
+                        return raw.Replace("\"", string.Empty).Replace("\\Ventrilo.exe -l%1", string.Empty).Replace("PROGRA~1", "Program Files").Replace("PROGRA~2", "Program Files (x86)");
                     }
-                    return String.Empty;
+                    return string.Empty;
                 }
                 catch
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }
@@ -447,14 +447,14 @@ namespace AxTools.Helpers
                     if (regVersion != null && regVersion.GetValue("") != null)
                     {
                         string raw = regVersion.GetValue("").ToString();
-                        string path = raw.Replace("\\mumble.exe \"%1\"", String.Empty);
+                        string path = raw.Replace("\\mumble.exe \"%1\"", string.Empty);
                         return path;
                     }
-                    return String.Empty;
+                    return string.Empty;
                 }
                 catch
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }
@@ -468,13 +468,13 @@ namespace AxTools.Helpers
                     if (regVersion != null && regVersion.GetValue("InstallPath") != null)
                     {
                         string raw = regVersion.GetValue("InstallPath").ToString();
-                        return raw.Replace("\"", String.Empty).Replace("World of Warcraft\\", "World of Warcraft");
+                        return raw.Replace("\"", string.Empty).Replace("World of Warcraft\\", "World of Warcraft");
                     }
-                    return String.Empty;
+                    return string.Empty;
                 }
                 catch
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }

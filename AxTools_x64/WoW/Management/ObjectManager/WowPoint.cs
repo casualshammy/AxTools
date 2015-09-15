@@ -41,7 +41,7 @@ namespace AxTools.WoW.Management.ObjectManager
 
         public override string ToString()
         {
-            return String.Format("{0},{1},{2}", (int) X, (int) Y, (int) Z);
+            return string.Format("{0},{1},{2}", (int) X, (int) Y, (int) Z);
         }
 
         public static WowPoint operator -(WowPoint left, WowPoint right)

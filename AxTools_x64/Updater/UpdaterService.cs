@@ -125,7 +125,7 @@ namespace AxTools.Updater
                 Log.Error(string.Format("[Updater] Fetching info error ({0}): {1}", ex.GetType(), ex.Message));
                 return;
             }
-            if (!String.IsNullOrWhiteSpace(updateString))
+            if (!string.IsNullOrWhiteSpace(updateString))
             {
                 try
                 {

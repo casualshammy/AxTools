@@ -51,7 +51,7 @@ namespace AxTools.Helpers
                 using (MailMessage mailMessage = new MailMessage("axtoolslogsender@gmail.com", "axio@axio.name"))
                 {
                     mailMessage.SubjectEncoding = Encoding.UTF8;
-                    mailMessage.Subject = string.IsNullOrWhiteSpace(subject) ? String.Format("Error log from {0}", Settings.Instance.UserID) : String.Format("Error log from {0} ({1})", Settings.Instance.UserID, subject);
+                    mailMessage.Subject = string.IsNullOrWhiteSpace(subject) ? string.Format("Error log from {0}", Settings.Instance.UserID) : string.Format("Error log from {0} ({1})", Settings.Instance.UserID, subject);
                     mailMessage.BodyEncoding = Encoding.UTF8;
                     mailMessage.Body = File.ReadAllText(Globals.LogFileName, Encoding.UTF8);
                     smtpClient.Send(mailMessage);

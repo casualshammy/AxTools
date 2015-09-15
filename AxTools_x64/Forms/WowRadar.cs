@@ -89,7 +89,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Error(String.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                Log.Error(string.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
             }
 
             checkBoxFriends.CheckedChanged += SaveCheckBoxes;
@@ -108,7 +108,7 @@ namespace AxTools.Forms
                 BeginInvoke((MethodInvoker) (() => { labelHint.Visible = false; }));
             });
 
-            Log.Info(String.Format("{0}:{1} :: [Radar] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0}:{1} :: [Radar] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void Redraw()
@@ -128,7 +128,7 @@ namespace AxTools.Forms
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(String.Format("{0}:{1} :: [Radar] OOG drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                        Log.Error(string.Format("{0}:{1} :: [Radar] OOG drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                     }
                     Thread.Sleep(100);
                     continue;
@@ -139,7 +139,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(String.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                    Log.Error(string.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
                     Thread.Sleep(100);
@@ -194,7 +194,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(String.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                    Log.Error(string.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
                     Thread.Sleep(100);
@@ -206,7 +206,7 @@ namespace AxTools.Forms
                     Thread.Sleep(counter);
                 }
             }
-            Log.Info(String.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void PictureBox1Paint(object sender, PaintEventArgs e)
@@ -217,12 +217,12 @@ namespace AxTools.Forms
                 {
                     flicker = !flicker;
                     int friendsCountAlive = friends.Count(i => i.Health > 0);
-                    checkBoxFriends.Text = String.Concat("F: ", friendsCountAlive.ToString(), "/", friends.Length.ToString());
+                    checkBoxFriends.Text = string.Concat("F: ", friendsCountAlive.ToString(), "/", friends.Length.ToString());
                     int enemiesCountAlive = enemies.Count(i => i.Health > 0);
-                    checkBoxEnemies.Text = String.Concat("E: ", enemiesCountAlive.ToString(), "/", enemies.Length.ToString());
-                    checkBoxObjects.Text = String.Concat("Objects: ", objects.Length.ToString());
+                    checkBoxEnemies.Text = string.Concat("E: ", enemiesCountAlive.ToString(), "/", enemies.Length.ToString());
+                    checkBoxObjects.Text = string.Concat("Objects: ", objects.Length.ToString());
                     int npcsCountAlive = npcs.Count(i => i.Health > 0);
-                    checkBoxNpcs.Text = String.Concat("N: ", npcsCountAlive.ToString(), "/", npcs.Length.ToString());
+                    checkBoxNpcs.Text = string.Concat("N: ", npcsCountAlive.ToString(), "/", npcs.Length.ToString());
 
                     objectsPointsInRadarCoords.Clear();
 
@@ -308,11 +308,11 @@ namespace AxTools.Forms
                                 }
                                 else if (i.Level > localPlayer.Level)
                                 {
-                                    graphics.DrawString(String.Concat(i.Class.ToString(), "+"), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
+                                    graphics.DrawString(string.Concat(i.Class.ToString(), "+"), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
                                 }
                                 else
                                 {
-                                    graphics.DrawString(String.Concat(i.Class.ToString(), "-"), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
+                                    graphics.DrawString(string.Concat(i.Class.ToString(), "-"), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
                                 }
                             }
                         }
@@ -379,11 +379,11 @@ namespace AxTools.Forms
                                 }
                                 else if (i.Level > localPlayer.Level)
                                 {
-                                    graphics.DrawString(String.Concat(i.Class.ToString(), "+"), DefaultFont, solidBrush, point);
+                                    graphics.DrawString(string.Concat(i.Class.ToString(), "+"), DefaultFont, solidBrush, point);
                                 }
                                 else
                                 {
-                                    graphics.DrawString(String.Concat(i.Class.ToString(), "-"), DefaultFont, solidBrush, point);
+                                    graphics.DrawString(string.Concat(i.Class.ToString(), "-"), DefaultFont, solidBrush, point);
                                 }
                             }
                         }
@@ -495,7 +495,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(String.Format("{0}:{1} :: Radar: Drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                    Log.Error(string.Format("{0}:{1} :: Radar: Drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
                 }
             }
             else
@@ -595,13 +595,13 @@ namespace AxTools.Forms
             isRunning = false;
             if (!thread.Join(5000))
             {
-                Log.Error(String.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, thread.ThreadState));
+                Log.Error(string.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, thread.ThreadState));
             }
             else
             {
-                Log.Info(String.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+                Log.Info(string.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
-            Log.Info(String.Format("{0}:{1} :: [Radar] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0}:{1} :: [Radar] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
         private void RadarLoad(object sender, EventArgs e)
@@ -649,20 +649,20 @@ namespace AxTools.Forms
                     if (unit != null)
                     {
                         DrawTooltip(mousePosition,
-                            String.Concat("   ", unit.Name, "  \r\n   (", unit.Class.ToString(), "*", unit.Level.ToString(), ") ",
+                            string.Concat("   ", unit.Name, "  \r\n   (", unit.Class.ToString(), "*", unit.Level.ToString(), ") ",
                                 ((uint) (unit.Health/(float) unit.HealthMax*100)).ToString(), "%"), unit.Class);
                         return;
                     }
                     WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
                     if (npc != null)
                     {
-                        DrawTooltip(mousePosition, String.Concat("   ", npc.Name, "  \r\n   ", ((uint) (npc.Health/(float) npc.HealthMax*100)).ToString(), "%"), WowPlayerClass.War);
+                        DrawTooltip(mousePosition, string.Concat("   ", npc.Name, "  \r\n   ", ((uint) (npc.Health/(float) npc.HealthMax*100)).ToString(), "%"), WowPlayerClass.War);
                         return;
                     }
                     WowObject _object = wowObjects.FirstOrDefault(i => i.GUID == pair.Key);
                     if (_object != null)
                     {
-                        DrawTooltip(mousePosition, String.Concat("   ", _object.Name, "  "), WowPlayerClass.Rog);
+                        DrawTooltip(mousePosition, string.Concat("   ", _object.Name, "  "), WowPlayerClass.Rog);
                         return;
                     }
                 }

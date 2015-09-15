@@ -54,11 +54,11 @@ namespace AxTools.WoW.Management
                                 return false;
                             }
                         }
-                        Log.Info(String.Format("{0}:{1} :: [WoW hook] Player isn't logged in", wowProcess.ProcessName, wowProcess.ProcessID));
+                        Log.Info(string.Format("{0}:{1} :: [WoW hook] Player isn't logged in", wowProcess.ProcessName, wowProcess.ProcessID));
                         AppSpecUtils.NotifyUser("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
                         return false;
                     }
-                    Log.Error(String.Format("{0}:{1} :: [WoW hook] Incorrect WoW build", wowProcess.ProcessName, wowProcess.ProcessID));
+                    Log.Error(string.Format("{0}:{1} :: [WoW hook] Incorrect WoW build", wowProcess.ProcessName, wowProcess.ProcessID));
                     AppSpecUtils.NotifyUser("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
                     return false;
                 }

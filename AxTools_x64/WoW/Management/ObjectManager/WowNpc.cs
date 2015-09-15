@@ -45,7 +45,7 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
-        internal string Name
+        public string Name
         {
             get
             {
@@ -84,12 +84,12 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
-        private uint mHealth = UInt32.MaxValue;
+        private uint mHealth = uint.MaxValue;
         public uint Health
         {
             get
             {
-                if (mHealth == UInt32.MaxValue)
+                if (mHealth == uint.MaxValue)
                 {
                     mHealth = WoWManager.WoWProcess.Memory.Read<uint>(Descriptors + WowBuildInfoX64.UnitHealth);
                 }
@@ -97,12 +97,12 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
-        private uint mHealthMax = UInt32.MaxValue;
-        internal uint HealthMax
+        private uint mHealthMax = uint.MaxValue;
+        public uint HealthMax
         {
             get
             {
-                if (mHealthMax == UInt32.MaxValue)
+                if (mHealthMax == uint.MaxValue)
                 {
                     mHealthMax = WoWManager.WoWProcess.Memory.Read<uint>(Descriptors + WowBuildInfoX64.UnitHealthMax);
                 }

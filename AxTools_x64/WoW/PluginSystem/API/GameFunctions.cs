@@ -20,6 +20,21 @@ namespace AxTools.WoW.PluginSystem.API
             WoWDXInject.Interact(guid);
         }
 
+        public static void Target(this WowNpc wowNpc)
+        {
+            WoWDXInject.TargetUnit(wowNpc.GUID);
+        }
+
+        public static void Target(this WowPlayer wowPlayer)
+        {
+            WoWDXInject.TargetUnit(wowPlayer.GUID);
+        }
+
+        public static void Target(UInt128 guid)
+        {
+            WoWDXInject.TargetUnit(guid);
+        }
+
         public static void MoveTo(WowPoint point)
         {
             WoWDXInject.MoveTo(point);

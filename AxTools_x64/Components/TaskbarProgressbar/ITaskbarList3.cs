@@ -29,7 +29,7 @@ namespace AxTools.Components.TaskbarProgressbar
         void MarkFullscreenWindow(IntPtr hwnd, [MarshalAs(UnmanagedType.Bool)] bool fFullscreen);
 
         // ITaskbarList3
-        void SetProgressValue(IntPtr hwnd, UInt64 ullCompleted, UInt64 ullTotal);
+        void SetProgressValue(IntPtr hwnd, ulong ullCompleted, ulong ullTotal);
         void SetProgressState(IntPtr hwnd, ThumbnailProgressState tbpFlags);
     }
 }

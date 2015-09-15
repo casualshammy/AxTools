@@ -41,7 +41,7 @@ namespace AxTools.Helpers
         /// <returns></returns>
         internal static string AsString<T>(this IEnumerable<T> array)
         {
-            return array.Aggregate("{", (current, s) => current + String.Format(" {0},", s)) + " }";
+            return array.Aggregate("{", (current, s) => current + string.Format(" {0},", s)) + " }";
         }
 
         internal static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
