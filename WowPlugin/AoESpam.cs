@@ -52,21 +52,7 @@ namespace TestPlugin
         {
             try
             {
-                string p = Lua.GetFunctionReturn("tostring(select(1, GetSpellCooldown(\"" + spellName + "\")))");
-                if (p == "0")
-                {
-                    WoWPlayerMe localPlayer = ObjMgr.Pulse();
-                    if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
-                    {
-                        Lua.LuaDoString("CastSpellByName(\"" + spellName + "\")");
-                        Thread.Sleep(250);
-                        Functions.TerrainClick(state ? TerrainClickStruct.FromWowPoint(new WowPoint(5701, 796, 90)) : TerrainClickStruct.FromWowPoint(new WowPoint(5707, 780, 90)));
-                        state = !state;
-                        // new WowPoint(5701, 796, 90)
-                        // TerrainClickStruct.FromWowPoint(localPlayer.Location)
-                        Thread.Sleep(1000);
-                    }
-                }
+                
             }
             catch (Exception)
             {
