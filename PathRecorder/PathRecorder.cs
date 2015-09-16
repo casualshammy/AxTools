@@ -20,7 +20,8 @@ namespace PathRecorder
 
         public string Description { get { return "Records path (resolution = 0.25 sec)"; } }
 
-        public Image TrayIcon { get { return null; } }
+        private Image trayIcon;
+        public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\Achievement_faction_lorewalkers.png", Application.StartupPath, Name))); } }
 
         public string WowIcon { get { return string.Empty; } }
 

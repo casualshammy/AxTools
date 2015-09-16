@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
@@ -28,10 +29,8 @@ namespace WoWPlugin_GarrisonFishingHelper
             get { return "Uses coins"; }
         }
 
-        public Image TrayIcon
-        {
-            get { return null; }
-        }
+        private Image trayIcon;
+        public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\Inv_fishingchair.png", Application.StartupPath, Name))); } }
 
         public string WowIcon
         {

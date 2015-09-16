@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Threading;
+using System.Windows.Forms;
 using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
@@ -18,12 +19,8 @@ namespace WoWPlugin_SpellGroundClicker
 
         public string Description { get { return "Spams one AoE spell at the feet"; } }
 
-        //private Image trayIcon;
-        public Image TrayIcon
-        {
-            get { return null; }
-            //get { return trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\" + Name + "\\spell_shaman_earthquake.jpg")); }
-        }
+        private Image trayIcon;
+        public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\Spell_shaman_earthquake.png", Application.StartupPath, Name))); } }
 
         public string WowIcon { get { return "Interface\\\\Icons\\\\spell_shaman_earthquake"; } }
 
