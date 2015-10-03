@@ -80,34 +80,6 @@ namespace AxTools.Forms
 
         private void ButtonDumpClick(object sender, EventArgs e)
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            Task.Factory.StartNew(delegate
-            {
-                for (int i = 0; i < 100; i++)
-                {
-                    WoWDXInject.LuaDoString("print(GetTime())");
-                }
-                MessageBox.Show("LuaDoString: " + stopwatch.ElapsedMilliseconds.ToString());
-            });
-            Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    WoWPlayerMe me = ObjectMgr.Pulse();
-                    GameFunctions.Lua_EnableCTM();
-                    for (int i = 0; i < 100; i++)
-                    {
-                        WoWDXInject.MoveTo(me.Location, true);
-                    }
-                    GameFunctions.Lua_DisableCTM();
-                    MessageBox.Show("MoveTo: " + stopwatch.ElapsedMilliseconds.ToString());
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("MoveTo ERROR: " + ex.Message);
-                }
-            });
-
             List<WowPlayer> wowUnits = new List<WowPlayer>();
             List<WowObject> wowObjects = new List<WowObject>();
             List<WowNpc> wowNpcs = new List<WowNpc>();

@@ -24,18 +24,18 @@ namespace Dummy
                 long result = 0;
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
-                for (int i = 0; i < 100; i++)
+                try
                 {
-                    try
-                    {
-                        HookJmp hook = process.HooksManager.CreateAndApplyJmpHook(process.ModulesManager.MainModule.BaseAddress + CGWorldFrame_Render, length);
-                        result = hook.Executor.Execute<long>(code);
-                        hook.Remove();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("!!! ERROR: " + ex.Message);
-                    }
+                    IntPtr address = process.ModulesManager.MainModule.BaseAddress + CGWorldFrame_Render;
+                    HookJmp hook = process.HooksManager.CreateAndApplyJmpHook(address, length);
+                    Console.WriteLine("Hook applied (0x{0:X}), press any key to continue...", address.ToInt64());
+                    Console.ReadLine();
+                    result = hook.Executor.Execute<long>(code);
+                    hook.Remove();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("!!! ERROR: " + ex.Message);
                 }
 
                 Console.WriteLine("Code is executed, result: {0}; time (ms): {1}", result, stopwatch.ElapsedMilliseconds);
