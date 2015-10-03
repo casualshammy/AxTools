@@ -22,7 +22,6 @@ namespace AxTools.Forms
 {
     internal partial class WowRadar : Form, IWoWModule
     {
-        //private readonly MouseHookListener mouseHookListener;
         private bool processMouseWheelEvents;
 
         private static readonly HashSet<string> RadarKOSFind = new HashSet<string>();

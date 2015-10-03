@@ -10,9 +10,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.WoW.PluginSystem;
+using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
@@ -50,7 +53,6 @@ namespace AxTools.Forms
             Log.Info(string.Format("{0}:{1} :: [Lua console] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
         
-
         internal void SwitchTimer()
         {
             InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty);
@@ -78,19 +80,33 @@ namespace AxTools.Forms
 
         private void ButtonDumpClick(object sender, EventArgs e)
         {
-            //for (int k = 0; k < 3; k++)
-            //{
-            //    byte[] b = { };
-            //    Stopwatch stopwatch = Stopwatch.StartNew();
-            //    for (int i = 0; i < 10000000; i++)
-            //    {
-            //        b = WoWDXInject.CreatePrologue();
-            //    }
-            //    stopwatch.Stop();
-            //    Log.Info(b.Length + " // " + stopwatch.ElapsedMilliseconds + "ms");
-            //}
-            //return;
-
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            Task.Factory.StartNew(delegate
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    WoWDXInject.LuaDoString("print(GetTime())");
+                }
+                MessageBox.Show("LuaDoString: " + stopwatch.ElapsedMilliseconds.ToString());
+            });
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    WoWPlayerMe me = ObjectMgr.Pulse();
+                    GameFunctions.Lua_EnableCTM();
+                    for (int i = 0; i < 100; i++)
+                    {
+                        WoWDXInject.MoveTo(me.Location, true);
+                    }
+                    GameFunctions.Lua_DisableCTM();
+                    MessageBox.Show("MoveTo: " + stopwatch.ElapsedMilliseconds.ToString());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("MoveTo ERROR: " + ex.Message);
+                }
+            });
 
             List<WowPlayer> wowUnits = new List<WowPlayer>();
             List<WowObject> wowObjects = new List<WowObject>();

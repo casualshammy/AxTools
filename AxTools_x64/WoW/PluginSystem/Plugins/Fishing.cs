@@ -110,7 +110,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         break;
                     }
                     bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == localPlayer.GUID);
-                    if (bobber != null && bobber.Bobbing) //4456449
+                    if (bobber != null && bobber.Bobbing)
                     {
                         this.LogPrint("Got bit!");
                         Thread.Sleep(Utils.Rnd.Next(500, 1000));

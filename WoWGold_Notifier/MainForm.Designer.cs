@@ -41,6 +41,7 @@ namespace WoWGold_Notifier
             this.button1 = new System.Windows.Forms.Button();
             this.labelPerformance = new System.Windows.Forms.Label();
             this.labelResponse = new System.Windows.Forms.Label();
+            this.checkBoxTimerEnabled = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // webBrowser1
@@ -118,9 +119,22 @@ namespace WoWGold_Notifier
             this.labelResponse.TabIndex = 7;
             this.labelResponse.Text = "Response: 420";
             // 
+            // checkBoxTimerEnabled
+            // 
+            this.checkBoxTimerEnabled.AutoSize = true;
+            this.checkBoxTimerEnabled.Checked = true;
+            this.checkBoxTimerEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxTimerEnabled.Location = new System.Drawing.Point(816, 20);
+            this.checkBoxTimerEnabled.Name = "checkBoxTimerEnabled";
+            this.checkBoxTimerEnabled.Size = new System.Drawing.Size(105, 17);
+            this.checkBoxTimerEnabled.TabIndex = 8;
+            this.checkBoxTimerEnabled.Text = "Timer Is Enabled";
+            this.checkBoxTimerEnabled.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(1458, 320);
+            this.Controls.Add(this.checkBoxTimerEnabled);
             this.Controls.Add(this.labelResponse);
             this.Controls.Add(this.labelPerformance);
             this.Controls.Add(this.button1);
@@ -147,6 +161,7 @@ namespace WoWGold_Notifier
         private Button button1;
         private Label labelPerformance;
         private Label labelResponse;
+        private CheckBox checkBoxTimerEnabled;
     }
 }
 

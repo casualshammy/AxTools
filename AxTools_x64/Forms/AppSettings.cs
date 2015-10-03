@@ -471,8 +471,7 @@ namespace AxTools.Forms
                 try
                 {
                     string subject = InputBox.Input("Any comment? (optional)");
-                    WaitingOverlay waitingOverlay = new WaitingOverlay(this);
-                    waitingOverlay.Show();
+                    WaitingOverlay waitingOverlay = WaitingOverlay.Show(this);
                     Task.Factory.StartNew(() =>
                     {
                         try
@@ -566,6 +565,6 @@ namespace AxTools.Forms
                 settings.WoWPluginShowIngameNotifications = checkBoxPluginsShowIngameNotifications.Checked;
             }
         }
-    
+
     }
 }

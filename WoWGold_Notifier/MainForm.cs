@@ -33,10 +33,9 @@ namespace WoWGold_Notifier
         private const string ButtonToClickText = "Выполнить";
         private readonly string[] serverNames =
         {
-            "Гордунни",
             "Черный Шрам"
         };
-        private const int MaxValue = 40000;
+        private const int MaxValue = 50000;
         private bool useProxy;
 
         public MainForm()
@@ -70,64 +69,64 @@ namespace WoWGold_Notifier
             try
             {
                 useProxy = !useProxy;
-                string source = HttpGet(SITE);
-                if (source.Contains("503 Service Temporarily Unavailable"))
+                string source = HttpGetBruteForce503(SITE);
+                if (source != null)
                 {
-                    On503Error();
-                }
-                else if (!source.Contains(ButtonToClickText) && !source.Contains("Выполняется"))
-                {
-                    labelResponse.Text = "Response: Auth error?";
-                }
-                else
-                {
-                    labelResponse.Text = "Response: 200 OK";
-                }
-                HtmlDocument p = new HtmlDocument {OptionDefaultStreamEncoding = Encoding.UTF8};
-                p.LoadHtml(source);
-                foreach (HtmlNode node in p.DocumentNode.Descendants("tr").Where(i => i.Attributes.Contains("data-id")).Reverse())
-                {
-                    if (!orders.Contains(node.Attributes["data-id"].Value))
+                    if (source.Contains("503 Service Temporarily Unavailable"))
                     {
-                        HtmlNode btn = node.Descendants("td").ToArray()[7];
-                        if (btn.InnerText.Contains(ButtonToClickText))
+                        On503Error();
+                    }
+                    else if (!source.Contains(ButtonToClickText) && !source.Contains("Выполняется"))
+                    {
+                        labelResponse.Text = "Response: Auth error?";
+                    }
+                    else
+                    {
+                        labelResponse.Text = "Response: 200 OK";
+                    }
+                    HtmlDocument p = new HtmlDocument {OptionDefaultStreamEncoding = Encoding.UTF8};
+                    p.LoadHtml(source);
+                    foreach (HtmlNode node in p.DocumentNode.Descendants("tr").Where(i => i.Attributes.Contains("data-id")).Reverse())
+                    {
+                        if (!orders.Contains(node.Attributes["data-id"].Value))
                         {
-                            string server = node.Descendants("td").ToArray()[2].InnerText;
-                            if (shouldInformUser && serverNames.Any(l => server.Contains(l)))
+                            HtmlNode btn = node.Descendants("td").ToArray()[7];
+                            if (btn.InnerText.Contains(ButtonToClickText))
                             {
-                                int amount = int.Parse(node.Descendants("td").ToArray()[4].InnerText.Split(',')[0]);
-                                if (amount > 0 && amount <= MaxValue)
+                                string server = node.Descendants("td").ToArray()[2].InnerText;
+                                if (shouldInformUser && serverNames.Any(l => server.Contains(l)))
                                 {
-                                    try
+                                    int amount = int.Parse(node.Descendants("td").ToArray()[4].InnerText.Split(',')[0]);
+                                    if (amount > 0 && amount <= MaxValue)
                                     {
                                         if (btn.InnerText.Contains(ButtonToClickText))
                                         {
                                             string href = btn.Descendants("a").ToArray()[0].Attributes["href"].Value;
-                                            HttpGet(new Uri(SITE + href));
-                                            Log("Trying to bind: " + SITE + href);
-                                            SendSMS(server + " - " + amount);
+                                            if (ClickButtonAndSendSMS(href))
+                                            {
+                                                SystemSounds.Exclamation.Play();
+                                                notifyIcon.ShowBalloonTip(30000, "WoWGold - New Order!", server + " - " + amount, ToolTipIcon.Warning);
+                                                FLASHWINFO flashwinfo = new FLASHWINFO
+                                                {
+                                                    cbSize = (uint) Marshal.SizeOf(typeof (FLASHWINFO)),
+                                                    hwnd = Handle,
+                                                    dwFlags = FlashWindowFlags.FLASHW_TRAY | FlashWindowFlags.FLASHW_TIMERNOFG
+                                                };
+                                                NativeMethods.FlashWindowEx(ref flashwinfo);
+                                            }
                                         }
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        Log("Click error: " + ex.Message);
-                                    }
-                                    SystemSounds.Exclamation.Play();
-                                    notifyIcon.ShowBalloonTip(30000, "WoWGold - New Order!", server + " - " + amount, ToolTipIcon.Warning);
-                                    FLASHWINFO flashwinfo = new FLASHWINFO
-                                    {
-                                        cbSize = (uint) Marshal.SizeOf(typeof (FLASHWINFO)),
-                                        hwnd = Handle,
-                                        dwFlags = FlashWindowFlags.FLASHW_TRAY | FlashWindowFlags.FLASHW_TIMERNOFG
-                                    };
-                                    NativeMethods.FlashWindowEx(ref flashwinfo);
                                 }
+                                orders.Add(node.Attributes["data-id"].Value);
                             }
-                            orders.Add(node.Attributes["data-id"].Value);
                         }
                     }
+                    shouldInformUser = true;
                 }
-                shouldInformUser = true;
+                else
+                {
+                    labelResponse.Text = "Response: FATAL ERROR";
+                }
             }
             catch (Exception ex)
             {
@@ -139,13 +138,48 @@ namespace WoWGold_Notifier
             }
         }
 
+        private bool ClickButtonAndSendSMS(string url)
+        {
+            int counter = 0;
+            while (counter < 20)
+            {
+                try
+                {
+                    HttpGet(new Uri(SITE + url));
+                    Log("Trying to bind: " + SITE + url);
+                    SendSMS("WOWGOLD: ORDER BID");
+                    return true;
+                }
+                catch
+                {
+                    Thread.Sleep(100);
+                    counter++;
+                }
+            }
+            return false;
+        }
+
+        private string HttpGetBruteForce503(Uri uri)
+        {
+            int counter = 0;
+            while (counter < 20)
+            {
+                try
+                {
+                    return HttpGet(uri);
+                }
+                catch
+                {
+                    Thread.Sleep(100);
+                    counter++;
+                }
+            }
+            return null;
+        }
+
         private string HttpGet(Uri uri)
         {
             HttpWebRequest req = (HttpWebRequest) WebRequest.Create(uri);
-            //if (useProxy)
-            //{
-            //    req.Proxy = new WebProxy(new Uri(Proxy), true);
-            //}
             req.Method = "GET";
             req.UserAgent = "Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))";
             req.CookieContainer = cookies;
@@ -170,15 +204,18 @@ namespace WoWGold_Notifier
             while (_lock)
             {
                 stopwatch.Restart();
-                ProcessPage();
-                long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
-                BeginInvoke((Action) (() =>
+                if (checkBoxTimerEnabled.Checked)
                 {
-                    label1.Text = string.Format("Last updated: {0:HH:mm:ss.fff}", DateTime.Now);
-                    labelPerformance.Text = "Performance: " + elapsedMilliseconds + "ms";
-                    labelThreads.Text = "Interval: " + _timerStartInterval;
-                }));
-                int counter = (int) (_timerStartInterval - stopwatch.ElapsedMilliseconds);
+                    ProcessPage();
+                    long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+                    BeginInvoke((Action) (() =>
+                    {
+                        label1.Text = string.Format("Last updated: {0:HH:mm:ss.fff}", DateTime.Now);
+                        labelPerformance.Text = "Performance: " + elapsedMilliseconds + "ms";
+                        labelThreads.Text = "Interval: " + _timerStartInterval;
+                    }));
+                }
+                int counter = (int)(_timerStartInterval - stopwatch.ElapsedMilliseconds);
                 if (counter > 0)
                 {
                     Thread.Sleep(counter);
@@ -230,7 +267,7 @@ namespace WoWGold_Notifier
         [DllImport("wininet.dll", SetLastError = true)]
         public static extern bool InternetGetCookieEx(string url, string cookieName, StringBuilder cookieData, ref int size, Int32 dwFlags, IntPtr lpReserved);
 
-        private const Int32 InternetCookieHttponly = 0x2000;
+        private const int InternetCookieHttponly = 0x2000;
 
         /// <summary>
         /// Gets the URI cookie container.
@@ -259,6 +296,5 @@ namespace WoWGold_Notifier
             }
             return cookies;
         }
-        
     }
 }

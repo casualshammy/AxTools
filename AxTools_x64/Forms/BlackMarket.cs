@@ -20,16 +20,15 @@ namespace AxTools.Forms
             Icon = Resources.AppIcon;
             metroStyleManager1.Style = Settings.Instance.StyleColor;
             timerUpdateList.Enabled = true;
-            Log.Info(string.Format("{0}:{1} :: [BlackMarket tracker] Opened", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0} [BlackMarket tracker] Opened", WoWManager.WoWProcess));
         }
         
         private DateTime lastRefresh = DateTime.UtcNow;
-        private readonly int bmStructSize = 168;
 
         private void BlackMarketFormClosing(object sender, FormClosingEventArgs e)
         {
             timerUpdateList.Enabled = false;
-            Log.Info(string.Format("{0}:{1} :: [BlackMarket tracker] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0} [BlackMarket tracker] Closed", WoWManager.WoWProcess));
         }
 
         private void MetroLinkRefreshClick(object sender, EventArgs e)
@@ -45,8 +44,7 @@ namespace AxTools.Forms
             uint numItems = WoWManager.WoWProcess.Memory.Read<uint>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.BlackMarketNumItems);
             if (numItems != 0)
             {
-                WaitingOverlay waitingOverlay = new WaitingOverlay(this);
-                waitingOverlay.Show();
+                WaitingOverlay waitingOverlay = WaitingOverlay.Show(this);
                 IntPtr baseAddr = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.BlackMarketItems);
                 Task.Factory.StartNew(() =>
                 {
@@ -54,34 +52,36 @@ namespace AxTools.Forms
                     {
                         for (uint i = 0; i < numItems; ++i)
                         {
-                            int finalAddr = (int) (baseAddr + (int) (i*bmStructSize));
-                            BlackMarketItem item = WoWManager.WoWProcess.Memory.Read<BlackMarketItem>(new IntPtr(finalAddr));
-                            uint gold = (uint) (item.currBid > 0 ? (uint)(item.currBid / 10000) : item.NextBid / 10000);
-                            ListViewItem lvi = new ListViewItem(
-                                new[]
+                            unsafe
+                            {
+                                int finalAddr = (int)(baseAddr + (int)(i * sizeof(BlackMarketItem)));
+                                BlackMarketItem item = WoWManager.WoWProcess.Memory.Read<BlackMarketItem>(new IntPtr(finalAddr));
+                                uint gold = (uint)(item.currBid > 0 ? (uint)(item.currBid / 10000) : item.NextBid / 10000);
+                                ListViewItem lvi = new ListViewItem(new[]
                                 {
                                     WoWDXInject.GetFunctionReturn("GetItemInfo(" + item.Entry + ")"),
                                     TimeSpan.FromSeconds(item.TimeLeft).ToString("hh\\:mm\\:ss"),
                                     gold + " g",
                                     item.NumBids.ToString()
-                                }) {Tag = item};
-                            Invoke((MethodInvoker) (() => listView1.Items.Add(lvi)));
+                                }) { Tag = item };
+                                Invoke((MethodInvoker)(() => listView1.Items.Add(lvi)));
+                            }
                         }
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(string.Format("{0}:{1} :: [BlackMarket tracker] Refresh error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                        Log.Error(string.Format("{0} [BlackMarket tracker] Refresh error: {1}", WoWManager.WoWProcess, ex.Message));
                     }
                     finally
                     {
                         Invoke(new Action(waitingOverlay.Close));
-                        Log.Info(string.Format("{0}:{1} :: [BlackMarket tracker] Refresh time: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Environment.TickCount - startTime));
+                        Log.Info(string.Format("{0} [BlackMarket tracker] Refresh time: {1}", WoWManager.WoWProcess, Environment.TickCount - startTime));
                     }
                 });
             }
             else
             {
-                Log.Info(string.Format("{0}:{1} :: [BlackMarket tracker] Nothing to scan!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+                Log.Info(string.Format("{0} [BlackMarket tracker] Nothing to scan!", WoWManager.WoWProcess));
                 this.ShowTaskDialog("Items are zero", "Are you sure the black market window open?", TaskDialogButton.OK, TaskDialogIcon.Stop);
             }
         }
@@ -118,6 +118,9 @@ namespace AxTools.Forms
 
             [FieldOffset(0xA0)]
             public readonly uint NumBids;
+
+            [FieldOffset(164)]
+            private readonly uint Unknown_DoNotRemove;
         }
 
     }

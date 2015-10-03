@@ -63,29 +63,66 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         private void OnElapsed()
         {
-            switch (state)
+            if (state == State.Fishing || state == State.None)
             {
-                case State.Fishing:
-                case State.None:
-                    this.LogPrint("State: Fishing or None");
-                    if (GameFunctions.Lua_GetFunctionReturn(luaShouldPull) == "true")
+                this.LogPrint("State: Fishing or None");
+                if (GameFunctions.Lua_GetFunctionReturn(luaShouldPull) == "true")
+                {
+                    GameFunctions.Lua_DoString("UseItemByName(116158)");
+                    state = State.Targeting;
+                    Utilities.RequestStopPlugin("Fishing");
+                }
+                else
+                {
+                    Utilities.RequestStartPlugin("Fishing");
+                }
+            }
+            else if (state == State.Targeting)
+            {
+                this.LogPrint("State: Targeting");
+                if (GameFunctions.Lua_GetFunctionReturn(luaIsInCombat) == "true")
+                {
+                    WoWPlayerMe localPlayer0 = ObjMgr.Pulse(wowNpcs);
+                    if (localPlayer0 != null)
                     {
-                        GameFunctions.Lua_DoString("UseItemByName(116158)");
-                        state = State.Targeting;
-                    }
-                    break;
-                case State.Targeting:
-                    this.LogPrint("State: Targeting");
-                    if (GameFunctions.Lua_GetFunctionReturn(luaIsInCombat) == "true")
-                    {
-                        WoWPlayerMe localPlayer0 = ObjMgr.Pulse(wowNpcs);
-                        if (localPlayer0 != null)
+                        WowNpc creature = wowNpcs.FirstOrDefault(k => k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер");
+                        if (creature != null)
                         {
-                            WowNpc creature = wowNpcs.FirstOrDefault(k => k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер");
-                            if (creature != null)
+                            creature.Target();
+                            state = State.Killing;
+                        }
+                    }
+                }
+                else
+                {
+                    state = State.Fishing;
+                }
+            }
+            else if (state == State.Killing)
+            {
+                this.LogPrint("State: Killing");
+                WoWPlayerMe localPlayer1 = ObjMgr.Pulse(wowNpcs);
+                if (localPlayer1 != null)
+                {
+                    WowNpc creature = wowNpcs.FirstOrDefault(k => k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер");
+                    if (creature != null)
+                    {
+                        if (creature.Health == 0)
+                        {
+                            if (creature.Lootable)
                             {
-                                creature.Target();
-                                state = State.Killing;
+                                state = State.Looting;
+                            }
+                        }
+                        else
+                        {
+                            if (localPlayer1.TargetGUID == creature.GUID)
+                            {
+                                GameFunctions.Lua_DoString(luaKillingRotation);
+                            }
+                            else
+                            {
+                                state = State.Targeting;
                             }
                         }
                     }
@@ -93,56 +130,27 @@ namespace WoWPlugin_GarrisonFishingHelper
                     {
                         state = State.Fishing;
                     }
-                    break;
-                case State.Killing:
-                    this.LogPrint("State: Killing");
-                    WoWPlayerMe localPlayer1 = ObjMgr.Pulse(wowNpcs);
-                    if (localPlayer1 != null)
+                }
+            }
+            else if (state == State.Looting)
+            {
+                this.LogPrint("State: Looting");
+                WoWPlayerMe localPlayer2 = ObjMgr.Pulse(wowNpcs);
+                if (localPlayer2 != null)
+                {
+                    WowNpc creature = wowNpcs.FirstOrDefault(k => k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер");
+                    if (creature != null && creature.Lootable)
                     {
-                        WowNpc creature = wowNpcs.FirstOrDefault(k => k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер");
-                        if (creature != null)
-                        {
-                            if (creature.Health == 0)
-                            {
-                                if (creature.Lootable)
-                                {
-                                    state = State.Looting;
-                                }
-                            }
-                            else
-                            {
-                                if (localPlayer1.TargetGUID == creature.GUID)
-                                {
-                                    GameFunctions.Lua_DoString(luaKillingRotation);
-                                }
-                                else
-                                {
-                                    state = State.Targeting;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            state = State.Fishing;
-                        }
-                    }
-                    break;
-                case State.Looting:
-                    this.LogPrint("State: Looting");
-                    WoWPlayerMe localPlayer2 = ObjMgr.Pulse(wowNpcs);
-                    if (localPlayer2 != null)
-                    {
-                        WowNpc creature = wowNpcs.FirstOrDefault(k => k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер");
-                        if (creature != null && creature.Lootable)
+                        if (!localPlayer2.IsLooting)
                         {
                             creature.Interact();
                         }
-                        else
-                        {
-                            state = State.Fishing;
-                        }
                     }
-                    break;
+                    else
+                    {
+                        state = State.Fishing;
+                    }
+                }
             }
         }
 

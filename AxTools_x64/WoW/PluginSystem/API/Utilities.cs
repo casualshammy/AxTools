@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Forms;
@@ -61,6 +62,13 @@ namespace AxTools.WoW.PluginSystem.API
             Task.Factory.StartNew(PluginManager.StopPlugins);
         }
 
+        /// <summary>
+        ///     Creates new <see cref="SingleThreadTimer"/> timer.
+        /// </summary>
+        /// <param name="plugin"></param>
+        /// <param name="interval"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public static SingleThreadTimer CreateTimer(this IPlugin plugin, int interval, Action action)
         {
             return new SingleThreadTimer(interval, action) { PluginName = plugin.Name };
@@ -69,6 +77,28 @@ namespace AxTools.WoW.PluginSystem.API
         public static string GetRandomString(int size)
         {
             return Utils.GetRandomString(size);
+        }
+
+        public static void RequestStartPlugin(string name)
+        {
+            IPlugin plugin = PluginManager.Plugins.FirstOrDefault(l => l.Name == name);
+            if (plugin != null)
+            {
+                IPlugin activePlugin = PluginManager.ActivePlugins.FirstOrDefault(l => l.Name == name);
+                if (activePlugin == null)
+                {
+                    PluginManager.AddPluginToRunning(plugin);
+                }
+            }
+        }
+
+        public static void RequestStopPlugin(string name)
+        {
+            IPlugin plugin = PluginManager.ActivePlugins.FirstOrDefault(l => l.Name == name);
+            if (plugin != null)
+            {
+                PluginManager.RemovePluginFromRunning(plugin);
+            }
         }
 
     }

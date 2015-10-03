@@ -70,8 +70,7 @@ namespace AxTools.Forms
             {
                 Location = settings.MainWindowLocation;
                 OnActivated(EventArgs.Empty);
-                startupOverlay = new WaitingOverlay(this);
-                startupOverlay.Show();
+                startupOverlay = WaitingOverlay.Show(this);
             });
         }
 
@@ -395,6 +394,22 @@ namespace AxTools.Forms
             {
                 WoWAccount wowAccount = new WoWAccount(WoWAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WoWAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
                 StartWoW(wowAccount);
+                if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
+                {
+                    StartVentrilo();
+                }
+                if (settings.TS3StartWithWoW && !Process.GetProcessesByName("ts3client_win64").Any() && !Process.GetProcessesByName("ts3client_win32").Any())
+                {
+                    StartTS3();
+                }
+                if (settings.RaidcallStartWithWoW && !Process.GetProcessesByName("raidcall").Any())
+                {
+                    // todo
+                }
+                if (settings.MumbleStartWithWoW && !Process.GetProcessesByName("mumble").Any())
+                {
+                    // todo
+                }
                 cmbboxAccSelect.SelectedIndex = -1;
                 cmbboxAccSelect.Invalidate();
             }
@@ -486,28 +501,7 @@ namespace AxTools.Forms
 
         private void TileTeamspeak3Click(object sender, EventArgs e)
         {
-            string cPath;
-            if (File.Exists(settings.TS3Directory + "\\ts3client_win32.exe"))
-            {
-                cPath = settings.TS3Directory + "\\ts3client_win32.exe";
-            }
-            else if (File.Exists(settings.TS3Directory + "\\ts3client_win64.exe"))
-            {
-                cPath = settings.TS3Directory + "\\ts3client_win64.exe";
-            }
-            else
-            {
-                new TaskDialog("Executable not found", "AxTools",
-                    "Can't locate \"ts3client_win64.exe\"/\"ts3client_win32.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
-                return;
-            }
-            Process.Start(new ProcessStartInfo
-            {
-                WorkingDirectory = settings.TS3Directory,
-                FileName = cPath,
-                Arguments = "-nosingleinstance"
-            });
-            Log.Info("TS3 process started");
+            StartTS3();
         }
 
         private void TileMumbleClick(object sender, EventArgs e)
@@ -883,15 +877,34 @@ namespace AxTools.Forms
             }
         }
 
+        private void StartTS3()
+        {
+            string ts3Executable;
+            if (File.Exists(settings.TS3Directory + "\\ts3client_win64.exe"))
+            {
+                ts3Executable = settings.TS3Directory + "\\ts3client_win64.exe";
+            }
+            else if (File.Exists(settings.TS3Directory + "\\ts3client_win32.exe"))
+            {
+                ts3Executable = settings.TS3Directory + "\\ts3client_win32.exe";
+            }
+            else
+            {
+                this.ShowTaskDialog("Executable not found", "Can't locate \"ts3client_win32.exe\"/\"ts3client_win64.exe\". Check paths in settings dialog", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                return;
+            }
+            Process.Start(new ProcessStartInfo
+            {
+                WorkingDirectory = settings.TS3Directory,
+                FileName = ts3Executable,
+                Arguments = "-nosingleinstance"
+            });
+            Log.Info("TS3 process started");
+        }
+
         private void StartWoW(WoWAccount wowAccount = null)
         {
-            WaitingOverlay waitingOverlay = null;
-            Invoke((MethodInvoker) (() =>
-            {
-                waitingOverlay = new WaitingOverlay(this);
-                waitingOverlay.Show();
-            }));
-            Task.Factory.StartNew(() => Thread.Sleep(1000)).ContinueWith(l => BeginInvoke((MethodInvoker) waitingOverlay.Close));
+            WaitingOverlay.Show(this, 1000);
             if (File.Exists(settings.WoWDirectory + "\\Wow-64.exe"))
             {
                 Process process = Process.Start(new ProcessStartInfo
@@ -902,10 +915,6 @@ namespace AxTools.Forms
                 if (wowAccount != null)
                 {
                     new AutoLogin(wowAccount, process).EnterCredentialsASAPAsync();
-                }
-                if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
-                {
-                    StartVentrilo();
                 }
             }
             else

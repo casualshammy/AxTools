@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Helpers;
 using MetroFramework.Drawing;
@@ -12,16 +14,22 @@ namespace AxTools.Forms
         private readonly MetroForm parentForm;
         private WaitingOverlaySub panel;
 
-        internal WaitingOverlay(MetroForm form)
+        private WaitingOverlay(MetroForm form)
         {
             InitializeComponent();
             parentForm = form;
             Load += WaitingOverlay_Load;
         }
 
-        public new void Show()
+        public static WaitingOverlay Show(MetroForm parent, int periodInMs = 0)
         {
-            Show(parentForm);
+            WaitingOverlay waitingOverlay = new WaitingOverlay(parent);
+            waitingOverlay.Show((IWin32Window) waitingOverlay.parentForm);
+            if (periodInMs != 0)
+            {
+                Task.Factory.StartNew(() => Thread.Sleep(periodInMs)).ContinueWith(l => { waitingOverlay.Close(); }, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            return waitingOverlay;
         }
 
         private void WaitingOverlay_Load(object sender, EventArgs e)
@@ -36,8 +44,6 @@ namespace AxTools.Forms
         {
             panel.Close();
         }
-
-
 
         private class WaitingOverlaySub : Form
         {
@@ -167,5 +173,6 @@ namespace AxTools.Forms
             private MetroFramework.Controls.MetroProgressSpinner metroProgressSpinner1;
 
         }
+    
     }
 }

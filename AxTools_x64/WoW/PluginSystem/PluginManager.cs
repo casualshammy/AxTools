@@ -110,6 +110,64 @@ namespace AxTools.WoW.PluginSystem
             }
         }
 
+        internal static void AddPluginToRunning(IPlugin plugin)
+        {
+            lock (_lock)
+            {
+                if (!_activePlugins.Contains(plugin))
+                {
+                    _activePlugins.Add(plugin);
+                    try
+                    {
+                        plugin.OnStart();
+                        Log.Info(string.Format("{0} [{1}] Plugin is started", WoWManager.WoWProcess, plugin.Name));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(string.Format("Plugin OnStart error [{0}]: {1}", plugin.Name, ex.Message));
+                    }
+                    if (Settings.Instance.WoWPluginShowIngameNotifications)
+                    {
+                        WoWDXInject.ShowOverlayText("Plugin <" + plugin.Name + "> is started", plugin.WowIcon, Color.FromArgb(255, 102, 0));
+                    }
+                    if (PluginStateChanged != null)
+                    {
+                        PluginStateChanged();
+                    }
+                }
+            }
+        }
+
+        internal static void RemovePluginFromRunning(IPlugin plugin)
+        {
+            lock (_lock)
+            {
+                if (_activePlugins.Contains(plugin))
+                {
+                    try
+                    {
+                        plugin.OnStop();
+                        Log.Info(WoWManager.WoWProcess != null
+                            ? string.Format("{0} [{1}] Plugin is stopped", WoWManager.WoWProcess, plugin.Name)
+                            : string.Format("[UNKNOWN] [{0}] Plugin is stopped", plugin.Name));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(string.Format("{0} Can't shutdown plugin [{1}]: {2}", WoWManager.WoWProcess, plugin.Name, ex.Message));
+                    }
+                    if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
+                    {
+                        WoWDXInject.ShowOverlayText("Plugin <" + plugin.Name + "> is stopped", plugin.WowIcon, Color.FromArgb(255, 0, 0));
+                    }
+                    _activePlugins.Remove(plugin);
+                    if (PluginStateChanged != null)
+                    {
+                        PluginStateChanged();
+                    }
+                }
+            }
+        }
+
         internal static void LoadPlugins()
         {
             Plugins.Add(new Fishing());
