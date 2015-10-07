@@ -11,7 +11,6 @@ namespace AxTools.WoW
     internal class AutoLogin
     {
         private readonly WoWAccount wowAccount;
-
         private readonly Process process;
 
         internal AutoLogin(WoWAccount wowAccount, Process process)
@@ -35,7 +34,7 @@ namespace AxTools.WoW
                     process.Refresh();
                     if (process.MainWindowHandle != (IntPtr)0)
                     {
-                        WowProcess wowProcess = WowProcess.List.FirstOrDefault(i => i.ProcessID == process.Id);
+                        WowProcess wowProcess = WoWProcessManager.List.FirstOrDefault(i => i.ProcessID == process.Id);
                         if (wowProcess != null && wowProcess.Memory != null && wowProcess.IsValidBuild)
                         {
                             GlueState glueState = wowProcess.Memory.Read<GlueState>(wowProcess.Memory.ImageBase + WowBuildInfoX64.GlueState);

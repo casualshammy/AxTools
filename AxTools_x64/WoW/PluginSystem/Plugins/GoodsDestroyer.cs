@@ -4,6 +4,7 @@ using System.Threading;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW.Management;
+using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.PluginSystem.Plugins
@@ -101,13 +102,13 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     state = 1;
                     break;
                 case 1:
-                    if (WoWManager.WoWProcess.PlayerIsLooting)
+                    if (WoWPlayerMe.IsLooting)
                     {
                         state = 2;
                     }
                     break;
                 case 2:
-                    if (!WoWManager.WoWProcess.PlayerIsLooting)
+                    if (!WoWPlayerMe.IsLooting)
                     {
                         state = 0;
                     }

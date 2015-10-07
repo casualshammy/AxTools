@@ -10,12 +10,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
@@ -95,8 +92,8 @@ namespace AxTools.Forms
             }
             var sb = new StringBuilder("\r\nLocal player-----------------------------------------\r\n");
             sb.AppendFormat("GUID: 0x{0}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; Realm: {5}; GUID bytes: {6}; IsLooting: {7}; Name: {8}\r\n",
-                            localPlayer.GUID, (uint)localPlayer.Address, localPlayer.Location, WoWManager.WoWProcess.PlayerZoneID,
-                            "dummy", WoWManager.WoWProcess.PlayerRealm, BitConverter.ToString(WoWManager.WoWProcess.Memory.ReadBytes(localPlayer.Address + WowBuildInfoX64.ObjectGUID, 16)), WoWManager.WoWProcess.PlayerIsLooting, WoWManager.WoWProcess.PlayerName);
+                            localPlayer.GUID, (uint)localPlayer.Address, localPlayer.Location, WoWPlayerMe.ZoneID,
+                            "N/A", "N/A", BitConverter.ToString(WoWManager.WoWProcess.Memory.ReadBytes(localPlayer.Address + WowBuildInfoX64.ObjectGUID, 16)), WoWPlayerMe.IsLooting, localPlayer.Name);
             sb.AppendLine("Objects-----------------------------------------");
             foreach (var i in wowObjects)
             {

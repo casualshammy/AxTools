@@ -58,7 +58,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public void OnConfig()
         {
-            FishingConfig.Open();
+            FishingConfig.Open(this);
         }
 
         public void OnStart()
@@ -83,7 +83,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             switch (state)
             {
                 case 0:
-                    if (!WoWManager.WoWProcess.PlayerIsLooting)
+                    if (!WoWPlayerMe.IsLooting)
                     {
                         this.LogPrint("Cast fishing...");
                         WoWDXInject.LuaDoString(castFishing);
@@ -132,14 +132,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     }
                     break;
                 case 3:
-                    if (WoWManager.WoWProcess.PlayerIsLooting)
+                    if (WoWPlayerMe.IsLooting)
                     {
                         state = 4;
                         this.LogPrint("Looting...");
                     }
                     break;
                 case 4:
-                    if (!WoWManager.WoWProcess.PlayerIsLooting)
+                    if (!WoWPlayerMe.IsLooting)
                     {
                         // more random
                         if (Utils.Rnd.Next(0, 25) == 0)

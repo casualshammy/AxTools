@@ -3,6 +3,7 @@ using AxTools.Properties;
 using AxTools.Services;
 using AxTools.WoW.PluginSystem;
 using System.Drawing;
+using System.Linq;
 using System.Timers;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
@@ -69,7 +70,7 @@ namespace AxTools.Helpers
 
         private static void ActualizingPhase()
         {
-            if (LuaConsole.TimerEnabled && PluginManager.ActivePlugins.Count != 0)
+            if (LuaConsole.TimerEnabled && PluginManagerEx.RunningPlugins.Count() != 0)
             {
                 _notifyIcon.Icon = AppIconPluginOnLuaOn;
             }
@@ -77,7 +78,7 @@ namespace AxTools.Helpers
             {
                 _notifyIcon.Icon = AppIconPluginOffLuaOn;
             }
-            else if (PluginManager.ActivePlugins.Count != 0)
+            else if (PluginManagerEx.RunningPlugins.Count() != 0)
             {
                 _notifyIcon.Icon = AppIconPluginOnLuaOff;
             }

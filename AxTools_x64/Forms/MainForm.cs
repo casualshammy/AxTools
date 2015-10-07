@@ -56,7 +56,7 @@ namespace AxTools.Forms
             WebRequest.DefaultWebProxy = null;
 
             settings.WoWPluginHotkeyChanged += WoWPluginHotkeyChanged;
-            PluginManager.PluginStateChanged += PluginManagerOnPluginStateChanged;
+            PluginManagerEx.PluginStateChanged += PluginManagerOnPluginStateChanged;
             Pinger.PingResultArrived += Pinger_DataChanged;
             Pinger.IsEnabledChanged += PingerOnStateChanged;
             AddonsBackup.IsRunningChanged += AddonsBackup_IsRunningChanged;
@@ -134,14 +134,14 @@ namespace AxTools.Forms
             if (Clicker.Enabled)
             {
                 Clicker.Stop();
-                WowProcess cProcess = WowProcess.List.FirstOrDefault(i => i.MainWindowHandle == Clicker.Handle);
+                WowProcess cProcess = WoWProcessManager.List.FirstOrDefault(i => i.MainWindowHandle == Clicker.Handle);
                 Log.Info(cProcess != null
                     ? string.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
                     : "UNKNOWN:null :: [Clicker] Disabled");
             }
             else
             {
-                WowProcess cProcess = WowProcess.List.FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
+                WowProcess cProcess = WoWProcessManager.List.FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
                 if (cProcess != null)
                 {
                     Clicker.Start(settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr) settings.ClickerKey);
@@ -153,7 +153,7 @@ namespace AxTools.Forms
 
         private void KeyboardHook_PrecompiledModulesHotkey()
         {
-            if (WowProcess.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+            if (WoWProcessManager.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
             {
                 SwitchWoWPlugin();
             }
@@ -162,7 +162,7 @@ namespace AxTools.Forms
         private void KeyboardHook_LuaTimerHotkey()
         {
             LuaConsole pForm = Utils.FindForm<LuaConsole>();
-            if (pForm != null && WowProcess.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+            if (pForm != null && WoWProcessManager.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
             {
                 pForm.SwitchTimer();
             }
@@ -183,7 +183,7 @@ namespace AxTools.Forms
             }
             //
             settings.WoWPluginHotkeyChanged -= WoWPluginHotkeyChanged;
-            PluginManager.PluginStateChanged -= PluginManagerOnPluginStateChanged;
+            PluginManagerEx.PluginStateChanged -= PluginManagerOnPluginStateChanged;
             Pinger.PingResultArrived -= Pinger_DataChanged;
             Pinger.IsEnabledChanged += PingerOnStateChanged;
             AddonsBackup.IsRunningChanged -= AddonsBackup_IsRunningChanged;
@@ -198,7 +198,7 @@ namespace AxTools.Forms
             TrayIconAnimation.Close();
             Pinger.Stop();
             //stop watching process trace
-            WoWProcessWatcher.StopWatcher();
+            WoWProcessManager.StopWatcher();
             Log.Info("WoW processes trace watching is stopped");
             // release hook 
             if (WoWManager.Hooked)
@@ -206,7 +206,7 @@ namespace AxTools.Forms
                 WoWManager.Unhook();
                 Log.Info(string.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
-            foreach (WowProcess i in WowProcess.List)
+            foreach (WowProcess i in WoWProcessManager.List)
             {
                 string name = i.ProcessName;
                 i.Dispose();
@@ -255,7 +255,7 @@ namespace AxTools.Forms
         private void LoadingStepAsync()
         {
             Log.Info("[AxTools] Registered for: " + Settings.Instance.UserID);
-            PluginManager.LoadPlugins();
+            PluginManagerEx.LoadPlugins();
             BeginInvoke(new Action(LoadingStepSync));
             Log.Info("[AxTools] Initial loading is finished");
         }
@@ -272,7 +272,7 @@ namespace AxTools.Forms
             {
                 Pinger.Start();
             }
-            WoWProcessWatcher.StartWatcher();
+            WoWProcessManager.StartWatcher();
             TrayIconAnimation.Initialize(notifyIconMain);
 
             KeyboardListener.KeyPressed += KeyboardHookKeyDown;
@@ -324,7 +324,7 @@ namespace AxTools.Forms
 
         private void UpdatePluginsShortcutsInTrayContextMenu()
         {
-            foreach (IPlugin plugin in PluginManager.Plugins)
+            foreach (IPlugin plugin in PluginManagerEx.LoadedPlugins)
             {
                 ToolStripItem[] items = contextMenuStripMain.Items.Find("NativeN" + plugin.Name, true);
                 foreach (ToolStripItem toolStripItem in items)
@@ -333,11 +333,11 @@ namespace AxTools.Forms
                     if (item != null)
                     {
                         item.ShortcutKeyDisplayString = olvPlugins.CheckedObjects.Cast<IPlugin>().FirstOrDefault(i => i.Name == item.Text) != null ? settings.WoWPluginHotkey.ToString() : null;
-                        item.Enabled = PluginManager.ActivePlugins.Count == 0;
+                        item.Enabled = !PluginManagerEx.RunningPlugins.Any();
                     }
                 }
             }
-            stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManager.ActivePlugins.Count != 0;
+            stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.Any();
             stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = settings.WoWPluginHotkey.ToString();
         }
 
@@ -367,7 +367,7 @@ namespace AxTools.Forms
 
         private void stopActivePluginorPresshotkeyToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            if (PluginManager.ActivePlugins.Count != 0)
+            if (PluginManagerEx.RunningPlugins.Any())
             {
                 SwitchWoWPlugin();
             }
@@ -377,7 +377,7 @@ namespace AxTools.Forms
         {
             olvPlugins.UncheckAll();
             olvPlugins.CheckObject(plugin);
-            if (!WoWManager.Hooked && WowProcess.List.Count != 1)
+            if (!WoWManager.Hooked && WoWProcessManager.List.Count != 1)
             {
                 Activate();
             }
@@ -606,11 +606,11 @@ namespace AxTools.Forms
             }
         }
 
-        private void ObjectListView1OnItemChecked(object sender, ItemCheckedEventArgs itemCheckedEventArgs)
-        {
-            settings.EnabledPluginsList = olvPlugins.CheckedObjects.Cast<IPlugin>().Select(l => l.Name).ToList();
-            BeginInvoke(new MethodInvoker(UpdatePluginsShortcutsInTrayContextMenu));
-        }
+        //private void ObjectListView1OnItemChecked(object sender, ItemCheckedEventArgs itemCheckedEventArgs)
+        //{
+        //    settings.EnabledPluginsList = olvPlugins.CheckedObjects.Cast<IPlugin>().Select(l => l.Name).ToList();
+        //    BeginInvoke(new MethodInvoker(UpdatePluginsShortcutsInTrayContextMenu));
+        //}
 
         private void OlvPluginsOnDoubleClick(object sender, EventArgs eventArgs)
         {
@@ -626,6 +626,36 @@ namespace AxTools.Forms
                     AppSpecUtils.NotifyUser("This plugin hasn't settings dialog", null, NotifyUserType.Info, false);
                 }
             }
+        }
+
+        private bool OlvPlugins_BooleanCheckStateGetter(object rowObject)
+        {
+            IPlugin plugin = rowObject as IPlugin;
+            if (plugin != null)
+            {
+                return PluginManagerEx.EnabledPlugins.Contains(plugin) || PluginManagerEx.RunningPlugins.Contains(plugin);
+            }
+            return false;
+        }
+
+        private bool OlvPlugins_BooleanCheckStatePutter(object rowObject, bool newValue)
+        {
+            IPlugin plugin = rowObject as IPlugin;
+            if (plugin != null)
+            {
+                if (newValue)
+                {
+                    PluginManagerEx.EnablePlugin(plugin);
+                    settings.EnabledPluginsList.Add(plugin.Name);
+                }
+                else
+                {
+                    PluginManagerEx.DisablePlugin(plugin);
+                    settings.EnabledPluginsList.RemoveAll(l => l == plugin.Name);
+                }
+                BeginInvoke(new MethodInvoker(UpdatePluginsShortcutsInTrayContextMenu));
+            }
+            return newValue;
         }
 
         #endregion
@@ -668,12 +698,14 @@ namespace AxTools.Forms
 
         private void OnPluginsLoaded()
         {
-            olvPlugins.SetObjects(PluginManager.Plugins);
-            foreach (IPlugin i in PluginManager.Plugins.Where(i => settings.EnabledPluginsList.Contains(i.Name)))
+            olvPlugins.SetObjects(PluginManagerEx.LoadedPlugins);
+            foreach (IPlugin i in PluginManagerEx.EnabledPlugins)
             {
                 olvPlugins.CheckObject(i);
             }
-            olvPlugins.ItemChecked += ObjectListView1OnItemChecked;
+            //olvPlugins.ItemChecked += ObjectListView1OnItemChecked;
+            olvPlugins.BooleanCheckStateGetter = OlvPlugins_BooleanCheckStateGetter;
+            olvPlugins.BooleanCheckStatePutter = OlvPlugins_BooleanCheckStatePutter;
 
             contextMenuStripMain.Items.Clear();
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
@@ -684,7 +716,7 @@ namespace AxTools.Forms
                 toolStripSeparator2
             });
             Type[] nativePlugins = {typeof (Fishing), typeof (FlagReturner), typeof (GoodsDestroyer)};
-            foreach (IPlugin i in PluginManager.Plugins.Where(i => nativePlugins.Contains(i.GetType())))
+            foreach (IPlugin i in PluginManagerEx.LoadedPlugins.Where(i => nativePlugins.Contains(i.GetType())))
             {
                 IPlugin plugin = i;
                 ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
@@ -697,12 +729,12 @@ namespace AxTools.Forms
                 toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
-            if (PluginManager.Plugins.Count > nativePlugins.Length)
+            if (PluginManagerEx.LoadedPlugins.Count() > nativePlugins.Length)
             {
                 ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Custom plugins") as ToolStripMenuItem;
                 if (customPlugins != null)
                 {
-                    foreach (IPlugin i in PluginManager.Plugins.Where(i => !nativePlugins.Contains(i.GetType())))
+                    foreach (IPlugin i in PluginManagerEx.LoadedPlugins.Where(i => !nativePlugins.Contains(i.GetType())))
                     {
                         IPlugin plugin = i;
                         ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
@@ -756,8 +788,8 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugins.Count == 0 ? "Start" : "Stop", settings.WoWPluginHotkey);
-                olvPlugins.Enabled = PluginManager.ActivePlugins.Count == 0;
+                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", !PluginManagerEx.RunningPlugins.Any() ? "Start" : "Stop", settings.WoWPluginHotkey);
+                olvPlugins.Enabled = !PluginManagerEx.RunningPlugins.Any();
                 UpdatePluginsShortcutsInTrayContextMenu();
             });
         }
@@ -766,7 +798,7 @@ namespace AxTools.Forms
         {
             BeginInvoke(new MethodInvoker(() =>
             {
-                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", PluginManager.ActivePlugins.Count == 0 ? "Start" : "Stop", key);
+                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", !PluginManagerEx.RunningPlugins.Any() ? "Start" : "Stop", key);
                 UpdatePluginsShortcutsInTrayContextMenu();
             }));
         }
@@ -949,7 +981,7 @@ namespace AxTools.Forms
         private void SwitchWoWPlugin()
         {
             buttonStartStopPlugin.Enabled = false;
-            if (PluginManager.ActivePlugins.Count == 0)
+            if (!PluginManagerEx.RunningPlugins.Any())
             {
                 if (olvPlugins.CheckedObjects.Count != 0)
                 {
@@ -957,7 +989,7 @@ namespace AxTools.Forms
                     {
                         if (WoWManager.WoWProcess.IsInGame)
                         {
-                            PluginManager.StartPlugins(olvPlugins.CheckedObjects.Cast<IPlugin>());
+                            PluginManagerEx.StartPlugins();
                         }
                         else
                         {
@@ -974,8 +1006,7 @@ namespace AxTools.Forms
             {
                 try
                 {
-                    PluginManager.StopPlugins();
-                    //GC.Collect();
+                    PluginManagerEx.StopPlugins();
                 }
                 catch
                 {

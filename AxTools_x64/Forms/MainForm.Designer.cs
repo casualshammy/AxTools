@@ -349,7 +349,7 @@ namespace AxTools.Forms
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
             // 
-            // objectListView1
+            // olvPlugins
             // 
             this.olvPlugins.AllColumns.Add(this.olvColumn1);
             this.olvPlugins.AllColumns.Add(this.olvColumn2);
@@ -364,7 +364,7 @@ namespace AxTools.Forms
             this.olvPlugins.HideSelection = false;
             this.olvPlugins.IncludeColumnHeadersInCopy = true;
             this.olvPlugins.Location = new System.Drawing.Point(3, 15);
-            this.olvPlugins.Name = "objectListView1";
+            this.olvPlugins.Name = "olvPlugins";
             this.olvPlugins.ShowGroups = false;
             this.olvPlugins.Size = new System.Drawing.Size(294, 142);
             this.olvPlugins.TabIndex = 81;
@@ -378,6 +378,7 @@ namespace AxTools.Forms
             // olvColumn1
             // 
             this.olvColumn1.AspectName = "Name";
+            this.olvColumn1.HeaderCheckBox = true;
             this.olvColumn1.MaximumWidth = 217;
             this.olvColumn1.MinimumWidth = 217;
             this.olvColumn1.Text = "Name";

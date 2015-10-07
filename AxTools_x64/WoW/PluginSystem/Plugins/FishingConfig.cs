@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
 using AxTools.Forms;
 
@@ -12,9 +11,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
             InitializeComponent();
         }
 
-        internal static void Open()
+        internal static void Open(Fishing fishing)
         {
-            Fishing fishing = PluginManager.Plugins.FirstOrDefault(i => i.GetType() == typeof(Fishing)) as Fishing;
             if (fishing != null)
             {
                 fishing.LoadSettings();

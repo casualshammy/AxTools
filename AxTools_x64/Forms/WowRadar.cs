@@ -150,7 +150,7 @@ namespace AxTools.Forms
                     enemies = wowPlayers.Except(friends).ToArray();
                     objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
                     npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                    if (!WoWManager.WoWProcess.PlayerIsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
+                    if (!WoWPlayerMe.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
                     {
                         UInt128 interactGUID = UInt128.Zero;
                         double interactDistance = 11;
@@ -522,7 +522,7 @@ namespace AxTools.Forms
             RadarKOSFind.Clear();
             RadarKOSFindAlarm.Clear();
             RadarKOSFindInteract.Clear();
-            foreach (ObjectToFind i in settings.WoWRadarList.Where(i => i.Enabled))
+            foreach (RadarObject i in settings.WoWRadarList.Where(i => i.Enabled))
             {
                 RadarKOSFind.Add(i.Name);
                 if (i.Interact)

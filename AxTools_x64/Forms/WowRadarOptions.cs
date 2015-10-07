@@ -27,7 +27,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             ShowInTaskbar = false;
-            foreach (ObjectToFind i in settings.WoWRadarList)
+            foreach (RadarObject i in settings.WoWRadarList)
             {
                 dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
             }
@@ -59,10 +59,10 @@ namespace AxTools.Forms
 
         private void RebuildKOSList()
         {
-            List<ObjectToFind> list = new List<ObjectToFind>();
+            List<RadarObject> list = new List<RadarObject>();
             foreach (DataGridViewRow i in dataGridViewObjects.Rows)
             {
-                list.Add(new ObjectToFind((bool)i.Cells[0].Value, (string)i.Cells[1].Value, (bool)i.Cells[2].Value, (bool)i.Cells[3].Value));
+                list.Add(new RadarObject((bool)i.Cells[0].Value, (string)i.Cells[1].Value, (bool)i.Cells[2].Value, (bool)i.Cells[3].Value));
             }
             settings.WoWRadarList = list;
         }
@@ -218,9 +218,9 @@ namespace AxTools.Forms
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string rawText = File.ReadAllText(openFileDialog.FileName, Encoding.UTF8);
-                    List<ObjectToFind> list = JsonConvert.DeserializeObject<List<ObjectToFind>>(rawText);
+                    List<RadarObject> list = JsonConvert.DeserializeObject<List<RadarObject>>(rawText);
                     dataGridViewObjects.Rows.Clear();
-                    foreach (ObjectToFind i in list)
+                    foreach (RadarObject i in list)
                     {
                         dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
                     }

@@ -4,6 +4,7 @@ using AxTools.Helpers.MemoryManagement;
 using AxTools.WinAPI;
 using AxTools.WoW.Management;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
@@ -13,8 +14,24 @@ using System.Windows.Forms;
 
 namespace AxTools.WoW
 {
-    internal static class WoWProcessWatcher
+    internal static class WoWProcessManager
     {
+        /// <summary>
+        ///     List of all <see cref="WowProcess"/> running on computer
+        /// </summary>
+        internal static List<WowProcess> List
+        {
+            get
+            {
+                lock (_listLock)
+                {
+                    return _sharedList;
+                }
+            }
+        }
+
+        private static readonly object _listLock = new object();
+        private static readonly List<WowProcess> _sharedList = new List<WowProcess>();
         private static ManagementEventWatcher _wowWatcherStart;
         private static ManagementEventWatcher _wowWatcherStop;
         private static readonly object _lock = new object();
@@ -64,7 +81,7 @@ namespace AxTools.WoW
                         break;
                     case "wow-64":
                         WowProcess process = new WowProcess(i.Id);
-                        WowProcess.List.Add(process);
+                        List.Add(process);
                         Log.Info(string.Format("{0} [Process watcher] Process added", process));
                         Task.Factory.StartNew(OnWowProcessStartup, process);
                         break;
@@ -86,8 +103,8 @@ namespace AxTools.WoW
                 else if (processName == "wow-64.exe")
                 {
                     WowProcess wowProcess = new WowProcess(processId);
-                    WowProcess.List.Add(wowProcess);
-                    Log.Info(string.Format("{0} [Process watcher] Process started, {1} total", wowProcess, WowProcess.List.Count));
+                    List.Add(wowProcess);
+                    Log.Info(string.Format("{0} [Process watcher] Process started, {1} total", wowProcess, List.Count));
                     Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
                 }
             }
@@ -109,7 +126,7 @@ namespace AxTools.WoW
                 {
                     int pid = Convert.ToInt32(e.NewEvent["ProcessID"]);
                     string name = e.NewEvent["ProcessName"].ToString().Substring(0, e.NewEvent["ProcessName"].ToString().Length - 4);
-                    WowProcess pWowProcess = WowProcess.List.FirstOrDefault(x => x.ProcessID == pid);
+                    WowProcess pWowProcess = List.FirstOrDefault(x => x.ProcessID == pid);
                     if (pWowProcess != null)
                     {
                         if (WoWManager.Hooked && WoWManager.WoWProcess.ProcessID == pWowProcess.ProcessID)
@@ -119,9 +136,9 @@ namespace AxTools.WoW
                         }
                         pWowProcess.Dispose();
                         Log.Info(string.Format("[{0}:{1}] [WoW hook] Memory manager disposed", name, pid));
-                        if (WowProcess.List.Remove(pWowProcess))
+                        if (List.Remove(pWowProcess))
                         {
-                            Log.Info(string.Format("[{0}:{1}] [Process watcher] Process closed, {2} total", name, pid, WowProcess.List.Count));
+                            Log.Info(string.Format("[{0}:{1}] [Process watcher] Process closed, {2} total", name, pid, List.Count));
                         }
                         else
                         {

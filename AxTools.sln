@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_SpellGroundClicke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dummy", "Dummy\Dummy.csproj", "{328017C2-C977-47CF-AD42-D8CD7CAEBB7B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyMemory", "..\..\..\Download\MyMemory-master\MyMemory\MyMemory.vcxproj", "{3B4FBB66-598A-46B8-89FF-F6FA73CB6D7B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyMemory", "..\MyMemory\MyMemory.vcxproj", "{3B4FBB66-598A-46B8-89FF-F6FA73CB6D7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

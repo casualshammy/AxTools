@@ -141,7 +141,7 @@ namespace WoWPlugin_GarrisonFishingHelper
                     WowNpc creature = wowNpcs.FirstOrDefault(k => k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер");
                     if (creature != null && creature.Lootable)
                     {
-                        if (!localPlayer2.IsLooting)
+                        if (!localPlayer2.Is_Looting)
                         {
                             creature.Interact();
                         }

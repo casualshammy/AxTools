@@ -68,7 +68,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             // todo: delete try..catch
             try
             {
-                uint zone = WoWManager.WoWProcess.PlayerZoneID;
+                uint zone = WoWPlayerMe.ZoneID;
                 if (zone != currentZone)
                 {
                     OnZoneChanged(zone);

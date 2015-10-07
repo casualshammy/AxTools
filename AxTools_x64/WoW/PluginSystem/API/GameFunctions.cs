@@ -7,47 +7,59 @@ namespace AxTools.WoW.PluginSystem.API
     {
         public static void Interact(this WowObject wowObject)
         {
-            WoWDXInject.Interact(wowObject.GUID);
+            Interact(wowObject.GUID);
         }
 
         public static void Interact(this WowNpc wowNpc)
         {
-            WoWDXInject.Interact(wowNpc.GUID);
+            Interact(wowNpc.GUID);
         }
 
         public static void Interact(UInt128 guid)
         {
-            WoWDXInject.Interact(guid);
+            if (WoWManager.WoWProcess.IsInGame)
+            {
+                WoWDXInject.Interact(guid);
+            }
         }
 
         public static void Target(this WowNpc wowNpc)
         {
-            WoWDXInject.TargetUnit(wowNpc.GUID);
+            Target(wowNpc.GUID);
         }
 
         public static void Target(this WowPlayer wowPlayer)
         {
-            WoWDXInject.TargetUnit(wowPlayer.GUID);
+            Target(wowPlayer.GUID);
         }
 
         public static void Target(UInt128 guid)
         {
-            WoWDXInject.TargetUnit(guid);
+            if (WoWManager.WoWProcess.IsInGame)
+            {
+                WoWDXInject.TargetUnit(guid);
+            }
         }
 
         public static void MoveTo(WowPoint point)
         {
-            WoWDXInject.MoveTo(point);
+            if (WoWManager.WoWProcess.IsInGame)
+            {
+                WoWDXInject.MoveTo(point);
+            }
         }
 
         public static void Lua_DoString(string command)
         {
-            WoWDXInject.LuaDoString(command);
+            if (WoWManager.WoWProcess.IsInGame)
+            {
+                WoWDXInject.LuaDoString(command);
+            }
         }
 
         public static string Lua_GetFunctionReturn(string function)
         {
-            return WoWDXInject.GetFunctionReturn(function);
+            return WoWManager.WoWProcess.IsInGame ? WoWDXInject.GetFunctionReturn(function) : "";
         }
 
         public static void Lua_EnableCTM()

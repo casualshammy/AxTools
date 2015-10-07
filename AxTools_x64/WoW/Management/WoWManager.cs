@@ -5,6 +5,7 @@ using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace AxTools.WoW.Management
 {
@@ -14,7 +15,7 @@ namespace AxTools.WoW.Management
         internal static bool Hooked { private set; get; }
 
         /// <summary>
-        ///     Selects <see cref="WowProcess"/> from all available processes (via <see cref="ProcessSelection"/>).
+        ///     Selects <see cref="WowProcess"/> from all available processes (via <see cref="WoWProcessSelector"/>).
         ///     Checks selected process for IncorrectDirectXVersion, InvalidWoWBuild and NotInGame states.
         ///     If something went wrong, informs user via Utils.NotifyUser().
         /// </summary>
@@ -23,10 +24,9 @@ namespace AxTools.WoW.Management
         /// </returns>
         internal static bool HookWoWAndNotifyUserIfError()
         {
-            int index = WowProcess.List.Count == 1 ? 0 : ProcessSelection.SelectProcess();
-            if (index != -1)
+            WowProcess wowProcess = WoWProcessSelector.GetWoWProcess();
+            if (wowProcess != null)
             {
-                WowProcess wowProcess = WowProcess.List[index];
                 if (!Hooked)
                 {
                     if (wowProcess.IsValidBuild)
@@ -81,9 +81,75 @@ namespace AxTools.WoW.Management
             LuaConsole pLuaInjector = Utils.FindForm<LuaConsole>();
             if (pLuaInjector != null) pLuaInjector.Close();
 
-            if (PluginManager.ActivePlugins.Count != 0)
+            if (PluginManagerEx.RunningPlugins.Any())
             {
-                PluginManager.StopPlugins();
+                PluginManagerEx.StopPlugins();
+            }
+
+            WoWDXInject.Release();
+            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total objects cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowObject.Names.Count));
+            WowObject.Names.Clear();
+            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total players cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowPlayer.Names.Count));
+            WowPlayer.Names.Clear();
+            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total NPC cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowNpc.Names.Count));
+            WowNpc.Names.Clear();
+            Hooked = false;
+        }
+
+        internal enum HookResult
+        {
+            OK,
+            NoWoWProcessSelected,
+            PlayerIsNotInGame,
+            IncorrectWoWBuild,
+            AlreadyInitialized,
+            IncorrectHookPointer,
+        }
+
+        internal static HookResult Initialize(WowProcess wowProcess)
+        {
+            if (wowProcess != null)
+            {
+                if (!Hooked)
+                {
+                    if (wowProcess.IsValidBuild)
+                    {
+                        if (wowProcess.IsInGame)
+                        {
+                            WoWProcess = wowProcess;
+                            if (WoWProcess.Memory == null)
+                            {
+                                WoWProcess.Memory = new MemoryManager(Process.GetProcessById(WoWProcess.ProcessID));
+                            }
+                            if (WoWDXInject.Apply(WoWProcess))
+                            {
+                                ObjectMgr.Initialize(WoWProcess);
+                                Hooked = true;
+                                return HookResult.OK;
+                            }
+                            return HookResult.IncorrectHookPointer;
+                        }
+                        return HookResult.PlayerIsNotInGame;
+                    }
+                    return HookResult.IncorrectWoWBuild;
+                }
+                return HookResult.AlreadyInitialized;
+            }
+            return HookResult.NoWoWProcessSelected;
+        }
+
+        internal static void Deinitialize()
+        {
+            WowRadarOptions pWowRadarOptions = Utils.FindForm<WowRadarOptions>();
+            if (pWowRadarOptions != null) pWowRadarOptions.Close();
+            WowRadar pWowRadar = Utils.FindForm<WowRadar>();
+            if (pWowRadar != null) pWowRadar.Close();
+            LuaConsole pLuaInjector = Utils.FindForm<LuaConsole>();
+            if (pLuaInjector != null) pLuaInjector.Close();
+
+            if (PluginManagerEx.RunningPlugins.Any())
+            {
+                PluginManagerEx.StopPlugins();
             }
 
             WoWDXInject.Release();

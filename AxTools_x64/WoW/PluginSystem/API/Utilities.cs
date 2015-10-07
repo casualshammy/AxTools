@@ -57,9 +57,9 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
-        public static void RequestPluginsStopAsync()
+        public static Task RequestPluginsStopAsync()
         {
-            Task.Factory.StartNew(PluginManager.StopPlugins);
+            return Task.Factory.StartNew(PluginManagerEx.StopPlugins);
         }
 
         /// <summary>
@@ -81,23 +81,23 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static void RequestStartPlugin(string name)
         {
-            IPlugin plugin = PluginManager.Plugins.FirstOrDefault(l => l.Name == name);
+            IPlugin plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == name);
             if (plugin != null)
             {
-                IPlugin activePlugin = PluginManager.ActivePlugins.FirstOrDefault(l => l.Name == name);
+                IPlugin activePlugin = PluginManagerEx.RunningPlugins.FirstOrDefault(l => l.Name == name);
                 if (activePlugin == null)
                 {
-                    PluginManager.AddPluginToRunning(plugin);
+                    PluginManagerEx.AddPluginToRunning(plugin);
                 }
             }
         }
 
         public static void RequestStopPlugin(string name)
         {
-            IPlugin plugin = PluginManager.ActivePlugins.FirstOrDefault(l => l.Name == name);
+            IPlugin plugin = PluginManagerEx.RunningPlugins.FirstOrDefault(l => l.Name == name);
             if (plugin != null)
             {
-                PluginManager.RemovePluginFromRunning(plugin);
+                PluginManagerEx.RemovePluginFromRunning(plugin);
             }
         }
 

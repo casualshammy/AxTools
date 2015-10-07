@@ -258,9 +258,9 @@ namespace AxTools.Helpers
         #region Radar
 
         internal EventHandler WoWRadarListChanged;
-        private List<ObjectToFind> wowRadarList = new List<ObjectToFind>();
+        private List<RadarObject> wowRadarList = new List<RadarObject>();
         [JsonProperty(Order = 33, PropertyName = "WoWRadarList")]
-        internal List<ObjectToFind> WoWRadarList
+        internal List<RadarObject> WoWRadarList
         {
             get
             {

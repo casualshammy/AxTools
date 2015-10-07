@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
@@ -27,29 +26,13 @@ namespace AxTools.WoW
             Process.Dispose();
         }
 
-        private static readonly List<WowProcess> SharedList = new List<WowProcess>();
-        private static readonly object SharedLock = new object();
-
-        /// <summary>
-        ///     List of all <see cref="WowProcess"/> running on computer
-        /// </summary>
-        internal static List<WowProcess> List
-        {
-            get
-            {
-                lock (SharedLock)
-                {
-                    return SharedList;
-                }
-            }
-        }
-
         internal int ProcessID;
         internal MemoryManager Memory;
-
         private readonly WoWAntiKick woWAntiKick;
-
         private string mProcessName;
+        private readonly Process mProcess;
+        private readonly object isValidBuildLocker = new object();
+        private int isValidBuild;
 
         internal string ProcessName
         {
@@ -68,7 +51,6 @@ namespace AxTools.WoW
             get { return Process.MainWindowHandle; }
         }
         
-        private readonly Process mProcess;
         private Process Process
         {
             get
@@ -78,8 +60,6 @@ namespace AxTools.WoW
             }
         }
 
-        private readonly object isValidBuildLocker = new object();
-        private int isValidBuild;
         internal bool IsValidBuild
         {
             get
@@ -137,51 +117,10 @@ namespace AxTools.WoW
             }
         }
 
-        internal uint PlayerZoneID
-        {
-            get
-            {
-                return Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.PlayerZoneID);
-            }
-        }
-
-        internal string PlayerRealm
-        {
-            get
-            {
-                var textRealmName = Encoding.UTF8.GetString(Memory.ReadBytes(Memory.ImageBase + WowBuildInfoX64.PlayerRealm, 32));
-                if (textRealmName.Contains("\0"))
-                {
-                    textRealmName = textRealmName.Split(Convert.ToChar("\0"))[0];
-                }
-                return textRealmName;
-            }
-        }
-
-        internal string PlayerName
-        {
-            get
-            {
-                var txtPlayerName = Encoding.UTF8.GetString(Memory.ReadBytes(Memory.ImageBase + WowBuildInfoX64.PlayerName, 24));
-                if (txtPlayerName.Contains("\0"))
-                {
-                    txtPlayerName = txtPlayerName.Split(Convert.ToChar("\0"))[0];
-                }
-                return txtPlayerName;
-            }
-        }
-
-        internal bool PlayerIsLooting
-        {
-            get
-            {
-                return Memory.Read<byte>(Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting) != 0;
-            }
-        }
-
         public override string ToString()
         {
             return string.Concat("[", ProcessName, ":", ProcessID, "]");
         }
+
     }
 }

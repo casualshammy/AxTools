@@ -21,7 +21,7 @@ namespace AxTools.WoW
         internal static readonly int TickCount = 0x143A920; // [int]
         internal static readonly int GameState = 0x16A2F5E; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound)
         internal static readonly int PlayerName = 0x17EF7E0; // ClientServices::GetCharacterName (or Script_UnitName/GetPlayerName)
-        internal static readonly int PlayerRealm = 0x17EF996; // Гордунни = D0 93 D0 BE D1 80 D0 B4 D1 83 D0 BD D0 BD D0 B8 // Черный Шрам = D0 A7 D0 B5 D1 80 D0 BD D1 8B D0 B9 20 D0 A8 D1 80 D0 B0 D0 BC
+        //internal static readonly int PlayerRealm = 0x17EF996; // Гордунни = D0 93 D0 BE D1 80 D0 B4 D1 83 D0 BD D0 BD D0 B8 // Черный Шрам = D0 A7 D0 B5 D1 80 D0 BD D1 8B D0 B9 20 D0 A8 D1 80 D0 B0 D0 BC
         internal static readonly int PlayerZoneID = 0x16A2FE0; // CGGameUI::NewZoneFeedback (16) (or Script_GetRaidRosterInfo (101))
         internal static readonly int PlayerIsLooting = 0x1716A24; // [byte] CGPlayer_C::IsLooting (17) (or Script_SetLootPortrait (32) or Script_GetContainerPurchaseInfo)
         internal static readonly int BlackMarketNumItems = 0x1757CC8; // [uint]

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Windows.Forms;
 
 namespace AxTools.WoW.Management.ObjectManager
 {
@@ -83,44 +80,11 @@ namespace AxTools.WoW.Management.ObjectManager
                     try
                     {
                         ushort serverID = (ushort) ((GUID.Low >> 42) & 0x1FFF);
-                        // ReSharper disable ImpureMethodCallOnReadonlyValueField
                         temp = WoWDXInject.GetFunctionReturn("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
-                        // ReSharper restore ImpureMethodCallOnReadonlyValueField
                         if (!string.IsNullOrWhiteSpace(temp))
                         {
                             Names.Add(GUID, temp);
                         }
-                        /*
-                        /*      With remote server support
-                        /* 
-                        ushort serverID = (ushort) ((GUID.Low >> 42) & 0x1FFF);
-                        string playerGUID = "Player-" + serverID + "-" + GUID.High.ToString("X");
-                        using (WebClient webClient = new WebClient())
-                        {
-                            webClient.Encoding = Encoding.UTF8;
-                            try
-                            {
-                                temp = webClient.DownloadString("http://25.202.130.226:5000/get_player_name+guid=" + playerGUID);
-                            }
-                            finally
-                            {
-                                
-                            }
-                            if (!string.IsNullOrWhiteSpace(temp) && temp != "UNKNOWN")
-                            {
-                                Names.Add(GUID, temp);
-                            }
-                            else
-                            {
-                                temp = WoWDXInject.GetFunctionReturn("select(6, GetPlayerInfoByGUID(\"" + playerGUID + "\"))");
-                                if (!string.IsNullOrWhiteSpace(temp))
-                                {
-                                    Names.Add(GUID, temp);
-                                    webClient.DownloadString("http://25.202.130.226:5000/add_player_name+guid=" + playerGUID + "+name=" + temp);
-                                }
-                            }
-                        }
-                        */
                     }
                     catch
                     {
