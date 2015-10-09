@@ -151,6 +151,7 @@
     <Compile Include="Components\Line.Designer.cs">
       <DependentUpon>Line.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Helpers\RadarObject.cs" />
     <Compile Include="Helpers\AppSpecUtils.cs" />
     <Compile Include="Helpers\ErrorProviderExt.cs" />
     <Compile Include="Services\KeyboardListener.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.Designer.cs">
       <DependentUpon>FishingConfig.cs</DependentUpon>
     </Compile>
+    <Compile Include="WoW\PluginSystem\Plugins\FishingSettings.cs" />
     <Compile Include="WoW\WoWAntiKick.cs" />
     <Compile Include="WoW\WoWProcessWatcher.cs" />
     <Compile Include="WoW\Management\ObjectManager\WoWPlayerMe.cs" />
@@ -262,7 +264,6 @@
     <Compile Include="WinAPI\FLASHWINFO.cs" />
     <Compile Include="WinAPI\NativeMethods.cs" />
     <Compile Include="WinAPI\WM_MESSAGE.cs" />
-    <Compile Include="WoW\RadarObject.cs" />
     <Compile Include="Components\PictureBoxExt.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -535,6 +536,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

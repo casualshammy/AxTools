@@ -3,14 +3,10 @@ using AxTools.Properties;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem.API;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace AxTools.WoW.PluginSystem.Plugins
@@ -58,12 +54,16 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public void OnConfig()
         {
-            FishingConfig.Open(this);
+            if (fishingSettings == null)
+            {
+                fishingSettings = this.LoadSettingsJSON<FishingSettings>();
+            }
+            FishingConfig.Open(fishingSettings);
         }
 
         public void OnStart()
         {
-            LoadSettings();
+            fishingSettings = this.LoadSettingsJSON<FishingSettings>();
             state = 0;
             bobber = null;
             iterationStartTime = Environment.TickCount;
@@ -168,6 +168,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         public void OnStop()
         {
             timer.Dispose();
+            this.SaveSettingsJSON(fishingSettings);
         }
 
         #endregion
@@ -189,62 +190,10 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private int iterationStartTime;
         // ReSharper disable once InconsistentNaming
-        internal FishingSettings fishingSettings;
+        private FishingSettings fishingSettings;
         private string lureSpecialBait;
         private int state;
         private SingleThreadTimer timer;
-
-        #endregion
-
-        #region Settings
-
-        [JsonObject(MemberSerialization.OptIn)]
-        internal struct FishingSettings
-        {
-            [JsonProperty(PropertyName = "UseBestBait")]
-            internal bool UseBestBait;
-
-            [JsonProperty(PropertyName = "UseSpecialBait")]
-            internal bool UseSpecialBait;
-
-            [JsonProperty(PropertyName = "SpecialBait")]
-            internal string SpecialBait;
-        }
-
-        internal void SaveSettings()
-        {
-            StringBuilder sb = new StringBuilder(1024);
-            using (StringWriter sw = new StringWriter(sb, CultureInfo.InvariantCulture))
-            {
-                using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
-                {
-                    JsonSerializer js = new JsonSerializer();
-                    jsonWriter.Formatting = Formatting.Indented;
-                    jsonWriter.IndentChar = ' ';
-                    jsonWriter.Indentation = 4;
-                    js.Serialize(jsonWriter, fishingSettings);
-                }
-            }
-            string json = sb.ToString();
-            AppSpecUtils.CheckCreateDir();
-            string mySettingsDir = Globals.PluginsSettingsPath + "\\Fishing";
-            if (!Directory.Exists(mySettingsDir))
-            {
-                Directory.CreateDirectory(mySettingsDir);
-            }
-            File.WriteAllText(mySettingsDir + "\\FishingSettings.json", json, Encoding.UTF8);
-        }
-
-        internal void LoadSettings()
-        {
-            string mySettingsDir = Globals.PluginsSettingsPath + "\\Fishing";
-            string mySettingsFile = mySettingsDir + "\\FishingSettings.json";
-            if (File.Exists(mySettingsFile))
-            {
-                string rawText = File.ReadAllText(mySettingsFile, Encoding.UTF8);
-                fishingSettings = JsonConvert.DeserializeObject<FishingSettings>(rawText);
-            }
-        }
 
         #endregion
 

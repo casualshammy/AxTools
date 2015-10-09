@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using AxTools.WoW;
+using AxTools.Forms.Helpers;
 using MetroFramework;
 using Microsoft.Win32;
 using Newtonsoft.Json;

@@ -204,7 +204,6 @@ namespace AxTools.Forms
             if (WoWManager.Hooked)
             {
                 WoWManager.Unhook();
-                Log.Info(string.Format("{0}:{1} :: [WoW hook] Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }
             foreach (WowProcess i in WoWProcessManager.List)
             {
@@ -262,8 +261,13 @@ namespace AxTools.Forms
 
         private void LoadingStepSync()
         {
-            OnPluginsLoaded();
+            // plugins should be loaded, let's setup controls
+            SetupOLVPlugins();
+            CreateTrayContextMenu();
+            UpdateTrayContextMenu();
+            // start backup service
             AddonsBackup.StartService();
+            // start or disable pinger
             if (settings.PingerServerID == 0)
             {
                 Pinger.Stop();
@@ -272,15 +276,20 @@ namespace AxTools.Forms
             {
                 Pinger.Start();
             }
+            // start WoW process start/stop handler
             WoWProcessManager.StartWatcher();
+            // initialize tray animation
             TrayIconAnimation.Initialize(notifyIconMain);
-
+            // start key listener
             KeyboardListener.KeyPressed += KeyboardHookKeyDown;
             KeyboardListener.Start(new[] {settings.ClickerHotkey, settings.LuaTimerHotkey, settings.WoWPluginHotkey});
-
+            // close startup overkay
             startupOverlay.Close();
+            // show changes overview dialog if needed
             Changes.ShowChangesIfNeeded();
+            // start updater service
             UpdaterService.Start();
+            // situation normal :)
             Log.Info("AxTools started succesfully");
         }
 
@@ -309,7 +318,11 @@ namespace AxTools.Forms
                 case MouseButtons.Left:
                     Pinger.Stop();
                     linkPing.Text = "cleared";
-                    Pinger.Start();
+                    Task.Factory.StartNew(() =>
+                    {
+                        Thread.Sleep(1000);
+                        Pinger.Start();
+                    });
                     break;
                 case MouseButtons.Right:
                     int pingerTabPageIndex = 5;
@@ -320,9 +333,90 @@ namespace AxTools.Forms
 
         #endregion
 
-        #region MainNotifyIconContextMenu
+        #region TrayContextMenu
 
-        private void UpdatePluginsShortcutsInTrayContextMenu()
+        private void CreateTrayContextMenu()
+        {
+            contextMenuStripMain.Items.Clear();
+            contextMenuStripMain.Items.AddRange(new ToolStripItem[]
+            {
+                woWRadarToolStripMenuItem,
+                luaConsoleToolStripMenuItem,
+                blackMarketTrackerToolStripMenuItem,
+                toolStripSeparator2
+            });
+            Type[] nativePlugins = { typeof(Fishing), typeof(FlagReturner), typeof(GoodsDestroyer) };
+            foreach (IPlugin i in PluginManagerEx.LoadedPlugins.Where(i => nativePlugins.Contains(i.GetType())))
+            {
+                IPlugin plugin = i;
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
+                toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
+                {
+                    if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
+                    else if (plugin.ConfigAvailable) plugin.OnConfig();
+                    contextMenuStripMain.Hide();
+                };
+                toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
+                contextMenuStripMain.Items.Add(toolStripMenuItem);
+            }
+            if (PluginManagerEx.LoadedPlugins.Count() > nativePlugins.Length)
+            {
+                ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Custom plugins") as ToolStripMenuItem;
+                if (customPlugins != null)
+                {
+                    foreach (IPlugin i in PluginManagerEx.LoadedPlugins.Where(i => !nativePlugins.Contains(i.GetType())))
+                    {
+                        IPlugin plugin = i;
+                        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
+                        toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
+                        {
+                            if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
+                            else if (plugin.ConfigAvailable) plugin.OnConfig();
+                            contextMenuStripMain.Hide();
+                        };
+                        toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
+                        customPlugins.DropDownItems.Add(toolStripMenuItem);
+                    }
+                }
+            }
+            ToolStripMenuItem launchWoW = new ToolStripMenuItem("World of Warcraft", null, delegate
+            {
+                contextMenuStripMain.Hide();
+                StartWoW();
+            }, "World of Warcraft");
+            foreach (WoWAccount wowAccount in WoWAccount.AllAccounts)
+            {
+                WoWAccount account = wowAccount;
+                launchWoW.DropDownItems.Add(new ToolStripMenuItem(wowAccount.Login, null, delegate
+                {
+                    StartWoW(account);
+                }));
+            }
+            ToolStripMenuItem unloadInject = new ToolStripMenuItem("Detach from current WoW process", null, delegate
+            {
+                contextMenuStripMain.Hide();
+                if (WoWManager.Hooked)
+                {
+                    WoWManager.Unhook();
+                }
+                else
+                {
+                    AppSpecUtils.NotifyUser("Warning", "AxTools isn't attached to any WoW process", NotifyUserType.Warn, true);
+                }
+            }, "Detach from current WoW process");
+            contextMenuStripMain.Items.AddRange(new ToolStripItem[]
+            {
+                stopActivePluginorPresshotkeyToolStripMenuItem,
+                toolStripSeparator1,
+                unloadInject,
+                new ToolStripSeparator(),
+                launchWoW,
+                new ToolStripSeparator(),
+                launchWoWToolStripMenuItem
+            });
+        }
+
+        private void UpdateTrayContextMenu()
         {
             foreach (IPlugin plugin in PluginManagerEx.LoadedPlugins)
             {
@@ -386,7 +480,28 @@ namespace AxTools.Forms
 
         #endregion
 
-        #region MainTab
+        #region Tab: Home
+
+        private void StartWoW(WoWAccount wowAccount = null)
+        {
+            WaitingOverlay.Show(this, 1000);
+            if (File.Exists(settings.WoWDirectory + "\\Wow-64.exe"))
+            {
+                Process process = Process.Start(new ProcessStartInfo
+                {
+                    WorkingDirectory = settings.WoWDirectory,
+                    FileName = settings.WoWDirectory + "\\Wow-64.exe",
+                });
+                if (wowAccount != null)
+                {
+                    new AutoLogin(wowAccount, process).EnterCredentialsASAPAsync();
+                }
+            }
+            else
+            {
+                this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow-64.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
+        }
 
         private void CmbboxAccSelectSelectedIndexChanged(object sender, EventArgs e)
         {
@@ -404,11 +519,11 @@ namespace AxTools.Forms
                 }
                 if (settings.RaidcallStartWithWoW && !Process.GetProcessesByName("raidcall").Any())
                 {
-                    // todo
+                    StartRaidcall();
                 }
                 if (settings.MumbleStartWithWoW && !Process.GetProcessesByName("mumble").Any())
                 {
-                    // todo
+                    StartMumble();
                 }
                 cmbboxAccSelect.SelectedIndex = -1;
                 cmbboxAccSelect.Invalidate();
@@ -477,7 +592,110 @@ namespace AxTools.Forms
 
         #endregion
 
-        #region VoipTab
+        #region Tab: VoIP
+
+        private void StartVentrilo()
+        {
+            if (File.Exists(settings.VentriloDirectory + "\\Ventrilo.exe"))
+            {
+                Process process = Process.Start(new ProcessStartInfo
+                {
+                    WorkingDirectory = settings.VentriloDirectory,
+                    FileName = settings.VentriloDirectory + "\\Ventrilo.exe",
+                    Arguments = "-m"
+                });
+                Task.Factory.StartNew(() =>
+                {
+                    int counter = 300;
+                    while (counter > 0)
+                    {
+                        if (process != null)
+                        {
+                            process.Refresh();
+                            if (process.MainWindowHandle != (IntPtr)0)
+                            {
+                                IntPtr windowHandle = NativeMethods.FindWindow(null, "Ventrilo");
+                                if (windowHandle != IntPtr.Zero)
+                                {
+                                    IntPtr connectButtonHandle = NativeMethods.FindWindowEx(windowHandle, IntPtr.Zero, "Button", "C&onnect");
+                                    if (connectButtonHandle != IntPtr.Zero)
+                                    {
+                                        NativeMethods.PostMessage(connectButtonHandle, WM_MESSAGE.WM_BM_CLICK, IntPtr.Zero, IntPtr.Zero);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        Thread.Sleep(100);
+                        counter--;
+                    }
+                });
+                Log.Info("Ventrilo process started");
+            }
+            else
+            {
+                this.ShowTaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop);
+            }
+        }
+
+        private void StartTS3()
+        {
+            string ts3Executable;
+            if (File.Exists(settings.TS3Directory + "\\ts3client_win64.exe"))
+            {
+                ts3Executable = settings.TS3Directory + "\\ts3client_win64.exe";
+            }
+            else if (File.Exists(settings.TS3Directory + "\\ts3client_win32.exe"))
+            {
+                ts3Executable = settings.TS3Directory + "\\ts3client_win32.exe";
+            }
+            else
+            {
+                this.ShowTaskDialog("Executable not found", "Can't locate \"ts3client_win32.exe\"/\"ts3client_win64.exe\". Check paths in settings dialog", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                return;
+            }
+            Process.Start(new ProcessStartInfo
+            {
+                WorkingDirectory = settings.TS3Directory,
+                FileName = ts3Executable,
+                Arguments = "-nosingleinstance"
+            });
+            Log.Info("TS3 process started");
+        }
+
+        private void StartRaidcall()
+        {
+            if (File.Exists(settings.RaidcallDirectory + "\\raidcall.exe"))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    WorkingDirectory = settings.RaidcallDirectory,
+                    FileName = settings.RaidcallDirectory + "\\raidcall.exe"
+                });
+                Log.Info("Raidcall process started");
+            }
+            else
+            {
+                AppSpecUtils.NotifyUser("Executable not found", "Can't locate \"raidcall.exe\". Check paths in settings window", NotifyUserType.Error, false);
+            }
+        }
+
+        private void StartMumble()
+        {
+            if (File.Exists(settings.MumbleDirectory + "\\mumble.exe"))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    WorkingDirectory = settings.MumbleDirectory,
+                    FileName = settings.MumbleDirectory + "\\mumble.exe"
+                });
+                Log.Info("Mumble process started");
+            }
+            else
+            {
+                AppSpecUtils.NotifyUser("Executable not found", "Can't locate \"mumble.exe\". Check paths in settings window", NotifyUserType.Error, false);
+            }
+        }
 
         private void TileVentriloClick(object sender, EventArgs e)
         {
@@ -486,17 +704,7 @@ namespace AxTools.Forms
 
         private void TileRaidcallClick(object sender, EventArgs e)
         {
-            if (!File.Exists(settings.RaidcallDirectory + "\\raidcall.exe"))
-            {
-                new TaskDialog("Executable not found", "AxTools", "Can't locate \"raidcall.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
-                return;
-            }
-            Process.Start(new ProcessStartInfo
-            {
-                WorkingDirectory = settings.RaidcallDirectory,
-                FileName = settings.RaidcallDirectory + "\\raidcall.exe"
-            });
-            Log.Info("Raidcall process started");
+            StartRaidcall();
         }
 
         private void TileTeamspeak3Click(object sender, EventArgs e)
@@ -506,17 +714,7 @@ namespace AxTools.Forms
 
         private void TileMumbleClick(object sender, EventArgs e)
         {
-            if (!File.Exists(settings.MumbleDirectory + "\\mumble.exe"))
-            {
-                new TaskDialog("Executable not found", "AxTools", "Can't locate \"mumble.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
-                return;
-            }
-            Process.Start(new ProcessStartInfo
-            {
-                WorkingDirectory = settings.MumbleDirectory,
-                FileName = settings.MumbleDirectory + "\\mumble.exe"
-            });
-            Log.Info("Mumble process started");
+            StartMumble();
         }
 
         private void checkBoxStartVenriloWithWow_CheckedChanged(object sender, EventArgs e)
@@ -541,41 +739,105 @@ namespace AxTools.Forms
 
         #endregion
 
-        #region WowPluginsTab
+        #region Tab: Modules
+
+        private void StartWoWModule<T>() where T : Form, IWoWModule, new()
+        {
+            if (!WoWManager.Hooked)
+            {
+                if (WoWManager.HookWoWAndNotifyUserIfError())
+                {
+                    new T().Show();
+                }
+            }
+            else
+            {
+                T form = Utils.FindForm<T>();
+                if (form != null)
+                {
+                    form.Activate();
+                }
+                else
+                {
+                    new T().Show();
+                }
+            }
+        }
+
+        private void tileRadar_Click(object sender, EventArgs e)
+        {
+            StartWoWModule<WowRadar>();
+        }
+
+        private void tileLuaConsole_Click(object sender, EventArgs e)
+        {
+            StartWoWModule<LuaConsole>();
+        }
+
+        private void tileBMTracker_Click(object sender, EventArgs e)
+        {
+            StartWoWModule<BlackMarket>();
+        }
+
+        #endregion
+
+        #region Tab: Plug-ins
+
+        private void SwitchWoWPlugin()
+        {
+            buttonStartStopPlugin.Enabled = false;
+            if (!PluginManagerEx.RunningPlugins.Any())
+            {
+                if (olvPlugins.CheckedObjects.Count != 0)
+                {
+                    if (WoWManager.Hooked || WoWManager.HookWoWAndNotifyUserIfError())
+                    {
+                        if (WoWManager.WoWProcess.IsInGame)
+                        {
+                            PluginManagerEx.StartPlugins();
+                        }
+                        else
+                        {
+                            AppSpecUtils.NotifyUser("Plugin error", "Player isn't logged in", NotifyUserType.Error, true);
+                        }
+                    }
+                }
+                else
+                {
+                    AppSpecUtils.NotifyUser("Plugin error", "You didn't select valid plugin", NotifyUserType.Error, true);
+                }
+            }
+            else
+            {
+                try
+                {
+                    PluginManagerEx.StopPlugins();
+                }
+                catch
+                {
+                    Log.Error("Plugin task failed to cancel");
+                    AppSpecUtils.NotifyUser("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
+                }
+            }
+            buttonStartStopPlugin.Enabled = true;
+        }
+
+        private void SetupOLVPlugins()
+        {
+            olvPlugins.SetObjects(PluginManagerEx.LoadedPlugins);
+            foreach (IPlugin i in PluginManagerEx.EnabledPlugins)
+            {
+                olvPlugins.CheckObject(i);
+            }
+            olvPlugins.BooleanCheckStateGetter = OlvPlugins_BooleanCheckStateGetter;
+            olvPlugins.BooleanCheckStatePutter = OlvPlugins_BooleanCheckStatePutter;
+        }
 
         private void buttonStartStopPlugin_Click(object sender, EventArgs e)
         {
             SwitchWoWPlugin();
         }
         
-        private void MetroButtonBlackMarketTrackerClick(object sender, EventArgs e)
-        {
-            StartWoWModule<BlackMarket>();
-        }
-
-        private void MetroButtonRadarClick(object sender, EventArgs e)
-        {
-            StartWoWModule<WowRadar>();
-        }
-
-        private void MetroButtonLuaConsoleClick(object sender, EventArgs e)
-        {
-            StartWoWModule<LuaConsole>();
-        }
-
-        private void ButtonUnloadInjectorClick(object sender, EventArgs e)
-        {
-            if (WoWManager.Hooked)
-            {
-                WoWManager.Unhook();
-                Log.Info(string.Format("{0}:{1} :: Injector unloaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
-            }
-            if (!WoWManager.Hooked)
-            {
-                WoWManager.HookWoWAndNotifyUserIfError();
-            }
-        }
-
         private void buttonPluginSettings_Click(object sender, EventArgs e)
         {
             IPlugin plugin = olvPlugins.SelectedObject as IPlugin;
@@ -605,12 +867,6 @@ namespace AxTools.Forms
                 e.Text = plugin.Description + "\r\nVersion: " + plugin.Version;
             }
         }
-
-        //private void ObjectListView1OnItemChecked(object sender, ItemCheckedEventArgs itemCheckedEventArgs)
-        //{
-        //    settings.EnabledPluginsList = olvPlugins.CheckedObjects.Cast<IPlugin>().Select(l => l.Name).ToList();
-        //    BeginInvoke(new MethodInvoker(UpdatePluginsShortcutsInTrayContextMenu));
-        //}
 
         private void OlvPluginsOnDoubleClick(object sender, EventArgs eventArgs)
         {
@@ -653,14 +909,14 @@ namespace AxTools.Forms
                     PluginManagerEx.DisablePlugin(plugin);
                     settings.EnabledPluginsList.RemoveAll(l => l == plugin.Name);
                 }
-                BeginInvoke(new MethodInvoker(UpdatePluginsShortcutsInTrayContextMenu));
+                BeginInvoke(new MethodInvoker(UpdateTrayContextMenu));
             }
             return newValue;
         }
 
         #endregion
 
-        #region Events()
+        #region Events handlers
 
         private void WoWAccounts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -696,84 +952,6 @@ namespace AxTools.Forms
             }
         }
 
-        private void OnPluginsLoaded()
-        {
-            olvPlugins.SetObjects(PluginManagerEx.LoadedPlugins);
-            foreach (IPlugin i in PluginManagerEx.EnabledPlugins)
-            {
-                olvPlugins.CheckObject(i);
-            }
-            //olvPlugins.ItemChecked += ObjectListView1OnItemChecked;
-            olvPlugins.BooleanCheckStateGetter = OlvPlugins_BooleanCheckStateGetter;
-            olvPlugins.BooleanCheckStatePutter = OlvPlugins_BooleanCheckStatePutter;
-
-            contextMenuStripMain.Items.Clear();
-            contextMenuStripMain.Items.AddRange(new ToolStripItem[]
-            {
-                woWRadarToolStripMenuItem,
-                luaConsoleToolStripMenuItem,
-                blackMarketTrackerToolStripMenuItem,
-                toolStripSeparator2
-            });
-            Type[] nativePlugins = {typeof (Fishing), typeof (FlagReturner), typeof (GoodsDestroyer)};
-            foreach (IPlugin i in PluginManagerEx.LoadedPlugins.Where(i => nativePlugins.Contains(i.GetType())))
-            {
-                IPlugin plugin = i;
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
-                toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
-                {
-                    if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
-                    else if (plugin.ConfigAvailable) plugin.OnConfig();
-                    contextMenuStripMain.Hide();
-                };
-                toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
-                contextMenuStripMain.Items.Add(toolStripMenuItem);
-            }
-            if (PluginManagerEx.LoadedPlugins.Count() > nativePlugins.Length)
-            {
-                ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Custom plugins") as ToolStripMenuItem;
-                if (customPlugins != null)
-                {
-                    foreach (IPlugin i in PluginManagerEx.LoadedPlugins.Where(i => !nativePlugins.Contains(i.GetType())))
-                    {
-                        IPlugin plugin = i;
-                        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
-                        toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
-                        {
-                            if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
-                            else if (plugin.ConfigAvailable) plugin.OnConfig();
-                            contextMenuStripMain.Hide();
-                        };
-                        toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
-                        customPlugins.DropDownItems.Add(toolStripMenuItem);
-                    }
-                }
-            }
-            ToolStripMenuItem launchWoW = new ToolStripMenuItem("World of Warcraft", null, delegate
-            {
-                contextMenuStripMain.Hide();
-                StartWoW();
-            }, "World of Warcraft");
-            foreach (WoWAccount wowAccount in WoWAccount.AllAccounts)
-            {
-                WoWAccount account = wowAccount;
-                launchWoW.DropDownItems.Add(new ToolStripMenuItem(wowAccount.Login, null, delegate
-                {
-                    StartWoW(account);
-                }));
-            }
-            contextMenuStripMain.Items.AddRange(new ToolStripItem[]
-            {
-                stopActivePluginorPresshotkeyToolStripMenuItem,
-                toolStripSeparator1,
-                launchWoW,
-                new ToolStripSeparator(),
-                launchWoWToolStripMenuItem
-            });
-
-            UpdatePluginsShortcutsInTrayContextMenu();
-        }
-
         private void OnSettingsLoaded()
         {
             metroStyleManager1.Style = settings.StyleColor;
@@ -790,7 +968,7 @@ namespace AxTools.Forms
             {
                 buttonStartStopPlugin.Text = string.Format("{0} [{1}]", !PluginManagerEx.RunningPlugins.Any() ? "Start" : "Stop", settings.WoWPluginHotkey);
                 olvPlugins.Enabled = !PluginManagerEx.RunningPlugins.Any();
-                UpdatePluginsShortcutsInTrayContextMenu();
+                UpdateTrayContextMenu();
             });
         }
 
@@ -799,7 +977,7 @@ namespace AxTools.Forms
             BeginInvoke(new MethodInvoker(() =>
             {
                 buttonStartStopPlugin.Text = string.Format("{0} [{1}]", !PluginManagerEx.RunningPlugins.Any() ? "Start" : "Stop", key);
-                UpdatePluginsShortcutsInTrayContextMenu();
+                UpdateTrayContextMenu();
             }));
         }
 
@@ -859,170 +1037,6 @@ namespace AxTools.Forms
                     TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
                 }
             });
-        }
-
-        #endregion
-
-        #region Helpers
-
-        private void StartVentrilo()
-        {
-            if (File.Exists(settings.VentriloDirectory + "\\Ventrilo.exe"))
-            {
-                Process process = Process.Start(new ProcessStartInfo
-                {
-                    WorkingDirectory = settings.VentriloDirectory,
-                    FileName = settings.VentriloDirectory + "\\Ventrilo.exe",
-                    Arguments = "-m"
-                });
-                Task.Factory.StartNew(() =>
-                {
-                    int counter = 300;
-                    while (counter > 0)
-                    {
-                        if (process != null)
-                        {
-                            process.Refresh();
-                            if (process.MainWindowHandle != (IntPtr) 0)
-                            {
-                                IntPtr windowHandle = NativeMethods.FindWindow(null, "Ventrilo");
-                                if (windowHandle != IntPtr.Zero)
-                                {
-                                    IntPtr connectButtonHandle = NativeMethods.FindWindowEx(windowHandle, IntPtr.Zero, "Button", "C&onnect");
-                                    if (connectButtonHandle != IntPtr.Zero)
-                                    {
-                                        NativeMethods.PostMessage(connectButtonHandle, WM_MESSAGE.WM_BM_CLICK, IntPtr.Zero, IntPtr.Zero);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        Thread.Sleep(100);
-                        counter--;
-                    }
-                });
-                Log.Info("Ventrilo process started");
-            }
-            else
-            {
-                this.ShowTaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop);
-            }
-        }
-
-        private void StartTS3()
-        {
-            string ts3Executable;
-            if (File.Exists(settings.TS3Directory + "\\ts3client_win64.exe"))
-            {
-                ts3Executable = settings.TS3Directory + "\\ts3client_win64.exe";
-            }
-            else if (File.Exists(settings.TS3Directory + "\\ts3client_win32.exe"))
-            {
-                ts3Executable = settings.TS3Directory + "\\ts3client_win32.exe";
-            }
-            else
-            {
-                this.ShowTaskDialog("Executable not found", "Can't locate \"ts3client_win32.exe\"/\"ts3client_win64.exe\". Check paths in settings dialog", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                return;
-            }
-            Process.Start(new ProcessStartInfo
-            {
-                WorkingDirectory = settings.TS3Directory,
-                FileName = ts3Executable,
-                Arguments = "-nosingleinstance"
-            });
-            Log.Info("TS3 process started");
-        }
-
-        private void StartWoW(WoWAccount wowAccount = null)
-        {
-            WaitingOverlay.Show(this, 1000);
-            if (File.Exists(settings.WoWDirectory + "\\Wow-64.exe"))
-            {
-                Process process = Process.Start(new ProcessStartInfo
-                {
-                    WorkingDirectory = settings.WoWDirectory,
-                    FileName = settings.WoWDirectory + "\\Wow-64.exe",
-                });
-                if (wowAccount != null)
-                {
-                    new AutoLogin(wowAccount, process).EnterCredentialsASAPAsync();
-                }
-            }
-            else
-            {
-                this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow-64.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
-            }
-        }
-
-        private void StartWoWModule<T>() where T : Form, IWoWModule, new()
-        {
-            if (!WoWManager.Hooked)
-            {
-                if (WoWManager.HookWoWAndNotifyUserIfError())
-                {
-                    new T().Show();
-                }
-            }
-            else
-            {
-                T form = Utils.FindForm<T>();
-                if (form != null)
-                {
-                    form.Activate();
-                }
-                else
-                {
-                    new T().Show();
-                }
-            }
-        }
-
-        private void SwitchWoWPlugin()
-        {
-            buttonStartStopPlugin.Enabled = false;
-            if (!PluginManagerEx.RunningPlugins.Any())
-            {
-                if (olvPlugins.CheckedObjects.Count != 0)
-                {
-                    if (WoWManager.Hooked || WoWManager.HookWoWAndNotifyUserIfError())
-                    {
-                        if (WoWManager.WoWProcess.IsInGame)
-                        {
-                            PluginManagerEx.StartPlugins();
-                        }
-                        else
-                        {
-                            AppSpecUtils.NotifyUser("Plugin error", "Player isn't logged in", NotifyUserType.Error, true);
-                        }
-                    }
-                }
-                else
-                {
-                    AppSpecUtils.NotifyUser("Plugin error", "You didn't select valid plugin", NotifyUserType.Error, true);
-                }
-            }
-            else
-            {
-                try
-                {
-                    PluginManagerEx.StopPlugins();
-                }
-                catch
-                {
-                    Log.Error("Plugin task failed to cancel");
-                    AppSpecUtils.NotifyUser("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
-                }
-            }
-            buttonStartStopPlugin.Enabled = true;
-        }
-
-        internal void ShowNotifyIconMessage(string title, string text, ToolTipIcon icon)
-        {
-            if (InvokeRequired)
-                BeginInvoke(new MethodInvoker(() => notifyIconMain.ShowBalloonTip(30000, title, text, icon)));
-            else
-                notifyIconMain.ShowBalloonTip(30000, title, text, icon);
         }
 
         #endregion

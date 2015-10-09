@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.Forms.Helpers;
 
 namespace AxTools.Forms
 {

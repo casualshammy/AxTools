@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Forms;
 using AxTools.Helpers;
 using AxTools.WoW.Management;
+using Newtonsoft.Json;
 
 namespace AxTools.WoW.PluginSystem.API
 {
@@ -29,7 +33,7 @@ namespace AxTools.WoW.PluginSystem.API
         /// <param name="icon"></param>
         public static void ShowNotifyMessage(string title, string text, ToolTipIcon icon)
         {
-            MainForm.Instance.ShowNotifyIconMessage(title, text, icon);
+            AppSpecUtils.NotifyUser(title, text, (NotifyUserType) icon, false);
         }
 
         /// <summary>
@@ -72,6 +76,40 @@ namespace AxTools.WoW.PluginSystem.API
         public static SingleThreadTimer CreateTimer(this IPlugin plugin, int interval, Action action)
         {
             return new SingleThreadTimer(interval, action) { PluginName = plugin.Name };
+        }
+
+        public static void SaveSettingsJSON<T>(this IPlugin plugin, T data) where T : class
+        {
+            StringBuilder sb = new StringBuilder(1024);
+            using (StringWriter sw = new StringWriter(sb, CultureInfo.InvariantCulture))
+            {
+                using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
+                {
+                    JsonSerializer js = new JsonSerializer();
+                    jsonWriter.Formatting = Formatting.Indented;
+                    jsonWriter.IndentChar = ' ';
+                    jsonWriter.Indentation = 4;
+                    js.Serialize(jsonWriter, data);
+                }
+            }
+            AppSpecUtils.CheckCreateDir();
+            string mySettingsDir = Globals.PluginsSettingsPath + "\\" + plugin.Name;
+            if (!Directory.Exists(mySettingsDir))
+            {
+                Directory.CreateDirectory(mySettingsDir);
+            }
+            File.WriteAllText(mySettingsDir + "\\settings.json", sb.ToString(), Encoding.UTF8);
+        }
+
+        public static T LoadSettingsJSON<T>(this IPlugin plugin) where T : class
+        {
+            string mySettingsFile = string.Format("{0}\\{1}\\settings.json", Globals.PluginsSettingsPath, plugin.Name);
+            if (File.Exists(mySettingsFile))
+            {
+                string rawText = File.ReadAllText(mySettingsFile, Encoding.UTF8);
+                return JsonConvert.DeserializeObject<T>(rawText);
+            }
+            return default(T);
         }
 
         public static string GetRandomString(int size)

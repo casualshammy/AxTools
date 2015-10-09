@@ -87,13 +87,14 @@ namespace AxTools.WoW.Management
             }
 
             WoWDXInject.Release();
-            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total objects cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowObject.Names.Count));
+            Log.Info(string.Format("{0} [WoW hook] Total objects cached: {1}", WoWProcess, WowObject.Names.Count));
             WowObject.Names.Clear();
-            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total players cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowPlayer.Names.Count));
+            Log.Info(string.Format("{0} [WoW hook] Total players cached: {1}", WoWProcess, WowPlayer.Names.Count));
             WowPlayer.Names.Clear();
-            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total NPC cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowNpc.Names.Count));
+            Log.Info(string.Format("{0} [WoW hook] Total NPC cached: {1}", WoWProcess, WowNpc.Names.Count));
             WowNpc.Names.Clear();
             Hooked = false;
+            Log.Info(string.Format("{0} [WoW hook] Detached", WoWProcess));
         }
 
         internal enum HookResult
@@ -106,7 +107,7 @@ namespace AxTools.WoW.Management
             IncorrectHookPointer,
         }
 
-        internal static HookResult Initialize(WowProcess wowProcess)
+        internal static HookResult Attach(WowProcess wowProcess)
         {
             if (wowProcess != null)
             {
@@ -138,28 +139,9 @@ namespace AxTools.WoW.Management
             return HookResult.NoWoWProcessSelected;
         }
 
-        internal static void Deinitialize()
+        internal static void Detach()
         {
-            WowRadarOptions pWowRadarOptions = Utils.FindForm<WowRadarOptions>();
-            if (pWowRadarOptions != null) pWowRadarOptions.Close();
-            WowRadar pWowRadar = Utils.FindForm<WowRadar>();
-            if (pWowRadar != null) pWowRadar.Close();
-            LuaConsole pLuaInjector = Utils.FindForm<LuaConsole>();
-            if (pLuaInjector != null) pLuaInjector.Close();
-
-            if (PluginManagerEx.RunningPlugins.Any())
-            {
-                PluginManagerEx.StopPlugins();
-            }
-
-            WoWDXInject.Release();
-            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total objects cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowObject.Names.Count));
-            WowObject.Names.Clear();
-            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total players cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowPlayer.Names.Count));
-            WowPlayer.Names.Clear();
-            Log.Info(string.Format("{0}:{1} :: [WoW hook] Total NPC cached: {2}", WoWProcess.ProcessName, WoWProcess.ProcessID, WowNpc.Names.Count));
-            WowNpc.Names.Clear();
-            Hooked = false;
+            Unhook();
         }
 
     }

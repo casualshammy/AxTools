@@ -88,7 +88,7 @@ namespace AxTools.Updater
                 return;
             }
             TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No), TaskDialogIcon.Information);
-            MainForm.Instance.ShowNotifyIconMessage("Update for AxTools is ready to install", "Click on icon to install", ToolTipIcon.Info);
+            AppSpecUtils.NotifyUser("Update for AxTools is ready to install", "Click on icon to install", NotifyUserType.Info, true);
             if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
             {
                 try

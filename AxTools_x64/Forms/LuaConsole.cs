@@ -62,7 +62,7 @@ namespace AxTools.Forms
                 if (!settings.WoWLuaConsoleIgnoreGameState)
                 {
                     Log.Info(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
-                    MainForm.Instance.ShowNotifyIconMessage("Lua console's timer is stopped", "The player isn't active or not in the game", ToolTipIcon.Error);
+                    AppSpecUtils.NotifyUser("Lua console's timer is stopped", "The player isn't active or not in the game", NotifyUserType.Warn, false);
                     Invoke(new Action(() => InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty)));
                     return;
                 }

@@ -11,23 +11,18 @@ namespace AxTools.WoW.PluginSystem.Plugins
             InitializeComponent();
         }
 
-        internal static void Open(Fishing fishing)
+        internal static void Open(FishingSettings fishingSettings)
         {
-            if (fishing != null)
+            FishingConfig fishingConfig = new FishingConfig
             {
-                fishing.LoadSettings();
-                FishingConfig fishingConfig = new FishingConfig
-                {
-                    checkBoxUseBestBait = {Checked = fishing.fishingSettings.UseBestBait},
-                    checkBoxUseSpecialBait = {Checked = fishing.fishingSettings.UseSpecialBait},
-                    comboBoxSpecialBait = {Text = fishing.fishingSettings.SpecialBait}
-                };
-                fishingConfig.ShowDialog(MainForm.Instance);
-                fishing.fishingSettings.UseBestBait = fishingConfig.checkBoxUseBestBait.Checked;
-                fishing.fishingSettings.UseSpecialBait = fishingConfig.checkBoxUseSpecialBait.Checked;
-                fishing.fishingSettings.SpecialBait = fishingConfig.comboBoxSpecialBait.Text;
-                fishing.SaveSettings();
-            }
+                checkBoxUseBestBait = { Checked = fishingSettings.UseBestBait },
+                checkBoxUseSpecialBait = { Checked = fishingSettings.UseSpecialBait },
+                comboBoxSpecialBait = { Text = fishingSettings.SpecialBait }
+            };
+            fishingConfig.ShowDialog(MainForm.Instance);
+            fishingSettings.UseBestBait = fishingConfig.checkBoxUseBestBait.Checked;
+            fishingSettings.UseSpecialBait = fishingConfig.checkBoxUseSpecialBait.Checked;
+            fishingSettings.SpecialBait = fishingConfig.comboBoxSpecialBait.Text;
         }
 
         private void button1_Click(object sender, EventArgs e)

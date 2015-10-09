@@ -63,16 +63,17 @@ namespace AxTools.Forms
             this.linkClickerSettings = new MetroFramework.Controls.MetroLink();
             this.linkBackup = new MetroFramework.Controls.MetroLink();
             this.cmbboxAccSelect = new AxTools.Components.MetroComboboxExt(this.components);
+            this.tabPageModules = new MetroFramework.Controls.MetroTabPage();
+            this.tileBMTracker = new AxTools.Components.MetroTileExt(this.components);
+            this.tileRadar = new AxTools.Components.MetroTileExt(this.components);
+            this.tileLuaConsole = new AxTools.Components.MetroTileExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
             this.olvPlugins = new BrightIdeasSoftware.ObjectListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.buttonPluginSettings = new System.Windows.Forms.Button();
             this.buttonStartStopPlugin = new MetroFramework.Controls.MetroButton();
-            this.metroButtonLuaConsole = new MetroFramework.Controls.MetroButton();
-            this.metroButtonRadar = new MetroFramework.Controls.MetroButton();
-            this.metroButtonBlackMarketTracker = new MetroFramework.Controls.MetroButton();
-            this.buttonUnloadInjector = new MetroFramework.Controls.MetroButton();
+            this.labelPluginDesc = new MetroFramework.Controls.MetroLabel();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.checkBoxStartTeamspeak3WithWow = new MetroFramework.Controls.MetroCheckBox();
             this.checkBoxStartMumbleWithWow = new MetroFramework.Controls.MetroCheckBox();
@@ -95,6 +96,7 @@ namespace AxTools.Forms
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
+            this.tabPageModules.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvPlugins)).BeginInit();
             this.metroTabPage2.SuspendLayout();
@@ -181,6 +183,7 @@ namespace AxTools.Forms
             // tabControl
             // 
             this.tabControl.Controls.Add(this.metroTabPage1);
+            this.tabControl.Controls.Add(this.tabPageModules);
             this.tabControl.Controls.Add(this.metroTabPage3);
             this.tabControl.Controls.Add(this.metroTabPage2);
             this.tabControl.CustomBackground = false;
@@ -219,7 +222,7 @@ namespace AxTools.Forms
             this.metroTabPage1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage1.StyleManager = this.metroStyleManager1;
             this.metroTabPage1.TabIndex = 0;
-            this.metroTabPage1.Text = "             Home          ";
+            this.metroTabPage1.Text = "         Home       ";
             this.metroTabPage1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage1.VerticalScrollbar = false;
             this.metroTabPage1.VerticalScrollbarBarColor = true;
@@ -322,15 +325,86 @@ namespace AxTools.Forms
             this.cmbboxAccSelect.Theme = MetroFramework.MetroThemeStyle.Light;
             this.cmbboxAccSelect.SelectedIndexChanged += new System.EventHandler(this.CmbboxAccSelectSelectedIndexChanged);
             // 
+            // tabPageModules
+            // 
+            this.tabPageModules.Controls.Add(this.tileBMTracker);
+            this.tabPageModules.Controls.Add(this.tileRadar);
+            this.tabPageModules.Controls.Add(this.tileLuaConsole);
+            this.tabPageModules.CustomBackground = false;
+            this.tabPageModules.HorizontalScrollbar = false;
+            this.tabPageModules.HorizontalScrollbarBarColor = true;
+            this.tabPageModules.HorizontalScrollbarHighlightOnWheel = false;
+            this.tabPageModules.HorizontalScrollbarSize = 10;
+            this.tabPageModules.Location = new System.Drawing.Point(4, 35);
+            this.tabPageModules.Name = "tabPageModules";
+            this.tabPageModules.Size = new System.Drawing.Size(421, 160);
+            this.tabPageModules.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tabPageModules.StyleManager = null;
+            this.tabPageModules.TabIndex = 3;
+            this.tabPageModules.Text = "      Modules    ";
+            this.tabPageModules.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.tabPageModules.VerticalScrollbar = false;
+            this.tabPageModules.VerticalScrollbarBarColor = true;
+            this.tabPageModules.VerticalScrollbarHighlightOnWheel = false;
+            this.tabPageModules.VerticalScrollbarSize = 10;
+            // 
+            // tileBMTracker
+            // 
+            this.tileBMTracker.ActiveControl = null;
+            this.tileBMTracker.CenterText = "Black market tracker";
+            this.tileBMTracker.CustomBackground = false;
+            this.tileBMTracker.CustomForeColor = false;
+            this.tileBMTracker.Location = new System.Drawing.Point(3, 101);
+            this.tileBMTracker.Name = "tileBMTracker";
+            this.tileBMTracker.PaintTileCount = true;
+            this.tileBMTracker.Size = new System.Drawing.Size(415, 52);
+            this.tileBMTracker.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tileBMTracker.StyleManager = this.metroStyleManager1;
+            this.tileBMTracker.TabIndex = 8;
+            this.tileBMTracker.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.tileBMTracker.TileCount = 0;
+            this.tileBMTracker.Click += new System.EventHandler(this.tileBMTracker_Click);
+            // 
+            // tileRadar
+            // 
+            this.tileRadar.ActiveControl = null;
+            this.tileRadar.CenterText = "Radar";
+            this.tileRadar.CustomBackground = false;
+            this.tileRadar.CustomForeColor = false;
+            this.tileRadar.Location = new System.Drawing.Point(3, 15);
+            this.tileRadar.Name = "tileRadar";
+            this.tileRadar.PaintTileCount = true;
+            this.tileRadar.Size = new System.Drawing.Size(205, 80);
+            this.tileRadar.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tileRadar.StyleManager = this.metroStyleManager1;
+            this.tileRadar.TabIndex = 7;
+            this.tileRadar.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.tileRadar.TileCount = 0;
+            this.tileRadar.Click += new System.EventHandler(this.tileRadar_Click);
+            // 
+            // tileLuaConsole
+            // 
+            this.tileLuaConsole.ActiveControl = null;
+            this.tileLuaConsole.CenterText = "Lua console";
+            this.tileLuaConsole.CustomBackground = false;
+            this.tileLuaConsole.CustomForeColor = false;
+            this.tileLuaConsole.Location = new System.Drawing.Point(214, 15);
+            this.tileLuaConsole.Name = "tileLuaConsole";
+            this.tileLuaConsole.PaintTileCount = true;
+            this.tileLuaConsole.Size = new System.Drawing.Size(204, 80);
+            this.tileLuaConsole.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tileLuaConsole.StyleManager = this.metroStyleManager1;
+            this.tileLuaConsole.TabIndex = 6;
+            this.tileLuaConsole.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.tileLuaConsole.TileCount = 0;
+            this.tileLuaConsole.Click += new System.EventHandler(this.tileLuaConsole_Click);
+            // 
             // metroTabPage3
             // 
             this.metroTabPage3.Controls.Add(this.olvPlugins);
             this.metroTabPage3.Controls.Add(this.buttonPluginSettings);
             this.metroTabPage3.Controls.Add(this.buttonStartStopPlugin);
-            this.metroTabPage3.Controls.Add(this.metroButtonLuaConsole);
-            this.metroTabPage3.Controls.Add(this.metroButtonRadar);
-            this.metroTabPage3.Controls.Add(this.metroButtonBlackMarketTracker);
-            this.metroTabPage3.Controls.Add(this.buttonUnloadInjector);
+            this.metroTabPage3.Controls.Add(this.labelPluginDesc);
             this.metroTabPage3.CustomBackground = false;
             this.metroTabPage3.HorizontalScrollbar = false;
             this.metroTabPage3.HorizontalScrollbarBarColor = true;
@@ -342,7 +416,7 @@ namespace AxTools.Forms
             this.metroTabPage3.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage3.StyleManager = this.metroStyleManager1;
             this.metroTabPage3.TabIndex = 2;
-            this.metroTabPage3.Text = "      WoW plug-ins    ";
+            this.metroTabPage3.Text = "      Plug-ins    ";
             this.metroTabPage3.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage3.VerticalScrollbar = false;
             this.metroTabPage3.VerticalScrollbarBarColor = true;
@@ -418,57 +492,24 @@ namespace AxTools.Forms
             this.metroToolTip1.SetToolTip(this.buttonStartStopPlugin, "Start/stop plugin");
             this.buttonStartStopPlugin.Click += new System.EventHandler(this.buttonStartStopPlugin_Click);
             // 
-            // metroButtonLuaConsole
+            // labelPluginDesc
             // 
-            this.metroButtonLuaConsole.Highlight = true;
-            this.metroButtonLuaConsole.Location = new System.Drawing.Point(303, 79);
-            this.metroButtonLuaConsole.Name = "metroButtonLuaConsole";
-            this.metroButtonLuaConsole.Size = new System.Drawing.Size(115, 23);
-            this.metroButtonLuaConsole.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroButtonLuaConsole.StyleManager = this.metroStyleManager1;
-            this.metroButtonLuaConsole.TabIndex = 71;
-            this.metroButtonLuaConsole.Text = "Lua console";
-            this.metroButtonLuaConsole.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroButtonLuaConsole.Click += new System.EventHandler(this.MetroButtonLuaConsoleClick);
-            // 
-            // metroButtonRadar
-            // 
-            this.metroButtonRadar.Highlight = true;
-            this.metroButtonRadar.Location = new System.Drawing.Point(303, 50);
-            this.metroButtonRadar.Name = "metroButtonRadar";
-            this.metroButtonRadar.Size = new System.Drawing.Size(115, 23);
-            this.metroButtonRadar.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroButtonRadar.StyleManager = this.metroStyleManager1;
-            this.metroButtonRadar.TabIndex = 70;
-            this.metroButtonRadar.Text = "Radar";
-            this.metroButtonRadar.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroButtonRadar.Click += new System.EventHandler(this.MetroButtonRadarClick);
-            // 
-            // metroButtonBlackMarketTracker
-            // 
-            this.metroButtonBlackMarketTracker.Highlight = true;
-            this.metroButtonBlackMarketTracker.Location = new System.Drawing.Point(303, 108);
-            this.metroButtonBlackMarketTracker.Name = "metroButtonBlackMarketTracker";
-            this.metroButtonBlackMarketTracker.Size = new System.Drawing.Size(115, 23);
-            this.metroButtonBlackMarketTracker.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroButtonBlackMarketTracker.StyleManager = this.metroStyleManager1;
-            this.metroButtonBlackMarketTracker.TabIndex = 16;
-            this.metroButtonBlackMarketTracker.Text = "Black Market tracker";
-            this.metroButtonBlackMarketTracker.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroButtonBlackMarketTracker.Click += new System.EventHandler(this.MetroButtonBlackMarketTrackerClick);
-            // 
-            // buttonUnloadInjector
-            // 
-            this.buttonUnloadInjector.Highlight = false;
-            this.buttonUnloadInjector.Location = new System.Drawing.Point(303, 137);
-            this.buttonUnloadInjector.Name = "buttonUnloadInjector";
-            this.buttonUnloadInjector.Size = new System.Drawing.Size(115, 20);
-            this.buttonUnloadInjector.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonUnloadInjector.StyleManager = this.metroStyleManager1;
-            this.buttonUnloadInjector.TabIndex = 15;
-            this.buttonUnloadInjector.Text = "Another process...";
-            this.buttonUnloadInjector.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.buttonUnloadInjector.Click += new System.EventHandler(this.ButtonUnloadInjectorClick);
+            this.labelPluginDesc.AutoSize = true;
+            this.labelPluginDesc.CustomBackground = false;
+            this.labelPluginDesc.CustomForeColor = false;
+            this.labelPluginDesc.FontSize = MetroFramework.MetroLabelSize.Small;
+            this.labelPluginDesc.FontWeight = MetroFramework.MetroLabelWeight.Regular;
+            this.labelPluginDesc.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.labelPluginDesc.Location = new System.Drawing.Point(303, 47);
+            this.labelPluginDesc.Name = "labelPluginDesc";
+            this.labelPluginDesc.Size = new System.Drawing.Size(117, 105);
+            this.labelPluginDesc.Style = MetroFramework.MetroColorStyle.Blue;
+            this.labelPluginDesc.StyleManager = null;
+            this.labelPluginDesc.TabIndex = 82;
+            this.labelPluginDesc.Text = "Check plugins you\r\nwant to enable and\r\nthen click \"Start\"\r\nbutton to launch.\r\nDou" +
+    "ble right click on\r\na row to open\r\nsettings dialog";
+            this.labelPluginDesc.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.labelPluginDesc.UseStyleColors = true;
             // 
             // metroTabPage2
             // 
@@ -491,7 +532,7 @@ namespace AxTools.Forms
             this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage2.StyleManager = this.metroStyleManager1;
             this.metroTabPage2.TabIndex = 1;
-            this.metroTabPage2.Text = "             VoIP           ";
+            this.metroTabPage2.Text = "        VoIP     ";
             this.metroTabPage2.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage2.VerticalScrollbar = true;
             this.metroTabPage2.VerticalScrollbarBarColor = true;
@@ -782,7 +823,9 @@ namespace AxTools.Forms
             this.tabControl.ResumeLayout(false);
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage1.PerformLayout();
+            this.tabPageModules.ResumeLayout(false);
             this.metroTabPage3.ResumeLayout(false);
+            this.metroTabPage3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvPlugins)).EndInit();
             this.metroTabPage2.ResumeLayout(false);
             this.metroTabPage2.PerformLayout();
@@ -794,7 +837,7 @@ namespace AxTools.Forms
         }
         #endregion
 
-        private NotifyIcon notifyIconMain;
+        internal NotifyIcon notifyIconMain;
         private MetroTabControl tabControl;
         private MetroTabPage metroTabPage1;
         private MetroTabPage metroTabPage2;
@@ -804,7 +847,6 @@ namespace AxTools.Forms
         private MetroTileExt tileVentrilo;
         private MetroTabPage metroTabPage3;
         private MetroComboboxExt cmbboxAccSelect;
-        private MetroButton buttonUnloadInjector;
         private MetroToolTip metroToolTip1;
         private MetroStyleManager metroStyleManager1;
         private ContextMenuStrip contextMenuStripMain;
@@ -814,9 +856,6 @@ namespace AxTools.Forms
         private ToolStripMenuItem launchWoWToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripMenuItem luaConsoleToolStripMenuItem;
-        private MetroButton metroButtonBlackMarketTracker;
-        private MetroButton metroButtonLuaConsole;
-        private MetroButton metroButtonRadar;
         private MetroCheckBox checkBoxStartVenriloWithWow;
         private MetroCheckBox checkBoxStartRaidcallWithWow;
         private MetroCheckBox checkBoxStartTeamspeak3WithWow;
@@ -841,6 +880,11 @@ namespace AxTools.Forms
         private BrightIdeasSoftware.ObjectListView olvPlugins;
         private BrightIdeasSoftware.OLVColumn olvColumn1;
         private BrightIdeasSoftware.OLVColumn olvColumn2;
+        private MetroTabPage tabPageModules;
+        private MetroTileExt tileBMTracker;
+        private MetroTileExt tileRadar;
+        private MetroTileExt tileLuaConsole;
+        private MetroLabel labelPluginDesc;
     }
 }
 

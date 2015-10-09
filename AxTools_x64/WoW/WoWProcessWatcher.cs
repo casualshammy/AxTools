@@ -1,5 +1,4 @@
-﻿using AxTools.Forms;
-using AxTools.Helpers;
+﻿using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
 using AxTools.WinAPI;
 using AxTools.WoW.Management;
@@ -10,7 +9,6 @@ using System.Linq;
 using System.Management;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace AxTools.WoW
 {
@@ -77,7 +75,7 @@ namespace AxTools.WoW
                 switch (i.ProcessName.ToLower())
                 {
                     case "wow":
-                        MainForm.Instance.ShowNotifyIconMessage("Unsupported WoW version", "AxTools doesn't support x86 versions of WoW client", ToolTipIcon.Warning);
+                        AppSpecUtils.NotifyUser("Unsupported WoW version", "AxTools doesn't support x86 versions of WoW client", NotifyUserType.Warn, true);
                         break;
                     case "wow-64":
                         WowProcess process = new WowProcess(i.Id);
@@ -97,7 +95,7 @@ namespace AxTools.WoW
                 string processName = e.NewEvent["ProcessName"].ToString().ToLower();
                 if (processName == "wow.exe")
                 {
-                    MainForm.Instance.ShowNotifyIconMessage("Unsupported WoW version", "AxTools doesn't support x86 versions of WoW client", ToolTipIcon.Error);
+                    AppSpecUtils.NotifyUser("Unsupported WoW version", "AxTools doesn't support x86 versions of WoW client", NotifyUserType.Warn, true);
                     Log.Error(string.Format("[{0}:{1}] [Process watcher] 32bit WoW processes aren't supported", processName, processId));
                 }
                 else if (processName == "wow-64.exe")
@@ -132,7 +130,6 @@ namespace AxTools.WoW
                         if (WoWManager.Hooked && WoWManager.WoWProcess.ProcessID == pWowProcess.ProcessID)
                         {
                             WoWManager.Unhook();
-                            Log.Info(string.Format("{0} [WoW hook] Injector unloaded", pWowProcess));
                         }
                         pWowProcess.Dispose();
                         Log.Info(string.Format("[{0}:{1}] [WoW hook] Memory manager disposed", name, pid));
@@ -197,7 +194,7 @@ namespace AxTools.WoW
                             if (!process.IsValidBuild)
                             {
                                 Log.Info(string.Format("{0} [WoW hook] Memory manager: invalid WoW executable", process));
-                                MainForm.Instance.ShowNotifyIconMessage("Incorrect WoW version", "Injector is locked, please wait for update", ToolTipIcon.Warning);
+                                AppSpecUtils.NotifyUser("Incorrect WoW version", "Injector is locked, please wait for update", NotifyUserType.Warn, true);
                                 Utils.PlaySystemNotificationAsync();
                             }
                         }

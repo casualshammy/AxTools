@@ -42,7 +42,13 @@ namespace AxTools.Helpers
         {
             try
             {
-
+                // 08.10.2015
+                string mySettingsDir = Globals.PluginsSettingsPath + "\\Fishing";
+                string mySettingsFile = mySettingsDir + "\\FishingSettings.json";
+                if (File.Exists(mySettingsFile))
+                {
+                    File.Move(mySettingsFile, mySettingsDir + "\\settings.json");
+                }
             }
             catch (Exception ex)
             {
@@ -69,7 +75,14 @@ namespace AxTools.Helpers
             }
             else
             {
-                MainForm.Instance.ShowNotifyIconMessage(title, message, (ToolTipIcon)type);
+                if (MainForm.Instance.InvokeRequired)
+                {
+                    MainForm.Instance.BeginInvoke(new MethodInvoker(() => MainForm.Instance.notifyIconMain.ShowBalloonTip(30000, title, message, (ToolTipIcon) type)));
+                }
+                else
+                {
+                    MainForm.Instance.notifyIconMain.ShowBalloonTip(30000, title, message, (ToolTipIcon)type);
+                }
                 if (sound)
                 {
                     if (type == NotifyUserType.Error || type == NotifyUserType.Warn)
