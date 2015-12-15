@@ -55,12 +55,17 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public void OnConfig()
         {
-            
-
+            if (SettingsInstance == null)
+            {
+                SettingsInstance = this.LoadSettingsJSON<GoodsDestroyerSettings>();
+            }
+            GoodsDestroyerConfig.Open(SettingsInstance);
+            this.SaveSettingsJSON(SettingsInstance);
         }
 
         public void OnStart()
         {
+            SettingsInstance = this.LoadSettingsJSON<GoodsDestroyerSettings>();
             state = 0;
             iterationStartTime = Environment.TickCount;
             WoWDXInject.LuaDoString(
@@ -157,6 +162,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private int iterationStartTime;
 
         private SingleThreadTimer timer;
+
+        internal GoodsDestroyerSettings SettingsInstance;
 
         #endregion
 

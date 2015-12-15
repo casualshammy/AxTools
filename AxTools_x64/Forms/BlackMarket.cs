@@ -123,5 +123,13 @@ namespace AxTools.Forms
             private readonly uint Unknown_DoNotRemove;
         }
 
+        //private class BlackMarketItemEx
+        //{
+        //    internal string Name;
+        //    internal DateTime FinishTime;
+        //    internal int Gold;
+        //    internal int BidsNum;
+        //}
+
     }
 }

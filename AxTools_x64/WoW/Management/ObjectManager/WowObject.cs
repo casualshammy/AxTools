@@ -22,9 +22,9 @@ namespace AxTools.WoW.Management.ObjectManager
 
         internal static readonly Dictionary<UInt128, string> Names = new Dictionary<UInt128, string>();
 
-        internal readonly UInt128 GUID;
+        public readonly UInt128 GUID;
 
-        internal readonly WowPoint Location;
+        public readonly WowPoint Location;
 
         internal readonly bool Bobbing;
 
@@ -42,7 +42,7 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
-        internal string Name
+        public string Name
         {
             get
             {

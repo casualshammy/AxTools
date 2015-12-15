@@ -78,7 +78,7 @@ namespace AxTools.WoW.PluginSystem.API
             return new SingleThreadTimer(interval, action) { PluginName = plugin.Name };
         }
 
-        public static void SaveSettingsJSON<T>(this IPlugin plugin, T data) where T : class
+        public static void SaveSettingsJSON<T>(this IPlugin plugin, T data, string path = null) where T : class
         {
             StringBuilder sb = new StringBuilder(1024);
             using (StringWriter sw = new StringWriter(sb, CultureInfo.InvariantCulture))
@@ -86,6 +86,7 @@ namespace AxTools.WoW.PluginSystem.API
                 using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
                 {
                     JsonSerializer js = new JsonSerializer();
+                    js.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                     jsonWriter.Formatting = Formatting.Indented;
                     jsonWriter.IndentChar = ' ';
                     jsonWriter.Indentation = 4;
@@ -98,18 +99,18 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 Directory.CreateDirectory(mySettingsDir);
             }
-            File.WriteAllText(mySettingsDir + "\\settings.json", sb.ToString(), Encoding.UTF8);
+            File.WriteAllText(path ?? (mySettingsDir + "\\settings.json"), sb.ToString(), Encoding.UTF8);
         }
 
-        public static T LoadSettingsJSON<T>(this IPlugin plugin) where T : class
+        public static T LoadSettingsJSON<T>(this IPlugin plugin, string path = null) where T : class, new()
         {
-            string mySettingsFile = string.Format("{0}\\{1}\\settings.json", Globals.PluginsSettingsPath, plugin.Name);
+            string mySettingsFile = path ?? string.Format("{0}\\{1}\\settings.json", Globals.PluginsSettingsPath, plugin.Name);
             if (File.Exists(mySettingsFile))
             {
                 string rawText = File.ReadAllText(mySettingsFile, Encoding.UTF8);
                 return JsonConvert.DeserializeObject<T>(rawText);
             }
-            return default(T);
+            return new T();
         }
 
         public static string GetRandomString(int size)

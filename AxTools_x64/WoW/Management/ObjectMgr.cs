@@ -54,9 +54,7 @@ namespace AxTools.WoW.Management
         {
             wowObjects.Clear();
             wowNpcs.Clear();
-            //WoWPlayerMe localPlayer = null;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            //UInt128 playerGUID = _memory.Read<UInt128>(_memory.ImageBase + WowBuildInfo.PlayerGUID);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
             for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
                 (i < 10) && (i > 0);
@@ -66,16 +64,6 @@ namespace AxTools.WoW.Management
                 {
                     case 3:
                         wowNpcs.Add(new WowNpc(currObject));
-                        break;
-                    case 4:
-                        //if (localPlayer == null)
-                        //{
-                        //    UInt128 objectGUID = _memory.Read<UInt128>(currObject + WowBuildInfo.ObjectGUID);
-                        //    if (objectGUID == playerGUID)
-                        //    {
-                        //        localPlayer = new WoWPlayerMe(currObject, playerGUID);
-                        //    }
-                        //}
                         break;
                     case 5:
                         wowObjects.Add(new WowObject(currObject));

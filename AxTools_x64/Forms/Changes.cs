@@ -36,7 +36,7 @@ namespace AxTools.Forms
                     AppSpecUtils.CheckCreateDir();
                     using (WebClient pWebClient = new WebClient())
                     {
-                        pWebClient.DownloadFile(Globals.DropboxPath + "/changes.jpg", Globals.TempPath + "\\changes.jpg");
+                        pWebClient.DownloadFile(Globals.UpdateServerPath + "/changes.jpg", Globals.TempPath + "\\changes.jpg");
                     }
                 }).ContinueWith(l =>
                 {

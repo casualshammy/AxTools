@@ -16,6 +16,9 @@ namespace AxTools.Updater
     internal class UpdaterService
     {
         private static readonly System.Timers.Timer Timer = new System.Timers.Timer(900000);
+        private static readonly string VersionFilePath = Globals.UpdateServerPath + "/__update.json";
+        private static readonly string ArchiveFilePath = Globals.UpdateServerPath + "/__update.zip";
+        private static readonly string UpdaterExecutablePath = Globals.UpdateServerPath + "/Updater.exe";
 
         internal static void Start()
         {
@@ -48,7 +51,7 @@ namespace AxTools.Updater
             {
                 try
                 {
-                    webClient.DownloadFile(Globals.UpdateFilePath + ".zip", zipFile);
+                    webClient.DownloadFile(ArchiveFilePath, zipFile);
                     Log.Info("[Updater] Package is downloaded!");
                 }
                 catch (Exception ex)
@@ -58,7 +61,7 @@ namespace AxTools.Updater
                 }
                 try
                 {
-                    webClient.DownloadFile(Globals.DropboxPath + "/Updater.exe", Application.StartupPath + "\\Updater.exe");
+                    webClient.DownloadFile(UpdaterExecutablePath, Application.StartupPath + "\\Updater.exe");
                     Log.Info("[Updater] Updater executable is downloaded!");
                 }
                 catch (Exception ex)
@@ -112,7 +115,7 @@ namespace AxTools.Updater
             {
                 using (WebClient webClient = new WebClient())
                 {
-                    updateString = webClient.DownloadString(Globals.UpdateFilePath + ".json");
+                    updateString = webClient.DownloadString(VersionFilePath);
                 }
             }
             catch (WebException webException)

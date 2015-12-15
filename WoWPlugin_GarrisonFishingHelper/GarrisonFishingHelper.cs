@@ -53,6 +53,7 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         public void OnStart()
         {
+            state = State.None;
             (timer = this.CreateTimer(1000, OnElapsed)).Start();
         }
 
@@ -85,7 +86,7 @@ namespace WoWPlugin_GarrisonFishingHelper
                     WoWPlayerMe localPlayer0 = ObjMgr.Pulse(wowNpcs);
                     if (localPlayer0 != null)
                     {
-                        WowNpc creature = wowNpcs.FirstOrDefault(k => k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер");
+                        WowNpc creature = wowNpcs.FirstOrDefault(k => (k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер") && k.Health > 0);
                         if (creature != null)
                         {
                             creature.Target();
@@ -104,24 +105,24 @@ namespace WoWPlugin_GarrisonFishingHelper
                 WoWPlayerMe localPlayer1 = ObjMgr.Pulse(wowNpcs);
                 if (localPlayer1 != null)
                 {
-                    WowNpc creature = wowNpcs.FirstOrDefault(k => k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер");
+                    WowNpc creature = wowNpcs.FirstOrDefault(k => (k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер") && (k.Health != 0 || k.Lootable));
                     if (creature != null)
                     {
-                        if (creature.Health == 0)
+                        if (creature.Lootable)
                         {
-                            if (creature.Lootable)
-                            {
-                                state = State.Looting;
-                            }
+                            state = State.Looting;
                         }
                         else
                         {
+                            this.LogPrint("Creature is alive, do we target it?");
                             if (localPlayer1.TargetGUID == creature.GUID)
                             {
+                                this.LogPrint("Yeah, nuking...");
                                 GameFunctions.Lua_DoString(luaKillingRotation);
                             }
                             else
                             {
+                                this.LogPrint("No, targeting...");
                                 state = State.Targeting;
                             }
                         }
@@ -130,6 +131,10 @@ namespace WoWPlugin_GarrisonFishingHelper
                     {
                         state = State.Fishing;
                     }
+                }
+                else
+                {
+                    this.LogPrint("Error: localPlayer1 is null!");
                 }
             }
             else if (state == State.Looting)

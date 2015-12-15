@@ -616,7 +616,7 @@ namespace AxTools.Forms
                 {
                     using (WebClient pWebClient = new WebClient())
                     {
-                        pWebClient.DownloadFile(Globals.DropboxPath + "/alarm.wav", Globals.UserfilesPath + "\\alarm.wav");
+                        pWebClient.DownloadFile(Globals.UpdateServerPath + "/alarm.wav", Globals.UserfilesPath + "\\alarm.wav");
                     }
                 });
             }

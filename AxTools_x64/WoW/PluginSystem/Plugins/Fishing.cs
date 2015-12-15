@@ -59,6 +59,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 fishingSettings = this.LoadSettingsJSON<FishingSettings>();
             }
             FishingConfig.Open(fishingSettings);
+            this.SaveSettingsJSON(fishingSettings);
         }
 
         public void OnStart()
@@ -168,7 +169,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
         public void OnStop()
         {
             timer.Dispose();
-            this.SaveSettingsJSON(fishingSettings);
         }
 
         #endregion
