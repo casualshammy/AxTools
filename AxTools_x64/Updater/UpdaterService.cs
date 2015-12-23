@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -17,7 +18,7 @@ namespace AxTools.Updater
     {
         private static readonly System.Timers.Timer Timer = new System.Timers.Timer(900000);
         private static readonly string VersionFilePath = Globals.UpdateServerPath + "/__update.json";
-        private static readonly string ArchiveFilePath = Globals.UpdateServerPath + "/__update.zip";
+        private static readonly string ArchiveFilePath = Globals.UpdateServerPath + "/_update.zip";
         private static readonly string UpdaterExecutablePath = Globals.UpdateServerPath + "/Updater.exe";
 
         internal static void Start()
@@ -42,6 +43,7 @@ namespace AxTools.Updater
             });
         }
 
+        [Obfuscation(Exclude = false, Feature = "constants")]
         private static void DownloadExtractUpdate()
         {
             AppSpecUtils.CheckCreateDir();
@@ -81,6 +83,7 @@ namespace AxTools.Updater
                 string path = Application.StartupPath + "\\update";
                 using (ZipFile zip = new ZipFile(zipFile, Encoding.UTF8))
                 {
+                    zip.Password = "3aTaTre6agA$-E+e";
                     zip.ExtractAll(path, ExtractExistingFileAction.OverwriteSilently);
                 }
                 Log.Info("[Updater] Package is extracted to " + path);

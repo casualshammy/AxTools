@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -9,17 +8,15 @@ namespace axtools_updater
 {
     static class Program
     {
-        private static readonly DirectoryInfo Directory = new DirectoryInfo(Application.StartupPath + "\\update");
+        private static readonly DirectoryInfo UpdateDirectory = new DirectoryInfo(Application.StartupPath + "\\update");
+        internal static readonly string AxToolsWebsite = "http://axtools.axio.name";
 
-        /// <summary>
-        /// Главная точка входа для приложения.
-        /// </summary>
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            if (Directory.Exists)
+            if (UpdateDirectory.Exists)
             {
                 NonUIUpdate();
             }
@@ -31,13 +28,28 @@ namespace axtools_updater
 
         private static void NonUIUpdate()
         {
-            foreach (FileInfo i in Directory.GetFileSystemInfos().Where(i => i is FileInfo).Cast<FileInfo>())
+            foreach (FileSystemInfo info in UpdateDirectory.GetFileSystemInfos())
             {
-                File.Delete(Application.StartupPath + "\\" + i.Name);
-                File.Move(i.FullName, Application.StartupPath + "\\" + i.Name);
+                if (info is FileInfo)
+                {
+                    File.Delete(Application.StartupPath + "\\" + info.Name);
+                    File.Move(info.FullName, Application.StartupPath + "\\" + info.Name);
+                }
+                else if (info is DirectoryInfo)
+                {
+                    // ReSharper disable once RedundantEmptyFinallyBlock
+                    try
+                    {
+                        DirectoryCopy(info.FullName, Application.StartupPath + "\\" + info.Name, true);
+                    }
+                    finally
+                    {
+                        
+                    }
+                }
             }
             DeleteUnusedFiles();
-            Directory.Delete(true);
+            UpdateDirectory.Delete(true);
             Process.Start(new ProcessStartInfo
             {
                 FileName = Application.StartupPath + "\\AxTools.exe",
@@ -50,13 +62,42 @@ namespace axtools_updater
             string[] filesToDelete = File.ReadAllText(Application.StartupPath + "\\__delete", Encoding.UTF8).Split(',');
             foreach (string i in filesToDelete)
             {
+                // ReSharper disable once RedundantEmptyFinallyBlock
                 try
                 {
                     File.Delete(Application.StartupPath + "\\" + i);
                 }
-                catch
+                finally
                 {
                     
+                }
+            }
+        }
+
+        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + sourceDirName);
+            }
+            if (!Directory.Exists(destDirName))
+            {
+                Directory.CreateDirectory(destDirName);
+            }
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string temppath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(temppath, true);
+            }
+            if (copySubDirs)
+            {
+                DirectoryInfo[] dirs = dir.GetDirectories();
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string temppath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, temppath, true);
                 }
             }
         }
