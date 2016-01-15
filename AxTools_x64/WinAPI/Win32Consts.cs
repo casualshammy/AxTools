@@ -16,5 +16,6 @@
         internal const uint WS_EX_LAYERED = 0x80000;
         internal const uint WS_EX_TRANSPARENT = 0x20;
         internal const uint LWA_ALPHA = 0x2;
+        internal const uint PAGE_EXECUTE_READWRITE = 64;
     }
 }
