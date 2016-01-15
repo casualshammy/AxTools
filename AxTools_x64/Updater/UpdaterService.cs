@@ -4,6 +4,7 @@ using Ionic.Zip;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -14,17 +15,18 @@ using WindowsFormsAero.TaskDialog;
 
 namespace AxTools.Updater
 {
-    internal class UpdaterService
+    [Obfuscation(Exclude = false, Feature = "constants")]
+    internal static class UpdaterService
     {
-        private static readonly System.Timers.Timer Timer = new System.Timers.Timer(900000);
-        private static readonly string VersionFilePath = Globals.UpdateServerPath + "/__update.json";
-        private static readonly string ArchiveFilePath = Globals.UpdateServerPath + "/_update.zip";
-        private static readonly string UpdaterExecutablePath = Globals.UpdateServerPath + "/Updater.exe";
+        private static readonly System.Timers.Timer _timer = new System.Timers.Timer(900000);
+        private static readonly string DistrDirectory = Globals.TempPath + "\\update";
+        private static string _updateFileURL;
+        private const string UpdateFileDnsTxt = "axtools-update-file.axio.name";
 
         internal static void Start()
         {
-            Timer.Elapsed += timer_Elapsed;
-            Timer.Start();
+            _timer.Elapsed += timer_Elapsed;
+            _timer.Start();
             OnElapsed();
         }
 
@@ -35,44 +37,48 @@ namespace AxTools.Updater
 
         private static void OnElapsed()
         {
-            Task.Factory.StartNew(() =>
+            Task.Run(() =>
             {
-                Timer.Stop();
-                CheckForUpdates();
-                Timer.Start();
+                _timer.Stop();
+                if (_updateFileURL == null)
+                {
+                    _updateFileURL = GetUpdateFileURL(UpdateFileDnsTxt);
+                    Log.Info("[Updater] Update file URL: " + (_updateFileURL ?? "UNKNOWN"));
+                }
+                if (_updateFileURL != null)
+                {
+                    CheckForUpdates();
+                }
+                else
+                {
+                    Log.Error("[Updater] Can't get update file URL from DNS!");
+                }
+                _timer.Start();
             });
         }
 
-        [Obfuscation(Exclude = false, Feature = "constants")]
-        private static void DownloadExtractUpdate()
+        private static void DownloadExtractUpdate(UpdateInfo0 updateInfo)
         {
-            AppSpecUtils.CheckCreateDir();
-            string zipFile = Globals.TempPath + "\\__update.zip";
-            File.Delete(zipFile);
+            AppSpecUtils.CheckCreateTempDir();
+            string distrZipFile = Globals.TempPath + "\\_distr.zip";
+            string updaterZipFile = Globals.TempPath + "\\_updater.zip";
+            File.Delete(distrZipFile);
+            File.Delete(updaterZipFile);
             using (WebClient webClient = new WebClient())
             {
                 try
                 {
-                    webClient.DownloadFile(ArchiveFilePath, zipFile);
-                    Log.Info("[Updater] Package is downloaded!");
+                    webClient.DownloadFile(updateInfo.DistrZipURL, distrZipFile);
+                    webClient.DownloadFile(updateInfo.UpdaterZipURL, updaterZipFile);
+                    Log.Info("[Updater] Packages are downloaded!");
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[Updater] Can't download archive: " + ex.Message);
-                    return;
-                }
-                try
-                {
-                    webClient.DownloadFile(UpdaterExecutablePath, Application.StartupPath + "\\Updater.exe");
-                    Log.Info("[Updater] Updater executable is downloaded!");
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("[Updater] Can't download updater: " + ex.Message);
+                    Log.Error("[Updater] Can't download packages: " + ex.Message);
                     return;
                 }
             }
-            DirectoryInfo updateDirectoryInfo = new DirectoryInfo(Application.StartupPath + "\\update");
+            DirectoryInfo updateDirectoryInfo = new DirectoryInfo(DistrDirectory);
             if (updateDirectoryInfo.Exists)
             {
                 updateDirectoryInfo.Delete(true);
@@ -80,17 +86,36 @@ namespace AxTools.Updater
             updateDirectoryInfo.Create();
             try
             {
-                string path = Application.StartupPath + "\\update";
-                using (ZipFile zip = new ZipFile(zipFile, Encoding.UTF8))
+                using (ZipFile zip = new ZipFile(distrZipFile, Encoding.UTF8))
                 {
                     zip.Password = "3aTaTre6agA$-E+e";
-                    zip.ExtractAll(path, ExtractExistingFileAction.OverwriteSilently);
+                    zip.ExtractAll(DistrDirectory, ExtractExistingFileAction.OverwriteSilently);
                 }
-                Log.Info("[Updater] Package is extracted to " + path);
+                Log.Info("[Updater] Package <distr> is extracted to " + DistrDirectory);
             }
             catch (Exception ex)
             {
-                Log.Info("[Updater] Can't extract archive: " + ex.Message);
+                Log.Error("[Updater] Can't extract <distr> package: " + ex.Message);
+                return;
+            }
+            try
+            {
+                using (ZipFile zip = new ZipFile(updaterZipFile, Encoding.UTF8))
+                {
+                    zip.Password = "3aTaTre6agA$-E+e";
+                    zip.ExtractAll(Globals.TempPath, ExtractExistingFileAction.OverwriteSilently);
+                }
+                Log.Info("[Updater] Package <updater> is extracted to " + Globals.TempPath);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("[Updater] Can't extract <updater> package: " + ex.Message);
+                return;
+            }
+            FileInfo updaterExe = new DirectoryInfo(Globals.TempPath).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
+            if (updaterExe == null)
+            {
+                Log.Error("[Updater] Can't find updater executable! Files: " + string.Join(", ", new DirectoryInfo(Globals.TempPath).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().Select(l => l.Name)));
                 return;
             }
             TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No), TaskDialogIcon.Information);
@@ -118,7 +143,7 @@ namespace AxTools.Updater
             {
                 using (WebClient webClient = new WebClient())
                 {
-                    updateString = webClient.DownloadString(VersionFilePath);
+                    updateString = webClient.DownloadString(_updateFileURL);
                 }
             }
             catch (WebException webException)
@@ -135,15 +160,15 @@ namespace AxTools.Updater
             {
                 try
                 {
-                    UpdateInfo updateInfo = UpdateInfo.InitializeFromJSON(updateString);
+                    UpdateInfo0 updateInfo = UpdateInfo0.FromJSON(updateString);
                     if (updateInfo != null)
                     {
                         Log.Info("[Updater] Server version: <" + updateInfo.Version + ">, local version: <" + Globals.AppVersion + ">");
                         if (Globals.AppVersion != updateInfo.Version)
                         {
                             Log.Info("[Updater] Downloading new version...");
-                            Timer.Elapsed -= timer_Elapsed;
-                            DownloadExtractUpdate();
+                            _timer.Elapsed -= timer_Elapsed;
+                            DownloadExtractUpdate(updateInfo);
                         }
                         else
                         {
@@ -169,7 +194,46 @@ namespace AxTools.Updater
         private static void ApplicationOnApplicationExit(object sender, EventArgs eventArgs)
         {
             Application.ApplicationExit -= ApplicationOnApplicationExit;
-            Process.Start(new ProcessStartInfo {FileName = Application.StartupPath + "\\Updater.exe", WorkingDirectory = Application.StartupPath});
+            FileInfo updaterExe = new DirectoryInfo(Globals.TempPath).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
+            if (updaterExe != null)
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = updaterExe.FullName,
+                    Arguments = string.Format("-update-dir \"{0}\" -axtools-dir \"{1}\"", DistrDirectory, Application.StartupPath)
+                });
+            }
+        }
+
+        private static string GetUpdateFileURL(string hostname)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo("nslookup")
+            {
+                Arguments = string.Format("-type=TXT {0}", hostname),
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            using (Process cmd = Process.Start(startInfo))
+            {
+                if (cmd != null)
+                {
+                    try
+                    {
+                        string output = cmd.StandardOutput.ReadToEnd();
+                        string rawResponse = output.Split(new[] { hostname + "\ttext =\r\n" }, StringSplitOptions.RemoveEmptyEntries)[1];
+                        string response = rawResponse.Trim().Trim('"');
+                        Uri uriResult;
+                        bool result = Uri.TryCreate(response, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                        return result ? response : null;
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
         }
 
     }

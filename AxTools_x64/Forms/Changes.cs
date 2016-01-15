@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
-using System.Net;
-using System.Threading.Tasks;
+using System.IO;
 using AxTools.Components;
 using AxTools.Helpers;
 using AxTools.Properties;
@@ -31,20 +30,11 @@ namespace AxTools.Forms
         {
             if (Globals.AppVersion.Major != Settings.Instance.LastUsedVersion.Major || Globals.AppVersion.Minor != Settings.Instance.LastUsedVersion.Minor)
             {
-                Task.Factory.StartNew(() =>
+                string file = Globals.ResourcesPath + "\\changes.jpg";
+                if (File.Exists(file))
                 {
-                    AppSpecUtils.CheckCreateDir();
-                    using (WebClient pWebClient = new WebClient())
-                    {
-                        pWebClient.DownloadFile(Globals.UpdateServerPath + "/changes.jpg", Globals.TempPath + "\\changes.jpg");
-                    }
-                }).ContinueWith(l =>
-                {
-                    if (l.Exception == null)
-                    {
-                        new Changes(Globals.TempPath + "\\changes.jpg").ShowDialog();
-                    }
-                }, TaskScheduler.FromCurrentSynchronizationContext());
+                    new Changes(file).ShowDialog();
+                }
             }
             Settings.Instance.LastUsedVersion = Globals.AppVersion;
         }

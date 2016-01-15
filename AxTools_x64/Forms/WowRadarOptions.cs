@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using AxTools.Components;
 using AxTools.Helpers;
-using AxTools.WoW;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 using Newtonsoft.Json;

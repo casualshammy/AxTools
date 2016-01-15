@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
 
@@ -109,6 +108,22 @@ namespace AxTools.WoW
                 {
                     if (Memory == null) return false;
                     return Memory.Read<byte>(Memory.ImageBase + WowBuildInfoX64.GameState) == 1;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        internal bool IsNotLoadingScreen
+        {
+            get
+            {
+                try
+                {
+                    if (Memory == null) return false;
+                    return Memory.Read<byte>(Memory.ImageBase + WowBuildInfoX64.Possible_NotLoadingScreen) == 1;
                 }
                 catch
                 {

@@ -38,6 +38,14 @@ namespace AxTools.Helpers
             }
         }
 
+        internal static void CheckCreateTempDir()
+        {
+            if (!Directory.Exists(Globals.TempPath))
+            {
+                Directory.CreateDirectory(Globals.TempPath);
+            }
+        }
+
         internal static void Legacy()
         {
             try

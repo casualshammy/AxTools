@@ -9,11 +9,11 @@ namespace AxTools.Helpers
         internal static readonly string TempPath = Application.StartupPath + "\\tmp";
         internal static readonly string CfgPath = Application.StartupPath + "\\cfg";
         internal static readonly string UserfilesPath = Application.StartupPath + "\\userfiles";
+        internal static readonly string ResourcesPath = Application.StartupPath + "\\resources";
         internal static readonly string LogFileName = TempPath + "\\AxTools.log";
         internal static readonly string PluginsPath = Application.StartupPath + "\\plugins";
         internal static readonly string PluginsAssembliesPath = Application.StartupPath + "\\pluginsAssemblies";
         internal static readonly string PluginsSettingsPath = Application.StartupPath + "\\pluginsSettings";
-        internal static readonly string UpdateServerPath = "https://axtools.axio.name";
         internal static readonly VersionExt AppVersion = new VersionExt(Assembly.GetExecutingAssembly().GetName().Version);
 
         internal static readonly SrvAddress[] GameServers =

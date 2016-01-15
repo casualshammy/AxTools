@@ -6,20 +6,13 @@ namespace AxTools.WoW
     internal static class WowBuildInfoX64
     {
 
-        #region Build info
+        #region Comments
 
-        internal static readonly byte[] WoWHash =
-        {
-            0x4F, 0xA1, 0xBE, 0x44, 0xD3, 0xED, 0x08, 0x8F, 0xE8, 0x56, 0x68, 0x67, 0xFC, 0xBF, 0x83, 0xB1, 0xD4, 0xC9, 0x56, 0x36, 0xCA, 0x90, 0xB8, 0x2F, 0xC9, 0x48, 0x18, 0xF3, 0x4E, 0x52, 0xC5, 0x85
-        };
-        
-        #endregion
-        
-        #region Static infos
-
+        /*
         internal static readonly int LastHardwareAction = 0x1446208; // [int] CGGameUI::UpdatePlayerAFK / WRITE
         internal static readonly int TickCount = 0x1439160; // [int]
         internal static readonly int GameState = 0x16A179E; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound)
+        internal static readonly int Possible_NotLoadingScreen = 0x135474C;
         //internal static readonly int PlayerName = 0x17EF7E0; // ClientServices::GetCharacterName (or Script_UnitName/GetPlayerName)
         //internal static readonly int PlayerRealm = 0x17EF996; // Гордунни = D0 93 D0 BE D1 80 D0 B4 D1 83 D0 BD D0 BD D0 B8 // Черный Шрам = D0 A7 D0 B5 D1 80 D0 BD D1 8B D0 B9 20 D0 A8 D1 80 D0 B0 D0 BC
         internal static readonly int PlayerZoneID = 0x16A1820; // CGGameUI::NewZoneFeedback (16) (or Script_GetRaidRosterInfo (101))
@@ -30,6 +23,33 @@ namespace AxTools.WoW
         internal static readonly int PlayerPtr = 0x1606320; // [IntPtr] ClntObjMgrGetActivePlayerObj
         internal static readonly int GlueState = 0x14CE2E4; // dword
         internal static readonly int FocusedWidget = 0x1445DB8; // qword
+        */
+
+        #endregion
+
+        #region Build info
+
+        internal static readonly byte[] WoWHash =
+        {
+            0x4F, 0x4D, 0x1A, 0x28, 0xE0, 0x0F, 0xB0, 0xE9, 0x2D, 0x50, 0xC9, 0x02, 0x48, 0xDC, 0xAE, 0x19, 0x2F, 0x9C, 0xDC, 0xD5, 0x08, 0xE3, 0xE4, 0x2D, 0x86, 0x48, 0x7A, 0x90, 0xA0, 0xB4, 0xB1, 0x54
+        };
+        
+        #endregion
+        
+        #region Static infos
+
+        internal static readonly int LastHardwareAction = 0x1446208;
+        internal static readonly int TickCount = 0x1439160;
+        internal static readonly int GameState = 0x16A179E;
+        internal static readonly int Possible_NotLoadingScreen = 0x135474C;
+        internal static readonly int PlayerZoneID = 0x16A1820;
+        internal static readonly int PlayerIsLooting = 0x1715264;
+        internal static readonly int BlackMarketNumItems = 0x1756528;
+        internal static readonly int BlackMarketItems = 0x1756530;
+        internal static readonly int ObjectManager = 0x14E4DC0;
+        internal static readonly int PlayerPtr = 0x1606320;
+        internal static readonly int GlueState = 0x14CE2E4;
+        internal static readonly int FocusedWidget = 0x1445DB8;
         
         #endregion
 
@@ -40,9 +60,9 @@ namespace AxTools.WoW
         internal static readonly int CGGameUI_Target = 0x6ED970;
         internal static readonly int CGGameUI_Interact = 0x6F0640;
         internal static readonly int CGUnit_C_InitializeTrackingState = 0x5736F0;
-        internal const int CGWorldFrame_Render = 0x701280; // Wow-64.exe+701280
-        internal const int HookLength = 12;
-        internal static readonly byte[] HookPattern = {0x48, 0x89, 0x7C, 0x24, 0x20, 0x55, 0x48, 0x8D, 0x6C, 0x24, 0xA0, 0x48};
+        internal static readonly int CGWorldFrame_Render = 0x701050; // Wow-64.exe+701280
+        internal static readonly byte[] HookPattern = {0x48, 0x89, 0x7C, 0x24, 0x20, 0x55, 0x48, 0x8D, 0x6C, 0x24, 0xA0, 0x48, 0x81, 0xEC, 0x60, 0x01, 0x00, 0x00};
+        internal static readonly int HookLength = HookPattern.Length;
 
         #endregion
 

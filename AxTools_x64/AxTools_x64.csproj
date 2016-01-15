@@ -131,6 +131,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsFormsAero">
       <HintPath>..\..\.NET libs\WindowsFormsAero.dll</HintPath>
@@ -170,6 +171,7 @@
     <Compile Include="Services\PingerHelpers\PingResult.cs" />
     <Compile Include="Updater\UpdateInfo.cs" />
     <Compile Include="Updater\UpdaterService.cs" />
+    <Compile Include="WinAPI\Win32Consts.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
     <Compile Include="WoW\IWoWModule.cs" />
     <Compile Include="WoW\Management\ObjectManager\WoWObjectInfo.cs">
@@ -543,6 +545,12 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MyMemory\MyMemory.vcxproj">
+      <Project>{3b4fbb66-598a-46b8-89ff-f6fa73cb6d7b}</Project>
+      <Name>MyMemory</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

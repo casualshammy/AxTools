@@ -3,20 +3,44 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using NDesk.Options;
 
 namespace axtools_updater
 {
-    static class Program
+    internal static class Program
     {
-        private static readonly DirectoryInfo UpdateDirectory = new DirectoryInfo(Application.StartupPath + "\\update");
-        internal static readonly string AxToolsWebsite = "http://axtools.axio.name";
+        internal const string AxToolsWebsite = "https://axtools.axio.name";
+        private const string FileWithListOfFilesToDelete = "__delete";
+        private static string _updateDir;
+        private static string _axToolsDir;
+
+        #region OptionSet
+
+        private static readonly OptionSet _cmdOptions = new OptionSet
+        {
+            {
+                "update-dir=", v =>
+                {
+                    _updateDir = v;
+                }
+            },
+            {
+                "axtools-dir=", v =>
+                {
+                    _axToolsDir = v;
+                }
+            }
+        };
+
+        #endregion
 
         [STAThread]
-        static void Main()
+        private static void Main(string[] args)
         {
+            _cmdOptions.Parse(args);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            if (UpdateDirectory.Exists)
+            if (_updateDir != null && Directory.Exists(_updateDir) && _axToolsDir != null && Directory.Exists(_axToolsDir))
             {
                 NonUIUpdate();
             }
@@ -28,48 +52,72 @@ namespace axtools_updater
 
         private static void NonUIUpdate()
         {
-            foreach (FileSystemInfo info in UpdateDirectory.GetFileSystemInfos())
+            try
             {
-                if (info is FileInfo)
+                foreach (FileSystemInfo info in new DirectoryInfo(_updateDir).GetFileSystemInfos())
                 {
-                    File.Delete(Application.StartupPath + "\\" + info.Name);
-                    File.Move(info.FullName, Application.StartupPath + "\\" + info.Name);
-                }
-                else if (info is DirectoryInfo)
-                {
-                    // ReSharper disable once RedundantEmptyFinallyBlock
-                    try
+                    if (info is FileInfo)
                     {
-                        DirectoryCopy(info.FullName, Application.StartupPath + "\\" + info.Name, true);
+                        File.Delete(Path.Combine(_axToolsDir, info.Name));
+                        File.Move(info.FullName, Path.Combine(_axToolsDir, info.Name));
                     }
-                    finally
+                    else if (info is DirectoryInfo)
                     {
-                        
+                        // ReSharper disable once RedundantEmptyFinallyBlock
+                        try
+                        {
+                            DirectoryCopy(info.FullName, Path.Combine(_axToolsDir, info.Name), true);
+                        }
+                        finally
+                        {
+
+                        }
                     }
                 }
             }
-            DeleteUnusedFiles();
-            UpdateDirectory.Delete(true);
-            Process.Start(new ProcessStartInfo
+            catch (Exception ex)
             {
-                FileName = Application.StartupPath + "\\AxTools.exe",
-                WorkingDirectory = Application.StartupPath
-            });
+                MessageBox.Show("Critical update error. Click OK to continue.\r\nError message:\r\n" + ex.Message);
+                Application.Run(new Main());
+            }
+            try
+            {
+                DeleteUnusedFiles();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Non-critical update error:\r\n" + ex.Message);
+            }
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = Path.Combine(_axToolsDir, "AxTools.exe"),
+                    WorkingDirectory = _axToolsDir
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Non-critical update error. Please start AxTools manually.\r\nError message:\r\n" + ex.Message);
+            }
         }
 
         internal static void DeleteUnusedFiles()
         {
-            string[] filesToDelete = File.ReadAllText(Application.StartupPath + "\\__delete", Encoding.UTF8).Split(',');
-            foreach (string i in filesToDelete)
+            if (File.Exists(Path.Combine(_axToolsDir, FileWithListOfFilesToDelete)))
             {
-                // ReSharper disable once RedundantEmptyFinallyBlock
-                try
+                string[] filesToDelete = File.ReadAllText(Path.Combine(_axToolsDir, FileWithListOfFilesToDelete), Encoding.UTF8).Split(',');
+                foreach (string i in filesToDelete)
                 {
-                    File.Delete(Application.StartupPath + "\\" + i);
-                }
-                finally
-                {
-                    
+                    // ReSharper disable once RedundantEmptyFinallyBlock
+                    try
+                    {
+                        File.Delete(Path.Combine(_axToolsDir, i));
+                    }
+                    finally
+                    {
+
+                    }
                 }
             }
         }
@@ -101,5 +149,6 @@ namespace axtools_updater
                 }
             }
         }
+    
     }
 }

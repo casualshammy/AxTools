@@ -5,7 +5,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
     [JsonObject(MemberSerialization.OptIn)]
     internal class GoodsDestroyerSettings
     {
-        [JsonProperty(PropertyName = "WarbindersInkCount")]
-        internal int WarbindersInkCount = 20;
+        [JsonProperty(PropertyName = "LaunchInkCrafter")]
+        internal bool LaunchInkCrafter = false;
     }
 }

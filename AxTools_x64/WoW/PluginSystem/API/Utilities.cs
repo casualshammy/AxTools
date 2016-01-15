@@ -99,7 +99,7 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 Directory.CreateDirectory(mySettingsDir);
             }
-            File.WriteAllText(path ?? (mySettingsDir + "\\settings.json"), sb.ToString(), Encoding.UTF8);
+            File.WriteAllText(path ?? mySettingsDir + "\\settings.json", sb.ToString(), Encoding.UTF8);
         }
 
         public static T LoadSettingsJSON<T>(this IPlugin plugin, string path = null) where T : class, new()

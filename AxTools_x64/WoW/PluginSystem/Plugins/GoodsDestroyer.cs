@@ -9,7 +9,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
-    class GoodsDestroyer : IPlugin
+    internal class GoodsDestroyer : IPlugin
     {
 
         #region Info
@@ -46,7 +46,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public bool ConfigAvailable
         {
-            get { return false; }
+            get { return true; }
         }
 
         #endregion
@@ -86,25 +86,42 @@ namespace AxTools.WoW.PluginSystem.Plugins
             switch (state)
             {
                 case 0:
-                    if (WoWDXInject.GetFunctionReturn("tostring(IsSpellKnown(51005))") == "true") // mill
+                    WoWPlayerMe localPlayer = ObjectMgr.Pulse();
+                    if (localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
                     {
-                        WoWDXInject.LuaDoString(mill);
+                        iterationStartTime = Environment.TickCount;
+                        if (GameFunctions.Lua_GetFunctionReturn("tostring(IsSpellKnown(51005))") == "true") // mill
+                        {
+                            if (IsFastMillingAvailable())
+                            {
+                                WoWDXInject.LuaDoString(fastMill);
+                                break;
+                            }
+                            if (IsPlayerHaveHerbs())
+                            {
+                                WoWDXInject.LuaDoString(mill);
+                            }
+                            else if (SettingsInstance.LaunchInkCrafter)
+                            {
+                                Utilities.RequestStartPlugin("InkCrafter");
+                                break;
+                            }
+                        }
+                        else if (GameFunctions.Lua_GetFunctionReturn("tostring(IsSpellKnown(31252))") == "true") // prospect
+                        {
+                            WoWDXInject.LuaDoString(prospecting);
+                        }
+                        else if (GameFunctions.Lua_GetFunctionReturn("tostring(IsSpellKnown(13262))") == "true") // disenchant
+                        {
+                            Thread.Sleep(1000); // pause to prevent disenchanting nonexistent item 
+                            WoWDXInject.LuaDoString(disenchant);
+                        }
+                        else
+                        {
+                            Log.Info("This character can't mill, prospect or disenchant!");
+                        }
+                        state = 1;
                     }
-                    else if (WoWDXInject.GetFunctionReturn("tostring(IsSpellKnown(31252))") == "true") // prospect
-                    {
-                        WoWDXInject.LuaDoString(prospecting);
-                    }
-                    else if (WoWDXInject.GetFunctionReturn("tostring(IsSpellKnown(13262))") == "true") // disenchant
-                    {
-                        Thread.Sleep(1000); // pause to prevent disenchanting unreal item 
-                        WoWDXInject.LuaDoString(disenchant);
-                    }
-                    else
-                    {
-                        Log.Info("This character can't mill, prospect or disenchant!");
-                    }
-                    iterationStartTime = Environment.TickCount;
-                    state = 1;
                     break;
                 case 1:
                     if (WoWPlayerMe.IsLooting)
@@ -126,11 +143,26 @@ namespace AxTools.WoW.PluginSystem.Plugins
             timer.Dispose();
         }
 
+        private bool IsFastMillingAvailable()
+        {
+            WoWDXInject.LuaDoString(fastMillAvailable);
+            return GameFunctions.Lua_GetFunctionReturn("tostring(" + UniqVarName + ")") == "true";
+        }
+
+        private bool IsPlayerHaveHerbs()
+        {
+            WoWDXInject.LuaDoString(playerHaveHerbs);
+            return GameFunctions.Lua_GetFunctionReturn("tostring(" + UniqVarName + ")") == "true";
+        }
+
         #endregion
 
         #region Variables
 
-        private readonly string mill =
+        private static readonly string UniqVarName = Utilities.GetRandomString(8);
+
+        private readonly string fastMillAvailable =
+            UniqVarName + " = false;\r\n" +
             "local t = {\r\n" +
             "    \"Массовое измельчение горгрондской мухоловки\",\r\n" +
             "    \"Массовое измельчение звездоцвета\",\r\n" +
@@ -142,13 +174,50 @@ namespace AxTools.WoW.PluginSystem.Plugins
             "local numTradeSkills = GetNumTradeSkills();\r\n" +
             "if (numTradeSkills > 0) then\r\n" +
             "    for i = 1, numTradeSkills do\r\n" +
-            "        local skillName, skillType, numAvailable, isExpanded, serviceType, numSkillUps, indentLevel, showProgressBar, currentRank, maxRank, startingRank = GetTradeSkillInfo(i);\r\n" +
+            "        local skillName, _, numAvailable = GetTradeSkillInfo(i);\r\n" +
+            "        if (tContains(t, skillName) and numAvailable > 0) then\r\n" +
+            "            " + UniqVarName + " = true;\r\n" +
+            "            return;\r\n" +
+            "        end\r\n" +
+            "    end\r\n" +
+            "end";
+
+        private readonly string fastMill =
+            "local t = {\r\n" +
+            "    \"Массовое измельчение горгрондской мухоловки\",\r\n" +
+            "    \"Массовое измельчение звездоцвета\",\r\n" +
+            "    \"Массовое измельчение морозноцвета\",\r\n" +
+            "    \"Массовое измельчение награндского стрелоцвета\",\r\n" +
+            "    \"Массовое измельчение пламецвета\",\r\n" +
+            "    \"Массовое измельчение таладорской орхидеи\",\r\n" +
+            "};\r\n" +
+            "local numTradeSkills = GetNumTradeSkills();\r\n" +
+            "if (numTradeSkills > 0) then\r\n" +
+            "    for i = 1, numTradeSkills do\r\n" +
+            "        local skillName, _, numAvailable = GetTradeSkillInfo(i);\r\n" +
             "        if (tContains(t, skillName) and numAvailable > 0) then\r\n" +
             "            DoTradeSkill(i, numAvailable);\r\n" +
             "            return;\r\n" +
             "        end\r\n" +
             "    end\r\n" +
-            "end\r\n" +
+            "end";
+
+        private readonly string playerHaveHerbs =
+            UniqVarName + " = false;\r\n" +
+            "for bag = 0, 4 do\r\n" +
+            "	for bag_slot = 1, GetContainerNumSlots(bag) do\r\n" +
+            "		local name, cCount = GetContainerItemInfo(bag, bag_slot);\r\n" +
+            "		local id = GetContainerItemID(bag, bag_slot);\r\n" +
+            "		if (name) then\r\n" +
+            "			if (tContains(AxToolsHerbsIDs, id) and cCount >= 5) then\r\n" +
+            "			    " + UniqVarName + " = true;\r\n" +
+            "				return;\r\n" +
+            "			end\r\n" +
+            "		end\r\n" +
+            "	end\r\n" +
+            "end";
+
+        private readonly string mill =
             "for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local name, cCount = GetContainerItemInfo(bag, bag_slot); local id = GetContainerItemID(bag, bag_slot); if (name) then if (tContains(AxToolsHerbsIDs, id) and cCount >= 5) then CastSpellByID(51005); UseContainerItem(bag, bag_slot); return; end end end end";
 
         private readonly string disenchant =

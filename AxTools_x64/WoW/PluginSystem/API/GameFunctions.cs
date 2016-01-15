@@ -59,7 +59,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static string Lua_GetFunctionReturn(string function)
         {
-            return WoWManager.WoWProcess.IsInGame ? WoWDXInject.GetFunctionReturn(function) : "";
+            return WoWManager.WoWProcess.IsInGame && WoWManager.WoWProcess.IsNotLoadingScreen ? WoWDXInject.GetFunctionReturn(function) : "";
         }
 
         public static void Lua_EnableCTM()
@@ -74,7 +74,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static bool Lua_IsCTMEnabled()
         {
-            return Lua_GetFunctionReturn("GetCVar(\"autointeract\")") != "0";
+            return Lua_GetFunctionReturn("GetCVar(\"autointeract\")") == "1";
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Management.ObjectManager
 {
@@ -80,7 +81,7 @@ namespace AxTools.WoW.Management.ObjectManager
                     try
                     {
                         ushort serverID = (ushort) ((GUID.Low >> 42) & 0x1FFF);
-                        temp = WoWDXInject.GetFunctionReturn("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
+                        temp = GameFunctions.Lua_GetFunctionReturn("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
                         if (!string.IsNullOrWhiteSpace(temp))
                         {
                             Names.Add(GUID, temp);

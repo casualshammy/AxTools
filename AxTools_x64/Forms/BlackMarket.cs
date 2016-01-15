@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.WoW;
 using AxTools.WoW.Management;
+using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
@@ -59,7 +60,7 @@ namespace AxTools.Forms
                                 uint gold = (uint)(item.currBid > 0 ? (uint)(item.currBid / 10000) : item.NextBid / 10000);
                                 ListViewItem lvi = new ListViewItem(new[]
                                 {
-                                    WoWDXInject.GetFunctionReturn("GetItemInfo(" + item.Entry + ")"),
+                                    GameFunctions.Lua_GetFunctionReturn("GetItemInfo(" + item.Entry + ")"),
                                     TimeSpan.FromSeconds(item.TimeLeft).ToString("hh\\:mm\\:ss"),
                                     gold + " g",
                                     item.NumBids.ToString()

@@ -28,47 +28,37 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.labelModernInk = new System.Windows.Forms.Label();
             this.buttonSave = new System.Windows.Forms.Button();
-            this.textBoxModernInk = new System.Windows.Forms.TextBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
-            // 
-            // labelModernInk
-            // 
-            this.labelModernInk.AutoSize = true;
-            this.labelModernInk.Location = new System.Drawing.Point(12, 9);
-            this.labelModernInk.Name = "labelModernInk";
-            this.labelModernInk.Size = new System.Drawing.Size(179, 13);
-            this.labelModernInk.TabIndex = 0;
-            this.labelModernInk.Text = "How much Warbinder\'s Ink to retain:";
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(15, 32);
+            this.buttonSave.Location = new System.Drawing.Point(12, 35);
             this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(262, 23);
+            this.buttonSave.Size = new System.Drawing.Size(291, 23);
             this.buttonSave.TabIndex = 5;
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
-            // textBoxModernInk
+            // checkBox1
             // 
-            this.textBoxModernInk.Location = new System.Drawing.Point(197, 6);
-            this.textBoxModernInk.Name = "textBoxModernInk";
-            this.textBoxModernInk.Size = new System.Drawing.Size(80, 20);
-            this.textBoxModernInk.TabIndex = 6;
-            this.textBoxModernInk.Text = "20";
-            this.textBoxModernInk.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(12, 12);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(291, 17);
+            this.checkBox1.TabIndex = 7;
+            this.checkBox1.Text = "Launch InkCrafter plugin when player hasn\'t herbs to mill";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // GoodsDestroyerConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 68);
-            this.Controls.Add(this.textBoxModernInk);
+            this.ClientSize = new System.Drawing.Size(314, 69);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.buttonSave);
-            this.Controls.Add(this.labelModernInk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -81,8 +71,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label labelModernInk;
         private System.Windows.Forms.Button buttonSave;
-        private System.Windows.Forms.TextBox textBoxModernInk;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

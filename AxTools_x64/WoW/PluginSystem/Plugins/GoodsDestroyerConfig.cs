@@ -14,14 +14,10 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             GoodsDestroyerConfig goodsDestroyerConfig = new GoodsDestroyerConfig
             {
-                textBoxModernInk = {Text = settingsInstance.WarbindersInkCount.ToString()}
+                checkBox1 = {Checked = settingsInstance.LaunchInkCrafter}
             };
             goodsDestroyerConfig.ShowDialog();
-            int temp;
-            if (int.TryParse(goodsDestroyerConfig.textBoxModernInk.Text, out temp))
-            {
-                settingsInstance.WarbindersInkCount = temp;
-            }
+            settingsInstance.LaunchInkCrafter = goodsDestroyerConfig.checkBox1.Checked;
         }
 
         // ReSharper disable once InconsistentNaming
@@ -36,7 +32,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
         }
 
-        private void buttonSave_Click(object sender, System.EventArgs e)
+        private void buttonSave_Click(object sender, EventArgs e)
         {
             Close();
         }

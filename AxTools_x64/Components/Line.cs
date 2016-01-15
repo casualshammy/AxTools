@@ -18,7 +18,9 @@ namespace AxTools.Components
         {
             InitializeComponent();
             Paint += LineSeparator_Paint;
+            // ReSharper disable once RedundantBaseQualifier
             base.MaximumSize = new Size(2000, 2);
+            // ReSharper disable once RedundantBaseQualifier
             base.MinimumSize = new Size(0, 2);
             Width = 350;
         }

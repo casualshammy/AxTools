@@ -1,5 +1,4 @@
-﻿using AxTools.Helpers;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -42,7 +41,6 @@ namespace AxTools.Components
             if ((highlightedImage == null || !ReferenceEquals(refImage, Image)) && Image != null)
             {
                 InitializeHighlightedImage();
-                Log.Info("Image initialized");
             }
             if (highlightedImage != null)
             {

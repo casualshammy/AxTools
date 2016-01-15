@@ -1,14 +1,15 @@
-﻿using AxTools.Helpers;
+﻿using System;
+using AxTools.Helpers;
 using Newtonsoft.Json;
 
 namespace AxTools.Updater
 {
     [JsonObject(MemberSerialization.OptIn)]
-    internal class UpdateInfo
+    internal class UpdateInfo0
     {
-        internal static UpdateInfo InitializeFromJSON(string s)
+        internal static UpdateInfo0 FromJSON(string s)
         {
-            return JsonConvert.DeserializeObject<UpdateInfo>(s);
+            return JsonConvert.DeserializeObject<UpdateInfo0>(s);
         }
 
         [JsonProperty(Order = 0, PropertyName = "Version")]
@@ -16,6 +17,12 @@ namespace AxTools.Updater
 
         [JsonProperty(Order = 1, PropertyName = "PanicMode")]
         internal bool PanicMode;
+
+        [JsonProperty(Order = 2, PropertyName = "DistrZipURL")]
+        internal Uri DistrZipURL;
+
+        [JsonProperty(Order = 3, PropertyName = "UpdaterZipURL")]
+        internal Uri UpdaterZipURL;
 
     }
 }

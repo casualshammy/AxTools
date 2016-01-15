@@ -9,7 +9,7 @@ using System.Security;
 namespace AxTools.Helpers.MemoryManagement
 {
     [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
-    internal unsafe sealed class MemoryManager : IDisposable
+    internal sealed unsafe class MemoryManager : IDisposable
     {
         /// <summary>
         ///     Gets or sets the process handle.

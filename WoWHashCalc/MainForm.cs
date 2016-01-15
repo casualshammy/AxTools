@@ -1,31 +1,41 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WoWHashCalc
 {
     public partial class MainForm : Form
     {
+
         public MainForm()
         {
             InitializeComponent();
-            using (SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider())
+            DoWork();
+        }
+
+        private async void DoWork()
+        {
+            textBoxX86.Text = await CalcucateHashAsync(Application.StartupPath + "\\Wow.exe");
+            textBoxX64.Text = await CalcucateHashAsync(Application.StartupPath + "\\Wow-64.exe");
+        }
+
+        private async Task<string> CalcucateHashAsync(string path)
+        {
+            Task<string> task = Task.Run(() =>
             {
-                using (FileStream fileStream = File.Open(Application.StartupPath + "\\Wow.exe", FileMode.Open, FileAccess.Read))
+                using (SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider())
                 {
-                    byte[] hash = provider.ComputeHash(fileStream);
-                    textBoxX86.Text = "0x" + BitConverter.ToString(hash).Replace("-", ", 0x");
+                    using (FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read))
+                    {
+                        byte[] hash = provider.ComputeHash(fileStream);
+                        return "0x" + BitConverter.ToString(hash).Replace("-", ", 0x");
+                    }
                 }
-            }
-            using (SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider())
-            {
-                using (FileStream fileStream = File.Open(Application.StartupPath + "\\Wow-64.exe", FileMode.Open, FileAccess.Read))
-                {
-                    byte[] hash = provider.ComputeHash(fileStream);
-                    textBoxX64.Text = "0x" + BitConverter.ToString(hash).Replace("-", ", 0x");
-                }
-            }
+            });
+            await task;
+            return task.Result;
         }
     }
 }

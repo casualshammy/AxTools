@@ -507,7 +507,7 @@ namespace AxTools.Forms
             this.labelPluginDesc.StyleManager = null;
             this.labelPluginDesc.TabIndex = 82;
             this.labelPluginDesc.Text = "Check plugins you\r\nwant to enable and\r\nthen click \"Start\"\r\nbutton to launch.\r\nDou" +
-    "ble right click on\r\na row to open\r\nsettings dialog";
+    "ble click on\r\na row to open\r\nsettings dialog";
             this.labelPluginDesc.Theme = MetroFramework.MetroThemeStyle.Light;
             this.labelPluginDesc.UseStyleColors = true;
             // 

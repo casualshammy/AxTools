@@ -11,7 +11,6 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Media;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -242,10 +241,10 @@ namespace AxTools.Forms
                     point.X = halfOfPictureboxSize;
                     point.Y = halfOfPictureboxSize;
                     graphics.FillRectangle(whiteBrush, point.X - 2, point.Y - 2, 4, 4);
-                    point2.X = point.X + ((int) (15.0*Math.Cos(d)));
-                    point2.Y = point.Y + ((int) (15.0*Math.Sin(d)));
+                    point2.X = point.X + (int) (15.0*Math.Cos(d));
+                    point2.Y = point.Y + (int) (15.0*Math.Sin(d));
                     graphics.DrawLine(whitePen, point, point2);
-                    graphics.DrawEllipse(whitePen, point.X - (40*zoomR), point.Y - (40*zoomR), 80*zoomR, 80*zoomR);
+                    graphics.DrawEllipse(whitePen, point.X - 40*zoomR, point.Y - 40*zoomR, 80*zoomR, 80*zoomR);
 
                     #endregion
 
@@ -258,14 +257,14 @@ namespace AxTools.Forms
                             if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
                             var2X = i.Location.X;
                             var2Y = i.Location.Y;
-                            num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
+                            num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
                             var2X = localPlayerLocationX - var2X;
                             var2Y = localPlayerLocationY - var2Y;
                             var2X = (int) (zoomR*var2X);
                             var2Y = (int) (zoomR*var2Y);
-                            double num3 = Math.Sqrt((var2X*var2X) + (var2Y*var2Y));
-                            point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931)));
-                            point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num3)*Math.Sin(num2)));
+                            double num3 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
+                            point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931));
+                            point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Sin(num2));
                             Pen pen;
                             SolidBrush solidBrush;
                             if (i.Health > 0)
@@ -329,14 +328,14 @@ namespace AxTools.Forms
                             if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
                             var2X = i.Location.X;
                             var2Y = i.Location.Y;
-                            num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
+                            num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
                             var2X = localPlayerLocationX - var2X;
                             var2Y = localPlayerLocationY - var2Y;
                             var2X = (int) (zoomR*var2X);
                             var2Y = (int) (zoomR*var2Y);
-                            double num3 = Math.Sqrt((var2X*var2X) + (var2Y*var2Y));
-                            point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931)));
-                            point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num3)*Math.Sin(num2)));
+                            double num3 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
+                            point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931));
+                            point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Sin(num2));
                             Pen pen;
                             SolidBrush solidBrush;
                             if (i.Health > 0)
@@ -399,14 +398,14 @@ namespace AxTools.Forms
                         {
                             var2X = i.Location.X;
                             var2Y = i.Location.Y;
-                            num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
+                            num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
                             var2X = localPlayerLocationX - var2X;
                             var2Y = localPlayerLocationY - var2Y;
                             var2X = (int) (zoomR*var2X);
                             var2Y = (int) (zoomR*var2Y);
-                            double num4 = Math.Sqrt((var2X*var2X) + (var2Y*var2Y));
-                            point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931)));
-                            point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Sin(num2)));
+                            double num4 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
+                            point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931));
+                            point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Sin(num2));
                             Point[] pts;
                             float zDiff = i.Location.Z - localPlayer.Location.Z;
                             if (zDiff >= 10)
@@ -444,14 +443,14 @@ namespace AxTools.Forms
                             if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
                             var2X = i.Location.X;
                             var2Y = i.Location.Y;
-                            num2 = (Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931) + 1.5707963267948966;
+                            num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
                             var2X = localPlayerLocationX - var2X;
                             var2Y = localPlayerLocationY - var2Y;
                             var2X = (int) (zoomR*var2X);
                             var2Y = (int) (zoomR*var2Y);
-                            double num4 = Math.Sqrt((var2X*var2X) + (var2Y*var2Y));
-                            point.X = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931)));
-                            point.Y = (int) Math.Round(halfOfPictureboxSize + (Math.Abs(num4)*Math.Sin(num2)));
+                            double num4 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
+                            point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931));
+                            point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Sin(num2));
                             Point[] pts;
                             float zDiff = i.Location.Z - localPlayer.Location.Z;
                             if (zDiff >= 10)
@@ -509,9 +508,10 @@ namespace AxTools.Forms
 
         private void PlayAlarmFile()
         {
-            if (File.Exists(Globals.UserfilesPath + "\\alarm.wav"))
+            string path = Globals.ResourcesPath + "\\alarm.wav";
+            if (File.Exists(path))
             {
-                using (SoundPlayer pPlayer = new SoundPlayer(Globals.UserfilesPath + "\\alarm.wav"))
+                using (SoundPlayer pPlayer = new SoundPlayer(path))
                 {
                     pPlayer.PlaySync();
                 }
@@ -609,17 +609,6 @@ namespace AxTools.Forms
             Location = settings.WoWRadarLocation;
             isRunning = true;
             thread.Start();
-            if (!File.Exists(Globals.UserfilesPath + "\\alarm.wav"))
-            {
-                AppSpecUtils.CheckCreateDir();
-                Task.Factory.StartNew(() =>
-                {
-                    using (WebClient pWebClient = new WebClient())
-                    {
-                        pWebClient.DownloadFile(Globals.UpdateServerPath + "/alarm.wav", Globals.UserfilesPath + "\\alarm.wav");
-                    }
-                });
-            }
         }
 
         private void PictureBoxRadarSettingsClick(object sender, EventArgs e)

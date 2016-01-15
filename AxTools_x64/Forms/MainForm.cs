@@ -76,7 +76,7 @@ namespace AxTools.Forms
 
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == (uint) WM_MESSAGE.WM_QUERYENDSESSION)
+            if (m.Msg == Win32Consts.WM_QUERYENDSESSION)
             {
                 if (!isClosing)
                 {
@@ -290,7 +290,7 @@ namespace AxTools.Forms
             // start updater service
             UpdaterService.Start();
             // situation normal :)
-            Log.Info("AxTools started succesfully");
+            Log.Info("[AxTools] All start-up routines are finished");
         }
 
         private void linkSettings_Click(object sender, EventArgs e)
@@ -1022,7 +1022,7 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                linkPing.Text = string.Format("[{0}]::[{1}%]  |", (pingResult.Ping == -1 || pingResult.Ping == -2) ? "n/a" : pingResult.Ping + "ms", pingResult.PacketLoss);
+                linkPing.Text = string.Format("[{0}]::[{1}%]  |", pingResult.Ping == -1 || pingResult.Ping == -2 ? "n/a" : pingResult.Ping + "ms", pingResult.PacketLoss);
                 TBProgressBar.SetProgressValue(Handle, 1, 1);
                 if (pingResult.PacketLoss >= settings.PingerVeryBadPacketLoss || pingResult.Ping >= settings.PingerVeryBadPing)
                 {

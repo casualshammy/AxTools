@@ -28,7 +28,7 @@ namespace AxTools.WinAPI
         internal static extern bool PostMessage(IntPtr hwnd, WM_MESSAGE wMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32")]
-        static internal extern IntPtr GetForegroundWindow();
+        internal static extern IntPtr GetForegroundWindow();
 
         [DllImport("user32")]
         [return: MarshalAs(UnmanagedType.Bool)]

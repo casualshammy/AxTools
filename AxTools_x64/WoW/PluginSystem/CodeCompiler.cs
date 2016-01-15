@@ -54,7 +54,7 @@ namespace AxTools.WoW.PluginSystem
             get
             {
                 return string.Format("{0}_{1}.dll",
-                    (FileStructure == FileStructureType.SingleFile)
+                    FileStructure == FileStructureType.SingleFile
                         ? Path.GetFileNameWithoutExtension(SourcePath)
                         : new DirectoryInfo(SourcePath).Name, Utils.GetRandomString(16));
             }
@@ -94,7 +94,7 @@ namespace AxTools.WoW.PluginSystem
             Dictionary<string, string> providerOptions = new Dictionary<string, string>
             {
                 {
-                    "CompilerVersion", string.Format(CultureInfo.InvariantCulture.NumberFormat, "v{0:N1}", new object[] {CompilerVersion})
+                    "CompilerVersion", string.Format(CultureInfo.InvariantCulture.NumberFormat, "v{0:N1}", CompilerVersion)
                 }
             };
             using (var provider = new CSharpCodeProvider(providerOptions))
@@ -204,17 +204,14 @@ namespace AxTools.WoW.PluginSystem
                         {
                             if (str4 != "AddRef")
                             {
-                                if ((((str4 == "Optimise") && (strArray2.Length == 3)) &&
-                                     (!string.IsNullOrEmpty(strArray2[2]) && (strArray2[2] == "On"))) &&
-                                    !Options.CompilerOptions.Contains("/optimise"))
+                                if ((str4 == "Optimise") && (strArray2.Length == 3) && !string.IsNullOrEmpty(strArray2[2]) && (strArray2[2] == "On") && !Options.CompilerOptions.Contains("/optimise"))
                                 {
                                     Options.IncludeDebugInformation = false;
                                     CompilerParameters options = Options;
                                     options.CompilerOptions = options.CompilerOptions + " /optimise";
                                 }
                             }
-                            else if (((strArray2.Length == 3) && !string.IsNullOrEmpty(strArray2[2])) &&
-                                     (strArray2[2].EndsWith(".dll") && !method_2(strArray2[2])))
+                            else if ((strArray2.Length == 3) && !string.IsNullOrEmpty(strArray2[2]) && strArray2[2].EndsWith(".dll") && !method_2(strArray2[2]))
                             {
                                 AddReference(strArray2[2]);
                             }

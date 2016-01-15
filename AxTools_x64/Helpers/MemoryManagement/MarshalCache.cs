@@ -11,18 +11,19 @@ namespace AxTools.Helpers.MemoryManagement
     [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     public static class MarshalCache<T>
     {
+        // ReSharper disable once StaticMemberInGenericType
         /// <summary> The size of the Type </summary>
         public static int Size;
 
-
+        // ReSharper disable once StaticMemberInGenericType
         /// <summary> The real, underlying type. </summary>
         public static Type RealType;
 
-
+        // ReSharper disable once StaticMemberInGenericType
         /// <summary> The type code </summary>
         public static TypeCode TypeCode;
 
-
+        // ReSharper disable once StaticMemberInGenericType
         /// <summary> True if this type requires the Marshaler to map variables. (No direct pointer dereferencing) </summary>
         public static bool TypeRequiresMarshal;
 
@@ -102,8 +103,11 @@ namespace AxTools.Helpers.MemoryManagement
                     object[] attr = field.GetCustomAttributes(typeof (FixedBufferAttribute), false);
                     if (attr.Length > 0)
                     {
-                        var fba = attr[0] as FixedBufferAttribute;
-                        totalSize += GetSizeOf(fba.ElementType)*fba.Length;
+                        FixedBufferAttribute fba = attr[0] as FixedBufferAttribute;
+                        if (fba != null)
+                        {
+                            totalSize += GetSizeOf(fba.ElementType)*fba.Length;
+                        }
                     }
 
 

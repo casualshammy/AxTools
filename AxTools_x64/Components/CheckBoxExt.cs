@@ -28,7 +28,10 @@ namespace AxTools.Components
             if (mevent.Button == MouseButtons.Right && !HandlingRightClick)
             {
                 HandlingRightClick = true;
-                MouseClickExtended(null, mevent);
+                if (MouseClickExtended != null)
+                {
+                    MouseClickExtended(null, mevent);
+                }
             }
             base.OnMouseDown(mevent);
         }

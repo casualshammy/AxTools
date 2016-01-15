@@ -41,6 +41,7 @@
             this.textBoxX86.ReadOnly = true;
             this.textBoxX86.Size = new System.Drawing.Size(1110, 20);
             this.textBoxX86.TabIndex = 0;
+            this.textBoxX86.Text = "Please wait...";
             // 
             // labelX86
             // 
@@ -67,6 +68,7 @@
             this.textBoxX64.ReadOnly = true;
             this.textBoxX64.Size = new System.Drawing.Size(1110, 20);
             this.textBoxX64.TabIndex = 6;
+            this.textBoxX64.Text = "Please wait...";
             // 
             // MainForm
             // 

@@ -23,4 +23,8 @@ F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\axtools_updat
 F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\axtools_updater.Properties.Resources.resources
 F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.csproj.GenerateResource.Cache
 F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.exe
-F:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\distr\updater.exe
+F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\obj\x86\Release\updater.csprojResolveAssemblyReference.cache
+F:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\Updater.exe
+F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\bin\Release\Updater.exe
+F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\bin\Release\Updater.exe.config
+F:\Dropbox\Projects\AxTools\axtools_updater_CSharp\bin\Release\NDesk.Options.dll

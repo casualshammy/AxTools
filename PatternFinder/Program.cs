@@ -4,16 +4,17 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace PatternFinder
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        private static void Main()
         {
             Process[] wowProcess = Process.GetProcessesByName("Wow-64");
-            if (wowProcess.Length == 0)
+            if (wowProcess.Length != 1)
             {
                 Console.WriteLine("!!! No WoW process found!");
                 Console.ReadLine();
@@ -39,7 +40,8 @@ namespace PatternFinder
                 Pattern.FromTextstyle("CGGameUI_Target", "41 83 E0 3F 45 84 C0 48 0F 44 C3 48 85 C0 0F 95 C3 E8 ?? ?? ?? ?? 8B D3 48 8B CF E8", new AddModifier(18), new LeaModifier(LeaType.E8)),
                 Pattern.FromTextstyle("CGGameUI_Interact", "83 7B 10 01 48 8B CB 75 10 E8 ?? ?? ?? ?? B8 01 00 00 00 48 83 C4 20 5B C3 E8 ?? ?? ?? ?? B8 01 00 00 00 48 83 C4 20 5B C3", new AddModifier(26), new LeaModifier(LeaType.E8)),
                 Pattern.FromTextstyle("CGUnit_C_InitializeTrackingState", "48 8D 55 E7 48 8B CF E8 ?? ?? ?? ?? 48 8B BC 24 B0 00 00 00 B8 01 00 00 00 48 8B 9C 24 B8 00 00 00", new AddModifier(8), new LeaModifier(LeaType.E8)),
-                Pattern.FromTextstyle("CGWorldFrame_Render", "F3 0F 10 84 08 50 1A 00 00 48 8B CB F3 0F 11 45 A0 E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 0D", new AddModifier(31), new LeaModifier(LeaType.E8))
+                Pattern.FromTextstyle("CGWorldFrame_Render", "F3 0F 10 84 08 50 1A 00 00 48 8B CB F3 0F 11 45 A0 E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 0D", new AddModifier(31), new LeaModifier(LeaType.E8)),
+                Pattern.FromTextstyle("Possible_NotLoadingScreen", "48 83 EC 38 80 3D ?? ?? ?? ?? 00 0F 84 F8 00 00 00 83 3D ?? ?? ?? ?? 00 48 89 5C 24 40 74 05 E8", new AddModifier(6), new LeaModifier(LeaType.Cmp))
 
                 // x86
                 //Pattern.FromTextstyle("GlueState", "83 3d ?? ?? ?? ?? ?? 75 ?? e8 ?? ?? ?? ?? 8b 10 8b c8 ff 62 5c c3", new AddModifier(2), new LeaModifier()),
@@ -65,28 +67,33 @@ namespace PatternFinder
             string reportFilePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\result.txt";
             File.Delete(reportFilePath);
             Stopwatch stopwatch = Stopwatch.StartNew();
+            Console.WriteLine("Calculating hash...");
+            File.AppendAllLines(reportFilePath, new[] {"internal static readonly byte[] WoWHash =", "{", CalcucateHash(wowProcess[0].MainModule.FileName), "};"});
+            Console.WriteLine("Hash is calculated");
+            Console.WriteLine("------------------");
+            Console.WriteLine("------------------");
             using (MemoryManagement.MemoryManager epr = new MemoryManagement.MemoryManager(wowProcess[0]))
             {
                 int counter = 0;
                 object locker = new object();
                 Parallel.ForEach(patterns, pattern =>
                 {
-                    string consoleOutput = null;
+                    string consoleOutput;
                     try
                     {
-                        bool alreadyFound = false;
-                        foreach (IntPtr intPtr in pattern.Find(epr))
+                        // ReSharper disable once AccessToDisposedClosure
+                        IntPtr[] addresses = pattern.Find(epr).ToArray();
+                        if (addresses.Length == 1)
                         {
-                            if (!alreadyFound)
+                            consoleOutput = pattern.Name + ": 0x" + addresses[0].ToInt64().ToString("X");
+                            lock (locker)
                             {
-                                consoleOutput = pattern.Name + ": 0x" + intPtr.ToInt64().ToString("X");
+                                File.AppendAllLines(reportFilePath, new[] { "internal const int " + pattern.Name + " = 0x" + addresses[0].ToInt64().ToString("X") + ";" });
                             }
-                            else
-                            {
-                                consoleOutput = "!!!  " + pattern.Name + ": 0x" + intPtr.ToInt64().ToString("X");
-                            }
-                            File.AppendAllLines(reportFilePath, new[] { "internal const int " + pattern.Name + " = 0x" + intPtr.ToInt64().ToString("X") + ";" });
-                            alreadyFound = true;
+                        }
+                        else
+                        {
+                            consoleOutput = "!!!  " + pattern.Name + ": 0x" + string.Join(", 0x", addresses.Select(l => l.ToInt64().ToString("X")));
                         }
                     }
                     catch (Exception ex)
@@ -104,40 +111,22 @@ namespace PatternFinder
                         Console.SetCursorPosition(cursorLeft, cursorTop);
                     }
                 });
-                //foreach (Pattern pattern in patterns)
-                //{
-                //    try
-                //    {
-                //        bool alreadyFound = false;
-                //        foreach (IntPtr intPtr in pattern.Find(epr))
-                //        {
-                //            if (!alreadyFound)
-                //            {
-                //                Console.WriteLine(pattern.Name + ": 0x" + intPtr.ToInt64().ToString("X"));
-                //            }
-                //            else
-                //            {
-                //                Console.WriteLine("!!!  " + pattern.Name + ": 0x" + intPtr.ToInt64().ToString("X"));
-                //            }
-                //            File.AppendAllLines(reportFilePath, new[] {"internal const int " + pattern.Name + " = 0x" + intPtr.ToInt64().ToString("X") + ";"});
-                //            alreadyFound = true;
-                //        }
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        Console.WriteLine("!!!  " + ex.Message);
-                //    }
-                //    counter++;
-                //    int cursorTop = Console.CursorTop;
-                //    int cursorLeft = Console.CursorLeft;
-                //    Console.SetCursorPosition(0, Console.CursorTop);
-                //    Console.WriteLine("---- " + counter*100/patterns.Length + "% ----");
-                //    Console.SetCursorPosition(cursorLeft, cursorTop);
-                //}
                 Console.WriteLine();
             }
             Console.WriteLine("Stopwatch: " + stopwatch.ElapsedMilliseconds + "ms");
             Console.ReadLine();
+        }
+
+        private static string CalcucateHash(string path)
+        {
+            using (SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider())
+            {
+                using (FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read))
+                {
+                    byte[] hash = provider.ComputeHash(fileStream);
+                    return "0x" + BitConverter.ToString(hash).Replace("-", ", 0x");
+                }
+            }
         }
     }
 

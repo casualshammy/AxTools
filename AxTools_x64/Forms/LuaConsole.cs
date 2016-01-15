@@ -3,7 +3,6 @@ using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW;
 using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +12,9 @@ using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.WoW.Management.ObjectManager;
 using Settings = AxTools.Helpers.Settings;
+using Timer = System.Timers.Timer;
 
 namespace AxTools.Forms
 {
@@ -21,7 +22,7 @@ namespace AxTools.Forms
     {
         private readonly Settings settings = Settings.Instance;
         internal static bool TimerEnabled { get; private set; }
-        private readonly System.Timers.Timer timerLua = new System.Timers.Timer(1000);
+        private readonly Timer timerLua = new Timer(1000);
         private const string MetroLinkEnableCyclicExecutionTextEnable = "<Enable cyclic execution>";
         private const string MetroLinkEnableCyclicExecutionTextDisable = "<Disable cyclic execution>";
 
@@ -77,6 +78,14 @@ namespace AxTools.Forms
 
         private void ButtonDumpClick(object sender, EventArgs e)
         {
+            //Timer __timer = new Timer(50);
+            //__timer.Elapsed += delegate
+            //{
+            //    //IntPtr playerPtr = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerPtr);
+            //    textBoxLuaCode.Text = WoWManager.WoWProcess.IsInGame ? GameFunctions.Lua_GetFunctionReturn("tostring(GetTime())") : "NotInGame";
+            //};
+            //__timer.Start();
+
             List<WowPlayer> wowUnits = new List<WowPlayer>();
             List<WowObject> wowObjects = new List<WowObject>();
             List<WowNpc> wowNpcs = new List<WowNpc>();
@@ -115,40 +124,6 @@ namespace AxTools.Forms
                     i.TargetGUID, i.IsAlliance);
             }
             Log.Info(sb.ToString());
-
-
-            //sb.AppendLine("Test-----------------------------------------");
-            //WowObject nomi = wowObjects.FirstOrDefault(i => i.Name == "Хранилище гильдии");
-            //if (nomi != null)
-            //{
-            //    Log.Print("Object is found!", false);
-            //    Parallel.For((long)0, 0x200, i =>
-            //        {
-            //            try
-            //            {
-            //                IntPtr desc = WoWManager.WoWProcess.Memory.Read<IntPtr>(nomi.Address + (int)i);
-            //                Parallel.For((long)0, 0x100, l =>
-            //                    {
-            //                        try
-            //                        {
-            //                            uint name2 = WoWManager.WoWProcess.Memory.Read<uint>(desc + (int)i1);
-            //                            if (name2 == 188127)
-            //                            {
-            //                                sb.AppendLine("УДАЧА!!!: " + i1.ToString() + "/" + i.ToString());
-            //                                Log.Print(sb.ToString(), false);
-            //                            }
-            //                        }
-            //                        catch (Exception)
-            //                        {
-            //                        }
-            //                    });
-            //            }
-            //            catch (Exception)
-            //            {
-            //            }
-            //        });
-            //}
-            // WoWDXInject.MoveHook();
         }
         
         private void WowModulesFormClosing(object sender, FormClosingEventArgs e)
