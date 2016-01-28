@@ -1,10 +1,13 @@
 ﻿using System.Drawing;
 using AxTools.WinAPI;
 using System;
+using System.Collections.Generic;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net.NetworkInformation;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -96,6 +99,83 @@ namespace AxTools.Helpers
             {
                 memoryStream.Position = 0;
                 return Image.FromStream(memoryStream);
+            }
+        }
+
+        internal static string GetComputerHID()
+        {
+            string processorID = "";
+            string diskID = "";
+            string motherboardID = "";
+            try
+            {
+                ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select * From Win32_processor");
+                ManagementObjectCollection mbsList = mbs.Get();
+                foreach (ManagementObject mo in mbsList.Cast<ManagementObject>())
+                {
+                    processorID = mo["ProcessorID"].ToString();
+                    break;
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+            try
+            {
+                ManagementObject dsk = new ManagementObject(@"win32_logicaldisk.deviceid=""c:""");
+                dsk.Get();
+                diskID = dsk["VolumeSerialNumber"].ToString();
+            }
+            catch
+            {
+                // ignore
+            }
+            try
+            {
+                ManagementObjectSearcher mos = new ManagementObjectSearcher("SELECT * FROM Win32_BaseBoard");
+                ManagementObjectCollection moc = mos.Get();
+                foreach (ManagementObject mo in moc.Cast<ManagementObject>())
+                {
+                    motherboardID = mo["SerialNumber"].ToString();
+                    break;
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+            using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
+            {
+                string raw = processorID + diskID + motherboardID;
+                byte[] bytes = Encoding.UTF8.GetBytes(raw);
+                byte[] hash = sha256.ComputeHash(bytes);
+                return BitConverter.ToString(hash).Replace("-", "");
+            }
+        }
+
+        public static string CreateMd5ForFolder(string path)
+        {
+            List<string> files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).OrderBy(p => p).ToList();
+            using (MD5 md5 = MD5.Create())
+            {
+                for (int i = 0; i < files.Count; i++)
+                {
+                    string file = files[i];
+                    string relativePath = file.Substring(path.Length + 1);
+                    byte[] pathBytes = Encoding.UTF8.GetBytes(relativePath.ToLower());
+                    md5.TransformBlock(pathBytes, 0, pathBytes.Length, pathBytes, 0);
+                    byte[] contentBytes = File.ReadAllBytes(file);
+                    if (i == files.Count - 1)
+                    {
+                        md5.TransformFinalBlock(contentBytes, 0, contentBytes.Length);
+                    }
+                    else
+                    {
+                        md5.TransformBlock(contentBytes, 0, contentBytes.Length, contentBytes, 0);
+                    }
+                }
+                return BitConverter.ToString(md5.Hash).Replace("-", "");
             }
         }
 

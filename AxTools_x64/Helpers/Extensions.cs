@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 
@@ -74,7 +76,7 @@ namespace AxTools.Helpers
         }
 
         /// <summary>
-        /// Very fast comparison of byte arrays (memcmp)
+        ///     Very fast comparison of byte arrays (memcmp)
         /// </summary>
         /// <param name="b1"></param>
         /// <param name="b2"></param>
@@ -88,6 +90,18 @@ namespace AxTools.Helpers
                     return WinAPI.NativeMethods.memcmp(v1, v2, (UIntPtr)b1.Length) == 0;
                 }
             }
+        }
+
+        /// <summary>
+        ///     Forces WebClient to use basic http auth without getting http-401-error
+        /// </summary>
+        /// <param name="webClient"></param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        public static void ForceBasicAuth(this WebClient webClient, string username, string password)
+        {
+            string credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(username + ":" + password));
+            webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Basic {0}", credentials);
         }
 
     }

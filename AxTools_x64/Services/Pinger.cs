@@ -17,12 +17,11 @@ namespace AxTools.Services
         private static Timer _timer;
         private static readonly object Lock = new object();
         private static Stopwatch _stopwatch;
-
-        private static List<int> _pingList;
+        private static List<PingerReply> _pingList;
         private static int _lastPing;
         private static int _lastPacketLoss;
 
-        internal static event Action<PingResult> PingResultArrived;
+        internal static event Action<PingerStat> StatChanged;
 
         /// <summary>
         ///     True if pinger is active, false otherwise
@@ -35,9 +34,20 @@ namespace AxTools.Services
             {
                 return _timer != null && _timer.Enabled;
             }
+            set
+            {
+                if (value)
+                {
+                    Start();
+                }
+                else
+                {
+                    Stop();
+                }
+            }
         }
 
-        internal static void Start()
+        private static void Start()
         {
             lock (Lock)
             {
@@ -45,7 +55,7 @@ namespace AxTools.Services
                 {
                     throw new Exception("Pinger is already running!");
                 }
-                _pingList = new List<int>(100) { -2, -2, -2, -2, -2, -2, -2, -2, -2, -2 };
+                _pingList = Enumerable.Repeat(new PingerReply(0, true), 10).ToList();
                 _stopwatch = new Stopwatch();
                 _timer = new Timer(2000);
                 _timer.Elapsed += TimerOnElapsed;
@@ -57,7 +67,7 @@ namespace AxTools.Services
             }
         }
 
-        internal static void Stop()
+        private static void Stop()
         {
             lock (Lock)
             {
@@ -89,14 +99,14 @@ namespace AxTools.Services
                         {
                             _pingList.RemoveAt(0);
                         }
-                        _pingList.Add((int)(!result || !pSocket.Connected ? -1 : elapsed));
-                        int ping = _pingList.GetRange(_pingList.Count - 10, 10).Max();
-                        int packetLoss = _pingList.Count(x => x == -1);
+                        _pingList.Add(new PingerReply((int) elapsed, result && pSocket.Connected));
+                        int ping = _pingList.GetRange(_pingList.Count - 10, 10).Where(l => l.Successful).Select(l => l.PingInMs).Max();
+                        int packetLoss = _pingList.Count(l => !l.Successful);
                         if (ping != _lastPing || packetLoss != _lastPacketLoss)
                         {
-                            if (PingResultArrived != null)
+                            if (StatChanged != null)
                             {
-                                PingResultArrived(new PingResult(ping, packetLoss));
+                                StatChanged(new PingerStat(ping, packetLoss));
                             }
                             _lastPing = ping;
                             _lastPacketLoss = packetLoss;

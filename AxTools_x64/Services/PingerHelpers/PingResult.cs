@@ -1,11 +1,11 @@
 ﻿namespace AxTools.Services.PingerHelpers
 {
-    internal struct PingResult
+    internal struct PingerStat
     {
         internal int Ping;
         internal int PacketLoss;
 
-        internal PingResult(int ping, int packetLoss)
+        internal PingerStat(int ping, int packetLoss)
         {
             Ping = ping;
             PacketLoss = packetLoss;

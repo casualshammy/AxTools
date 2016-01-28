@@ -55,7 +55,7 @@ namespace AxTools.Helpers
                     mailMessage.SubjectEncoding = Encoding.UTF8;
                     mailMessage.Subject = string.IsNullOrWhiteSpace(subject) ? string.Format("Error log from {0}", Settings.Instance.UserID) : string.Format("Error log from {0} ({1})", Settings.Instance.UserID, subject);
                     mailMessage.BodyEncoding = Encoding.UTF8;
-                    mailMessage.Body = "ERRORS: \r\n" + string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN)));
+                    mailMessage.Body = "ERRORS:\r\n" + string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN)));
                     using (Attachment logFile = new Attachment(Globals.LogFileName, MediaTypeNames.Text.Plain))
                     {
                         mailMessage.Attachments.Add(logFile);
@@ -69,7 +69,7 @@ namespace AxTools.Helpers
         {
             if (_stringBuilder.Length != 0)
             {
-                AppSpecUtils.CheckCreateDir();
+                AppSpecUtils.CheckCreateTempDir();
                 lock (_lock)
                 {
                     File.AppendAllText(Globals.LogFileName, _stringBuilder.ToString(), Encoding.UTF8);

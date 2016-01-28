@@ -45,10 +45,7 @@ namespace AxTools.Forms
             this.Label8 = new MetroFramework.Controls.MetroLabel();
             this.CheckBox6 = new MetroFramework.Controls.MetroCheckBox();
             this.labelClickerHotkey = new MetroFramework.Controls.MetroLabel();
-            this.comboBoxClickerHotkey = new MetroFramework.Controls.MetroComboBox();
-            this.comboBoxWExecModule = new MetroFramework.Controls.MetroComboBox();
             this.labelWExecModule = new MetroFramework.Controls.MetroLabel();
-            this.comboBoxWExecLuaTimer = new MetroFramework.Controls.MetroComboBox();
             this.labelWExecLuaTimer = new MetroFramework.Controls.MetroLabel();
             this.numericUpDownBackupTimer = new System.Windows.Forms.NumericUpDown();
             this.Hours = new MetroFramework.Controls.MetroLabel();
@@ -86,6 +83,9 @@ namespace AxTools.Forms
             this.buttonBackupPath = new MetroFramework.Controls.MetroButton();
             this.textBoxBackupPath = new System.Windows.Forms.TextBox();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
+            this.textBoxPluginsHotkey = new MetroFramework.Controls.MetroTextBox();
+            this.textBoxLuaHotkey = new MetroFramework.Controls.MetroTextBox();
+            this.textBoxClickerHotkey = new MetroFramework.Controls.MetroTextBox();
             this.metroTabPage7 = new MetroFramework.Controls.MetroTabPage();
             this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel13 = new MetroFramework.Controls.MetroLabel();
@@ -99,6 +99,9 @@ namespace AxTools.Forms
             this.Label3 = new MetroFramework.Controls.MetroLabel();
             this.toolTip = new MetroFramework.Components.MetroToolTip();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
+            this.buttonClickerHotkey = new MetroFramework.Controls.MetroButton();
+            this.buttonLuaHotkey = new MetroFramework.Controls.MetroButton();
+            this.buttonPluginsHotkey = new MetroFramework.Controls.MetroButton();
             this.GroupBox2.SuspendLayout();
             this.GroupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupTimer)).BeginInit();
@@ -129,7 +132,6 @@ namespace AxTools.Forms
             this.checkBox_AntiAFK.Theme = MetroFramework.MetroThemeStyle.Light;
             this.checkBox_AntiAFK.UseStyleColors = true;
             this.checkBox_AntiAFK.UseVisualStyleBackColor = true;
-            this.checkBox_AntiAFK.CheckedChanged += new System.EventHandler(this.CheckBox1CheckedChanged);
             // 
             // textBoxVentriloPath
             // 
@@ -152,7 +154,6 @@ namespace AxTools.Forms
             this.buttonVentriloPath.Text = "...";
             this.buttonVentriloPath.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.buttonVentriloPath, "Click to select path...");
-            this.buttonVentriloPath.Click += new System.EventHandler(this.Button9Click);
             // 
             // CheckBoxStartAxToolsWithWindows
             // 
@@ -355,42 +356,6 @@ namespace AxTools.Forms
             this.toolTip.SetToolTip(this.labelClickerHotkey, "Key to switch clicker on/off. Works only if WoW window is active");
             this.labelClickerHotkey.UseStyleColors = true;
             // 
-            // comboBoxClickerHotkey
-            // 
-            this.comboBoxClickerHotkey.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxClickerHotkey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxClickerHotkey.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.comboBoxClickerHotkey.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxClickerHotkey.FormattingEnabled = true;
-            this.comboBoxClickerHotkey.ItemHeight = 23;
-            this.comboBoxClickerHotkey.Location = new System.Drawing.Point(231, 15);
-            this.comboBoxClickerHotkey.Name = "comboBoxClickerHotkey";
-            this.comboBoxClickerHotkey.Size = new System.Drawing.Size(88, 29);
-            this.comboBoxClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxClickerHotkey.StyleManager = null;
-            this.comboBoxClickerHotkey.TabIndex = 45;
-            this.comboBoxClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.comboBoxClickerHotkey, "Key to switch clicker on/off. Works only if WoW window is active");
-            this.comboBoxClickerHotkey.SelectedIndexChanged += new System.EventHandler(this.ComboBoxClickerHotkeySelectedIndexChanged);
-            // 
-            // comboBoxWExecModule
-            // 
-            this.comboBoxWExecModule.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxWExecModule.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxWExecModule.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.comboBoxWExecModule.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxWExecModule.FormattingEnabled = true;
-            this.comboBoxWExecModule.ItemHeight = 23;
-            this.comboBoxWExecModule.Location = new System.Drawing.Point(231, 85);
-            this.comboBoxWExecModule.Name = "comboBoxWExecModule";
-            this.comboBoxWExecModule.Size = new System.Drawing.Size(88, 29);
-            this.comboBoxWExecModule.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxWExecModule.StyleManager = null;
-            this.comboBoxWExecModule.TabIndex = 51;
-            this.comboBoxWExecModule.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.comboBoxWExecModule, "Key to switch active WoW plugin on/off. Works only if WoW window is active");
-            this.comboBoxWExecModule.SelectedIndexChanged += new System.EventHandler(this.ComboBoxWExecModuleSelectedIndexChanged);
-            // 
             // labelWExecModule
             // 
             this.labelWExecModule.AutoSize = true;
@@ -409,25 +374,6 @@ namespace AxTools.Forms
             this.labelWExecModule.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.labelWExecModule, "Key to switch active WoW plugin on/off. Works only if WoW window is active");
             this.labelWExecModule.UseStyleColors = true;
-            // 
-            // comboBoxWExecLuaTimer
-            // 
-            this.comboBoxWExecLuaTimer.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxWExecLuaTimer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxWExecLuaTimer.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.comboBoxWExecLuaTimer.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxWExecLuaTimer.FormattingEnabled = true;
-            this.comboBoxWExecLuaTimer.ItemHeight = 23;
-            this.comboBoxWExecLuaTimer.Location = new System.Drawing.Point(231, 50);
-            this.comboBoxWExecLuaTimer.Name = "comboBoxWExecLuaTimer";
-            this.comboBoxWExecLuaTimer.Size = new System.Drawing.Size(88, 29);
-            this.comboBoxWExecLuaTimer.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxWExecLuaTimer.StyleManager = null;
-            this.comboBoxWExecLuaTimer.TabIndex = 49;
-            this.comboBoxWExecLuaTimer.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.comboBoxWExecLuaTimer, "Key to switch Lua console\'s loop execution on/off. Works only if WoW window is ac" +
-        "tive");
-            this.comboBoxWExecLuaTimer.SelectedIndexChanged += new System.EventHandler(this.ComboBoxWExecLuaTimerSelectedIndexChanged);
             // 
             // labelWExecLuaTimer
             // 
@@ -472,7 +418,6 @@ namespace AxTools.Forms
             0,
             0,
             0});
-            this.numericUpDownBackupTimer.ValueChanged += new System.EventHandler(this.NumericUpDownBackupTimerValueChanged);
             // 
             // Hours
             // 
@@ -511,7 +456,6 @@ namespace AxTools.Forms
             0,
             0,
             0});
-            this.numericUpDownBackupCopiesToKeep.ValueChanged += new System.EventHandler(this.NumericUpDownBackupCopiesToKeepValueChanged);
             // 
             // label9
             // 
@@ -549,7 +493,6 @@ namespace AxTools.Forms
             this.checkBoxAddonsBackup.Theme = MetroFramework.MetroThemeStyle.Light;
             this.checkBoxAddonsBackup.UseStyleColors = true;
             this.checkBoxAddonsBackup.UseVisualStyleBackColor = true;
-            this.checkBoxAddonsBackup.CheckedChanged += new System.EventHandler(this.CheckBoxAddonsBackupCheckedChanged);
             // 
             // tabControl
             // 
@@ -565,7 +508,7 @@ namespace AxTools.Forms
             this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 2;
+            this.tabControl.SelectedIndex = 4;
             this.tabControl.Size = new System.Drawing.Size(565, 234);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.StyleManager = this.styleManager;
@@ -617,7 +560,6 @@ namespace AxTools.Forms
             this.checkBoxMinimizeToTray.Theme = MetroFramework.MetroThemeStyle.Light;
             this.checkBoxMinimizeToTray.UseStyleColors = true;
             this.checkBoxMinimizeToTray.UseVisualStyleBackColor = true;
-            this.checkBoxMinimizeToTray.CheckedChanged += new System.EventHandler(this.checkBoxMinimizeToTray_CheckedChanged);
             // 
             // linkSendLogToDev
             // 
@@ -637,7 +579,6 @@ namespace AxTools.Forms
             this.linkSendLogToDev.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.linkSendLogToDev, "Send AxTools\'s log file to developer");
             this.linkSendLogToDev.UseStyleColors = true;
-            this.linkSendLogToDev.Click += new System.EventHandler(this.linkSendLogToDev_Click);
             // 
             // linkShowLog
             // 
@@ -656,7 +597,6 @@ namespace AxTools.Forms
             this.linkShowLog.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.linkShowLog, "Open AxTools\'s log file");
             this.linkShowLog.UseStyleColors = true;
-            this.linkShowLog.Click += new System.EventHandler(this.linkShowLog_Click);
             // 
             // metroLabel10
             // 
@@ -705,7 +645,6 @@ namespace AxTools.Forms
             this.metroComboBoxStyle.StyleManager = null;
             this.metroComboBoxStyle.TabIndex = 44;
             this.metroComboBoxStyle.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroComboBoxStyle.SelectedIndexChanged += new System.EventHandler(this.metroComboBoxStyle_SelectedIndexChanged);
             // 
             // metroTabPage5
             // 
@@ -773,7 +712,6 @@ namespace AxTools.Forms
             this.buttonWowPath.Text = "...";
             this.buttonWowPath.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.buttonWowPath, "Click to select path...");
-            this.buttonWowPath.Click += new System.EventHandler(this.buttonWowPath_Click);
             // 
             // textBoxWowPath
             // 
@@ -796,7 +734,6 @@ namespace AxTools.Forms
             this.buttonRaidcallPath.Text = "...";
             this.buttonRaidcallPath.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.buttonRaidcallPath, "Click to select path...");
-            this.buttonRaidcallPath.Click += new System.EventHandler(this.ButtonRaidcallPathClick);
             // 
             // textBoxRaidcallPath
             // 
@@ -819,7 +756,6 @@ namespace AxTools.Forms
             this.buttonMumblePath.Text = "...";
             this.buttonMumblePath.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.buttonMumblePath, "Click to select path...");
-            this.buttonMumblePath.Click += new System.EventHandler(this.ButtonMumblePathClick);
             // 
             // textBoxMumblePath
             // 
@@ -842,7 +778,6 @@ namespace AxTools.Forms
             this.buttonTeamspeak3Path.Text = "...";
             this.buttonTeamspeak3Path.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.buttonTeamspeak3Path, "Click to select path...");
-            this.buttonTeamspeak3Path.Click += new System.EventHandler(this.ButtonTeamspeak3PathClick);
             // 
             // textBoxTeamspeak3Path
             // 
@@ -968,7 +903,6 @@ namespace AxTools.Forms
             this.toolTip.SetToolTip(this.checkBoxPluginsShowIngameNotifications, "Show various plugins notifications in game\r\n(it appears on recordings/streams)");
             this.checkBoxPluginsShowIngameNotifications.UseStyleColors = true;
             this.checkBoxPluginsShowIngameNotifications.UseVisualStyleBackColor = true;
-            this.checkBoxPluginsShowIngameNotifications.CheckedChanged += new System.EventHandler(this.metroCheckBox1_CheckedChanged);
             // 
             // metroTabPage4
             // 
@@ -1026,7 +960,6 @@ namespace AxTools.Forms
             this.metroComboBoxBackupCompressionLevel.StyleManager = this.styleManager;
             this.metroComboBoxBackupCompressionLevel.TabIndex = 55;
             this.metroComboBoxBackupCompressionLevel.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroComboBoxBackupCompressionLevel.SelectedIndexChanged += new System.EventHandler(this.MetroComboBoxBackupCompressionLevelSelectedIndexChanged);
             // 
             // styleManager
             // 
@@ -1082,7 +1015,6 @@ namespace AxTools.Forms
             this.buttonBackupPath.Text = "...";
             this.buttonBackupPath.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.buttonBackupPath, "Click to select path...");
-            this.buttonBackupPath.Click += new System.EventHandler(this.ButtonBackupPathClick);
             // 
             // textBoxBackupPath
             // 
@@ -1094,12 +1026,15 @@ namespace AxTools.Forms
             // 
             // metroTabPage2
             // 
-            this.metroTabPage2.Controls.Add(this.comboBoxWExecModule);
+            this.metroTabPage2.Controls.Add(this.buttonPluginsHotkey);
+            this.metroTabPage2.Controls.Add(this.buttonLuaHotkey);
+            this.metroTabPage2.Controls.Add(this.buttonClickerHotkey);
+            this.metroTabPage2.Controls.Add(this.textBoxPluginsHotkey);
+            this.metroTabPage2.Controls.Add(this.textBoxLuaHotkey);
+            this.metroTabPage2.Controls.Add(this.textBoxClickerHotkey);
             this.metroTabPage2.Controls.Add(this.labelWExecModule);
-            this.metroTabPage2.Controls.Add(this.comboBoxWExecLuaTimer);
             this.metroTabPage2.Controls.Add(this.labelClickerHotkey);
             this.metroTabPage2.Controls.Add(this.labelWExecLuaTimer);
-            this.metroTabPage2.Controls.Add(this.comboBoxClickerHotkey);
             this.metroTabPage2.CustomBackground = false;
             this.metroTabPage2.HorizontalScrollbar = false;
             this.metroTabPage2.HorizontalScrollbarBarColor = true;
@@ -1117,6 +1052,61 @@ namespace AxTools.Forms
             this.metroTabPage2.VerticalScrollbarBarColor = true;
             this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.VerticalScrollbarSize = 10;
+            // 
+            // textBoxPluginsHotkey
+            // 
+            this.textBoxPluginsHotkey.CustomBackground = false;
+            this.textBoxPluginsHotkey.CustomForeColor = false;
+            this.textBoxPluginsHotkey.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxPluginsHotkey.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
+            this.textBoxPluginsHotkey.Location = new System.Drawing.Point(233, 89);
+            this.textBoxPluginsHotkey.Multiline = false;
+            this.textBoxPluginsHotkey.Name = "textBoxPluginsHotkey";
+            this.textBoxPluginsHotkey.SelectedText = "";
+            this.textBoxPluginsHotkey.Size = new System.Drawing.Size(97, 23);
+            this.textBoxPluginsHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxPluginsHotkey.StyleManager = null;
+            this.textBoxPluginsHotkey.TabIndex = 54;
+            this.textBoxPluginsHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.textBoxPluginsHotkey, "Key to switch active WoW plugin on/off. Works only if WoW window is active");
+            this.textBoxPluginsHotkey.UseStyleColors = true;
+            // 
+            // textBoxLuaHotkey
+            // 
+            this.textBoxLuaHotkey.CustomBackground = false;
+            this.textBoxLuaHotkey.CustomForeColor = false;
+            this.textBoxLuaHotkey.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxLuaHotkey.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
+            this.textBoxLuaHotkey.Location = new System.Drawing.Point(233, 54);
+            this.textBoxLuaHotkey.Multiline = false;
+            this.textBoxLuaHotkey.Name = "textBoxLuaHotkey";
+            this.textBoxLuaHotkey.SelectedText = "";
+            this.textBoxLuaHotkey.Size = new System.Drawing.Size(97, 23);
+            this.textBoxLuaHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxLuaHotkey.StyleManager = null;
+            this.textBoxLuaHotkey.TabIndex = 53;
+            this.textBoxLuaHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.textBoxLuaHotkey, "Key to switch Lua console\'s loop execution on/off. Works only if WoW window is ac" +
+        "tive");
+            this.textBoxLuaHotkey.UseStyleColors = true;
+            // 
+            // textBoxClickerHotkey
+            // 
+            this.textBoxClickerHotkey.CustomBackground = false;
+            this.textBoxClickerHotkey.CustomForeColor = false;
+            this.textBoxClickerHotkey.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxClickerHotkey.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
+            this.textBoxClickerHotkey.Location = new System.Drawing.Point(233, 19);
+            this.textBoxClickerHotkey.Multiline = false;
+            this.textBoxClickerHotkey.Name = "textBoxClickerHotkey";
+            this.textBoxClickerHotkey.SelectedText = "";
+            this.textBoxClickerHotkey.Size = new System.Drawing.Size(97, 23);
+            this.textBoxClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxClickerHotkey.StyleManager = null;
+            this.textBoxClickerHotkey.TabIndex = 52;
+            this.textBoxClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.textBoxClickerHotkey, "Key to switch clicker on/off. Works only if WoW window is active");
+            this.textBoxClickerHotkey.UseStyleColors = true;
             // 
             // metroTabPage7
             // 
@@ -1199,7 +1189,6 @@ namespace AxTools.Forms
             this.comboBoxVeryBadNetworkStatusPing.StyleManager = null;
             this.comboBoxVeryBadNetworkStatusPing.TabIndex = 48;
             this.comboBoxVeryBadNetworkStatusPing.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboBoxVeryBadNetworkStatusPing.SelectedIndexChanged += new System.EventHandler(this.comboBoxVeryBadNetworkStatusPing_SelectedIndexChanged);
             // 
             // comboBoxBadNetworkStatusPing
             // 
@@ -1216,7 +1205,6 @@ namespace AxTools.Forms
             this.comboBoxBadNetworkStatusPing.StyleManager = null;
             this.comboBoxBadNetworkStatusPing.TabIndex = 47;
             this.comboBoxBadNetworkStatusPing.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboBoxBadNetworkStatusPing.SelectedIndexChanged += new System.EventHandler(this.comboBoxBadNetworkStatusPing_SelectedIndexChanged);
             // 
             // comboBoxVeryBadNetworkStatusProcent
             // 
@@ -1233,7 +1221,6 @@ namespace AxTools.Forms
             this.comboBoxVeryBadNetworkStatusProcent.StyleManager = null;
             this.comboBoxVeryBadNetworkStatusProcent.TabIndex = 46;
             this.comboBoxVeryBadNetworkStatusProcent.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboBoxVeryBadNetworkStatusProcent.SelectedIndexChanged += new System.EventHandler(this.comboBoxVeryBadNetworkStatusProcent_SelectedIndexChanged);
             // 
             // comboBoxBadNetworkStatusProcent
             // 
@@ -1250,7 +1237,6 @@ namespace AxTools.Forms
             this.comboBoxBadNetworkStatusProcent.StyleManager = null;
             this.comboBoxBadNetworkStatusProcent.TabIndex = 45;
             this.comboBoxBadNetworkStatusProcent.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboBoxBadNetworkStatusProcent.SelectedIndexChanged += new System.EventHandler(this.comboBoxBadNetworkStatusProcent_SelectedIndexChanged);
             // 
             // metroLabel12
             // 
@@ -1303,7 +1289,6 @@ namespace AxTools.Forms
             this.ComboBox_server_ip.StyleManager = null;
             this.ComboBox_server_ip.TabIndex = 41;
             this.ComboBox_server_ip.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.ComboBox_server_ip.SelectedIndexChanged += new System.EventHandler(this.ComboBox_server_ip_SelectedIndexChanged);
             // 
             // Label3
             // 
@@ -1350,6 +1335,42 @@ namespace AxTools.Forms
             this.linkTitle.Text = "Settings";
             this.linkTitle.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkTitle.UseStyleColors = true;
+            // 
+            // buttonClickerHotkey
+            // 
+            this.buttonClickerHotkey.Highlight = true;
+            this.buttonClickerHotkey.Location = new System.Drawing.Point(336, 19);
+            this.buttonClickerHotkey.Name = "buttonClickerHotkey";
+            this.buttonClickerHotkey.Size = new System.Drawing.Size(61, 23);
+            this.buttonClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonClickerHotkey.StyleManager = null;
+            this.buttonClickerHotkey.TabIndex = 55;
+            this.buttonClickerHotkey.Text = "Clear";
+            this.buttonClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // buttonLuaHotkey
+            // 
+            this.buttonLuaHotkey.Highlight = true;
+            this.buttonLuaHotkey.Location = new System.Drawing.Point(336, 54);
+            this.buttonLuaHotkey.Name = "buttonLuaHotkey";
+            this.buttonLuaHotkey.Size = new System.Drawing.Size(61, 23);
+            this.buttonLuaHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonLuaHotkey.StyleManager = null;
+            this.buttonLuaHotkey.TabIndex = 56;
+            this.buttonLuaHotkey.Text = "Clear";
+            this.buttonLuaHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // buttonPluginsHotkey
+            // 
+            this.buttonPluginsHotkey.Highlight = true;
+            this.buttonPluginsHotkey.Location = new System.Drawing.Point(336, 89);
+            this.buttonPluginsHotkey.Name = "buttonPluginsHotkey";
+            this.buttonPluginsHotkey.Size = new System.Drawing.Size(61, 23);
+            this.buttonPluginsHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonPluginsHotkey.StyleManager = null;
+            this.buttonPluginsHotkey.TabIndex = 57;
+            this.buttonPluginsHotkey.Text = "Clear";
+            this.buttonPluginsHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // AppSettings
             // 
@@ -1410,10 +1431,7 @@ namespace AxTools.Forms
         #endregion
 
         private MetroLabel labelClickerHotkey;
-        private MetroComboBox comboBoxClickerHotkey;
-        private MetroComboBox comboBoxWExecModule;
         private MetroLabel labelWExecModule;
-        private MetroComboBox comboBoxWExecLuaTimer;
         private MetroLabel labelWExecLuaTimer;
         private System.Windows.Forms.NumericUpDown numericUpDownBackupCopiesToKeep;
         private MetroLabel label9;
@@ -1464,5 +1482,11 @@ namespace AxTools.Forms
         private MetroCheckBox checkBoxMinimizeToTray;
         private MetroLink linkTitle;
         private MetroCheckBox checkBoxPluginsShowIngameNotifications;
+        private MetroTextBox textBoxPluginsHotkey;
+        private MetroTextBox textBoxLuaHotkey;
+        private MetroTextBox textBoxClickerHotkey;
+        private MetroButton buttonPluginsHotkey;
+        private MetroButton buttonLuaHotkey;
+        private MetroButton buttonClickerHotkey;
     }
 }

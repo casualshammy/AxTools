@@ -8,10 +8,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.Services;
+using AxTools.WinAPI;
 using AxTools.WoW.Management.ObjectManager;
 using Settings = AxTools.Helpers.Settings;
 using Timer = System.Timers.Timer;
@@ -48,10 +51,12 @@ namespace AxTools.Forms
             textBoxLuaCode.Text = settings.WoWLuaConsoleLastText;
             settings.LuaTimerHotkeyChanged += LuaTimerHotkeyChanged;
             LuaTimerHotkeyChanged(settings.LuaTimerHotkey);
+            HotkeyManager.AddKeys(typeof(LuaConsole).ToString(), settings.LuaTimerHotkey);
+            HotkeyManager.KeyPressed += KeyboardListener2_KeyPressed;
             Log.Info(string.Format("{0}:{1} :: [Lua console] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
-        
-        internal void SwitchTimer()
+
+        private void SwitchTimer()
         {
             InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty);
         }
@@ -134,6 +139,8 @@ namespace AxTools.Forms
             }
             settings.WoWLuaConsoleLastText = textBoxLuaCode.Text;
             settings.LuaTimerHotkeyChanged -= LuaTimerHotkeyChanged;
+            HotkeyManager.RemoveKeys(typeof(LuaConsole).ToString());
+            HotkeyManager.KeyPressed -= KeyboardListener2_KeyPressed;
             Log.Info(string.Format("{0}:{1} :: [Lua console] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
         }
 
@@ -296,6 +303,20 @@ namespace AxTools.Forms
                     WoWDXInject.ShowOverlayText("LTimer is started", "Interface\\\\Icons\\\\inv_misc_pocketwatch_01", Color.FromArgb(255, 102, 0));
                 }
                 Log.Info(string.Format("{0}:{1} :: [Lua console] Lua timer enabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            }
+        }
+
+        private void KeyboardListener2_KeyPressed(Keys obj)
+        {
+            if (obj == settings.LuaTimerHotkey)
+            {
+                BeginInvoke((MethodInvoker) delegate
+                {
+                    if (WoWProcessManager.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+                    {
+                        SwitchTimer();
+                    }
+                });
             }
         }
 

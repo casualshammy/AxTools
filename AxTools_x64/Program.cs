@@ -1,6 +1,7 @@
 ﻿using AxTools.Forms;
 using System;
 using System.IO;
+using System.Net;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
@@ -9,10 +10,10 @@ using AxTools.Helpers;
 
 namespace AxTools
 {
-    static class Program
+    internal static class Program
     {
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             bool newInstance;
             using (new Mutex(true, "AxToolsMainExecutable", out newInstance))
@@ -35,10 +36,12 @@ namespace AxTools
                         }
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
-                        OnStartup();
-                        Log.Info("Loading main window...");
+                        WebRequest.DefaultWebProxy = null;
+                        DeleteTempFolder();
+                        AppSpecUtils.Legacy();
+                        Log.Info(string.Format("[AxTools] Starting application... ({0})", Globals.AppVersion));
                         Application.Run(MainForm.Instance = new MainForm());
-                        Log.Info("Application is closed");
+                        Log.Info("[AxTools] Application is closed");
                     }
                     else
                     {
@@ -52,7 +55,7 @@ namespace AxTools
             }
         }
 
-        private static void OnStartup()
+        private static void DeleteTempFolder()
         {
             if (Directory.Exists(Globals.TempPath))
             {
@@ -62,7 +65,7 @@ namespace AxTools
                 }
                 catch
                 {
-                    File.Delete(Globals.LogFileName);
+                    //
                 }
             }
         }

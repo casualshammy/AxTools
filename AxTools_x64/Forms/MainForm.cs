@@ -18,7 +18,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -30,48 +29,28 @@ namespace AxTools.Forms
     internal partial class MainForm : BorderedMetroForm
     {
         internal static MainForm Instance;
+        private bool isClosing;
+        private readonly Settings settings = Settings.Instance;
 
         internal MainForm()
         {
+            Log.Info("[AxTools] Initializing main window...");
             InitializeComponent();
+            Icon = Resources.AppIcon;
             Closing += MainFormClosing;
             notifyIconMain.Icon = Resources.AppIcon;
-
+            tabControl.SelectedIndex = 0;
+            linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width/2 - linkEditWowAccounts.Size.Width/2, linkEditWowAccounts.Location.Y);
             cmbboxAccSelect.MouseWheel += delegate(object sender, MouseEventArgs args) { ((HandledMouseEventArgs) args).Handled = true; };
             cmbboxAccSelect.KeyDown += delegate(object sender, KeyEventArgs args) { args.SuppressKeyPress = true; };
             cmbboxAccSelect.Location = new Point(metroTabPage1.Size.Width/2 - cmbboxAccSelect.Size.Width/2, cmbboxAccSelect.Location.Y);
-            linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width/2 - linkEditWowAccounts.Size.Width/2, linkEditWowAccounts.Location.Y);
-
-            tabControl.SelectedIndex = 0;
-
             progressBarAddonsBackup.Size = linkBackup.Size;
             progressBarAddonsBackup.Location = linkBackup.Location;
             progressBarAddonsBackup.Visible = false;
 
-            Log.Info(string.Format("Launching... ({0})", Globals.AppVersion));
-            Icon = Resources.AppIcon;
-            AppSpecUtils.Legacy();
-            OnSettingsLoaded();
-            WoWAccounts_CollectionChanged(null, null); // initial load wowaccounts
-            WebRequest.DefaultWebProxy = null;
-
-            settings.WoWPluginHotkeyChanged += WoWPluginHotkeyChanged;
-            PluginManagerEx.PluginStateChanged += PluginManagerOnPluginStateChanged;
-            Pinger.PingResultArrived += Pinger_DataChanged;
-            Pinger.IsEnabledChanged += PingerOnStateChanged;
-            AddonsBackup.IsRunningChanged += AddonsBackup_IsRunningChanged;
-            WoWAccount.AllAccounts.CollectionChanged += WoWAccounts_CollectionChanged;
-            olvPlugins.SelectedIndexChanged += objectListView1_SelectedIndexChanged;
-            olvPlugins.CellToolTipShowing += objectListView1_CellToolTipShowing;
-            olvPlugins.DoubleClick += OlvPluginsOnDoubleClick;
-
-            Task.Factory.StartNew(LoadingStepAsync);
-            BeginInvoke((MethodInvoker) delegate
-            {
-                Location = settings.MainWindowLocation;
-                OnActivated(EventArgs.Empty);
-                startupOverlay = WaitingOverlay.Show(this);
-            });
+            BeginInvoke((MethodInvoker) AfterInitializing);
+            Log.Info(string.Format("[AxTools] Registered for: {0}", Settings.Instance.UserID));
+            Log.Info("[AxTools] Initial loading is finished");
         }
 
         protected override void WndProc(ref Message m)
@@ -92,84 +71,6 @@ namespace AxTools.Forms
             }
         }
         
-        #region Variables
-
-        //another
-        private bool isClosing;
-        private WaitingOverlay startupOverlay;
-
-        private readonly Settings settings = Settings.Instance;
-
-        #endregion
-
-        #region Keyboard hook
-
-        private void KeyboardHookKeyDown(Keys key)
-        {
-            if (key == settings.ClickerHotkey)
-            {
-                BeginInvoke((MethodInvoker) KeyboardHook_ClickerHotkey);
-            }
-            else if (key == settings.WoWPluginHotkey)
-            {
-                BeginInvoke((MethodInvoker) KeyboardHook_PrecompiledModulesHotkey);
-            }
-            else if (key == settings.LuaTimerHotkey)
-            {
-                BeginInvoke((MethodInvoker) KeyboardHook_LuaTimerHotkey);
-            }
-            //else if (e.KeyCode == Keys.L && NativeMethods.GetForegroundWindow() == Handle)
-            //{
-
-            //}
-        }
-
-        private void KeyboardHook_ClickerHotkey()
-        {
-            if (settings.ClickerKey == Keys.None)
-            {
-                this.ShowTaskDialog("Incorrect input!", "Please select key to be pressed", TaskDialogButton.OK, TaskDialogIcon.Stop);
-                return;
-            }
-            if (Clicker.Enabled)
-            {
-                Clicker.Stop();
-                WowProcess cProcess = WoWProcessManager.List.FirstOrDefault(i => i.MainWindowHandle == Clicker.Handle);
-                Log.Info(cProcess != null
-                    ? string.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
-                    : "UNKNOWN:null :: [Clicker] Disabled");
-            }
-            else
-            {
-                WowProcess cProcess = WoWProcessManager.List.FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
-                if (cProcess != null)
-                {
-                    Clicker.Start(settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr) settings.ClickerKey);
-                    Log.Info(string.Format("{0}:{1} :: [Clicker] Enabled, interval {2}ms, window handle 0x{3:X}", cProcess.ProcessName, cProcess.ProcessID,
-                        settings.ClickerInterval, (uint) cProcess.MainWindowHandle));
-                }
-            }
-        }
-
-        private void KeyboardHook_PrecompiledModulesHotkey()
-        {
-            if (WoWProcessManager.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
-            {
-                SwitchWoWPlugin();
-            }
-        }
-
-        private void KeyboardHook_LuaTimerHotkey()
-        {
-            LuaConsole pForm = Utils.FindForm<LuaConsole>();
-            if (pForm != null && WoWProcessManager.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
-            {
-                pForm.SwitchTimer();
-            }
-        }
-
-        #endregion
-
         #region MainFormEvents
 
         private void MainFormClosing(object sender, CancelEventArgs e)
@@ -184,8 +85,8 @@ namespace AxTools.Forms
             //
             settings.WoWPluginHotkeyChanged -= WoWPluginHotkeyChanged;
             PluginManagerEx.PluginStateChanged -= PluginManagerOnPluginStateChanged;
-            Pinger.PingResultArrived -= Pinger_DataChanged;
-            Pinger.IsEnabledChanged += PingerOnStateChanged;
+            Pinger.StatChanged -= Pinger_DataChanged;
+            Pinger.IsEnabledChanged -= PingerOnStateChanged;
             AddonsBackup.IsRunningChanged -= AddonsBackup_IsRunningChanged;
             //
             settings.MainWindowLocation = Location;
@@ -196,7 +97,7 @@ namespace AxTools.Forms
             //stop timers
             AddonsBackup.StopService();
             TrayIconAnimation.Close();
-            Pinger.Stop();
+            Pinger.Enabled = false;
             //stop watching process trace
             WoWProcessManager.StopWatcher();
             Log.Info("WoW processes trace watching is stopped");
@@ -211,7 +112,8 @@ namespace AxTools.Forms
                 i.Dispose();
                 Log.Info(string.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, i.ProcessID));
             }
-            KeyboardListener.Stop();
+            HotkeyManager.KeyPressed -= KeyboardHookKeyDown;
+            HotkeyManager.RemoveKeys(typeof(PluginManagerEx).ToString());
             Log.Info("AxTools closed");
             SendLogToDeveloper();
         }
@@ -251,46 +153,42 @@ namespace AxTools.Forms
             }
         }
 
-        private void LoadingStepAsync()
+        private void AfterInitializing()
         {
-            Log.Info("[AxTools] Registered for: " + Settings.Instance.UserID);
-            PluginManagerEx.LoadPlugins();
-            BeginInvoke(new Action(LoadingStepSync));
-            Log.Info("[AxTools] Initial loading is finished");
-        }
-
-        private void LoadingStepSync()
-        {
-            // plugins should be loaded, let's setup controls
-            SetupOLVPlugins();
-            CreateTrayContextMenu();
-            UpdateTrayContextMenu();
-            // start backup service
-            AddonsBackup.StartService();
-            // start or disable pinger
-            if (settings.PingerServerID == 0)
-            {
-                Pinger.Stop();
-            }
-            else
-            {
-                Pinger.Start();
-            }
-            // start WoW process start/stop handler
-            WoWProcessManager.StartWatcher();
-            // initialize tray animation
-            TrayIconAnimation.Initialize(notifyIconMain);
-            // start key listener
-            KeyboardListener.KeyPressed += KeyboardHookKeyDown;
-            KeyboardListener.Start(new[] {settings.ClickerHotkey, settings.LuaTimerHotkey, settings.WoWPluginHotkey});
-            // close startup overkay
-            startupOverlay.Close();
-            // show changes overview dialog if needed
-            Changes.ShowChangesIfNeeded();
-            // start updater service
-            UpdaterService.Start();
-            // situation normal :)
-            Log.Info("[AxTools] All start-up routines are finished");
+            Task pluginsLoader = PluginManagerEx.LoadPluginsAsync();    // start loading plugins
+            Location = settings.MainWindowLocation;                     // should do it here...
+            OnActivated(EventArgs.Empty);                               // ...and calling OnActivated is necessary
+            WaitingOverlay startupOverlay = WaitingOverlay.Show(this);  // form is visible, placing overlay
+            WoWAccounts_CollectionChanged(null, null);                  // initial load wowaccounts
+            // styling, events attaching...
+            metroStyleManager1.Style = settings.StyleColor;
+            checkBoxStartVenriloWithWow.Checked = settings.VentriloStartWithWoW;
+            checkBoxStartTeamspeak3WithWow.Checked = settings.TS3StartWithWoW;
+            checkBoxStartRaidcallWithWow.Checked = settings.RaidcallStartWithWoW;
+            checkBoxStartMumbleWithWow.Checked = settings.MumbleStartWithWoW;
+            buttonStartStopPlugin.Text = string.Format("{0} [{1}]", "Start", settings.WoWPluginHotkey);
+            settings.WoWPluginHotkeyChanged += WoWPluginHotkeyChanged;
+            PluginManagerEx.PluginStateChanged += PluginManagerOnPluginStateChanged;
+            PluginManagerEx.PluginsLoaded += PluginManagerExOnPluginsLoaded;
+            Pinger.StatChanged += Pinger_DataChanged;
+            Pinger.IsEnabledChanged += PingerOnStateChanged;
+            AddonsBackup.IsRunningChanged += AddonsBackup_IsRunningChanged;
+            WoWAccount.AllAccounts.CollectionChanged += WoWAccounts_CollectionChanged;
+            olvPlugins.SelectedIndexChanged += objectListView1_SelectedIndexChanged;
+            olvPlugins.CellToolTipShowing += objectListView1_CellToolTipShowing;
+            olvPlugins.DoubleClick += OlvPluginsOnDoubleClick;
+            // end of styling, events attaching...
+            AddonsBackup.StartService();                                // start backup service
+            Pinger.Enabled = settings.PingerServerID != 0;              // set pinger
+            WoWProcessManager.StartWatcher();                           // start WoW spy
+            TrayIconAnimation.Initialize(notifyIconMain);               // initialize tray animation
+            HotkeyManager.KeyPressed += KeyboardHookKeyDown;        // start keyboard listener
+            HotkeyManager.AddKeys(typeof(PluginManagerEx).ToString(), settings.WoWPluginHotkey);
+            pluginsLoader.Wait();                                       // waiting for plugins to be loaded
+            startupOverlay.Close();                                     // close startup overkay
+            Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
+            UpdaterService.Start();                                     // start updater service
+            Log.Info("[AxTools] All start-up routines are finished");   // situation normal :)
         }
 
         private void linkSettings_Click(object sender, EventArgs e)
@@ -316,12 +214,12 @@ namespace AxTools.Forms
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    Pinger.Stop();
+                    Pinger.Enabled = false;
                     linkPing.Text = "cleared";
                     Task.Factory.StartNew(() =>
                     {
                         Thread.Sleep(1000);
-                        Pinger.Start();
+                        Pinger.Enabled = true;
                     });
                     break;
                 case MouseButtons.Right:
@@ -879,7 +777,7 @@ namespace AxTools.Forms
                 }
                 else
                 {
-                    AppSpecUtils.NotifyUser("This plugin hasn't settings dialog", null, NotifyUserType.Info, false);
+                    AppSpecUtils.NotifyUser(plugin.Name, "This plugin hasn't settings dialog", NotifyUserType.Info, false);
                 }
             }
         }
@@ -952,16 +850,6 @@ namespace AxTools.Forms
             }
         }
 
-        private void OnSettingsLoaded()
-        {
-            metroStyleManager1.Style = settings.StyleColor;
-            checkBoxStartVenriloWithWow.Checked = settings.VentriloStartWithWoW;
-            checkBoxStartTeamspeak3WithWow.Checked = settings.TS3StartWithWoW;
-            checkBoxStartRaidcallWithWow.Checked = settings.RaidcallStartWithWoW;
-            checkBoxStartMumbleWithWow.Checked = settings.MumbleStartWithWoW;
-            buttonStartStopPlugin.Text = string.Format("{0} [{1}]", "Start", settings.WoWPluginHotkey);
-        }
-
         private void PluginManagerOnPluginStateChanged()
         {
             BeginInvoke((MethodInvoker) delegate
@@ -970,6 +858,17 @@ namespace AxTools.Forms
                 olvPlugins.Enabled = !PluginManagerEx.RunningPlugins.Any();
                 UpdateTrayContextMenu();
             });
+        }
+
+        private void PluginManagerExOnPluginsLoaded()
+        {
+            BeginInvoke((MethodInvoker) delegate
+            {
+                SetupOLVPlugins();
+                CreateTrayContextMenu();
+                UpdateTrayContextMenu();
+            });
+            PluginManagerEx.PluginsLoaded -= PluginManagerExOnPluginsLoaded;
         }
 
         private void WoWPluginHotkeyChanged(Keys key)
@@ -1018,7 +917,7 @@ namespace AxTools.Forms
             }));
         }
 
-        private void Pinger_DataChanged(PingResult pingResult)
+        private void Pinger_DataChanged(PingerStat pingResult)
         {
             BeginInvoke((MethodInvoker) delegate
             {
@@ -1037,6 +936,20 @@ namespace AxTools.Forms
                     TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
                 }
             });
+        }
+
+        private void KeyboardHookKeyDown(Keys key)
+        {
+            if (key == settings.WoWPluginHotkey)
+            {
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    if (WoWProcessManager.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+                    {
+                        SwitchWoWPlugin();
+                    }
+                });
+            }
         }
 
         #endregion

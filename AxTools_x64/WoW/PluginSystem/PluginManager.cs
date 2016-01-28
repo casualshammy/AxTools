@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using WindowsFormsAero.TaskDialog;
 
@@ -199,17 +200,22 @@ namespace AxTools.WoW.PluginSystem
             }
         }
 
-        internal static void LoadPlugins()
+        internal static Task LoadPluginsAsync()
+        {
+            return Task.Run((Action) LoadPlugins);
+        }
+
+        private static void LoadPlugins()
         {
             IPlugin fishing = new Fishing();
             _pluginContainers.Add(new PluginContainer(fishing, Settings.Instance.EnabledPluginsList.Contains(fishing.Name)));
-            Log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
+            Log.Info(string.Format("[PluginManager] Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
             IPlugin flagReturner = new FlagReturner();
             _pluginContainers.Add(new PluginContainer(flagReturner, Settings.Instance.EnabledPluginsList.Contains(flagReturner.Name)));
-            Log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
+            Log.Info(string.Format("[PluginManager] Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
             IPlugin goodsDestroyer = new GoodsDestroyer();
             _pluginContainers.Add(new PluginContainer(goodsDestroyer, Settings.Instance.EnabledPluginsList.Contains(goodsDestroyer.Name)));
-            Log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
+            Log.Info(string.Format("[PluginManager] Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
             LoadPluginsFromDisk();
             if (PluginsLoaded != null)
             {
@@ -217,71 +223,76 @@ namespace AxTools.WoW.PluginSystem
             }
         }
 
-        internal static Task LoadPluginsAsync()
-        {
-            return Task.Run((Action) LoadPlugins);
-        }
-
         private static void LoadPluginsFromDisk()
         {
             string[] directories = Directory.GetDirectories(Globals.PluginsPath);
-            bool haveError = false;
             foreach (string directory in directories)
             {
                 try
                 {
-                    CodeCompiler cc = new CodeCompiler(directory);
-                    CompilerResults results = cc.Compile();
-
-                    if (results != null)
+                    string md5ForFolder = Utils.CreateMd5ForFolder(directory);
+                    string dllPath = string.Format("{0}\\{1}.dll", Globals.PluginsAssembliesPath, md5ForFolder);
+                    Assembly dll;
+                    if (!File.Exists(dllPath))
                     {
-                        if (results.Errors.HasErrors)
+                        dll = CompilePlugin(directory);
+                    }
+                    else
+                    {
+                        dll = Assembly.LoadFile(dllPath);
+                        Log.Info(string.Format("[PluginManager] Plugin from directory " + directory + " with hash " + md5ForFolder + " is already compiled"));
+                    }
+                    if (dll == null)
+                    {
+                        throw new Exception("Plugin image is null!");
+                    }
+                    Type type = dll.GetTypes().FirstOrDefault(k => k.IsClass && typeof (IPlugin).IsAssignableFrom(k));
+                    if (type != default(Type))
+                    {
+                        IPlugin temp = (IPlugin) Activator.CreateInstance(type);
+                        if (_pluginContainers.Select(l => l.Plugin).All(l => l.Name != temp.Name))
                         {
-                            foreach (object error in results.Errors)
+                            if (!string.IsNullOrWhiteSpace(temp.Name))
                             {
-                                Log.Info("Compiler Error: " + error);
+                                _pluginContainers.Add(new PluginContainer(temp, Settings.Instance.EnabledPluginsList.Contains(temp.Name)));
+                                Log.Info(string.Format("[PluginManager] Plugin loaded: {0} {1}", temp.Name, temp.Version));
                             }
-                            haveError = true;
+                            else
+                            {
+                                throw new Exception("<IPlugin.Name> is empty");
+                            }
                         }
                         else
                         {
-                            Type[] types = cc.CompiledAssembly.GetTypes();
-                            foreach (Type t in types)
-                            {
-                                if (t.IsClass && typeof(IPlugin).IsAssignableFrom(t))
-                                {
-                                    IPlugin temp = (IPlugin) Activator.CreateInstance(t);
-                                    if (_pluginContainers.Select(l => l.Plugin).All(l => l.Name != temp.Name))
-                                    {
-                                        if (!string.IsNullOrWhiteSpace(temp.Name))
-                                        {
-                                            _pluginContainers.Add(new PluginContainer(temp, Settings.Instance.EnabledPluginsList.Contains(temp.Name)));
-                                            Log.Info(string.Format("Plugin loaded: {0} {1}", temp.Name, temp.Version));
-                                        }
-                                        else
-                                        {
-                                            Log.Info(string.Format("Can't load plugin [{0}]: [Name] is empty", temp.GetHashCode()));
-                                            haveError = true;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Log.Info(string.Format("Can't load plugin [{0}]: already loaded", temp.Name));
-                                    }
-                                }
-                            }
+                            Log.Info(string.Format("[PluginManager] Can't load plugin [{0}]: already loaded", temp.Name));
                         }
+                    }
+                    else
+                    {
+                        throw new Exception("Can't find IPlugin interface in plugin image!");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex.Message);
+                    Log.Info(string.Format("[PluginManager] Can't load plugin [{0}]: {1}", directory, ex.Message));
+                    MainForm.Instance.ShowTaskDialog("[PluginManager] Plugin error", "Error has occured during compiling plugins\r\nSome plugins could not be loaded and are disabled", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 }
             }
-            if (haveError)
+        }
+
+        private static Assembly CompilePlugin(string directory)
+        {
+            CodeCompiler cc = new CodeCompiler(directory);
+            CompilerResults results = cc.Compile();
+            if (results.Errors.HasErrors)
             {
-                MainForm.Instance.ShowTaskDialog("Plugin error", "Error has occured during compiling plugins\r\nSome plugins could not be loaded and are disabled", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                foreach (object error in results.Errors)
+                {
+                    Log.Info("[PluginManager] Compiler Error: " + error);
+                }
+                return null;
             }
+            return cc.CompiledAssembly;
         }
 
     }

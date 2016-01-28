@@ -21,7 +21,8 @@ namespace AxTools.Updater
         private static readonly System.Timers.Timer _timer = new System.Timers.Timer(900000);
         private static readonly string DistrDirectory = Globals.TempPath + "\\update";
         private static string _updateFileURL;
-        private const string UpdateFileDnsTxt = "axtools-update-file.axio.name";
+        private const string UpdateFileDnsTxt = "axtools-update-file-1.axio.name";
+        private static string _hardwareID;
 
         internal static void Start()
         {
@@ -40,6 +41,11 @@ namespace AxTools.Updater
             Task.Run(() =>
             {
                 _timer.Stop();
+                if (_hardwareID == null)
+                {
+                    _hardwareID = Utils.GetComputerHID();
+                    Log.Info(string.Format("[Updater] Your credentials for updates: login: {0} password: {1}", Settings.Instance.UserID, _hardwareID));
+                }
                 if (_updateFileURL == null)
                 {
                     _updateFileURL = GetUpdateFileURL(UpdateFileDnsTxt);
@@ -68,6 +74,7 @@ namespace AxTools.Updater
             {
                 try
                 {
+                    webClient.ForceBasicAuth(Settings.Instance.UserID, _hardwareID);
                     webClient.DownloadFile(updateInfo.DistrZipURL, distrZipFile);
                     webClient.DownloadFile(updateInfo.UpdaterZipURL, updaterZipFile);
                     Log.Info("[Updater] Packages are downloaded!");
@@ -143,12 +150,26 @@ namespace AxTools.Updater
             {
                 using (WebClient webClient = new WebClient())
                 {
+                    webClient.ForceBasicAuth(Settings.Instance.UserID, _hardwareID);
                     updateString = webClient.DownloadString(_updateFileURL);
                 }
             }
-            catch (WebException webException)
+            catch (WebException webEx)
             {
-                Log.Info("[Updater] Fetching info error: " + webException.Message);
+                if (webEx.Status == WebExceptionStatus.ProtocolError && webEx.Response is HttpWebResponse && ((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    AppSpecUtils.NotifyUser("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact devs", NotifyUserType.Error, false);
+                    _timer.Elapsed -= timer_Elapsed;
+                }
+                else if (webEx.Status == WebExceptionStatus.TrustFailure || webEx.Status == WebExceptionStatus.SecureChannelFailure)
+                {
+                    AppSpecUtils.NotifyUser("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, false);
+                    _timer.Elapsed -= timer_Elapsed;
+                }
+                else
+                {
+                    Log.Error(string.Format("[Updater] Fetching info error (status {0}): {1}", webEx.Status, webEx.Message));
+                }
                 return;
             }
             catch (Exception ex)

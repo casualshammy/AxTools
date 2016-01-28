@@ -147,13 +147,13 @@ namespace AxTools.Helpers
 
         #region WoW
 
-        [JsonProperty(Order = 5, PropertyName = "WoWDirectory")]
+        [JsonProperty(Order = 6, PropertyName = "WoWDirectory")]
         internal string WoWDirectory = string.Empty;
 
-        [JsonProperty(Order = 6, PropertyName = "WoWAccounts")]
+        [JsonProperty(Order = 7, PropertyName = "WoWAccounts")]
         internal byte[] WoWAccounts = new byte[0];
 
-        [JsonProperty(Order = 7, PropertyName = "WoWAntiKick")]
+        [JsonProperty(Order = 8, PropertyName = "WoWAntiKick")]
         internal bool WoWAntiKick = true;
 
         [JsonProperty(Order = 11, PropertyName = "WoWCustomizeWindow")]

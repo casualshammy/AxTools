@@ -5,13 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Timers;
 using AxTools.WoW.PluginSystem.API;
-using Timer = System.Timers.Timer;
+using MyMemory;
+using MyMemory.Hooks;
 
 namespace AxTools.WoW.Management
 {
@@ -20,18 +18,11 @@ namespace AxTools.WoW.Management
     internal static class WoWDXInject
     {
         private static WowProcess _wowProcess;
+        private static RemoteProcess _remoteProcess;
+        private static HookJmp _hookJmp;
         private static readonly string RandomVariableName = Utils.GetRandomString(10);
         private static readonly string OverlayFrameName = Utils.GetRandomString(10);
-        private static readonly Dictionary<IntPtr, int> MemoryWaitingToBeFreed = new Dictionary<IntPtr, int>();
-        private static readonly object MemoryWaitingToBeFreedLock = new object();
-        private static readonly Timer TimerForMemory = new Timer(1000);
-        private static readonly object _executeLock = new object();
-        private static IntPtr _flag = IntPtr.Zero;
-
-        static WoWDXInject()
-        {
-            TimerForMemory.Elapsed += TimerForMemory_OnElapsed;
-        }
+        private static readonly object HookLock = new object();
 
         /// <summary>
         ///     
@@ -41,11 +32,14 @@ namespace AxTools.WoW.Management
         internal static bool Apply(WowProcess process)
         {
             _wowProcess = process;
-            TimerForMemory.Start();
-            byte[] hookOriginalBytes = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength);
-            _flag = _wowProcess.Memory.AllocateMemory(4);
-            if (HookPtrSignatureIsValid(hookOriginalBytes))
+            byte[] hookOriginalBytes = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookPattern.Length);
+            if (hookOriginalBytes.SequenceEqual(WowBuildInfoX64.HookPattern))
             {
+                lock (HookLock)
+                {
+                    _remoteProcess = new RemoteProcess((uint) _wowProcess.ProcessID);
+                    _hookJmp = _remoteProcess.HooksManager.CreateJmpHook(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookPattern.Length);
+                }
                 Log.Info(string.Format("{0} [WoW hook] Signature is valid, address: 0x{1:X}", _wowProcess, (_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render).ToInt64()));
                 return true;
             }
@@ -55,175 +49,11 @@ namespace AxTools.WoW.Management
 
         internal static void Release()
         {
-            TimerForMemory.Stop();
             if (!_wowProcess.Memory.Process.HasExited)
             {
-                int counter = 10;
-                while (MemoryWaitingToBeFreed.Count > 0 && counter > 0)
+                lock (HookLock)
                 {
-                    FreeOldAllocatedMemory();
-                    counter--;
-                    Thread.Sleep(200);
-                }
-                if (MemoryWaitingToBeFreed.Count > 0)
-                {
-                    Log.Error(string.Format("{0}:{1} :: [WoW hook] Memory leak, count: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, MemoryWaitingToBeFreed.Count));
-                }
-                if (_flag != IntPtr.Zero)
-                {
-                    _wowProcess.Memory.FreeMemory(_flag);
-                    _flag = IntPtr.Zero;
-                }
-            }
-            lock (MemoryWaitingToBeFreedLock)
-            {
-                MemoryWaitingToBeFreed.Clear();
-            }
-        }
-
-        private static void TimerForMemory_OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
-        {
-            FreeOldAllocatedMemory();
-        }
-
-        /// <summary>
-        ///     You should call it STRICTLY after ExecuteWait. ExecuteWait has a lock.
-        /// </summary>
-        /// <param name="addresses"></param>
-        private static void EnqueueAllocatedMemoryForWipe(params IntPtr[] addresses)
-        {
-            int currentTime = Environment.TickCount;
-            lock (MemoryWaitingToBeFreedLock)
-            {
-                foreach (IntPtr intPtr in addresses)
-                {
-                    MemoryWaitingToBeFreed.Add(intPtr, currentTime);
-                }
-            }
-        }
-
-        private static void FreeOldAllocatedMemory()
-        {
-            lock (MemoryWaitingToBeFreedLock)
-            {
-                int currentTime = Environment.TickCount;
-                List<IntPtr> entriesToRemove = new List<IntPtr>();
-                foreach (KeyValuePair<IntPtr, int> keyValuePair in MemoryWaitingToBeFreed)
-                {
-                    if (currentTime - keyValuePair.Value >= 1000)
-                    {
-                        _wowProcess.Memory.FreeMemory(keyValuePair.Key);
-                        entriesToRemove.Add(keyValuePair.Key);
-                    }
-                }
-                foreach (IntPtr intPtr in entriesToRemove)
-                {
-                    MemoryWaitingToBeFreed.Remove(intPtr);
-                }
-            }
-        }
-
-        private static bool HookPtrSignatureIsValid(byte[] originalBytes)
-        {
-            return originalBytes.SequenceEqual(WowBuildInfoX64.HookPattern);
-        }
-
-        private static byte[] CreateByteCode(byte[] userFunction)
-        {
-            byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength);
-            byte[] firstInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render).ToInt64());
-            byte[] secondInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render + 4).ToInt64());
-            byte[] thirdInt = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render + 8).ToInt64());
-            byte[] originalPtr = firstInt;
-            byte[] ret = new byte[]
-            {            
-                // Save the registers
-                0x50, // push rax
-                0x54, // push rsp
-                0x54, // push rsp
-                0x51, // push rcx
-                0x52, // push rdx
-                0x53, // push rbx
-                0x55, // push rbp
-                0x56, // push rsi
-                0x57, // push rdi
-                0x41, 0x50, // push r8
-                0x41, 0x51, // push r9
-                0x41, 0x52, // push r10
-                0x41, 0x53, // push r11
-                0x41, 0x54, // push r12
-                0x41, 0x55, // push r13
-                0x41, 0x56, // push r14
-                0x41, 0x57, // push r15
-                // Save the flags
-                //0x9c // pushfq
-            }.Concat(userFunction).Concat(new byte[]
-            {
-                // Restore the flags
-                //0x9D, // popfq
-                // Restore the registers
-                0x41, 0x5F, // pop r15
-                0x41, 0x5E, // pop r14
-                0x41, 0x5D, // pop r13
-                0x41, 0x5C, // pop r12
-                0x41, 0x5B, // pop r11
-                0x41, 0x5A, // pop r10
-                0x41, 0x59, // pop r9
-                0x41, 0x58, // pop r8
-                0x5F, // pop rdi
-                0x5E, // pop rsi
-                0x5D, // pop rbp
-                0x5B, // pop rbx
-                0x5A, // pop rdx
-                0x59, // pop rcx
-                0x5c, // pop rsp
-                0x5c, // pop rsp
-                0x58, // pop rax
-                0xB8, originalCode[0], originalCode[1], originalCode[2], originalCode[3], // mov eax, value // +4
-                0x2E, 0xA3, firstInt[0], firstInt[1], firstInt[2], firstInt[3], firstInt[4], firstInt[5], firstInt[6], firstInt[7], // mov address, eax // +14
-                0xB8, originalCode[4], originalCode[5], originalCode[6], originalCode[7], // mov eax, value // +19
-                0x2E, 0xA3, secondInt[0], secondInt[1], secondInt[2], secondInt[3], secondInt[4], secondInt[5], secondInt[6], secondInt[7], // mov address, eax // +29
-                0xB8, originalCode[8], originalCode[9], originalCode[10], originalCode[11], // mov eax, value // +34
-                0x2E, 0xA3, thirdInt[0], thirdInt[1], thirdInt[2], thirdInt[3], thirdInt[4], thirdInt[5], thirdInt[6], thirdInt[7], // mov address, eax // +44
-                0x90, // nop (for fun)
-                0x90, // nop (for fun)
-                0x48, 0xB8, originalPtr[0], originalPtr[1], originalPtr[2], originalPtr[3], originalPtr[4], originalPtr[5], originalPtr[6], originalPtr[7], // movabs rax, 0xAAAAAAAAAAAAAAAA
-                0xFF, 0xE0 // jmp rax
-            }).ToArray();
-            return ret;
-        }
-
-        private static void ExecuteWait(IntPtr injectedFunction)
-        {
-            lock (_executeLock)
-            {
-                byte[] originalCode = _wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength);
-                if (HookPtrSignatureIsValid(originalCode))
-                {
-                    byte[] hookJmpBytes = BitConverter.GetBytes(injectedFunction.ToInt64());
-                    byte[] byteCode =
-                    {
-                        0x48, 0xB8, hookJmpBytes[0], hookJmpBytes[1], hookJmpBytes[2], hookJmpBytes[3], hookJmpBytes[4], hookJmpBytes[5], hookJmpBytes[6], hookJmpBytes[7], // movabs rax, 0xAAAAAAAAAAAAAAAA
-                        0xFF, 0xE0 // jmp rax
-                    };
-                    uint lpflOldProtect;
-                    NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, (UIntPtr)WowBuildInfoX64.HookLength, Win32Consts.PAGE_EXECUTE_READWRITE, out lpflOldProtect);
-                    _wowProcess.Memory.WriteBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, byteCode);
-                    int counter = 0;
-                    while (!_wowProcess.Memory.ReadBytes(_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, WowBuildInfoX64.HookLength).SequenceEqual(originalCode))
-                    {
-                        Thread.Sleep(1);
-                        counter++;
-                        if (counter == 1000 && IsWoWWindowMinimized())
-                        {
-                            AppSpecUtils.NotifyUser("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Please activate WoW window!", NotifyUserType.Warn, true);
-                        }
-                    }
-                    NativeMethods.VirtualProtectEx(_wowProcess.Memory.ProcessHandle, _wowProcess.Memory.ImageBase + WowBuildInfoX64.CGWorldFrame_Render, (UIntPtr)WowBuildInfoX64.HookLength, lpflOldProtect, out lpflOldProtect);
-                }
-                else
-                {
-                    Log.Info(string.Format("{0}:{1} :: [WoW hook] CGWorldFrame::Render has invalid signature, bytes: {2}", _wowProcess.ProcessName, _wowProcess.ProcessID, BitConverter.ToString(originalCode)));
+                    _remoteProcess.Dispose();
                 }
             }
         }
@@ -237,29 +67,31 @@ namespace AxTools.WoW.Management
         internal static void LuaDoString(string command)
         {
             byte[] commandBytes = Encoding.UTF8.GetBytes(command);
-            IntPtr cmdAddr = _wowProcess.Memory.AllocateMemory(commandBytes.Length + 1);
-            _wowProcess.Memory.WriteBytes(cmdAddr, commandBytes);
-            byte[] cmdAddrBytes = BitConverter.GetBytes(cmdAddr.ToInt64());
-            byte[] luaFunctionPtr = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.FrameScript_ExecuteBuffer).ToInt64());
-            byte[] byteCode = CreateByteCode(new byte[]
+            IntPtr cmdAddr = _remoteProcess.MemoryManager.AllocateRawMemory((uint) (commandBytes.Length + 1));
+            _remoteProcess.MemoryManager.WriteBytes(cmdAddr, commandBytes);
+            string[] code =
             {
-                0x48, 0x83, 0xEC, 0x20, // sub rsp, 0x20
-                0x48, 0xB9, cmdAddrBytes[0], cmdAddrBytes[1], cmdAddrBytes[2], cmdAddrBytes[3], cmdAddrBytes[4], cmdAddrBytes[5], cmdAddrBytes[6], cmdAddrBytes[7], // mov rcx, 8bytes
-                0x48, 0xBA, cmdAddrBytes[0], cmdAddrBytes[1], cmdAddrBytes[2], cmdAddrBytes[3], cmdAddrBytes[4], cmdAddrBytes[5], cmdAddrBytes[6], cmdAddrBytes[7], // mov rdx, 8bytes
-                0x49, 0xC7, 0xC0, 0x00, 0x00, 0x00, 0x00, // mov r8, 0x0
-                0x48, 0xB8, luaFunctionPtr[0], luaFunctionPtr[1], luaFunctionPtr[2], luaFunctionPtr[3], luaFunctionPtr[4], luaFunctionPtr[5], luaFunctionPtr[6], luaFunctionPtr[7], // movabs rax, 8bytes
-                0xFF, 0xD0, // call rax
-                0x48, 0x83, 0xC4, 0x20 // add rsp, 0x20
-            });
-            IntPtr mem = _wowProcess.Memory.AllocateMemory(byteCode.Length);
-            _wowProcess.Memory.WriteBytes(mem, byteCode);
-            ExecuteWait(mem);
-            EnqueueAllocatedMemoryForWipe(mem, cmdAddr);
+                "sub rsp, 0x20",
+                "mov rcx, 0x" + cmdAddr.ToInt64().ToString("X"),
+                "mov rdx, 0x" + cmdAddr.ToInt64().ToString("X"),
+                "mov r8, 0x0",
+                "mov rax, 0x" + (_wowProcess.Memory.ImageBase + WowBuildInfoX64.FrameScript_ExecuteBuffer).ToInt64().ToString("X"),
+                "call rax",
+                "add rsp, 0x20",
+                "retn"
+            };
+            HookApplyExecuteRemove(code);
+            _remoteProcess.MemoryManager.FreeRawMemory(cmdAddr);
         }
 
+        /// <summary>
+        ///     Returns string.Empty if something went wrong
+        /// </summary>
+        /// <param name="function"></param>
+        /// <returns></returns>
         internal static unsafe string GetFunctionReturn(string function)
         {
-            IntPtr localPlayerPtr = _wowProcess.Memory.Read<IntPtr>(_wowProcess.Memory.ImageBase + WowBuildInfoX64.PlayerPtr);
+            IntPtr localPlayerPtr = _remoteProcess.MemoryManager.Read<IntPtr>(_wowProcess.Memory.ImageBase + WowBuildInfoX64.PlayerPtr);
             if (localPlayerPtr == IntPtr.Zero)
             {
                 Log.Error("GetFunctionReturn was called while player ptr is null");
@@ -267,40 +99,30 @@ namespace AxTools.WoW.Management
             }
             byte[] cmdRequest = Encoding.UTF8.GetBytes(RandomVariableName + "=" + function);
             byte[] cmdRetrieve = Encoding.UTF8.GetBytes(RandomVariableName);
-            IntPtr addrRequest = _wowProcess.Memory.AllocateMemory(cmdRequest.Length + 1);
-            IntPtr addrRetrieve = _wowProcess.Memory.AllocateMemory(cmdRetrieve.Length + 1);
+            IntPtr addrRequest = _remoteProcess.MemoryManager.AllocateRawMemory((uint) (cmdRequest.Length + 1));
+            IntPtr addrRetrieve = _remoteProcess.MemoryManager.AllocateRawMemory((uint) (cmdRetrieve.Length + 1));
+            IntPtr ptrToResult = _remoteProcess.MemoryManager.AllocateRawMemory((uint) sizeof (IntPtr));
             _wowProcess.Memory.WriteBytes(addrRequest, cmdRequest);
             _wowProcess.Memory.WriteBytes(addrRetrieve, cmdRetrieve);
-            byte[] cmdRequestBytes = BitConverter.GetBytes(addrRequest.ToInt64());
-            byte[] cmdRetrieveBytes = BitConverter.GetBytes(addrRetrieve.ToInt64());
-            byte[] localPlayerPtrBytes = BitConverter.GetBytes(localPlayerPtr.ToInt64());
-            byte[] executeBufferPtr = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.FrameScript_ExecuteBuffer).ToInt64());
-            byte[] getLocalizedTextPtr = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.FrameScript_GetLocalizedText).ToInt64());
-            IntPtr ptrToResult = _wowProcess.Memory.AllocateMemory(sizeof(IntPtr));
-            byte[] ptrToResultBytes = BitConverter.GetBytes(ptrToResult.ToInt64());
-            byte[] byteCode = CreateByteCode(new byte[]
+            string[] code =
             {
-                0x48, 0x83, 0xEC, 0x20, // sub rsp, 20h
-                0x48, 0xB9, cmdRequestBytes[0], cmdRequestBytes[1], cmdRequestBytes[2], cmdRequestBytes[3], cmdRequestBytes[4], cmdRequestBytes[5], cmdRequestBytes[6], cmdRequestBytes[7], // mov rcx, 8bytes
-                0x48, 0xBA, cmdRequestBytes[0], cmdRequestBytes[1], cmdRequestBytes[2], cmdRequestBytes[3], cmdRequestBytes[4], cmdRequestBytes[5], cmdRequestBytes[6], cmdRequestBytes[7], // mov rdx, 8bytes
-                0x49, 0xC7, 0xC0, 0x00, 0x00, 0x00, 0x00, // mov r8, 0x0
-                0x48, 0xB8, executeBufferPtr[0], executeBufferPtr[1], executeBufferPtr[2], executeBufferPtr[3], executeBufferPtr[4], executeBufferPtr[5], executeBufferPtr[6], executeBufferPtr[7], // movabs rax, value
-                0xFF, 0xD0, // call rax
-                0x48, 0x83, 0xC4, 0x20, // add rsp, 20h
-                0x48, 0x83, 0xEC, 0x20, // sub rsp, 20h
-                0x48, 0xB9, localPlayerPtrBytes[0], localPlayerPtrBytes[1], localPlayerPtrBytes[2], localPlayerPtrBytes[3], localPlayerPtrBytes[4], localPlayerPtrBytes[5], localPlayerPtrBytes[6], localPlayerPtrBytes[7],
-                // mov rcx, value
-                0x48, 0xBA, cmdRetrieveBytes[0], cmdRetrieveBytes[1], cmdRetrieveBytes[2], cmdRetrieveBytes[3], cmdRetrieveBytes[4], cmdRetrieveBytes[5], cmdRetrieveBytes[6], cmdRetrieveBytes[7], // mov rdx, value
-                0x49, 0xC7, 0xC0, 0xFF, 0xFF, 0xFF, 0xFF, // mov r8, -1
-                0x48, 0xB8, getLocalizedTextPtr[0], getLocalizedTextPtr[1], getLocalizedTextPtr[2], getLocalizedTextPtr[3], getLocalizedTextPtr[4], getLocalizedTextPtr[5], getLocalizedTextPtr[6], getLocalizedTextPtr[7],
-                // movabs rax, value
-                0xFF, 0xD0, // call rax
-                0x48, 0xA3, ptrToResultBytes[0], ptrToResultBytes[1], ptrToResultBytes[2], ptrToResultBytes[3], ptrToResultBytes[4], ptrToResultBytes[5], ptrToResultBytes[6], ptrToResultBytes[7], // movabs ds:0x130000000, rax
-                0x48, 0x83, 0xC4, 0x20 // add rsp, 20h
-            });
-            IntPtr mem = _wowProcess.Memory.AllocateMemory(byteCode.Length);
-            _wowProcess.Memory.WriteBytes(mem, byteCode);
-            ExecuteWait(mem);
+                "sub rsp, 0x20",
+                "mov rcx, 0x" + addrRequest.ToInt64().ToString("X"),
+                "mov rdx, 0x" + addrRequest.ToInt64().ToString("X"),
+                "mov r8, 0x0",
+                "mov rax, 0x" + (_wowProcess.Memory.ImageBase + WowBuildInfoX64.FrameScript_ExecuteBuffer).ToInt64().ToString("X"),
+                "call rax",
+                "mov rcx, 0x" + localPlayerPtr.ToInt64().ToString("X"),
+                "mov rdx, 0x" + addrRetrieve.ToInt64().ToString("X"),
+                "mov r8, 0xFFFFFFFF",
+                "mov rax, 0x" + (_wowProcess.Memory.ImageBase + WowBuildInfoX64.FrameScript_GetLocalizedText).ToInt64().ToString("X"),
+                "call rax",
+                "mov rcx, 0x" + ptrToResult.ToInt64().ToString("X"),
+                "mov [rcx], rax",
+                "add rsp, 0x20",
+                "retn"
+            };
+            HookApplyExecuteRemove(code);
             List<byte> retnByte = new List<byte>();
             IntPtr dwAddress = _wowProcess.Memory.Read<IntPtr>(ptrToResult);
             if (dwAddress != IntPtr.Zero)
@@ -313,7 +135,9 @@ namespace AxTools.WoW.Management
                     buf = _wowProcess.Memory.Read<byte>(dwAddress);
                 }
             }
-            EnqueueAllocatedMemoryForWipe(addrRequest, addrRetrieve, ptrToResult, mem);
+            _remoteProcess.MemoryManager.FreeRawMemory(addrRequest);
+            _remoteProcess.MemoryManager.FreeRawMemory(addrRetrieve);
+            _remoteProcess.MemoryManager.FreeRawMemory(ptrToResult);
             return Encoding.UTF8.GetString(retnByte.ToArray());
         }
 
@@ -381,10 +205,11 @@ namespace AxTools.WoW.Management
                                               "end").Replace("AxToolsMainOverlay", OverlayFrameName);
 
             #endregion
+
             CultureInfo culture = CultureInfo.InvariantCulture;
-            string colorRed = (color.R / 255f).ToString(culture);
-            string colorGreen = (color.G / 255f).ToString(culture);
-            string colorBlue = (color.B / 255f).ToString(culture);
+            string colorRed = (color.R/255f).ToString(culture);
+            string colorGreen = (color.G/255f).ToString(culture);
+            string colorBlue = (color.B/255f).ToString(culture);
             string function = OverlayFrameName + "Children.text:SetText(\"" + text + "\");\r\n" +
                               OverlayFrameName + "Children.text:SetVertexColor(" + colorRed + ", " + colorGreen + ", " + colorBlue + ", 1);\r\n" +
                               OverlayFrameName + "Children.icon:SetTexture(\"" + icon + "\");\r\n" +
@@ -403,26 +228,22 @@ namespace AxTools.WoW.Management
         {
             if (GameFunctions.Lua_IsCTMEnabled())
             {
-                IntPtr playerPtr = _wowProcess.Memory.Read<IntPtr>(_wowProcess.Memory.ImageBase + WowBuildInfoX64.PlayerPtr);
-                byte[] playerPtrBytes = BitConverter.GetBytes(playerPtr.ToInt64());
-                IntPtr locationPtr = _wowProcess.Memory.AllocateMemory(sizeof(WowPoint));
-                _wowProcess.Memory.Write(locationPtr, point);
-                byte[] locationPtrBytes = BitConverter.GetBytes(locationPtr.ToInt64());
-                byte[] functionPtr = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGUnit_C_InitializeTrackingState).ToInt64());
-                byte[] byteCode = CreateByteCode(new byte[]
+                IntPtr playerPtr = _remoteProcess.MemoryManager.Read<IntPtr>(_wowProcess.Memory.ImageBase + WowBuildInfoX64.PlayerPtr);
+                IntPtr locationPtr = _remoteProcess.MemoryManager.AllocateRawMemory((uint) sizeof (WowPoint));
+                _remoteProcess.MemoryManager.Write(locationPtr, point);
+                string[] code =
                 {
-                    0x48, 0x83, 0xEC, 0x20, // sub rsp, 20h
-                    0x48, 0xB9, playerPtrBytes[0], playerPtrBytes[1], playerPtrBytes[2], playerPtrBytes[3], playerPtrBytes[4], playerPtrBytes[5], playerPtrBytes[6], playerPtrBytes[7], // mov rcx, value
-                    0x48, 0xBA, locationPtrBytes[0], locationPtrBytes[1], locationPtrBytes[2], locationPtrBytes[3], locationPtrBytes[4], locationPtrBytes[5], locationPtrBytes[6], locationPtrBytes[7], // mov rdx, value
-                    0x49, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // mov r8, 0
-                    0x48, 0xB8, functionPtr[0], functionPtr[1], functionPtr[2], functionPtr[3], functionPtr[4], functionPtr[5], functionPtr[6], functionPtr[7], // movabs rax, value
-                    0xFF, 0xD0, // call rax
-                    0x48, 0x83, 0xC4, 0x20 // add rsp, 20h
-                });
-                IntPtr mem = _wowProcess.Memory.AllocateMemory(byteCode.Length);
-                _wowProcess.Memory.WriteBytes(mem, byteCode);
-                ExecuteWait(mem);
-                EnqueueAllocatedMemoryForWipe(mem, locationPtr);
+                    "sub rsp, 0x20",
+                    "mov rcx, 0x" + playerPtr.ToInt64().ToString("X"),
+                    "mov rdx, 0x" + locationPtr.ToInt64().ToString("X"),
+                    "mov r8, 0x0",
+                    "mov rax, 0x" + (_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGUnit_C_InitializeTrackingState).ToInt64().ToString("X"),
+                    "call rax",
+                    "add rsp, 0x20",
+                    "retn"
+                };
+                HookApplyExecuteRemove(code);
+                _remoteProcess.MemoryManager.FreeRawMemory(locationPtr);
             }
             else
             {
@@ -432,42 +253,50 @@ namespace AxTools.WoW.Management
 
         internal static unsafe void TargetUnit(UInt128 guid)
         {
-            IntPtr guidAddress = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
-            _wowProcess.Memory.Write(guidAddress, guid);
-            byte[] guidAddressBytes = BitConverter.GetBytes(guidAddress.ToInt64());
-            byte[] functionPtr = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGGameUI_Target).ToInt64());
-            byte[] byteCode = CreateByteCode(new byte[]
+            IntPtr guidAddress = _remoteProcess.MemoryManager.AllocateRawMemory((uint) sizeof (UInt128));
+            _remoteProcess.MemoryManager.Write(guidAddress, guid);
+            string[] code =
             {
-                0x48, 0x83, 0xEC, 0x20, // sub rsp, 20h
-                0x48, 0xB9, guidAddressBytes[0], guidAddressBytes[1], guidAddressBytes[2], guidAddressBytes[3], guidAddressBytes[4], guidAddressBytes[5], guidAddressBytes[6], guidAddressBytes[7], // mov rcx, value
-                0x48, 0xB8, functionPtr[0], functionPtr[1], functionPtr[2], functionPtr[3], functionPtr[4], functionPtr[5], functionPtr[6], functionPtr[7], // movabs rax, 0xAAAAAAAAAAAAAAAA
-                0xFF, 0xD0, // call rax
-                0x48, 0x83, 0xC4, 0x20 // add rsp, 20h
-            });
-            IntPtr mem = _wowProcess.Memory.AllocateMemory(byteCode.Length);
-            _wowProcess.Memory.WriteBytes(mem, byteCode);
-            ExecuteWait(mem);
-            EnqueueAllocatedMemoryForWipe(mem, guidAddress);
+                "sub rsp, 0x20",
+                "mov rcx, 0x" + guidAddress.ToInt64().ToString("X"),
+                "mov rax, 0x" + (_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGGameUI_Target).ToInt64().ToString("X"),
+                "call rax",
+                "add rsp, 0x20",
+                "retn"
+            };
+            HookApplyExecuteRemove(code);
+            _remoteProcess.MemoryManager.FreeRawMemory(guidAddress);
         }
 
         internal static unsafe void Interact(UInt128 guid)
         {
-            IntPtr guidAddress = _wowProcess.Memory.AllocateMemory(sizeof(UInt128));
-            _wowProcess.Memory.Write(guidAddress, guid);
-            byte[] guidAddressBytes = BitConverter.GetBytes(guidAddress.ToInt64());
-            byte[] functionPtr = BitConverter.GetBytes((_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGGameUI_Interact).ToInt64());
-            byte[] byteCode = CreateByteCode(new byte[]
+            IntPtr guidAddress = _remoteProcess.MemoryManager.AllocateRawMemory((uint) sizeof (UInt128));
+            _remoteProcess.MemoryManager.Write(guidAddress, guid);
+            string[] code =
             {
-                0x48, 0x83, 0xEC, 0x20, // sub rsp, 20h
-                0x48, 0xB9, guidAddressBytes[0], guidAddressBytes[1], guidAddressBytes[2], guidAddressBytes[3], guidAddressBytes[4], guidAddressBytes[5], guidAddressBytes[6], guidAddressBytes[7], // mov rcx, value
-                0x48, 0xB8, functionPtr[0], functionPtr[1], functionPtr[2], functionPtr[3], functionPtr[4], functionPtr[5], functionPtr[6], functionPtr[7], // movabs rax, 0xAAAAAAAAAAAAAAAA
-                0xFF, 0xD0, // call rax
-                0x48, 0x83, 0xC4, 0x20 // add rsp, 20h
-            });
-            IntPtr mem = _wowProcess.Memory.AllocateMemory(byteCode.Length);
-            _wowProcess.Memory.WriteBytes(mem, byteCode);
-            ExecuteWait(mem);
-            EnqueueAllocatedMemoryForWipe(mem, guidAddress);
+                "sub rsp, 0x20",
+                "mov rcx, 0x" + guidAddress.ToInt64().ToString("X"),
+                "mov rax, 0x" + (_wowProcess.Memory.ImageBase + WowBuildInfoX64.CGGameUI_Interact).ToInt64().ToString("X"),
+                "call rax",
+                "add rsp, 0x20",
+                "retn"
+            };
+            HookApplyExecuteRemove(code);
+            _remoteProcess.MemoryManager.FreeRawMemory(guidAddress);
+        }
+
+        private static void HookApplyExecuteRemove(string[] asm)
+        {
+            lock (HookLock)
+            {
+                if (IsWoWWindowMinimized())
+                {
+                    AppSpecUtils.NotifyUser("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Please activate WoW window!", NotifyUserType.Warn, true);
+                }
+                _hookJmp.Apply();
+                _hookJmp.Executor.Execute<long>(asm, true);
+                _hookJmp.Remove();
+            }
         }
 
     }

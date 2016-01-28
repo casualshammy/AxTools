@@ -39,7 +39,7 @@ namespace WoWGold_Notifier
         {
             "Черный Шрам - Альянс"
         };
-        private const int MaxValue = 50000;
+        private const int MaxValue = 40000;
 
         public MainForm()
         {

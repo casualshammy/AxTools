@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 
 namespace AxTools.WoW.PluginSystem
 {
@@ -21,20 +22,28 @@ namespace AxTools.WoW.PluginSystem
             DeleteOldAssemblies();
             CompilerVersion = 4f;
             SourceFilePaths = new List<string>();
+            string hash = null;
             if (File.Exists(path))
             {
                 FileStructure = FileStructureType.SingleFile;
+                using (MD5 md5 = MD5.Create())
+                {
+                    byte[] fileBytes = File.ReadAllBytes(path);
+                    byte[] hashBytes = md5.ComputeHash(fileBytes);
+                    hash = BitConverter.ToString(hashBytes).Replace("-", "");
+                }
             }
             else if (Directory.Exists(path))
             {
                 FileStructure = FileStructureType.Folder;
+                hash = Utils.CreateMd5ForFolder(path);
             }
             SourcePath = path;
-            Options = new CompilerParameters {GenerateExecutable = false, GenerateInMemory = false, IncludeDebugInformation = true};
+            Options = new CompilerParameters {GenerateExecutable = false, GenerateInMemory = false, IncludeDebugInformation = false};
             string str = "BW_" + Assembly.GetEntryAssembly().GetName().Version.Revision;
             Options.CompilerOptions = string.Format("/d:BW;{0} /unsafe", str);
             Options.TempFiles = new TempFileCollection(Path.GetTempPath());
-            Options.OutputAssembly = Path.Combine(Globals.PluginsAssembliesPath, AssemblyName);
+            Options.OutputAssembly = Path.Combine(Globals.PluginsAssembliesPath, (hash ?? Utils.GetRandomString(16)) + ".dll");
             CompiledToLocation = Options.OutputAssembly;
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -45,18 +54,6 @@ namespace AxTools.WoW.PluginSystem
                 catch (NotSupportedException)
                 {
                 }
-            }
-        }
-
-        // Properties
-        public string AssemblyName
-        {
-            get
-            {
-                return string.Format("{0}_{1}.dll",
-                    FileStructure == FileStructureType.SingleFile
-                        ? Path.GetFileNameWithoutExtension(SourcePath)
-                        : new DirectoryInfo(SourcePath).Name, Utils.GetRandomString(16));
             }
         }
 
@@ -97,7 +94,7 @@ namespace AxTools.WoW.PluginSystem
                     "CompilerVersion", string.Format(CultureInfo.InvariantCulture.NumberFormat, "v{0:N1}", CompilerVersion)
                 }
             };
-            using (var provider = new CSharpCodeProvider(providerOptions))
+            using (CSharpCodeProvider provider = new CSharpCodeProvider(providerOptions))
             {
                 provider.Supports(GeneratorSupport.Resources);
                 CompilerResults results = provider.CompileAssemblyFromFile(Options, SourceFilePaths.ToArray());
