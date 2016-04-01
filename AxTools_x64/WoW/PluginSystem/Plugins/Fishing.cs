@@ -65,135 +65,144 @@ namespace AxTools.WoW.PluginSystem.Plugins
         public void OnStart()
         {
             fishingSettings = this.LoadSettingsJSON<FishingSettings>();
-            state = 0;
-            bobber = null;
-            iterationStartTime = Environment.TickCount;
-            lureSpecialBait = "if (not UnitBuff(\"player\", \"" + fishingSettings.SpecialBait + "\")) then " +
-                              "if (GetItemCount(\"" + fishingSettings.SpecialBait + "\") > 0) then UseItemByName(\"" + fishingSettings.SpecialBait + "\") end end";
+            pluginIsActive = true;
+            fishingSpellName = Wowhead.GetSpellInfo(7620).Name;
+            this.LogPrint("Fishing spell name: " + fishingSpellName);
             timer = this.CreateTimer(100, OnPulse);
             timer.Start();
         }
 
+        public void OnStop()
+        {
+            pluginIsActive = false;
+            timer.Dispose();
+        }
+
         private void OnPulse()
         {
-            if (Environment.TickCount - iterationStartTime > 25000)
+            List<WowObject> wowObjects = new List<WowObject>();
+            WoWPlayerMe me = ObjectMgr.Pulse(wowObjects);
+            if (!GameFunctions.IsLooting && !me.InCombat)
             {
-                state = 0;
-                this.LogPrint("Timeout has expired");
-            }
-            switch (state)
-            {
-                case 0:
-                    if (!WoWPlayerMe.IsLooting)
+                if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
+                {
+                    if (Utils.Rnd.Next(0, 25) == 0)
                     {
+                        int breakTime = Utils.Rnd.Next(15, 45);
+                        this.LogPrint(string.Format("I'm human! Let's have a break ({0} sec)", breakTime));
+                        int breakStartTime = Environment.TickCount;
+                        while ((Environment.TickCount - breakStartTime < breakTime*1000) && pluginIsActive)
+                        {
+                            Thread.Sleep(1000);
+                        }
+                    }
+                    else if (fishingSettings.UseBestBait && CanLure)
+                    {
+                        this.LogPrint("Applying lure...");
+                        uint bestBait = baits.First(l => me.ItemsInBags.Any(k => k.EntryID == l));
+                        GameFunctions.UseItemByID(bestBait);
+                        lastTimeLureApplied = DateTime.UtcNow;
+                        Thread.Sleep(Utils.Rnd.Next(250, 750));
+                    }
+                    else if (fishingSettings.UseSpecialBait && NeedSpecialLure)
+                    {
+                        this.LogPrint("Applying special lure...");
+                        uint specialLureID = specialWodBaits.FirstOrDefault(l => Wowhead.GetItemInfo(l).Name == fishingSettings.SpecialBait);
+                        GameFunctions.UseItemByID(specialLureID);
+                        Thread.Sleep(Utils.Rnd.Next(250, 750));
+                    }
+                    else
+                    {
+                        Thread.Sleep(Utils.Rnd.Next(500, 1000));
                         this.LogPrint("Cast fishing...");
-                        WoWDXInject.LuaDoString(castFishing);
+                        GameFunctions.CastSpellByName(fishingSpellName);
                         Thread.Sleep(1500);
-                        state = 1;
-                        iterationStartTime = Environment.TickCount;
                     }
-                    break;
-                case 1:
-                    WoWPlayerMe localPlayer;
-                    try
-                    {
-                        localPlayer = ObjectMgr.Pulse(wowObjects);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(string.Format("{0}:{1} :: [Fishing] Pulse error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
-                        break;
-                    }
-                    if (localPlayer.ChannelSpellID == 0)
-                    {
-                        this.LogPrint("Player isn't fishing, recast...");
-                        state = 0;
-                        break;
-                    }
-                    bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == localPlayer.GUID);
+                }
+                else
+                {
+                    WowObject bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == me.GUID);
                     if (bobber != null && bobber.Bobbing)
                     {
                         this.LogPrint("Got bit!");
                         Thread.Sleep(Utils.Rnd.Next(500, 1000));
-                        state = 2;
+                        this.LogPrint("Interacting with bobber --> " + bobber.GUID);
+                        bobber.Interact();
+                        Thread.Sleep(Utils.Rnd.Next(500, 1000));
                     }
-                    break;
-                case 2:
-                    if (bobber != null)
-                    {
-                        this.LogPrint("Interacting...");
-                        WoWDXInject.Interact(bobber.GUID);
-                        bobber = null;
-                        state = 3;
-                    }
-                    else
-                    {
-                        this.LogPrint("Bobber isn't found, recast...");
-                        state = 0;
-                    }
-                    break;
-                case 3:
-                    if (WoWPlayerMe.IsLooting)
-                    {
-                        state = 4;
-                        this.LogPrint("Looting...");
-                    }
-                    break;
-                case 4:
-                    if (!WoWPlayerMe.IsLooting)
-                    {
-                        // more random
-                        if (Utils.Rnd.Next(0, 25) == 0)
-                        {
-                            int breakTime = Utils.Rnd.Next(15, 45);
-                            this.LogPrint(string.Format("I'm human! Let's have a break ({0} sec)", breakTime));
-                            Thread.Sleep(breakTime * 1000);
-                        }
-                        //
-                        this.LogPrint("Looted, applying lure...");
-                        if (fishingSettings.UseSpecialBait)
-                        {
-                            WoWDXInject.LuaDoString(lureSpecialBait);
-                        }
-                        if (fishingSettings.UseBestBait)
-                        {
-                            WoWDXInject.LuaDoString(lureBait);
-                        }
-                        Thread.Sleep(500);
-                        state = 0;
-                    }
-                    break;
+                }
             }
-        }
-
-        public void OnStop()
-        {
-            timer.Dispose();
         }
 
         #endregion
 
-        #region Variables
-        
-        private readonly string lureBait = "if (not GetWeaponEnchantInfo()) then " +
-                                           "if (GetItemCount(118391) > 0) then local name = GetItemInfo(118391); UseItemByName(name) " +                    // Королевский червяк
-                                           "elseif (IsEquippedItem(88710) and GetInventoryItemCooldown(\"player\", 1) == 0) then UseInventoryItem(1) " +    // Шляпа Ната
-                                           "elseif (GetItemCount(68049) > 0) then local name = GetItemInfo(68049); UseItemByName(name) " +                  // Термостойкая вращающаяся наживка
-                                           "elseif (GetItemCount(34861) > 0) then local name = GetItemInfo(34861); UseItemByName(name) " +                  // Заостренный рыболовный крючок
-                                           "elseif (IsEquippedItem(33820) and GetInventoryItemCooldown(\"player\", 1) == 0) then UseInventoryItem(1) " +    // Видавшая виды рыболовная шапка
-                                           "elseif (GetItemCount(6529) > 0) then local name = GetItemInfo(6529); UseItemByName(name) " +                    // Блесна
-                                           " end" +
-                                           " end";
+        #region Fields, propeties
 
-        private readonly string castFishing = "if (not UnitAffectingCombat(\"player\")) then CastSpellByName(\"Рыбная ловля\") end";
-        private WowObject bobber;
-        private readonly List<WowObject> wowObjects = new List<WowObject>();
-        private int iterationStartTime;
-        // ReSharper disable once InconsistentNaming
+        private bool CanLure
+        {
+            get
+            {
+                WoWPlayerMe me = ObjectMgr.Pulse();
+                return fishingRods.Contains(me.Inventory[15].EntryID) && me.ItemsInBags.Any(l => baits.Contains(l.EntryID)) && ((DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10);
+            }
+        }
+
+        private bool NeedSpecialLure
+        {
+            get
+            {
+                WoWPlayerMe me = ObjectMgr.Pulse();
+                return me.Auras.All(l => l.Name != fishingSettings.SpecialBait) && me.ItemsInBags.Any(l => l.Name == fishingSettings.SpecialBait);
+            }
+        }
+
         private FishingSettings fishingSettings;
-        private string lureSpecialBait;
-        private int state;
         private SingleThreadTimer timer;
+        private bool pluginIsActive;
+        private string fishingSpellName;
+        private DateTime lastTimeLureApplied = DateTime.MinValue;
+
+        private readonly uint[] fishingRods =
+        {
+            44050, // Мастерски сделанная калуакская удочка
+            25978, // Графитовая удочка Сета
+            19022, // Продвинутая рыбалка Ната Пэгла FC-5000
+            6367, // Большая железная удочка
+            6366, // Удочка из темной древесины
+            120163, // Удочка Тукра
+            45858, // Счастливая удочка Ната
+            19970, // Арканитовая удочка
+            84661, // Счастливая удочка драконов
+            45991, // Костяная удочка
+            118381, // Эфемерная удочка
+            45992, // Удочка со стразами
+            46337, // Удочка Стаатса
+            12225, // Удочка семейства Блумп
+            6365, // Крепкая удочка
+            116826, // Дренейская удочка
+            84660, // Пандаренская удочка
+            116825, // Яростная удочка
+            6256, // Удочка
+        };
+
+        private readonly uint[] baits =
+        {
+            118391, // Королевский червяк
+            68049,  // Термостойкая вращающаяся наживка
+            34861,  // Заостренный рыболовный крючок
+            6529,   // Блесна
+        };
+
+        private readonly uint[] specialWodBaits =
+        {
+            110293,
+            110291,
+            110289,
+            110290,
+            110292,
+            110274,
+            110294,
+        };
 
         #endregion
 

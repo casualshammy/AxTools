@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
@@ -160,13 +161,15 @@ namespace AxTools.Updater
                 {
                     AppSpecUtils.NotifyUser("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact devs", NotifyUserType.Error, false);
                     _timer.Elapsed -= timer_Elapsed;
+                    Log.Info(string.Format("[Updater] Your credentials are invalid. Updater is disabled. Please contact devs (status {0}): {1}", webEx.Status, webEx.Message));
                 }
                 else if (webEx.Status == WebExceptionStatus.TrustFailure || webEx.Status == WebExceptionStatus.SecureChannelFailure)
                 {
                     AppSpecUtils.NotifyUser("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, false);
                     _timer.Elapsed -= timer_Elapsed;
+                    Log.Info(string.Format("[Updater] Cannot validate remote server. Your internet connection is compromised (status {0}): {1}", webEx.Status, webEx.Message));
                 }
-                else
+                else if (webEx.Status != WebExceptionStatus.NameResolutionFailure && webEx.Status != WebExceptionStatus.Timeout && webEx.Status != WebExceptionStatus.ConnectFailure)
                 {
                     Log.Error(string.Format("[Updater] Fetching info error (status {0}): {1}", webEx.Status, webEx.Message));
                 }
@@ -242,11 +245,14 @@ namespace AxTools.Updater
                     try
                     {
                         string output = cmd.StandardOutput.ReadToEnd();
-                        string rawResponse = output.Split(new[] { hostname + "\ttext =\r\n" }, StringSplitOptions.RemoveEmptyEntries)[1];
-                        string response = rawResponse.Trim().Trim('"');
-                        Uri uriResult;
-                        bool result = Uri.TryCreate(response, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-                        return result ? response : null;
+                        Match match = Regex.Match(output, "text =\\s*\"(.+)\"");
+                        if (match.Success)
+                        {
+                            Uri uriResult;
+                            bool result = Uri.TryCreate(match.Groups[1].Value, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                            return result ? match.Groups[1].Value : null;
+                        }
+                        return null;
                     }
                     catch
                     {

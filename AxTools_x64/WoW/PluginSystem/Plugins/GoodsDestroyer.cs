@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
-using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
@@ -46,7 +46,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public bool ConfigAvailable
         {
-            get { return true; }
+            get { return false; }
         }
 
         #endregion
@@ -66,75 +66,51 @@ namespace AxTools.WoW.PluginSystem.Plugins
         public void OnStart()
         {
             SettingsInstance = this.LoadSettingsJSON<GoodsDestroyerSettings>();
-            state = 0;
-            iterationStartTime = Environment.TickCount;
-            WoWDXInject.LuaDoString(
-                "AxToolsHerbsIDs = {785, 2449, 2447, 765, 2450, 2453, 3820, 2452, 3369, 3356, 3357, 3355, 3819, 3818, 3821, 3358, 8836, 8839, 4625, 8846, 8831, 8838, 13463, 13464, 13465, 13466, 13467, 22786, 22785, 22793, 22791, 22792, 22787, 22789, 36907, 36903, 36906, 36904, 36905, 36901, 39970, 37921, 52983, 52987, 52984, 52986, 52985, 52988, 22790, 72235, 72234, 72237, 79010, 79011, 89639, 109129, 109128, 109127, 109126, 109125, 109124, 8845};" +
-                "AxToolsDisenchantWeapon = \"Оружие\";" +
-                "AxToolsDisenchantArmor = \"Доспехи\";" +
-                "AxToolsOreIDs = {2770, 2771, 2772, 10620, 3858, 23424, 23425, 36909, 36912, 36910, 52185, 53038, 52183, 72093, 72094, 72103, 72092};");
             (timer = this.CreateTimer(50, OnPulse)).Start();
         }
 
         public void OnPulse()
         {
-            if (Environment.TickCount - iterationStartTime > 5000)
+            WoWPlayerMe me = ObjectMgr.Pulse();
+            if (me != null)
             {
-                Log.Info(string.Format("{0}:{1} :: [{2}] Timeout has expired (nothing to do?), state: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, state));
-                state = 0;
-            }
-            switch (state)
-            {
-                case 0:
-                    WoWPlayerMe localPlayer = ObjectMgr.Pulse();
-                    if (localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
+                if (!GameFunctions.IsLooting)
+                {
+                    if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
                     {
-                        iterationStartTime = Environment.TickCount;
-                        if (GameFunctions.Lua_GetFunctionReturn("tostring(IsSpellKnown(51005))") == "true") // mill
+                        if (GameFunctions.IsSpellKnown(51005)) // mill
                         {
-                            if (IsFastMillingAvailable())
+                            if (me.ItemsInBags.Any(l => fastMillHerbs.Contains(l.EntryID) && l.StackSize >= 20))
                             {
-                                WoWDXInject.LuaDoString(fastMill);
-                                break;
+                                string s = "/run if(GetNumTradeSkills()>0) then for i=1,GetNumTradeSkills() do local n,_,a=GetTradeSkillInfo(i);if(strfind(n,\"Массовое измельчение\") and a>0) then DoTradeSkill(i,a);return;end end end";
+                                GameFunctions.SendToChat(s);
+                                Thread.Sleep(2000);
+                                return;
                             }
-                            if (IsPlayerHaveHerbs())
+                            WoWItem herb = me.ItemsInBags.FirstOrDefault(l => herbs.Contains(l.EntryID) && l.StackSize >= 5);
+                            if (herb != null)
                             {
-                                WoWDXInject.LuaDoString(mill);
-                            }
-                            else if (SettingsInstance.LaunchInkCrafter)
-                            {
-                                Utilities.RequestStartPlugin("InkCrafter");
-                                break;
+                                GameFunctions.CastSpellByName(Wowhead.GetSpellInfo(51005).Name);
+                                GameFunctions.UseItem(herb.BagID, herb.SlotID);
+                                Thread.Sleep(1000);
+                                return;
                             }
                         }
-                        else if (GameFunctions.Lua_GetFunctionReturn("tostring(IsSpellKnown(31252))") == "true") // prospect
+                        if (GameFunctions.IsSpellKnown(31252)) // prospect
                         {
-                            WoWDXInject.LuaDoString(prospecting);
+                            DoProspect();
                         }
-                        else if (GameFunctions.Lua_GetFunctionReturn("tostring(IsSpellKnown(13262))") == "true") // disenchant
+                        if (GameFunctions.IsSpellKnown(13262)) // disenchant
                         {
                             Thread.Sleep(1000); // pause to prevent disenchanting nonexistent item 
-                            WoWDXInject.LuaDoString(disenchant);
+                            DoDisenchant();
                         }
-                        else
-                        {
-                            Log.Info("This character can't mill, prospect or disenchant!");
-                        }
-                        state = 1;
+                        //else
+                        //{
+                        //    Log.Info("This character can't mill, prospect or disenchant!");
+                        //}
                     }
-                    break;
-                case 1:
-                    if (WoWPlayerMe.IsLooting)
-                    {
-                        state = 2;
-                    }
-                    break;
-                case 2:
-                    if (!WoWPlayerMe.IsLooting)
-                    {
-                        state = 0;
-                    }
-                    break;
+                }
             }
         }
 
@@ -143,96 +119,53 @@ namespace AxTools.WoW.PluginSystem.Plugins
             timer.Dispose();
         }
 
-        private bool IsFastMillingAvailable()
+        private void DoDisenchant()
         {
-            WoWDXInject.LuaDoString(fastMillAvailable);
-            return GameFunctions.Lua_GetFunctionReturn("tostring(" + UniqVarName + ")") == "true";
+            WoWPlayerMe me = ObjectMgr.Pulse();
+            WoWItem itemToDesenchant = me.ItemsInBags.FirstOrDefault(l => (l.Class == 2 || l.Class == 4) && l.Quality == 2 && l.Level > 1);
+            if (itemToDesenchant != null)
+            {
+                GameFunctions.CastSpellByName(Wowhead.GetSpellInfo(13262).Name);
+                GameFunctions.UseItem(itemToDesenchant.BagID, itemToDesenchant.SlotID);
+            }
         }
 
-        private bool IsPlayerHaveHerbs()
+        private void DoProspect()
         {
-            WoWDXInject.LuaDoString(playerHaveHerbs);
-            return GameFunctions.Lua_GetFunctionReturn("tostring(" + UniqVarName + ")") == "true";
+            WoWPlayerMe me = ObjectMgr.Pulse();
+            WoWItem ore = me.ItemsInBags.FirstOrDefault(l => ores.Contains(l.EntryID) && l.StackSize >= 5);
+            if (ore != null)
+            {
+                GameFunctions.CastSpellByName(Wowhead.GetSpellInfo(31252).Name);
+                GameFunctions.UseItem(ore.BagID, ore.SlotID);
+            }
         }
 
         #endregion
 
         #region Variables
 
-        private static readonly string UniqVarName = Utilities.GetRandomString(8);
-
-        private readonly string fastMillAvailable =
-            UniqVarName + " = false;\r\n" +
-            "local t = {\r\n" +
-            "    \"Массовое измельчение горгрондской мухоловки\",\r\n" +
-            "    \"Массовое измельчение звездоцвета\",\r\n" +
-            "    \"Массовое измельчение морозноцвета\",\r\n" +
-            "    \"Массовое измельчение награндского стрелоцвета\",\r\n" +
-            "    \"Массовое измельчение пламецвета\",\r\n" +
-            "    \"Массовое измельчение таладорской орхидеи\",\r\n" +
-            "};\r\n" +
-            "local numTradeSkills = GetNumTradeSkills();\r\n" +
-            "if (numTradeSkills > 0) then\r\n" +
-            "    for i = 1, numTradeSkills do\r\n" +
-            "        local skillName, _, numAvailable = GetTradeSkillInfo(i);\r\n" +
-            "        if (tContains(t, skillName) and numAvailable > 0) then\r\n" +
-            "            " + UniqVarName + " = true;\r\n" +
-            "            return;\r\n" +
-            "        end\r\n" +
-            "    end\r\n" +
-            "end";
-
-        private readonly string fastMill =
-            "local t = {\r\n" +
-            "    \"Массовое измельчение горгрондской мухоловки\",\r\n" +
-            "    \"Массовое измельчение звездоцвета\",\r\n" +
-            "    \"Массовое измельчение морозноцвета\",\r\n" +
-            "    \"Массовое измельчение награндского стрелоцвета\",\r\n" +
-            "    \"Массовое измельчение пламецвета\",\r\n" +
-            "    \"Массовое измельчение таладорской орхидеи\",\r\n" +
-            "};\r\n" +
-            "local numTradeSkills = GetNumTradeSkills();\r\n" +
-            "if (numTradeSkills > 0) then\r\n" +
-            "    for i = 1, numTradeSkills do\r\n" +
-            "        local skillName, _, numAvailable = GetTradeSkillInfo(i);\r\n" +
-            "        if (tContains(t, skillName) and numAvailable > 0) then\r\n" +
-            "            DoTradeSkill(i, numAvailable);\r\n" +
-            "            return;\r\n" +
-            "        end\r\n" +
-            "    end\r\n" +
-            "end";
-
-        private readonly string playerHaveHerbs =
-            UniqVarName + " = false;\r\n" +
-            "for bag = 0, 4 do\r\n" +
-            "	for bag_slot = 1, GetContainerNumSlots(bag) do\r\n" +
-            "		local name, cCount = GetContainerItemInfo(bag, bag_slot);\r\n" +
-            "		local id = GetContainerItemID(bag, bag_slot);\r\n" +
-            "		if (name) then\r\n" +
-            "			if (tContains(AxToolsHerbsIDs, id) and cCount >= 5) then\r\n" +
-            "			    " + UniqVarName + " = true;\r\n" +
-            "				return;\r\n" +
-            "			end\r\n" +
-            "		end\r\n" +
-            "	end\r\n" +
-            "end";
-
-        private readonly string mill =
-            "for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local name, cCount = GetContainerItemInfo(bag, bag_slot); local id = GetContainerItemID(bag, bag_slot); if (name) then if (tContains(AxToolsHerbsIDs, id) and cCount >= 5) then CastSpellByID(51005); UseContainerItem(bag, bag_slot); return; end end end end";
-
-        private readonly string disenchant =
-            "for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local itemLink = select(7, GetContainerItemInfo(bag, bag_slot)); if (itemLink) then local _, _ , cQuality, cLevel, _, cClass = GetItemInfo(itemLink); if ((cClass == AxToolsDisenchantWeapon or cClass == AxToolsDisenchantArmor) and cLevel > 1 and cQuality == 2) then CastSpellByID(13262); UseContainerItem(bag, bag_slot); return; end end end end";
-
-        private readonly string prospecting =
-            "for bag = 0, 4 do for bag_slot = 1, GetContainerNumSlots(bag) do local name, cCount = GetContainerItemInfo(bag, bag_slot); local id = GetContainerItemID(bag, bag_slot); if (name) then if (tContains(AxToolsOreIDs, id) and cCount >= 5) then CastSpellByID(31252); UseContainerItem(bag, bag_slot); return; end end end end";
-
-        private int state;
-
-        private int iterationStartTime;
-
         private SingleThreadTimer timer;
 
         internal GoodsDestroyerSettings SettingsInstance;
+
+        private readonly uint[] herbs =
+        {
+            785, 2449, 2447, 765, 2450, 2453, 3820, 2452, 3369, 3356, 3357, 3355, 3819, 3818, 3821, 3358, 8836, 8839, 4625, 8846, 8831, 8838, 13463, 13464, 13465, 13466, 13467, 22786, 22785, 22793, 22791, 22792,
+            22787, 22789, 36907, 36903, 36906, 36904, 36905, 36901, 39970, 37921, 52983, 52987, 52984, 52986, 52985, 52988, 22790, 72235, 72234, 72237, 79010, 79011, 89639, 109129, 109128, 109127, 109126, 109125, 109124, 8845
+        };
+
+        private readonly uint[] fastMillHerbs =
+        {
+            109126, // Горгрондская мухоловка
+            109127, // Звездоцвет
+            109124, // Морозноцвет
+            109128, // Награндский стрелоцвет
+            109125, // Пламецвет
+            109129 // Таладорская орхидея
+        };
+
+        private readonly uint[] ores = {2770, 2771, 2772, 10620, 3858, 23424, 23425, 36909, 36912, 36910, 52185, 53038, 52183, 72093, 72094, 72103, 72092};
 
         #endregion
 

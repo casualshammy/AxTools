@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
+using AxTools.WinAPI;
 
 namespace AxTools.WoW
 {
@@ -56,6 +57,15 @@ namespace AxTools.WoW
             {
                 mProcess.Refresh();
                 return mProcess;
+            }
+        }
+
+        internal bool IsMinimized
+        {
+            get
+            {
+                long style = NativeMethods.GetWindowLong64(MainWindowHandle, Win32Consts.GWL_STYLE);
+                return (style & Win32Consts.WS_MINIMIZE) != 0;
             }
         }
 

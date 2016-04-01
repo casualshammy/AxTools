@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
-using AxTools.Components;
+using Components;
 using ICSharpCode.TextEditor;
 
 namespace AxTools.Forms
@@ -37,14 +37,13 @@ namespace AxTools.Forms
             this.textBoxLuaCode = new ICSharpCode.TextEditor.TextEditorControl();
             this.buttonDump = new System.Windows.Forms.Button();
             this.metroCheckBoxIgnoreGameState = new MetroFramework.Controls.MetroCheckBox();
-            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             this.metroCheckBoxRandomize = new MetroFramework.Controls.MetroCheckBox();
             this.metroPanelTimerOptions = new MetroFramework.Controls.MetroPanel();
             this.metroCheckBoxShowIngameNotifications = new MetroFramework.Controls.MetroCheckBox();
             this.metroTextBoxTimerInterval = new MetroFramework.Controls.MetroTextBox();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
-            this.pictureBoxOpenLuaFile = new AxTools.Components.PictureBoxExt(this.components);
-            this.pictureBoxSaveLuaFile = new AxTools.Components.PictureBoxExt(this.components);
+            this.pictureBoxOpenLuaFile = new Components.PictureBoxExt(this.components);
+            this.pictureBoxSaveLuaFile = new Components.PictureBoxExt(this.components);
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.labelRequestTime = new MetroFramework.Controls.MetroLabel();
             this.metroLinkRunScriptOnce = new MetroFramework.Controls.MetroLink();
@@ -95,19 +94,12 @@ namespace AxTools.Forms
             this.metroCheckBoxIgnoreGameState.Name = "metroCheckBoxIgnoreGameState";
             this.metroCheckBoxIgnoreGameState.Size = new System.Drawing.Size(209, 15);
             this.metroCheckBoxIgnoreGameState.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroCheckBoxIgnoreGameState.StyleManager = this.metroStyleManager1;
             this.metroCheckBoxIgnoreGameState.TabIndex = 49;
             this.metroCheckBoxIgnoreGameState.Text = "Ignore game state (offline, loading)";
             this.metroCheckBoxIgnoreGameState.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroCheckBoxIgnoreGameState.UseStyleColors = true;
             this.metroCheckBoxIgnoreGameState.UseVisualStyleBackColor = true;
             this.metroCheckBoxIgnoreGameState.CheckedChanged += new System.EventHandler(this.metroCheckBoxIgnoreGameState_CheckedChanged);
-            // 
-            // metroStyleManager1
-            // 
-            this.metroStyleManager1.OwnerForm = this;
-            this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // metroCheckBoxRandomize
             // 
@@ -120,7 +112,6 @@ namespace AxTools.Forms
             this.metroCheckBoxRandomize.Name = "metroCheckBoxRandomize";
             this.metroCheckBoxRandomize.Size = new System.Drawing.Size(165, 15);
             this.metroCheckBoxRandomize.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroCheckBoxRandomize.StyleManager = this.metroStyleManager1;
             this.metroCheckBoxRandomize.TabIndex = 52;
             this.metroCheckBoxRandomize.Text = "Randomize interval (±20%)";
             this.metroCheckBoxRandomize.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -146,7 +137,6 @@ namespace AxTools.Forms
             this.metroPanelTimerOptions.Name = "metroPanelTimerOptions";
             this.metroPanelTimerOptions.Size = new System.Drawing.Size(220, 96);
             this.metroPanelTimerOptions.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroPanelTimerOptions.StyleManager = this.metroStyleManager1;
             this.metroPanelTimerOptions.TabIndex = 53;
             this.metroPanelTimerOptions.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroPanelTimerOptions.VerticalScrollbar = false;
@@ -165,7 +155,6 @@ namespace AxTools.Forms
             this.metroCheckBoxShowIngameNotifications.Name = "metroCheckBoxShowIngameNotifications";
             this.metroCheckBoxShowIngameNotifications.Size = new System.Drawing.Size(164, 15);
             this.metroCheckBoxShowIngameNotifications.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroCheckBoxShowIngameNotifications.StyleManager = this.metroStyleManager1;
             this.metroCheckBoxShowIngameNotifications.TabIndex = 55;
             this.metroCheckBoxShowIngameNotifications.Text = "Show ingame notifications";
             this.metroCheckBoxShowIngameNotifications.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -186,7 +175,6 @@ namespace AxTools.Forms
             this.metroTextBoxTimerInterval.SelectedText = "";
             this.metroTextBoxTimerInterval.Size = new System.Drawing.Size(89, 23);
             this.metroTextBoxTimerInterval.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBoxTimerInterval.StyleManager = this.metroStyleManager1;
             this.metroTextBoxTimerInterval.TabIndex = 54;
             this.metroTextBoxTimerInterval.Text = "1000";
             this.metroTextBoxTimerInterval.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -205,7 +193,6 @@ namespace AxTools.Forms
             this.metroLabel1.Name = "metroLabel1";
             this.metroLabel1.Size = new System.Drawing.Size(46, 15);
             this.metroLabel1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel1.StyleManager = this.metroStyleManager1;
             this.metroLabel1.TabIndex = 53;
             this.metroLabel1.Text = "Interval:";
             this.metroLabel1.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -251,7 +238,6 @@ namespace AxTools.Forms
             this.labelRequestTime.Name = "labelRequestTime";
             this.labelRequestTime.Size = new System.Drawing.Size(241, 15);
             this.labelRequestTime.Style = MetroFramework.MetroColorStyle.Blue;
-            this.labelRequestTime.StyleManager = this.metroStyleManager1;
             this.labelRequestTime.TabIndex = 61;
             this.labelRequestTime.Text = "Script has taken {0}ms to complete";
             this.labelRequestTime.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -270,7 +256,6 @@ namespace AxTools.Forms
             this.metroLinkRunScriptOnce.Name = "metroLinkRunScriptOnce";
             this.metroLinkRunScriptOnce.Size = new System.Drawing.Size(109, 23);
             this.metroLinkRunScriptOnce.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLinkRunScriptOnce.StyleManager = this.metroStyleManager1;
             this.metroLinkRunScriptOnce.TabIndex = 62;
             this.metroLinkRunScriptOnce.Text = "<Run script once>";
             this.metroLinkRunScriptOnce.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -287,7 +272,6 @@ namespace AxTools.Forms
             this.metroLinkEnableCyclicExecution.Name = "metroLinkEnableCyclicExecution";
             this.metroLinkEnableCyclicExecution.Size = new System.Drawing.Size(155, 23);
             this.metroLinkEnableCyclicExecution.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLinkEnableCyclicExecution.StyleManager = this.metroStyleManager1;
             this.metroLinkEnableCyclicExecution.TabIndex = 63;
             this.metroLinkEnableCyclicExecution.Text = "<Enable cyclic execution>";
             this.metroLinkEnableCyclicExecution.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -304,7 +288,6 @@ namespace AxTools.Forms
             this.metroLinkSettings.Name = "metroLinkSettings";
             this.metroLinkSettings.Size = new System.Drawing.Size(69, 23);
             this.metroLinkSettings.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLinkSettings.StyleManager = this.metroStyleManager1;
             this.metroLinkSettings.TabIndex = 64;
             this.metroLinkSettings.Text = "<Settings>";
             this.metroLinkSettings.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -335,7 +318,6 @@ namespace AxTools.Forms
             this.MinimumSize = new System.Drawing.Size(650, 354);
             this.Name = "LuaConsole";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
-            this.StyleManager = this.metroStyleManager1;
             this.Text = "Lua console";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WowModulesFormClosing);
             this.Resize += new System.EventHandler(this.LuaConsole_Resize);
@@ -356,7 +338,6 @@ namespace AxTools.Forms
         private MetroFramework.Controls.MetroPanel metroPanelTimerOptions;
         private MetroFramework.Controls.MetroLabel metroLabel1;
         private MetroFramework.Controls.MetroTextBox metroTextBoxTimerInterval;
-        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
         private PictureBoxExt pictureBoxOpenLuaFile;
         private PictureBoxExt pictureBoxSaveLuaFile;
         private MetroFramework.Controls.MetroCheckBox metroCheckBoxShowIngameNotifications;

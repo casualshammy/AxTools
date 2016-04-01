@@ -20,6 +20,7 @@ namespace AxTools.Services
         private static List<PingerReply> _pingList;
         private static int _lastPing;
         private static int _lastPacketLoss;
+        private const int IncorrectPing = -1;
 
         internal static event Action<PingerStat> StatChanged;
 
@@ -100,13 +101,13 @@ namespace AxTools.Services
                             _pingList.RemoveAt(0);
                         }
                         _pingList.Add(new PingerReply((int) elapsed, result && pSocket.Connected));
-                        int ping = _pingList.GetRange(_pingList.Count - 10, 10).Where(l => l.Successful).Select(l => l.PingInMs).Max();
+                        int ping = Max(_pingList.GetRange(_pingList.Count - 10, 10).Where(l => l.Successful).Select(l => l.PingInMs));
                         int packetLoss = _pingList.Count(l => !l.Successful);
                         if (ping != _lastPing || packetLoss != _lastPacketLoss)
                         {
                             if (StatChanged != null)
                             {
-                                StatChanged(new PingerStat(ping, packetLoss));
+                                StatChanged(new PingerStat(ping, packetLoss, ping != IncorrectPing));
                             }
                             _lastPing = ping;
                             _lastPacketLoss = packetLoss;
@@ -124,5 +125,10 @@ namespace AxTools.Services
             }
         }
 
+        private static int Max(IEnumerable<int> seq)
+        {
+            int[] array = seq.ToArray();
+            return array.Any() ? array.Max() : IncorrectPing;
+        }
     }
 }

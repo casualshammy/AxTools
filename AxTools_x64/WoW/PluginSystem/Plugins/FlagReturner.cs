@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
@@ -68,7 +67,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             // todo: delete try..catch
             try
             {
-                uint zone = WoWPlayerMe.ZoneID;
+                uint zone = GameFunctions.ZoneID;
                 if (zone != currentZone)
                 {
                     OnZoneChanged(zone);
@@ -99,7 +98,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         // todo: delete try..catch
                         try
                         {
-                            WoWDXInject.Interact(i.GUID);
+                            GameFunctions.Interact(i.GUID);
                         }
                         catch (Exception ex)
                         {
@@ -119,17 +118,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             timer.Dispose();
         }
-
-        #endregion
-
-        #region Variables
-
-        private uint currentZone;
-        private string[] searchingObjects;
-        private readonly List<WowObject> wowObjects = new List<WowObject>();
-        private SingleThreadTimer timer;
-
-        #endregion
 
         private void OnZoneChanged(uint zone)
         {
@@ -158,18 +146,27 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
             if (searchingObjects.Length > 0)
             {
-                string zoneText = GameFunctions.Lua_GetFunctionReturn("GetZoneText()");
-                this.LogPrint("We're in " + zoneText + ", searching for " + searchingObjects.AsString());
-                Utilities.ShowNotifyMessage("[" + Name + "] ", zoneText + ": " + searchingObjects.AsString(), ToolTipIcon.Info);
-                Utils.PlaySystemNotificationAsync();
+                string zoneText = GameFunctions.ZoneText;
+                this.LogPrint(string.Format("We're in {0}, searching for {{{1}}}", zoneText, string.Join(", ", searchingObjects)));
+                this.ShowNotify(string.Format("{0}: {{{1}}}", zoneText, string.Join(", ", searchingObjects)), false, true);
             }
             else
             {
-                this.LogPrint("Unknown battlefield, ID:" + zone);
-                Utilities.ShowNotifyMessage("[" + Name + "]", "Unknown battlefield. I don't know what to do in this zone...", ToolTipIcon.Warning);
-                Utils.PlaySystemNotificationAsync();
+                this.LogPrint("Unknown battlefield, ID: " + zone);
+                this.ShowNotify("Unknown battlefield. I don't know what to do in this zone...", true, true);
             }
         }
+
+        #endregion
+
+        #region Variables
+
+        private uint currentZone;
+        private string[] searchingObjects;
+        private readonly List<WowObject> wowObjects = new List<WowObject>();
+        private SingleThreadTimer timer;
+
+        #endregion
 
     }
 }

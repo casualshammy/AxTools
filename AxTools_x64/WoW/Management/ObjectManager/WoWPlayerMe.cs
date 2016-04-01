@@ -1,19 +1,18 @@
 ﻿using System;
+using AxTools.WoW.PluginSystem.API;
 
 // ReSharper disable InconsistentNaming
 namespace AxTools.WoW.Management.ObjectManager
 {
     public sealed class WoWPlayerMe : WowPlayer
     {
-        internal WoWPlayerMe(IntPtr address, UInt128 guid) : base(address)
-        {
-            MGUID = guid;
-        }
-
         internal WoWPlayerMe(IntPtr address) : base(address)
         {
-
+            IntPtr playerDesc = WoWManager.WoWProcess.Memory.Read<IntPtr>(address + WowBuildInfoX64.UnitDescriptors);
+            inventoryAndContainers = WoWManager.WoWProcess.Memory.Read<PlayerInventoryAndContainers>(playerDesc + WowBuildInfoX64.PlayerInvSlots);
         }
+
+        private readonly PlayerInventoryAndContainers inventoryAndContainers;
 
         private uint castingSpellID;
         public uint CastingSpellID
@@ -56,50 +55,53 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
-        public bool Is_Looting
+        private WoWItem[] inventory;
+        /// <summary>
+        ///     INVSLOT_HEAD       = 0;
+        ///     INVSLOT_NECK       = 1;
+        ///     INVSLOT_SHOULDER   = 2;
+        ///     INVSLOT_BODY       = 3;
+        ///     INVSLOT_CHEST      = 4;
+        ///     INVSLOT_WAIST      = 5;
+        ///     INVSLOT_LEGS       = 6;
+        ///     INVSLOT_FEET       = 7;
+        ///     INVSLOT_WRIST      = 8;
+        ///     INVSLOT_HAND       = 9;
+        ///     INVSLOT_FINGER1    = 10;
+        ///     INVSLOT_FINGER2    = 11;
+        ///     INVSLOT_TRINKET1   = 12;
+        ///     INVSLOT_TRINKET2   = 13;
+        ///     INVSLOT_BACK       = 14;
+        ///     INVSLOT_MAINHAND   = 15;
+        ///     INVSLOT_OFFHAND    = 16;
+        ///     INVSLOT_RANGED     = 17;
+        ///     INVSLOT_TABARD     = 18;
+        /// </summary>
+        public WoWItem[] Inventory
         {
-            get { return IsLooting; }
+            get { return inventory ?? (inventory = ObjectMgr.GetInventory(inventoryAndContainers.InvSlots)); }
         }
 
-        public static bool IsLooting
+        private WoWItem[] itemsInBags;
+        public WoWItem[] ItemsInBags
         {
-            get
-            {
-                return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting) != 0;
-            }
+            get { return itemsInBags ?? (itemsInBags = ObjectMgr.GetItemsInBags(inventoryAndContainers)); }
         }
 
-        //public new string Name
-        //{
-        //    get { return Name; }
-        //}
-        //public static new string Name
-        //{
-        //    get
-        //    {
-        //        string name = Encoding.UTF8.GetString(WoWManager.WoWProcess.Memory.ReadBytes(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerName, 24));
-        //        int index = name.IndexOf('\0');
-        //        if (index != -1)
-        //        {
-        //            name.Remove(index);
-        //        }
-        //        return name;
-        //    }
-        //}
-
-        public static uint Zone_ID
-        {
-            get { return ZoneID; }
-        }
-
-        public static uint ZoneID
+        private bool? isMoving;
+        public bool IsMoving
         {
             get
             {
-                return WoWManager.WoWProcess.Memory.Read<uint>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerZoneID);
+                if (!isMoving.HasValue)
+                {
+                    IntPtr speedPtr = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.PlayerSpeedBase);
+                    float speed = WoWManager.WoWProcess.Memory.Read<float>(speedPtr + WowBuildInfoX64.PlayerSpeedOffset);
+                    isMoving = speed > 0f;
+                }
+                return isMoving.Value;
             }
         }
-    
     }
 }
 // ReSharper restore InconsistentNaming

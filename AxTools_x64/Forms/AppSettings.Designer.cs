@@ -1,4 +1,5 @@
-﻿using MetroFramework.Components;
+﻿using Components;
+using MetroFramework.Components;
 using MetroFramework.Controls;
 
 namespace AxTools.Forms
@@ -29,18 +30,18 @@ namespace AxTools.Forms
         private void InitializeComponent()
         {
             this.checkBox_AntiAFK = new MetroFramework.Controls.MetroCheckBox();
-            this.textBoxVentriloPath = new System.Windows.Forms.TextBox();
+            this.textBoxVentriloPath = new Components.MetroTextboxExt();
             this.buttonVentriloPath = new MetroFramework.Controls.MetroButton();
             this.CheckBoxStartAxToolsWithWindows = new MetroFramework.Controls.MetroCheckBox();
             this.CheckBox7 = new MetroFramework.Controls.MetroCheckBox();
             this.GroupBox2 = new System.Windows.Forms.GroupBox();
-            this.TextBox4 = new System.Windows.Forms.TextBox();
-            this.TextBox5 = new System.Windows.Forms.TextBox();
+            this.TextBox4 = new Components.MetroTextboxExt();
+            this.TextBox5 = new Components.MetroTextboxExt();
             this.Label5 = new MetroFramework.Controls.MetroLabel();
             this.Label6 = new MetroFramework.Controls.MetroLabel();
             this.GroupBox1 = new System.Windows.Forms.GroupBox();
-            this.TextBox6 = new System.Windows.Forms.TextBox();
-            this.TextBox7 = new System.Windows.Forms.TextBox();
+            this.TextBox6 = new Components.MetroTextboxExt();
+            this.TextBox7 = new Components.MetroTextboxExt();
             this.Label7 = new MetroFramework.Controls.MetroLabel();
             this.Label8 = new MetroFramework.Controls.MetroLabel();
             this.CheckBox6 = new MetroFramework.Controls.MetroCheckBox();
@@ -62,46 +63,48 @@ namespace AxTools.Forms
             this.metroTabPage5 = new MetroFramework.Controls.MetroTabPage();
             this.metroLabel5 = new MetroFramework.Controls.MetroLabel();
             this.buttonWowPath = new MetroFramework.Controls.MetroButton();
-            this.textBoxWowPath = new System.Windows.Forms.TextBox();
+            this.textBoxWowPath = new Components.MetroTextboxExt();
             this.buttonRaidcallPath = new MetroFramework.Controls.MetroButton();
-            this.textBoxRaidcallPath = new System.Windows.Forms.TextBox();
+            this.textBoxRaidcallPath = new Components.MetroTextboxExt();
             this.buttonMumblePath = new MetroFramework.Controls.MetroButton();
-            this.textBoxMumblePath = new System.Windows.Forms.TextBox();
+            this.textBoxMumblePath = new Components.MetroTextboxExt();
             this.buttonTeamspeak3Path = new MetroFramework.Controls.MetroButton();
-            this.textBoxTeamspeak3Path = new System.Windows.Forms.TextBox();
+            this.textBoxTeamspeak3Path = new Components.MetroTextboxExt();
             this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
+            this.buttonIngameKeyBinds = new MetroFramework.Controls.MetroButton();
             this.checkBoxPluginsShowIngameNotifications = new MetroFramework.Controls.MetroCheckBox();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
             this.metroComboBoxBackupCompressionLevel = new MetroFramework.Controls.MetroComboBox();
-            this.styleManager = new MetroFramework.Components.MetroStyleManager();
             this.metroLabel9 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel6 = new MetroFramework.Controls.MetroLabel();
             this.buttonBackupPath = new MetroFramework.Controls.MetroButton();
-            this.textBoxBackupPath = new System.Windows.Forms.TextBox();
+            this.textBoxBackupPath = new Components.MetroTextboxExt();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
+            this.buttonPluginsHotkey = new MetroFramework.Controls.MetroButton();
+            this.buttonLuaHotkey = new MetroFramework.Controls.MetroButton();
+            this.buttonClickerHotkey = new MetroFramework.Controls.MetroButton();
             this.textBoxPluginsHotkey = new MetroFramework.Controls.MetroTextBox();
             this.textBoxLuaHotkey = new MetroFramework.Controls.MetroTextBox();
             this.textBoxClickerHotkey = new MetroFramework.Controls.MetroTextBox();
             this.metroTabPage7 = new MetroFramework.Controls.MetroTabPage();
             this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel8 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel7 = new MetroFramework.Controls.MetroLabel();
+            this.textBoxVeryBadNetworkStatusPing = new Components.MetroTextboxExt();
+            this.textBoxVeryBadNetworkStatusProcent = new Components.MetroTextboxExt();
+            this.textBoxBadNetworkStatusPing = new Components.MetroTextboxExt();
+            this.textBoxBadNetworkStatusProcent = new Components.MetroTextboxExt();
             this.metroLabel13 = new MetroFramework.Controls.MetroLabel();
-            this.comboBoxVeryBadNetworkStatusPing = new MetroFramework.Controls.MetroComboBox();
-            this.comboBoxBadNetworkStatusPing = new MetroFramework.Controls.MetroComboBox();
-            this.comboBoxVeryBadNetworkStatusProcent = new MetroFramework.Controls.MetroComboBox();
-            this.comboBoxBadNetworkStatusProcent = new MetroFramework.Controls.MetroComboBox();
             this.metroLabel12 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel11 = new MetroFramework.Controls.MetroLabel();
             this.ComboBox_server_ip = new MetroFramework.Controls.MetroComboBox();
             this.Label3 = new MetroFramework.Controls.MetroLabel();
             this.toolTip = new MetroFramework.Components.MetroToolTip();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
-            this.buttonClickerHotkey = new MetroFramework.Controls.MetroButton();
-            this.buttonLuaHotkey = new MetroFramework.Controls.MetroButton();
-            this.buttonPluginsHotkey = new MetroFramework.Controls.MetroButton();
             this.GroupBox2.SuspendLayout();
             this.GroupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupTimer)).BeginInit();
@@ -135,11 +138,22 @@ namespace AxTools.Forms
             // 
             // textBoxVentriloPath
             // 
+            this.textBoxVentriloPath.CustomBackground = false;
+            this.textBoxVentriloPath.CustomForeColor = false;
+            this.textBoxVentriloPath.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxVentriloPath.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
             this.textBoxVentriloPath.Location = new System.Drawing.Point(128, 67);
+            this.textBoxVentriloPath.Multiline = false;
             this.textBoxVentriloPath.Name = "textBoxVentriloPath";
             this.textBoxVentriloPath.ReadOnly = true;
+            this.textBoxVentriloPath.SelectedText = "";
             this.textBoxVentriloPath.Size = new System.Drawing.Size(384, 20);
+            this.textBoxVentriloPath.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxVentriloPath.StyleManager = null;
             this.textBoxVentriloPath.TabIndex = 27;
+            this.textBoxVentriloPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.textBoxVentriloPath.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxVentriloPath.UseStyleColors = true;
             // 
             // buttonVentriloPath
             // 
@@ -207,17 +221,41 @@ namespace AxTools.Forms
             // 
             // TextBox4
             // 
+            this.TextBox4.CustomBackground = false;
+            this.TextBox4.CustomForeColor = false;
+            this.TextBox4.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.TextBox4.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
             this.TextBox4.Location = new System.Drawing.Point(31, 51);
+            this.TextBox4.Multiline = false;
             this.TextBox4.Name = "TextBox4";
+            this.TextBox4.ReadOnly = false;
+            this.TextBox4.SelectedText = "";
             this.TextBox4.Size = new System.Drawing.Size(58, 20);
+            this.TextBox4.Style = MetroFramework.MetroColorStyle.Blue;
+            this.TextBox4.StyleManager = null;
             this.TextBox4.TabIndex = 5;
+            this.TextBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.TextBox4.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.TextBox4.UseStyleColors = true;
             // 
             // TextBox5
             // 
+            this.TextBox5.CustomBackground = false;
+            this.TextBox5.CustomForeColor = false;
+            this.TextBox5.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.TextBox5.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
             this.TextBox5.Location = new System.Drawing.Point(31, 25);
+            this.TextBox5.Multiline = false;
             this.TextBox5.Name = "TextBox5";
+            this.TextBox5.ReadOnly = false;
+            this.TextBox5.SelectedText = "";
             this.TextBox5.Size = new System.Drawing.Size(58, 20);
+            this.TextBox5.Style = MetroFramework.MetroColorStyle.Blue;
+            this.TextBox5.StyleManager = null;
             this.TextBox5.TabIndex = 4;
+            this.TextBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.TextBox5.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.TextBox5.UseStyleColors = true;
             // 
             // Label5
             // 
@@ -271,17 +309,41 @@ namespace AxTools.Forms
             // 
             // TextBox6
             // 
+            this.TextBox6.CustomBackground = false;
+            this.TextBox6.CustomForeColor = false;
+            this.TextBox6.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.TextBox6.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
             this.TextBox6.Location = new System.Drawing.Point(31, 51);
+            this.TextBox6.Multiline = false;
             this.TextBox6.Name = "TextBox6";
+            this.TextBox6.ReadOnly = false;
+            this.TextBox6.SelectedText = "";
             this.TextBox6.Size = new System.Drawing.Size(58, 20);
+            this.TextBox6.Style = MetroFramework.MetroColorStyle.Blue;
+            this.TextBox6.StyleManager = null;
             this.TextBox6.TabIndex = 5;
+            this.TextBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.TextBox6.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.TextBox6.UseStyleColors = true;
             // 
             // TextBox7
             // 
+            this.TextBox7.CustomBackground = false;
+            this.TextBox7.CustomForeColor = false;
+            this.TextBox7.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.TextBox7.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
             this.TextBox7.Location = new System.Drawing.Point(31, 25);
+            this.TextBox7.Multiline = false;
             this.TextBox7.Name = "TextBox7";
+            this.TextBox7.ReadOnly = false;
+            this.TextBox7.SelectedText = "";
             this.TextBox7.Size = new System.Drawing.Size(58, 20);
+            this.TextBox7.Style = MetroFramework.MetroColorStyle.Blue;
+            this.TextBox7.StyleManager = null;
             this.TextBox7.TabIndex = 4;
+            this.TextBox7.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.TextBox7.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.TextBox7.UseStyleColors = true;
             // 
             // Label7
             // 
@@ -508,10 +570,9 @@ namespace AxTools.Forms
             this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 4;
+            this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(565, 234);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tabControl.StyleManager = this.styleManager;
             this.tabControl.TabIndex = 65;
             this.tabControl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.tabControl.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -715,11 +776,22 @@ namespace AxTools.Forms
             // 
             // textBoxWowPath
             // 
+            this.textBoxWowPath.CustomBackground = false;
+            this.textBoxWowPath.CustomForeColor = false;
+            this.textBoxWowPath.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxWowPath.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
             this.textBoxWowPath.Location = new System.Drawing.Point(85, 21);
+            this.textBoxWowPath.Multiline = false;
             this.textBoxWowPath.Name = "textBoxWowPath";
             this.textBoxWowPath.ReadOnly = true;
+            this.textBoxWowPath.SelectedText = "";
             this.textBoxWowPath.Size = new System.Drawing.Size(427, 20);
+            this.textBoxWowPath.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxWowPath.StyleManager = null;
             this.textBoxWowPath.TabIndex = 56;
+            this.textBoxWowPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.textBoxWowPath.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxWowPath.UseStyleColors = true;
             // 
             // buttonRaidcallPath
             // 
@@ -737,11 +809,22 @@ namespace AxTools.Forms
             // 
             // textBoxRaidcallPath
             // 
+            this.textBoxRaidcallPath.CustomBackground = false;
+            this.textBoxRaidcallPath.CustomForeColor = false;
+            this.textBoxRaidcallPath.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxRaidcallPath.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
             this.textBoxRaidcallPath.Location = new System.Drawing.Point(128, 93);
+            this.textBoxRaidcallPath.Multiline = false;
             this.textBoxRaidcallPath.Name = "textBoxRaidcallPath";
             this.textBoxRaidcallPath.ReadOnly = true;
+            this.textBoxRaidcallPath.SelectedText = "";
             this.textBoxRaidcallPath.Size = new System.Drawing.Size(384, 20);
+            this.textBoxRaidcallPath.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxRaidcallPath.StyleManager = null;
             this.textBoxRaidcallPath.TabIndex = 54;
+            this.textBoxRaidcallPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.textBoxRaidcallPath.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxRaidcallPath.UseStyleColors = true;
             // 
             // buttonMumblePath
             // 
@@ -759,11 +842,22 @@ namespace AxTools.Forms
             // 
             // textBoxMumblePath
             // 
+            this.textBoxMumblePath.CustomBackground = false;
+            this.textBoxMumblePath.CustomForeColor = false;
+            this.textBoxMumblePath.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxMumblePath.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
             this.textBoxMumblePath.Location = new System.Drawing.Point(128, 120);
+            this.textBoxMumblePath.Multiline = false;
             this.textBoxMumblePath.Name = "textBoxMumblePath";
             this.textBoxMumblePath.ReadOnly = true;
+            this.textBoxMumblePath.SelectedText = "";
             this.textBoxMumblePath.Size = new System.Drawing.Size(384, 20);
+            this.textBoxMumblePath.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxMumblePath.StyleManager = null;
             this.textBoxMumblePath.TabIndex = 52;
+            this.textBoxMumblePath.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.textBoxMumblePath.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxMumblePath.UseStyleColors = true;
             // 
             // buttonTeamspeak3Path
             // 
@@ -781,11 +875,22 @@ namespace AxTools.Forms
             // 
             // textBoxTeamspeak3Path
             // 
+            this.textBoxTeamspeak3Path.CustomBackground = false;
+            this.textBoxTeamspeak3Path.CustomForeColor = false;
+            this.textBoxTeamspeak3Path.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxTeamspeak3Path.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
             this.textBoxTeamspeak3Path.Location = new System.Drawing.Point(128, 146);
+            this.textBoxTeamspeak3Path.Multiline = false;
             this.textBoxTeamspeak3Path.Name = "textBoxTeamspeak3Path";
             this.textBoxTeamspeak3Path.ReadOnly = true;
+            this.textBoxTeamspeak3Path.SelectedText = "";
             this.textBoxTeamspeak3Path.Size = new System.Drawing.Size(384, 20);
+            this.textBoxTeamspeak3Path.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxTeamspeak3Path.StyleManager = null;
             this.textBoxTeamspeak3Path.TabIndex = 50;
+            this.textBoxTeamspeak3Path.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.textBoxTeamspeak3Path.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxTeamspeak3Path.UseStyleColors = true;
             // 
             // metroLabel4
             // 
@@ -861,6 +966,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage3
             // 
+            this.metroTabPage3.Controls.Add(this.buttonIngameKeyBinds);
             this.metroTabPage3.Controls.Add(this.checkBoxPluginsShowIngameNotifications);
             this.metroTabPage3.Controls.Add(this.GroupBox2);
             this.metroTabPage3.Controls.Add(this.CheckBox6);
@@ -884,6 +990,18 @@ namespace AxTools.Forms
             this.metroTabPage3.VerticalScrollbarBarColor = true;
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
+            // 
+            // buttonIngameKeyBinds
+            // 
+            this.buttonIngameKeyBinds.Highlight = true;
+            this.buttonIngameKeyBinds.Location = new System.Drawing.Point(3, 65);
+            this.buttonIngameKeyBinds.Name = "buttonIngameKeyBinds";
+            this.buttonIngameKeyBinds.Size = new System.Drawing.Size(137, 23);
+            this.buttonIngameKeyBinds.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonIngameKeyBinds.StyleManager = null;
+            this.buttonIngameKeyBinds.TabIndex = 56;
+            this.buttonIngameKeyBinds.Text = "Ingame key binds...";
+            this.buttonIngameKeyBinds.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // checkBoxPluginsShowIngameNotifications
             // 
@@ -957,15 +1075,9 @@ namespace AxTools.Forms
             this.metroComboBoxBackupCompressionLevel.Name = "metroComboBoxBackupCompressionLevel";
             this.metroComboBoxBackupCompressionLevel.Size = new System.Drawing.Size(152, 25);
             this.metroComboBoxBackupCompressionLevel.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroComboBoxBackupCompressionLevel.StyleManager = this.styleManager;
+            this.metroComboBoxBackupCompressionLevel.StyleManager = null;
             this.metroComboBoxBackupCompressionLevel.TabIndex = 55;
             this.metroComboBoxBackupCompressionLevel.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // styleManager
-            // 
-            this.styleManager.OwnerForm = this;
-            this.styleManager.Style = MetroFramework.MetroColorStyle.Blue;
-            this.styleManager.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // metroLabel9
             // 
@@ -1018,11 +1130,22 @@ namespace AxTools.Forms
             // 
             // textBoxBackupPath
             // 
+            this.textBoxBackupPath.CustomBackground = false;
+            this.textBoxBackupPath.CustomForeColor = false;
+            this.textBoxBackupPath.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxBackupPath.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
             this.textBoxBackupPath.Location = new System.Drawing.Point(128, 69);
+            this.textBoxBackupPath.Multiline = false;
             this.textBoxBackupPath.Name = "textBoxBackupPath";
             this.textBoxBackupPath.ReadOnly = true;
+            this.textBoxBackupPath.SelectedText = "";
             this.textBoxBackupPath.Size = new System.Drawing.Size(384, 20);
+            this.textBoxBackupPath.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxBackupPath.StyleManager = null;
             this.textBoxBackupPath.TabIndex = 48;
+            this.textBoxBackupPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.textBoxBackupPath.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxBackupPath.UseStyleColors = true;
             // 
             // metroTabPage2
             // 
@@ -1052,6 +1175,42 @@ namespace AxTools.Forms
             this.metroTabPage2.VerticalScrollbarBarColor = true;
             this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.VerticalScrollbarSize = 10;
+            // 
+            // buttonPluginsHotkey
+            // 
+            this.buttonPluginsHotkey.Highlight = true;
+            this.buttonPluginsHotkey.Location = new System.Drawing.Point(336, 89);
+            this.buttonPluginsHotkey.Name = "buttonPluginsHotkey";
+            this.buttonPluginsHotkey.Size = new System.Drawing.Size(61, 23);
+            this.buttonPluginsHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonPluginsHotkey.StyleManager = null;
+            this.buttonPluginsHotkey.TabIndex = 57;
+            this.buttonPluginsHotkey.Text = "Clear";
+            this.buttonPluginsHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // buttonLuaHotkey
+            // 
+            this.buttonLuaHotkey.Highlight = true;
+            this.buttonLuaHotkey.Location = new System.Drawing.Point(336, 54);
+            this.buttonLuaHotkey.Name = "buttonLuaHotkey";
+            this.buttonLuaHotkey.Size = new System.Drawing.Size(61, 23);
+            this.buttonLuaHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonLuaHotkey.StyleManager = null;
+            this.buttonLuaHotkey.TabIndex = 56;
+            this.buttonLuaHotkey.Text = "Clear";
+            this.buttonLuaHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // buttonClickerHotkey
+            // 
+            this.buttonClickerHotkey.Highlight = true;
+            this.buttonClickerHotkey.Location = new System.Drawing.Point(336, 19);
+            this.buttonClickerHotkey.Name = "buttonClickerHotkey";
+            this.buttonClickerHotkey.Size = new System.Drawing.Size(61, 23);
+            this.buttonClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonClickerHotkey.StyleManager = null;
+            this.buttonClickerHotkey.TabIndex = 55;
+            this.buttonClickerHotkey.Text = "Clear";
+            this.buttonClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // textBoxPluginsHotkey
             // 
@@ -1111,11 +1270,13 @@ namespace AxTools.Forms
             // metroTabPage7
             // 
             this.metroTabPage7.Controls.Add(this.metroLabel14);
+            this.metroTabPage7.Controls.Add(this.metroLabel8);
+            this.metroTabPage7.Controls.Add(this.metroLabel7);
+            this.metroTabPage7.Controls.Add(this.textBoxVeryBadNetworkStatusPing);
+            this.metroTabPage7.Controls.Add(this.textBoxVeryBadNetworkStatusProcent);
+            this.metroTabPage7.Controls.Add(this.textBoxBadNetworkStatusPing);
+            this.metroTabPage7.Controls.Add(this.textBoxBadNetworkStatusProcent);
             this.metroTabPage7.Controls.Add(this.metroLabel13);
-            this.metroTabPage7.Controls.Add(this.comboBoxVeryBadNetworkStatusPing);
-            this.metroTabPage7.Controls.Add(this.comboBoxBadNetworkStatusPing);
-            this.metroTabPage7.Controls.Add(this.comboBoxVeryBadNetworkStatusProcent);
-            this.metroTabPage7.Controls.Add(this.comboBoxBadNetworkStatusProcent);
             this.metroTabPage7.Controls.Add(this.metroLabel12);
             this.metroTabPage7.Controls.Add(this.metroLabel11);
             this.metroTabPage7.Controls.Add(this.ComboBox_server_ip);
@@ -1146,15 +1307,131 @@ namespace AxTools.Forms
             this.metroLabel14.FontSize = MetroFramework.MetroLabelSize.Medium;
             this.metroLabel14.FontWeight = MetroFramework.MetroLabelWeight.Light;
             this.metroLabel14.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel14.Location = new System.Drawing.Point(339, 99);
+            this.metroLabel14.Location = new System.Drawing.Point(388, 100);
             this.metroLabel14.Name = "metroLabel14";
-            this.metroLabel14.Size = new System.Drawing.Size(22, 19);
+            this.metroLabel14.Size = new System.Drawing.Size(26, 19);
             this.metroLabel14.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroLabel14.StyleManager = null;
-            this.metroLabel14.TabIndex = 50;
-            this.metroLabel14.Text = "or";
+            this.metroLabel14.TabIndex = 57;
+            this.metroLabel14.Text = "ms";
             this.metroLabel14.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLabel14.UseStyleColors = true;
+            // 
+            // metroLabel8
+            // 
+            this.metroLabel8.AutoSize = true;
+            this.metroLabel8.CustomBackground = false;
+            this.metroLabel8.CustomForeColor = false;
+            this.metroLabel8.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.metroLabel8.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.metroLabel8.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.metroLabel8.Location = new System.Drawing.Point(309, 100);
+            this.metroLabel8.Name = "metroLabel8";
+            this.metroLabel8.Size = new System.Drawing.Size(37, 19);
+            this.metroLabel8.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroLabel8.StyleManager = null;
+            this.metroLabel8.TabIndex = 56;
+            this.metroLabel8.Text = "% or";
+            this.metroLabel8.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroLabel8.UseStyleColors = true;
+            // 
+            // metroLabel7
+            // 
+            this.metroLabel7.AutoSize = true;
+            this.metroLabel7.CustomBackground = false;
+            this.metroLabel7.CustomForeColor = false;
+            this.metroLabel7.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.metroLabel7.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.metroLabel7.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.metroLabel7.Location = new System.Drawing.Point(388, 69);
+            this.metroLabel7.Name = "metroLabel7";
+            this.metroLabel7.Size = new System.Drawing.Size(26, 19);
+            this.metroLabel7.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroLabel7.StyleManager = null;
+            this.metroLabel7.TabIndex = 55;
+            this.metroLabel7.Text = "ms";
+            this.metroLabel7.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroLabel7.UseStyleColors = true;
+            // 
+            // textBoxVeryBadNetworkStatusPing
+            // 
+            this.textBoxVeryBadNetworkStatusPing.CustomBackground = false;
+            this.textBoxVeryBadNetworkStatusPing.CustomForeColor = false;
+            this.textBoxVeryBadNetworkStatusPing.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxVeryBadNetworkStatusPing.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
+            this.textBoxVeryBadNetworkStatusPing.Location = new System.Drawing.Point(348, 99);
+            this.textBoxVeryBadNetworkStatusPing.Multiline = false;
+            this.textBoxVeryBadNetworkStatusPing.Name = "textBoxVeryBadNetworkStatusPing";
+            this.textBoxVeryBadNetworkStatusPing.ReadOnly = false;
+            this.textBoxVeryBadNetworkStatusPing.SelectedText = "";
+            this.textBoxVeryBadNetworkStatusPing.Size = new System.Drawing.Size(40, 23);
+            this.textBoxVeryBadNetworkStatusPing.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxVeryBadNetworkStatusPing.StyleManager = null;
+            this.textBoxVeryBadNetworkStatusPing.TabIndex = 54;
+            this.textBoxVeryBadNetworkStatusPing.Text = "9999";
+            this.textBoxVeryBadNetworkStatusPing.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxVeryBadNetworkStatusPing.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxVeryBadNetworkStatusPing.UseStyleColors = true;
+            // 
+            // textBoxVeryBadNetworkStatusProcent
+            // 
+            this.textBoxVeryBadNetworkStatusProcent.CustomBackground = false;
+            this.textBoxVeryBadNetworkStatusProcent.CustomForeColor = false;
+            this.textBoxVeryBadNetworkStatusProcent.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxVeryBadNetworkStatusProcent.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
+            this.textBoxVeryBadNetworkStatusProcent.Location = new System.Drawing.Point(280, 99);
+            this.textBoxVeryBadNetworkStatusProcent.Multiline = false;
+            this.textBoxVeryBadNetworkStatusProcent.Name = "textBoxVeryBadNetworkStatusProcent";
+            this.textBoxVeryBadNetworkStatusProcent.ReadOnly = false;
+            this.textBoxVeryBadNetworkStatusProcent.SelectedText = "";
+            this.textBoxVeryBadNetworkStatusProcent.Size = new System.Drawing.Size(29, 23);
+            this.textBoxVeryBadNetworkStatusProcent.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxVeryBadNetworkStatusProcent.StyleManager = null;
+            this.textBoxVeryBadNetworkStatusProcent.TabIndex = 53;
+            this.textBoxVeryBadNetworkStatusProcent.Text = "100";
+            this.textBoxVeryBadNetworkStatusProcent.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxVeryBadNetworkStatusProcent.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxVeryBadNetworkStatusProcent.UseStyleColors = true;
+            // 
+            // textBoxBadNetworkStatusPing
+            // 
+            this.textBoxBadNetworkStatusPing.CustomBackground = false;
+            this.textBoxBadNetworkStatusPing.CustomForeColor = false;
+            this.textBoxBadNetworkStatusPing.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxBadNetworkStatusPing.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
+            this.textBoxBadNetworkStatusPing.Location = new System.Drawing.Point(348, 68);
+            this.textBoxBadNetworkStatusPing.Multiline = false;
+            this.textBoxBadNetworkStatusPing.Name = "textBoxBadNetworkStatusPing";
+            this.textBoxBadNetworkStatusPing.ReadOnly = false;
+            this.textBoxBadNetworkStatusPing.SelectedText = "";
+            this.textBoxBadNetworkStatusPing.Size = new System.Drawing.Size(40, 23);
+            this.textBoxBadNetworkStatusPing.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxBadNetworkStatusPing.StyleManager = null;
+            this.textBoxBadNetworkStatusPing.TabIndex = 52;
+            this.textBoxBadNetworkStatusPing.Text = "9999";
+            this.textBoxBadNetworkStatusPing.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxBadNetworkStatusPing.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxBadNetworkStatusPing.UseStyleColors = true;
+            // 
+            // textBoxBadNetworkStatusProcent
+            // 
+            this.textBoxBadNetworkStatusProcent.CustomBackground = false;
+            this.textBoxBadNetworkStatusProcent.CustomForeColor = false;
+            this.textBoxBadNetworkStatusProcent.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxBadNetworkStatusProcent.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
+            this.textBoxBadNetworkStatusProcent.Location = new System.Drawing.Point(280, 68);
+            this.textBoxBadNetworkStatusProcent.Multiline = false;
+            this.textBoxBadNetworkStatusProcent.Name = "textBoxBadNetworkStatusProcent";
+            this.textBoxBadNetworkStatusProcent.ReadOnly = false;
+            this.textBoxBadNetworkStatusProcent.SelectedText = "";
+            this.textBoxBadNetworkStatusProcent.Size = new System.Drawing.Size(29, 23);
+            this.textBoxBadNetworkStatusProcent.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxBadNetworkStatusProcent.StyleManager = null;
+            this.textBoxBadNetworkStatusProcent.TabIndex = 51;
+            this.textBoxBadNetworkStatusProcent.Text = "100";
+            this.textBoxBadNetworkStatusProcent.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxBadNetworkStatusProcent.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxBadNetworkStatusProcent.UseStyleColors = true;
             // 
             // metroLabel13
             // 
@@ -1164,79 +1441,15 @@ namespace AxTools.Forms
             this.metroLabel13.FontSize = MetroFramework.MetroLabelSize.Medium;
             this.metroLabel13.FontWeight = MetroFramework.MetroLabelWeight.Light;
             this.metroLabel13.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel13.Location = new System.Drawing.Point(339, 68);
+            this.metroLabel13.Location = new System.Drawing.Point(309, 69);
             this.metroLabel13.Name = "metroLabel13";
-            this.metroLabel13.Size = new System.Drawing.Size(22, 19);
+            this.metroLabel13.Size = new System.Drawing.Size(37, 19);
             this.metroLabel13.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroLabel13.StyleManager = null;
             this.metroLabel13.TabIndex = 49;
-            this.metroLabel13.Text = "or";
+            this.metroLabel13.Text = "% or";
             this.metroLabel13.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLabel13.UseStyleColors = true;
-            // 
-            // comboBoxVeryBadNetworkStatusPing
-            // 
-            this.comboBoxVeryBadNetworkStatusPing.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxVeryBadNetworkStatusPing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxVeryBadNetworkStatusPing.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.comboBoxVeryBadNetworkStatusPing.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxVeryBadNetworkStatusPing.FormattingEnabled = true;
-            this.comboBoxVeryBadNetworkStatusPing.ItemHeight = 19;
-            this.comboBoxVeryBadNetworkStatusPing.Location = new System.Drawing.Point(367, 96);
-            this.comboBoxVeryBadNetworkStatusPing.Name = "comboBoxVeryBadNetworkStatusPing";
-            this.comboBoxVeryBadNetworkStatusPing.Size = new System.Drawing.Size(75, 25);
-            this.comboBoxVeryBadNetworkStatusPing.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxVeryBadNetworkStatusPing.StyleManager = null;
-            this.comboBoxVeryBadNetworkStatusPing.TabIndex = 48;
-            this.comboBoxVeryBadNetworkStatusPing.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // comboBoxBadNetworkStatusPing
-            // 
-            this.comboBoxBadNetworkStatusPing.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxBadNetworkStatusPing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxBadNetworkStatusPing.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.comboBoxBadNetworkStatusPing.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxBadNetworkStatusPing.FormattingEnabled = true;
-            this.comboBoxBadNetworkStatusPing.ItemHeight = 19;
-            this.comboBoxBadNetworkStatusPing.Location = new System.Drawing.Point(367, 65);
-            this.comboBoxBadNetworkStatusPing.Name = "comboBoxBadNetworkStatusPing";
-            this.comboBoxBadNetworkStatusPing.Size = new System.Drawing.Size(75, 25);
-            this.comboBoxBadNetworkStatusPing.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxBadNetworkStatusPing.StyleManager = null;
-            this.comboBoxBadNetworkStatusPing.TabIndex = 47;
-            this.comboBoxBadNetworkStatusPing.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // comboBoxVeryBadNetworkStatusProcent
-            // 
-            this.comboBoxVeryBadNetworkStatusProcent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxVeryBadNetworkStatusProcent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxVeryBadNetworkStatusProcent.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.comboBoxVeryBadNetworkStatusProcent.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxVeryBadNetworkStatusProcent.FormattingEnabled = true;
-            this.comboBoxVeryBadNetworkStatusProcent.ItemHeight = 19;
-            this.comboBoxVeryBadNetworkStatusProcent.Location = new System.Drawing.Point(280, 96);
-            this.comboBoxVeryBadNetworkStatusProcent.Name = "comboBoxVeryBadNetworkStatusProcent";
-            this.comboBoxVeryBadNetworkStatusProcent.Size = new System.Drawing.Size(53, 25);
-            this.comboBoxVeryBadNetworkStatusProcent.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxVeryBadNetworkStatusProcent.StyleManager = null;
-            this.comboBoxVeryBadNetworkStatusProcent.TabIndex = 46;
-            this.comboBoxVeryBadNetworkStatusProcent.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // comboBoxBadNetworkStatusProcent
-            // 
-            this.comboBoxBadNetworkStatusProcent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxBadNetworkStatusProcent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxBadNetworkStatusProcent.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.comboBoxBadNetworkStatusProcent.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.comboBoxBadNetworkStatusProcent.FormattingEnabled = true;
-            this.comboBoxBadNetworkStatusProcent.ItemHeight = 19;
-            this.comboBoxBadNetworkStatusProcent.Location = new System.Drawing.Point(280, 65);
-            this.comboBoxBadNetworkStatusProcent.Name = "comboBoxBadNetworkStatusProcent";
-            this.comboBoxBadNetworkStatusProcent.Size = new System.Drawing.Size(53, 25);
-            this.comboBoxBadNetworkStatusProcent.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxBadNetworkStatusProcent.StyleManager = null;
-            this.comboBoxBadNetworkStatusProcent.TabIndex = 45;
-            this.comboBoxBadNetworkStatusProcent.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // metroLabel12
             // 
@@ -1330,47 +1543,10 @@ namespace AxTools.Forms
             this.linkTitle.Name = "linkTitle";
             this.linkTitle.Size = new System.Drawing.Size(55, 23);
             this.linkTitle.Style = MetroFramework.MetroColorStyle.Blue;
-            this.linkTitle.StyleManager = this.styleManager;
             this.linkTitle.TabIndex = 70;
             this.linkTitle.Text = "Settings";
             this.linkTitle.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkTitle.UseStyleColors = true;
-            // 
-            // buttonClickerHotkey
-            // 
-            this.buttonClickerHotkey.Highlight = true;
-            this.buttonClickerHotkey.Location = new System.Drawing.Point(336, 19);
-            this.buttonClickerHotkey.Name = "buttonClickerHotkey";
-            this.buttonClickerHotkey.Size = new System.Drawing.Size(61, 23);
-            this.buttonClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonClickerHotkey.StyleManager = null;
-            this.buttonClickerHotkey.TabIndex = 55;
-            this.buttonClickerHotkey.Text = "Clear";
-            this.buttonClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // buttonLuaHotkey
-            // 
-            this.buttonLuaHotkey.Highlight = true;
-            this.buttonLuaHotkey.Location = new System.Drawing.Point(336, 54);
-            this.buttonLuaHotkey.Name = "buttonLuaHotkey";
-            this.buttonLuaHotkey.Size = new System.Drawing.Size(61, 23);
-            this.buttonLuaHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonLuaHotkey.StyleManager = null;
-            this.buttonLuaHotkey.TabIndex = 56;
-            this.buttonLuaHotkey.Text = "Clear";
-            this.buttonLuaHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // buttonPluginsHotkey
-            // 
-            this.buttonPluginsHotkey.Highlight = true;
-            this.buttonPluginsHotkey.Location = new System.Drawing.Point(336, 89);
-            this.buttonPluginsHotkey.Name = "buttonPluginsHotkey";
-            this.buttonPluginsHotkey.Size = new System.Drawing.Size(61, 23);
-            this.buttonPluginsHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonPluginsHotkey.StyleManager = null;
-            this.buttonPluginsHotkey.TabIndex = 57;
-            this.buttonPluginsHotkey.Text = "Clear";
-            this.buttonPluginsHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // AppSettings
             // 
@@ -1385,7 +1561,6 @@ namespace AxTools.Forms
             this.Name = "AppSettings";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 10);
             this.Resizable = false;
-            this.StyleManager = this.styleManager;
             this.Text = "Settings";
             this.GroupBox2.ResumeLayout(false);
             this.GroupBox2.PerformLayout();
@@ -1411,18 +1586,18 @@ namespace AxTools.Forms
 
         }
         private MetroCheckBox checkBox_AntiAFK;
-        private System.Windows.Forms.TextBox textBoxVentriloPath;
+        private MetroTextboxExt textBoxVentriloPath;
         private MetroButton buttonVentriloPath;
         private MetroCheckBox CheckBoxStartAxToolsWithWindows;
         private MetroCheckBox CheckBox7;
         private System.Windows.Forms.GroupBox GroupBox2;
-        private System.Windows.Forms.TextBox TextBox4;
-        private System.Windows.Forms.TextBox TextBox5;
+        private MetroTextboxExt TextBox4;
+        private MetroTextboxExt TextBox5;
         private MetroLabel Label5;
         private MetroLabel Label6;
         private System.Windows.Forms.GroupBox GroupBox1;
-        private System.Windows.Forms.TextBox TextBox6;
-        private System.Windows.Forms.TextBox TextBox7;
+        private MetroTextboxExt TextBox6;
+        private MetroTextboxExt TextBox7;
         private MetroLabel Label7;
         private MetroLabel Label8;
         private MetroCheckBox CheckBox6;
@@ -1447,23 +1622,22 @@ namespace AxTools.Forms
         private MetroLabel metroLabel1;
         private MetroLabel metroLabel6;
         private MetroButton buttonBackupPath;
-        private System.Windows.Forms.TextBox textBoxBackupPath;
+        private MetroTextboxExt textBoxBackupPath;
         private MetroButton buttonRaidcallPath;
-        private System.Windows.Forms.TextBox textBoxRaidcallPath;
+        private MetroTextboxExt textBoxRaidcallPath;
         private MetroButton buttonMumblePath;
-        private System.Windows.Forms.TextBox textBoxMumblePath;
+        private MetroTextboxExt textBoxMumblePath;
         private MetroButton buttonTeamspeak3Path;
-        private System.Windows.Forms.TextBox textBoxTeamspeak3Path;
+        private MetroTextboxExt textBoxTeamspeak3Path;
         private MetroLabel metroLabel4;
         private MetroLabel metroLabel3;
         private MetroLabel metroLabel2;
-        private MetroStyleManager styleManager;
         private MetroToolTip toolTip;
         private MetroComboBox metroComboBoxBackupCompressionLevel;
         private MetroLabel metroLabel9;
         private MetroLabel metroLabel5;
         private MetroButton buttonWowPath;
-        private System.Windows.Forms.TextBox textBoxWowPath;
+        private MetroTextboxExt textBoxWowPath;
         private MetroLabel metroLabel10;
         private MetroComboBox metroComboBoxStyle;
         private MetroLink linkShowLog;
@@ -1471,13 +1645,8 @@ namespace AxTools.Forms
         private MetroTabPage metroTabPage7;
         private MetroComboBox ComboBox_server_ip;
         private MetroLabel Label3;
-        private MetroComboBox comboBoxBadNetworkStatusProcent;
         private MetroLabel metroLabel12;
         private MetroLabel metroLabel11;
-        private MetroComboBox comboBoxVeryBadNetworkStatusPing;
-        private MetroComboBox comboBoxBadNetworkStatusPing;
-        private MetroComboBox comboBoxVeryBadNetworkStatusProcent;
-        private MetroLabel metroLabel14;
         private MetroLabel metroLabel13;
         private MetroCheckBox checkBoxMinimizeToTray;
         private MetroLink linkTitle;
@@ -1488,5 +1657,13 @@ namespace AxTools.Forms
         private MetroButton buttonPluginsHotkey;
         private MetroButton buttonLuaHotkey;
         private MetroButton buttonClickerHotkey;
+        private MetroTextboxExt textBoxVeryBadNetworkStatusPing;
+        private MetroTextboxExt textBoxVeryBadNetworkStatusProcent;
+        private MetroTextboxExt textBoxBadNetworkStatusPing;
+        private MetroTextboxExt textBoxBadNetworkStatusProcent;
+        private MetroLabel metroLabel14;
+        private MetroLabel metroLabel8;
+        private MetroLabel metroLabel7;
+        private MetroButton buttonIngameKeyBinds;
     }
 }

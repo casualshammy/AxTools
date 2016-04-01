@@ -110,6 +110,11 @@ namespace AxTools.WoW.Management.ObjectManager
             }
         }
 
+        public bool Alive
+        {
+            get { return Health > 1; }
+        }
+
         private int lootable = -1;
         public bool Lootable
         {
@@ -121,6 +126,20 @@ namespace AxTools.WoW.Management.ObjectManager
                     lootable = dynamicFlags[0x2] ? 1 : 0;
                 }
                 return lootable != 0;
+            }
+        }
+
+        private uint mEntryID;
+        internal uint EntryID
+        {
+            get
+            {
+                if (mEntryID == 0)
+                {
+                    IntPtr descriptors = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
+                    mEntryID = WoWManager.WoWProcess.Memory.Read<uint>(descriptors + WowBuildInfoX64.GameObjectEntryID);
+                }
+                return mEntryID;
             }
         }
 

@@ -19,7 +19,6 @@ namespace AxTools.WoW.PluginSystem
         // Methods
         public CodeCompiler(string path)
         {
-            DeleteOldAssemblies();
             CompilerVersion = 4f;
             SourceFilePaths = new List<string>();
             string hash = null;
@@ -43,7 +42,9 @@ namespace AxTools.WoW.PluginSystem
             string str = "BW_" + Assembly.GetEntryAssembly().GetName().Version.Revision;
             Options.CompilerOptions = string.Format("/d:BW;{0} /unsafe", str);
             Options.TempFiles = new TempFileCollection(Path.GetTempPath());
-            Options.OutputAssembly = Path.Combine(Globals.PluginsAssembliesPath, (hash ?? Utils.GetRandomString(16)) + ".dll");
+            string assemblyPath = Path.Combine(Globals.PluginsAssembliesPath, (hash ?? Utils.GetRandomString(16)) + ".dll");
+            DeleteOldAssembly(assemblyPath);
+            Options.OutputAssembly = assemblyPath;
             CompiledToLocation = Options.OutputAssembly;
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -107,7 +108,7 @@ namespace AxTools.WoW.PluginSystem
             }
         }
 
-        public static void DeleteOldAssemblies()
+        private static void DeleteOldAssembly(string filepath)
         {
             if (!Directory.Exists(Globals.PluginsAssembliesPath))
             {
@@ -115,15 +116,9 @@ namespace AxTools.WoW.PluginSystem
             }
             else
             {
-                foreach (string str in Directory.GetFiles(Globals.PluginsAssembliesPath))
+                if (File.Exists(filepath))
                 {
-                    try
-                    {
-                        File.Delete(str);
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                    }
+                    File.Delete(filepath);
                 }
             }
         }

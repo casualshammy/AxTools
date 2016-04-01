@@ -24,6 +24,13 @@ namespace AxTools.Helpers
         {
             _timer.Elapsed += TimerOnElapsed;
             _timer.Start();
+            Program.Exit += Application_ApplicationExit;
+        }
+
+        private static void Application_ApplicationExit()
+        {
+            Program.Exit -= Application_ApplicationExit;
+            TimerOnElapsed(null, null);
         }
 
         internal static void Info(string text)

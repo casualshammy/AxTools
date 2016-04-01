@@ -43,22 +43,22 @@ namespace AxTools.WoW
                             {
                                 foreach (char ch in wowAccount.Login)
                                 {
-                                    NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
+                                    NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
                                     Thread.Sleep(5);
                                 }
                                 IntPtr tabCode = new IntPtr(0x09);
-                                NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYDOWN, tabCode, IntPtr.Zero);
-                                NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYUP, tabCode, IntPtr.Zero);
+                                NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, tabCode, IntPtr.Zero);
+                                NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, tabCode, IntPtr.Zero);
                                 Thread.Sleep(5);
                                 foreach (char ch in wowAccount.Password)
                                 {
-                                    NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
+                                    NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
                                     Thread.Sleep(5);
                                 }
                                 IntPtr enterCode = new IntPtr(0x0D);
-                                NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYDOWN, enterCode, IntPtr.Zero);
-                                NativeMethods.PostMessage(wowProcess.MainWindowHandle, WM_MESSAGE.WM_KEYUP, enterCode, IntPtr.Zero);
-                                Log.Info(string.Format("{0}:{1} :: [Account manager] Credendials have been entered [{2}]", wowProcess.ProcessName, wowProcess.ProcessID, wowAccount.Login));
+                                NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, enterCode, IntPtr.Zero);
+                                NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, enterCode, IntPtr.Zero);
+                                Log.Info(string.Format("{0} [Account manager] Credendials have been entered [{1}]", wowProcess, wowAccount.Login));
                                 break;
                             }
                         }

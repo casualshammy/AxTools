@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,7 +69,7 @@ namespace AxTools.Helpers
                 {
                     using (Ping ping = new Ping())
                     {
-                        PingReply pingReply = ping.Send("google.com", 2000);
+                        PingReply pingReply = ping.Send("8.8.8.8", 2000);
                         return pingReply != null && (pingReply.Status == IPStatus.Success);
                     }
                 }
@@ -102,6 +103,8 @@ namespace AxTools.Helpers
             }
         }
 
+        [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
+        [Obfuscation(Exclude = false, Feature = "constants")]
         internal static string GetComputerHID()
         {
             string processorID = "";
@@ -109,12 +112,16 @@ namespace AxTools.Helpers
             string motherboardID = "";
             try
             {
-                ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select * From Win32_processor");
-                ManagementObjectCollection mbsList = mbs.Get();
-                foreach (ManagementObject mo in mbsList.Cast<ManagementObject>())
+                using (ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select * From Win32_processor"))
                 {
-                    processorID = mo["ProcessorID"].ToString();
-                    break;
+                    using (ManagementObjectCollection mbsList = mbs.Get())
+                    {
+                        foreach (ManagementObject mo in mbsList.Cast<ManagementObject>())
+                        {
+                            processorID = mo["ProcessorID"].ToString();
+                            break;
+                        }
+                    }
                 }
             }
             catch
@@ -123,9 +130,11 @@ namespace AxTools.Helpers
             }
             try
             {
-                ManagementObject dsk = new ManagementObject(@"win32_logicaldisk.deviceid=""c:""");
-                dsk.Get();
-                diskID = dsk["VolumeSerialNumber"].ToString();
+                using (ManagementObject dsk = new ManagementObject(@"win32_logicaldisk.deviceid=""c:"""))
+                {
+                    dsk.Get();
+                    diskID = dsk["VolumeSerialNumber"].ToString();
+                }
             }
             catch
             {
@@ -133,12 +142,16 @@ namespace AxTools.Helpers
             }
             try
             {
-                ManagementObjectSearcher mos = new ManagementObjectSearcher("SELECT * FROM Win32_BaseBoard");
-                ManagementObjectCollection moc = mos.Get();
-                foreach (ManagementObject mo in moc.Cast<ManagementObject>())
+                using (ManagementObjectSearcher mos = new ManagementObjectSearcher("SELECT * FROM Win32_BaseBoard"))
                 {
-                    motherboardID = mo["SerialNumber"].ToString();
-                    break;
+                    using (ManagementObjectCollection moc = mos.Get())
+                    {
+                        foreach (ManagementObject mo in moc.Cast<ManagementObject>())
+                        {
+                            motherboardID = mo["SerialNumber"].ToString();
+                            break;
+                        }
+                    }
                 }
             }
             catch

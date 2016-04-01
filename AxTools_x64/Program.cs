@@ -12,6 +12,8 @@ namespace AxTools
 {
     internal static class Program
     {
+        internal static event Action Exit;
+
         [STAThread]
         private static void Main()
         {
@@ -42,6 +44,10 @@ namespace AxTools
                         Log.Info(string.Format("[AxTools] Starting application... ({0})", Globals.AppVersion));
                         Application.Run(MainForm.Instance = new MainForm());
                         Log.Info("[AxTools] Application is closed");
+                        if (Exit != null)
+                        {
+                            Exit();
+                        }
                     }
                     else
                     {

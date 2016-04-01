@@ -7,7 +7,7 @@ namespace AxTools.WoW.Management.ObjectManager
     /// <summary>
     ///     World of Warcraft game object
     /// </summary>
-    public sealed class WowObject
+    public class WowObject
     {
         internal WowObject(IntPtr pAddress)
         {
@@ -66,7 +66,8 @@ namespace AxTools.WoW.Management.ObjectManager
         }
 
         private uint mEntryID;
-        internal uint EntryID
+
+        public uint EntryID
         {
             get
             {

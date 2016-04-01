@@ -31,7 +31,6 @@ namespace AxTools.Forms
         private void InitializeComponent()
         {
             this.comboBox1 = new MetroFramework.Controls.MetroComboBox();
-            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             this.button1 = new MetroFramework.Controls.MetroButton();
             this.button2 = new MetroFramework.Controls.MetroButton();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
@@ -49,16 +48,9 @@ namespace AxTools.Forms
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(206, 25);
             this.comboBox1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBox1.StyleManager = this.metroStyleManager1;
             this.comboBox1.TabIndex = 0;
             this.comboBox1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.ComboBox1SelectedIndexChanged);
-            // 
-            // metroStyleManager1
-            // 
-            this.metroStyleManager1.OwnerForm = this;
-            this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // button1
             // 
@@ -67,7 +59,6 @@ namespace AxTools.Forms
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.button1.StyleManager = this.metroStyleManager1;
             this.button1.TabIndex = 1;
             this.button1.Text = "Select";
             this.button1.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -80,7 +71,6 @@ namespace AxTools.Forms
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.Style = MetroFramework.MetroColorStyle.Blue;
-            this.button2.StyleManager = this.metroStyleManager1;
             this.button2.TabIndex = 2;
             this.button2.Text = "Flash";
             this.button2.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -98,7 +88,6 @@ namespace AxTools.Forms
             this.metroLabel1.Name = "metroLabel1";
             this.metroLabel1.Size = new System.Drawing.Size(144, 19);
             this.metroLabel1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel1.StyleManager = this.metroStyleManager1;
             this.metroLabel1.TabIndex = 3;
             this.metroLabel1.Text = "Select process to inject:";
             this.metroLabel1.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -120,7 +109,6 @@ namespace AxTools.Forms
             this.Resizable = false;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StyleManager = this.metroStyleManager1;
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -131,7 +119,6 @@ namespace AxTools.Forms
         private MetroFramework.Controls.MetroComboBox comboBox1;
         private MetroFramework.Controls.MetroButton button1;
         private MetroFramework.Controls.MetroButton button2;
-        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
         private MetroLabel metroLabel1;
 
     }

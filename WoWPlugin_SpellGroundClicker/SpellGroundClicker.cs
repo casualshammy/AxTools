@@ -38,7 +38,7 @@ namespace WoWPlugin_SpellGroundClicker
         public void OnStart()
         {
             clickPoint = WinAPI.GetCursorPosition();
-            (timer = this.CreateTimer(250, OnElapsed)).Start();
+            (timer = this.CreateTimer(1000, OnElapsed)).Start();
         }
 
         public void OnStop()
@@ -48,18 +48,14 @@ namespace WoWPlugin_SpellGroundClicker
 
         private void OnElapsed()
         {
-            string p = GameFunctions.Lua_GetFunctionReturn("tostring(select(1, GetSpellCooldown(\"" + spellName + "\")))");
-            if (p == "0")
+            WoWPlayerMe localPlayer = ObjMgr.Pulse();
+            if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
             {
-                WoWPlayerMe localPlayer = ObjMgr.Pulse();
-                if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
-                {
-                    GameFunctions.Lua_DoString("CastSpellByName(\"" + spellName + "\")");
-                    Thread.Sleep(250);
-                    WinAPI.SetCursorPosition(clickPoint);
-                    WinAPI.MouseEvent(WinAPI.MouseEventFlags.LeftDown | WinAPI.MouseEventFlags.LeftUp);
-                    Thread.Sleep(1000);
-                }
+                GameFunctions.CastSpellByName(spellName);
+                Thread.Sleep(250);
+                WinAPI.SetCursorPosition(clickPoint);
+                WinAPI.MouseEvent(WinAPI.MouseEventFlags.LeftDown | WinAPI.MouseEventFlags.LeftUp);
+                Thread.Sleep(1000);
             }
         }
 

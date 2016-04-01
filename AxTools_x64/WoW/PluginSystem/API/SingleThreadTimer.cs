@@ -28,10 +28,14 @@ namespace AxTools.WoW.PluginSystem.API
         {
             lock (_lock)
             {
-                thread = new Thread(Loop) { IsBackground = true };
-                balancingStopwatch = new Stopwatch();
-                flag = true;
-                thread.Start();
+                if (thread == null)
+                {
+                    thread = new Thread(Loop) { IsBackground = true};
+                    thread.SetApartmentState(ApartmentState.STA);
+                    balancingStopwatch = new Stopwatch();
+                    flag = true;
+                    thread.Start();
+                }
             }
         }
 
@@ -39,12 +43,15 @@ namespace AxTools.WoW.PluginSystem.API
         {
             lock (_lock)
             {
-                flag = false;
-                if (!thread.Join(5000))
+                if (thread != null)
                 {
-                    throw new Exception(string.Format("{0}:{1} :: [{2}] SingleThreadTimer: Can't stop!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? ""));
+                    flag = false;
+                    if (!thread.Join(5000))
+                    {
+                        throw new Exception(string.Format("{0}:{1} :: [{2}] SingleThreadTimer: Can't stop!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? ""));
+                    }
+                    thread = null;
                 }
-                thread = null;
             }
         }
 

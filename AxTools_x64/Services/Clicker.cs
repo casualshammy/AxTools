@@ -62,8 +62,8 @@ namespace AxTools.Services
 
         private static void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            NativeMethods.PostMessage(Handle, WM_MESSAGE.WM_KEYDOWN, _key, IntPtr.Zero);
-            NativeMethods.PostMessage(Handle, WM_MESSAGE.WM_KEYUP, _key, IntPtr.Zero);
+            NativeMethods.PostMessage(Handle, Win32Consts.WM_KEYDOWN, _key, IntPtr.Zero);
+            NativeMethods.PostMessage(Handle, Win32Consts.WM_KEYUP, _key, IntPtr.Zero);
         }
 
         private static void KeyboardListener2_KeyPressed(Keys obj)
@@ -80,7 +80,7 @@ namespace AxTools.Services
                     Stop();
                     WowProcess cProcess = WoWProcessManager.List.FirstOrDefault(i => i.MainWindowHandle == Handle);
                     Log.Info(cProcess != null
-                        ? string.Format("{0}:{1} :: [Clicker] Disabled", cProcess.ProcessName, cProcess.ProcessID)
+                        ? string.Format("{0} [Clicker] Disabled", cProcess)
                         : "UNKNOWN:null :: [Clicker] Disabled");
                 }
                 else
@@ -89,8 +89,7 @@ namespace AxTools.Services
                     if (cProcess != null)
                     {
                         Start(_settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr)_settings.ClickerKey);
-                        Log.Info(string.Format("{0}:{1} :: [Clicker] Enabled, interval {2}ms, window handle 0x{3:X}", cProcess.ProcessName, cProcess.ProcessID,
-                            _settings.ClickerInterval, (uint) cProcess.MainWindowHandle));
+                        Log.Info(string.Format("{0} [Clicker] Enabled, interval {1}ms, window handle 0x{2:X}", cProcess, _settings.ClickerInterval, cProcess.MainWindowHandle.ToInt64()));
                     }
                 }
             }

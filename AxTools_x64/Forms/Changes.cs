@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.IO;
-using AxTools.Components;
+using Components;
 using AxTools.Helpers;
 using AxTools.Properties;
 using Settings = AxTools.Helpers.Settings;
@@ -12,6 +12,7 @@ namespace AxTools.Forms
         internal Changes(string imagePath)
         {
             InitializeComponent();
+           StyleManager.Style = Settings.Instance.StyleColor;
             Icon = Resources.AppIcon;
             using (Image objImage = Image.FromFile(imagePath))
             {
@@ -20,7 +21,6 @@ namespace AxTools.Forms
                 pictureBox1.Size = objImage.Size;
                 pictureBox1.ImageLocation = imagePath;
             }
-            metroStyleManager1.Style = Settings.Instance.StyleColor;
         }
 
         /// <summary>

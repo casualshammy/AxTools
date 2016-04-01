@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using AxTools.Components;
+using Components;
 using AxTools.Helpers;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
@@ -27,6 +27,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             ShowInTaskbar = false;
+           StyleManager.Style = Settings.Instance.StyleColor;
             foreach (RadarObject i in settings.WoWRadarList)
             {
                 dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
@@ -41,7 +42,6 @@ namespace AxTools.Forms
             metroCheckBoxShowPlayersClasses.Checked = settings.WoWRadarShowPlayersClasses;
             metroCheckBoxShowNpcsNames.Checked = settings.WoWRadarShowNPCsNames;
             metroCheckBoxShowObjectsNames.Checked = settings.WoWRadarShowObjectsNames;
-            metroStyleManager1.Style = settings.StyleColor;
             metroTabControl1.SelectedIndex = 0;
             BeginInvoke((MethodInvoker) delegate
             {

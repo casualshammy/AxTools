@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using AxTools.WinAPI;
+using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Management.ObjectManager
 {
@@ -52,6 +55,36 @@ namespace AxTools.WoW.Management.ObjectManager
         public static WowPoint operator *(WowPoint wowPoint, float v)
         {
             return new WowPoint(wowPoint.X*v, wowPoint.Y*v, wowPoint.Z*v);
+        }
+
+        public void Face()
+        {
+            float face;
+            WoWPlayerMe me = ObjectMgr.Pulse();
+            if (MoveHelper.NegativeAngle(MoveHelper.AngleHorizontal(this) - me.Rotation) < Math.PI)
+            {
+                face = MoveHelper.NegativeAngle(MoveHelper.AngleHorizontal(this) - me.Rotation);
+                bool moving = me.IsMoving;
+                if (face > 1)
+                {
+                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.S, IntPtr.Zero);
+                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.S, IntPtr.Zero);
+                    moving = false;
+                }
+                MoveHelper.FaceHorizontalWithTimer(face, Keys.A, moving);
+            }
+            else
+            {
+                face = MoveHelper.NegativeAngle(me.Rotation - MoveHelper.AngleHorizontal(this));
+                bool moving = me.IsMoving;
+                if (face > 1)
+                {
+                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.S, IntPtr.Zero);
+                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.S, IntPtr.Zero);
+                    moving = false;
+                }
+                MoveHelper.FaceHorizontalWithTimer(face, Keys.D, moving);
+            }
         }
 
     }

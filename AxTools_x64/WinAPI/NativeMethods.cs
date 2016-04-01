@@ -25,7 +25,7 @@ namespace AxTools.WinAPI
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32", EntryPoint = "PostMessageA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-        internal static extern bool PostMessage(IntPtr hwnd, WM_MESSAGE wMsg, IntPtr wParam, IntPtr lParam);
+        internal static extern bool PostMessage(IntPtr hwnd, uint wMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32")]
         internal static extern IntPtr GetForegroundWindow();
@@ -34,9 +34,9 @@ namespace AxTools.WinAPI
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
         
-        [DllImportAttribute("winmm.dll", EntryPoint = "sndPlaySoundW")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
-        internal static extern bool sndPlaySoundW([InAttribute] [MarshalAsAttribute(UnmanagedType.LPWStr)] string pszSound, uint fuSound);
+        [DllImport("winmm.dll", EntryPoint = "sndPlaySoundW")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool sndPlaySoundW([In] [MarshalAs(UnmanagedType.LPWStr)] string pszSound, uint fuSound);
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
@@ -53,6 +53,9 @@ namespace AxTools.WinAPI
 
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool VirtualProtectEx(SafeMemoryHandle hProcess, IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        internal static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         // ReSharper disable InconsistentNaming
         internal static int WS_CAPTION = 0xC00000;

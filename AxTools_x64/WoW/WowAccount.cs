@@ -52,17 +52,17 @@ namespace AxTools.WoW
                     byte[] bytes = Crypt.Decrypt<RijndaelManaged>(Settings.Instance.WoWAccounts, strangeBytes);
                     ObservableCollection<WoWAccount> list = JsonConvert.DeserializeObject<ObservableCollection<WoWAccount>>(Encoding.UTF8.GetString(bytes));
                     list.CollectionChanged += WoWAccounts_Changed;
-                    Log.Info("WoW accounts was loaded");
+                    Log.Info("[AxTools] WoW accounts was loaded");
                     return list;
                 }
                 ObservableCollection<WoWAccount> emptyList = new ObservableCollection<WoWAccount>();
                 emptyList.CollectionChanged += WoWAccounts_Changed;
-                Log.Info("WoW accounts: new collection is created");
+                Log.Info("[AxTools] WoW accounts: new collection is created");
                 return emptyList;
             }
             catch (Exception ex)
             {
-                Log.Error("WoW accounts loading failed, new accounts will not be saved: " + ex.Message);
+                Log.Error("[AxTools] WoW accounts loading failed, new accounts will not be saved: " + ex.Message);
                 return new ObservableCollection<WoWAccount>();
             }
         }

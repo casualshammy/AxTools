@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -44,9 +45,60 @@ namespace AxTools.Services
             }
         }
 
-        internal static void MakeBackup()
+        internal static void ManualBackup()
         {
-            Start();
+            if (_isBackingUp)
+            {
+                throw new Exception("Backup process is already started");
+            }
+            MakeNewArchive();
+        }
+
+        internal static void DeployArchive(string path)
+        {
+            _isBackingUp = true;
+            if (IsRunningChanged != null)
+            {
+                IsRunningChanged(true);
+            }
+            try
+            {
+                if (Directory.Exists(_settings.WoWDirectory))
+                {
+                    if (File.Exists(path))
+                    {
+                        Log.Info("[BackupAddons] Deploying archive: " + path);
+                        Unzip(path);
+                        Log.Info("[BackupAddons] Archive is deployed: " + path);
+                    }
+                    else
+                    {
+                        Log.Info("[BackupAddons] Archive " + path + " isn't found");
+                        AppSpecUtils.NotifyUser("Backup error", "Archive " + path + " isn't found", NotifyUserType.Error, true);
+                    }
+                }
+                else
+                {
+                    Log.Info("[BackupAddons] WoW dir (" + _settings.WoWDirectory + ") isn't found");
+                    AppSpecUtils.NotifyUser("Backup error", "WoW dir (" + _settings.WoWDirectory + ") isn't found", NotifyUserType.Error, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("[BackupAddons] Deploying error: " + ex.Message);
+                AppSpecUtils.NotifyUser("Deploying error", ex.Message, NotifyUserType.Error, true);
+            }
+            if (IsRunningChanged != null)
+            {
+                IsRunningChanged(false);
+            }
+            _isBackingUp = false;
+        }
+
+        internal static string[] GetArchives()
+        {
+            DirectoryInfo backupDirectory = new DirectoryInfo(_settings.WoWAddonsBackupPath);
+            return backupDirectory.GetFileSystemInfos().Where(l => l is FileInfo && Regex.IsMatch(l.Name, "AddonsBackup_\\d+_\\d+\\.zip")).Select(l => l.FullName).ToArray();
         }
 
         private static void Timer_OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
@@ -58,7 +110,7 @@ namespace AxTools.Services
                 ProcessPriorityClass defaultProcessPriorityClass = Process.GetCurrentProcess().PriorityClass;
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
                 Log.Info("[BackupAddons] Process priority is changed to " + Process.GetCurrentProcess().PriorityClass);
-                Task.Factory.StartNew(Start)
+                Task.Factory.StartNew(MakeNewArchive)
                     .ContinueWith(l =>
                     {
                         Process.GetCurrentProcess().PriorityClass = defaultProcessPriorityClass;
@@ -67,86 +119,56 @@ namespace AxTools.Services
             }
         }
 
-        private static void Start()
+        private static void MakeNewArchive()
         {
             _isBackingUp = true;
-            CheckWTFDirectoryResult checkWTFDirectoryResult = CheckWTFDirectory();
-            switch (checkWTFDirectoryResult)
+            if (IsRunningChanged != null)
             {
-                case CheckWTFDirectoryResult.OK:
-                    Log.Info("[BackupAddons] Starting...");
-                    Exception backupDir = CreateBackupDir();
-                    if (backupDir == null)
+                IsRunningChanged(true);
+            }
+            if (Directory.Exists(_settings.WoWDirectory + "\\WTF"))
+            {
+                if (Utils.CalcDirectorySize(_settings.WoWDirectory + "\\WTF") <= 1024*1024*1024)
+                {
+                    try
                     {
-                        Log.Info("[BackupAddons] Backup directory created");
+                        Log.Info("[BackupAddons] WTF directory OK");
+                        CreateBackupDir();
+                        Log.Info("[BackupAddons] Backup directory OK");
                         DeleteOldFiles();
-                        try
-                        {
-                            if (IsRunningChanged != null)
-                            {
-                                IsRunningChanged(true);
-                            }
-                            Zip();
-                            Log.Info("[BackupAddons] Backup is successfully created");
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error("[BackupAddons] Backup error: Zipping failed: " + ex.Message);
-                            AppSpecUtils.NotifyUser("Backup error", ex.Message, NotifyUserType.Error, true);
-                        }
-                        finally
-                        {
-                            if (IsRunningChanged != null)
-                            {
-                                IsRunningChanged(false);
-                            }
-                        }
+                        Log.Info("[BackupAddons] Old archives are deleted");
+                        Zip();
+                        Log.Info("[BackupAddons] Backup is successfully created");
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Log.Error("[BackupAddons] Can't create backup directory: " + backupDir.Message);
-                        AppSpecUtils.NotifyUser("Backup error", "Can't create backup dir:\r\n" + backupDir.Message, NotifyUserType.Error, true);
+                        Log.Error("[BackupAddons] Backup error: " + ex.Message);
+                        AppSpecUtils.NotifyUser("Backup error", ex.Message, NotifyUserType.Error, true);
                     }
-                    break;
-                case CheckWTFDirectoryResult.WTFDirIsNotFound:
-                    Log.Info("Backup error: WTF directory isn't found");
-                    AppSpecUtils.NotifyUser("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
-                    break;
-                case CheckWTFDirectoryResult.WTFDirIsTooLarge:
-                    Log.Info("Backup error: WTF directory is too large");
+                }
+                else
+                {
+                    Log.Info("[BackupAddons] WTF directory is too large");
                     AppSpecUtils.NotifyUser("Backup error", "WTF directory is too large (> 1GB)", NotifyUserType.Error, true);
-                    break;
+                }
+            }
+            else
+            {
+                Log.Info("[BackupAddons] WTF directory isn't found");
+                AppSpecUtils.NotifyUser("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
+            }
+            if (IsRunningChanged != null)
+            {
+                IsRunningChanged(false);
             }
             _isBackingUp = false;
         }
 
-        private static CheckWTFDirectoryResult CheckWTFDirectory()
+        private static void CreateBackupDir()
         {
-            if (!Directory.Exists(_settings.WoWDirectory + "\\WTF"))
+            if (!Directory.Exists(_settings.WoWAddonsBackupPath))
             {
-                return CheckWTFDirectoryResult.WTFDirIsNotFound;
-            }
-            if (Utils.CalcDirectorySize(_settings.WoWDirectory + "\\WTF") > 1024 * 1024 * 1024)
-            {
-                return CheckWTFDirectoryResult.WTFDirIsTooLarge;
-            }
-            return CheckWTFDirectoryResult.OK;
-        }
-
-        private static Exception CreateBackupDir()
-        {
-            DirectoryInfo backupDirectory = new DirectoryInfo(_settings.WoWAddonsBackupPath);
-            try
-            {
-                if (!backupDirectory.Exists)
-                {
-                    backupDirectory.Create();
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                return ex;
+                Directory.CreateDirectory(_settings.WoWAddonsBackupPath);
             }
         }
 
@@ -197,6 +219,17 @@ namespace AxTools.Services
             GC.Collect();
         }
 
+        private static void Unzip(string path)
+        {
+            using (ZipFile zip = new ZipFile(path, Encoding.UTF8))
+            {
+                zip.ExtractProgress += AddonsBackup_ExtractProgress;
+                zip.ExtractAll(_settings.WoWDirectory, ExtractExistingFileAction.OverwriteSilently);
+                zip.ExtractProgress -= AddonsBackup_ExtractProgress;
+            }
+            GC.Collect();
+        }
+
         private static void AddonsBackup_SaveProgress(object sender, SaveProgressEventArgs e)
         {
             if (e.EntriesTotal != 0)
@@ -213,12 +246,21 @@ namespace AxTools.Services
             }
         }
 
-        private enum CheckWTFDirectoryResult
+        private static void AddonsBackup_ExtractProgress(object sender, ExtractProgressEventArgs e)
         {
-            OK,
-            WTFDirIsNotFound,
-            WTFDirIsTooLarge,
+            if (e.EntriesTotal != 0)
+            {
+                int procent = e.EntriesExtracted * 100 / e.EntriesTotal;
+                if (procent != _prevProcent && procent >= 0 && procent <= 100)
+                {
+                    _prevProcent = procent;
+                    if (ProgressPercentageChanged != null)
+                    {
+                        ProgressPercentageChanged(procent);
+                    }
+                }
+            }
         }
-
+    
     }
 }

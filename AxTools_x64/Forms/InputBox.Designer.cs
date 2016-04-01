@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.button1 = new MetroFramework.Controls.MetroButton();
-            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             this.button2 = new MetroFramework.Controls.MetroButton();
             this.textBox1 = new MetroFramework.Controls.MetroTextBox();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
@@ -42,16 +41,9 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.button1.StyleManager = this.metroStyleManager1;
             this.button1.TabIndex = 0;
             this.button1.Text = "OK";
             this.button1.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // metroStyleManager1
-            // 
-            this.metroStyleManager1.OwnerForm = this;
-            this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // button2
             // 
@@ -60,7 +52,6 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.Style = MetroFramework.MetroColorStyle.Blue;
-            this.button2.StyleManager = this.metroStyleManager1;
             this.button2.TabIndex = 1;
             this.button2.Text = "Cancel";
             this.button2.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -77,7 +68,6 @@
             this.textBox1.SelectedText = "";
             this.textBox1.Size = new System.Drawing.Size(297, 20);
             this.textBox1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBox1.StyleManager = this.metroStyleManager1;
             this.textBox1.TabIndex = 3;
             this.textBox1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.textBox1.UseStyleColors = true;
@@ -94,7 +84,6 @@
             this.metroLabel1.Name = "metroLabel1";
             this.metroLabel1.Size = new System.Drawing.Size(34, 19);
             this.metroLabel1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel1.StyleManager = this.metroStyleManager1;
             this.metroLabel1.TabIndex = 4;
             this.metroLabel1.Text = "Text";
             this.metroLabel1.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -116,7 +105,6 @@
             this.Name = "InputBox";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.Resizable = false;
-            this.StyleManager = this.metroStyleManager1;
             this.Text = "InputBox";
             this.Load += new System.EventHandler(this.InputBoxLoad);
             this.ResumeLayout(false);
@@ -129,7 +117,6 @@
         private MetroFramework.Controls.MetroButton button1;
         private MetroFramework.Controls.MetroButton button2;
         private MetroFramework.Controls.MetroTextBox textBox1;
-        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
         private MetroFramework.Controls.MetroLabel metroLabel1;
     }
 }

@@ -1,5 +1,5 @@
-﻿using AxTools.Components;
-using AxTools.Components.TaskbarProgressbar;
+﻿using Components;
+using Components.TaskbarProgressbar;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
@@ -36,6 +36,7 @@ namespace AxTools.Forms
         {
             Log.Info("[AxTools] Initializing main window...");
             InitializeComponent();
+            StyleManager.Style = Settings.Instance.StyleColor;
             Icon = Resources.AppIcon;
             Closing += MainFormClosing;
             notifyIconMain.Icon = Resources.AppIcon;
@@ -153,23 +154,22 @@ namespace AxTools.Forms
             }
         }
 
-        private void AfterInitializing()
+        private async void AfterInitializing()
         {
+            PluginManagerEx.PluginStateChanged += PluginManagerOnPluginStateChanged;
+            PluginManagerEx.PluginsLoaded += PluginManagerExOnPluginsLoaded;
             Task pluginsLoader = PluginManagerEx.LoadPluginsAsync();    // start loading plugins
             Location = settings.MainWindowLocation;                     // should do it here...
             OnActivated(EventArgs.Empty);                               // ...and calling OnActivated is necessary
             WaitingOverlay startupOverlay = WaitingOverlay.Show(this);  // form is visible, placing overlay
             WoWAccounts_CollectionChanged(null, null);                  // initial load wowaccounts
             // styling, events attaching...
-            metroStyleManager1.Style = settings.StyleColor;
             checkBoxStartVenriloWithWow.Checked = settings.VentriloStartWithWoW;
             checkBoxStartTeamspeak3WithWow.Checked = settings.TS3StartWithWoW;
             checkBoxStartRaidcallWithWow.Checked = settings.RaidcallStartWithWoW;
             checkBoxStartMumbleWithWow.Checked = settings.MumbleStartWithWoW;
             buttonStartStopPlugin.Text = string.Format("{0} [{1}]", "Start", settings.WoWPluginHotkey);
             settings.WoWPluginHotkeyChanged += WoWPluginHotkeyChanged;
-            PluginManagerEx.PluginStateChanged += PluginManagerOnPluginStateChanged;
-            PluginManagerEx.PluginsLoaded += PluginManagerExOnPluginsLoaded;
             Pinger.StatChanged += Pinger_DataChanged;
             Pinger.IsEnabledChanged += PingerOnStateChanged;
             AddonsBackup.IsRunningChanged += AddonsBackup_IsRunningChanged;
@@ -184,7 +184,7 @@ namespace AxTools.Forms
             TrayIconAnimation.Initialize(notifyIconMain);               // initialize tray animation
             HotkeyManager.KeyPressed += KeyboardHookKeyDown;        // start keyboard listener
             HotkeyManager.AddKeys(typeof(PluginManagerEx).ToString(), settings.WoWPluginHotkey);
-            pluginsLoader.Wait();                                       // waiting for plugins to be loaded
+            await pluginsLoader;                                     // waiting for plugins to be loaded
             startupOverlay.Close();                                     // close startup overkay
             Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
             UpdaterService.Start();                                     // start updater service
@@ -460,19 +460,20 @@ namespace AxTools.Forms
 
         private void toolStripMenuItemBackupWoWAddOns_Click(object sender, EventArgs e)
         {
-            Task.Factory.StartNew(AddonsBackup.MakeBackup)
+            Task.Factory.StartNew(AddonsBackup.ManualBackup)
                 .ContinueWith(l => this.ShowTaskDialog("Backup is complete", "New archive is placed to [" + settings.WoWAddonsBackupPath + "]", TaskDialogButton.OK, TaskDialogIcon.Information));
         }
 
-        private void toolStripMenuItemOpenBackupFolder_Click(object sender, EventArgs e)
+        private void toolStripMenuItemDeployArchive_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(settings.WoWAddonsBackupPath))
+            AddonsBackupDeploy form = Utils.FindForm<AddonsBackupDeploy>();
+            if (form != null)
             {
-                Process.Start(settings.WoWAddonsBackupPath);
+                form.Show();
             }
             else
             {
-                this.ShowTaskDialog("Can't open backup folder", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                new AddonsBackupDeploy().Show();
             }
         }
 
@@ -518,7 +519,7 @@ namespace AxTools.Forms
                                     IntPtr connectButtonHandle = NativeMethods.FindWindowEx(windowHandle, IntPtr.Zero, "Button", "C&onnect");
                                     if (connectButtonHandle != IntPtr.Zero)
                                     {
-                                        NativeMethods.PostMessage(connectButtonHandle, WM_MESSAGE.WM_BM_CLICK, IntPtr.Zero, IntPtr.Zero);
+                                        NativeMethods.PostMessage(connectButtonHandle, Win32Consts.WM_BM_CLICK, IntPtr.Zero, IntPtr.Zero);
                                         break;
                                     }
                                 }
@@ -921,7 +922,7 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                linkPing.Text = string.Format("[{0}]::[{1}%]  |", pingResult.Ping == -1 || pingResult.Ping == -2 ? "n/a" : pingResult.Ping + "ms", pingResult.PacketLoss);
+                linkPing.Text = string.Format("[{0}]::[{1}%]  |", pingResult.PingDataIsRelevant ? pingResult.Ping + "ms" : "n/a", pingResult.PacketLoss);
                 TBProgressBar.SetProgressValue(Handle, 1, 1);
                 if (pingResult.PacketLoss >= settings.PingerVeryBadPacketLoss || pingResult.Ping >= settings.PingerVeryBadPing)
                 {

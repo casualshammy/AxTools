@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using AxTools.Helpers.MemoryManagement;
 using AxTools.WoW.Management.ObjectManager;
 
@@ -183,6 +185,90 @@ namespace AxTools.WoW.Management
             IntPtr localPlayerPtr = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.PlayerPtr);
             return new WoWPlayerMe(localPlayerPtr);
         }
-        
+
+        internal static WoWItem[] GetItemsInBags(PlayerInventoryAndContainers inventoryAndContainers)
+        {
+            Dictionary<UInt128, List<UInt128>> itemCountPerContainer = new Dictionary<UInt128, List<UInt128>>();
+            List<WoWItem> items = new List<WoWItem>();
+            IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
+            //
+            IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
+            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
+                (i < 10) && (i > 0);
+                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            {
+                if (i == 2)
+                {
+                    WowObject p = new WowObject(currObject);
+                    if (inventoryAndContainers.Containers.Contains(p.GUID))
+                    {
+                        IntPtr desc = _memory.Read<IntPtr>(p.Address + WowBuildInfoX64.UnitDescriptors);
+                        SixteenUInt128 itemsInContainer = _memory.Read<SixteenUInt128>(desc + WowBuildInfoX64.WoWContainerItems);
+                        itemCountPerContainer.Add(p.GUID, new List<UInt128>(itemsInContainer.Slots));
+                    }
+                }    
+                currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
+            }
+            //
+            currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
+            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
+                (i < 10) && (i > 0);
+                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            {
+                if (i == 1) // WoWItem
+                {
+                    WoWItem item = new WoWItem(currObject);
+                    for (int j = 0; j < inventoryAndContainers.Containers.Length; j++)
+                    {
+                        if (inventoryAndContainers.Containers[j] == item.ContainedIn)
+                        {
+                            item.BagID = j + 1;
+                            item.SlotID = itemCountPerContainer[item.ContainedIn].IndexOf(item.GUID) + 1;
+                            items.Add(item);
+                        }
+                    }
+                    for (int j = 0; j < inventoryAndContainers.Backpack.Length; j++)
+                    {
+                        if (inventoryAndContainers.Backpack[j] == item.GUID)
+                        {
+                            item.BagID = 0;
+                            item.SlotID = j + 1;
+                            items.Add(item);
+                        }
+                    }
+                }
+                currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
+            }
+            return items.ToArray();
+        }
+
+        internal static WoWItem[] GetInventory(UInt128[] inventory)
+        {
+            List<WoWItem> items = new List<WoWItem>();
+            IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
+            IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
+            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
+                (i < 10) && (i > 0);
+                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            {
+                if (i == 1) // WoWItem
+                {
+                    WoWItem item = new WoWItem(currObject);
+                    if (inventory.Contains(item.GUID))
+                    {
+                        items.Add(item);
+                    }
+                }
+                currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
+            }
+            return items.ToArray();
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SixteenUInt128
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 36)] internal readonly UInt128[] Slots;
+        }
+
     }
 }

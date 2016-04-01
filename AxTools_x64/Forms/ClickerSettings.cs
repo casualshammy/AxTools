@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using AxTools.Components;
+using Components;
 using AxTools.Helpers;
 using AxTools.Properties;
 using Settings = AxTools.Helpers.Settings;
@@ -15,8 +15,8 @@ namespace AxTools.Forms
         internal ClickerSettings()
         {
             InitializeComponent();
+           StyleManager.Style = Settings.Instance.StyleColor;
             Icon = Resources.AppIcon;
-            metroStyleManager1.Style = settings.StyleColor;
             Keys[] keys =
             {
                 Keys.None, Keys.F1, Keys.F2, Keys.F3, Keys.F4, Keys.F5, Keys.F6, Keys.F7, Keys.F8, Keys.F9, Keys.F10, Keys.F11,

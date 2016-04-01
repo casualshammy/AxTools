@@ -6,11 +6,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using AxTools.Components;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
 using AxTools.WoW.PluginSystem;
+using Components;
 using MetroFramework;
 using MetroFramework.Forms;
 using Microsoft.Win32;
@@ -25,8 +25,8 @@ namespace AxTools.Forms
         internal AppSettings()
         {
             InitializeComponent();
+            StyleManager.Style = Settings.Instance.StyleColor;
             Icon = Resources.AppIcon;
-            styleManager.Style = settings.StyleColor;
             tabControl.SelectedIndex = 0;
             SetupData();
             SetupEvents();
@@ -42,25 +42,10 @@ namespace AxTools.Forms
             textBoxClickerHotkey.Text = new KeysConverter().ConvertToInvariantString(settings.ClickerHotkey);
             textBoxLuaHotkey.Text = new KeysConverter().ConvertToInvariantString(settings.LuaTimerHotkey);
             textBoxPluginsHotkey.Text = new KeysConverter().ConvertToInvariantString(settings.WoWPluginHotkey);
-            for (int i = 0; i <= 30; i++)
-            {
-                comboBoxBadNetworkStatusProcent.Items.Add(i + "%");
-            }
-            comboBoxBadNetworkStatusProcent.SelectedIndex = settings.PingerBadPacketLoss;
-            for (int i = 0; i <= 50; i++)
-            {
-                comboBoxVeryBadNetworkStatusProcent.Items.Add(i + "%");
-            }
-            comboBoxVeryBadNetworkStatusProcent.SelectedIndex = settings.PingerVeryBadPacketLoss;
-            int counter = 25;
-            while (counter <= 750)
-            {
-                comboBoxBadNetworkStatusPing.Items.Add(counter + "ms");
-                comboBoxVeryBadNetworkStatusPing.Items.Add(counter + "ms");
-                counter += 25;
-            }
-            comboBoxBadNetworkStatusPing.SelectedIndex = settings.PingerBadPing / 25 - 1;
-            comboBoxVeryBadNetworkStatusPing.SelectedIndex = settings.PingerVeryBadPing / 25 - 1;
+            textBoxBadNetworkStatusProcent.Text = settings.PingerBadPacketLoss.ToString();
+            textBoxVeryBadNetworkStatusProcent.Text = settings.PingerVeryBadPacketLoss.ToString();
+            textBoxBadNetworkStatusPing.Text = settings.PingerBadPing.ToString();
+            textBoxVeryBadNetworkStatusPing.Text = settings.PingerVeryBadPing.ToString();
             ComboBox_server_ip.Items.Clear();
             ComboBox_server_ip.Items.AddRange(Globals.GameServers.Select(k => k.Description).Cast<object>().ToArray());
             ComboBox_server_ip.SelectedIndex = settings.PingerServerID;
@@ -113,10 +98,10 @@ namespace AxTools.Forms
             TextBox5.TextChanged += TextBox5TextChanged;
             TextBox4.TextChanged += TextBox4TextChanged;
             ComboBox_server_ip.SelectedIndexChanged += ComboBox_server_ip_SelectedIndexChanged;
-            comboBoxVeryBadNetworkStatusProcent.SelectedIndexChanged += comboBoxVeryBadNetworkStatusProcent_SelectedIndexChanged;
-            comboBoxBadNetworkStatusProcent.SelectedIndexChanged += comboBoxBadNetworkStatusProcent_SelectedIndexChanged;
-            comboBoxBadNetworkStatusPing.SelectedIndexChanged += comboBoxBadNetworkStatusPing_SelectedIndexChanged;
-            comboBoxVeryBadNetworkStatusPing.SelectedIndexChanged += comboBoxVeryBadNetworkStatusPing_SelectedIndexChanged;
+            textBoxVeryBadNetworkStatusProcent.KeyUp += textBoxVeryBadNetworkStatusProcent_KeyUp;
+            textBoxBadNetworkStatusProcent.KeyUp += textBoxBadNetworkStatusProcent_KeyUp;
+            textBoxBadNetworkStatusPing.KeyUp += textBoxBadNetworkStatusPing_KeyUp;
+            textBoxVeryBadNetworkStatusPing.KeyUp += textBoxVeryBadNetworkStatusPing_KeyUp;
             buttonBackupPath.Click += ButtonBackupPathClick;
             metroComboBoxBackupCompressionLevel.SelectedIndexChanged += MetroComboBoxBackupCompressionLevelSelectedIndexChanged;
             checkBoxPluginsShowIngameNotifications.CheckedChanged += metroCheckBox1_CheckedChanged;
@@ -139,6 +124,77 @@ namespace AxTools.Forms
             buttonClickerHotkey.Click += buttonClickerHotkey_Click;
             buttonLuaHotkey.Click += buttonLuaHotkey_Click;
             buttonPluginsHotkey.Click += buttonPluginsHotkey_Click;
+            buttonIngameKeyBinds.Click += buttonIngameKeyBinds_Click;
+        }
+
+        private void buttonIngameKeyBinds_Click(object sender, EventArgs e)
+        {
+            AppSettingsWoWBinds form = Utils.FindForm<AppSettingsWoWBinds>();
+            if (form != null)
+            {
+                form.Show();
+                form.Activate();
+            }
+            else
+            {
+                new AppSettingsWoWBinds().ShowDialog(this);
+            }
+        }
+
+        private void textBoxVeryBadNetworkStatusPing_KeyUp(object sender, KeyEventArgs e)
+        {
+            int value;
+            if (int.TryParse(textBoxVeryBadNetworkStatusPing.Text, out value))
+            {
+                ErrorProviderExt.ClearError(textBoxVeryBadNetworkStatusPing);
+                settings.PingerVeryBadPing = value;
+            }
+            else
+            {
+                ErrorProviderExt.SetError(textBoxVeryBadNetworkStatusPing, "Value must be a number", Color.Red);
+            }
+        }
+
+        private void textBoxBadNetworkStatusPing_KeyUp(object sender, KeyEventArgs e)
+        {
+            int value;
+            if (int.TryParse(textBoxBadNetworkStatusPing.Text, out value))
+            {
+                ErrorProviderExt.ClearError(textBoxBadNetworkStatusPing);
+                settings.PingerBadPing = value;
+            }
+            else
+            {
+                ErrorProviderExt.SetError(textBoxBadNetworkStatusPing, "Value must be a number", Color.Red);
+            }
+        }
+
+        private void textBoxBadNetworkStatusProcent_KeyUp(object sender, KeyEventArgs e)
+        {
+            int value;
+            if (int.TryParse(textBoxBadNetworkStatusProcent.Text, out value))
+            {
+                ErrorProviderExt.ClearError(textBoxBadNetworkStatusProcent);
+                settings.PingerBadPacketLoss = value;
+            }
+            else
+            {
+                ErrorProviderExt.SetError(textBoxBadNetworkStatusProcent, "Value must be a number", Color.Red);
+            }
+        }
+
+        private void textBoxVeryBadNetworkStatusProcent_KeyUp(object sender, KeyEventArgs e)
+        {
+            int value;
+            if (int.TryParse(textBoxVeryBadNetworkStatusProcent.Text, out value))
+            {
+                ErrorProviderExt.ClearError(textBoxVeryBadNetworkStatusProcent);
+                settings.PingerVeryBadPacketLoss = value;
+            }
+            else
+            {
+                ErrorProviderExt.SetError(textBoxVeryBadNetworkStatusProcent, "Value must be a number", Color.Red);
+            }
         }
 
         private void buttonPluginsHotkey_Click(object sender, EventArgs e)
@@ -450,26 +506,6 @@ namespace AxTools.Forms
                     }
                 }
             }
-        }
-
-        private void comboBoxBadNetworkStatusProcent_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            settings.PingerBadPacketLoss = comboBoxBadNetworkStatusProcent.SelectedIndex;
-        }
-
-        private void comboBoxBadNetworkStatusPing_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            settings.PingerBadPing = (comboBoxBadNetworkStatusPing.SelectedIndex + 1)*25;
-        }
-
-        private void comboBoxVeryBadNetworkStatusProcent_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            settings.PingerVeryBadPacketLoss = comboBoxVeryBadNetworkStatusProcent.SelectedIndex;
-        }
-
-        private void comboBoxVeryBadNetworkStatusPing_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            settings.PingerVeryBadPing = (comboBoxVeryBadNetworkStatusPing.SelectedIndex + 1) * 25;
         }
 
         private void checkBoxMinimizeToTray_CheckedChanged(object sender, EventArgs e)

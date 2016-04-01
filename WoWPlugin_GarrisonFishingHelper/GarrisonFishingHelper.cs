@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem;
@@ -53,7 +54,6 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         public void OnStart()
         {
-            state = State.None;
             (timer = this.CreateTimer(1000, OnElapsed)).Start();
         }
 
@@ -64,96 +64,59 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         private void OnElapsed()
         {
-            if (state == State.Fishing || state == State.None)
+            WoWPlayerMe me = ObjMgr.Pulse(wowNpcs);
+            if (me != null)
             {
-                this.LogPrint("State: Fishing or None");
-                if (GameFunctions.Lua_GetFunctionReturn(luaShouldPull) == "true")
+                if (!me.InCombat)
                 {
-                    GameFunctions.Lua_DoString("UseItemByName(116158)");
-                    state = State.Targeting;
-                    Utilities.RequestStopPlugin("Fishing");
-                }
-                else
-                {
-                    Utilities.RequestStartPlugin("Fishing");
-                }
-            }
-            else if (state == State.Targeting)
-            {
-                this.LogPrint("State: Targeting");
-                if (GameFunctions.Lua_GetFunctionReturn(luaIsInCombat) == "true")
-                {
-                    WoWPlayerMe localPlayer0 = ObjMgr.Pulse(wowNpcs);
-                    if (localPlayer0 != null)
+                    WowNpc lootableCorpse = wowNpcs.FirstOrDefault(k => (k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер") && k.Lootable && !k.Alive);
+                    if (lootableCorpse != null)
                     {
-                        WowNpc creature = wowNpcs.FirstOrDefault(k => (k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер") && k.Health > 0);
-                        if (creature != null)
+                        if (!GameFunctions.IsLooting)
                         {
-                            creature.Target();
-                            state = State.Killing;
+                            lootableCorpse.Interact();
+                            this.LogPrint("Looting --> " + lootableCorpse.GUID);
                         }
+                    }
+                    else if (me.ItemsInBags.FirstOrDefault(l => l.EntryID == 116158) != null)
+                    {
+                        if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
+                        {
+                            Utilities.RequestStopPlugin("Fishing");
+                            this.LogPrint("Fishing is paused");
+                            Thread.Sleep(rnd.Next(2000, 3000));
+                            GameFunctions.UseItemByID(116158);
+                            this.LogPrint("Green fish is throwed");
+                            Thread.Sleep(rnd.Next(1000, 2000));
+                            _isworking = true;
+                        }
+                    }
+                    else
+                    {
+                        Thread.Sleep(rnd.Next(500, 1500));
+                        Utilities.RequestStartPlugin("Fishing");
+                        if (_isworking)
+                        {
+                            this.LogPrint("Fishing is resumed");
+                        }
+                        _isworking = false;
                     }
                 }
                 else
                 {
-                    state = State.Fishing;
-                }
-            }
-            else if (state == State.Killing)
-            {
-                this.LogPrint("State: Killing");
-                WoWPlayerMe localPlayer1 = ObjMgr.Pulse(wowNpcs);
-                if (localPlayer1 != null)
-                {
-                    WowNpc creature = wowNpcs.FirstOrDefault(k => (k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер") && (k.Health != 0 || k.Lootable));
-                    if (creature != null)
+                    WowNpc enemy = wowNpcs.FirstOrDefault(k => (k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер") && k.Alive);
+                    if (enemy != null)
                     {
-                        if (creature.Lootable)
+                        if (enemy.GUID != me.TargetGUID)
                         {
-                            state = State.Looting;
+                            enemy.Target();
+                            this.LogPrint("Target enemy --> " + enemy.GUID);
                         }
                         else
                         {
-                            this.LogPrint("Creature is alive, do we target it?");
-                            if (localPlayer1.TargetGUID == creature.GUID)
-                            {
-                                this.LogPrint("Yeah, nuking...");
-                                GameFunctions.Lua_DoString(luaKillingRotation);
-                            }
-                            else
-                            {
-                                this.LogPrint("No, targeting...");
-                                state = State.Targeting;
-                            }
+                            GameFunctions.CastSpellByName(killingSpellName);
+                            this.LogPrint("Killing enemy --> " + enemy.GUID);
                         }
-                    }
-                    else
-                    {
-                        state = State.Fishing;
-                    }
-                }
-                else
-                {
-                    this.LogPrint("Error: localPlayer1 is null!");
-                }
-            }
-            else if (state == State.Looting)
-            {
-                this.LogPrint("State: Looting");
-                WoWPlayerMe localPlayer2 = ObjMgr.Pulse(wowNpcs);
-                if (localPlayer2 != null)
-                {
-                    WowNpc creature = wowNpcs.FirstOrDefault(k => k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер");
-                    if (creature != null && creature.Lootable)
-                    {
-                        if (!localPlayer2.Is_Looting)
-                        {
-                            creature.Interact();
-                        }
-                    }
-                    else
-                    {
-                        state = State.Fishing;
                     }
                 }
             }
@@ -164,22 +127,12 @@ namespace WoWPlugin_GarrisonFishingHelper
         #region Variables
 
         private SingleThreadTimer timer;
-        private readonly string luaShouldPull = "tostring(GetItemCount(116158) > 0)";
-        private readonly string luaIsInCombat = "tostring(InCombatLockdown())";
-        private readonly string luaKillingRotation = "CastSpellByName(\"Молния\")";
-        private State state = State.None;
+        private readonly string killingSpellName = "Молния";
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
+        private readonly Random rnd = new Random();
+        private static bool _isworking;
 
         #endregion
-
-        private enum State
-        {
-            None,
-            Fishing,
-            Targeting,
-            Killing,
-            Looting
-        }
     
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using AxTools.Components;
+using Components;
 using AxTools.Properties;
 using AxTools.WoW;
 using Settings = AxTools.Helpers.Settings;
@@ -12,8 +12,8 @@ namespace AxTools.Forms
         internal WowAccountsManager()
         {
             InitializeComponent();
+           StyleManager.Style = Settings.Instance.StyleColor;
             Icon = Resources.AppIcon;
-            metroStyleManager1.Style = Settings.Instance.StyleColor;
             UpdateControls();
         }
 
@@ -24,8 +24,6 @@ namespace AxTools.Forms
             {
                 int index = WoWAccount.AllAccounts.IndexOf(wowAccount);
                 WoWAccount.AllAccounts[index] = new WoWAccount(textBoxWowAccountLogin.Text, textBoxWowAccountPassword.Text);
-                // WoWAccount.AllAccounts.RemoveAt(index);                                                                             // we do so because <WoWAccount.AllAccounts>
-                // WoWAccount.AllAccounts.Insert(index, new WoWAccount(textBoxWowAccountLogin.Text, textBoxWowAccountPassword.Text));  // should raise <CollectionChanged> event
             }
             else
             {

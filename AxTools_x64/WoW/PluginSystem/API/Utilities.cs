@@ -46,7 +46,7 @@ namespace AxTools.WoW.PluginSystem.API
         {
             if (Settings.Instance.WoWPluginShowIngameNotifications)
             {
-                WoWDXInject.ShowOverlayText(text, wowIcon, color);
+                GameFunctions.ShowNotify(text);
             }
         }
 

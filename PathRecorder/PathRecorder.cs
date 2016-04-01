@@ -51,7 +51,7 @@ namespace PathRecorder
                 File.AppendAllLines(string.Format("{0}\\pluginsSettings\\{1}\\path.txt", Application.StartupPath, Name),
                     new[]
                     {
-                        String.Format("{0},{1},{2}",
+                        string.Format("{0},{1},{2}",
                             location.X.ToString("0.000", CultureInfo.InvariantCulture), location.Y.ToString("0.000", CultureInfo.InvariantCulture), location.Z.ToString("0.000", CultureInfo.InvariantCulture))
                     });
             }

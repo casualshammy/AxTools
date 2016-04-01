@@ -5,12 +5,12 @@ using AxTools.WoW.PluginSystem.Plugins;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using WindowsFormsAero.TaskDialog;
+using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.PluginSystem
 {
@@ -66,11 +66,11 @@ namespace AxTools.WoW.PluginSystem
                 {
                     if (RunningPlugins.Count() == 1)
                     {
-                        WoWDXInject.ShowOverlayText("Plugin <" + RunningPlugins.First().Name + "> is started", RunningPlugins.First().WowIcon, Color.FromArgb(255, 102, 0));
+                        GameFunctions.ShowNotify("Plugin <" + RunningPlugins.First().Name + "> is started");
                     }
                     else
                     {
-                        WoWDXInject.ShowOverlayText("Plugins are started", "", Color.FromArgb(255, 102, 0));
+                        GameFunctions.ShowNotify("Plugins are started");
                     }
                 }
                 if (PluginStateChanged != null)
@@ -107,11 +107,11 @@ namespace AxTools.WoW.PluginSystem
                 {
                     if (RunningPlugins.Count() == 1)
                     {
-                        WoWDXInject.ShowOverlayText("Plugin <" + RunningPlugins.First().Name + "> is stopped", RunningPlugins.First().WowIcon, Color.FromArgb(255, 0, 0));
+                        GameFunctions.ShowNotify("Plugin <" + RunningPlugins.First().Name + "> is stopped");
                     }
                     else
                     {
-                        WoWDXInject.ShowOverlayText("Plugins are stopped", "", Color.FromArgb(255, 102, 0));
+                        GameFunctions.ShowNotify("Plugins are stopped");
                     }
                 }
                 foreach (PluginContainer pluginContainer in _pluginContainers.Where(l => l.IsRunning))
@@ -146,7 +146,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 if (Settings.Instance.WoWPluginShowIngameNotifications)
                 {
-                    WoWDXInject.ShowOverlayText("Plugin <" + plugin.Name + "> is started", plugin.WowIcon, Color.FromArgb(255, 102, 0));
+                    GameFunctions.ShowNotify("Plugin <" + plugin.Name + "> is started");
                 }
                 if (PluginStateChanged != null)
                 {
@@ -172,7 +172,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
                 {
-                    WoWDXInject.ShowOverlayText("Plugin <" + plugin.Name + "> is stopped", plugin.WowIcon, Color.FromArgb(255, 0, 0));
+                    GameFunctions.ShowNotify("Plugin <" + plugin.Name + "> is stopped");
                 }
                 _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = false;
                 if (PluginStateChanged != null)
@@ -225,6 +225,7 @@ namespace AxTools.WoW.PluginSystem
 
         private static void LoadPluginsFromDisk()
         {
+            CreatePluginsDirsIfNotExist();
             string[] directories = Directory.GetDirectories(Globals.PluginsPath);
             foreach (string directory in directories)
             {
@@ -236,11 +237,12 @@ namespace AxTools.WoW.PluginSystem
                     if (!File.Exists(dllPath))
                     {
                         dll = CompilePlugin(directory);
+                        Log.Info(string.Format("[PluginManager] Plugin from directory {0} is compiled", directory));
                     }
                     else
                     {
                         dll = Assembly.LoadFile(dllPath);
-                        Log.Info(string.Format("[PluginManager] Plugin from directory " + directory + " with hash " + md5ForFolder + " is already compiled"));
+                        Log.Info(string.Format("[PluginManager] Plugin from directory {0} with hash {1} is already compiled", directory, md5ForFolder));
                     }
                     if (dll == null)
                     {
@@ -278,6 +280,24 @@ namespace AxTools.WoW.PluginSystem
                     MainForm.Instance.ShowTaskDialog("[PluginManager] Plugin error", "Error has occured during compiling plugins\r\nSome plugins could not be loaded and are disabled", TaskDialogButton.OK, TaskDialogIcon.Stop);
                 }
             }
+            ClearOldAssemblies();
+        }
+
+        private static void ClearOldAssemblies()
+        {
+            string[] assemblies = Directory.GetFiles(Globals.PluginsAssembliesPath);
+            foreach (string assembly in assemblies)
+            {
+                try
+                {
+                    File.Delete(assembly);
+                    Log.Info("[PluginManager] Old assembly is deleted: " + assembly);
+                }
+                catch
+                {
+                    //
+                }
+            }
         }
 
         private static Assembly CompilePlugin(string directory)
@@ -293,6 +313,22 @@ namespace AxTools.WoW.PluginSystem
                 return null;
             }
             return cc.CompiledAssembly;
+        }
+
+        private static void CreatePluginsDirsIfNotExist()
+        {
+            if (!Directory.Exists(Globals.PluginsPath))
+            {
+                Directory.CreateDirectory(Globals.PluginsPath);
+            }
+            if (!Directory.Exists(Globals.PluginsAssembliesPath))
+            {
+                Directory.CreateDirectory(Globals.PluginsAssembliesPath);
+            }
+            if (!Directory.Exists(Globals.PluginsSettingsPath))
+            {
+                Directory.CreateDirectory(Globals.PluginsSettingsPath);
+            }
         }
 
     }

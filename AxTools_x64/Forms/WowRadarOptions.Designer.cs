@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using AxTools.Components;
+using Components;
 using MetroFramework.Components;
 using MetroFramework.Controls;
 
@@ -34,9 +34,8 @@ namespace AxTools.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             this.toolTip1 = new MetroFramework.Components.MetroToolTip();
-            this.dataGridViewObjects = new AxTools.Components.DataGridViewExt();
+            this.dataGridViewObjects = new Components.DataGridViewExt();
             this.ObjectToFindEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ObjectName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Interact = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -47,8 +46,8 @@ namespace AxTools.Forms
             this.metroCheckBoxShowObjectsNames = new MetroFramework.Controls.MetroCheckBox();
             this.metroTextBoxAddNew = new MetroFramework.Controls.MetroTextBox();
             this.buttonAddUnknown = new MetroFramework.Controls.MetroButton();
-            this.comboboxNPCs = new AxTools.Components.MetroComboboxExt(this.components);
-            this.comboboxObjects = new AxTools.Components.MetroComboboxExt(this.components);
+            this.comboboxNPCs = new Components.MetroComboboxExt(this.components);
+            this.comboboxObjects = new Components.MetroComboboxExt(this.components);
             this.buttonAddObject = new MetroFramework.Controls.MetroButton();
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.tabPageTrackingUnits = new MetroFramework.Controls.MetroTabPage();
@@ -60,12 +59,6 @@ namespace AxTools.Forms
             this.tabPageTrackingUnits.SuspendLayout();
             this.tabPageAppearance.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // metroStyleManager1
-            // 
-            this.metroStyleManager1.OwnerForm = this;
-            this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // toolTip1
             // 
@@ -125,7 +118,6 @@ namespace AxTools.Forms
             this.buttonAddNPC.Name = "buttonAddNPC";
             this.buttonAddNPC.Size = new System.Drawing.Size(71, 25);
             this.buttonAddNPC.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonAddNPC.StyleManager = this.metroStyleManager1;
             this.buttonAddNPC.TabIndex = 38;
             this.buttonAddNPC.Text = "Add";
             this.buttonAddNPC.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -142,7 +134,6 @@ namespace AxTools.Forms
             this.metroCheckBoxShowPlayersClasses.Name = "metroCheckBoxShowPlayersClasses";
             this.metroCheckBoxShowPlayersClasses.Size = new System.Drawing.Size(131, 19);
             this.metroCheckBoxShowPlayersClasses.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroCheckBoxShowPlayersClasses.StyleManager = this.metroStyleManager1;
             this.metroCheckBoxShowPlayersClasses.TabIndex = 47;
             this.metroCheckBoxShowPlayersClasses.Text = "Show player class";
             this.metroCheckBoxShowPlayersClasses.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -161,7 +152,6 @@ namespace AxTools.Forms
             this.metroCheckBoxShowNpcsNames.Name = "metroCheckBoxShowNpcsNames";
             this.metroCheckBoxShowNpcsNames.Size = new System.Drawing.Size(127, 19);
             this.metroCheckBoxShowNpcsNames.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroCheckBoxShowNpcsNames.StyleManager = this.metroStyleManager1;
             this.metroCheckBoxShowNpcsNames.TabIndex = 48;
             this.metroCheckBoxShowNpcsNames.Text = "Show NPC name";
             this.metroCheckBoxShowNpcsNames.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -180,7 +170,6 @@ namespace AxTools.Forms
             this.metroCheckBoxShowObjectsNames.Name = "metroCheckBoxShowObjectsNames";
             this.metroCheckBoxShowObjectsNames.Size = new System.Drawing.Size(137, 19);
             this.metroCheckBoxShowObjectsNames.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroCheckBoxShowObjectsNames.StyleManager = this.metroStyleManager1;
             this.metroCheckBoxShowObjectsNames.TabIndex = 49;
             this.metroCheckBoxShowObjectsNames.Text = "Show object name";
             this.metroCheckBoxShowObjectsNames.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -200,7 +189,6 @@ namespace AxTools.Forms
             this.metroTextBoxAddNew.SelectedText = "";
             this.metroTextBoxAddNew.Size = new System.Drawing.Size(311, 23);
             this.metroTextBoxAddNew.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBoxAddNew.StyleManager = this.metroStyleManager1;
             this.metroTextBoxAddNew.TabIndex = 54;
             this.metroTextBoxAddNew.Text = "Enter object/npc name here...";
             this.metroTextBoxAddNew.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -213,7 +201,6 @@ namespace AxTools.Forms
             this.buttonAddUnknown.Name = "buttonAddUnknown";
             this.buttonAddUnknown.Size = new System.Drawing.Size(71, 23);
             this.buttonAddUnknown.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonAddUnknown.StyleManager = this.metroStyleManager1;
             this.buttonAddUnknown.TabIndex = 55;
             this.buttonAddUnknown.Text = "Add";
             this.buttonAddUnknown.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -232,7 +219,6 @@ namespace AxTools.Forms
             this.comboboxNPCs.OverlayText = "List of visible NPCs...";
             this.comboboxNPCs.Size = new System.Drawing.Size(311, 25);
             this.comboboxNPCs.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboboxNPCs.StyleManager = this.metroStyleManager1;
             this.comboboxNPCs.TabIndex = 59;
             this.comboboxNPCs.Theme = MetroFramework.MetroThemeStyle.Light;
             this.comboboxNPCs.Click += new System.EventHandler(this.comboboxNPCs_Click);
@@ -250,7 +236,6 @@ namespace AxTools.Forms
             this.comboboxObjects.OverlayText = "List of visible objects...";
             this.comboboxObjects.Size = new System.Drawing.Size(311, 25);
             this.comboboxObjects.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboboxObjects.StyleManager = this.metroStyleManager1;
             this.comboboxObjects.TabIndex = 60;
             this.comboboxObjects.Theme = MetroFramework.MetroThemeStyle.Light;
             this.comboboxObjects.Click += new System.EventHandler(this.comboboxObjects_Click);
@@ -262,7 +247,6 @@ namespace AxTools.Forms
             this.buttonAddObject.Name = "buttonAddObject";
             this.buttonAddObject.Size = new System.Drawing.Size(71, 25);
             this.buttonAddObject.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonAddObject.StyleManager = this.metroStyleManager1;
             this.buttonAddObject.TabIndex = 61;
             this.buttonAddObject.Text = "Add";
             this.buttonAddObject.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -282,7 +266,6 @@ namespace AxTools.Forms
             this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Size = new System.Drawing.Size(402, 368);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTabControl1.StyleManager = this.metroStyleManager1;
             this.metroTabControl1.TabIndex = 62;
             this.metroTabControl1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -308,7 +291,6 @@ namespace AxTools.Forms
             this.tabPageTrackingUnits.Name = "tabPageTrackingUnits";
             this.tabPageTrackingUnits.Size = new System.Drawing.Size(394, 329);
             this.tabPageTrackingUnits.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tabPageTrackingUnits.StyleManager = this.metroStyleManager1;
             this.tabPageTrackingUnits.TabIndex = 0;
             this.tabPageTrackingUnits.Text = "             Tracking units           ";
             this.tabPageTrackingUnits.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -324,7 +306,6 @@ namespace AxTools.Forms
             this.buttonSaveFile.Name = "buttonSaveFile";
             this.buttonSaveFile.Size = new System.Drawing.Size(191, 23);
             this.buttonSaveFile.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonSaveFile.StyleManager = this.metroStyleManager1;
             this.buttonSaveFile.TabIndex = 64;
             this.buttonSaveFile.Text = "Save list to file";
             this.buttonSaveFile.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -337,7 +318,6 @@ namespace AxTools.Forms
             this.buttonOpenFile.Name = "buttonOpenFile";
             this.buttonOpenFile.Size = new System.Drawing.Size(191, 23);
             this.buttonOpenFile.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonOpenFile.StyleManager = this.metroStyleManager1;
             this.buttonOpenFile.TabIndex = 63;
             this.buttonOpenFile.Text = "Load list from file";
             this.buttonOpenFile.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -357,7 +337,6 @@ namespace AxTools.Forms
             this.tabPageAppearance.Name = "tabPageAppearance";
             this.tabPageAppearance.Size = new System.Drawing.Size(394, 329);
             this.tabPageAppearance.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tabPageAppearance.StyleManager = this.metroStyleManager1;
             this.tabPageAppearance.TabIndex = 1;
             this.tabPageAppearance.Text = "               Appearance            ";
             this.tabPageAppearance.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -379,7 +358,6 @@ namespace AxTools.Forms
             this.Padding = new System.Windows.Forms.Padding(15, 30, 15, 10);
             this.Resizable = false;
             this.ShowInTaskbar = false;
-            this.StyleManager = this.metroStyleManager1;
             this.Text = "Radar settings";
             this.TopMost = true;
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjects)).EndInit();
@@ -397,7 +375,6 @@ namespace AxTools.Forms
 
         private MetroFramework.Components.MetroToolTip toolTip1;
         private MetroFramework.Controls.MetroButton buttonAddNPC;
-        private MetroStyleManager metroStyleManager1;
         private MetroCheckBox metroCheckBoxShowObjectsNames;
         private MetroCheckBox metroCheckBoxShowNpcsNames;
         private MetroCheckBox metroCheckBoxShowPlayersClasses;

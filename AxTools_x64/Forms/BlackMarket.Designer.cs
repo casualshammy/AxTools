@@ -1,4 +1,4 @@
-﻿using AxTools.Components;
+﻿using Components;
 
 namespace AxTools.Forms
 {
@@ -31,21 +31,15 @@ namespace AxTools.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
-            this.listView1 = new ListViewDoubleBuffered();
+            this.listView1 = new Components.ListViewDoubleBuffered();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.metroLinkRefresh = new MetroFramework.Controls.MetroLink();
             this.timerUpdateList = new System.Windows.Forms.Timer(this.components);
+            this.imageListWowhead = new System.Windows.Forms.ImageList(this.components);
             this.SuspendLayout();
-            // 
-            // metroStyleManager1
-            // 
-            this.metroStyleManager1.OwnerForm = this;
-            this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // listView1
             // 
@@ -57,7 +51,8 @@ namespace AxTools.Forms
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.Location = new System.Drawing.Point(20, 60);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(506, 243);
+            this.listView1.Size = new System.Drawing.Size(519, 243);
+            this.listView1.SmallImageList = this.imageListWowhead;
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -70,7 +65,7 @@ namespace AxTools.Forms
             // columnHeader2
             // 
             this.columnHeader2.Text = "Time Remaining";
-            this.columnHeader2.Width = 92;
+            this.columnHeader2.Width = 105;
             // 
             // columnHeader3
             // 
@@ -89,11 +84,10 @@ namespace AxTools.Forms
             this.metroLinkRefresh.CustomForeColor = false;
             this.metroLinkRefresh.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.metroLinkRefresh.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.metroLinkRefresh.Location = new System.Drawing.Point(329, 31);
+            this.metroLinkRefresh.Location = new System.Drawing.Point(342, 31);
             this.metroLinkRefresh.Name = "metroLinkRefresh";
             this.metroLinkRefresh.Size = new System.Drawing.Size(115, 23);
             this.metroLinkRefresh.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLinkRefresh.StyleManager = this.metroStyleManager1;
             this.metroLinkRefresh.TabIndex = 2;
             this.metroLinkRefresh.Text = ">> Refresh <<";
             this.metroLinkRefresh.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -105,16 +99,21 @@ namespace AxTools.Forms
             this.timerUpdateList.Interval = 500;
             this.timerUpdateList.Tick += new System.EventHandler(this.timerUpdateList_Tick);
             // 
+            // imageListWowhead
+            // 
+            this.imageListWowhead.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageListWowhead.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageListWowhead.TransparentColor = System.Drawing.Color.Transparent;
+            // 
             // BlackMarket
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(546, 323);
+            this.ClientSize = new System.Drawing.Size(559, 323);
             this.Controls.Add(this.metroLinkRefresh);
             this.Controls.Add(this.listView1);
             this.Location = new System.Drawing.Point(0, 0);
             this.Name = "BlackMarket";
-            this.StyleManager = this.metroStyleManager1;
             this.Text = "BlackMarket tracker";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BlackMarketFormClosing);
             this.ResumeLayout(false);
@@ -123,7 +122,6 @@ namespace AxTools.Forms
 
         #endregion
 
-        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
         private ListViewDoubleBuffered listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
@@ -131,5 +129,6 @@ namespace AxTools.Forms
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private MetroFramework.Controls.MetroLink metroLinkRefresh;
         private System.Windows.Forms.Timer timerUpdateList;
+        private System.Windows.Forms.ImageList imageListWowhead;
     }
 }

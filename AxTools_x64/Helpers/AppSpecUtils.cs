@@ -64,9 +64,9 @@ namespace AxTools.Helpers
             }
         }
 
-        internal static void NotifyUser(string title, string message, NotifyUserType type, bool sound)
+        internal static void NotifyUser(string title, string message, NotifyUserType type, bool sound, bool showOnlyBallonTip = false)
         {
-            if (NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
+            if (!showOnlyBallonTip && NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
             {
                 switch (type)
                 {

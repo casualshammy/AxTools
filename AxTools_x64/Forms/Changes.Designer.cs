@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -41,12 +40,6 @@
             this.pictureBox1.Size = new System.Drawing.Size(689, 235);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            // 
-            // metroStyleManager1
-            // 
-            this.metroStyleManager1.OwnerForm = this;
-            this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // Changes
             // 
@@ -61,7 +54,6 @@
             this.Name = "Changes";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.Resizable = false;
-            this.StyleManager = this.metroStyleManager1;
             this.Text = "Changes";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -71,7 +63,6 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
 
 
     }

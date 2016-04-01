@@ -41,10 +41,10 @@ namespace AxTools.Forms
         private readonly SolidBrush objectBrush = new SolidBrush(Settings.Instance.WoWRadarObjectColor);
         private readonly SolidBrush whiteBrush = new SolidBrush(Color.White);
         private readonly SolidBrush grayBrush = new SolidBrush(Color.Gray);
-        Point tmpPoint = Point.Empty;
-        Point oldPoint = Point.Empty;
-        bool isDragging;
-        float zoomR = 0.5F;
+        private Point tmpPoint = Point.Empty;
+        private Point oldPoint = Point.Empty;
+        private bool isDragging;
+        private float zoomR = 0.5F;
         private readonly int halfOfPictureboxSize;
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private readonly List<WowPlayer> wowPlayers = new List<WowPlayer>();
@@ -107,7 +107,7 @@ namespace AxTools.Forms
                 BeginInvoke((MethodInvoker) (() => { labelHint.Visible = false; }));
             });
 
-            Log.Info(string.Format("{0}:{1} :: [Radar] Loaded", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0} [Radar] Loaded", WoWManager.WoWProcess));
         }
 
         private void Redraw()
@@ -127,7 +127,7 @@ namespace AxTools.Forms
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(string.Format("{0}:{1} :: [Radar] OOG drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                        Log.Error(string.Format("{0} [Radar] OOG drawing error: {1}", WoWManager.WoWProcess, ex.Message));
                     }
                     Thread.Sleep(100);
                     continue;
@@ -138,7 +138,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(string.Format("{0}:{1} :: [Radar] Pulsing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                    Log.Error(string.Format("{0} [Radar] Pulsing error: {1}", WoWManager.WoWProcess, ex.Message));
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
                     Thread.Sleep(100);
@@ -150,7 +150,7 @@ namespace AxTools.Forms
                     enemies = wowPlayers.Except(friends).ToArray();
                     objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
                     npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                    if (!WoWPlayerMe.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
+                    if (!GameFunctions.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
                     {
                         UInt128 interactGUID = UInt128.Zero;
                         double interactDistance = 11;
@@ -178,11 +178,11 @@ namespace AxTools.Forms
                         }
                         if (interactGUID != UInt128.Zero)
                         {
-                            WoWDXInject.Interact(interactGUID);
-                            Log.Info(string.Format("{0}:{1} :: [Radar] Interacted with {2} {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, interactName, interactGUID));
+                            GameFunctions.Interact(interactGUID);
+                            Log.Info(string.Format("{0} [Radar] Interacted with {1} {2}", WoWManager.WoWProcess, interactName, interactGUID));
                         }
                     }
-                    bool soundAlarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Health > 0);
+                    bool soundAlarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Alive);
                     if (!soundAlarmPrevState && soundAlarm)
                     {
                         Task.Factory.StartNew(PlayAlarmFile);
@@ -193,7 +193,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(string.Format("{0}:{1} :: [Radar] Prepainting error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                    Log.Error(string.Format("{0} [Radar] Prepainting error: {1}", WoWManager.WoWProcess, ex.Message));
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
                     Thread.Sleep(100);
@@ -205,7 +205,7 @@ namespace AxTools.Forms
                     Thread.Sleep(counter);
                 }
             }
-            Log.Info(string.Format("{0}:{1} :: [Radar] Redraw task is finishing...", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0} [Radar] Redraw task is finishing...", WoWManager.WoWProcess));
         }
 
         private void PictureBox1Paint(object sender, PaintEventArgs e)
@@ -215,12 +215,12 @@ namespace AxTools.Forms
                 try
                 {
                     flicker = !flicker;
-                    int friendsCountAlive = friends.Count(i => i.Health > 0);
+                    int friendsCountAlive = friends.Count(i => i.Alive);
                     checkBoxFriends.Text = string.Concat("F: ", friendsCountAlive.ToString(), "/", friends.Length.ToString());
-                    int enemiesCountAlive = enemies.Count(i => i.Health > 0);
+                    int enemiesCountAlive = enemies.Count(i => i.Alive);
                     checkBoxEnemies.Text = string.Concat("E: ", enemiesCountAlive.ToString(), "/", enemies.Length.ToString());
                     checkBoxObjects.Text = string.Concat("Objects: ", objects.Length.ToString());
-                    int npcsCountAlive = npcs.Count(i => i.Health > 0);
+                    int npcsCountAlive = npcs.Count(i => i.Alive);
                     checkBoxNpcs.Text = string.Concat("N: ", npcsCountAlive.ToString(), "/", npcs.Length.ToString());
 
                     objectsPointsInRadarCoords.Clear();
@@ -254,64 +254,66 @@ namespace AxTools.Forms
                     {
                         foreach (WowPlayer i in friends)
                         {
-                            if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
-                            var2X = i.Location.X;
-                            var2Y = i.Location.Y;
-                            num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
-                            var2X = localPlayerLocationX - var2X;
-                            var2Y = localPlayerLocationY - var2Y;
-                            var2X = (int) (zoomR*var2X);
-                            var2Y = (int) (zoomR*var2Y);
-                            double num3 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
-                            point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931));
-                            point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Sin(num2));
-                            Pen pen;
-                            SolidBrush solidBrush;
-                            if (i.Health > 0)
+                            if (checkBoxCorpses.Checked || i.Alive)
                             {
-                                pen = friendPen;
-                                solidBrush = friendBrush;
-                            }
-                            else
-                            {
-                                pen = grayPen;
-                                solidBrush = grayBrush;
-                            }
-                            Point[] pts;
-                            float zDiff = i.Location.Z - localPlayer.Location.Z;
-                            if (zDiff >= 10)
-                            {
-                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
-                            }
-                            else if (zDiff <= -10)
-                            {
-                                pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
-                            }
-                            else
-                            {
-                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
-                            }
-                            graphics.FillPolygon(solidBrush, pts);
-                            if (!flicker || i.TargetGUID != localPlayer.GUID)
-                            {
-                                graphics.DrawPolygon(pen, pts);
-                            }
-                            objectsPointsInRadarCoords.Add(i.GUID, point);
-                            point.X += 3;
-                            point.Y += 3;
-                            if (settings.WoWRadarShowPlayersClasses)
-                            {
-                                if (i.Level == localPlayer.Level)
+                                var2X = i.Location.X;
+                                var2Y = i.Location.Y;
+                                num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
+                                var2X = localPlayerLocationX - var2X;
+                                var2Y = localPlayerLocationY - var2Y;
+                                var2X = (int) (zoomR*var2X);
+                                var2Y = (int) (zoomR*var2Y);
+                                double num3 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
+                                point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931));
+                                point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Sin(num2));
+                                Pen pen;
+                                SolidBrush solidBrush;
+                                if (i.Alive)
                                 {
-                                    graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
-                                }
-                                else if (i.Level > localPlayer.Level)
-                                {
-                                    graphics.DrawString(string.Concat(i.Class.ToString(), "+"), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
+                                    pen = friendPen;
+                                    solidBrush = friendBrush;
                                 }
                                 else
                                 {
-                                    graphics.DrawString(string.Concat(i.Class.ToString(), "-"), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
+                                    pen = grayPen;
+                                    solidBrush = grayBrush;
+                                }
+                                Point[] pts;
+                                float zDiff = i.Location.Z - localPlayer.Location.Z;
+                                if (zDiff >= 10)
+                                {
+                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
+                                }
+                                else if (zDiff <= -10)
+                                {
+                                    pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
+                                }
+                                else
+                                {
+                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                                }
+                                graphics.FillPolygon(solidBrush, pts);
+                                if (!flicker || i.TargetGUID != localPlayer.GUID)
+                                {
+                                    graphics.DrawPolygon(pen, pts);
+                                }
+                                objectsPointsInRadarCoords.Add(i.GUID, point);
+                                point.X += 3;
+                                point.Y += 3;
+                                if (settings.WoWRadarShowPlayersClasses)
+                                {
+                                    if (i.Level == localPlayer.Level)
+                                    {
+                                        graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
+                                    }
+                                    else if (i.Level > localPlayer.Level)
+                                    {
+                                        graphics.DrawString(string.Concat(i.Class.ToString(), "+"), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
+                                    }
+                                    else
+                                    {
+                                        graphics.DrawString(string.Concat(i.Class.ToString(), "-"), DefaultFont, solidBrush, point); // do not use TextRenderer.DrawText, it's slower
+                                    }
                                 }
                             }
                         }
@@ -325,64 +327,66 @@ namespace AxTools.Forms
                     {
                         foreach (WowPlayer i in enemies)
                         {
-                            if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
-                            var2X = i.Location.X;
-                            var2Y = i.Location.Y;
-                            num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
-                            var2X = localPlayerLocationX - var2X;
-                            var2Y = localPlayerLocationY - var2Y;
-                            var2X = (int) (zoomR*var2X);
-                            var2Y = (int) (zoomR*var2Y);
-                            double num3 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
-                            point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931));
-                            point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Sin(num2));
-                            Pen pen;
-                            SolidBrush solidBrush;
-                            if (i.Health > 0)
+                            if (checkBoxCorpses.Checked || i.Alive)
                             {
-                                pen = enemyPen;
-                                solidBrush = enemyBrush;
-                            }
-                            else
-                            {
-                                pen = grayPen;
-                                solidBrush = grayBrush;
-                            }
-                            Point[] pts;
-                            float zDiff = i.Location.Z - localPlayer.Location.Z;
-                            if (zDiff >= 10)
-                            {
-                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
-                            }
-                            else if (zDiff <= -10)
-                            {
-                                pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
-                            }
-                            else
-                            {
-                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
-                            }
-                            graphics.FillPolygon(solidBrush, pts);
-                            if (!flicker || i.TargetGUID != localPlayer.GUID)
-                            {
-                                graphics.DrawPolygon(pen, pts);
-                            }
-                            objectsPointsInRadarCoords.Add(i.GUID, point);
-                            point.X += 3;
-                            point.Y += 3;
-                            if (settings.WoWRadarShowPlayersClasses)
-                            {
-                                if (i.Level == localPlayer.Level)
+                                var2X = i.Location.X;
+                                var2Y = i.Location.Y;
+                                num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
+                                var2X = localPlayerLocationX - var2X;
+                                var2Y = localPlayerLocationY - var2Y;
+                                var2X = (int) (zoomR*var2X);
+                                var2Y = (int) (zoomR*var2Y);
+                                double num3 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
+                                point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931));
+                                point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Sin(num2));
+                                Pen pen;
+                                SolidBrush solidBrush;
+                                if (i.Alive)
                                 {
-                                    graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
-                                }
-                                else if (i.Level > localPlayer.Level)
-                                {
-                                    graphics.DrawString(string.Concat(i.Class.ToString(), "+"), DefaultFont, solidBrush, point);
+                                    pen = enemyPen;
+                                    solidBrush = enemyBrush;
                                 }
                                 else
                                 {
-                                    graphics.DrawString(string.Concat(i.Class.ToString(), "-"), DefaultFont, solidBrush, point);
+                                    pen = grayPen;
+                                    solidBrush = grayBrush;
+                                }
+                                Point[] pts;
+                                float zDiff = i.Location.Z - localPlayer.Location.Z;
+                                if (zDiff >= 10)
+                                {
+                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
+                                }
+                                else if (zDiff <= -10)
+                                {
+                                    pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
+                                }
+                                else
+                                {
+                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                                }
+                                graphics.FillPolygon(solidBrush, pts);
+                                if (!flicker || i.TargetGUID != localPlayer.GUID)
+                                {
+                                    graphics.DrawPolygon(pen, pts);
+                                }
+                                objectsPointsInRadarCoords.Add(i.GUID, point);
+                                point.X += 3;
+                                point.Y += 3;
+                                if (settings.WoWRadarShowPlayersClasses)
+                                {
+                                    if (i.Level == localPlayer.Level)
+                                    {
+                                        graphics.DrawString(i.Class.ToString(), DefaultFont, solidBrush, point);
+                                    }
+                                    else if (i.Level > localPlayer.Level)
+                                    {
+                                        graphics.DrawString(string.Concat(i.Class.ToString(), "+"), DefaultFont, solidBrush, point);
+                                    }
+                                    else
+                                    {
+                                        graphics.DrawString(string.Concat(i.Class.ToString(), "-"), DefaultFont, solidBrush, point);
+                                    }
                                 }
                             }
                         }
@@ -440,39 +444,41 @@ namespace AxTools.Forms
                     {
                         foreach (WowNpc i in npcs)
                         {
-                            if (!checkBoxCorpses.Checked && i.Health <= 0) continue;
-                            var2X = i.Location.X;
-                            var2Y = i.Location.Y;
-                            num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
-                            var2X = localPlayerLocationX - var2X;
-                            var2Y = localPlayerLocationY - var2Y;
-                            var2X = (int) (zoomR*var2X);
-                            var2Y = (int) (zoomR*var2Y);
-                            double num4 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
-                            point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931));
-                            point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Sin(num2));
-                            Point[] pts;
-                            float zDiff = i.Location.Z - localPlayer.Location.Z;
-                            if (zDiff >= 10)
+                            if (checkBoxCorpses.Checked || i.Alive)
                             {
-                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
-                            }
-                            else if (zDiff <= -10)
-                            {
-                                pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
-                            }
-                            else
-                            {
-                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
-                            }
-                            graphics.DrawPolygon(i.Health > 0 ? npcPen : grayPen, pts);
-                            graphics.FillPolygon(i.Health > 0 ? npcBrush : grayBrush, pts);
-                            objectsPointsInRadarCoords.Add(i.GUID, point);
-                            if (settings.WoWRadarShowNPCsNames)
-                            {
-                                point.X += 3;
-                                point.Y += 3;
-                                graphics.DrawString(i.Name, DefaultFont, i.Health > 0 ? npcBrush : grayBrush, point);
+                                var2X = i.Location.X;
+                                var2Y = i.Location.Y;
+                                num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
+                                var2X = localPlayerLocationX - var2X;
+                                var2Y = localPlayerLocationY - var2Y;
+                                var2X = (int) (zoomR*var2X);
+                                var2Y = (int) (zoomR*var2Y);
+                                double num4 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
+                                point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931));
+                                point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Sin(num2));
+                                Point[] pts;
+                                float zDiff = i.Location.Z - localPlayer.Location.Z;
+                                if (zDiff >= 10)
+                                {
+                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
+                                }
+                                else if (zDiff <= -10)
+                                {
+                                    pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
+                                }
+                                else
+                                {
+                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                                }
+                                graphics.DrawPolygon(i.Alive ? npcPen : grayPen, pts);
+                                graphics.FillPolygon(i.Alive ? npcBrush : grayBrush, pts);
+                                objectsPointsInRadarCoords.Add(i.GUID, point);
+                                if (settings.WoWRadarShowNPCsNames)
+                                {
+                                    point.X += 3;
+                                    point.Y += 3;
+                                    graphics.DrawString(i.Name, DefaultFont, i.Alive ? npcBrush : grayBrush, point);
+                                }
                             }
                         }
                     }
@@ -595,13 +601,13 @@ namespace AxTools.Forms
             isRunning = false;
             if (!thread.Join(5000))
             {
-                Log.Error(string.Format("{0}:{1} :: [Radar] Redraw task termination error, status: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, thread.ThreadState));
+                Log.Error(string.Format("{0} [Radar] Redraw task termination error, status: {1}", WoWManager.WoWProcess, thread.ThreadState));
             }
             else
             {
-                Log.Info(string.Format("{0}:{1} :: [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+                Log.Info(string.Format("{0} [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess));
             }
-            Log.Info(string.Format("{0}:{1} :: [Radar] Closed", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
+            Log.Info(string.Format("{0} [Radar] Closed", WoWManager.WoWProcess));
         }
 
         private void RadarLoad(object sender, EventArgs e)
@@ -727,7 +733,7 @@ namespace AxTools.Forms
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            WoWDXInject.TargetUnit(unit.GUID);
+                            unit.Target();
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
@@ -740,7 +746,7 @@ namespace AxTools.Forms
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            WoWDXInject.TargetUnit(npc.GUID);
+                            npc.Target();
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
@@ -753,7 +759,7 @@ namespace AxTools.Forms
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            WoWDXInject.Interact(wowObject.GUID);
+                            GameFunctions.Interact(wowObject.GUID);
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
@@ -875,17 +881,10 @@ namespace AxTools.Forms
 
         private void MoveToWrapper(WowPoint point)
         {
-            bool shouldDisableCTM = false;
-            if (!GameFunctions.Lua_IsCTMEnabled())
+            Task.Run(() =>
             {
-                shouldDisableCTM = true;
-                GameFunctions.Lua_EnableCTM();
-            }
-            WoWDXInject.MoveTo(point);
-            if (shouldDisableCTM)
-            {
-                GameFunctions.Lua_DisableCTM();
-            }
+                GameFunctions.MoveTo(point, 1f, 5000, false);
+            });
         }
 
     }

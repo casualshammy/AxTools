@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 
@@ -59,6 +60,7 @@ namespace AxTools.WoW.PluginSystem.API
             return null;
         }
 
+        [Pure]
         public static WoWPlayerMe Pulse()
         {
             return WoWManager.WoWProcess.IsInGame ? ObjectMgr.Pulse() : null;
@@ -74,6 +76,6 @@ namespace AxTools.WoW.PluginSystem.API
             wowNpcs.Clear();
             return null;
         }
-    
+
     }
 }

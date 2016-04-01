@@ -1,11 +1,11 @@
-﻿using AxTools.Components;
-using AxTools.Helpers;
+﻿using Components;
 using AxTools.WinAPI;
 using AxTools.WoW;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using AxTools.Helpers;
 
 namespace AxTools.Forms
 {
@@ -15,7 +15,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             ShowInTaskbar = false;
-            metroStyleManager1.Style = Settings.Instance.StyleColor;
+           StyleManager.Style = Settings.Instance.StyleColor;
             foreach (WowProcess i in WoWProcessManager.List)
             {
                 comboBox1.Items.Add(i.IsValidBuild && i.IsInGame ?

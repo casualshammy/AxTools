@@ -30,6 +30,7 @@ namespace WoWGold_Notifier
         private CookieContainer cookies;
         private const int TIMER_INTERVAL = 100;
         private static readonly Uri SITE = new Uri("http://supply.elfmoney.ru");
+        internal static readonly NetworkCredential Credentials = new NetworkCredential("axio@axio.name", "axio-739");
         private readonly List<string> knownBidButtons = new List<string>();
         private const string ButtonTextIsPerforming = "Выдать";
         private const string ButtonTextToClickText = "Выполнить";
@@ -95,7 +96,6 @@ namespace WoWGold_Notifier
 
         private void TimerThreadFunc()
         {
-            TBProgressBar.SetProgressValue(Handle, 100, 100);
             while (_lock)
             {
                 stopwatch.Restart();
@@ -151,19 +151,22 @@ namespace WoWGold_Notifier
                 if (source.Contains(ButtonTextToClickText) || source.Contains(TEXT_PERFORMING))
                 {
                     labelResponse.Text = "Response: 200 OK";
+                    TBProgressBar.SetProgressValue(Handle, 100, 100);
                     TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
                 }
                 else if (source.Contains(TEXT_NO_ORDERS_AVAILABLE))
                 {
                     labelResponse.Text = "Response: No orders";
+                    TBProgressBar.SetProgressValue(Handle, 100, 100);
                     TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
                 }
                 else
                 {
                     labelResponse.Text = "Response: Auth error?";
+                    TBProgressBar.SetProgressValue(Handle, 100, 100);
                     TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
                 }
-                HtmlDocument p = new HtmlDocument { OptionDefaultStreamEncoding = Encoding.UTF8 };
+                HtmlDocument p = new HtmlDocument {OptionDefaultStreamEncoding = Encoding.UTF8};
                 p.LoadHtml(source);
                 return p;
             }

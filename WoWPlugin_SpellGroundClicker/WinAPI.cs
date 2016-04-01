@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace WoWPlugin_SpellGroundClicker
 {
-    class WinAPI
+    internal class WinAPI
     {
 
         public static void SetCursorPosition(Point point)

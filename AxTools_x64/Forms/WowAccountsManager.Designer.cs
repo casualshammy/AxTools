@@ -1,4 +1,4 @@
-﻿using AxTools.Components;
+﻿using Components;
 using MetroFramework.Controls;
 
 namespace AxTools.Forms
@@ -32,7 +32,6 @@ namespace AxTools.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.metroStyleManager1 = new MetroFramework.Components.MetroStyleManager();
             this.metroButtonWowAccountDelete = new MetroFramework.Controls.MetroButton();
             this.metroButtonWowAccountSaveUpdate = new MetroFramework.Controls.MetroButton();
             this.textBoxWowAccountPassword = new MetroFramework.Controls.MetroTextBox();
@@ -42,12 +41,6 @@ namespace AxTools.Forms
             this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
             this.SuspendLayout();
             // 
-            // metroStyleManager1
-            // 
-            this.metroStyleManager1.OwnerForm = this;
-            this.metroStyleManager1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroStyleManager1.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
             // metroButtonWowAccountDelete
             // 
             this.metroButtonWowAccountDelete.Enabled = false;
@@ -56,7 +49,6 @@ namespace AxTools.Forms
             this.metroButtonWowAccountDelete.Name = "metroButtonWowAccountDelete";
             this.metroButtonWowAccountDelete.Size = new System.Drawing.Size(106, 23);
             this.metroButtonWowAccountDelete.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroButtonWowAccountDelete.StyleManager = this.metroStyleManager1;
             this.metroButtonWowAccountDelete.TabIndex = 43;
             this.metroButtonWowAccountDelete.Text = "Delete";
             this.metroButtonWowAccountDelete.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -70,7 +62,6 @@ namespace AxTools.Forms
             this.metroButtonWowAccountSaveUpdate.Name = "metroButtonWowAccountSaveUpdate";
             this.metroButtonWowAccountSaveUpdate.Size = new System.Drawing.Size(106, 23);
             this.metroButtonWowAccountSaveUpdate.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroButtonWowAccountSaveUpdate.StyleManager = this.metroStyleManager1;
             this.metroButtonWowAccountSaveUpdate.TabIndex = 42;
             this.metroButtonWowAccountSaveUpdate.Text = "Add";
             this.metroButtonWowAccountSaveUpdate.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -88,7 +79,6 @@ namespace AxTools.Forms
             this.textBoxWowAccountPassword.SelectedText = "";
             this.textBoxWowAccountPassword.Size = new System.Drawing.Size(303, 23);
             this.textBoxWowAccountPassword.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxWowAccountPassword.StyleManager = this.metroStyleManager1;
             this.textBoxWowAccountPassword.TabIndex = 41;
             this.textBoxWowAccountPassword.Theme = MetroFramework.MetroThemeStyle.Light;
             this.textBoxWowAccountPassword.UseStyleColors = true;
@@ -105,7 +95,6 @@ namespace AxTools.Forms
             this.textBoxWowAccountLogin.SelectedText = "";
             this.textBoxWowAccountLogin.Size = new System.Drawing.Size(303, 23);
             this.textBoxWowAccountLogin.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxWowAccountLogin.StyleManager = this.metroStyleManager1;
             this.textBoxWowAccountLogin.TabIndex = 40;
             this.textBoxWowAccountLogin.Text = "Login";
             this.textBoxWowAccountLogin.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -124,7 +113,6 @@ namespace AxTools.Forms
             this.comboBoxWowAccounts.Name = "comboBoxWowAccounts";
             this.comboBoxWowAccounts.Size = new System.Drawing.Size(415, 29);
             this.comboBoxWowAccounts.Style = MetroFramework.MetroColorStyle.Blue;
-            this.comboBoxWowAccounts.StyleManager = this.metroStyleManager1;
             this.comboBoxWowAccounts.TabIndex = 39;
             this.comboBoxWowAccounts.Theme = MetroFramework.MetroThemeStyle.Light;
             this.comboBoxWowAccounts.SelectedIndexChanged += new System.EventHandler(this.comboBoxWowAccounts_SelectedIndexChanged);
@@ -141,7 +129,6 @@ namespace AxTools.Forms
             this.metroLabel3.Name = "metroLabel3";
             this.metroLabel3.Size = new System.Drawing.Size(185, 19);
             this.metroLabel3.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel3.StyleManager = this.metroStyleManager1;
             this.metroLabel3.TabIndex = 38;
             this.metroLabel3.Text = "...or just enter a new one here:";
             this.metroLabel3.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -159,7 +146,6 @@ namespace AxTools.Forms
             this.metroLabel4.Name = "metroLabel4";
             this.metroLabel4.Size = new System.Drawing.Size(161, 19);
             this.metroLabel4.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel4.StyleManager = this.metroStyleManager1;
             this.metroLabel4.TabIndex = 37;
             this.metroLabel4.Text = "Select an account to edit...";
             this.metroLabel4.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -183,7 +169,6 @@ namespace AxTools.Forms
             this.Name = "WowAccountsManager";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.Resizable = false;
-            this.StyleManager = this.metroStyleManager1;
             this.Text = "WowAccounts";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -192,7 +177,6 @@ namespace AxTools.Forms
 
         #endregion
 
-        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
         private MetroFramework.Controls.MetroButton metroButtonWowAccountDelete;
         private MetroFramework.Controls.MetroButton metroButtonWowAccountSaveUpdate;
         private MetroTextBox textBoxWowAccountPassword;

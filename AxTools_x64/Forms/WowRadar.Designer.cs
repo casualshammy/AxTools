@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using AxTools.Components;
+using Components;
 using AxTools.Properties;
 using MetroFramework;
 using MetroFramework.Components;
@@ -40,15 +40,15 @@ namespace AxTools.Forms
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WowRadar));
             this.pictureBoxMain = new System.Windows.Forms.PictureBox();
-            this.pictureBoxClose = new AxTools.Components.PictureBoxExt(this.components);
-            this.pictureBoxRadarSettings = new AxTools.Components.PictureBoxExt(this.components);
+            this.pictureBoxClose = new Components.PictureBoxExt(this.components);
+            this.pictureBoxRadarSettings = new Components.PictureBoxExt(this.components);
             this.toolTip1 = new MetroFramework.Components.MetroToolTip();
-            this.checkBoxFriends = new AxTools.Components.CheckBoxExt(this.components);
-            this.checkBoxEnemies = new AxTools.Components.CheckBoxExt(this.components);
+            this.checkBoxFriends = new Components.CheckBoxExt(this.components);
+            this.checkBoxEnemies = new Components.CheckBoxExt(this.components);
             this.checkBoxCorpses = new System.Windows.Forms.CheckBox();
             this.textBoxDetailedInfo = new System.Windows.Forms.TextBox();
-            this.checkBoxObjects = new AxTools.Components.CheckBoxExt(this.components);
-            this.checkBoxNpcs = new AxTools.Components.CheckBoxExt(this.components);
+            this.checkBoxObjects = new Components.CheckBoxExt(this.components);
+            this.checkBoxNpcs = new Components.CheckBoxExt(this.components);
             this.labelHint = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxClose)).BeginInit();
@@ -109,7 +109,7 @@ namespace AxTools.Forms
             this.checkBoxFriends.Text = "F: 999/999";
             this.toolTip1.SetToolTip(this.checkBoxFriends, "Show friendly players");
             this.checkBoxFriends.UseVisualStyleBackColor = true;
-            this.checkBoxFriends.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxFriendsMouseClickExtended);
+            this.checkBoxFriends.MouseClickExtended += new Components.CheckBoxExt.MouseClickExt(this.CheckBoxFriendsMouseClickExtended);
             // 
             // checkBoxEnemies
             // 
@@ -122,7 +122,7 @@ namespace AxTools.Forms
             this.checkBoxEnemies.Text = "E: 999/999";
             this.toolTip1.SetToolTip(this.checkBoxEnemies, "Show hostile players");
             this.checkBoxEnemies.UseVisualStyleBackColor = true;
-            this.checkBoxEnemies.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxEnemiesMouseClickExtended);
+            this.checkBoxEnemies.MouseClickExtended += new Components.CheckBoxExt.MouseClickExt(this.CheckBoxEnemiesMouseClickExtended);
             // 
             // checkBoxCorpses
             // 
@@ -159,7 +159,7 @@ namespace AxTools.Forms
             this.checkBoxObjects.TabIndex = 5;
             this.checkBoxObjects.Text = "Objects: 999";
             this.checkBoxObjects.UseVisualStyleBackColor = true;
-            this.checkBoxObjects.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxObjectsMouseClickExtended);
+            this.checkBoxObjects.MouseClickExtended += new Components.CheckBoxExt.MouseClickExt(this.CheckBoxObjectsMouseClickExtended);
             // 
             // checkBoxNpcs
             // 
@@ -171,7 +171,7 @@ namespace AxTools.Forms
             this.checkBoxNpcs.TabIndex = 7;
             this.checkBoxNpcs.Text = "N: 999/999";
             this.checkBoxNpcs.UseVisualStyleBackColor = true;
-            this.checkBoxNpcs.MouseClickExtended += new AxTools.Components.CheckBoxExt.MouseClickExt(this.CheckBoxNpcsMouseClickExtended);
+            this.checkBoxNpcs.MouseClickExtended += new Components.CheckBoxExt.MouseClickExt(this.CheckBoxNpcsMouseClickExtended);
             // 
             // labelHint
             // 

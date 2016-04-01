@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using AxTools.Components;
 using AxTools.Helpers;
+using Components;
 
 namespace AxTools.Forms
 {
@@ -10,9 +10,9 @@ namespace AxTools.Forms
         internal InputBox()
         {
             InitializeComponent();
+           StyleManager.Style = Settings.Instance.StyleColor;
             button1.Click += Button1Click;
             button2.Click += Button2Click;
-            metroStyleManager1.Style = Settings.Instance.StyleColor;
             BeginInvoke((MethodInvoker) delegate
             {
                 Location = MousePosition;

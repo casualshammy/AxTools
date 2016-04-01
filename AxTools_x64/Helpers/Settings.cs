@@ -33,12 +33,12 @@ namespace AxTools.Helpers
                             {
                                 string rawText = File.ReadAllText(settingsFile, Encoding.UTF8);
                                 _instance = JsonConvert.DeserializeObject<Settings>(rawText);
-                                Log.Info("Settings file is loaded");
+                                Log.Info("[AxTools] Settings file is loaded");
                             }
                             else
                             {
                                 _instance = new Settings();
-                                Log.Info("Settings file is not found!");
+                                Log.Info("[AxTools] Settings file is not found!");
                             }
                             _instance.ValidateAndFix();
                         }
@@ -155,6 +155,12 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 8, PropertyName = "WoWAntiKick")]
         internal bool WoWAntiKick = true;
+
+        [JsonProperty(Order = 9, PropertyName = "WoWInteractMouseover")]
+        internal Keys WoWInteractMouseover = Keys.None;
+
+        [JsonProperty(Order = 10, PropertyName = "WoWTargetMouseover")]
+        internal Keys WoWTargetMouseover = Keys.None;
 
         [JsonProperty(Order = 11, PropertyName = "WoWCustomizeWindow")]
         internal bool WoWCustomizeWindow = false;

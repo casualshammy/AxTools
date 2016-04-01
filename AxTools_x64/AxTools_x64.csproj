@@ -106,6 +106,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.TextEditor">
@@ -138,17 +140,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\CustomScriptEdit.cs">
+    <Compile Include="Forms\AddonsBackupDeploy.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Components\CustomScriptEdit.Designer.cs">
-      <DependentUpon>CustomScriptEdit.cs</DependentUpon>
+    <Compile Include="Forms\AddonsBackupDeploy.Designer.cs">
+      <DependentUpon>AddonsBackupDeploy.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\Line.cs">
-      <SubType>UserControl</SubType>
+    <Compile Include="Forms\AppSettingsWoWBinds.cs">
+      <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Components\Line.Designer.cs">
-      <DependentUpon>Line.cs</DependentUpon>
+    <Compile Include="Forms\AppSettingsWoWBinds.Designer.cs">
+      <DependentUpon>AppSettingsWoWBinds.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Helpers\RadarObject.cs" />
     <Compile Include="Helpers\AppSpecUtils.cs" />
@@ -162,10 +164,6 @@
     <Compile Include="Services\Clicker.cs" />
     <Compile Include="Services\HotkeyManager.cs" />
     <Compile Include="Services\Pinger.cs" />
-    <Compile Include="Components\TaskbarProgressbar\CTaskbarList.cs" />
-    <Compile Include="Components\TaskbarProgressbar\ITaskbarList3.cs" />
-    <Compile Include="Components\TaskbarProgressbar\TBProgressBar.cs" />
-    <Compile Include="Components\TaskbarProgressbar\ThumbnailProgressState.cs" />
     <Compile Include="Helpers\NotifyUserType.cs" />
     <Compile Include="Helpers\TrayIconAnimation.cs" />
     <Compile Include="Services\PingerHelpers\PingerReply.cs" />
@@ -175,10 +173,15 @@
     <Compile Include="WinAPI\Win32Consts.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
     <Compile Include="WoW\IWoWModule.cs" />
+    <Compile Include="WoW\Management\ObjectManager\PlayerInventoryAndContainers.cs" />
+    <Compile Include="WoW\Management\ObjectManager\WoWAura.cs" />
+    <Compile Include="WoW\Management\ObjectManager\WoWItem.cs" />
     <Compile Include="WoW\Management\ObjectManager\WoWObjectInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WoW\Management\UInt128.cs" />
+    <Compile Include="WoW\PluginSystem\API\ChatMsg.cs" />
+    <Compile Include="WoW\PluginSystem\API\MoveHelper.cs" />
     <Compile Include="WoW\PluginSystem\API\SingleThreadTimer.cs" />
     <Compile Include="WoW\PluginSystem\PluginContainer.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.cs">
@@ -196,10 +199,10 @@
     </Compile>
     <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyerSettings.cs" />
     <Compile Include="WoW\WoWAntiKick.cs" />
+    <Compile Include="WoW\Wowhead.cs" />
     <Compile Include="WoW\WoWProcessWatcher.cs" />
     <Compile Include="WoW\Management\ObjectManager\WoWPlayerMe.cs" />
     <Compile Include="WoW\Management\ObjectMgr.cs" />
-    <Compile Include="WoW\Management\WoWDXInject.cs" />
     <Compile Include="WoW\Management\WoWManager.cs" />
     <Compile Include="WoW\PluginSystem\API\ObjMgr.cs" />
     <Compile Include="WoW\PluginSystem\API\GameFunctions.cs" />
@@ -210,44 +213,8 @@
     <Compile Include="WoW\PluginSystem\Plugins\Fishing.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\FlagReturner.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyer.cs" />
-    <Compile Include="Components\BorderedMetroForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Helpers\Globals.cs" />
     <Compile Include="WoW\Management\ObjectManager\WowPlayerInfo.cs" />
-    <Compile Include="Components\CheckBoxExt.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\CheckBoxExt.Designer.cs">
-      <DependentUpon>CheckBoxExt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\DataGridViewExt.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\DataGridViewExt.Designer.cs">
-      <DependentUpon>DataGridViewExt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\ListBoxDoubleBuffered.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\MetroComboboxExt.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\MetroComboboxExt.Designer.cs">
-      <DependentUpon>MetroComboboxExt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\MetroTileExt.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\MetroTileExt.Designer.cs">
-      <DependentUpon>MetroTileExt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\MetroToggleExt.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\MetroToggleExt.Designer.cs">
-      <DependentUpon>MetroToggleExt.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\AppSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -271,13 +238,6 @@
     <Compile Include="WinAPI\SpecialWindowHandles.cs" />
     <Compile Include="WinAPI\FLASHWINFO.cs" />
     <Compile Include="WinAPI\NativeMethods.cs" />
-    <Compile Include="WinAPI\WM_MESSAGE.cs" />
-    <Compile Include="Components\PictureBoxExt.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\PictureBoxExt.Designer.cs">
-      <DependentUpon>PictureBoxExt.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\ClickerSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -354,11 +314,16 @@
     </Compile>
     <Compile Include="WoW\WowBuildInfoX64.cs" />
     <Compile Include="WoW\Management\ObjectManager\WowPlayerClass.cs" />
-    <EmbeddedResource Include="Components\CustomScriptEdit.resx">
-      <DependentUpon>CustomScriptEdit.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\AddonsBackupDeploy.resx">
+      <DependentUpon>AddonsBackupDeploy.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AppSettings.resx">
       <DependentUpon>AppSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AppSettingsWoWBinds.resx">
+      <DependentUpon>AppSettingsWoWBinds.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BlackMarket.resx">
@@ -371,6 +336,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ClickerSettings.resx">
       <DependentUpon>ClickerSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\InputBox.resx">
       <DependentUpon>InputBox.cs</DependentUpon>
@@ -386,6 +352,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WowAccountsManager.resx">
       <DependentUpon>WowAccountsManager.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -445,6 +412,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
+    <None Include="Resources\boxes37.png" />
     <None Include="Resources\Ashran.txt" />
     <None Include="Resources\1435959119_add-item.png" />
     <None Include="Resources\pluginSettingsLight.png" />
@@ -551,6 +519,10 @@
     <ProjectReference Include="..\..\MyMemory\MyMemory.vcxproj">
       <Project>{3b4fbb66-598a-46b8-89ff-f6fa73cb6d7b}</Project>
       <Name>MyMemory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Components\Components.csproj">
+      <Project>{63d3af8e-11d1-4d4e-b791-7fbf09e9aef3}</Project>
+      <Name>Components</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
