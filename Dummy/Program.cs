@@ -69,10 +69,7 @@ namespace Dummy
 
         private static void Test()
         {
-            using (SQLiteConnection connection = new SQLiteConnection(Application.StartupPath + "\\base.sqlite"))
-            {
-                connection.
-            }
+            Console.WriteLine(default(uint));
         }
 
         public static void ForceBasicAuth(this WebClient webClient, string username, string password)

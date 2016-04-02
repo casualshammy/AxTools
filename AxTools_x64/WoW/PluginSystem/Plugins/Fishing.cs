@@ -96,20 +96,26 @@ namespace AxTools.WoW.PluginSystem.Plugins
                             Thread.Sleep(1000);
                         }
                     }
-                    else if (fishingSettings.UseBestBait && CanLure)
+                    else if (fishingSettings.UseBestBait)
                     {
-                        this.LogPrint("Applying lure...");
-                        uint bestBait = baits.First(l => me.ItemsInBags.Any(k => k.EntryID == l));
-                        GameFunctions.UseItemByID(bestBait);
-                        lastTimeLureApplied = DateTime.UtcNow;
-                        Thread.Sleep(Utils.Rnd.Next(250, 750));
+                        uint baitID = GetBestBaitID(me);
+                        if (baitID != 0)
+                        {
+                            this.LogPrint("Applying lure...");
+                            GameFunctions.UseItemByID(baitID);
+                            lastTimeLureApplied = DateTime.UtcNow;
+                            Thread.Sleep(Utils.Rnd.Next(250, 750));
+                        }
                     }
-                    else if (fishingSettings.UseSpecialBait && NeedSpecialLure)
+                    else if (fishingSettings.UseSpecialBait)
                     {
-                        this.LogPrint("Applying special lure...");
-                        uint specialLureID = specialWodBaits.FirstOrDefault(l => Wowhead.GetItemInfo(l).Name == fishingSettings.SpecialBait);
-                        GameFunctions.UseItemByID(specialLureID);
-                        Thread.Sleep(Utils.Rnd.Next(250, 750));
+                        uint specialBaitID = GetSpecialBaitID(me);
+                        if (specialBaitID != 0)
+                        {
+                            this.LogPrint("Applying special lure...");
+                            GameFunctions.UseItemByID(specialBaitID);
+                            Thread.Sleep(Utils.Rnd.Next(250, 750));
+                        }
                     }
                     else
                     {
@@ -134,27 +140,28 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
         }
 
+        private uint GetSpecialBaitID(WoWPlayerMe me)
+        {
+            if (me.Auras.All(l => l.Name != fishingSettings.SpecialBait))
+            {
+                WoWItem item = me.ItemsInBags.FirstOrDefault(l => l.Name == fishingSettings.SpecialBait);
+                return item != null ? item.EntryID : 0;
+            }
+            return 0;
+        }
+
+        private uint GetBestBaitID(WoWPlayerMe me)
+        {
+            if (fishingRods.Contains(me.Inventory[15].EntryID) && (DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10)
+            {
+                return baits.FirstOrDefault(l => me.ItemsInBags.Any(k => k.EntryID == l));
+            }
+            return 0;
+        }
+
         #endregion
 
         #region Fields, propeties
-
-        private bool CanLure
-        {
-            get
-            {
-                WoWPlayerMe me = ObjectMgr.Pulse();
-                return fishingRods.Contains(me.Inventory[15].EntryID) && me.ItemsInBags.Any(l => baits.Contains(l.EntryID)) && ((DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10);
-            }
-        }
-
-        private bool NeedSpecialLure
-        {
-            get
-            {
-                WoWPlayerMe me = ObjectMgr.Pulse();
-                return me.Auras.All(l => l.Name != fishingSettings.SpecialBait) && me.ItemsInBags.Any(l => l.Name == fishingSettings.SpecialBait);
-            }
-        }
 
         private FishingSettings fishingSettings;
         private SingleThreadTimer timer;
