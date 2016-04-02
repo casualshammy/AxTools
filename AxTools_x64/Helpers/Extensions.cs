@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
@@ -33,17 +32,6 @@ namespace AxTools.Helpers
                 form.Activate();
                 new TaskDialog(title, "AxTools", text, button, icon).Show(form);
             }
-        }
-
-        /// <summary>
-        /// Represent array of T as string like "{ item0, item1, item2, ... }"
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        internal static string AsString<T>(this IEnumerable<T> array)
-        {
-            return array.Aggregate("{", (current, s) => current + string.Format(" {0},", s)) + " }";
         }
 
         internal static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)

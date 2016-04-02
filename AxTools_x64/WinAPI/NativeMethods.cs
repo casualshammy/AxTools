@@ -7,12 +7,6 @@ namespace AxTools.WinAPI
 {
     internal static class NativeMethods
     {
-        //[DllImport("user32", EntryPoint = "GetWindowLongA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-        //internal static extern int GetWindowLong32(IntPtr hwnd, int nIndex);
-
-        //[DllImport("user32", EntryPoint = "SetWindowLongA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-        //internal static extern int SetWindowLong32(IntPtr hwnd, int nIndex, int dwNewLong);
-
         [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
         internal static extern long GetWindowLong64(IntPtr hWnd, int nIndex);
 
