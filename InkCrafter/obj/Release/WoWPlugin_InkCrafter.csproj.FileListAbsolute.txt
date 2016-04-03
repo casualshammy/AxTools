@@ -1,0 +1,17 @@
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\InkCrafter.dll
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\InkCrafter.pdb
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\AxTools.exe
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\MetroFramework.dll
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\Ionic.Zip.Reduced.dll
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\ObjectListView.dll
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\WindowsFormsAero.dll
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\ICSharpCode.TextEditor.dll
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\Newtonsoft.Json.dll
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\Newtonsoft.Json.xml
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\obj\Release\WoWPlugin_InkCrafter.csprojResolveAssemblyReference.cache
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\obj\Release\InkCrafter.InkCrafterConfig.resources
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\obj\Release\WoWPlugin_InkCrafter.csproj.GenerateResource.Cache
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\obj\Release\InkCrafter.dll
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\obj\Release\InkCrafter.pdb
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\SMem-x64.dll
+C:\Program Files (x86)\AxTools\plugins\InkCrafter\bin\Release\SMem-x64.pdb

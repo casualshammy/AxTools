@@ -41,8 +41,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WoWPlugins", "WoWPlugins", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Components", "Components\Components.csproj", "{63D3AF8E-11D1-4D4E-B791-7FBF09E9AEF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_LootEnemyCorpses", "LootEnemyCorpses\WoWPlugin_LootEnemyCorpses.csproj", "{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -478,27 +476,6 @@ Global
 		{63D3AF8E-11D1-4D4E-B791-7FBF09E9AEF3}.Template|Win32.ActiveCfg = Release|Any CPU
 		{63D3AF8E-11D1-4D4E-B791-7FBF09E9AEF3}.Template|x64.ActiveCfg = Release|Any CPU
 		{63D3AF8E-11D1-4D4E-B791-7FBF09E9AEF3}.Template|x86.ActiveCfg = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Release|Win32.ActiveCfg = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Release|x64.ActiveCfg = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Release|x86.ActiveCfg = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Template|Any CPU.ActiveCfg = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Template|Any CPU.Build.0 = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Template|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Template|Mixed Platforms.Build.0 = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Template|Win32.ActiveCfg = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Template|x64.ActiveCfg = Release|Any CPU
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C}.Template|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -513,6 +490,5 @@ Global
 		{D9A766AD-5DF5-46D6-B9F6-09DD7269A53C} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 		{EB0AD1C6-FC11-4622-931F-974C18F8357F} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 		{FBEFD72A-8578-462A-9C53-AFF6D95D0A38} = {3D634715-DB81-45D6-8812-701A66BFF21E}
-		{3D1C93BC-6FE4-46D2-9270-145A0FF94C9C} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 	EndGlobalSection
 EndGlobal
