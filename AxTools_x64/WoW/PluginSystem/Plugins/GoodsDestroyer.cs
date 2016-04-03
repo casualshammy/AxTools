@@ -92,7 +92,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                             {
                                 GameFunctions.CastSpellByName(Wowhead.GetSpellInfo(51005).Name);
                                 GameFunctions.UseItem(herb.BagID, herb.SlotID);
-                                Thread.Sleep(1000);
+                                Thread.Sleep(500);
                                 return;
                             }
                         }
@@ -109,6 +109,10 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         //{
                         //    Log.Info("This character can't mill, prospect or disenchant!");
                         //}
+                    }
+                    else
+                    {
+                        Thread.Sleep(500); // wait for cast 
                     }
                 }
             }
