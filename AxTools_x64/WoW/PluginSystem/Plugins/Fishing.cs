@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
+using AxTools.WoW.Helpers;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
@@ -86,7 +87,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
             {
                 if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
                 {
-                    if (Utils.Rnd.Next(0, 25) == 0)
+                    uint baitItemID;
+                    if (Utils.Rnd.Next(0, 30) == 0)
                     {
                         int breakTime = Utils.Rnd.Next(15, 45);
                         this.LogPrint(string.Format("I'm human! Let's have a break ({0} sec)", breakTime));
@@ -96,31 +98,23 @@ namespace AxTools.WoW.PluginSystem.Plugins
                             Thread.Sleep(1000);
                         }
                     }
-                    else if (fishingSettings.UseBestBait)
+                    else if (fishingSettings.UseBestBait && (baitItemID = GetBestBaitID(me)) != 0)
                     {
-                        uint baitID = GetBestBaitID(me);
-                        if (baitID != 0)
-                        {
-                            this.LogPrint("Applying lure...");
-                            GameFunctions.UseItemByID(baitID);
-                            lastTimeLureApplied = DateTime.UtcNow;
-                            Thread.Sleep(Utils.Rnd.Next(250, 750));
-                        }
+                        this.LogPrint(string.Format("Applying lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
+                        GameFunctions.UseItemByID(baitItemID);
+                        lastTimeLureApplied = DateTime.UtcNow;
+                        Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
-                    else if (fishingSettings.UseSpecialBait)
+                    else if (fishingSettings.UseSpecialBait && (baitItemID = GetSpecialBaitID(me)) != 0)
                     {
-                        uint specialBaitID = GetSpecialBaitID(me);
-                        if (specialBaitID != 0)
-                        {
-                            this.LogPrint("Applying special lure...");
-                            GameFunctions.UseItemByID(specialBaitID);
-                            Thread.Sleep(Utils.Rnd.Next(250, 750));
-                        }
+                        this.LogPrint(string.Format("Applying special lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
+                        GameFunctions.UseItemByID(baitItemID);
+                        Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
                     else
                     {
                         Thread.Sleep(Utils.Rnd.Next(500, 1000));
-                        this.LogPrint("Cast fishing...");
+                        this.LogPrint(string.Format("Cast fishing --> ({0})", fishingSpellName));
                         GameFunctions.CastSpellByName(fishingSpellName);
                         Thread.Sleep(1500);
                     }
@@ -145,9 +139,45 @@ namespace AxTools.WoW.PluginSystem.Plugins
             if (me.Auras.All(l => l.Name != fishingSettings.SpecialBait))
             {
                 WoWItem item = me.ItemsInBags.FirstOrDefault(l => l.Name == fishingSettings.SpecialBait);
+                if (item == null)
+                {
+                    if (fishingSettings.GetSpecialBaitFromNatPagle)
+                    {
+                        GetSpecialBaitBuffFromNatPagle();
+                    }
+                    else if (fishingSettings.UseAnySpecialBaitIfPreferredIsNotAvailable)
+                    {
+                        bool haveBuff = me.Auras.Any(aura => specialBaits.Keys.Select(baitID => Wowhead.GetItemInfo(baitID).Name).Contains(aura.Name));
+                        if (!haveBuff)
+                        {
+                            return specialBaits.Keys.FirstOrDefault(itemID => me.ItemsInBags.Select(itemInBag => itemInBag.EntryID).Contains(itemID));
+                        }
+                    }
+                }
                 return item != null ? item.EntryID : 0;
             }
             return 0;
+        }
+
+        private void GetSpecialBaitBuffFromNatPagle()
+        {
+            List<WowNpc> npcs = new List<WowNpc>();
+            ObjMgr.Pulse(npcs);
+            WowNpc natPagle = npcs.FirstOrDefault(npc => npc.EntryID == 85984);
+            if (natPagle != null)
+            {
+                GameFunctions.MoveTo(natPagle.Location, 4f, 2000, false);
+                Thread.Sleep(500);
+                natPagle.Interact();
+                Thread.Sleep(2000);
+                GameFunctions.SelectDialogOption("Обычная приманка для рыбы?"); // todo: is it possible to localize it?
+                Thread.Sleep(1500);
+                string gossipText = Wowhead.GetItemInfo(specialBaits.First(baitFish => Wowhead.GetItemInfo(baitFish.Key).Name == fishingSettings.SpecialBait).Value).Name;
+                GameFunctions.SelectDialogOption(gossipText);
+                Thread.Sleep(1500);
+                GameFunctions.MoveTo(new WowPoint(2030f, 188f, 83f), 1f, 2000, false); // moving to good fishing point
+                new WowPoint(2035f, 211f, 82f).Face(); // facing water
+            }
         }
 
         private uint GetBestBaitID(WoWPlayerMe me)
@@ -200,15 +230,15 @@ namespace AxTools.WoW.PluginSystem.Plugins
             6529,   // Блесна
         };
 
-        private readonly uint[] specialWodBaits =
+        private readonly Dictionary<uint, uint> specialBaits = new Dictionary<uint, uint>
         {
-            110293,
-            110291,
-            110289,
-            110290,
-            110292,
-            110274,
-            110294,
+            {110293, 111664},
+            {110291, 111666},
+            {110289, 111668},
+            {110290, 111667},
+            {110274, 111669},
+            {110294, 111663},
+            {110292, 111665}, // Морской скорпион
         };
 
         #endregion

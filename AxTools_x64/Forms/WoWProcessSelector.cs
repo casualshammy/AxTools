@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using AxTools.Helpers;
+using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.Forms
 {
@@ -18,7 +19,7 @@ namespace AxTools.Forms
            StyleManager.Style = Settings.Instance.StyleColor;
             foreach (WowProcess i in WoWProcessManager.List)
             {
-                comboBox1.Items.Add(i.IsValidBuild && i.IsInGame ?
+                comboBox1.Items.Add(i.IsValidBuild && GameFunctions.IsInGame_(i) ?
                     string.Format("pID: {0}", i.ProcessID) :
                     string.Format("pID: {0} (ERROR DETECTED)", i.ProcessID));
             }

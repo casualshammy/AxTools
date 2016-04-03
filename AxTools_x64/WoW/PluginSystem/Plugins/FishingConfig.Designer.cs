@@ -32,15 +32,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.checkBoxUseBestBait = new System.Windows.Forms.CheckBox();
             this.checkBoxUseSpecialBait = new System.Windows.Forms.CheckBox();
-            this.labelCastRodKey = new System.Windows.Forms.Label();
-            this.textBoxCasRodKey = new System.Windows.Forms.TextBox();
-            this.buttonCastRodKey = new System.Windows.Forms.Button();
-            this.buttonBaitKey = new System.Windows.Forms.Button();
-            this.textBoxBaitKey = new System.Windows.Forms.TextBox();
-            this.labelBaitKey = new System.Windows.Forms.Label();
-            this.buttonWoDBaitKey = new System.Windows.Forms.Button();
-            this.textBoxWoDBaitKey = new System.Windows.Forms.TextBox();
-            this.labelWoDBaitKey = new System.Windows.Forms.Label();
+            this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable = new System.Windows.Forms.CheckBox();
+            this.checkBoxGetSpecialBaitFromNatPagle = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // comboBoxSpecialBait
@@ -62,7 +55,8 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 200);
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button1.Location = new System.Drawing.Point(12, 132);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(357, 23);
             this.button1.TabIndex = 4;
@@ -90,95 +84,33 @@
             this.checkBoxUseSpecialBait.Text = "Use the special bait:";
             this.checkBoxUseSpecialBait.UseVisualStyleBackColor = true;
             // 
-            // labelCastRodKey
+            // checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable
             // 
-            this.labelCastRodKey.AutoSize = true;
-            this.labelCastRodKey.Location = new System.Drawing.Point(12, 88);
-            this.labelCastRodKey.Name = "labelCastRodKey";
-            this.labelCastRodKey.Size = new System.Drawing.Size(69, 13);
-            this.labelCastRodKey.TabIndex = 7;
-            this.labelCastRodKey.Text = "Cast rod key:";
+            this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.AutoSize = true;
+            this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Location = new System.Drawing.Point(12, 83);
+            this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Name = "checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable";
+            this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Size = new System.Drawing.Size(247, 17);
+            this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.TabIndex = 7;
+            this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Text = "Use any special bait if preferred is not available";
+            this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.UseVisualStyleBackColor = true;
             // 
-            // textBoxCasRodKey
+            // checkBoxGetSpecialBaitFromNatPagle
             // 
-            this.textBoxCasRodKey.Location = new System.Drawing.Point(129, 85);
-            this.textBoxCasRodKey.Name = "textBoxCasRodKey";
-            this.textBoxCasRodKey.Size = new System.Drawing.Size(100, 20);
-            this.textBoxCasRodKey.TabIndex = 8;
-            // 
-            // buttonCastRodKey
-            // 
-            this.buttonCastRodKey.Location = new System.Drawing.Point(235, 85);
-            this.buttonCastRodKey.Name = "buttonCastRodKey";
-            this.buttonCastRodKey.Size = new System.Drawing.Size(75, 20);
-            this.buttonCastRodKey.TabIndex = 9;
-            this.buttonCastRodKey.Text = "Clear";
-            this.buttonCastRodKey.UseVisualStyleBackColor = true;
-            // 
-            // buttonBaitKey
-            // 
-            this.buttonBaitKey.Location = new System.Drawing.Point(235, 111);
-            this.buttonBaitKey.Name = "buttonBaitKey";
-            this.buttonBaitKey.Size = new System.Drawing.Size(75, 20);
-            this.buttonBaitKey.TabIndex = 12;
-            this.buttonBaitKey.Text = "Clear";
-            this.buttonBaitKey.UseVisualStyleBackColor = true;
-            // 
-            // textBoxBaitKey
-            // 
-            this.textBoxBaitKey.Location = new System.Drawing.Point(129, 111);
-            this.textBoxBaitKey.Name = "textBoxBaitKey";
-            this.textBoxBaitKey.Size = new System.Drawing.Size(100, 20);
-            this.textBoxBaitKey.TabIndex = 11;
-            // 
-            // labelBaitKey
-            // 
-            this.labelBaitKey.AutoSize = true;
-            this.labelBaitKey.Location = new System.Drawing.Point(12, 114);
-            this.labelBaitKey.Name = "labelBaitKey";
-            this.labelBaitKey.Size = new System.Drawing.Size(48, 13);
-            this.labelBaitKey.TabIndex = 10;
-            this.labelBaitKey.Text = "Bait key:";
-            // 
-            // buttonWoDBaitKey
-            // 
-            this.buttonWoDBaitKey.Location = new System.Drawing.Point(235, 137);
-            this.buttonWoDBaitKey.Name = "buttonWoDBaitKey";
-            this.buttonWoDBaitKey.Size = new System.Drawing.Size(75, 20);
-            this.buttonWoDBaitKey.TabIndex = 15;
-            this.buttonWoDBaitKey.Text = "Clear";
-            this.buttonWoDBaitKey.UseVisualStyleBackColor = true;
-            // 
-            // textBoxWoDBaitKey
-            // 
-            this.textBoxWoDBaitKey.Location = new System.Drawing.Point(129, 137);
-            this.textBoxWoDBaitKey.Name = "textBoxWoDBaitKey";
-            this.textBoxWoDBaitKey.Size = new System.Drawing.Size(100, 20);
-            this.textBoxWoDBaitKey.TabIndex = 14;
-            // 
-            // labelWoDBaitKey
-            // 
-            this.labelWoDBaitKey.AutoSize = true;
-            this.labelWoDBaitKey.Location = new System.Drawing.Point(12, 140);
-            this.labelWoDBaitKey.Name = "labelWoDBaitKey";
-            this.labelWoDBaitKey.Size = new System.Drawing.Size(111, 13);
-            this.labelWoDBaitKey.TabIndex = 13;
-            this.labelWoDBaitKey.Text = "WoD special bait key:";
+            this.checkBoxGetSpecialBaitFromNatPagle.AutoSize = true;
+            this.checkBoxGetSpecialBaitFromNatPagle.Location = new System.Drawing.Point(12, 60);
+            this.checkBoxGetSpecialBaitFromNatPagle.Name = "checkBoxGetSpecialBaitFromNatPagle";
+            this.checkBoxGetSpecialBaitFromNatPagle.Size = new System.Drawing.Size(172, 17);
+            this.checkBoxGetSpecialBaitFromNatPagle.TabIndex = 8;
+            this.checkBoxGetSpecialBaitFromNatPagle.Text = "Get special bait from Nat Pagle";
+            this.checkBoxGetSpecialBaitFromNatPagle.UseVisualStyleBackColor = true;
             // 
             // FishingConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(381, 235);
-            this.Controls.Add(this.buttonWoDBaitKey);
-            this.Controls.Add(this.textBoxWoDBaitKey);
-            this.Controls.Add(this.labelWoDBaitKey);
-            this.Controls.Add(this.buttonBaitKey);
-            this.Controls.Add(this.textBoxBaitKey);
-            this.Controls.Add(this.labelBaitKey);
-            this.Controls.Add(this.buttonCastRodKey);
-            this.Controls.Add(this.textBoxCasRodKey);
-            this.Controls.Add(this.labelCastRodKey);
+            this.ClientSize = new System.Drawing.Size(381, 167);
+            this.Controls.Add(this.checkBoxGetSpecialBaitFromNatPagle);
+            this.Controls.Add(this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable);
             this.Controls.Add(this.checkBoxUseSpecialBait);
             this.Controls.Add(this.checkBoxUseBestBait);
             this.Controls.Add(this.button1);
@@ -199,14 +131,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox checkBoxUseBestBait;
         private System.Windows.Forms.CheckBox checkBoxUseSpecialBait;
-        private System.Windows.Forms.Label labelCastRodKey;
-        private System.Windows.Forms.TextBox textBoxCasRodKey;
-        private System.Windows.Forms.Button buttonCastRodKey;
-        private System.Windows.Forms.Button buttonBaitKey;
-        private System.Windows.Forms.TextBox textBoxBaitKey;
-        private System.Windows.Forms.Label labelBaitKey;
-        private System.Windows.Forms.Button buttonWoDBaitKey;
-        private System.Windows.Forms.TextBox textBoxWoDBaitKey;
-        private System.Windows.Forms.Label labelWoDBaitKey;
+        private System.Windows.Forms.CheckBox checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable;
+        private System.Windows.Forms.CheckBox checkBoxGetSpecialBaitFromNatPagle;
     }
 }

@@ -173,16 +173,16 @@
     <Compile Include="WinAPI\Win32Consts.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
     <Compile Include="WoW\IWoWModule.cs" />
-    <Compile Include="WoW\Management\ObjectManager\PlayerInventoryAndContainers.cs" />
-    <Compile Include="WoW\Management\ObjectManager\WoWAura.cs" />
-    <Compile Include="WoW\Management\ObjectManager\WoWItem.cs" />
-    <Compile Include="WoW\Management\ObjectManager\WoWObjectInfo.cs">
+    <Compile Include="WoW\Internals\ObjectManager\PlayerInventoryAndContainers.cs" />
+    <Compile Include="WoW\Internals\ObjectManager\WoWAura.cs" />
+    <Compile Include="WoW\Internals\ObjectManager\WoWItem.cs" />
+    <Compile Include="WoW\Internals\ObjectManager\WoWObjectInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WoW\Management\UInt128.cs" />
-    <Compile Include="WoW\PluginSystem\API\ChatMsg.cs" />
-    <Compile Include="WoW\PluginSystem\API\MoveHelper.cs" />
-    <Compile Include="WoW\PluginSystem\API\SingleThreadTimer.cs" />
+    <Compile Include="WoW\Internals\WoWGUID.cs" />
+    <Compile Include="WoW\Helpers\ChatMsg.cs" />
+    <Compile Include="WoW\Helpers\MoveHelper.cs" />
+    <Compile Include="WoW\Helpers\SingleThreadTimer.cs" />
     <Compile Include="WoW\PluginSystem\PluginContainer.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.cs">
       <SubType>Form</SubType>
@@ -199,11 +199,11 @@
     </Compile>
     <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyerSettings.cs" />
     <Compile Include="WoW\WoWAntiKick.cs" />
-    <Compile Include="WoW\Wowhead.cs" />
+    <Compile Include="WoW\Helpers\Wowhead.cs" />
     <Compile Include="WoW\WoWProcessWatcher.cs" />
-    <Compile Include="WoW\Management\ObjectManager\WoWPlayerMe.cs" />
-    <Compile Include="WoW\Management\ObjectMgr.cs" />
-    <Compile Include="WoW\Management\WoWManager.cs" />
+    <Compile Include="WoW\Internals\ObjectManager\WoWPlayerMe.cs" />
+    <Compile Include="WoW\Internals\ObjectMgr.cs" />
+    <Compile Include="WoW\Internals\WoWManager.cs" />
     <Compile Include="WoW\PluginSystem\API\ObjMgr.cs" />
     <Compile Include="WoW\PluginSystem\API\GameFunctions.cs" />
     <Compile Include="WoW\PluginSystem\API\Utilities.cs" />
@@ -214,7 +214,7 @@
     <Compile Include="WoW\PluginSystem\Plugins\FlagReturner.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyer.cs" />
     <Compile Include="Helpers\Globals.cs" />
-    <Compile Include="WoW\Management\ObjectManager\WowPlayerInfo.cs" />
+    <Compile Include="WoW\Internals\ObjectManager\WowPlayerInfo.cs" />
     <Compile Include="Forms\AppSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -251,17 +251,17 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Extensions.cs" />
-    <Compile Include="WoW\WowRaidClassColors.cs" />
+    <Compile Include="WoW\Helpers\WowRaidClassColors.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Helpers\Log.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="WoW\WowAccount.cs" />
-    <Compile Include="WoW\Management\ObjectManager\WowNpc.cs" />
-    <Compile Include="WoW\Management\ObjectManager\WowObject.cs" />
-    <Compile Include="WoW\Management\ObjectManager\WowPoint.cs" />
+    <Compile Include="WoW\Internals\ObjectManager\WowNpc.cs" />
+    <Compile Include="WoW\Internals\ObjectManager\WowObject.cs" />
+    <Compile Include="WoW\Internals\ObjectManager\WowPoint.cs" />
     <Compile Include="WoW\WowProcess.cs" />
     <Compile Include="Helpers\Crypt.cs" />
-    <Compile Include="WoW\Management\ObjectManager\WowPlayer.cs" />
+    <Compile Include="WoW\Internals\ObjectManager\WowPlayer.cs" />
     <Compile Include="Forms\WaitingOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -313,7 +313,7 @@
       <DependentUpon>WowRadarOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="WoW\WowBuildInfoX64.cs" />
-    <Compile Include="WoW\Management\ObjectManager\WowPlayerClass.cs" />
+    <Compile Include="WoW\Internals\ObjectManager\WowPlayerClass.cs" />
     <EmbeddedResource Include="Forms\AddonsBackupDeploy.resx">
       <DependentUpon>AddonsBackupDeploy.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -525,6 +525,7 @@
       <Name>Components</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

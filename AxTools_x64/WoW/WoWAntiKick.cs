@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Timers;
 using AxTools.Helpers;
+using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW
 {
@@ -24,7 +25,7 @@ namespace AxTools.WoW
         {
             if (settings.WoWAntiKick)
             {
-                if (wowProcess.IsValidBuild && wowProcess.IsInGame)
+                if (wowProcess.IsValidBuild && GameFunctions.IsInGame_(wowProcess))
                 {
                     try
                     {

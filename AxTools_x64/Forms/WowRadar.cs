@@ -49,7 +49,7 @@ namespace AxTools.Forms
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private readonly List<WowPlayer> wowPlayers = new List<WowPlayer>();
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
-        private readonly Dictionary<UInt128, Point> objectsPointsInRadarCoords = new Dictionary<UInt128, Point>();
+        private readonly Dictionary<WoWGUID, Point> objectsPointsInRadarCoords = new Dictionary<WoWGUID, Point>();
 
         private WoWPlayerMe localPlayer;
         private WowPlayer[] friends;
@@ -118,7 +118,7 @@ namespace AxTools.Forms
             while (isRunning)
             {
                 stopwatch.Restart();
-                if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
+                if (!WoWManager.Hooked || !GameFunctions.IsInGame)
                 {
                     try
                     {
@@ -152,7 +152,7 @@ namespace AxTools.Forms
                     npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
                     if (!GameFunctions.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
                     {
-                        UInt128 interactGUID = UInt128.Zero;
+                        WoWGUID interactGUID = WoWGUID.Zero;
                         double interactDistance = 11;
                         string interactName = string.Empty;
                         // ReSharper disable once ImpureMethodCallOnReadonlyValueField
@@ -176,7 +176,7 @@ namespace AxTools.Forms
                                 interactName = i.Name;
                             }
                         }
-                        if (interactGUID != UInt128.Zero)
+                        if (interactGUID != WoWGUID.Zero)
                         {
                             GameFunctions.Interact(interactGUID);
                             Log.Info(string.Format("{0} [Radar] Interacted with {1} {2}", WoWManager.WoWProcess, interactName, interactGUID));
@@ -636,7 +636,7 @@ namespace AxTools.Forms
 
         private void MeasureTooltip(Point mousePosition)
         {
-            foreach (KeyValuePair<UInt128, Point> pair in objectsPointsInRadarCoords)
+            foreach (KeyValuePair<WoWGUID, Point> pair in objectsPointsInRadarCoords)
             {
                 if (Math.Abs(pair.Value.X - mousePosition.X) < 4 && Math.Abs(pair.Value.Y - mousePosition.Y) < 4)
                 {
@@ -724,7 +724,7 @@ namespace AxTools.Forms
 
         private void PictureBoxMainMouseClick(object sender, MouseEventArgs e)
         {
-            foreach (KeyValuePair<UInt128, Point> pair in objectsPointsInRadarCoords)
+            foreach (KeyValuePair<WoWGUID, Point> pair in objectsPointsInRadarCoords)
             {
                 if (Math.Abs(pair.Value.X - e.X) < 4 && Math.Abs(pair.Value.Y - e.Y) < 4)
                 {

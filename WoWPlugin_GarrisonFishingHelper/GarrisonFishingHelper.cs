@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using AxTools.WoW.Helpers;
 using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using AxTools.Properties;
+using AxTools.WoW.Helpers;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem.API;

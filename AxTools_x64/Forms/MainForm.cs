@@ -22,6 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
@@ -691,7 +692,7 @@ namespace AxTools.Forms
                 {
                     if (WoWManager.Hooked || WoWManager.HookWoWAndNotifyUserIfError())
                     {
-                        if (WoWManager.WoWProcess.IsInGame)
+                        if (GameFunctions.IsInGame)
                         {
                             PluginManagerEx.StartPlugins();
                         }

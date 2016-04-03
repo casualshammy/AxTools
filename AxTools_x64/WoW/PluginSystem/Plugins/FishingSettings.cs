@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
@@ -15,14 +14,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
         [JsonProperty(PropertyName = "SpecialBait")]
         internal string SpecialBait;
 
-        [JsonProperty(PropertyName = "KeyBait")]
-        internal Keys KeyBait = Keys.None;
+        [JsonProperty(PropertyName = "UseAnySpecialBaitIfPreferredIsNotAvailable")]
+        internal bool UseAnySpecialBaitIfPreferredIsNotAvailable = false;
 
-        [JsonProperty(PropertyName = "KeySpecialBait")]
-        internal Keys KeySpecialBait = Keys.None;
-
-        [JsonProperty(PropertyName = "KeyCastRod")]
-        internal Keys KeyCastRod = Keys.None;
+        [JsonProperty(PropertyName = "GetSpecialBaitFromNatPagle")]
+        internal bool GetSpecialBaitFromNatPagle = false;
 
     }
 }

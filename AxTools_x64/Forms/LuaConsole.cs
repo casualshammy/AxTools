@@ -144,7 +144,7 @@ namespace AxTools.Forms
 
         private void TimerLuaElapsed(object sender, ElapsedEventArgs e)
         {
-            if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
+            if (!WoWManager.Hooked || !GameFunctions.IsInGame)
             {
                 if (!settings.WoWLuaConsoleIgnoreGameState)
                 {
@@ -168,7 +168,7 @@ namespace AxTools.Forms
             //__timer.Elapsed += delegate
             //{
             //    //IntPtr playerPtr = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerPtr);
-            //    textBoxLuaCode.Text = WoWManager.WoWProcess.IsInGame ? GameFunctions.Lua_GetFunctionReturn("tostring(GetTime())") : "NotInGame";
+            //    textBoxLuaCode.Text = GameFunctions.IsInGame ? GameFunctions.Lua_GetFunctionReturn("tostring(GetTime())") : "NotInGame";
             //};
             //__timer.Start();
 
@@ -197,7 +197,7 @@ namespace AxTools.Forms
                 Log.Info("\t" + info);
             }
             Log.Info("----Mouseover----");
-            Log.Info(string.Format("\tGUID: {0}", WoWManager.WoWProcess.Memory.Read<UInt128>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.MouseoverGUID)));
+            Log.Info(string.Format("\tGUID: {0}", WoWManager.WoWProcess.Memory.Read<WoWGUID>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.MouseoverGUID)));
             Log.Info("----Inventory slots----");
             foreach (WoWItem item in localPlayer.Inventory.AsParallel())
             {
@@ -350,7 +350,7 @@ namespace AxTools.Forms
         {
             if (textBoxLuaCode.Text.Trim().Length != 0)
             {
-                if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
+                if (!WoWManager.Hooked || !GameFunctions.IsInGame)
                 {
                     new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                     return;
@@ -370,7 +370,7 @@ namespace AxTools.Forms
                 Log.Info(WoWManager.WoWProcess != null
                               ? string.Format("{0}:{1} :: [Lua console] Lua timer disabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID)
                               : "UNKNOWN:null :: Lua timer disabled");
-                if (settings.WoWLuaConsoleShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsInGame)
+                if (settings.WoWLuaConsoleShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && GameFunctions.IsInGame)
                 {
                     GameFunctions.ShowNotify("LTimer is stopped");
                 }
@@ -380,7 +380,7 @@ namespace AxTools.Forms
             else
             {
                 labelRequestTime.Visible = false;
-                if (!WoWManager.Hooked || !WoWManager.WoWProcess.IsInGame)
+                if (!WoWManager.Hooked || !GameFunctions.IsInGame)
                 {
                     new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                     return;

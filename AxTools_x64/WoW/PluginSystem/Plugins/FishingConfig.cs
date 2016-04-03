@@ -12,48 +12,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             InitializeComponent();
             thisSettings = fishingSettings;
-            textBoxCasRodKey.Text = new KeysConverter().ConvertToInvariantString(thisSettings.KeyCastRod);
-            textBoxBaitKey.Text = new KeysConverter().ConvertToInvariantString(thisSettings.KeyBait);
-            textBoxWoDBaitKey.Text = new KeysConverter().ConvertToInvariantString(thisSettings.KeySpecialBait);
-            textBoxCasRodKey.KeyDown += textBoxCasRodKey_KeyDown;
-            textBoxBaitKey.KeyDown += textBoxBaitKey_KeyDown;
-            textBoxWoDBaitKey.KeyDown += textBoxWoDBaitKey_KeyDown;
-        }
-
-        private void textBoxWoDBaitKey_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
-            {
-                Keys keys = LetOnlyOneKeyModifier(e);
-                textBoxWoDBaitKey.Text = new KeysConverter().ConvertToInvariantString(keys);
-                thisSettings.KeySpecialBait = keys;
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }
-        }
-
-        private void textBoxBaitKey_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
-            {
-                Keys keys = LetOnlyOneKeyModifier(e);
-                textBoxBaitKey.Text = new KeysConverter().ConvertToInvariantString(keys);
-                thisSettings.KeyBait = keys;
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }
-        }
-
-        private void textBoxCasRodKey_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
-            {
-                Keys keys = LetOnlyOneKeyModifier(e);
-                textBoxCasRodKey.Text = new KeysConverter().ConvertToInvariantString(keys);
-                thisSettings.KeyCastRod = keys;
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }
+            checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Checked = thisSettings.UseAnySpecialBaitIfPreferredIsNotAvailable;
+            checkBoxGetSpecialBaitFromNatPagle.Checked = thisSettings.GetSpecialBaitFromNatPagle;
         }
 
         internal static void Open(FishingSettings fishingSettings)
@@ -68,6 +28,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
             fishingSettings.UseBestBait = fishingConfig.checkBoxUseBestBait.Checked;
             fishingSettings.UseSpecialBait = fishingConfig.checkBoxUseSpecialBait.Checked;
             fishingSettings.SpecialBait = fishingConfig.comboBoxSpecialBait.Text;
+            fishingSettings.UseAnySpecialBaitIfPreferredIsNotAvailable = fishingConfig.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Checked;
+            fishingSettings.GetSpecialBaitFromNatPagle = fishingConfig.checkBoxGetSpecialBaitFromNatPagle.Checked;
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Forms;
 using AxTools.Helpers;
+using AxTools.WoW.Helpers;
 using AxTools.WoW.Management;
 using Newtonsoft.Json;
 
@@ -146,7 +147,7 @@ namespace AxTools.WoW.PluginSystem.API
             r1 = WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState - 1);
             r2 = WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState);
             r3 = WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState + 1);
-            b = WoWManager.WoWProcess.IsInGame;
+            b = GameFunctions.IsInGame;
         }
 
     }

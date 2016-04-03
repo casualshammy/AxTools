@@ -9,7 +9,7 @@ namespace AxTools.WoW.PluginSystem.API
     {
         public static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
         {
-            if (WoWManager.WoWProcess.IsInGame)
+            if (GameFunctions.IsInGame)
             {
                 return ObjectMgr.Pulse(wowObjects, wowUnits, wowNpcs);
             }
@@ -21,7 +21,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowNpc> wowNpcs)
         {
-            if (WoWManager.WoWProcess.IsInGame)
+            if (GameFunctions.IsInGame)
             {
                 return ObjectMgr.Pulse(wowObjects, wowNpcs);
             }
@@ -32,7 +32,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static WoWPlayerMe Pulse(List<WowObject> wowObjects)
         {
-            if (WoWManager.WoWProcess.IsInGame)
+            if (GameFunctions.IsInGame)
             {
                 return ObjectMgr.Pulse(wowObjects);
             }
@@ -42,7 +42,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static WoWPlayerMe Pulse(List<WowPlayer> wowPlayers)
         {
-            if (WoWManager.WoWProcess.IsInGame)
+            if (GameFunctions.IsInGame)
             {
                 return ObjectMgr.Pulse(wowPlayers);
             }
@@ -52,7 +52,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static WoWPlayerMe Pulse(List<WowNpc> wowNpcs)
         {
-            if (WoWManager.WoWProcess.IsInGame)
+            if (GameFunctions.IsInGame)
             {
                 return ObjectMgr.Pulse(wowNpcs);
             }
@@ -63,12 +63,12 @@ namespace AxTools.WoW.PluginSystem.API
         [Pure]
         public static WoWPlayerMe Pulse()
         {
-            return WoWManager.WoWProcess.IsInGame ? ObjectMgr.Pulse() : null;
+            return GameFunctions.IsInGame ? ObjectMgr.Pulse() : null;
         }
 
         public static WoWPlayerMe Pulse(List<WowPlayer> wowPlayers, List<WowNpc> wowNpcs)
         {
-            if (WoWManager.WoWProcess.IsInGame)
+            if (GameFunctions.IsInGame)
             {
                 return ObjectMgr.Pulse(wowPlayers, wowNpcs);
             }

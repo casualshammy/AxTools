@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.WoW;
 using AxTools.WoW.Management;
+using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
@@ -37,7 +38,7 @@ namespace AxTools.Forms
 
         private void MetroLinkRefreshClick(object sender, EventArgs e)
         {
-            if (WoWManager.Hooked && WoWManager.WoWProcess.IsInGame)
+            if (WoWManager.Hooked && GameFunctions.IsInGame)
             {
                 int startTime = Environment.TickCount;
                 lastRefresh = DateTime.UtcNow;

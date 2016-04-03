@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using AxTools.Helpers;
 using AxTools.WinAPI;
+using AxTools.WoW.Helpers;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 
@@ -28,10 +29,10 @@ namespace AxTools.WoW.PluginSystem.API
             Interact(wowNpc.GUID);
         }
 
-        public static void Interact(UInt128 guid)
+        public static void Interact(WoWGUID guid)
         {
             WaitWhileWoWIsMinimized();
-            if (WoWManager.WoWProcess.IsInGame)
+            if (IsInGame)
             {
                 if (Settings.Instance.WoWInteractMouseover != Keys.None)
                 {
@@ -61,10 +62,10 @@ namespace AxTools.WoW.PluginSystem.API
             Target(wowPlayer.GUID);
         }
 
-        public static void Target(UInt128 guid)
+        public static void Target(WoWGUID guid)
         {
             WaitWhileWoWIsMinimized();
-            if (WoWManager.WoWProcess.IsInGame)
+            if (IsInGame)
             {
                 if (Settings.Instance.WoWTargetMouseover != Keys.None)
                 {
@@ -84,6 +85,8 @@ namespace AxTools.WoW.PluginSystem.API
 
         #region Chat commands
 
+        private static readonly string GossipVarName = Utilities.GetRandomString(5);
+
         public static void UseItemByID(uint id)
         {
             ChatboxSendText("/use item:" + id);
@@ -99,6 +102,12 @@ namespace AxTools.WoW.PluginSystem.API
             ChatboxSendText("/cast " + spellName);
         }
 
+        public static void SelectDialogOption(string gossipText)
+        {
+            SendToChat(string.Format("/run _G.{1}=0;for i=1,100 do if(select(i, GetGossipOptions())==\"{0}\")then _G.{1}=i/2+0.5 end end", gossipText, GossipVarName));
+            SendToChat(string.Format("/run if(_G.{0} > 0)then SelectGossipOption(_G.{0}, nil, true) end", GossipVarName));
+        }
+
         public static void SendToChat(string command)
         {
             ChatboxSendText(command);
@@ -107,7 +116,7 @@ namespace AxTools.WoW.PluginSystem.API
         private static void ChatboxSendText(string text)
         {
             WaitWhileWoWIsMinimized();
-            if (WoWManager.WoWProcess.IsInGame && WoWManager.WoWProcess.IsNotLoadingScreen)
+            if (IsInGame && !IsLoadingScreen)
             {
                 if (ChatIsOpened)
                 {
@@ -160,17 +169,20 @@ namespace AxTools.WoW.PluginSystem.API
         {
             lock (_chatLock)
             {
-                IntPtr chatStart = WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.ChatBuffer;
-                for (int i = 0; i < 60; i++)
+                if (IsInGame && !IsLoadingScreen)
                 {
-                    IntPtr baseMsg = chatStart + i * WowBuildInfoX64.ChatNextMessage;
-                    string s = Encoding.UTF8.GetString(WoWManager.WoWProcess.Memory.ReadBytes(baseMsg + WowBuildInfoX64.ChatFullMessageOffset, 0x200).TakeWhile(l => l != 0).ToArray());
-                    if (ChatMessagesLast[i] != s)
+                    IntPtr chatStart = WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.ChatBuffer;
+                    for (int i = 0; i < 60; i++)
                     {
-                        ChatMessagesLast[i] = s;
-                        if (NewChatMessage != null)
+                        IntPtr baseMsg = chatStart + i * WowBuildInfoX64.ChatNextMessage;
+                        string s = Encoding.UTF8.GetString(WoWManager.WoWProcess.Memory.ReadBytes(baseMsg + WowBuildInfoX64.ChatFullMessageOffset, 0x200).TakeWhile(l => l != 0).ToArray());
+                        if (ChatMessagesLast[i] != s)
                         {
-                            NewChatMessage(ParseChatMsg(s));
+                            ChatMessagesLast[i] = s;
+                            if (NewChatMessage != null)
+                            {
+                                NewChatMessage(ParseChatMsg(s));
+                            }
                         }
                     }
                 }
@@ -198,14 +210,66 @@ namespace AxTools.WoW.PluginSystem.API
 
         #endregion
 
+        #region General Info
+
+        public static string ZoneText
+        {
+            get
+            {
+                IntPtr zoneTextPtr = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.ZoneText);
+                byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(zoneTextPtr, 100).TakeWhile(l => l != 0).ToArray();
+                return Encoding.UTF8.GetString(bytes);
+            }
+        }
+
+        public static uint ZoneID
+        {
+            get
+            {
+                return WoWManager.WoWProcess.Memory.Read<uint>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerZoneID);
+            }
+        }
+
+        public static bool IsLooting
+        {
+            get
+            {
+                return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting) != 0;
+            }
+        }
+
+        public static bool IsInGame
+        {
+            get
+            {
+                return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState) == 1;
+            }
+        }
+
+        internal static bool IsInGame_(WowProcess process)
+        {
+            if (process.Memory == null) return false;
+            return process.Memory.Read<byte>(process.Memory.ImageBase + WowBuildInfoX64.GameState) == 1;
+        }
+
+        public static bool IsLoadingScreen
+        {
+            get
+            {
+                return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.Possible_NotLoadingScreen) == 0;
+            }
+        }
+
+        #endregion
+
         public static void MoveTo(WowPoint point, float precision, int timeoutInMs, bool continueMoving)
         {
             WaitWhileWoWIsMinimized();
-            if (WoWManager.WoWProcess.IsInGame)
+            if (IsInGame && !IsLoadingScreen)
             {
                 WoWPlayerMe me = ObjMgr.Pulse();
                 WowPoint oldPos = me.Location;
-                while (WoWManager.WoWProcess.IsInGame && timeoutInMs > 0 && me.Location.Distance(point) > precision)
+                while (IsInGame && timeoutInMs > 0 && me.Location.Distance(point) > precision)
                 {
                     Thread.Sleep(100);
                     timeoutInMs -= 100;
@@ -238,7 +302,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
-        public static void ShowNotify(string text)
+        internal static void ShowNotify(string text)
         {
             AppSpecUtils.NotifyUser("AxTools", text, NotifyUserType.Info, false, true);
         }
@@ -246,32 +310,6 @@ namespace AxTools.WoW.PluginSystem.API
         public static void ShowNotify(this IPlugin plugin, string text, bool warning, bool sound)
         {
             AppSpecUtils.NotifyUser("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, true);
-        }
-
-        public static string ZoneText
-        {
-            get
-            {
-                IntPtr zoneTextPtr = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.ZoneText);
-                byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(zoneTextPtr, 100).TakeWhile(l => l != 0).ToArray();
-                return Encoding.UTF8.GetString(bytes);
-            }
-        }
-
-        public static uint ZoneID
-        {
-            get
-            {
-                return WoWManager.WoWProcess.Memory.Read<uint>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerZoneID);
-            }
-        }
-
-        public static bool IsLooting
-        {
-            get
-            {
-                return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting) != 0;
-            }
         }
 
         public static bool IsSpellKnown(uint spellID)

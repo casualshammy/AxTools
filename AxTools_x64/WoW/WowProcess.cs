@@ -110,38 +110,6 @@ namespace AxTools.WoW
             }
         }
 
-        internal bool IsInGame
-        {
-            get
-            {
-                try
-                {
-                    if (Memory == null) return false;
-                    return Memory.Read<byte>(Memory.ImageBase + WowBuildInfoX64.GameState) == 1;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-        }
-
-        internal bool IsNotLoadingScreen
-        {
-            get
-            {
-                try
-                {
-                    if (Memory == null) return false;
-                    return Memory.Read<byte>(Memory.ImageBase + WowBuildInfoX64.Possible_NotLoadingScreen) == 1;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-        }
-
         public override string ToString()
         {
             return string.Concat("[", ProcessName, ":", ProcessID, "]");
