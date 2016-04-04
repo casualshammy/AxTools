@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals.ObjectManager;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 
@@ -269,7 +270,7 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 WoWPlayerMe me = ObjMgr.Pulse();
                 WowPoint oldPos = me.Location;
-                while (IsInGame && timeoutInMs > 0 && me.Location.Distance(point) > precision)
+                while (IsInGame && !IsLoadingScreen && timeoutInMs > 0 && me.Location.Distance(point) > precision)
                 {
                     Thread.Sleep(100);
                     timeoutInMs -= 100;
@@ -278,14 +279,14 @@ namespace AxTools.WoW.PluginSystem.API
                     if (me.Location.Distance(oldPos) > 1f)
                     {
                         oldPos = me.Location;
-                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] Okay, we're moving: {1}", WoWManager.WoWProcess, point));
+                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] Okay, we're moving: {1}", WoWManager.WoWProcess, point)); // todo: remove
                     }
                     else if (!me.IsMoving)
                     {
                         NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
-                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released: {1}", WoWManager.WoWProcess, point));
+                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released: {1}", WoWManager.WoWProcess, point)); // todo: remove
                         NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.W, IntPtr.Zero);
-                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is pressed: {1}", WoWManager.WoWProcess, point));
+                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is pressed: {1}", WoWManager.WoWProcess, point)); // todo: remove
                     }
                     //else
                     //{
@@ -296,6 +297,7 @@ namespace AxTools.WoW.PluginSystem.API
                 if (!continueMoving || timeoutInMs > 0)
                 {
                     NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
+                    Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released2: {1}", WoWManager.WoWProcess, point)); // todo: remove
                     //NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.S, IntPtr.Zero);
                     //NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.S, IntPtr.Zero);
                 }

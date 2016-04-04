@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using AxTools.WoW.Helpers;
 using AxTools.WoW.Management.ObjectManager;
@@ -127,6 +128,10 @@ namespace InkCrafter
             if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
             {
                 GameFunctions.SendToChat("/run local o=GetNumTradeSkills();if(o>0)then for i=1,o do local n,_,a=GetTradeSkillInfo(i);if(_G[\"" + randomTableName + "\"][n] and a>0)then DoTradeSkill(i,a);return;end end end");
+            }
+            else
+            {
+                Thread.Sleep(500);
             }
         }
 

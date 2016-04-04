@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using AxTools.WinAPI;
 using AxTools.WoW.Helpers;
+using AxTools.WoW.Management;
+using AxTools.WoW.Management.ObjectManager;
 
-namespace AxTools.WoW.Management.ObjectManager
+namespace AxTools.WoW.Internals.ObjectManager
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct WowPoint
@@ -44,7 +47,7 @@ namespace AxTools.WoW.Management.ObjectManager
 
         public override string ToString()
         {
-            return string.Format("{0},{1},{2}", (int) X, (int) Y, (int) Z);
+            return string.Format(CultureInfo.InvariantCulture, "{0}, {1}, {2}", Math.Round(X, 2), Math.Round(Y, 2), Math.Round(Z, 2));
         }
 
         public static WowPoint operator -(WowPoint left, WowPoint right)

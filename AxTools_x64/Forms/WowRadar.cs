@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Forms.Helpers;
+using AxTools.WoW.Internals.ObjectManager;
 using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
 

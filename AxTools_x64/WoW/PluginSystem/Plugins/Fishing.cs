@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals.ObjectManager;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
@@ -166,6 +167,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             WowNpc natPagle = npcs.FirstOrDefault(npc => npc.EntryID == 85984);
             if (natPagle != null)
             {
+                natPagle.Location.Face();
                 GameFunctions.MoveTo(natPagle.Location, 4f, 2000, false);
                 Thread.Sleep(500);
                 natPagle.Interact();
@@ -175,7 +177,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 string gossipText = Wowhead.GetItemInfo(specialBaits.First(baitFish => Wowhead.GetItemInfo(baitFish.Key).Name == fishingSettings.SpecialBait).Value).Name;
                 GameFunctions.SelectDialogOption(gossipText);
                 Thread.Sleep(1500);
-                GameFunctions.MoveTo(new WowPoint(2030f, 188f, 83f), 1f, 2000, false); // moving to good fishing point
+                new WowPoint(2024.49f, 191.33f, 83.86f).Face();
+                GameFunctions.MoveTo(new WowPoint(2024.49f, 191.33f, 83.86f), 2f, 2000, false); // moving to good fishing point
                 new WowPoint(2035f, 211f, 82f).Face(); // facing water
             }
         }

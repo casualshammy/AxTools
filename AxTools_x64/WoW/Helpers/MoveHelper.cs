@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Windows.Forms;
 using AxTools.WinAPI;
+using AxTools.WoW.Internals.ObjectManager;
 using AxTools.WoW.Management;
 using AxTools.WoW.Management.ObjectManager;
 

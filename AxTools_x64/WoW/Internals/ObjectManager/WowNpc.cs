@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
+using AxTools.WoW.Internals.ObjectManager;
 
 namespace AxTools.WoW.Management.ObjectManager
 {

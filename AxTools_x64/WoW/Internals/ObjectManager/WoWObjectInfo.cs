@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using AxTools.WoW.Internals.ObjectManager;
 
 namespace AxTools.WoW.Management.ObjectManager
 {
