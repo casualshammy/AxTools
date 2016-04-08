@@ -63,7 +63,7 @@ namespace AxTools.Helpers.MemoryManagement
 
 
             // Generate a method to get the address of a generic type. We'll be using this for RtlMoveMemory later for much faster structure reads.
-            var method = new DynamicMethod(
+            DynamicMethod method = new DynamicMethod(
                 string.Format("GetPinnedPtr<{0}>", typeof (T).FullName.Replace(".", "<>")), typeof (void*), new[] {typeof (T).MakeByRefType()},
                 typeof (MarshalCache<>).Module);
             ILGenerator generator = method.GetILGenerator();

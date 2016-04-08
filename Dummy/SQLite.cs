@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading;
 
 #if USE_CSHARP_SQLITE
@@ -194,8 +195,8 @@ namespace SQLite
 			// open using the byte[]
 			// in the case where the path may include Unicode
 			// force open to using UTF-8 using sqlite3_open_v2
-			var databasePathAsBytes = GetNullTerminatedUtf8 (DatabasePath);
-			var r = SQLite3.Open (databasePathAsBytes, out handle, (int) openFlags, IntPtr.Zero);
+			byte[] databasePathAsBytes = GetNullTerminatedUtf8 (DatabasePath);
+			SQLite3.Result r = SQLite3.Open (databasePathAsBytes, out handle, (int) openFlags, IntPtr.Zero);
 #endif
 
 			Handle = handle;
@@ -212,7 +213,7 @@ namespace SQLite
 		static SQLiteConnection ()
 		{
 			if (_preserveDuringLinkMagic) {
-				var ti = new ColumnInfo ();
+				ColumnInfo ti = new ColumnInfo ();
 				ti.Name = "magic";
 			}
 		}
@@ -228,8 +229,8 @@ namespace SQLite
 
 		static byte[] GetNullTerminatedUtf8 (string s)
 		{
-			var utf8Length = System.Text.Encoding.UTF8.GetByteCount (s);
-			var bytes = new byte [utf8Length + 1];
+			int utf8Length = System.Text.Encoding.UTF8.GetByteCount (s);
+			byte[] bytes = new byte [utf8Length + 1];
 			utf8Length = System.Text.Encoding.UTF8.GetBytes(s, 0, s.Length, bytes, 0);
 			return bytes;
 		}
@@ -321,9 +322,9 @@ namespace SQLite
 		/// </summary>
 		public int DropTable<T>()
 		{
-			var map = GetMapping (typeof (T));
+			TableMapping map = GetMapping (typeof (T));
 
-			var query = string.Format("drop table if exists \"{0}\"", map.TableName);
+			string query = string.Format("drop table if exists \"{0}\"", map.TableName);
 
 			return Execute (query);
 		}
@@ -363,24 +364,24 @@ namespace SQLite
 				map = GetMapping (ty, createFlags);
 				_tables.Add (ty.FullName, map);
 			}
-			var query = "create table if not exists \"" + map.TableName + "\"(\n";
+			string query = "create table if not exists \"" + map.TableName + "\"(\n";
 			
-			var decls = map.Columns.Select (p => Orm.SqlDecl (p, StoreDateTimeAsTicks));
-			var decl = string.Join (",\n", decls.ToArray ());
+			IEnumerable<string> decls = map.Columns.Select (p => Orm.SqlDecl (p, StoreDateTimeAsTicks));
+			string decl = string.Join (",\n", decls.ToArray ());
 			query += decl;
 			query += ")";
 			
-			var count = Execute (query);
+			int count = Execute (query);
 			
 			if (count == 0) { //Possible bug: This always seems to return 0?
 				// Table already exists, migrate it
 				MigrateTable (map);
 			}
 
-			var indexes = new Dictionary<string, IndexInfo> ();
-			foreach (var c in map.Columns) {
-				foreach (var i in c.Indices) {
-					var iname = i.Name ?? map.TableName + "_" + c.Name;
+			Dictionary<string, IndexInfo> indexes = new Dictionary<string, IndexInfo> ();
+			foreach (TableMapping.Column c in map.Columns) {
+				foreach (IndexedAttribute i in c.Indices) {
+					string iname = i.Name ?? map.TableName + "_" + c.Name;
 					IndexInfo iinfo;
 					if (!indexes.TryGetValue (iname, out iinfo)) {
 						iinfo = new IndexInfo {
@@ -402,9 +403,9 @@ namespace SQLite
 				}
 			}
 
-			foreach (var indexName in indexes.Keys) {
-				var index = indexes[indexName];
-				var columns = index.Columns.OrderBy(i => i.Order).Select(i => i.ColumnName).ToArray();
+			foreach (string indexName in indexes.Keys) {
+				IndexInfo index = indexes[indexName];
+				string[] columns = index.Columns.OrderBy(i => i.Order).Select(i => i.ColumnName).ToArray();
                 count += CreateIndex(indexName, index.TableName, columns, index.Unique);
 			}
 			
@@ -421,7 +422,7 @@ namespace SQLite
         public int CreateIndex(string indexName, string tableName, string[] columnNames, bool unique = false)
         {
             const string sqlFormat = "create {2} index if not exists \"{3}\" on \"{0}\"(\"{1}\")";
-            var sql = String.Format(sqlFormat, tableName, string.Join ("\", \"", columnNames), unique ? "unique" : "", indexName);
+            string sql = String.Format(sqlFormat, tableName, string.Join ("\", \"", columnNames), unique ? "unique" : "", indexName);
             return Execute(sql);
         }
 
@@ -477,16 +478,16 @@ namespace SQLite
             {
                 mx= (property.Body as MemberExpression);
             }
-            var propertyInfo = mx.Member as PropertyInfo;
+            PropertyInfo propertyInfo = mx.Member as PropertyInfo;
             if (propertyInfo == null)
             {
                 throw new ArgumentException("The lambda expression 'property' should point to a valid Property");
             }
 
-            var propName = propertyInfo.Name;
+            string propName = propertyInfo.Name;
 
-            var map = GetMapping<T>();
-            var colName = map.FindColumnWithPropertyName(propName).Name;
+            TableMapping map = GetMapping<T>();
+            string colName = map.FindColumnWithPropertyName(propName).Name;
 
             CreateIndex(map.TableName, colName, unique);
         }
@@ -515,19 +516,19 @@ namespace SQLite
 
 		public List<ColumnInfo> GetTableInfo (string tableName)
 		{
-			var query = "pragma table_info(\"" + tableName + "\")";			
+			string query = "pragma table_info(\"" + tableName + "\")";			
 			return Query<ColumnInfo> (query);
 		}
 
 		void MigrateTable (TableMapping map)
 		{
-			var existingCols = GetTableInfo (map.TableName);
+			List<ColumnInfo> existingCols = GetTableInfo (map.TableName);
 			
-			var toBeAdded = new List<TableMapping.Column> ();
+			List<TableMapping.Column> toBeAdded = new List<TableMapping.Column> ();
 			
-			foreach (var p in map.Columns) {
-				var found = false;
-				foreach (var c in existingCols) {
+			foreach (TableMapping.Column p in map.Columns) {
+				bool found = false;
+				foreach (ColumnInfo c in existingCols) {
 					found = (string.Compare (p.Name, c.Name, StringComparison.OrdinalIgnoreCase) == 0);
 					if (found)
 						break;
@@ -537,8 +538,8 @@ namespace SQLite
 				}
 			}
 			
-			foreach (var p in toBeAdded) {
-				var addCol = "alter table \"" + map.TableName + "\" add column " + Orm.SqlDecl (p, StoreDateTimeAsTicks);
+			foreach (TableMapping.Column p in toBeAdded) {
+				string addCol = "alter table \"" + map.TableName + "\" add column " + Orm.SqlDecl (p, StoreDateTimeAsTicks);
 				Execute (addCol);
 			}
 		}
@@ -570,9 +571,9 @@ namespace SQLite
 			if (!_open)
 				throw SQLiteException.New (SQLite3.Result.Error, "Cannot create commands from unopened database");
 
-			var cmd = NewCommand ();
+			SQLiteCommand cmd = NewCommand ();
 			cmd.CommandText = cmdText;
-			foreach (var o in ps) {
+			foreach (object o in ps) {
 				cmd.Bind (o);
 			}
 			return cmd;
@@ -597,7 +598,7 @@ namespace SQLite
 		/// </returns>
 		public int Execute (string query, params object[] args)
 		{
-			var cmd = CreateCommand (query, args);
+			SQLiteCommand cmd = CreateCommand (query, args);
 			
 			if (TimeExecution) {
 				if (_sw == null) {
@@ -607,7 +608,7 @@ namespace SQLite
 				_sw.Start ();
 			}
 
-			var r = cmd.ExecuteNonQuery ();
+			int r = cmd.ExecuteNonQuery ();
 			
 			if (TimeExecution) {
 				_sw.Stop ();
@@ -620,7 +621,7 @@ namespace SQLite
 
 		public T ExecuteScalar<T> (string query, params object[] args)
 		{
-			var cmd = CreateCommand (query, args);
+			SQLiteCommand cmd = CreateCommand (query, args);
 			
 			if (TimeExecution) {
 				if (_sw == null) {
@@ -630,7 +631,7 @@ namespace SQLite
 				_sw.Start ();
 			}
 			
-			var r = cmd.ExecuteScalar<T> ();
+			T r = cmd.ExecuteScalar<T> ();
 			
 			if (TimeExecution) {
 				_sw.Stop ();
@@ -658,7 +659,7 @@ namespace SQLite
 		/// </returns>
 		public List<T> Query<T> (string query, params object[] args) where T : new()
 		{
-			var cmd = CreateCommand (query, args);
+			SQLiteCommand cmd = CreateCommand (query, args);
 			return cmd.ExecuteQuery<T> ();
 		}
 
@@ -681,7 +682,7 @@ namespace SQLite
 		/// </returns>
 		public IEnumerable<T> DeferredQuery<T>(string query, params object[] args) where T : new()
 		{
-			var cmd = CreateCommand(query, args);
+			SQLiteCommand cmd = CreateCommand(query, args);
 			return cmd.ExecuteDeferredQuery<T>();
 		}
 
@@ -707,7 +708,7 @@ namespace SQLite
 		/// </returns>
 		public List<object> Query (TableMapping map, string query, params object[] args)
 		{
-			var cmd = CreateCommand (query, args);
+			SQLiteCommand cmd = CreateCommand (query, args);
 			return cmd.ExecuteQuery<object> (map);
 		}
 
@@ -735,7 +736,7 @@ namespace SQLite
 		/// </returns>
 		public IEnumerable<object> DeferredQuery(TableMapping map, string query, params object[] args)
 		{
-			var cmd = CreateCommand(query, args);
+			SQLiteCommand cmd = CreateCommand(query, args);
 			return cmd.ExecuteDeferredQuery<object>(map);
 		}
 
@@ -765,7 +766,7 @@ namespace SQLite
 		/// </returns>
 		public T Get<T> (object pk) where T : new()
 		{
-			var map = GetMapping (typeof(T));
+			TableMapping map = GetMapping (typeof(T));
 			return Query<T> (map.GetByPrimaryKeySql, pk).First ();
 		}
 
@@ -799,7 +800,7 @@ namespace SQLite
 		/// </returns>
 		public T Find<T> (object pk) where T : new ()
 		{
-			var map = GetMapping (typeof (T));
+			TableMapping map = GetMapping (typeof (T));
 			return Query<T> (map.GetByPrimaryKeySql, pk).FirstOrDefault ();
 		}
 
@@ -862,7 +863,7 @@ namespace SQLite
 				try {
 					Execute ("begin transaction");
 				} catch (Exception ex) {
-					var sqlExp = ex as SQLiteException;
+					SQLiteException sqlExp = ex as SQLiteException;
 					if (sqlExp != null) {
 						// It is recommended that applications respond to the errors listed below 
 						//    by explicitly issuing a ROLLBACK command.
@@ -907,7 +908,7 @@ namespace SQLite
 			try {
 				Execute ("savepoint " + retVal);
 			} catch (Exception ex) {
-				var sqlExp = ex as SQLiteException;
+				SQLiteException sqlExp = ex as SQLiteException;
 				if (sqlExp != null) {
 					// It is recommended that applications respond to the errors listed below 
 					//    by explicitly issuing a ROLLBACK command.
@@ -1034,7 +1035,7 @@ namespace SQLite
 		public void RunInTransaction (Action action)
 		{
 			try {
-				var savePoint = SaveTransactionPoint ();
+				string savePoint = SaveTransactionPoint ();
 				action ();
 				Release (savePoint);
 			} catch (Exception) {
@@ -1054,9 +1055,9 @@ namespace SQLite
 		/// </returns>
 		public int InsertAll (System.Collections.IEnumerable objects)
 		{
-			var c = 0;
+			int c = 0;
 			RunInTransaction(() => {
-				foreach (var r in objects) {
+				foreach (object r in objects) {
 					c += Insert (r);
 				}
 			});
@@ -1077,9 +1078,9 @@ namespace SQLite
 		/// </returns>
 		public int InsertAll (System.Collections.IEnumerable objects, string extra)
 		{
-			var c = 0;
+			int c = 0;
 			RunInTransaction (() => {
-				foreach (var r in objects) {
+				foreach (object r in objects) {
 					c += Insert (r, extra);
 				}
 			});
@@ -1100,9 +1101,9 @@ namespace SQLite
 		/// </returns>
 		public int InsertAll (System.Collections.IEnumerable objects, Type objType)
 		{
-			var c = 0;
+			int c = 0;
 			RunInTransaction (() => {
-				foreach (var r in objects) {
+				foreach (object r in objects) {
 					c += Insert (r, objType);
 				}
 			});
@@ -1231,7 +1232,7 @@ namespace SQLite
 			}
 			
             
-			var map = GetMapping (objType);
+			TableMapping map = GetMapping (objType);
 
 #if NETFX_CORE
             if (map.PK != null && map.PK.IsAutoGuid)
@@ -1256,7 +1257,7 @@ namespace SQLite
             }
 #else
             if (map.PK != null && map.PK.IsAutoGuid) {
-                var prop = objType.GetProperty(map.PK.PropertyName);
+                PropertyInfo prop = objType.GetProperty(map.PK.PropertyName);
                 if (prop != null) {
                     if (prop.GetValue(obj, null).Equals(Guid.Empty)) {
                         prop.SetValue(obj, Guid.NewGuid(), null);
@@ -1266,15 +1267,15 @@ namespace SQLite
 #endif
 
 
-			var replacing = string.Compare (extra, "OR REPLACE", StringComparison.OrdinalIgnoreCase) == 0;
+			bool replacing = string.Compare (extra, "OR REPLACE", StringComparison.OrdinalIgnoreCase) == 0;
 			
-			var cols = replacing ? map.InsertOrReplaceColumns : map.InsertColumns;
-			var vals = new object[cols.Length];
-			for (var i = 0; i < vals.Length; i++) {
+			TableMapping.Column[] cols = replacing ? map.InsertOrReplaceColumns : map.InsertColumns;
+			object[] vals = new object[cols.Length];
+			for (int i = 0; i < vals.Length; i++) {
 				vals [i] = cols [i].GetValue (obj);
 			}
 			
-			var insertCmd = map.GetInsertCommand (this, extra);
+			PreparedSqlLiteInsertCommand insertCmd = map.GetInsertCommand (this, extra);
 			int count;
 
 			try {
@@ -1290,7 +1291,7 @@ namespace SQLite
 
             if (map.HasAutoIncPK)
             {
-				var id = SQLite3.LastInsertRowid (Handle);
+				long id = SQLite3.LastInsertRowid (Handle);
 				map.SetAutoIncPK (obj, id);
 			}
 			
@@ -1337,22 +1338,22 @@ namespace SQLite
 				return 0;
 			}
 			
-			var map = GetMapping (objType);
+			TableMapping map = GetMapping (objType);
 			
-			var pk = map.PK;
+			TableMapping.Column pk = map.PK;
 			
 			if (pk == null) {
 				throw new NotSupportedException ("Cannot update " + map.TableName + ": it has no PK");
 			}
 			
-			var cols = from p in map.Columns
+			IEnumerable<TableMapping.Column> cols = from p in map.Columns
 				where p != pk
 				select p;
-			var vals = from c in cols
+			IEnumerable<object> vals = from c in cols
 				select c.GetValue (obj);
-			var ps = new List<object> (vals);
+			List<object> ps = new List<object> (vals);
 			ps.Add (pk.GetValue (obj));
-			var q = string.Format ("update \"{0}\" set {1} where {2} = ? ", map.TableName, string.Join (",", (from c in cols
+			string q = string.Format ("update \"{0}\" set {1} where {2} = ? ", map.TableName, string.Join (",", (from c in cols
 				select "\"" + c.Name + "\" = ? ").ToArray ()), pk.Name);
 
 			try {
@@ -1381,9 +1382,9 @@ namespace SQLite
 		/// </returns>
 		public int UpdateAll (System.Collections.IEnumerable objects)
 		{
-			var c = 0;
+			int c = 0;
 			RunInTransaction (() => {
-				foreach (var r in objects) {
+				foreach (object r in objects) {
 					c += Update (r);
 				}
 			});
@@ -1401,12 +1402,12 @@ namespace SQLite
 		/// </returns>
 		public int Delete (object objectToDelete)
 		{
-			var map = GetMapping (objectToDelete.GetType ());
-			var pk = map.PK;
+			TableMapping map = GetMapping (objectToDelete.GetType ());
+			TableMapping.Column pk = map.PK;
 			if (pk == null) {
 				throw new NotSupportedException ("Cannot delete " + map.TableName + ": it has no PK");
 			}
-			var q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
+			string q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
 			return Execute (q, pk.GetValue (objectToDelete));
 		}
 
@@ -1424,12 +1425,12 @@ namespace SQLite
 		/// </typeparam>
 		public int Delete<T> (object primaryKey)
 		{
-			var map = GetMapping (typeof (T));
-			var pk = map.PK;
+			TableMapping map = GetMapping (typeof (T));
+			TableMapping.Column pk = map.PK;
 			if (pk == null) {
 				throw new NotSupportedException ("Cannot delete " + map.TableName + ": it has no PK");
 			}
-			var q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
+			string q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
 			return Execute (q, primaryKey);
 		}
 
@@ -1446,8 +1447,8 @@ namespace SQLite
 		/// </typeparam>
 		public int DeleteAll<T> ()
 		{
-			var map = GetMapping (typeof (T));
-			var query = string.Format("delete from \"{0}\"", map.TableName);
+			TableMapping map = GetMapping (typeof (T));
+			string query = string.Format("delete from \"{0}\"", map.TableName);
 			return Execute (query);
 		}
 
@@ -1472,11 +1473,11 @@ namespace SQLite
 			if (_open && Handle != NullHandle) {
 				try {
 					if (_mappings != null) {
-						foreach (var sqlInsertCommand in _mappings.Values) {
+						foreach (TableMapping sqlInsertCommand in _mappings.Values) {
 							sqlInsertCommand.Dispose();
 						}
 					}
-					var r = SQLite3.Close (Handle);
+					SQLite3.Result r = SQLite3.Close (Handle);
 					if (r != SQLite3.Result.OK) {
 						string msg = SQLite3.GetErrmsg (Handle);
 						throw SQLiteException.New (r, msg);
@@ -1631,22 +1632,22 @@ namespace SQLite
 			var tableAttr = (TableAttribute)System.Reflection.CustomAttributeExtensions
                 .GetCustomAttribute(type.GetTypeInfo(), typeof(TableAttribute), true);
 #else
-			var tableAttr = (TableAttribute)type.GetCustomAttributes (typeof (TableAttribute), true).FirstOrDefault ();
+			TableAttribute tableAttr = (TableAttribute)type.GetCustomAttributes (typeof (TableAttribute), true).FirstOrDefault ();
 #endif
 
 			TableName = tableAttr != null ? tableAttr.Name : MappedType.Name;
 
 #if !NETFX_CORE
-			var props = MappedType.GetProperties (BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty);
+			PropertyInfo[] props = MappedType.GetProperties (BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty);
 #else
 			var props = from p in MappedType.GetRuntimeProperties()
 						where ((p.GetMethod != null && p.GetMethod.IsPublic) || (p.SetMethod != null && p.SetMethod.IsPublic) || (p.GetMethod != null && p.GetMethod.IsStatic) || (p.SetMethod != null && p.SetMethod.IsStatic))
 						select p;
 #endif
-			var cols = new List<Column> ();
-			foreach (var p in props) {
+			List<Column> cols = new List<Column> ();
+			foreach (PropertyInfo p in props) {
 #if !NETFX_CORE
-				var ignore = p.GetCustomAttributes (typeof(IgnoreAttribute), true).Length > 0;
+				bool ignore = p.GetCustomAttributes (typeof(IgnoreAttribute), true).Length > 0;
 #else
 				var ignore = p.GetCustomAttributes (typeof(IgnoreAttribute), true).Count() > 0;
 #endif
@@ -1655,7 +1656,7 @@ namespace SQLite
 				}
 			}
 			Columns = cols.ToArray ();
-			foreach (var c in Columns) {
+			foreach (Column c in Columns) {
 				if (c.IsAutoInc && c.IsPK) {
 					_autoPk = c;
 				}
@@ -1704,13 +1705,13 @@ namespace SQLite
 
 		public Column FindColumnWithPropertyName (string propertyName)
 		{
-			var exact = Columns.FirstOrDefault (c => c.PropertyName == propertyName);
+			Column exact = Columns.FirstOrDefault (c => c.PropertyName == propertyName);
 			return exact;
 		}
 
 		public Column FindColumn (string columnName)
 		{
-			var exact = Columns.FirstOrDefault (c => c.Name == columnName);
+			Column exact = Columns.FirstOrDefault (c => c.Name == columnName);
 			return exact;
 		}
 		
@@ -1733,7 +1734,7 @@ namespace SQLite
 		
 		PreparedSqlLiteInsertCommand CreateInsertCommand(SQLiteConnection conn, string extra)
 		{
-			var cols = InsertColumns;
+			Column[] cols = InsertColumns;
 		    string insertSql;
             if (!cols.Any() && Columns.Count() == 1 && Columns[0].IsAutoInc)
             {
@@ -1741,7 +1742,7 @@ namespace SQLite
             }
             else
             {
-				var replacing = string.Compare (extra, "OR REPLACE", StringComparison.OrdinalIgnoreCase) == 0;
+				bool replacing = string.Compare (extra, "OR REPLACE", StringComparison.OrdinalIgnoreCase) == 0;
 
 				if (replacing) {
 					cols = InsertOrReplaceColumns;
@@ -1755,7 +1756,7 @@ namespace SQLite
                 
             }
 			
-			var insertCommand = new PreparedSqlLiteInsertCommand(conn);
+			PreparedSqlLiteInsertCommand insertCommand = new PreparedSqlLiteInsertCommand(conn);
 			insertCommand.CommandText = insertSql;
 			return insertCommand;
 		}
@@ -1793,7 +1794,7 @@ namespace SQLite
 
             public Column(PropertyInfo prop, CreateFlags createFlags = CreateFlags.None)
             {
-                var colAttr = (ColumnAttribute)prop.GetCustomAttributes(typeof(ColumnAttribute), true).FirstOrDefault();
+                ColumnAttribute colAttr = (ColumnAttribute)prop.GetCustomAttributes(typeof(ColumnAttribute), true).FirstOrDefault();
 
                 _prop = prop;
                 Name = colAttr == null ? prop.Name : colAttr.Name;
@@ -1805,7 +1806,7 @@ namespace SQLite
 					(((createFlags & CreateFlags.ImplicitPK) == CreateFlags.ImplicitPK) &&
 					 	string.Compare (prop.Name, Orm.ImplicitPkName, StringComparison.OrdinalIgnoreCase) == 0);
 
-                var isAuto = Orm.IsAutoInc(prop) || (IsPK && ((createFlags & CreateFlags.AutoIncPK) == CreateFlags.AutoIncPK));
+                bool isAuto = Orm.IsAutoInc(prop) || (IsPK && ((createFlags & CreateFlags.AutoIncPK) == CreateFlags.AutoIncPK));
                 IsAutoGuid = isAuto && ColumnType == typeof(Guid);
                 IsAutoInc = isAuto && !IsAutoGuid;
 
@@ -1862,7 +1863,7 @@ namespace SQLite
 
 		public static string SqlType (TableMapping.Column p, bool storeDateTimeAsTicks)
 		{
-			var clrType = p.ColumnType;
+			Type clrType = p.ColumnType;
 			if (clrType == typeof(Boolean) || clrType == typeof(Byte) || clrType == typeof(UInt16) || clrType == typeof(SByte) || clrType == typeof(Int16) || clrType == typeof(Int32)) {
 				return "integer";
 			} else if (clrType == typeof(UInt32) || clrType == typeof(Int64)) {
@@ -1899,7 +1900,7 @@ namespace SQLite
 
 		public static bool IsPK (MemberInfo p)
 		{
-			var attrs = p.GetCustomAttributes (typeof(PrimaryKeyAttribute), true);
+			object[] attrs = p.GetCustomAttributes (typeof(PrimaryKeyAttribute), true);
 #if !NETFX_CORE
 			return attrs.Length > 0;
 #else
@@ -1909,7 +1910,7 @@ namespace SQLite
 
 		public static string Collation (MemberInfo p)
 		{
-			var attrs = p.GetCustomAttributes (typeof(CollationAttribute), true);
+			object[] attrs = p.GetCustomAttributes (typeof(CollationAttribute), true);
 #if !NETFX_CORE
 			if (attrs.Length > 0) {
 				return ((CollationAttribute)attrs [0]).Value;
@@ -1924,7 +1925,7 @@ namespace SQLite
 
 		public static bool IsAutoInc (MemberInfo p)
 		{
-			var attrs = p.GetCustomAttributes (typeof(AutoIncrementAttribute), true);
+			object[] attrs = p.GetCustomAttributes (typeof(AutoIncrementAttribute), true);
 #if !NETFX_CORE
 			return attrs.Length > 0;
 #else
@@ -1934,13 +1935,13 @@ namespace SQLite
 
 		public static IEnumerable<IndexedAttribute> GetIndices(MemberInfo p)
 		{
-			var attrs = p.GetCustomAttributes(typeof(IndexedAttribute), true);
+			object[] attrs = p.GetCustomAttributes(typeof(IndexedAttribute), true);
 			return attrs.Cast<IndexedAttribute>();
 		}
 		
 		public static int? MaxStringLength(PropertyInfo p)
 		{
-			var attrs = p.GetCustomAttributes (typeof(MaxLengthAttribute), true);
+			object[] attrs = p.GetCustomAttributes (typeof(MaxLengthAttribute), true);
 #if !NETFX_CORE
 			if (attrs.Length > 0)
 				return ((MaxLengthAttribute)attrs [0]).Value;
@@ -1954,7 +1955,7 @@ namespace SQLite
 
 		public static bool IsMarkedNotNull(MemberInfo p)
 		{
-			var attrs = p.GetCustomAttributes (typeof (NotNullAttribute), true);
+			object[] attrs = p.GetCustomAttributes (typeof (NotNullAttribute), true);
 #if !NETFX_CORE
 			return attrs.Length > 0;
 #else
@@ -1983,8 +1984,8 @@ namespace SQLite
 				Debug.WriteLine ("Executing: " + this);
 			}
 			
-			var r = SQLite3.Result.OK;
-			var stmt = Prepare ();
+			SQLite3.Result r = SQLite3.Result.OK;
+			IntPtr stmt = Prepare ();
 			r = SQLite3.Step (stmt);
 			Finalize (stmt);
 			if (r == SQLite3.Result.Done) {
@@ -2041,23 +2042,23 @@ namespace SQLite
 				Debug.WriteLine ("Executing Query: " + this);
 			}
 
-			var stmt = Prepare ();
+			IntPtr stmt = Prepare ();
 			try
 			{
-				var cols = new TableMapping.Column[SQLite3.ColumnCount (stmt)];
+				TableMapping.Column[] cols = new TableMapping.Column[SQLite3.ColumnCount (stmt)];
 
 				for (int i = 0; i < cols.Length; i++) {
-					var name = SQLite3.ColumnName16 (stmt, i);
+					string name = SQLite3.ColumnName16 (stmt, i);
 					cols [i] = map.FindColumn (name);
 				}
 			
 				while (SQLite3.Step (stmt) == SQLite3.Result.Row) {
-					var obj = Activator.CreateInstance(map.MappedType);
+					object obj = Activator.CreateInstance(map.MappedType);
 					for (int i = 0; i < cols.Length; i++) {
 						if (cols [i] == null)
 							continue;
-						var colType = SQLite3.ColumnType (stmt, i);
-						var val = ReadCol (stmt, i, colType, cols [i].ColumnType);
+						SQLite3.ColType colType = SQLite3.ColumnType (stmt, i);
+						object val = ReadCol (stmt, i, colType, cols [i].ColumnType);
 						cols [i].SetValue (obj, val);
  					}
 					OnInstanceCreated (obj);
@@ -2078,13 +2079,13 @@ namespace SQLite
 			
 			T val = default(T);
 			
-			var stmt = Prepare ();
+			IntPtr stmt = Prepare ();
 
             try
             {
-                var r = SQLite3.Step (stmt);
+                SQLite3.Result r = SQLite3.Step (stmt);
                 if (r == SQLite3.Result.Row) {
-                    var colType = SQLite3.ColumnType (stmt, 0);
+                    SQLite3.ColType colType = SQLite3.ColumnType (stmt, 0);
                     val = (T)ReadCol (stmt, 0, colType, typeof(T));
                 }
                 else if (r == SQLite3.Result.Done) {
@@ -2117,10 +2118,10 @@ namespace SQLite
 
 		public override string ToString ()
 		{
-			var parts = new string[1 + _bindings.Count];
+			string[] parts = new string[1 + _bindings.Count];
 			parts [0] = CommandText;
-			var i = 1;
-			foreach (var b in _bindings) {
+			int i = 1;
+			foreach (Binding b in _bindings) {
 				parts [i] = string.Format ("  {0}: {1}", i - 1, b.Value);
 				i++;
 			}
@@ -2129,7 +2130,7 @@ namespace SQLite
 
 		Sqlite3Statement Prepare()
 		{
-			var stmt = SQLite3.Prepare2 (_conn.Handle, CommandText);
+			IntPtr stmt = SQLite3.Prepare2 (_conn.Handle, CommandText);
 			BindAll (stmt);
 			return stmt;
 		}
@@ -2142,7 +2143,7 @@ namespace SQLite
 		void BindAll (Sqlite3Statement stmt)
 		{
 			int nextIdx = 1;
-			foreach (var b in _bindings) {
+			foreach (Binding b in _bindings) {
 				if (b.Name != null) {
 					b.Index = SQLite3.BindParameterIndex (stmt, b.Name);
 				} else {
@@ -2230,7 +2231,7 @@ namespace SQLite
 						return new DateTime (SQLite3.ColumnInt64 (stmt, index));
 					}
 					else {
-						var text = SQLite3.ColumnString (stmt, index);
+						string text = SQLite3.ColumnString (stmt, index);
 						return DateTime.Parse (text);
 					}
 				} else if (clrType == typeof(DateTimeOffset)) {
@@ -2258,7 +2259,7 @@ namespace SQLite
 				} else if (clrType == typeof(byte[])) {
 					return SQLite3.ColumnByteArray (stmt, index);
 				} else if (clrType == typeof(Guid)) {
-                  var text = SQLite3.ColumnString(stmt, index);
+                  string text = SQLite3.ColumnString(stmt, index);
                   return new Guid(text);
                 } else{
 					throw new NotSupportedException ("Don't know how to read " + clrType);
@@ -2292,7 +2293,7 @@ namespace SQLite
 				Debug.WriteLine ("Executing: " + CommandText);
 			}
 
-			var r = SQLite3.Result.OK;
+			SQLite3.Result r = SQLite3.Result.OK;
 
 			if (!Initialized) {
 				Statement = Prepare ();
@@ -2326,7 +2327,7 @@ namespace SQLite
 
 		protected virtual Sqlite3Statement Prepare ()
 		{
-			var stmt = SQLite3.Prepare2 (Connection.Handle, CommandText);
+			IntPtr stmt = SQLite3.Prepare2 (Connection.Handle, CommandText);
 			return stmt;
 		}
 
@@ -2396,7 +2397,7 @@ namespace SQLite
 
 		public TableQuery<U> Clone<U> ()
 		{
-			var q = new TableQuery<U> (Connection, Table);
+			TableQuery<U> q = new TableQuery<U> (Connection, Table);
 			q._where = _where;
 			q._deferred = _deferred;
 			if (_orderBys != null) {
@@ -2416,9 +2417,9 @@ namespace SQLite
 		public TableQuery<T> Where (Expression<Func<T, bool>> predExpr)
 		{
 			if (predExpr.NodeType == ExpressionType.Lambda) {
-				var lambda = (LambdaExpression)predExpr;
-				var pred = lambda.Body;
-				var q = Clone<T> ();
+				LambdaExpression lambda = (LambdaExpression)predExpr;
+				Expression pred = lambda.Body;
+				TableQuery<T> q = Clone<T> ();
 				q.AddWhere (pred);
 				return q;
 			} else {
@@ -2428,14 +2429,14 @@ namespace SQLite
 
 		public TableQuery<T> Take (int n)
 		{
-			var q = Clone<T> ();
+			TableQuery<T> q = Clone<T> ();
 			q._limit = n;
 			return q;
 		}
 
 		public TableQuery<T> Skip (int n)
 		{
-			var q = Clone<T> ();
+			TableQuery<T> q = Clone<T> ();
 			q._offset = n;
 			return q;
 		}
@@ -2448,7 +2449,7 @@ namespace SQLite
 		bool _deferred;
 		public TableQuery<T> Deferred ()
 		{
-			var q = Clone<T> ();
+			TableQuery<T> q = Clone<T> ();
 			q._deferred = true;
 			return q;
 		}
@@ -2476,11 +2477,11 @@ namespace SQLite
 		private TableQuery<T> AddOrderBy<U> (Expression<Func<T, U>> orderExpr, bool asc)
 		{
 			if (orderExpr.NodeType == ExpressionType.Lambda) {
-				var lambda = (LambdaExpression)orderExpr;
+				LambdaExpression lambda = (LambdaExpression)orderExpr;
 				
 				MemberExpression mem = null;
 				
-				var unary = lambda.Body as UnaryExpression;
+				UnaryExpression unary = lambda.Body as UnaryExpression;
 				if (unary != null && unary.NodeType == ExpressionType.Convert) {
 					mem = unary.Operand as MemberExpression;
 				}
@@ -2489,7 +2490,7 @@ namespace SQLite
 				}
 				
 				if (mem != null && (mem.Expression.NodeType == ExpressionType.Parameter)) {
-					var q = Clone<T> ();
+					TableQuery<T> q = Clone<T> ();
 					if (q._orderBys == null) {
 						q._orderBys = new List<Ordering> ();
 					}
@@ -2521,7 +2522,7 @@ namespace SQLite
 			Expression<Func<TInner, TKey>> innerKeySelector,
 			Expression<Func<T, TInner, TResult>> resultSelector)
 		{
-			var q = new TableQuery<TResult> (Connection, Connection.GetMapping (typeof (TResult))) {
+			TableQuery<TResult> q = new TableQuery<TResult> (Connection, Connection.GetMapping (typeof (TResult))) {
 				_joinOuter = this,
 				_joinOuterKeySelector = outerKeySelector,
 				_joinInner = inner,
@@ -2533,7 +2534,7 @@ namespace SQLite
 				
 		public TableQuery<TResult> Select<TResult> (Expression<Func<T, TResult>> selector)
 		{
-			var q = Clone<TResult> ();
+			TableQuery<TResult> q = Clone<TResult> ();
 			q._selector = selector;
 			return q;
 		}
@@ -2544,14 +2545,14 @@ namespace SQLite
 				throw new NotSupportedException ("Joins are not supported.");
 			}
 			else {
-				var cmdText = "select " + selectionList + " from \"" + Table.TableName + "\"";
-				var args = new List<object> ();
+				string cmdText = "select " + selectionList + " from \"" + Table.TableName + "\"";
+				List<object> args = new List<object> ();
 				if (_where != null) {
-					var w = CompileExpr (_where, args);
+					CompileResult w = CompileExpr (_where, args);
 					cmdText += " where " + w.CommandText;
 				}
 				if ((_orderBys != null) && (_orderBys.Count > 0)) {
-					var t = string.Join (", ", _orderBys.Select (o => "\"" + o.ColumnName + "\"" + (o.Ascending ? "" : " desc")).ToArray ());
+					string t = string.Join (", ", _orderBys.Select (o => "\"" + o.ColumnName + "\"" + (o.Ascending ? "" : " desc")).ToArray ());
 					cmdText += " order by " + t;
 				}
 				if (_limit.HasValue) {
@@ -2579,10 +2580,10 @@ namespace SQLite
 			if (expr == null) {
 				throw new NotSupportedException ("Expression is NULL");
 			} else if (expr is BinaryExpression) {
-				var bin = (BinaryExpression)expr;
+				BinaryExpression bin = (BinaryExpression)expr;
 				
-				var leftr = CompileExpr (bin.Left, queryArgs);
-				var rightr = CompileExpr (bin.Right, queryArgs);
+				CompileResult leftr = CompileExpr (bin.Left, queryArgs);
+				CompileResult rightr = CompileExpr (bin.Right, queryArgs);
 
 				//If either side is a parameter and is null, then handle the other side specially (for "is null"/"is not null")
 				string text;
@@ -2595,15 +2596,15 @@ namespace SQLite
 				return new CompileResult { CommandText = text };
 			} else if (expr.NodeType == ExpressionType.Call) {
 				
-				var call = (MethodCallExpression)expr;
-				var args = new CompileResult[call.Arguments.Count];
-				var obj = call.Object != null ? CompileExpr (call.Object, queryArgs) : null;
+				MethodCallExpression call = (MethodCallExpression)expr;
+				CompileResult[] args = new CompileResult[call.Arguments.Count];
+				CompileResult obj = call.Object != null ? CompileExpr (call.Object, queryArgs) : null;
 				
-				for (var i = 0; i < args.Length; i++) {
+				for (int i = 0; i < args.Length; i++) {
 					args [i] = CompileExpr (call.Arguments [i], queryArgs);
 				}
 				
-				var sqlCall = "";
+				string sqlCall = "";
 				
 				if (call.Method.Name == "Like" && args.Length == 2) {
 					sqlCall = "(" + args [0].CommandText + " like " + args [1].CommandText + ")";
@@ -2637,34 +2638,34 @@ namespace SQLite
 				return new CompileResult { CommandText = sqlCall };
 				
 			} else if (expr.NodeType == ExpressionType.Constant) {
-				var c = (ConstantExpression)expr;
+				ConstantExpression c = (ConstantExpression)expr;
 				queryArgs.Add (c.Value);
 				return new CompileResult {
 					CommandText = "?",
 					Value = c.Value
 				};
 			} else if (expr.NodeType == ExpressionType.Convert) {
-				var u = (UnaryExpression)expr;
-				var ty = u.Type;
-				var valr = CompileExpr (u.Operand, queryArgs);
+				UnaryExpression u = (UnaryExpression)expr;
+				Type ty = u.Type;
+				CompileResult valr = CompileExpr (u.Operand, queryArgs);
 				return new CompileResult {
 					CommandText = valr.CommandText,
 					Value = valr.Value != null ? ConvertTo (valr.Value, ty) : null
 				};
 			} else if (expr.NodeType == ExpressionType.MemberAccess) {
-				var mem = (MemberExpression)expr;
+				MemberExpression mem = (MemberExpression)expr;
 				
 				if (mem.Expression!=null && mem.Expression.NodeType == ExpressionType.Parameter) {
 					//
 					// This is a column of our table, output just the column name
 					// Need to translate it if that column name is mapped
 					//
-					var columnName = Table.FindColumnWithPropertyName (mem.Member.Name).Name;
+					string columnName = Table.FindColumnWithPropertyName (mem.Member.Name).Name;
 					return new CompileResult { CommandText = "\"" + columnName + "\"" };
 				} else {
 					object obj = null;
 					if (mem.Expression != null) {
-						var r = CompileExpr (mem.Expression, queryArgs);
+						CompileResult r = CompileExpr (mem.Expression, queryArgs);
 						if (r.Value == null) {
 							throw new NotSupportedException ("Member access failed to compile expression");
 						}
@@ -2684,7 +2685,7 @@ namespace SQLite
 #else
 					if (mem.Member is PropertyInfo) {
 #endif
-						var m = (PropertyInfo)mem.Member;
+						PropertyInfo m = (PropertyInfo)mem.Member;
 						val = m.GetValue (obj, null);
 #if !NETFX_CORE
 					} else if (mem.Member.MemberType == MemberTypes.Field) {
@@ -2694,7 +2695,7 @@ namespace SQLite
 #if SILVERLIGHT
 						val = Expression.Lambda (expr).Compile ().DynamicInvoke ();
 #else
-						var m = (FieldInfo)mem.Member;
+						FieldInfo m = (FieldInfo)mem.Member;
 						val = m.GetValue (obj);
 #endif
 					} else {
@@ -2709,10 +2710,10 @@ namespace SQLite
 					// Work special magic for enumerables
 					//
 					if (val != null && val is System.Collections.IEnumerable && !(val is string) && !(val is System.Collections.Generic.IEnumerable<byte>)) {
-						var sb = new System.Text.StringBuilder();
+						StringBuilder sb = new System.Text.StringBuilder();
 						sb.Append("(");
-						var head = "";
-						foreach (var a in (System.Collections.IEnumerable)val) {
+						string head = "";
+						foreach (object a in (System.Collections.IEnumerable)val) {
 							queryArgs.Add(a);
 							sb.Append(head);
 							sb.Append("?");
@@ -2764,7 +2765,7 @@ namespace SQLite
 
 		string GetSqlName (Expression expr)
 		{
-			var n = expr.NodeType;
+			ExpressionType n = expr.NodeType;
 			if (n == ExpressionType.GreaterThan)
 				return ">"; else if (n == ExpressionType.GreaterThanOrEqual) {
 				return ">=";
@@ -2814,13 +2815,13 @@ namespace SQLite
 
 		public T First ()
 		{
-			var query = Take (1);
+			TableQuery<T> query = Take (1);
 			return query.ToList<T>().First ();
 		}
 
 		public T FirstOrDefault ()
 		{
-			var query = Take (1);
+			TableQuery<T> query = Take (1);
 			return query.ToList<T>().FirstOrDefault ();
 		}
     }
@@ -2971,7 +2972,7 @@ namespace SQLite
             byte[] queryBytes = System.Text.UTF8Encoding.UTF8.GetBytes (query);
             var r = Prepare2 (db, queryBytes, queryBytes.Length, out stmt, IntPtr.Zero);
 #else
-            var r = Prepare2 (db, query, System.Text.UTF8Encoding.UTF8.GetByteCount (query), out stmt, IntPtr.Zero);
+            Result r = Prepare2 (db, query, System.Text.UTF8Encoding.UTF8.GetByteCount (query), out stmt, IntPtr.Zero);
 #endif
 			if (r != Result.OK) {
 				throw SQLiteException.New (r, GetErrmsg (db));
@@ -3065,7 +3066,7 @@ namespace SQLite
 		public static byte[] ColumnByteArray (IntPtr stmt, int index)
 		{
 			int length = ColumnBytes (stmt, index);
-			var result = new byte[length];
+			byte[] result = new byte[length];
 			if (length > 0)
 				Marshal.Copy (ColumnBlob (stmt, index), result, 0, length);
 			return result;

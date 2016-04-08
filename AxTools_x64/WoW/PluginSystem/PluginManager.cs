@@ -1,6 +1,5 @@
 ﻿using AxTools.Forms;
 using AxTools.Helpers;
-using AxTools.WoW.Management;
 using AxTools.WoW.PluginSystem.Plugins;
 using System;
 using System.CodeDom.Compiler;

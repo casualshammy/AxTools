@@ -21,7 +21,7 @@ namespace AxTools.Helpers
 
         internal static T FindForm<T>() where T : Form
         {
-            foreach (var i in Application.OpenForms)
+            foreach (object i in Application.OpenForms)
             {
                 if (i.GetType() == typeof (T)) return i as T;
             }

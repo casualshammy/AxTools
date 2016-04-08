@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using AxTools.Forms;
 using AxTools.Helpers;
 using AxTools.WoW.Helpers;
-using AxTools.WoW.Management;
 using Newtonsoft.Json;
 
 namespace AxTools.WoW.PluginSystem.API

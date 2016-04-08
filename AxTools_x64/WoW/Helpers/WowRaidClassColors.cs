@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace AxTools.WoW
+namespace AxTools.WoW.Helpers
 {
     internal static class WowRaidClassColors
     {

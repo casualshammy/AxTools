@@ -173,10 +173,10 @@
     <Compile Include="WinAPI\Win32Consts.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
     <Compile Include="WoW\IWoWModule.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\PlayerInventoryAndContainers.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\WoWAura.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\WoWItem.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\WoWObjectInfo.cs">
+    <Compile Include="WoW\Internals\WoWPlayerItems.cs" />
+    <Compile Include="WoW\Internals\WoWAura.cs" />
+    <Compile Include="WoW\Internals\WoWItem.cs" />
+    <Compile Include="WoW\Internals\WoWObjectInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WoW\Internals\WoWGUID.cs" />
@@ -201,9 +201,9 @@
     <Compile Include="WoW\WoWAntiKick.cs" />
     <Compile Include="WoW\Helpers\Wowhead.cs" />
     <Compile Include="WoW\WoWProcessWatcher.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\WoWPlayerMe.cs" />
+    <Compile Include="WoW\Internals\WoWPlayerMe.cs" />
     <Compile Include="WoW\Internals\ObjectMgr.cs" />
-    <Compile Include="WoW\Internals\WoWManager.cs" />
+    <Compile Include="WoW\WoWManager.cs" />
     <Compile Include="WoW\PluginSystem\API\ObjMgr.cs" />
     <Compile Include="WoW\PluginSystem\API\GameFunctions.cs" />
     <Compile Include="WoW\PluginSystem\API\Utilities.cs" />
@@ -214,7 +214,7 @@
     <Compile Include="WoW\PluginSystem\Plugins\FlagReturner.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyer.cs" />
     <Compile Include="Helpers\Globals.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\WowPlayerInfo.cs" />
+    <Compile Include="WoW\Internals\WowPlayerInfo.cs" />
     <Compile Include="Forms\AppSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -256,12 +256,12 @@
     <Compile Include="Helpers\Log.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="WoW\WowAccount.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\WowNpc.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\WowObject.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\WowPoint.cs" />
+    <Compile Include="WoW\Internals\WowNpc.cs" />
+    <Compile Include="WoW\Internals\WowObject.cs" />
+    <Compile Include="WoW\Internals\WowPoint.cs" />
     <Compile Include="WoW\WowProcess.cs" />
     <Compile Include="Helpers\Crypt.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\WowPlayer.cs" />
+    <Compile Include="WoW\Internals\WowPlayer.cs" />
     <Compile Include="Forms\WaitingOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -313,7 +313,7 @@
       <DependentUpon>WowRadarOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="WoW\WowBuildInfoX64.cs" />
-    <Compile Include="WoW\Internals\ObjectManager\WowPlayerClass.cs" />
+    <Compile Include="WoW\Internals\WowPlayerClass.cs" />
     <EmbeddedResource Include="Forms\AddonsBackupDeploy.resx">
       <DependentUpon>AddonsBackupDeploy.cs</DependentUpon>
       <SubType>Designer</SubType>

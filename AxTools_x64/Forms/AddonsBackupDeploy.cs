@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Helpers;
 using Components;
@@ -38,19 +39,18 @@ namespace AxTools.Forms
 
         private void AddonsBackup_IsRunningChanged(bool obj)
         {
-            progressBarExtract.Visible = obj;
+            InvokePost(() => { progressBarExtract.Visible = obj; });
         }
 
         private void AddonsBackup_ProgressPercentageChanged(int obj)
         {
-            progressBarExtract.Value = obj;
+            InvokePost(() => { progressBarExtract.Value = obj; });
         }
 
         private void buttonBeginDeployment_Click(object sender, EventArgs e)
         {
             buttonBeginDeployment.Enabled = false;
-            AddonsBackup.DeployArchive(pathsToArchives[comboBoxArchives.SelectedIndex]);
-            buttonBeginDeployment.Enabled = true;
+            Task.Run(() => { AddonsBackup.DeployArchive(pathsToArchives[comboBoxArchives.SelectedIndex]); }).ContinueWith(task => { buttonBeginDeployment.Enabled = true; });
         }
 
     }

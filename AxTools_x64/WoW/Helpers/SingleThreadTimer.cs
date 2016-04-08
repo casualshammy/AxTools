@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading;
 using AxTools.Helpers;
-using AxTools.WoW.Management;
 using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Helpers

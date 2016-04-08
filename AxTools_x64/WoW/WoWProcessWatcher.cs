@@ -1,7 +1,6 @@
 ﻿using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
 using AxTools.WinAPI;
-using AxTools.WoW.Management;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

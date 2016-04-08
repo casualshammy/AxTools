@@ -1,13 +1,12 @@
 ﻿using AxTools.Helpers;
 using AxTools.Properties;
-using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {

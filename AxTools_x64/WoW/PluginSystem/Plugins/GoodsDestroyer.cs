@@ -4,8 +4,7 @@ using System.Linq;
 using System.Threading;
 using AxTools.Properties;
 using AxTools.WoW.Helpers;
-using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
+using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.PluginSystem.Plugins

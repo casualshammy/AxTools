@@ -2,7 +2,6 @@
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW;
-using AxTools.WoW.Management;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +14,8 @@ using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.Services;
 using AxTools.WinAPI;
-using AxTools.WoW.Management.ObjectManager;
+using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 using MyMemory;
 using MyMemory.Hooks;
@@ -219,15 +219,15 @@ namespace AxTools.Forms
             foreach (WowNpc i in wowNpcs)
             {
                 Log.Info(string.Format("{0}; Location: {1}; Distance: {2}; HP:{3}; MaxHP:{4}; Address:0x{5:X}; GUID:0x{6}; EntryID: {7}", i.Name, i.Location,
-                    (int)i.Location.Distance(localPlayer.Location), i.Health, i.HealthMax, i.Address.ToInt64(), i.GUID, i.EntryID));
+                    (int) i.Location.Distance(localPlayer.Location), i.Health, i.HealthMax, i.Address.ToInt64(), i.GUID, i.EntryID));
             }
             Log.Info("Players-----------------------------------------");
             foreach (WowPlayer i in wowUnits)
             {
                 Log.Info(string.Format(
-                    "{0} - GUID: 0x{1}; Location: {2}; Distance: {3}; Address:{4:X}; Class:{5}; Level:{6}; HP:{7}; MaxHP:{8}; TargetGUID: 0x{9}; IsAlliance:{10}; Buffs:{11}",
+                    "{0} - GUID: 0x{1}; Location: {2}; Distance: {3}; Address:{4:X}; Class:{5}; Level:{6}; HP:{7}; MaxHP:{8}; TargetGUID: 0x{9}; IsAlliance:{10}; Auras: {{ {11} }}",
                     i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), i.Address.ToInt64(), i.Class, i.Level, i.Health, i.HealthMax,
-                    i.TargetGUID, i.IsAlliance, string.Join(",", i.Auras.Select(l => Wowhead.GetSpellInfo(l.SpellId).Name + "::" + l.Stack + "::" + l.TimeLeftInMs + "::" + l.OwnerGUID.ToString()))));
+                    i.TargetGUID, i.Faction, string.Join(",", i.Auras.Select(l => l.Name + "::" + l.Stack + "::" + l.TimeLeftInMs + "::" + l.OwnerGUID.ToString()))));
             }
         }
         

@@ -56,7 +56,7 @@ namespace AxTools.Forms
 
         private void Button2Click(object sender, EventArgs e)
         {
-            var fi = new FLASHWINFO {
+            FLASHWINFO fi = new FLASHWINFO {
                 cbSize = (uint) Marshal.SizeOf(typeof (FLASHWINFO)),
                 hwnd = WoWProcessManager.List[comboBox1.SelectedIndex].MainWindowHandle,
                 dwFlags = FlashWindowFlags.FLASHW_TRAY | FlashWindowFlags.FLASHW_TIMERNOFG

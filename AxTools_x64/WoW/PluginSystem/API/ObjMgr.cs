@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
+using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.PluginSystem.API
 {

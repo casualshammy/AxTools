@@ -1,8 +1,6 @@
 ﻿using System.Globalization;
 using Components;
 using AxTools.Helpers;
-using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,6 +11,8 @@ using System.Text;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.Forms.Helpers;
+using AxTools.WoW;
+using AxTools.WoW.Internals;
 
 namespace AxTools.Forms
 {

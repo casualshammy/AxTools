@@ -7,7 +7,6 @@ using AxTools.Services.PingerHelpers;
 using AxTools.Updater;
 using AxTools.WinAPI;
 using AxTools.WoW;
-using AxTools.WoW.Management;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.Plugins;
 using BrightIdeasSoftware;

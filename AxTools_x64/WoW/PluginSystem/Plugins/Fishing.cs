@@ -1,7 +1,5 @@
 ﻿using AxTools.Helpers;
 using AxTools.Properties;
-using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
@@ -9,7 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals.ObjectManager;
+using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
@@ -162,14 +160,16 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         private void GetSpecialBaitBuffFromNatPagle()
         {
+            this.LogPrint("Searching for Nat Pagle, id:85984");
             List<WowNpc> npcs = new List<WowNpc>();
             ObjMgr.Pulse(npcs);
             WowNpc natPagle = npcs.FirstOrDefault(npc => npc.EntryID == 85984);
             if (natPagle != null)
             {
-                natPagle.Location.Face();
-                GameFunctions.MoveTo(natPagle.Location, 4f, 2000, false);
+                this.LogPrint(string.Format("Nat Pagle is found, guid: {0}, moving to him...", natPagle.GUID));
+                GameFunctions.Move2D(natPagle.Location, 4f, 2000, false);
                 Thread.Sleep(500);
+                this.LogPrint("Opening dialog window with Nat...");
                 natPagle.Interact();
                 Thread.Sleep(2000);
                 GameFunctions.SelectDialogOption("Обычная приманка для рыбы?"); // todo: is it possible to localize it?
@@ -177,9 +177,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 string gossipText = Wowhead.GetItemInfo(specialBaits.First(baitFish => Wowhead.GetItemInfo(baitFish.Key).Name == fishingSettings.SpecialBait).Value).Name;
                 GameFunctions.SelectDialogOption(gossipText);
                 Thread.Sleep(1500);
-                new WowPoint(2024.49f, 191.33f, 83.86f).Face();
-                GameFunctions.MoveTo(new WowPoint(2024.49f, 191.33f, 83.86f), 2f, 2000, false); // moving to good fishing point
-                new WowPoint(2035f, 211f, 82f).Face(); // facing water
+                WowPoint goodFishingPoint = new WowPoint(2024.49f, 191.33f, 83.86f);
+                this.LogPrint(string.Format("Moving to fishing point [{0}]", goodFishingPoint));
+                GameFunctions.Move2D(goodFishingPoint, 2f, 2000, false);
+                WowPoint water = new WowPoint((float) (Utils.Rnd.NextDouble()*5 + 2032.5f), (float) (Utils.Rnd.NextDouble()*5 + 208.5f), 82f);
+                this.LogPrint(string.Format("Facing water [{0}]", water));
+                water.Face();
             }
         }
 

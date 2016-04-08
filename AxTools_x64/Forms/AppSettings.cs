@@ -261,7 +261,7 @@ namespace AxTools.Forms
         private void CheckBox6CheckedChanged(object sender, EventArgs e)
         {
             settings.WoWCustomizeWindow = CheckBox6.Checked;
-            foreach (var i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
+            foreach (Control i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
             {
                 i.Enabled = CheckBox6.Checked;
             }

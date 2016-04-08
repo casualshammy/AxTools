@@ -9,13 +9,13 @@ using System.Windows.Forms;
 using AxTools.Helpers;
 using Newtonsoft.Json;
 
-namespace AxTools.WoW
+namespace AxTools.WoW.Helpers
 {
     internal static class Wowhead
     {
         private static readonly string _locale;
         private static readonly ConcurrentDictionary<uint, WowheadItemInfo> ItemInfos = new ConcurrentDictionary<uint, WowheadItemInfo>();
-        private static readonly ConcurrentDictionary<uint, WowheadSpellInfo> SpellInfos = new ConcurrentDictionary<uint, WowheadSpellInfo>();
+        private static readonly ConcurrentDictionary<int, WowheadSpellInfo> SpellInfos = new ConcurrentDictionary<int, WowheadSpellInfo>();
         private static readonly string CacheDir = Application.StartupPath + "\\wowheadCache";
 
         static Wowhead()
@@ -66,7 +66,7 @@ namespace AxTools.WoW
             return info;
         }
 
-        internal static WowheadSpellInfo GetSpellInfo(uint spellID)
+        internal static WowheadSpellInfo GetSpellInfo(int spellID)
         {
             WowheadSpellInfo info;
             if (!SpellInfos.TryGetValue(spellID, out info))
@@ -134,7 +134,7 @@ namespace AxTools.WoW
             File.WriteAllText(filepath, s, Encoding.UTF8);
         }
 
-        private static WowheadSpellInfo SpellInfo_GetCachedValue(uint spellID)
+        private static WowheadSpellInfo SpellInfo_GetCachedValue(int spellID)
         {
             string filepath = string.Format("{0}\\spells\\spell-{1}.json", CacheDir, spellID);
             if (File.Exists(filepath))
@@ -146,7 +146,7 @@ namespace AxTools.WoW
             return null;
         }
 
-        private static void SpellInfo_SaveToCache(uint spellID, WowheadSpellInfo info)
+        private static void SpellInfo_SaveToCache(int spellID, WowheadSpellInfo info)
         {
             string filepath = string.Format("{0}\\spells\\spell-{1}.json", CacheDir, spellID);
             string s = JsonConvert.SerializeObject(info, Formatting.Indented);

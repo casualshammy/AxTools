@@ -2,9 +2,7 @@
 using System.Threading;
 using System.Windows.Forms;
 using AxTools.WinAPI;
-using AxTools.WoW.Internals.ObjectManager;
-using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
+using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.Helpers
 {
@@ -33,7 +31,7 @@ namespace AxTools.WoW.Helpers
                 return;
             int turnTime = moving ? 1328 : 980;
             NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)key, IntPtr.Zero);
-            Thread.Sleep((int)((radius * turnTime * Math.PI) / 10));
+            Thread.Sleep((int)(radius * turnTime * Math.PI / 10));
             NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)key, IntPtr.Zero);
         }
 

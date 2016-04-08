@@ -4,8 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals.ObjectManager;
-using AxTools.WoW.Management.ObjectManager;
+using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
 
@@ -50,12 +49,8 @@ namespace PathRecorder
             if (localPlayer != null)
             {
                 WowPoint location = localPlayer.Location;
-                File.AppendAllLines(string.Format("{0}\\pluginsSettings\\{1}\\path.txt", Application.StartupPath, Name),
-                    new[]
-                    {
-                        string.Format("{0},{1},{2}",
-                            location.X.ToString("0.000", CultureInfo.InvariantCulture), location.Y.ToString("0.000", CultureInfo.InvariantCulture), location.Z.ToString("0.000", CultureInfo.InvariantCulture))
-                    });
+                File.AppendAllText(string.Format("{0}\\pluginsSettings\\{1}\\path.txt", Application.StartupPath, Name),
+                    string.Format("{0},{1},{2}\r\n", location.X.ToString("0.000", CultureInfo.InvariantCulture), location.Y.ToString("0.000", CultureInfo.InvariantCulture), location.Z.ToString("0.000", CultureInfo.InvariantCulture)));
             }
         }
 

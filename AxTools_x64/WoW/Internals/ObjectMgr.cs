@@ -4,10 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using AxTools.Helpers.MemoryManagement;
-using AxTools.WoW.Internals.ObjectManager;
-using AxTools.WoW.Management.ObjectManager;
 
-namespace AxTools.WoW.Management
+namespace AxTools.WoW.Internals
 {
     [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     internal static class ObjectMgr

@@ -202,14 +202,14 @@ namespace PatternFinder
 
         public static Pattern FromTextstyle(string name, string pattern, params IModifier[] modifiers)
         {
-            var ret = new Pattern { Name = name };
+            Pattern ret = new Pattern { Name = name };
             if (modifiers != null)
                 ret.Modifiers = modifiers.ToList();
-            var split = pattern.Split(' ');
+            string[] split = pattern.Split(' ');
             int index = 0;
             ret.Bytes = new byte[split.Length];
             ret.Mask = new bool[split.Length];
-            foreach (var token in split)
+            foreach (string token in split)
             {
                 if (token.Length > 2)
                     throw new InvalidDataException("Invalid token: " + token);

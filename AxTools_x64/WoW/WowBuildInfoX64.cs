@@ -201,6 +201,7 @@ namespace AxTools.WoW
         internal const int UnitLevel = 0x158;
         internal const int UnitRace = 0x160;
         internal const int UnitFlags = 0x17C;
+        internal const int UnitMountDisplayID = 0x1A8;
 
         internal const int AuraCount1 = 0x2390;
         internal const int AuraCount2 = 0x1D10;

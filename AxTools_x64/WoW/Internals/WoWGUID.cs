@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace AxTools.WoW.Management
+namespace AxTools.WoW.Internals
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct WoWGUID : IEquatable<WoWGUID>

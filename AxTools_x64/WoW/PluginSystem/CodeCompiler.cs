@@ -130,10 +130,10 @@ namespace AxTools.WoW.PluginSystem
             {
                 File.Delete(path);
             }
-            using (var reader = new ResXResourceReader(string2))
+            using (ResXResourceReader reader = new ResXResourceReader(string2))
             {
                 reader.BasePath = SourcePath;
-                using (var writer = new ResourceWriter(path))
+                using (ResourceWriter writer = new ResourceWriter(path))
                 {
                     foreach (DictionaryEntry entry in reader)
                     {
@@ -174,7 +174,7 @@ namespace AxTools.WoW.PluginSystem
 
         private bool method_2(string string2)
         {
-            var class2 = new Class153
+            Class153 class2 = new Class153
             {
                 String0 = string2
             };

@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Timers;
-using AxTools.WoW.Management.ObjectManager;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
 using Timer = System.Windows.Forms.Timer;

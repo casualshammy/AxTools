@@ -1,8 +1,6 @@
 ﻿using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.WoW;
-using AxTools.WoW.Management;
-using AxTools.WoW.Management.ObjectManager;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +13,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Forms.Helpers;
-using AxTools.WoW.Internals.ObjectManager;
+using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
 
@@ -23,6 +22,9 @@ namespace AxTools.Forms
 {
     internal partial class WowRadar : Form, IWoWModule
     {
+
+        #region Fields
+
         private bool processMouseWheelEvents;
 
         private static readonly HashSet<string> RadarKOSFind = new HashSet<string>();
@@ -61,6 +63,8 @@ namespace AxTools.Forms
         private volatile bool isRunning;
         private volatile bool shouldDrawObjects;
         private bool flicker;
+
+        #endregion
 
         public WowRadar()
         {
@@ -147,11 +151,11 @@ namespace AxTools.Forms
                 }
                 try
                 {
-                    friends = wowPlayers.Where(i => i.IsAlliance == localPlayer.IsAlliance).ToArray();
+                    friends = wowPlayers.Where(i => i.Faction == localPlayer.Faction).ToArray();
                     enemies = wowPlayers.Except(friends).ToArray();
                     objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
                     npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                    if (!GameFunctions.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
+                    if (!GameFunctions.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && localPlayer.Alive)
                     {
                         WoWGUID interactGUID = WoWGUID.Zero;
                         double interactDistance = 11;
@@ -884,7 +888,7 @@ namespace AxTools.Forms
         {
             Task.Run(() =>
             {
-                GameFunctions.MoveTo(point, 1f, 5000, false);
+                GameFunctions.Move2D(point, 3f, 5000, false);
             });
         }
 

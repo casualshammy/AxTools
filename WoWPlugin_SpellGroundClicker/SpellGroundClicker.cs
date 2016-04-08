@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using AxTools.WoW.Helpers;
-using AxTools.WoW.Management.ObjectManager;
+using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
 
@@ -50,8 +50,9 @@ namespace WoWPlugin_SpellGroundClicker
         private void OnElapsed()
         {
             WoWPlayerMe localPlayer = ObjMgr.Pulse();
-            if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0)
+            if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && (DateTime.UtcNow - spellLastUsed) > cooldown)
             {
+                spellLastUsed = DateTime.UtcNow;
                 GameFunctions.CastSpellByName(spellName);
                 Thread.Sleep(250);
                 WinAPI.SetCursorPosition(clickPoint);
@@ -65,7 +66,9 @@ namespace WoWPlugin_SpellGroundClicker
         #region Variables
 
         private SingleThreadTimer timer;
-        private readonly string spellName = "Землетрясение";
+        private readonly string spellName = "Целительный ливень";
+        private readonly TimeSpan cooldown = TimeSpan.FromSeconds(10);
+        private DateTime spellLastUsed = DateTime.MinValue;
         private Point clickPoint;
 
         #endregion

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.WoW;
-using AxTools.WoW.Management;
+using AxTools.WoW.Helpers;
 using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
 

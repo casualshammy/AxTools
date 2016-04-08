@@ -6,12 +6,10 @@ namespace AxTools.WoW.PluginSystem.Plugins
 {
     internal partial class FishingConfig : Form
     {
-        private readonly FishingSettings thisSettings;
-
         public FishingConfig(FishingSettings fishingSettings)
         {
             InitializeComponent();
-            thisSettings = fishingSettings;
+            FishingSettings thisSettings = fishingSettings;
             checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Checked = thisSettings.UseAnySpecialBaitIfPreferredIsNotAvailable;
             checkBoxGetSpecialBaitFromNatPagle.Checked = thisSettings.GetSpecialBaitFromNatPagle;
         }
@@ -48,23 +46,5 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 return myCp;
             }
         }
-
-        private Keys LetOnlyOneKeyModifier(KeyEventArgs args)
-        {
-            switch (args.Modifiers)
-            {
-                case Keys.Shift | Keys.Control | Keys.Alt:
-                    return args.KeyData & ~Keys.Control & ~Keys.Alt;
-                case Keys.Shift | Keys.Control:
-                    return args.KeyData & ~Keys.Control;
-                case Keys.Shift | Keys.Alt:
-                    return args.KeyData & ~Keys.Alt;
-                case Keys.Control | Keys.Alt:
-                    return args.KeyData & ~Keys.Alt;
-                default:
-                    return args.KeyData;
-            }
-        }
-
     }
 }
