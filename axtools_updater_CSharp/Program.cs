@@ -82,6 +82,14 @@ namespace axtools_updater
             }
             try
             {
+                DeletePluginsAssemblies();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Non-critical update error. Can't delete old plugins dlls\r\n" + ex.Message);
+            }
+            try
+            {
                 DeleteUnusedFiles();
             }
             catch (Exception ex)
@@ -149,6 +157,15 @@ namespace axtools_updater
                 }
             }
         }
-    
+
+        private static void DeletePluginsAssemblies()
+        {
+            DirectoryInfo pluginsDirectoryInfo = new DirectoryInfo(Path.Combine(_axToolsDir, "pluginsAssemblies"));
+            if (pluginsDirectoryInfo.Exists)
+            {
+                pluginsDirectoryInfo.Delete(true);
+            }
+        }
+
     }
 }
