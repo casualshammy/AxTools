@@ -215,9 +215,10 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get
             {
-                IntPtr zoneTextPtr = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.ZoneText);
-                byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(zoneTextPtr, 100).TakeWhile(l => l != 0).ToArray();
-                return Encoding.UTF8.GetString(bytes);
+                //IntPtr zoneTextPtr = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.ZoneText);
+                //byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(zoneTextPtr, 100).TakeWhile(l => l != 0).ToArray();
+                //return Encoding.UTF8.GetString(bytes);
+                return Wowhead.GetZoneText(ZoneID);
             }
         }
 

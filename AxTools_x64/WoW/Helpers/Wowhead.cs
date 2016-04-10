@@ -16,6 +16,7 @@ namespace AxTools.WoW.Helpers
         private static readonly string _locale;
         private static readonly ConcurrentDictionary<uint, WowheadItemInfo> ItemInfos = new ConcurrentDictionary<uint, WowheadItemInfo>();
         private static readonly ConcurrentDictionary<int, WowheadSpellInfo> SpellInfos = new ConcurrentDictionary<int, WowheadSpellInfo>();
+        private static readonly ConcurrentDictionary<uint, string> ZoneInfos = new ConcurrentDictionary<uint, string>();
         private static readonly string CacheDir = Application.StartupPath + "\\wowheadCache";
 
         static Wowhead()
@@ -100,6 +101,36 @@ namespace AxTools.WoW.Helpers
             return info;
         }
 
+        internal static string GetZoneText(uint zoneID)
+        {
+            string info;
+            if (!ZoneInfos.TryGetValue(zoneID, out info))
+            {
+                if ((info = ZoneInfo_GetCachedValue(zoneID)) == null)
+                {
+                    using (WebClient webClient = new WebClient())
+                    {
+                        webClient.Encoding = Encoding.UTF8;
+                        string xml = webClient.DownloadString(string.Format("https://{0}.wowhead.com/zone={1}&power", _locale, zoneID));
+                        Regex regex = new Regex("\\s+name_.+:\\s*'(.+)',");
+                        Match match = regex.Match(xml);
+                        if (match.Success)
+                        {
+                            info = match.Groups[1].Value;
+                            ZoneInfo_SaveToCache(zoneID, info);
+                        }
+                        else
+                        {
+                            info = "UNKNOWN";
+                            Log.Info("[Wowhead] Regex isn't match: " + xml);
+                        }
+                    }
+                }
+                ZoneInfos.TryAdd(zoneID, info);
+            }
+            return info;
+        }
+
         private static string GetLocale()
         {
             string configWtfPath = Settings.Instance.WoWDirectory + "\\WTF\\Config.wtf";
@@ -150,6 +181,26 @@ namespace AxTools.WoW.Helpers
         {
             string filepath = string.Format("{0}\\spells\\spell-{1}.json", CacheDir, spellID);
             string s = JsonConvert.SerializeObject(info, Formatting.Indented);
+            FileInfo fileInfo = new FileInfo(filepath);
+            if (fileInfo.Directory != null) fileInfo.Directory.Create();
+            File.WriteAllText(filepath, s, Encoding.UTF8);
+        }
+
+        private static string ZoneInfo_GetCachedValue(uint zoneID)
+        {
+            string filepath = string.Format("{0}\\zones\\zone-{1}.json", CacheDir, zoneID);
+            if (File.Exists(filepath))
+            {
+                string rawText = File.ReadAllText(filepath, Encoding.UTF8);
+                return JsonConvert.DeserializeObject<string>(rawText);
+            }
+            return null;
+        }
+
+        private static void ZoneInfo_SaveToCache(uint zoneID, string zoneText)
+        {
+            string filepath = string.Format("{0}\\zones\\zone-{1}.json", CacheDir, zoneID);
+            string s = JsonConvert.SerializeObject(zoneText, Formatting.Indented);
             FileInfo fileInfo = new FileInfo(filepath);
             if (fileInfo.Directory != null) fileInfo.Directory.Create();
             File.WriteAllText(filepath, s, Encoding.UTF8);
