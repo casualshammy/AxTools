@@ -18,6 +18,7 @@ namespace AxTools.WoW.Helpers
         private static readonly ConcurrentDictionary<int, WowheadSpellInfo> SpellInfos = new ConcurrentDictionary<int, WowheadSpellInfo>();
         private static readonly ConcurrentDictionary<uint, string> ZoneInfos = new ConcurrentDictionary<uint, string>();
         private static readonly string CacheDir = Application.StartupPath + "\\wowheadCache";
+        private const string UNKNOWN = "UNKNOWN";
 
         static Wowhead()
         {
@@ -57,7 +58,7 @@ namespace AxTools.WoW.Helpers
                         }
                         else
                         {
-                            info = new WowheadItemInfo("UNKNOWN", 0, 0, 0);
+                            info = new WowheadItemInfo(UNKNOWN, 0, 0, 0);
                             Log.Error("[Wowhead] Regex isn't match: " + xml);
                         }
                     }
@@ -91,7 +92,7 @@ namespace AxTools.WoW.Helpers
                         }
                         else
                         {
-                            info = new WowheadSpellInfo("UNKNOWN");
+                            info = new WowheadSpellInfo(UNKNOWN);
                             Log.Info("[Wowhead] Regex isn't match: " + xml);
                         }
                     }
@@ -121,7 +122,7 @@ namespace AxTools.WoW.Helpers
                         }
                         else
                         {
-                            info = "UNKNOWN";
+                            info = UNKNOWN;
                             Log.Info("[Wowhead] Regex isn't match: " + xml);
                         }
                     }

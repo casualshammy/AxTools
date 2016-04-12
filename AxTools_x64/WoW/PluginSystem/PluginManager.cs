@@ -65,11 +65,11 @@ namespace AxTools.WoW.PluginSystem
                 {
                     if (RunningPlugins.Count() == 1)
                     {
-                        GameFunctions.ShowNotify("Plugin <" + RunningPlugins.First().Name + "> is started");
+                        AppSpecUtils.NotifyUser("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is started", NotifyUserType.Info, false, true);
                     }
                     else
                     {
-                        GameFunctions.ShowNotify("Plugins are started");
+                        AppSpecUtils.NotifyUser("AxTools", "Plugins are started", NotifyUserType.Info, false, true);
                     }
                 }
                 if (PluginStateChanged != null)
@@ -106,11 +106,11 @@ namespace AxTools.WoW.PluginSystem
                 {
                     if (RunningPlugins.Count() == 1)
                     {
-                        GameFunctions.ShowNotify("Plugin <" + RunningPlugins.First().Name + "> is stopped");
+                        AppSpecUtils.NotifyUser("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is stopped", NotifyUserType.Info, false, true);
                     }
                     else
                     {
-                        GameFunctions.ShowNotify("Plugins are stopped");
+                        AppSpecUtils.NotifyUser("AxTools", "Plugins are stopped", NotifyUserType.Info, false, true);
                     }
                 }
                 foreach (PluginContainer pluginContainer in _pluginContainers.Where(l => l.IsRunning))
@@ -145,7 +145,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 if (Settings.Instance.WoWPluginShowIngameNotifications)
                 {
-                    GameFunctions.ShowNotify("Plugin <" + plugin.Name + "> is started");
+                    AppSpecUtils.NotifyUser("AxTools", "Plugin <" + plugin.Name + "> is started", NotifyUserType.Info, false, true);
                 }
                 if (PluginStateChanged != null)
                 {
@@ -171,7 +171,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && GameFunctions.IsInGame)
                 {
-                    GameFunctions.ShowNotify("Plugin <" + plugin.Name + "> is stopped");
+                    AppSpecUtils.NotifyUser("AxTools", "Plugin <" + plugin.Name + "> is stopped", NotifyUserType.Info, false, true);
                 }
                 _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = false;
                 if (PluginStateChanged != null)

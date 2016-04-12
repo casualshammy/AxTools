@@ -155,44 +155,8 @@ namespace AxTools.Forms
                     enemies = wowPlayers.Except(friends).ToArray();
                     objects = wowObjects.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
                     npcs = wowNpcs.Where(i => RadarKOSFind.Contains(i.Name)).ToArray();
-                    if (!GameFunctions.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && localPlayer.Alive)
-                    {
-                        WoWGUID interactGUID = WoWGUID.Zero;
-                        double interactDistance = 11;
-                        string interactName = string.Empty;
-                        // ReSharper disable once ImpureMethodCallOnReadonlyValueField
-                        foreach (WowObject i in objects.Where(i => RadarKOSFindInteract.Contains(i.Name)))
-                        {
-                            double distance = i.Location.Distance(localPlayer.Location);
-                            if (distance < interactDistance)
-                            {
-                                interactGUID = i.GUID;
-                                interactDistance = distance;
-                                interactName = i.Name;
-                            }
-                        }
-                        foreach (WowNpc i in npcs.Where(i => RadarKOSFindInteract.Contains(i.Name)))
-                        {
-                            double distance = i.Location.Distance(localPlayer.Location);
-                            if (distance < interactDistance)
-                            {
-                                interactGUID = i.GUID;
-                                interactDistance = distance;
-                                interactName = i.Name;
-                            }
-                        }
-                        if (interactGUID != WoWGUID.Zero)
-                        {
-                            GameFunctions.Interact(interactGUID);
-                            Log.Info(string.Format("{0} [Radar] Interacted with {1} {2}", WoWManager.WoWProcess, interactName, interactGUID));
-                        }
-                    }
-                    bool soundAlarm = objects.Any(i => RadarKOSFindAlarm.Contains(i.Name)) || npcs.Any(i => RadarKOSFindAlarm.Contains(i.Name) && i.Alive);
-                    if (!soundAlarmPrevState && soundAlarm)
-                    {
-                        Task.Factory.StartNew(PlayAlarmFile);
-                    }
-                    soundAlarmPrevState = soundAlarm;
+                    Redraw_Interact();
+                    Redraw_Alarm(ref soundAlarmPrevState);
                     shouldDrawObjects = true;
                     BeginInvoke(refreshRadar);
                 }
@@ -211,6 +175,75 @@ namespace AxTools.Forms
                 }
             }
             Log.Info(string.Format("{0} [Radar] Redraw task is finishing...", WoWManager.WoWProcess));
+        }
+
+        private void Redraw_Interact()
+        {
+            if (!GameFunctions.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && localPlayer.Alive)
+            {
+                WoWGUID interactGUID = WoWGUID.Zero;
+                double interactDistance = 11;
+                string interactName = string.Empty;
+                // ReSharper disable once ImpureMethodCallOnReadonlyValueField
+                foreach (WowObject i in objects.Where(i => RadarKOSFindInteract.Contains(i.Name)))
+                {
+                    double distance = i.Location.Distance(localPlayer.Location);
+                    if (distance < interactDistance)
+                    {
+                        interactGUID = i.GUID;
+                        interactDistance = distance;
+                        interactName = i.Name;
+                    }
+                }
+                foreach (WowNpc i in npcs.Where(i => RadarKOSFindInteract.Contains(i.Name)))
+                {
+                    double distance = i.Location.Distance(localPlayer.Location);
+                    if (distance < interactDistance)
+                    {
+                        interactGUID = i.GUID;
+                        interactDistance = distance;
+                        interactName = i.Name;
+                    }
+                }
+                if (interactGUID != WoWGUID.Zero)
+                {
+                    GameFunctions.Interact(interactGUID);
+                    Log.Info(string.Format("{0} [Radar] Interacted with {1} {2}", WoWManager.WoWProcess, interactName, interactGUID));
+                }
+            }
+        }
+
+        private void Redraw_Alarm(ref bool alarmState)
+        {
+            string newPOIName = null;
+            WowObject @object = objects.FirstOrDefault(i => RadarKOSFindAlarm.Contains(i.Name));
+            if (@object != null)
+            {
+                newPOIName = @object.Name;
+            }
+            else
+            {
+                WowNpc npc = npcs.FirstOrDefault(i => RadarKOSFindAlarm.Contains(i.Name) && i.Alive);
+                if (npc != null)
+                {
+                    newPOIName = npc.Name;
+                }
+            }
+            if (!alarmState && newPOIName != null)
+            {
+                Task.Factory.StartNew(PlayAlarmFile);
+                Task.Run(() =>
+                {
+                    BeginInvoke(new MethodInvoker(() =>
+                    {
+                        labelHint.Text = newPOIName;
+                        labelHint.Show();
+                    }));
+                    Thread.Sleep(5000);
+                    BeginInvoke(new MethodInvoker(labelHint.Hide));
+                });
+            }
+            alarmState = newPOIName != null;
         }
 
         private void PictureBox1Paint(object sender, PaintEventArgs e)

@@ -99,6 +99,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         try
                         {
                             GameFunctions.Interact(i.GUID);
+                            Log.Error(string.Format("NAME: {0}; ENTRY ID: {1}; ZONE ID: {2}", i.Name, i.EntryID, currentZone));
                         }
                         catch (Exception ex)
                         {
@@ -153,7 +154,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             else
             {
                 this.LogPrint("Unknown battlefield, ID: " + zone);
-                this.ShowNotify("Unknown battlefield. I don't know what to do in this zone...", true, true);
+                this.ShowNotify("Unknown battlefield (" + GameFunctions.ZoneText + "). I don't know what to do in this zone...", true, true);
             }
         }
 

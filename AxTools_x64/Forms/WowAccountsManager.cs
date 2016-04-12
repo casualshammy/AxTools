@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Components;
 using AxTools.Properties;
 using AxTools.WoW;
@@ -54,7 +55,7 @@ namespace AxTools.Forms
                 metroButtonWowAccountSaveUpdate.Text = "Add";
                 metroButtonWowAccountDelete.Enabled = false;
             }
-            metroButtonWowAccountSaveUpdate.Enabled = textBoxWowAccountLogin.Text.Contains('@') && textBoxWowAccountLogin.Text.Contains('.') && textBoxWowAccountPassword.Text.Trim().Length != 0;
+            metroButtonWowAccountSaveUpdate.Enabled = textBoxWowAccountPassword.Text.Trim().Length != 0 && Regex.IsMatch(textBoxWowAccountLogin.Text, "\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b");
         }
 
         private void comboBoxWowAccounts_SelectedIndexChanged(object sender, EventArgs e)

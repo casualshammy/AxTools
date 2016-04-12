@@ -12,8 +12,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LiteDB;
 using Newtonsoft.Json;
-using SQLite;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace Dummy
 {
@@ -69,7 +70,30 @@ namespace Dummy
 
         private static void Test()
         {
-            Console.WriteLine(default(uint));
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            if (File.Exists("test\\30000.json"))
+            {
+                Console.WriteLine(JsonConvert.DeserializeObject<DoAction>(File.ReadAllText("test\\30000.json")).String0);
+            }
+            Console.WriteLine(stopwatch.ElapsedMilliseconds + "ms");
+
+            //using (LiteDatabase db = new LiteDatabase("wowhead.db"))
+            //{
+            //    LiteCollection<DoAction> collection = db.GetCollection<DoAction>("do_actions");
+            //    Stopwatch stopwatch = Stopwatch.StartNew();
+            //    for (int i = 1; i < 1000000; i++)
+            //    {
+            //        collection.Insert(new DoAction { Id = i, String0 = "str0-" + i, String1 = "str1-" + i });
+            //    }
+            //    Console.WriteLine(stopwatch.ElapsedMilliseconds + "ms");
+
+
+            //    //foreach (DoAction action in collection.FindAll())
+            //    //{
+            //    //    Console.WriteLine(action.Id + "::" + action.String0 + "::" + action.String1);
+            //    //}
+
+            //}
         }
 
         public static void ForceBasicAuth(this WebClient webClient, string username, string password)
@@ -97,17 +121,19 @@ namespace Dummy
 
     }
 
-    [JsonObject(MemberSerialization.OptIn)]
-    internal class DoAction
+    
+    public class DoAction
     {
-        [JsonProperty(PropertyName = "String0", Required = Required.Always)]
-        internal string String0;
+        public DoAction()
+        {
+            
+        }
 
-        [JsonProperty(PropertyName = "String1", Required = Required.Always)]
-        internal string String1;
+        public string String0 { get; set; }
 
-        [JsonProperty(PropertyName = "Integer", Required = Required.Always)]
-        internal int Integer;
+        public string String1 { get; set; }
+
+        public int Id { get; set; }
     }
 
     [JsonObject(MemberSerialization.OptIn)]

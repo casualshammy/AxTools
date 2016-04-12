@@ -85,6 +85,7 @@ namespace AxTools.WoW.PluginSystem.API
         #region Chat commands
 
         private static readonly string GossipVarName = Utilities.GetRandomString(5);
+        private static readonly object ChatLock = new object();
 
         public static void UseItemByID(uint id)
         {
@@ -103,8 +104,8 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static void SelectDialogOption(string gossipText)
         {
-            SendToChat(string.Format("/run _G.{1}=0;for i=1,100 do if(select(i, GetGossipOptions())==\"{0}\")then _G.{1}=i/2+0.5 end end", gossipText, GossipVarName));
-            SendToChat(string.Format("/run if(_G.{0} > 0)then SelectGossipOption(_G.{0}, nil, true) end", GossipVarName));
+            ChatboxSendText(string.Format("/run _G.{1}=0;for i=1,100 do if(select(i, GetGossipOptions())==\"{0}\")then _G.{1}=i/2+0.5 end end", gossipText, GossipVarName));
+            ChatboxSendText(string.Format("/run if(_G.{0} > 0)then SelectGossipOption(_G.{0}, nil, true) end", GossipVarName));
         }
 
         public static void SendToChat(string command)
@@ -114,38 +115,41 @@ namespace AxTools.WoW.PluginSystem.API
 
         private static void ChatboxSendText(string text)
         {
-            WaitWhileWoWIsMinimized();
-            if (IsInGame && !IsLoadingScreen)
+            lock (ChatLock)
             {
-                if (ChatIsOpened)
+                WaitWhileWoWIsMinimized();
+                if (IsInGame && !IsLoadingScreen)
                 {
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)(long)MicrosoftVirtualKeys.VK_LCONTROL, IntPtr.Zero);
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)(long)MicrosoftVirtualKeys.A, IntPtr.Zero);
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)(long)MicrosoftVirtualKeys.A, IntPtr.Zero);
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)(long)MicrosoftVirtualKeys.VK_LCONTROL, IntPtr.Zero);
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)(long)MicrosoftVirtualKeys.Delete, IntPtr.Zero);
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)(long)MicrosoftVirtualKeys.Delete, IntPtr.Zero);
-                    Thread.Sleep(200);
-                }
-                else
-                {
-                    int counter = 1000;
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)13, IntPtr.Zero);
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)13, IntPtr.Zero);
-                    while (!ChatIsOpened && counter > 0)
+                    if (ChatIsOpened)
                     {
-                        counter -= 10;
-                        Thread.Sleep(10);
+                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)(long)MicrosoftVirtualKeys.VK_LCONTROL, IntPtr.Zero);
+                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)(long)MicrosoftVirtualKeys.A, IntPtr.Zero);
+                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)(long)MicrosoftVirtualKeys.A, IntPtr.Zero);
+                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)(long)MicrosoftVirtualKeys.VK_LCONTROL, IntPtr.Zero);
+                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)(long)MicrosoftVirtualKeys.Delete, IntPtr.Zero);
+                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)(long)MicrosoftVirtualKeys.Delete, IntPtr.Zero);
+                        Thread.Sleep(200);
+                    }
+                    else
+                    {
+                        int counter = 1000;
+                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)13, IntPtr.Zero);
+                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)13, IntPtr.Zero);
+                        while (!ChatIsOpened && counter > 0)
+                        {
+                            counter -= 10;
+                            Thread.Sleep(10);
+                        }
+                        Thread.Sleep(250);
+                    }
+                    foreach (char ch in text)
+                    {
+                        NativeMethods.PostMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
                     }
                     Thread.Sleep(250);
+                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)13, IntPtr.Zero);
+                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)13, IntPtr.Zero);
                 }
-                foreach (char ch in text)
-                {
-                    NativeMethods.PostMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
-                }
-                Thread.Sleep(250);
-                NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)13, IntPtr.Zero);
-                NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)13, IntPtr.Zero);
             }
         }
 
@@ -262,6 +266,8 @@ namespace AxTools.WoW.PluginSystem.API
 
         #endregion
 
+        #region Moving
+
         public static void Move2D(WowPoint point, float precision, int timeoutInMs, bool continueMoving)
         {
             WaitWhileWoWIsMinimized();
@@ -303,7 +309,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
-        public static void Move3D(WowPoint point, float precision2D, float precisionZ, int timeoutInMs)
+        public static void Move3D(WowPoint point, float precision2D, float precisionZ, int timeoutInMs, bool continueMoving)
         {
             WaitWhileWoWIsMinimized();
             if (IsInGame && !IsLoadingScreen)
@@ -316,6 +322,8 @@ namespace AxTools.WoW.PluginSystem.API
                     Thread.Sleep(100);
                     timeoutInMs -= 100;
                     me = ObjMgr.Pulse();
+                    float oldZDiff = zDiff;
+                    zDiff = Math.Abs(me.Location.Z - point.Z);
                     if (me.Location.Distance2D(point) > precision2D)
                     {
                         point.Face();
@@ -326,22 +334,26 @@ namespace AxTools.WoW.PluginSystem.API
                         }
                         else if (!me.IsMoving)
                         {
-                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr) Keys.W, IntPtr.Zero);
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
                             Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released: {1}", WoWManager.WoWProcess, point)); // todo: remove
-                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr) Keys.W, IntPtr.Zero);
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.W, IntPtr.Zero);
                             Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is pressed: {1}", WoWManager.WoWProcess, point)); // todo: remove
                         }
                     }
                     else
                     {
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
-                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released3: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                        if (zDiff > precisionZ || !continueMoving)
+                        {
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
+                            Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released3: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                        }
                     }
                     if (me.IsFlying && me.IsMounted && zDiff > precisionZ)
                     {
-                        if (Math.Abs(me.Location.Z - point.Z) < zDiff)
+                        if (zDiff < oldZDiff)
                         {
-                            Log.Info(string.Format("{0} [GameFunctions.MoveTo] Okay, we're moving Z; current position: [{1}]; distance to dest: [{2}]", WoWManager.WoWProcess, me.Location, me.Location.Distance(point))); // todo: remove
+                            Log.Info(string.Format("{0} [GameFunctions.MoveTo] Okay, we're moving Z; current position: [{1}]; distance to dest: [{2}]; zDiff: {3}; oldZDiff: {4}", WoWManager.WoWProcess, me.Location,
+                                me.Location.Distance(point), zDiff, oldZDiff)); // todo: remove
                         }
                         else
                         {
@@ -358,7 +370,6 @@ namespace AxTools.WoW.PluginSystem.API
                                 Log.Info(string.Format("{0} [GameFunctions.MoveTo] Space is pressed: {1}", WoWManager.WoWProcess, point)); // todo: remove
                             }
                         }
-                        zDiff = Math.Abs(me.Location.Z - point.Z);
                     }
                     else
                     {
@@ -368,14 +379,24 @@ namespace AxTools.WoW.PluginSystem.API
                         Log.Info(string.Format("{0} [GameFunctions.MoveTo] Space is released: {1}", WoWManager.WoWProcess, point)); // todo: remove
                     }
                 }
+                Log.Info(string.Format("{0} [GameFunctions.Move3D] Return, timeout: {1}, diffXY: {2}, diffZ: {3}", WoWManager.WoWProcess, timeoutInMs, me.Location.Distance2D(point), zDiff)); // todo: remove
             }
         }
+
+        #endregion
 
         internal static void ShowNotify(string text)
         {
             AppSpecUtils.NotifyUser("AxTools", text, NotifyUserType.Info, false, true);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="plugin"></param>
+        /// <param name="text">Any text you want</param>
+        /// <param name="warning">Is it warning or info</param>
+        /// <param name="sound">Play sound</param>
         public static void ShowNotify(this IPlugin plugin, string text, bool warning, bool sound)
         {
             AppSpecUtils.NotifyUser("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, true);

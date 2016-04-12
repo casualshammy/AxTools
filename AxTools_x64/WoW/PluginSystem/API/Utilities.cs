@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -35,21 +34,7 @@ namespace AxTools.WoW.PluginSystem.API
         {
             AppSpecUtils.NotifyUser(title, text, (NotifyUserType) icon, false);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="text">Any text you want</param>
-        /// <param name="wowIcon">Example: "Interface\\\\Icons\\\\achievement_bg_winwsg"</param>
-        /// <param name="color">Text color</param>
-        public static void ShowIngameNotify(string text, string wowIcon, Color color)
-        {
-            if (Settings.Instance.WoWPluginShowIngameNotifications)
-            {
-                GameFunctions.ShowNotify(text);
-            }
-        }
-
+        
         /// <summary>
         /// 
         /// </summary>
