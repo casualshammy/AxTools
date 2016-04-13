@@ -101,35 +101,35 @@ namespace AxTools.WoW
 
         internal static readonly byte[] WoWHash =
         {
-            0xE1, 0x8D, 0xCE, 0xD9, 0x48, 0xEF, 0x6C, 0x8A, 0x2F, 0x14, 0xF2, 0xCA, 0xF3, 0x4F, 0xD5, 0x7D, 0x29, 0xC8, 0x27, 0xC7, 0x2B, 0xDD, 0xCD, 0xC8, 0x86, 0x02, 0xEE, 0xCF, 0x56, 0x79, 0x38, 0x40
+            0xDC, 0xFD, 0x25, 0xE5, 0xFF, 0x38, 0x48, 0xD4, 0x3F, 0x97, 0x44, 0x48, 0xE9, 0xCD, 0x08, 0xA9, 0x5C, 0x25, 0x55, 0x40, 0x4D, 0x74, 0x91, 0xE4, 0x24, 0x9C, 0xA6, 0xD3, 0x3A, 0xF6, 0xD2, 0x6C
         };
 
         #endregion
 
         #region Static infos
 
-        internal const int PlayerZoneID = 0x1519B00;
-        internal const int ZoneText = 0x1519AA0;
-        internal const int NameCacheBase = 0x1316E98;
         internal const int LastHardwareAction = 0x12BF688;
-        internal const int PlayerPtr = 0x147E680;
-        internal const int ChatBuffer = 0x151BD20;
-        internal const int GlueState = 0x1347858;
+        internal const int NameCacheBase = 0x1316E98;
         internal const int GameState = 0x1519A7E;
-        internal const int FrameScript_ExecuteBuffer = 0x3DB20;
-        internal const int FocusedWidget = 0x12BF240;
-        internal const int CGWorldFrame_Render = 0x701DB0;
-        internal const int KnownSpellsCount = 0x1577BC0;
-        internal const int BlackMarketNumItems = 0x15CE6E8;
-        internal const int MouseoverGUID = 0x151A0B8;
+        internal const int ZoneText = 0x1519AA0;
+        internal const int GlueState = 0x1347858;
         internal const int TickCount = 0x12B25E0;
-        internal const int PlayerIsLooting = 0x158D1A4;
-        internal const int Possible_NotLoadingScreen = 0x11D288C;
-        internal const int KnownSpells = 0x1577BC8;
-        internal const int BlackMarketItems = 0x15CE6F0;
-        internal const int ChatIsOpened = 0x12CD4B0;
+        internal const int MouseoverGUID = 0x151A0B8;
+        internal const int PlayerZoneID = 0x1519B00;
+        internal const int FocusedWidget = 0x12BF240;
         internal const int ObjectManager = 0x135D120;
+        internal const int ChatIsOpened = 0x12CD4B0;
+        internal const int BlackMarketNumItems = 0x15CE6E8;
+        internal const int PlayerIsLooting = 0x158D1A4;
+        internal const int KnownSpellsCount = 0x1577BC0;
+        internal const int ChatBuffer = 0x151BD20;
+        internal const int BlackMarketItems = 0x15CE6F0;
+        internal const int PlayerPtr = 0x147E680;
+        internal const int CGWorldFrame_Render = 0x701E50;
         internal const int PlayerName = 0x1616F10;
+        internal const int KnownSpells = 0x1577BC8;
+        internal const int FrameScript_ExecuteBuffer = 0x3DB20;
+        internal const int Possible_NotLoadingScreen = 0x11D288C;
 
         internal static readonly byte[] HookPattern = {0x48, 0x89, 0x7C, 0x24, 0x20, 0x55, 0x48, 0x8D, 0x6C, 0x24, 0xA0, 0x48, 0x81, 0xEC, 0x60, 0x01, 0x00, 0x00};
         internal static readonly int HookLength = HookPattern.Length;

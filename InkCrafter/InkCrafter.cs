@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
@@ -70,56 +71,15 @@ namespace InkCrafter
         public void OnStart()
         {
             SettingsInstance = this.LoadSettingsJSON<InkCrafterSettings>();
-            GameFunctions.SendToChat(string.Format("/run _G[\"{0}\"] = {{}};", randomTableName));
-            foreach (string ink in inks)
+            startupTask = Task.Run(() =>
             {
-                GameFunctions.SendToChat(string.Format("/run _G[\"{0}\"][\"{1}\"] = true;", randomTableName, ink));
-            }
-
-            //craft = "local t = {\r\n" +
-            //        "    \"Чернила звездного света\",\r\n" +
-            //        "    \"Чернила снов\",\r\n" +
-            //        "    \"Чернила Преисподней\",\r\n" +
-            //        "    \"Мрачно-коричневые чернила\",\r\n" +
-            //        "    \"Чернила снегопада\",\r\n" +
-            //        "    \"Чернила моря\",\r\n" +
-            //        "    \"Чернила черного огня\",\r\n" +
-            //        "    \"Астральные чернила\",\r\n" +
-            //        "    \"Небесные чернила\",\r\n" +
-            //        "    \"Мерцающие чернила\",\r\n" +
-            //        "    \"Огненные чернила\",\r\n" +
-            //        "    \"Астрономические чернила\",\r\n" +
-            //        "    \"Королевские чернила\",\r\n" +
-            //        "    \"Чернила Нефритового Пламени\",\r\n" +
-            //        "    \"Чернила утренней звезды\",\r\n" +
-            //        "    \"Чернила царя зверей\",\r\n" +
-            //        "    \"Чернила охотника\",\r\n" +
-            //        "    \"Полуночные чернила\",\r\n" +
-            //        "    \"Чернила лунного сияния\",\r\n" +
-            //        "    \"Бежевые чернила\",\r\n" +
-            //        "    \"Великолепная шкура\",\r\n" +
-            //        "    \"Толстая борейская кожа\",\r\n" +
-            //        "    \"Чернила разжигателя войны\",\r\n" +
-            //        "};\r\n" +
-            //        "local numTradeSkills = GetNumTradeSkills();\r\n" +
-            //        "if (numTradeSkills > 0) then\r\n" +
-            //        "    for i = 1, numTradeSkills do\r\n" +
-            //        "        local skillName, skillType, numAvailable, isExpanded, serviceType, numSkillUps, indentLevel, showProgressBar, currentRank, maxRank, startingRank = GetTradeSkillInfo(i);\r\n" +
-            //        "        if (tContains(t, skillName) and numAvailable > 0) then\r\n" +
-            //        "			if (skillName == \"Чернила разжигателя войны\") then\r\n" +
-            //        "				if (numAvailable > " + (SettingsInstance.WarbindersInkCount + 1) + ") then\r\n" + // +1 is neccessary, don't touch
-            //        "        			DoTradeSkill(i, numAvailable - " + (SettingsInstance.WarbindersInkCount + 1) + ");\r\n" + // +1 is neccessary, don't touch
-            //        "        			return;\r\n" +
-            //        "				end\r\n" +
-            //        "			else\r\n" +
-            //        "        		DoTradeSkill(i, numAvailable);\r\n" +
-            //        "        		return;\r\n" +
-            //        "			end\r\n" +
-            //        "        end\r\n" +
-            //        "    end\r\n" +
-            //        "end\r\n" +
-            //        "print(\"Nothing to craft!\");";
-            (timer = this.CreateTimer(1000, OnPulse)).Start();
+                GameFunctions.SendToChat(string.Format("/run _G[\"{0}\"] = {{}};", randomTableName));
+                foreach (string ink in inks)
+                {
+                    GameFunctions.SendToChat(string.Format("/run _G[\"{0}\"][\"{1}\"] = true;", randomTableName, ink));
+                }
+                (timer = this.CreateTimer(1000, OnPulse)).Start();
+            });
         }
 
         public void OnPulse()
@@ -137,6 +97,8 @@ namespace InkCrafter
 
         public void OnStop()
         {
+            startupTask.Wait();
+            startupTask.Dispose();
             timer.Dispose();
         }
 
@@ -145,6 +107,7 @@ namespace InkCrafter
         private SingleThreadTimer timer;
         internal InkCrafterSettings SettingsInstance;
         private readonly string randomTableName = Utilities.GetRandomString(6);
+        private Task startupTask;
 
         private readonly string[] inks =
         {
