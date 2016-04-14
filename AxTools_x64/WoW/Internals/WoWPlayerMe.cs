@@ -87,19 +87,23 @@ namespace AxTools.WoW.Internals
             get { return itemsInBags ?? (itemsInBags = ObjectMgr.GetItemsInBags(inventoryAndContainers)); }
         }
 
-        private bool? isMoving;
-        public bool IsMoving
+        private float? speed;
+        public float Speed
         {
             get
             {
-                if (!isMoving.HasValue)
+                if (!speed.HasValue)
                 {
                     IntPtr speedPtr = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.PlayerSpeedBase);
-                    float speed = WoWManager.WoWProcess.Memory.Read<float>(speedPtr + WowBuildInfoX64.PlayerSpeedOffset);
-                    isMoving = speed > 0f;
+                    speed = WoWManager.WoWProcess.Memory.Read<float>(speedPtr + WowBuildInfoX64.PlayerSpeedOffset);
                 }
-                return isMoving.Value;
+                return speed.Value;
             }
+        }
+
+        public bool IsMoving
+        {
+            get { return Speed > 0f; }
         }
     }
 }
