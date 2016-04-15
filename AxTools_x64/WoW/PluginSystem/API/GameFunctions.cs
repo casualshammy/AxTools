@@ -268,7 +268,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         #region Moving
 
-        public static void Move2D(WowPoint point, float precision, int timeoutInMs, bool continueMoving)
+        public static void Move2D(WowPoint point, float precision, int timeoutInMs, bool continueMovingIfFailed, bool continueMovingIfSuccessful)
         {
             WaitWhileWoWIsMinimized();
             if (IsInGame && !IsLoadingScreen)
@@ -299,13 +299,14 @@ namespace AxTools.WoW.PluginSystem.API
                     //    Log.Info(string.Format("{0} [GameFunctions.MoveTo] Pressing W: {1}", WoWManager.WoWProcess, point));
                     //}
                 }
-                if (!continueMoving || timeoutInMs > 0)
+                if ((!continueMovingIfFailed || timeoutInMs > 0) && (!continueMovingIfSuccessful || timeoutInMs <= 0))
                 {
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
+                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr) Keys.W, IntPtr.Zero);
                     Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released2: {1}", WoWManager.WoWProcess, point)); // todo: remove
                     //NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.S, IntPtr.Zero);
                     //NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.S, IntPtr.Zero);
                 }
+                Log.Info(string.Format("{0} [GameFunctions.MoveTo] return; distance to dest: [{1}]", WoWManager.WoWProcess, me.Location.Distance2D(point))); // todo: remove
             }
         }
 

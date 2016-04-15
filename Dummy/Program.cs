@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Configuration;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LiteDB;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace Dummy
@@ -70,30 +72,37 @@ namespace Dummy
 
         private static void Test()
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            if (File.Exists("test\\30000.json"))
+            string user = "User1254";
+            using (WebClient webClient = new WebClient())
             {
-                Console.WriteLine(JsonConvert.DeserializeObject<DoAction>(File.ReadAllText("test\\30000.json")).String0);
+                webClient.Headers[HttpRequestHeader.UserAgent] = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2;)";
+                string linkToLog;
+                try
+                {
+                    string json =
+                        @"{
+                            ""description"": ""AxTools log from " + user + @""",
+                            ""public"": true,
+                            ""files"": {
+                                ""AxTools.log"": {
+                                    ""content"": " + JsonConvert.SerializeObject(File.ReadAllText("C:\\Program Files (x86)\\AxTools\\tmp\\AxTools.log")) + @"
+                                }
+                            }
+                        }";
+                    string jsonResponse = webClient.UploadString("https://api.github.com/gists", "POST", json);
+                    dynamic d = JObject.Parse(jsonResponse);
+                    linkToLog = d["files"]["AxTools.log"]["raw_url"];
+                }
+                catch (Exception ex)
+                {
+                    linkToLog = "Error while uploading log file: " + ex.Message;
+                }
+                webClient.Credentials = new NetworkCredential("Axio-5GDMJHD20R", "3BFCE06892A8AAE50818625702B0C4CA93F57CF7AEC02146F416EE278D31F478");
+                webClient.Encoding = Encoding.UTF8;
+                string s = string.Format("https://axio.name/axtools/log-reporter/sendEmail.php?gist-url={0}&desc={1}&user={2}", linkToLog, "Description5", user);
+                Console.WriteLine(s);
+                webClient.DownloadString(s);
             }
-            Console.WriteLine(stopwatch.ElapsedMilliseconds + "ms");
-
-            //using (LiteDatabase db = new LiteDatabase("wowhead.db"))
-            //{
-            //    LiteCollection<DoAction> collection = db.GetCollection<DoAction>("do_actions");
-            //    Stopwatch stopwatch = Stopwatch.StartNew();
-            //    for (int i = 1; i < 1000000; i++)
-            //    {
-            //        collection.Insert(new DoAction { Id = i, String0 = "str0-" + i, String1 = "str1-" + i });
-            //    }
-            //    Console.WriteLine(stopwatch.ElapsedMilliseconds + "ms");
-
-
-            //    //foreach (DoAction action in collection.FindAll())
-            //    //{
-            //    //    Console.WriteLine(action.Id + "::" + action.String0 + "::" + action.String1);
-            //    //}
-
-            //}
         }
 
         public static void ForceBasicAuth(this WebClient webClient, string username, string password)
@@ -166,5 +175,5 @@ namespace Dummy
         internal uint Quality;
 
     }
-    
+
 }

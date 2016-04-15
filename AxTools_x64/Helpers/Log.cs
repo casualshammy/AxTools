@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Mail;
-using System.Net.Mime;
-using System.Reflection;
 using System.Text;
 using System.Timers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AxTools.Helpers
 {
@@ -50,25 +48,38 @@ namespace AxTools.Helpers
             }
         }
 
-        [Obfuscation(Exclude = false, Feature = "constants")]
-        internal static void SendViaEmail(string subject)
+        internal static void UploadLogAndSendLink(string subject)
         {
-            using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587))
+            string gistFileName = "AxTools.log";
+            using (WebClient webClient = new WebClient())
             {
-                smtpClient.EnableSsl = true;
-                smtpClient.Credentials = new NetworkCredential("axtoolslogsender@gmail.com", "abrakadabra!pushpush");
-                using (MailMessage mailMessage = new MailMessage("axtoolslogsender@gmail.com", "axio@axio.name"))
+                webClient.Headers[HttpRequestHeader.UserAgent] = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2;)";
+                string linkToLog;
+                try
                 {
-                    mailMessage.SubjectEncoding = Encoding.UTF8;
-                    mailMessage.Subject = string.IsNullOrWhiteSpace(subject) ? string.Format("Error log from {0}", Settings.Instance.UserID) : string.Format("Error log from {0} ({1})", Settings.Instance.UserID, subject);
-                    mailMessage.BodyEncoding = Encoding.UTF8;
-                    mailMessage.Body = "ERRORS:\r\n" + string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN)));
-                    using (Attachment logFile = new Attachment(Globals.LogFileName, MediaTypeNames.Text.Plain))
-                    {
-                        mailMessage.Attachments.Add(logFile);
-                        smtpClient.Send(mailMessage);
-                    }
+                    string json =
+                        string.Format(@"{{
+                            ""description"": ""AxTools log from {0}"",
+                            ""public"": false,
+                            ""files"": {{
+                                ""{1}"": {{
+                                    ""content"": {2}
+                                }}
+                            }}
+                        }}", Settings.Instance.UserID, gistFileName, JsonConvert.SerializeObject(File.ReadAllText(Globals.LogFileName)));
+                    string jsonResponse = webClient.UploadString("https://api.github.com/gists", "POST", json);
+                    dynamic d = JObject.Parse(jsonResponse);
+                    linkToLog = d["files"][gistFileName]["raw_url"];
                 }
+                catch (Exception ex)
+                {
+                    linkToLog = "Error while uploading log file: " + ex.Message;
+                }
+                webClient.Credentials = new NetworkCredential(Settings.Instance.UserID, Utils.GetComputerHID());
+                webClient.Encoding = Encoding.UTF8;
+                subject = string.IsNullOrWhiteSpace(subject) ? string.Format("Error log from {0}", Settings.Instance.UserID) : string.Format("Error log from {0} ({1})", Settings.Instance.UserID, subject);
+                string s = string.Format("https://axio.name/axtools/log-reporter/sendEmail.php?body={0}&subject={1}&from-name={2}", linkToLog, subject, "AxTools log system");
+                webClient.DownloadString(s);
             }
         }
 

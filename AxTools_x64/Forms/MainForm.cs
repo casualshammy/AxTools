@@ -127,7 +127,7 @@ namespace AxTools.Forms
             {
                 try
                 {
-                    Log.SendViaEmail(null);
+                    Log.UploadLogAndSendLink(null);
                 }
                 catch (Exception ex)
                 {

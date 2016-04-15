@@ -47,7 +47,6 @@ namespace WoWPlugin_PathCreator
             if (me != null)
             {
                 mainForm.labelLocation.Text = "[" + me.Location + "]";
-
             }
         }
 

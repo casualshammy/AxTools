@@ -921,7 +921,7 @@ namespace AxTools.Forms
         {
             Task.Run(() =>
             {
-                GameFunctions.Move2D(point, 3f, 5000, false);
+                GameFunctions.Move2D(point, 3f, 5000, false, false);
             });
         }
 

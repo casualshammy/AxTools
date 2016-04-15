@@ -17,6 +17,7 @@ namespace AxTools.Helpers
 {
     internal static class Utils
     {
+        private static string _hardwareID;
         internal static readonly Random Rnd = new Random();
 
         internal static T FindForm<T>() where T : Form
@@ -107,64 +108,68 @@ namespace AxTools.Helpers
         [Obfuscation(Exclude = false, Feature = "constants")]
         internal static string GetComputerHID()
         {
-            string processorID = "";
-            string diskID = "";
-            string motherboardID = "";
-            try
+            if (_hardwareID == null)
             {
-                using (ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select * From Win32_processor"))
+                string processorID = "";
+                string diskID = "";
+                string motherboardID = "";
+                try
                 {
-                    using (ManagementObjectCollection mbsList = mbs.Get())
+                    using (ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select * From Win32_processor"))
                     {
-                        foreach (ManagementObject mo in mbsList.Cast<ManagementObject>())
+                        using (ManagementObjectCollection mbsList = mbs.Get())
                         {
-                            processorID = mo["ProcessorID"].ToString();
-                            break;
+                            foreach (ManagementObject mo in mbsList.Cast<ManagementObject>())
+                            {
+                                processorID = mo["ProcessorID"].ToString();
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            catch
-            {
-                // ignore
-            }
-            try
-            {
-                using (ManagementObject dsk = new ManagementObject(@"win32_logicaldisk.deviceid=""c:"""))
+                catch
                 {
-                    dsk.Get();
-                    diskID = dsk["VolumeSerialNumber"].ToString();
+                    // ignore
                 }
-            }
-            catch
-            {
-                // ignore
-            }
-            try
-            {
-                using (ManagementObjectSearcher mos = new ManagementObjectSearcher("SELECT * FROM Win32_BaseBoard"))
+                try
                 {
-                    using (ManagementObjectCollection moc = mos.Get())
+                    using (ManagementObject dsk = new ManagementObject(@"win32_logicaldisk.deviceid=""c:"""))
                     {
-                        foreach (ManagementObject mo in moc.Cast<ManagementObject>())
+                        dsk.Get();
+                        diskID = dsk["VolumeSerialNumber"].ToString();
+                    }
+                }
+                catch
+                {
+                    // ignore
+                }
+                try
+                {
+                    using (ManagementObjectSearcher mos = new ManagementObjectSearcher("SELECT * FROM Win32_BaseBoard"))
+                    {
+                        using (ManagementObjectCollection moc = mos.Get())
                         {
-                            motherboardID = mo["SerialNumber"].ToString();
-                            break;
+                            foreach (ManagementObject mo in moc.Cast<ManagementObject>())
+                            {
+                                motherboardID = mo["SerialNumber"].ToString();
+                                break;
+                            }
                         }
                     }
                 }
+                catch
+                {
+                    // ignore
+                }
+                using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
+                {
+                    string raw = processorID + diskID + motherboardID;
+                    byte[] bytes = Encoding.UTF8.GetBytes(raw);
+                    byte[] hash = sha256.ComputeHash(bytes);
+                    _hardwareID = BitConverter.ToString(hash).Replace("-", "");
+                }
             }
-            catch
-            {
-                // ignore
-            }
-            using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
-            {
-                string raw = processorID + diskID + motherboardID;
-                byte[] bytes = Encoding.UTF8.GetBytes(raw);
-                byte[] hash = sha256.ComputeHash(bytes);
-                return BitConverter.ToString(hash).Replace("-", "");
-            }
+            return _hardwareID;
         }
 
         public static string CreateMd5ForFolder(string path)

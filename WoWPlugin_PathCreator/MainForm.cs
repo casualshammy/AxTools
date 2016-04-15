@@ -58,7 +58,7 @@ namespace WoWPlugin_PathCreator
 
         private void buttonStopProfile_Click(object sender, EventArgs e)
         {
-            list.Add(new DoAction {ActionType = DoActionType.DisableCTM});
+            list.Add(new DoAction {ActionType = DoActionType.StopProfile});
             WriteJSON();
             Close();
         }
@@ -86,6 +86,7 @@ namespace WoWPlugin_PathCreator
         SelectGossipOption,
         RunMacro,
         RunLua,
-        SendChat
+        SendChat,
+        StopProfile
     }
 }
