@@ -1,0 +1,4 @@
+option batch on
+option confirm off
+open sftp://root@109.120.165.239:52852 -privatekey="F:\programs\Proxifier PE\my_key.ppk"
+put "F:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\_updater1.zip" "F:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\_update1.json" "F:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\_update1.zip" "/home/nginx/html/axio.name/axtools/upd/"

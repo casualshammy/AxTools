@@ -50,6 +50,7 @@ namespace AxTools.Helpers
 
         internal static void UploadLogAndSendLink(string subject)
         {
+            TimerOnElapsed(null, null);
             string gistFileName = "AxTools.log";
             using (WebClient webClient = new WebClient())
             {

@@ -31,6 +31,7 @@ namespace AxTools.Forms
         internal static MainForm Instance;
         private bool isClosing;
         private readonly Settings settings = Settings.Instance;
+        internal static event Action ClosingEx;
 
         internal MainForm()
         {
@@ -77,6 +78,10 @@ namespace AxTools.Forms
         private void MainFormClosing(object sender, CancelEventArgs e)
         {
             isClosing = true;
+            if (ClosingEx != null)
+            {
+                ClosingEx();
+            }
             // Close all children forms
             Form[] forms = Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof (MainForm) && i.GetType() != typeof (MetroFlatDropShadow)).ToArray();
             foreach (Form i in forms)

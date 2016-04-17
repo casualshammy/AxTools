@@ -73,10 +73,14 @@ namespace InkCrafter
             SettingsInstance = this.LoadSettingsJSON<InkCrafterSettings>();
             startupTask = Task.Run(() =>
             {
-                GameFunctions.SendToChat(string.Format("/run _G[\"{0}\"] = {{}};", randomTableName));
+                GameFunctions.SendToChat(string.Format("/run {0} = {{}};", tableNames));
+                GameFunctions.SendToChat(string.Format("/run {0} = {{}};", tableAvailable));
+                GameFunctions.SendToChat(string.Format("/run {0} = {{}};", tableIndexes));
+                GameFunctions.SendToChat(string.Format("/run {0} = {{}};", tableRemain));
                 foreach (string ink in inks)
                 {
-                    GameFunctions.SendToChat(string.Format("/run _G[\"{0}\"][\"{1}\"] = true;", randomTableName, ink));
+                    GameFunctions.SendToChat(string.Format("/run {0}[\"{1}\"] = true;", tableNames, ink));
+                    GameFunctions.SendToChat(string.Format("/run {0}[\"{1}\"] = {2};", tableRemain, ink, ink == "Чернила разжигателя войны" ? SettingsInstance.WarbindersInkCount : 0));
                 }
                 (timer = this.CreateTimer(1000, OnPulse)).Start();
             });
@@ -87,7 +91,8 @@ namespace InkCrafter
             WoWPlayerMe me = ObjMgr.Pulse();
             if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
             {
-                GameFunctions.SendToChat("/run local o=GetNumTradeSkills();if(o>0)then for i=1,o do local n,_,a=GetTradeSkillInfo(i);if(_G[\"" + randomTableName + "\"][n] and a>0)then DoTradeSkill(i,a);return;end end end");
+                GameFunctions.SendToChat(string.Format("/run local o=GetNumTradeSkills();if(o>0)then for i=1,o do local n,_,a=GetTradeSkillInfo(i);if({0}[n])then {1}[n]=a;{2}[n]=i;end end end", tableNames, tableAvailable, tableIndexes));
+                GameFunctions.SendToChat(string.Format("/run for i,v in pairs({0})do local a={1}[i]-{2}[i];if(a>0)then DoTradeSkill({3}[i],a);return;end end", tableNames, tableAvailable, tableRemain, tableIndexes));
             }
             else
             {
@@ -106,7 +111,10 @@ namespace InkCrafter
 
         private SingleThreadTimer timer;
         internal InkCrafterSettings SettingsInstance;
-        private readonly string randomTableName = Utilities.GetRandomString(6);
+        private readonly string tableNames = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6));
+        private readonly string tableAvailable = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6));
+        private readonly string tableIndexes = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6));
+        private readonly string tableRemain = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6));
         private Task startupTask;
 
         private readonly string[] inks =
