@@ -3,8 +3,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Timers;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace AxTools.Helpers
 {
@@ -48,39 +46,14 @@ namespace AxTools.Helpers
             }
         }
 
-        internal static void UploadLogAndSendLink(string subject)
+        internal static void UploadLog(string subject)
         {
             TimerOnElapsed(null, null);
-            string gistFileName = "AxTools.log";
             using (WebClient webClient = new WebClient())
             {
-                webClient.Headers[HttpRequestHeader.UserAgent] = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2;)";
-                string linkToLog;
-                try
-                {
-                    string json =
-                        string.Format(@"{{
-                            ""description"": ""AxTools log from {0}"",
-                            ""public"": false,
-                            ""files"": {{
-                                ""{1}"": {{
-                                    ""content"": {2}
-                                }}
-                            }}
-                        }}", Settings.Instance.UserID, gistFileName, JsonConvert.SerializeObject(File.ReadAllText(Globals.LogFileName)));
-                    string jsonResponse = webClient.UploadString("https://api.github.com/gists", "POST", json);
-                    dynamic d = JObject.Parse(jsonResponse);
-                    linkToLog = d["files"][gistFileName]["raw_url"];
-                }
-                catch (Exception ex)
-                {
-                    linkToLog = "Error while uploading log file: " + ex.Message;
-                }
                 webClient.Credentials = new NetworkCredential(Settings.Instance.UserID, Utils.GetComputerHID());
                 webClient.Encoding = Encoding.UTF8;
-                subject = string.IsNullOrWhiteSpace(subject) ? string.Format("Error log from {0}", Settings.Instance.UserID) : string.Format("Error log from {0} ({1})", Settings.Instance.UserID, subject);
-                string s = string.Format("https://axio.name/axtools/log-reporter/sendEmail.php?body={0}&subject={1}&from-name={2}", linkToLog, subject, "AxTools log system");
-                webClient.DownloadString(s);
+                webClient.UploadString(string.Format("https://axio.name/axtools/log-reporter/make_log.php?username={0}&comment={1}", Settings.Instance.UserID, subject), "POST", File.ReadAllText(Globals.LogFileName, Encoding.UTF8));
             }
         }
 

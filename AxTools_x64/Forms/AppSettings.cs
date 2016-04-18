@@ -467,7 +467,7 @@ namespace AxTools.Forms
                 {
                     try
                     {
-                        Log.UploadLogAndSendLink(subject);
+                        Log.UploadLog(subject);
                     }
                     catch (Exception ex)
                     {

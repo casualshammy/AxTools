@@ -89,10 +89,10 @@ namespace InkCrafter
         public void OnPulse()
         {
             WoWPlayerMe me = ObjMgr.Pulse();
-            if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
+            if (me != null && me.CastingSpellID == 0 && me.ChannelSpellID == 0)
             {
                 GameFunctions.SendToChat(string.Format("/run local o=GetNumTradeSkills();if(o>0)then for i=1,o do local n,_,a=GetTradeSkillInfo(i);if({0}[n])then {1}[n]=a;{2}[n]=i;end end end", tableNames, tableAvailable, tableIndexes));
-                GameFunctions.SendToChat(string.Format("/run for i,v in pairs({0})do local a={1}[i]-{2}[i];if(a>0)then DoTradeSkill({3}[i],a);return;end end", tableNames, tableAvailable, tableRemain, tableIndexes));
+                GameFunctions.SendToChat(string.Format("/run for i in pairs({0})do if({1}[i])then local a={1}[i]-{2}[i];if(a>0)then DoTradeSkill({3}[i],a);return;end end end", tableNames, tableAvailable, tableRemain, tableIndexes));
             }
             else
             {
@@ -141,7 +141,7 @@ namespace InkCrafter
             "Бежевые чернила",
             "Великолепная шкура",
             "Толстая борейская кожа",
-            //"Чернила разжигателя войны",
+            "Чернила разжигателя войны",
         };
 
     }
