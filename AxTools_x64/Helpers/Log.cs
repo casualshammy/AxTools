@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Timers;
 
 namespace AxTools.Helpers
@@ -50,13 +49,18 @@ namespace AxTools.Helpers
         internal static void UploadLog(string subject)
         {
             TimerOnElapsed(null, null);
-            Regex r = new Regex(string.Format("[{0}]", Regex.Escape(new string(Path.GetInvalidFileNameChars()))));
-            subject = r.Replace(subject, "_");
+            //Привет-привет, bye-bye!@#$%^&*()_-+=|\[]{};'.,?/
+            if (!string.IsNullOrWhiteSpace(subject))
+            {
+                char[] subjChars = subject.ToCharArray();
+                char[] subjCharsCleared = Array.FindAll(subjChars, c => char.IsLetterOrDigit(c) || c == '.' || c == ',' || c == ' ' || c == '-' || c == '!' || c == '?');
+                subject = new string(subjCharsCleared);
+            }
             using (WebClient webClient = new WebClient())
             {
                 webClient.Credentials = new NetworkCredential(Settings.Instance.UserID, Utils.GetComputerHID());
                 webClient.Encoding = Encoding.UTF8;
-                webClient.UploadString(string.Format("https://axio.name/axtools/log-reporter/make_log.php?comment={0}", subject), "POST", File.ReadAllText(Globals.LogFileName, Encoding.UTF8));
+                webClient.UploadString(string.Format("https://axio.name/axtools/log-reporter/make_log.php?comment={0}", subject ?? ""), "POST", File.ReadAllText(Globals.LogFileName, Encoding.UTF8));
             }
         }
 
