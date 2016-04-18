@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Timers;
 
 namespace AxTools.Helpers
@@ -49,6 +50,8 @@ namespace AxTools.Helpers
         internal static void UploadLog(string subject)
         {
             TimerOnElapsed(null, null);
+            Regex r = new Regex(string.Format("[{0}]", Regex.Escape(new string(Path.GetInvalidFileNameChars()))));
+            subject = r.Replace(subject, "_");
             using (WebClient webClient = new WebClient())
             {
                 webClient.Credentials = new NetworkCredential(Settings.Instance.UserID, Utils.GetComputerHID());
