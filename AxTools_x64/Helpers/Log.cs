@@ -53,7 +53,7 @@ namespace AxTools.Helpers
             {
                 webClient.Credentials = new NetworkCredential(Settings.Instance.UserID, Utils.GetComputerHID());
                 webClient.Encoding = Encoding.UTF8;
-                webClient.UploadString(string.Format("https://axio.name/axtools/log-reporter/make_log.php?username={0}&comment={1}", Settings.Instance.UserID, subject), "POST", File.ReadAllText(Globals.LogFileName, Encoding.UTF8));
+                webClient.UploadString(string.Format("https://axio.name/axtools/log-reporter/make_log.php?comment={0}", subject), "POST", File.ReadAllText(Globals.LogFileName, Encoding.UTF8));
             }
         }
 
