@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Timers;
@@ -60,7 +61,9 @@ namespace AxTools.Helpers
             {
                 webClient.Credentials = new NetworkCredential(Settings.Instance.UserID, Utils.GetComputerHID());
                 webClient.Encoding = Encoding.UTF8;
-                webClient.UploadString(string.Format("https://axio.name/axtools/log-reporter/make_log.php?comment={0}", subject ?? ""), "POST", File.ReadAllText(Globals.LogFileName, Encoding.UTF8));
+                string postMessage = string.Format("ERRORS:\r\n{0}\r\n\r\n\r\n{1}",
+                    string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN))), File.ReadAllText(Globals.LogFileName, Encoding.UTF8));
+                webClient.UploadString(string.Format("https://axio.name/axtools/log-reporter/make_log.php?comment={0}", subject ?? ""), "POST", postMessage);
             }
         }
 

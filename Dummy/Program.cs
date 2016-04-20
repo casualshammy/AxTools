@@ -77,7 +77,8 @@ namespace Dummy
                 webClient.Credentials = new NetworkCredential("Axio-5GDMJHD20R", "3BFCE06892A8AAE50818625702B0C4CA93F57CF7AEC02146F416EE278D31F478");
                 webClient.UploadString("https://axio.name/axtools/log-reporter/make_log.php?username=Axioma&comment=Meow there!", "POST", File.ReadAllText("C:\\Program Files (x86)\\AxTools\\tmp\\AxTools.log"));
             }
-
+            File.AppendAllText("1.txt", "\r\n", Encoding.UTF8);
+            
 
 //            string user = "User1254";
 //            using (WebClient webClient = new WebClient())

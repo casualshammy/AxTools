@@ -83,14 +83,7 @@ namespace AxTools.Helpers
             }
             else
             {
-                if (MainForm.Instance.InvokeRequired)
-                {
-                    MainForm.Instance.BeginInvoke(new MethodInvoker(() => MainForm.Instance.notifyIconMain.ShowBalloonTip(30000, title, message, (ToolTipIcon) type)));
-                }
-                else
-                {
-                    MainForm.Instance.notifyIconMain.ShowBalloonTip(30000, title, message, (ToolTipIcon)type);
-                }
+                MainForm.Instance.InvokePost(() => { MainForm.Instance.notifyIconMain.ShowBalloonTip(30000, title, message, (ToolTipIcon) type); });
                 if (sound)
                 {
                     if (type == NotifyUserType.Error || type == NotifyUserType.Warn)

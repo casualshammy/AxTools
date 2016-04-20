@@ -73,6 +73,7 @@ namespace InkCrafter
             SettingsInstance = this.LoadSettingsJSON<InkCrafterSettings>();
             startupTask = Task.Run(() =>
             {
+                this.ShowNotify("Please wait while plugin set up inks lists...", false, false);
                 GameFunctions.SendToChat(string.Format("/run {0} = {{}};", tableNames));
                 GameFunctions.SendToChat(string.Format("/run {0} = {{}};", tableAvailable));
                 GameFunctions.SendToChat(string.Format("/run {0} = {{}};", tableIndexes));
@@ -82,6 +83,7 @@ namespace InkCrafter
                     GameFunctions.SendToChat(string.Format("/run {0}[\"{1}\"] = true;", tableNames, ink));
                     GameFunctions.SendToChat(string.Format("/run {0}[\"{1}\"] = {2};", tableRemain, ink, ink == "Чернила разжигателя войны" ? SettingsInstance.WarbindersInkCount : 0));
                 }
+                this.ShowNotify("Completed, starting to craft", false, false);
                 (timer = this.CreateTimer(1000, OnPulse)).Start();
             });
         }
