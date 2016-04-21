@@ -72,68 +72,60 @@ namespace Dummy
 
         private static void Test()
         {
-            using (WebClient webClient = new WebClient())
+            string p = "";
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            for (int i = 0; i < 1000000; i++)
             {
-                webClient.Credentials = new NetworkCredential("Axio-5GDMJHD20R", "3BFCE06892A8AAE50818625702B0C4CA93F57CF7AEC02146F416EE278D31F478");
-                webClient.UploadString("https://axio.name/axtools/log-reporter/make_log.php?username=Axioma&comment=Meow there!", "POST", File.ReadAllText("C:\\Program Files (x86)\\AxTools\\tmp\\AxTools.log"));
+                p = GetRandomStringA(8);
             }
-            File.AppendAllText("1.txt", "\r\n", Encoding.UTF8);
-            
-
-//            string user = "User1254";
-//            using (WebClient webClient = new WebClient())
-//            {
-//                webClient.Headers[HttpRequestHeader.UserAgent] = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2;)";
-//                string linkToLog;
-//                try
-//                {
-//                    string json =
-//                        @"{
-//                            ""description"": ""AxTools log from " + user + @""",
-//                            ""public"": true,
-//                            ""files"": {
-//                                ""AxTools.log"": {
-//                                    ""content"": " + JsonConvert.SerializeObject(File.ReadAllText("C:\\Program Files (x86)\\AxTools\\tmp\\AxTools.log")) + @"
-//                                }
-//                            }
-//                        }";
-//                    string jsonResponse = webClient.UploadString("https://api.github.com/gists", "POST", json);
-//                    dynamic d = JObject.Parse(jsonResponse);
-//                    linkToLog = d["files"]["AxTools.log"]["raw_url"];
-//                }
-//                catch (Exception ex)
-//                {
-//                    linkToLog = "Error while uploading log file: " + ex.Message;
-//                }
-//                webClient.Credentials = new NetworkCredential("Axio-5GDMJHD20R", "3BFCE06892A8AAE50818625702B0C4CA93F57CF7AEC02146F416EE278D31F478");
-//                webClient.Encoding = Encoding.UTF8;
-//                string s = string.Format("https://axio.name/axtools/log-reporter/sendEmail.php?gist-url={0}&desc={1}&user={2}", linkToLog, "Description5", user);
-//                Console.WriteLine(s);
-//                webClient.DownloadString(s);
-//            }
-        }
-
-        public static void ForceBasicAuth(this WebClient webClient, string username, string password)
-        {
-            string credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(username + ":" + password));
-            webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Basic {0}", credentials);
-        }
-
-        private static void SendEmail(string email)
-        {
-            using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587))
+            Console.WriteLine("GetRandomStringA: " + stopwatch.ElapsedMilliseconds + "ms, " + p);
+            stopwatch.Restart();
+            for (int i = 0; i < 1000000; i++)
             {
-                smtpClient.EnableSsl = true;
-                smtpClient.Credentials = new NetworkCredential("axtoolslogsender@gmail.com", "abrakadabra!pushpush");
-                using (MailMessage mailMessage = new MailMessage("axtoolslogsender@gmail.com", email))
+                p = GetRandomStringB(8);
+            }
+            Console.WriteLine("GetRandomStringB: " + stopwatch.ElapsedMilliseconds + "ms, " + p);
+            stopwatch.Restart();
+            for (int i = 0; i < 1000000; i++)
+            {
+                p = GetRandomStringA(8);
+            }
+            Console.WriteLine("GetRandomStringA: " + stopwatch.ElapsedMilliseconds + "ms, " + p);
+            stopwatch.Restart();
+            for (int i = 0; i < 1000000; i++)
+            {
+                p = GetRandomStringB(8);
+            }
+            Console.WriteLine("GetRandomStringB: " + stopwatch.ElapsedMilliseconds + "ms, " + p);
+        }
+
+        internal static readonly Random Rnd = new Random();
+
+        internal static string GetRandomStringA(int size)
+        {
+            StringBuilder builder = new StringBuilder(size);
+            for (int i = 0; i < size; i++)
+            {
+                char ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * Rnd.NextDouble() + 65)));
+                if (Rnd.Next(10) % 2 == 0)
                 {
-                    mailMessage.SubjectEncoding = Encoding.UTF8;
-                    mailMessage.Subject = "Зафиксировано движение!";
-                    mailMessage.BodyEncoding = Encoding.UTF8;
-                    mailMessage.Body = "Время: " + DateTime.Now;
-                    smtpClient.Send(mailMessage);
+                    ch = ch.ToString().ToLower()[0];
                 }
+                builder.Append(ch);
             }
+            return builder.ToString();
+        }
+
+        internal static string GetRandomStringB(int size)
+        {
+            StringBuilder builder = new StringBuilder(size);
+            string chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            for (int i = 0; i < size; i++)
+            {
+                char c = chars[Rnd.Next(0, chars.Length)];
+                builder.Append(c);
+            }
+            return builder.ToString();
         }
 
     }

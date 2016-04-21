@@ -22,11 +22,12 @@ namespace AxTools.Helpers
 
         internal static T FindForm<T>() where T : Form
         {
-            foreach (object i in Application.OpenForms)
-            {
-                if (i.GetType() == typeof (T)) return i as T;
-            }
-            return null;
+            return (from object i in Application.OpenForms where i.GetType() == typeof (T) select i as T).FirstOrDefault();
+        }
+
+        internal static T[] FindForms<T>() where T : Form
+        {
+            return (from object i in Application.OpenForms where i.GetType() == typeof (T) select i as T).ToArray();
         }
 
         internal static long CalcDirectorySize(string path)
@@ -50,14 +51,11 @@ namespace AxTools.Helpers
         internal static string GetRandomString(int size)
         {
             StringBuilder builder = new StringBuilder(size);
+            string chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             for (int i = 0; i < size; i++)
             {
-                char ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * Rnd.NextDouble() + 65)));
-                if (Rnd.Next(10) % 2 == 0)
-                {
-                    ch = ch.ToString().ToLower()[0];
-                }
-                builder.Append(ch);
+                char c = chars[Rnd.Next(0, chars.Length)];
+                builder.Append(c);
             }
             return builder.ToString();
         }
