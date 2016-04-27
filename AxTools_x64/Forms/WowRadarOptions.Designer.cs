@@ -51,12 +51,17 @@ namespace AxTools.Forms
             this.buttonAddObject = new MetroFramework.Controls.MetroButton();
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.tabPageTrackingUnits = new MetroFramework.Controls.MetroTabPage();
+            this.oListView = new BrightIdeasSoftware.ObjectListView();
+            this.oColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.oColumnInteract = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.oColumnSoundAlarm = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.buttonSaveFile = new MetroFramework.Controls.MetroButton();
             this.buttonOpenFile = new MetroFramework.Controls.MetroButton();
             this.tabPageAppearance = new MetroFramework.Controls.MetroTabPage();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjects)).BeginInit();
             this.metroTabControl1.SuspendLayout();
             this.tabPageTrackingUnits.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.oListView)).BeginInit();
             this.tabPageAppearance.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -118,6 +123,7 @@ namespace AxTools.Forms
             this.buttonAddNPC.Name = "buttonAddNPC";
             this.buttonAddNPC.Size = new System.Drawing.Size(71, 25);
             this.buttonAddNPC.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonAddNPC.StyleManager = null;
             this.buttonAddNPC.TabIndex = 38;
             this.buttonAddNPC.Text = "Add";
             this.buttonAddNPC.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -134,6 +140,7 @@ namespace AxTools.Forms
             this.metroCheckBoxShowPlayersClasses.Name = "metroCheckBoxShowPlayersClasses";
             this.metroCheckBoxShowPlayersClasses.Size = new System.Drawing.Size(131, 19);
             this.metroCheckBoxShowPlayersClasses.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroCheckBoxShowPlayersClasses.StyleManager = null;
             this.metroCheckBoxShowPlayersClasses.TabIndex = 47;
             this.metroCheckBoxShowPlayersClasses.Text = "Show player class";
             this.metroCheckBoxShowPlayersClasses.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -152,6 +159,7 @@ namespace AxTools.Forms
             this.metroCheckBoxShowNpcsNames.Name = "metroCheckBoxShowNpcsNames";
             this.metroCheckBoxShowNpcsNames.Size = new System.Drawing.Size(127, 19);
             this.metroCheckBoxShowNpcsNames.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroCheckBoxShowNpcsNames.StyleManager = null;
             this.metroCheckBoxShowNpcsNames.TabIndex = 48;
             this.metroCheckBoxShowNpcsNames.Text = "Show NPC name";
             this.metroCheckBoxShowNpcsNames.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -170,6 +178,7 @@ namespace AxTools.Forms
             this.metroCheckBoxShowObjectsNames.Name = "metroCheckBoxShowObjectsNames";
             this.metroCheckBoxShowObjectsNames.Size = new System.Drawing.Size(137, 19);
             this.metroCheckBoxShowObjectsNames.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroCheckBoxShowObjectsNames.StyleManager = null;
             this.metroCheckBoxShowObjectsNames.TabIndex = 49;
             this.metroCheckBoxShowObjectsNames.Text = "Show object name";
             this.metroCheckBoxShowObjectsNames.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -189,6 +198,7 @@ namespace AxTools.Forms
             this.metroTextBoxAddNew.SelectedText = "";
             this.metroTextBoxAddNew.Size = new System.Drawing.Size(311, 23);
             this.metroTextBoxAddNew.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroTextBoxAddNew.StyleManager = null;
             this.metroTextBoxAddNew.TabIndex = 54;
             this.metroTextBoxAddNew.Text = "Enter object/npc name here...";
             this.metroTextBoxAddNew.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -201,6 +211,7 @@ namespace AxTools.Forms
             this.buttonAddUnknown.Name = "buttonAddUnknown";
             this.buttonAddUnknown.Size = new System.Drawing.Size(71, 23);
             this.buttonAddUnknown.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonAddUnknown.StyleManager = null;
             this.buttonAddUnknown.TabIndex = 55;
             this.buttonAddUnknown.Text = "Add";
             this.buttonAddUnknown.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -219,6 +230,7 @@ namespace AxTools.Forms
             this.comboboxNPCs.OverlayText = "List of visible NPCs...";
             this.comboboxNPCs.Size = new System.Drawing.Size(311, 25);
             this.comboboxNPCs.Style = MetroFramework.MetroColorStyle.Blue;
+            this.comboboxNPCs.StyleManager = null;
             this.comboboxNPCs.TabIndex = 59;
             this.comboboxNPCs.Theme = MetroFramework.MetroThemeStyle.Light;
             this.comboboxNPCs.Click += new System.EventHandler(this.comboboxNPCs_Click);
@@ -236,6 +248,7 @@ namespace AxTools.Forms
             this.comboboxObjects.OverlayText = "List of visible objects...";
             this.comboboxObjects.Size = new System.Drawing.Size(311, 25);
             this.comboboxObjects.Style = MetroFramework.MetroColorStyle.Blue;
+            this.comboboxObjects.StyleManager = null;
             this.comboboxObjects.TabIndex = 60;
             this.comboboxObjects.Theme = MetroFramework.MetroThemeStyle.Light;
             this.comboboxObjects.Click += new System.EventHandler(this.comboboxObjects_Click);
@@ -247,6 +260,7 @@ namespace AxTools.Forms
             this.buttonAddObject.Name = "buttonAddObject";
             this.buttonAddObject.Size = new System.Drawing.Size(71, 25);
             this.buttonAddObject.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonAddObject.StyleManager = null;
             this.buttonAddObject.TabIndex = 61;
             this.buttonAddObject.Text = "Add";
             this.buttonAddObject.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -264,7 +278,7 @@ namespace AxTools.Forms
             this.metroTabControl1.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
             this.metroTabControl1.Name = "metroTabControl1";
             this.metroTabControl1.SelectedIndex = 0;
-            this.metroTabControl1.Size = new System.Drawing.Size(402, 368);
+            this.metroTabControl1.Size = new System.Drawing.Size(991, 368);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.TabIndex = 62;
             this.metroTabControl1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -273,6 +287,7 @@ namespace AxTools.Forms
             // 
             // tabPageTrackingUnits
             // 
+            this.tabPageTrackingUnits.Controls.Add(this.oListView);
             this.tabPageTrackingUnits.Controls.Add(this.buttonSaveFile);
             this.tabPageTrackingUnits.Controls.Add(this.buttonOpenFile);
             this.tabPageTrackingUnits.Controls.Add(this.buttonAddObject);
@@ -289,8 +304,9 @@ namespace AxTools.Forms
             this.tabPageTrackingUnits.HorizontalScrollbarSize = 10;
             this.tabPageTrackingUnits.Location = new System.Drawing.Point(4, 35);
             this.tabPageTrackingUnits.Name = "tabPageTrackingUnits";
-            this.tabPageTrackingUnits.Size = new System.Drawing.Size(394, 329);
+            this.tabPageTrackingUnits.Size = new System.Drawing.Size(983, 329);
             this.tabPageTrackingUnits.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tabPageTrackingUnits.StyleManager = null;
             this.tabPageTrackingUnits.TabIndex = 0;
             this.tabPageTrackingUnits.Text = "             Tracking units           ";
             this.tabPageTrackingUnits.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -299,6 +315,65 @@ namespace AxTools.Forms
             this.tabPageTrackingUnits.VerticalScrollbarHighlightOnWheel = false;
             this.tabPageTrackingUnits.VerticalScrollbarSize = 10;
             // 
+            // oListView
+            // 
+            this.oListView.AllColumns.Add(this.oColumnName);
+            this.oListView.AllColumns.Add(this.oColumnInteract);
+            this.oListView.AllColumns.Add(this.oColumnSoundAlarm);
+            this.oListView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.DoubleClick;
+            this.oListView.CheckBoxes = true;
+            this.oListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.oColumnName,
+            this.oColumnInteract,
+            this.oColumnSoundAlarm});
+            this.oListView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.oListView.FullRowSelect = true;
+            this.oListView.HeaderWordWrap = true;
+            this.oListView.HideSelection = false;
+            this.oListView.IncludeColumnHeadersInCopy = true;
+            this.oListView.Location = new System.Drawing.Point(397, 39);
+            this.oListView.Name = "oListView";
+            this.oListView.OwnerDraw = true;
+            this.oListView.ShowGroups = false;
+            this.oListView.ShowImagesOnSubItems = true;
+            this.oListView.Size = new System.Drawing.Size(386, 198);
+            this.oListView.TabIndex = 63;
+            this.oListView.UseAlternatingBackColors = true;
+            this.oListView.UseCompatibleStateImageBehavior = false;
+            this.oListView.UseHotItem = true;
+            this.oListView.UseSubItemCheckBoxes = true;
+            this.oListView.View = System.Windows.Forms.View.Details;
+            // 
+            // oColumnName
+            // 
+            this.oColumnName.AspectName = "Name";
+            this.oColumnName.MaximumWidth = 265;
+            this.oColumnName.MinimumWidth = 265;
+            this.oColumnName.Text = "Name";
+            this.oColumnName.Width = 265;
+            // 
+            // oColumnInteract
+            // 
+            this.oColumnInteract.AspectName = "Interact";
+            this.oColumnInteract.CheckBoxes = true;
+            this.oColumnInteract.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.oColumnInteract.MaximumWidth = 50;
+            this.oColumnInteract.MinimumWidth = 50;
+            this.oColumnInteract.Text = "Interact";
+            this.oColumnInteract.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.oColumnInteract.Width = 50;
+            // 
+            // oColumnSoundAlarm
+            // 
+            this.oColumnSoundAlarm.AspectName = "SoundAlarm";
+            this.oColumnSoundAlarm.CheckBoxes = true;
+            this.oColumnSoundAlarm.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.oColumnSoundAlarm.MaximumWidth = 50;
+            this.oColumnSoundAlarm.MinimumWidth = 50;
+            this.oColumnSoundAlarm.Text = "Sound alarm";
+            this.oColumnSoundAlarm.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.oColumnSoundAlarm.Width = 50;
+            // 
             // buttonSaveFile
             // 
             this.buttonSaveFile.Highlight = true;
@@ -306,6 +381,7 @@ namespace AxTools.Forms
             this.buttonSaveFile.Name = "buttonSaveFile";
             this.buttonSaveFile.Size = new System.Drawing.Size(191, 23);
             this.buttonSaveFile.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonSaveFile.StyleManager = null;
             this.buttonSaveFile.TabIndex = 64;
             this.buttonSaveFile.Text = "Save list to file";
             this.buttonSaveFile.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -318,6 +394,7 @@ namespace AxTools.Forms
             this.buttonOpenFile.Name = "buttonOpenFile";
             this.buttonOpenFile.Size = new System.Drawing.Size(191, 23);
             this.buttonOpenFile.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonOpenFile.StyleManager = null;
             this.buttonOpenFile.TabIndex = 63;
             this.buttonOpenFile.Text = "Load list from file";
             this.buttonOpenFile.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -335,8 +412,9 @@ namespace AxTools.Forms
             this.tabPageAppearance.HorizontalScrollbarSize = 10;
             this.tabPageAppearance.Location = new System.Drawing.Point(4, 35);
             this.tabPageAppearance.Name = "tabPageAppearance";
-            this.tabPageAppearance.Size = new System.Drawing.Size(394, 329);
+            this.tabPageAppearance.Size = new System.Drawing.Size(983, 329);
             this.tabPageAppearance.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tabPageAppearance.StyleManager = null;
             this.tabPageAppearance.TabIndex = 1;
             this.tabPageAppearance.Text = "               Appearance            ";
             this.tabPageAppearance.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -349,7 +427,7 @@ namespace AxTools.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(432, 408);
+            this.ClientSize = new System.Drawing.Size(1021, 408);
             this.Controls.Add(this.metroTabControl1);
             this.DisplayHeader = false;
             this.Location = new System.Drawing.Point(0, 0);
@@ -363,6 +441,7 @@ namespace AxTools.Forms
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjects)).EndInit();
             this.metroTabControl1.ResumeLayout(false);
             this.tabPageTrackingUnits.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.oListView)).EndInit();
             this.tabPageAppearance.ResumeLayout(false);
             this.tabPageAppearance.PerformLayout();
             this.ResumeLayout(false);
@@ -393,5 +472,9 @@ namespace AxTools.Forms
         private DataGridViewCheckBoxColumn SoundAlarm;
         private MetroButton buttonSaveFile;
         private MetroButton buttonOpenFile;
+        private BrightIdeasSoftware.ObjectListView oListView;
+        private BrightIdeasSoftware.OLVColumn oColumnName;
+        private BrightIdeasSoftware.OLVColumn oColumnInteract;
+        private BrightIdeasSoftware.OLVColumn oColumnSoundAlarm;
     }
 }

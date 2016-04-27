@@ -18,15 +18,15 @@ namespace AxTools.Forms.Helpers
         }
 
         [DataMember(Name = "Enabled", Order = 1)]
-        internal bool Enabled;
+        public bool Enabled;
 
         [DataMember(Name = "Name", Order = 0)]
-        internal string Name;
+        public string Name;
 
         [DataMember(Name = "Interact", Order = 2)]
-        internal bool Interact;
+        public bool Interact;
 
         [DataMember(Name = "SoundAlarm", Order = 3)]
-        internal bool SoundAlarm;
+        public bool SoundAlarm;
     }
 }

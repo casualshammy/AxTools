@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
+using AxTools.Helpers;
 using AxTools.WoW.Helpers;
 
 namespace AxTools.WoW.Internals
@@ -21,7 +23,18 @@ namespace AxTools.WoW.Internals
 
         public string Name
         {
-            get { return Wowhead.GetSpellInfo(SpellId).Name; }
+            get
+            {
+                try
+                {
+                    return Wowhead.GetSpellInfo(SpellId).Name;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(string.Format("[Wowhead] Can't get aura name, id: {0}, error: {1}", SpellId, ex.Message));
+                    return "";
+                }
+            }
         }
     }
 }

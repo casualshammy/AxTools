@@ -135,27 +135,35 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         private uint GetSpecialBaitID(WoWPlayerMe me)
         {
-            if (me.Auras.All(l => l.Name != fishingSettings.SpecialBait))
+            try
             {
-                WoWItem item = me.ItemsInBags.FirstOrDefault(l => l.Name == fishingSettings.SpecialBait);
-                if (item == null)
+                if (me.Auras.All(l => l.Name != fishingSettings.SpecialBait))
                 {
-                    if (fishingSettings.GetSpecialBaitFromNatPagle)
+                    WoWItem item = me.ItemsInBags.FirstOrDefault(l => l.Name == fishingSettings.SpecialBait);
+                    if (item == null)
                     {
-                        GetSpecialBaitBuffFromNatPagle();
-                    }
-                    else if (fishingSettings.UseAnySpecialBaitIfPreferredIsNotAvailable)
-                    {
-                        bool haveBuff = me.Auras.Any(aura => specialBaits.Keys.Select(baitID => Wowhead.GetItemInfo(baitID).Name).Contains(aura.Name));
-                        if (!haveBuff)
+                        if (fishingSettings.GetSpecialBaitFromNatPagle)
                         {
-                            return specialBaits.Keys.FirstOrDefault(itemID => me.ItemsInBags.Select(itemInBag => itemInBag.EntryID).Contains(itemID));
+                            GetSpecialBaitBuffFromNatPagle();
+                        }
+                        else if (fishingSettings.UseAnySpecialBaitIfPreferredIsNotAvailable)
+                        {
+                            bool haveBuff = me.Auras.Any(aura => specialBaits.Keys.Select(baitID => Wowhead.GetItemInfo(baitID).Name).Contains(aura.Name));
+                            if (!haveBuff)
+                            {
+                                return specialBaits.Keys.FirstOrDefault(itemID => me.ItemsInBags.Select(itemInBag => itemInBag.EntryID).Contains(itemID));
+                            }
                         }
                     }
+                    return item != null ? item.EntryID : 0;
                 }
-                return item != null ? item.EntryID : 0;
+                return 0;
             }
-            return 0;
+            catch (Exception ex)
+            {
+                this.LogPrint(ex.Message + "\r\n" + ex.StackTrace);
+                return 0;
+            }
         }
 
         private void GetSpecialBaitBuffFromNatPagle()

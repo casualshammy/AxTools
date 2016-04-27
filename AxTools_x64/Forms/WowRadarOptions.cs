@@ -27,7 +27,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             ShowInTaskbar = false;
-           StyleManager.Style = Settings.Instance.StyleColor;
+            StyleManager.Style = Settings.Instance.StyleColor;
             foreach (RadarObject i in settings.WoWRadarList)
             {
                 dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
@@ -55,6 +55,35 @@ namespace AxTools.Forms
                 }
                 OnActivated(EventArgs.Empty);
             });
+
+            oListView.SetObjects(settings.WoWRadarList);
+            oListView.CheckObjects(settings.WoWRadarList.Where(l => l.Enabled));
+            oListView.BooleanCheckStateGetter = delegate(object rowObject)
+            {
+                RadarObject radarObject = rowObject as RadarObject;
+                return radarObject != null && radarObject.Enabled;
+            };
+            oListView.BooleanCheckStatePutter = delegate(object rowObject, bool value)
+            {
+                RadarObject radarObject = rowObject as RadarObject;
+                if (radarObject != null)
+                {
+                    radarObject.Enabled = value;
+                }
+                return value;
+            };
+            oListView.KeyUp += delegate(object sender, KeyEventArgs args)
+            {
+                if (args.KeyCode == Keys.Delete && !oListView.IsCellEditing)
+                {
+                    RadarObject radarObject = oListView.SelectedObject as RadarObject;
+                    if (radarObject != null)
+                    {
+                        settings.WoWRadarList.Remove(radarObject);
+                        oListView.RemoveObject(radarObject);
+                    }
+                }
+            };
         }
 
         private void RebuildKOSList()
@@ -119,6 +148,11 @@ namespace AxTools.Forms
                 {
                     dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
                 }
+
+                RadarObject radarObject = new RadarObject(true, metroTextBoxAddNew.Text, true, true);
+                settings.WoWRadarList.Add(radarObject);
+                oListView.AddObject(radarObject);
+                oListView.Items[oListView.Items.Count - 1].EnsureVisible();
             }
             else
             {

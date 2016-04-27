@@ -59,7 +59,7 @@ namespace AxTools.WoW.Helpers
                         else
                         {
                             info = new WowheadItemInfo(UNKNOWN, 0, 0, 0);
-                            Log.Error("[Wowhead] Regex isn't match: " + xml);
+                            Log.Error("[Wowhead] Regex isn't match: " + JsonConvert.SerializeObject(xml));
                         }
                     }
                 }
@@ -93,7 +93,7 @@ namespace AxTools.WoW.Helpers
                         else
                         {
                             info = new WowheadSpellInfo(UNKNOWN);
-                            Log.Info("[Wowhead] Regex isn't match: " + xml);
+                            Log.Info("[Wowhead] Regex isn't match: " + JsonConvert.SerializeObject(xml));
                         }
                     }
                 }
@@ -123,7 +123,7 @@ namespace AxTools.WoW.Helpers
                         else
                         {
                             info = UNKNOWN;
-                            Log.Info("[Wowhead] Regex isn't match: " + xml);
+                            Log.Info("[Wowhead] Regex isn't match: " + JsonConvert.SerializeObject(xml));
                         }
                     }
                 }
