@@ -4,6 +4,7 @@ using AxTools.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -19,26 +20,12 @@ namespace AxTools.Forms
     internal partial class WowRadarOptions : BorderedMetroForm
     {
         private readonly Settings settings = Settings.Instance;
-        private readonly int nameColumnWidth = 248;
-        private readonly int nameColumnWidthExt = 265;
-        private readonly int maxVisibleRows = 7;
 
         internal WowRadarOptions()
         {
             InitializeComponent();
             ShowInTaskbar = false;
             StyleManager.Style = Settings.Instance.StyleColor;
-            foreach (RadarObject i in settings.WoWRadarList)
-            {
-                dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
-            }
-            dataGridViewObjects.RowsAdded += DataGridViewObjectsRowsAddedOrRemove;
-            dataGridViewObjects.RowsRemoved += DataGridViewObjectsRowsAddedOrRemove;
-            dataGridViewObjects.CellValueChanged += DataGridViewObjectsOnCellValueChanged;
-            dataGridViewObjects.CellMouseClick += DataGridViewObjectsOnCellMouseClick;
-            dataGridViewObjects.CellContentClick += DataGridViewObjectsOnCellContentClick;
-            dataGridViewObjects.ColumnHeaderMouseClick += DataGridViewObjectsColumnHeaderMouseClick;
-            dataGridViewObjects.Columns[1].Width = dataGridViewObjects.Rows.Count > maxVisibleRows ? nameColumnWidth : nameColumnWidthExt;
             metroCheckBoxShowPlayersClasses.Checked = settings.WoWRadarShowPlayersClasses;
             metroCheckBoxShowNpcsNames.Checked = settings.WoWRadarShowNPCsNames;
             metroCheckBoxShowObjectsNames.Checked = settings.WoWRadarShowObjectsNames;
@@ -58,42 +45,38 @@ namespace AxTools.Forms
 
             oListView.SetObjects(settings.WoWRadarList);
             oListView.CheckObjects(settings.WoWRadarList.Where(l => l.Enabled));
-            oListView.BooleanCheckStateGetter = delegate(object rowObject)
-            {
-                RadarObject radarObject = rowObject as RadarObject;
-                return radarObject != null && radarObject.Enabled;
-            };
-            oListView.BooleanCheckStatePutter = delegate(object rowObject, bool value)
-            {
-                RadarObject radarObject = rowObject as RadarObject;
-                if (radarObject != null)
-                {
-                    radarObject.Enabled = value;
-                }
-                return value;
-            };
-            oListView.KeyUp += delegate(object sender, KeyEventArgs args)
-            {
-                if (args.KeyCode == Keys.Delete && !oListView.IsCellEditing)
-                {
-                    RadarObject radarObject = oListView.SelectedObject as RadarObject;
-                    if (radarObject != null)
-                    {
-                        settings.WoWRadarList.Remove(radarObject);
-                        oListView.RemoveObject(radarObject);
-                    }
-                }
-            };
+            oListView.BooleanCheckStateGetter = OListView_BooleanCheckStateGetter;
+            oListView.BooleanCheckStatePutter = OListView_BooleanCheckStatePutter;
+            oListView.KeyUp += OListView_OnKeyUp;
         }
 
-        private void RebuildKOSList()
+        private bool OListView_BooleanCheckStateGetter(object rowObject)
         {
-            List<RadarObject> list = new List<RadarObject>();
-            foreach (DataGridViewRow i in dataGridViewObjects.Rows)
+            RadarObject radarObject = rowObject as RadarObject;
+            return radarObject != null && radarObject.Enabled;
+        }
+
+        private bool OListView_BooleanCheckStatePutter(object rowObject, bool value)
+        {
+            RadarObject radarObject = rowObject as RadarObject;
+            if (radarObject != null)
             {
-                list.Add(new RadarObject((bool)i.Cells[0].Value, (string)i.Cells[1].Value, (bool)i.Cells[2].Value, (bool)i.Cells[3].Value));
+                radarObject.Enabled = value;
             }
-            settings.WoWRadarList = list;
+            return value;
+        }
+
+        private void OListView_OnKeyUp(object sender, KeyEventArgs args)
+        {
+            if (args.KeyCode == Keys.Delete && !oListView.IsCellEditing)
+            {
+                RadarObject radarObject = oListView.SelectedObject as RadarObject;
+                if (radarObject != null)
+                {
+                    settings.WoWRadarList.Remove(radarObject);
+                    oListView.RemoveObject(radarObject);
+                }
+            }
         }
 
         private void MetroCheckBoxShowPlayersClassesCheckedChanged(object sender, EventArgs e)
@@ -111,48 +94,11 @@ namespace AxTools.Forms
             settings.WoWRadarShowObjectsNames = metroCheckBoxShowObjectsNames.Checked;
         }
 
-        private void DataGridViewObjectsRowsAddedOrRemove(object sender, EventArgs e)
-        {
-            RebuildKOSList();
-            dataGridViewObjects.Columns[1].Width = dataGridViewObjects.Rows.Count > maxVisibleRows ? nameColumnWidth : nameColumnWidthExt;
-        }
-        private void DataGridViewObjectsOnCellValueChanged(object sender, DataGridViewCellEventArgs dataGridViewCellEventArgs)
-        {
-            RebuildKOSList();
-        }
-
-        private void DataGridViewObjectsColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            RebuildKOSList();
-        }
-
-        private void DataGridViewObjectsOnCellContentClick(object sender, DataGridViewCellEventArgs dataGridViewCellEventArgs)
-        {
-            dataGridViewObjects.CommitEdit(DataGridViewDataErrorContexts.Commit);
-        }
-
-        private void DataGridViewObjectsOnCellMouseClick(object sender, DataGridViewCellMouseEventArgs dataGridViewCellMouseEventArgs)
-        {
-            if (dataGridViewCellMouseEventArgs.Button == MouseButtons.Right && dataGridViewCellMouseEventArgs.RowIndex >= 0)
-            {
-                dataGridViewObjects.Rows.RemoveAt(dataGridViewCellMouseEventArgs.RowIndex);
-            }
-        }
-
         private void buttonAddUnknown_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(metroTextBoxAddNew.Text))
             {
-                dataGridViewObjects.Rows.Add(true, metroTextBoxAddNew.Text, true, true);
-                if (dataGridViewObjects.Rows.Count > 0)
-                {
-                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
-                }
-
-                RadarObject radarObject = new RadarObject(true, metroTextBoxAddNew.Text, true, true);
-                settings.WoWRadarList.Add(radarObject);
-                oListView.AddObject(radarObject);
-                oListView.Items[oListView.Items.Count - 1].EnsureVisible();
+                AddRadarObject(new RadarObject(true, metroTextBoxAddNew.Text, true, true));
             }
             else
             {
@@ -164,11 +110,7 @@ namespace AxTools.Forms
         {
             if (comboboxNPCs.SelectedIndex != -1 && comboboxNPCs.SelectedItem != null && !string.IsNullOrWhiteSpace(comboboxNPCs.SelectedItem.ToString()))
             {
-                dataGridViewObjects.Rows.Add(true, comboboxNPCs.SelectedItem.ToString(),false, true);
-                if (dataGridViewObjects.Rows.Count > 0)
-                {
-                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
-                }
+                AddRadarObject(new RadarObject(true, comboboxNPCs.SelectedItem.ToString(), false, true));
                 comboboxNPCs.SelectedIndex = -1;
                 comboboxNPCs.Invalidate();
             }
@@ -182,11 +124,7 @@ namespace AxTools.Forms
         {
             if (comboboxObjects.SelectedIndex != -1 && comboboxObjects.SelectedItem != null && !string.IsNullOrWhiteSpace(comboboxObjects.SelectedItem.ToString()))
             {
-                dataGridViewObjects.Rows.Add(true, comboboxObjects.SelectedItem.ToString(), true, true);
-                if (dataGridViewObjects.Rows.Count > 0)
-                {
-                    dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
-                }
+                AddRadarObject(new RadarObject(true, comboboxObjects.SelectedItem.ToString(), true, true));
                 comboboxObjects.SelectedIndex = -1;
                 comboboxObjects.Invalidate();
             }
@@ -252,17 +190,15 @@ namespace AxTools.Forms
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string rawText = File.ReadAllText(openFileDialog.FileName, Encoding.UTF8);
-                    List<RadarObject> list = JsonConvert.DeserializeObject<List<RadarObject>>(rawText);
-                    dataGridViewObjects.Rows.Clear();
-                    foreach (RadarObject i in list)
+                    ObservableCollection<RadarObject> o = JsonConvert.DeserializeObject<ObservableCollection<RadarObject>>(rawText);
+                    settings.WoWRadarList.Clear();
+                    foreach (RadarObject radarObject in o)
                     {
-                        dataGridViewObjects.Rows.Add(i.Enabled, i.Name, i.Interact, i.SoundAlarm);
+                        settings.WoWRadarList.Add(radarObject);
                     }
+                    oListView.SetObjects(settings.WoWRadarList);
                 }
-            }
-            if (dataGridViewObjects.Rows.Count > 0)
-            {
-                dataGridViewObjects.FirstDisplayedScrollingRowIndex = dataGridViewObjects.RowCount - 1;
+                oListView.Items[oListView.Items.Count - 1].EnsureVisible();
             }
         }
 
@@ -293,6 +229,13 @@ namespace AxTools.Forms
                 }
             }
         }
-    
+
+        private void AddRadarObject(RadarObject radarObject)
+        {
+            settings.WoWRadarList.Add(radarObject);
+            oListView.AddObject(radarObject);
+            oListView.Items[oListView.Items.Count - 1].EnsureVisible();
+        }
+
     }
 }

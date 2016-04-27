@@ -35,11 +35,6 @@ namespace AxTools.Forms
         {
             this.components = new System.ComponentModel.Container();
             this.toolTip1 = new MetroFramework.Components.MetroToolTip();
-            this.dataGridViewObjects = new Components.DataGridViewExt();
-            this.ObjectToFindEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.ObjectName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Interact = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.SoundAlarm = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.buttonAddNPC = new MetroFramework.Controls.MetroButton();
             this.metroCheckBoxShowPlayersClasses = new MetroFramework.Controls.MetroCheckBox();
             this.metroCheckBoxShowNpcsNames = new MetroFramework.Controls.MetroCheckBox();
@@ -58,7 +53,6 @@ namespace AxTools.Forms
             this.buttonSaveFile = new MetroFramework.Controls.MetroButton();
             this.buttonOpenFile = new MetroFramework.Controls.MetroButton();
             this.tabPageAppearance = new MetroFramework.Controls.MetroTabPage();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjects)).BeginInit();
             this.metroTabControl1.SuspendLayout();
             this.tabPageTrackingUnits.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.oListView)).BeginInit();
@@ -70,51 +64,6 @@ namespace AxTools.Forms
             this.toolTip1.Style = MetroFramework.MetroColorStyle.Blue;
             this.toolTip1.StyleManager = null;
             this.toolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // dataGridViewObjects
-            // 
-            this.dataGridViewObjects.AllowUserToAddRows = false;
-            this.dataGridViewObjects.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewObjects.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ObjectToFindEnabled,
-            this.ObjectName,
-            this.Interact,
-            this.SoundAlarm});
-            this.dataGridViewObjects.Location = new System.Drawing.Point(3, 39);
-            this.dataGridViewObjects.Name = "dataGridViewObjects";
-            this.dataGridViewObjects.RowHeadersVisible = false;
-            this.dataGridViewObjects.Size = new System.Drawing.Size(388, 198);
-            this.dataGridViewObjects.TabIndex = 53;
-            // 
-            // ObjectToFindEnabled
-            // 
-            this.ObjectToFindEnabled.FillWeight = 20F;
-            this.ObjectToFindEnabled.HeaderText = " ";
-            this.ObjectToFindEnabled.Name = "ObjectToFindEnabled";
-            this.ObjectToFindEnabled.Width = 20;
-            // 
-            // ObjectName
-            // 
-            this.ObjectName.FillWeight = 265F;
-            this.ObjectName.HeaderText = "Name";
-            this.ObjectName.Name = "ObjectName";
-            this.ObjectName.Width = 265;
-            // 
-            // Interact
-            // 
-            this.Interact.FillWeight = 50F;
-            this.Interact.HeaderText = "Interact";
-            this.Interact.Name = "Interact";
-            this.Interact.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Interact.Width = 50;
-            // 
-            // SoundAlarm
-            // 
-            this.SoundAlarm.FillWeight = 50F;
-            this.SoundAlarm.HeaderText = "Sound    alarm";
-            this.SoundAlarm.Name = "SoundAlarm";
-            this.SoundAlarm.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.SoundAlarm.Width = 50;
             // 
             // buttonAddNPC
             // 
@@ -278,7 +227,7 @@ namespace AxTools.Forms
             this.metroTabControl1.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
             this.metroTabControl1.Name = "metroTabControl1";
             this.metroTabControl1.SelectedIndex = 0;
-            this.metroTabControl1.Size = new System.Drawing.Size(991, 368);
+            this.metroTabControl1.Size = new System.Drawing.Size(402, 368);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.TabIndex = 62;
             this.metroTabControl1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -292,7 +241,6 @@ namespace AxTools.Forms
             this.tabPageTrackingUnits.Controls.Add(this.buttonOpenFile);
             this.tabPageTrackingUnits.Controls.Add(this.buttonAddObject);
             this.tabPageTrackingUnits.Controls.Add(this.comboboxObjects);
-            this.tabPageTrackingUnits.Controls.Add(this.dataGridViewObjects);
             this.tabPageTrackingUnits.Controls.Add(this.comboboxNPCs);
             this.tabPageTrackingUnits.Controls.Add(this.buttonAddUnknown);
             this.tabPageTrackingUnits.Controls.Add(this.metroTextBoxAddNew);
@@ -304,7 +252,7 @@ namespace AxTools.Forms
             this.tabPageTrackingUnits.HorizontalScrollbarSize = 10;
             this.tabPageTrackingUnits.Location = new System.Drawing.Point(4, 35);
             this.tabPageTrackingUnits.Name = "tabPageTrackingUnits";
-            this.tabPageTrackingUnits.Size = new System.Drawing.Size(983, 329);
+            this.tabPageTrackingUnits.Size = new System.Drawing.Size(394, 329);
             this.tabPageTrackingUnits.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabPageTrackingUnits.StyleManager = null;
             this.tabPageTrackingUnits.TabIndex = 0;
@@ -331,12 +279,12 @@ namespace AxTools.Forms
             this.oListView.HeaderWordWrap = true;
             this.oListView.HideSelection = false;
             this.oListView.IncludeColumnHeadersInCopy = true;
-            this.oListView.Location = new System.Drawing.Point(397, 39);
+            this.oListView.Location = new System.Drawing.Point(3, 39);
             this.oListView.Name = "oListView";
             this.oListView.OwnerDraw = true;
             this.oListView.ShowGroups = false;
             this.oListView.ShowImagesOnSubItems = true;
-            this.oListView.Size = new System.Drawing.Size(386, 198);
+            this.oListView.Size = new System.Drawing.Size(388, 198);
             this.oListView.TabIndex = 63;
             this.oListView.UseAlternatingBackColors = true;
             this.oListView.UseCompatibleStateImageBehavior = false;
@@ -427,7 +375,7 @@ namespace AxTools.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1021, 408);
+            this.ClientSize = new System.Drawing.Size(432, 408);
             this.Controls.Add(this.metroTabControl1);
             this.DisplayHeader = false;
             this.Location = new System.Drawing.Point(0, 0);
@@ -438,7 +386,6 @@ namespace AxTools.Forms
             this.ShowInTaskbar = false;
             this.Text = "Radar settings";
             this.TopMost = true;
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjects)).EndInit();
             this.metroTabControl1.ResumeLayout(false);
             this.tabPageTrackingUnits.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.oListView)).EndInit();
@@ -457,7 +404,6 @@ namespace AxTools.Forms
         private MetroCheckBox metroCheckBoxShowObjectsNames;
         private MetroCheckBox metroCheckBoxShowNpcsNames;
         private MetroCheckBox metroCheckBoxShowPlayersClasses;
-        private DataGridViewExt dataGridViewObjects;
         private MetroButton buttonAddUnknown;
         private MetroTextBox metroTextBoxAddNew;
         private MetroButton buttonAddObject;
@@ -466,10 +412,6 @@ namespace AxTools.Forms
         private MetroTabControl metroTabControl1;
         private MetroTabPage tabPageTrackingUnits;
         private MetroTabPage tabPageAppearance;
-        private DataGridViewCheckBoxColumn ObjectToFindEnabled;
-        private DataGridViewTextBoxColumn ObjectName;
-        private DataGridViewCheckBoxColumn Interact;
-        private DataGridViewCheckBoxColumn SoundAlarm;
         private MetroButton buttonSaveFile;
         private MetroButton buttonOpenFile;
         private BrightIdeasSoftware.ObjectListView oListView;

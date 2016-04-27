@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -194,23 +195,17 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 19, PropertyName = "MumbleStartWithWoW")]
         internal bool MumbleStartWithWoW = false;
 
-
-
         [JsonProperty(Order = 20, PropertyName = "RaidcallDirectory")]
         internal string RaidcallDirectory = string.Empty;
 
         [JsonProperty(Order = 21, PropertyName = "RaidcallStartWithWoW")]
         internal bool RaidcallStartWithWoW = false;
 
-
-
         [JsonProperty(Order = 22, PropertyName = "TS3Directory")]
         internal string TS3Directory = string.Empty;
 
         [JsonProperty(Order = 23, PropertyName = "TS3StartWithWoW")]
         internal bool TS3StartWithWoW = false;
-
-
 
         [JsonProperty(Order = 24, PropertyName = "VentriloDirectory")]
         internal string VentriloDirectory = string.Empty;
@@ -263,10 +258,9 @@ namespace AxTools.Helpers
 
         #region Radar
 
-        internal EventHandler WoWRadarListChanged;
-        private List<RadarObject> wowRadarList = new List<RadarObject>();
+        private readonly ObservableCollection<RadarObject> wowRadarList = new ObservableCollection<RadarObject>();
         [JsonProperty(Order = 33, PropertyName = "WoWRadarList")]
-        internal List<RadarObject> WoWRadarList
+        internal ObservableCollection<RadarObject> WoWRadarList
         {
             get
             {
@@ -274,10 +268,9 @@ namespace AxTools.Helpers
             }
             set
             {
-                wowRadarList = value;
-                if (WoWRadarListChanged != null)
+                foreach (RadarObject o in value)
                 {
-                    WoWRadarListChanged(null, null);
+                    wowRadarList.Add(o);
                 }
             }
         }

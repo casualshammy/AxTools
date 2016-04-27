@@ -3,6 +3,7 @@ using AxTools.Properties;
 using AxTools.WoW;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -70,7 +71,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             Icon = Resources.AppIcon;
-            settings.WoWRadarListChanged += WoWRadarListChanged;
+            settings.WoWRadarList.CollectionChanged += WoWRadarListChanged;
             UpdateCaches();
             checkBoxFriends.ForeColor = settings.WoWRadarFriendColor;
             checkBoxEnemies.ForeColor = settings.WoWRadarEnemyColor;
@@ -581,7 +582,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void WoWRadarListChanged(object sender, EventArgs eventArgs)
+        private void WoWRadarListChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
         {
             UpdateCaches();
         }
@@ -619,7 +620,7 @@ namespace AxTools.Forms
         private void RadarFormClosing(object sender, FormClosingEventArgs e)
         {
             // ReSharper disable once DelegateSubtraction
-            settings.WoWRadarListChanged -= WoWRadarListChanged;
+            settings.WoWRadarList.CollectionChanged -= WoWRadarListChanged;
             whitePen.Dispose();
             enemyPen.Dispose();
             friendPen.Dispose();
