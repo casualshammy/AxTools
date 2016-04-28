@@ -25,17 +25,6 @@ namespace AxTools.WoW.PluginSystem.API
         }
 
         /// <summary>
-        ///     Shows notify message in tray
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="text"></param>
-        /// <param name="icon"></param>
-        public static void ShowNotifyMessage(string title, string text, ToolTipIcon icon)
-        {
-            AppSpecUtils.NotifyUser(title, text, (NotifyUserType) icon, false);
-        }
-        
-        /// <summary>
         /// 
         /// </summary>
         public static IntPtr MainWindowHandle
