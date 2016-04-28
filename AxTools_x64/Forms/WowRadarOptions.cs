@@ -61,7 +61,10 @@ namespace AxTools.Forms
             RadarObject radarObject = rowObject as RadarObject;
             if (radarObject != null)
             {
+                int indexOf = settings.WoWRadarList.IndexOf(radarObject);
+                settings.WoWRadarList.RemoveAt(indexOf);
                 radarObject.Enabled = value;
+                settings.WoWRadarList.Insert(indexOf, radarObject);
             }
             return value;
         }

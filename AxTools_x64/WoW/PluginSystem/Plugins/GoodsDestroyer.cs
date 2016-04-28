@@ -46,7 +46,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public bool ConfigAvailable
         {
-            get { return false; }
+            get { return true; }
         }
 
         #endregion
@@ -94,6 +94,10 @@ namespace AxTools.WoW.PluginSystem.Plugins
                                 GameFunctions.UseItem(herb.BagID, herb.SlotID);
                                 Thread.Sleep(500);
                                 return;
+                            }
+                            if (SettingsInstance.LaunchInkCrafter)
+                            {
+                                Utilities.RequestStartPlugin("InkCrafter");
                             }
                         }
                         if (GameFunctions.IsSpellKnown(31252)) // prospect

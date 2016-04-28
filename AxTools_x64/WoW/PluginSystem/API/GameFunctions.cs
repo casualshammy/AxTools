@@ -104,7 +104,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static void SelectDialogOption(string gossipText)
         {
-            ChatboxSendText(string.Format("/run _G[\"{1}\"]=0;for i=1,100 do if(select(i, GetGossipOptions())==\"{0}\")then _G[\"{1}\"]=i/2+0.5 end end", gossipText, GossipVarName));
+            ChatboxSendText(string.Format("/run _G[\"{1}\"]=0;for i=1,100 do if(select(i,GetGossipOptions())==\"{0}\")then _G[\"{1}\"]=i/2+0.5 end end", gossipText, GossipVarName));
             ChatboxSendText(string.Format("/run if(_G[\"{0}\"]>0)then SelectGossipOption(_G[\"{0}\"], nil, true) end", GossipVarName));
         }
 
