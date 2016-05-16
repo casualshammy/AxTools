@@ -360,7 +360,7 @@ namespace AxTools.Forms
             this.tabPageAppearance.HorizontalScrollbarSize = 10;
             this.tabPageAppearance.Location = new System.Drawing.Point(4, 35);
             this.tabPageAppearance.Name = "tabPageAppearance";
-            this.tabPageAppearance.Size = new System.Drawing.Size(983, 329);
+            this.tabPageAppearance.Size = new System.Drawing.Size(394, 329);
             this.tabPageAppearance.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabPageAppearance.StyleManager = null;
             this.tabPageAppearance.TabIndex = 1;

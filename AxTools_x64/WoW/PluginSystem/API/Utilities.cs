@@ -114,6 +114,11 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
+        public static dynamic GetReferenceOfPlugin(string pluginName)
+        {
+            return PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pluginName);
+        }
+
         public static void TestFunc(out byte r0, out byte r1, out byte r2, out byte r3, out bool b)
         {
             r0 = WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState - 2);

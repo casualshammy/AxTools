@@ -55,6 +55,20 @@ namespace AxTools.WoW.PluginSystem
                 catch (NotSupportedException)
                 {
                 }
+                catch (Exception ex)
+                {
+                    Log.Error(string.Format("[CodeCompiler] Can't add {0}: {1}", assembly.Location, ex.Message));
+                }
+            }
+            string ver = string.Format("{0}.{1}.{2}", Environment.Version.Major, Environment.Version.MajorRevision, Environment.Version.Build);
+            string dllPath = string.Format("C:\\WINDOWS\\Microsoft.NET\\Framework{0}\\v{1}\\Microsoft.CSharp.dll", Environment.Is64BitProcess ? "64" : "", ver);
+            try
+            {
+                AddReference(dllPath);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(string.Format("[CodeCompiler] Can't add Microsoft.CSharp ({0}): {1}", dllPath, ex.Message));
             }
         }
 
