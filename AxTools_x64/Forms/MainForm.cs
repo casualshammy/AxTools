@@ -49,6 +49,7 @@ namespace AxTools.Forms
             progressBarAddonsBackup.Size = linkBackup.Size;
             progressBarAddonsBackup.Location = linkBackup.Location;
             progressBarAddonsBackup.Visible = false;
+            metroToolTip1.SetToolTip(buttonStartStopPlugin, "Check plugins you want to enable and\r\nclick this button to launch.\r\nDouble click on a row to open settings dialog");
 
             BeginInvoke((MethodInvoker) AfterInitializing);
             Log.Info(string.Format("[AxTools] Registered for: {0}", Settings.Instance.UserID));
@@ -816,6 +817,11 @@ namespace AxTools.Forms
                 BeginInvoke(new MethodInvoker(UpdateTrayContextMenu));
             }
             return newValue;
+        }
+
+        private void linkDownloadPlugins_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://axio.name/axtools/plugins/");
         }
 
         #endregion

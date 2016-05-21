@@ -3,6 +3,9 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Timers;
+using System.Windows.Forms;
+using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
 using Timer = System.Windows.Forms.Timer;
@@ -39,27 +42,42 @@ namespace WoWPlugin_Test
         public void OnStart()
         {
             (frm = new MainForm()).Show();
+            //GameFunctions.NewChatMessage += GameFunctionsOnNewChatMessage;
             t.Start();
             t.Elapsed += OnPulse;
+            try
+            {
+                WoWUIFrame.ReloadFrames();
+                foreach (WoWUIFrame frame in WoWUIFrame.GetFrames)
+                {
+                    File.AppendAllText(Application.StartupPath + "\\1.txt", string.Format("{0}::{1}\r\n", frame.GetName, frame.IsVisible));
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void GameFunctionsOnNewChatMessage(ChatMsg chatMsg)
+        {
+            if (chatMsg.Type != 0x11)
+            {
+                frm.label1.Text = string.Format("{0}::{1}::{2}::{3}", chatMsg.Type, chatMsg.Sender, chatMsg.Channel, chatMsg.Text);
+                frm.Invalidate();
+            }
         }
 
         private void OnPulse(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            byte r0, r1, r2, r3;
-            bool b;
-            Utilities.TestFunc(out r0, out r1, out r2, out r3, out b);
-            frm.label1.Text = b.ToString();
-            frm.label5.Text = r0.ToString();
-            frm.label6.Text = r1.ToString();
-            frm.label7.Text = r2.ToString();
-            frm.label8.Text = r3.ToString();
-            frm.Invalidate();
+            //GameFunctions.ReadChat();
         }
 
         public void OnStop()
         {
             t.Elapsed -= OnPulse;
             t.Stop();
+            //GameFunctions.NewChatMessage -= GameFunctionsOnNewChatMessage;
             frm.Dispose();
         }
 

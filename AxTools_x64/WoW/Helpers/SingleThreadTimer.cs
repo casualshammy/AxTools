@@ -85,6 +85,11 @@ namespace AxTools.WoW.Helpers
         {
             Stop();
         }
-    
+
+        public bool IsRunning
+        {
+            get { return flag; }
+        }
+
     }
 }
