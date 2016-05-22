@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -246,7 +247,17 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get
             {
-                return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState) == 1;
+                try
+                {
+                    return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState) == 1;
+                }
+                catch (Exception ex)
+                {
+                    StackTrace stackTrace = new StackTrace();
+                    StackFrame[] stackFrames = stackTrace.GetFrames();
+                    Log.Error("IsInGame: " + string.Join(" -->> ", stackFrames.Select(l => l.GetMethod().Name).Reverse()) + ex.Message);
+                    return false;
+                }
             }
         }
 
@@ -260,7 +271,17 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get
             {
-                return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.Possible_NotLoadingScreen) == 0;
+                try
+                {
+                    return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.Possible_NotLoadingScreen) == 0;
+                }
+                catch (Exception ex)
+                {
+                    StackTrace stackTrace = new StackTrace();
+                    StackFrame[] stackFrames = stackTrace.GetFrames();
+                    Log.Error("IsLoadingScreen: " + string.Join(" -->> ", stackFrames.Select(l => l.GetMethod().Name).Reverse()) + ex.Message);
+                    return false;
+                }
             }
         }
 

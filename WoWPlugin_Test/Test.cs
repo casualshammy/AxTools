@@ -47,11 +47,11 @@ namespace WoWPlugin_Test
             t.Elapsed += OnPulse;
             try
             {
-                WoWUIFrame.ReloadFrames();
-                foreach (WoWUIFrame frame in WoWUIFrame.GetFrames)
-                {
-                    File.AppendAllText(Application.StartupPath + "\\1.txt", string.Format("{0}::{1}\r\n", frame.GetName, frame.IsVisible));
-                }
+                //WoWUIFrame.ReloadFrames();
+                //foreach (WoWUIFrame frame in WoWUIFrame.GetFrames)
+                //{
+                //    File.AppendAllText(Application.StartupPath + "\\1.txt", string.Format("{0}::{1}\r\n", frame.GetName, frame.IsVisible));
+                //}
             }
             catch (Exception ex)
             {
