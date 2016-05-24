@@ -169,10 +169,10 @@ namespace PatternFinder
 
             List<IntPtr> addresses = new List<IntPtr>();
 
-            for (long i = 0; i < size - patternLength; i += (CacheSize - patternLength))
+            for (long i = 0; i < size - patternLength; i += CacheSize - patternLength)
             {
                 byte[] cache = bm.ReadBytes(start + (int)i, (int) (CacheSize > size - i ? size - i : CacheSize));
-                for (uint i2 = 0; i2 < (cache.Length - patternLength); i2++)
+                for (uint i2 = 0; i2 < cache.Length - patternLength; i2++)
                 {
                     if (DataCompare(cache, i2))
                     {
@@ -243,7 +243,7 @@ namespace PatternFinder
 
         public IntPtr Apply(MemoryManagement.MemoryManager bm, IntPtr addr)
         {
-            return (addr + (int)Offset);
+            return addr + (int)Offset;
         }
     }
 

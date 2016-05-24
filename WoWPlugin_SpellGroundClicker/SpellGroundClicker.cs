@@ -50,7 +50,7 @@ namespace WoWPlugin_SpellGroundClicker
         private void OnElapsed()
         {
             WoWPlayerMe localPlayer = ObjMgr.Pulse();
-            if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && (DateTime.UtcNow - spellLastUsed) > cooldown)
+            if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && DateTime.UtcNow - spellLastUsed > cooldown)
             {
                 spellLastUsed = DateTime.UtcNow;
                 GameFunctions.CastSpellByName(spellName);
@@ -65,7 +65,7 @@ namespace WoWPlugin_SpellGroundClicker
 
         #region Variables
 
-        private SingleThreadTimer timer;
+        private SafeTimer timer;
         private readonly string spellName = "Целительный ливень";
         private readonly TimeSpan cooldown = TimeSpan.FromSeconds(10);
         private DateTime spellLastUsed = DateTime.MinValue;

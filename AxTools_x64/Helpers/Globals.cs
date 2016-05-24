@@ -15,6 +15,7 @@ namespace AxTools.Helpers
         internal static readonly string PluginsAssembliesPath = Application.StartupPath + "\\pluginsAssemblies";
         internal static readonly string PluginsSettingsPath = Application.StartupPath + "\\pluginsSettings";
         internal static readonly VersionExt AppVersion = new VersionExt(Assembly.GetExecutingAssembly().GetName().Version);
+        internal static readonly string PluginsURL = "https://axio.name/axtools/plugins/";
 
         internal static readonly SrvAddress[] GameServers =
         {

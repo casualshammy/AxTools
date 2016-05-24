@@ -64,7 +64,7 @@ namespace AxTools.Forms
                         catch (Exception ex)
                         {
                             Log.Error(string.Format("{0} [BlackMarket tracker] Refresh error: {1}", WoWManager.WoWProcess, ex.Message));
-                            AppSpecUtils.NotifyUser("BM refresh error", ex.Message, NotifyUserType.Error, false);
+                            Notify.SmartNotify("BM refresh error", ex.Message, NotifyUserType.Error, false);
                         }
                         finally
                         {
@@ -76,12 +76,12 @@ namespace AxTools.Forms
                 else
                 {
                     Log.Info(string.Format("{0} [BlackMarket tracker] Nothing to scan!", WoWManager.WoWProcess));
-                    AppSpecUtils.NotifyUser("Item count is null", "Are you sure the black market window is open?", NotifyUserType.Error, false);
+                    Notify.SmartNotify("Item count is null", "Are you sure the black market window is open?", NotifyUserType.Error, false);
                 }
             }
             else
             {
-                this.ShowTaskDialog("Player isn't logged in", "If you sure it is, close this window and open BMTracker again", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                this.TaskDialog("Player isn't logged in", "If you sure it is, close this window and open BMTracker again", NotifyUserType.Warn);
             }
         }
 
@@ -106,12 +106,12 @@ namespace AxTools.Forms
                 {
                     BlackMarketItem bmItem = (BlackMarketItem) l.Tag;
                     string name = Wowhead.GetItemInfo(bmItem.Entry).Name;
-                    InvokePost(() => { l.SubItems[0].Text = name; });
+                    PostInvoke(() => { l.SubItems[0].Text = name; });
                     if (!ImageListContainsKeySafe(bmItem.Entry.ToString()))
                     {
                         ImageListAddSafe(bmItem.Entry.ToString(), Wowhead.GetItemInfo(bmItem.Entry).Image);
                     }
-                    InvokePost(() => { l.ImageKey = bmItem.Entry.ToString(); });
+                    PostInvoke(() => { l.ImageKey = bmItem.Entry.ToString(); });
                 }
                 catch (Exception ex)
                 {

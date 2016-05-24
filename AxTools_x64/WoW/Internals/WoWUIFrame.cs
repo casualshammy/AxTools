@@ -1,22 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using AxTools.Helpers;
 
 namespace AxTools.WoW.Internals
 {
     public class WoWUIFrame
     {
-        private readonly IntPtr Address;
+        private readonly IntPtr address;
         private string cachedName;
+        private string cachedEditboxText;
 
         internal WoWUIFrame(IntPtr address)
         {
-            Address = address;
+            this.address = address;
         }
 
         public string GetName
@@ -25,16 +23,29 @@ namespace AxTools.WoW.Internals
             {
                 if (cachedName == null)
                 {
-                    byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.UIFrameName), 132 * 2);
+                    byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(WoWManager.WoWProcess.Memory.Read<IntPtr>(address + WowBuildInfoX64.UIFrameName), 132 * 2);
                     cachedName = Encoding.UTF8.GetString(bytes.TakeWhile(l => l != 0).ToArray());
                 }
                 return cachedName;
             }
         }
 
+        public string EditboxText
+        {
+            get
+            {
+                if (cachedEditboxText == null)
+                {
+                    byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(WoWManager.WoWProcess.Memory.Read<IntPtr>(address + WowBuildInfoX64.UIEditBoxText), 255*2); // 255 - max string length; 2 - utf8 char length
+                    cachedEditboxText = Encoding.UTF8.GetString(bytes.TakeWhile(l => l != 0).ToArray());
+                }
+                return cachedEditboxText;
+            }
+        }
+
         public bool IsVisible
         {
-            get { return ((WoWManager.WoWProcess.Memory.Read<int>(Address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) == 1; }
+            get { return ((WoWManager.WoWProcess.Memory.Read<int>(address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) == 1; }
         }
 
 
@@ -56,7 +67,7 @@ namespace AxTools.WoW.Internals
                     //File.AppendAllText(Application.StartupPath + "\\frames.txt", string.Format("New frame: {0}; Visible: {1}\r\n", f.GetName, f.IsVisible));
                     if (f.GetName == name)
                     {
-                        Log.Info(string.Format("WoWUIFrame.GetFrameByName exec time: {0}ms", stopwatch.ElapsedMilliseconds));
+                        Log.Info(string.Format("WoWUIFrame.GetFrameByName: frame name: {0}; search time: {1}ms", name, stopwatch.ElapsedMilliseconds));
                         return f;
                     }
                 }

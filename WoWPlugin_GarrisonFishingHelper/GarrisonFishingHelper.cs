@@ -127,7 +127,7 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         #region Variables
 
-        private SingleThreadTimer timer;
+        private SafeTimer timer;
         private readonly string killingSpellName = "Молния";
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
         private readonly Random rnd = new Random();

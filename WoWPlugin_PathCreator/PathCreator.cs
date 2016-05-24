@@ -59,7 +59,7 @@ namespace WoWPlugin_PathCreator
 
         #endregion
 
-        private SingleThreadTimer timer;
+        private SafeTimer timer;
         private MainForm mainForm;
 
     }

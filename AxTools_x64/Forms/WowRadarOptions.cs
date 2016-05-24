@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using WindowsFormsAero.TaskDialog;
 using AxTools.Forms.Helpers;
 using AxTools.WoW;
 using AxTools.WoW.Internals;
@@ -105,7 +104,7 @@ namespace AxTools.Forms
             }
             else
             {
-                this.ShowTaskDialog("Object name cannot be empty!", "Please enter an object name in the textbox", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                this.TaskDialog("Object name cannot be empty!", "Please enter an object name in the textbox", NotifyUserType.Error);
             }
         }
 
@@ -119,7 +118,7 @@ namespace AxTools.Forms
             }
             else
             {
-                this.ShowTaskDialog("NPC name cannot be empty!", "Please select NPC from the combobox", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                this.TaskDialog("NPC name cannot be empty!", "Please select NPC from the combobox", NotifyUserType.Error);
             }
         }
 
@@ -133,7 +132,7 @@ namespace AxTools.Forms
             }
             else
             {
-                this.ShowTaskDialog("Object name cannot be empty!", "Please select object from the combobox", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                this.TaskDialog("Object name cannot be empty!", "Please select object from the combobox", NotifyUserType.Error);
             }
         }
 
@@ -187,7 +186,7 @@ namespace AxTools.Forms
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                AppSpecUtils.CheckCreateDir();
+                AppFolders.CreateUserfilesDir();
                 openFileDialog.Filter = @"JSON file|*.json";
                 openFileDialog.InitialDirectory = Globals.UserfilesPath;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -209,7 +208,7 @@ namespace AxTools.Forms
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                AppSpecUtils.CheckCreateDir();
+                AppFolders.CreateUserfilesDir();
                 saveFileDialog.Filter = @"JSON file|*.json";
                 saveFileDialog.InitialDirectory = Globals.UserfilesPath;
                 saveFileDialog.AddExtension = true;

@@ -18,7 +18,7 @@ namespace WoWPlugin_Notifier
 
         public Version Version { get { return new Version(1, 0); } }
 
-        public string Description { get { return "Sends sms on various events (need SMSSender)"; } }
+        public string Description { get { return "Sends sms on various events (need LibSMS)"; } }
 
         private Image trayIcon;
         public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\Mobile-Sms-icon.png", Application.StartupPath, Name))); } }
@@ -44,20 +44,20 @@ namespace WoWPlugin_Notifier
         public void OnStart()
         {
             settingsInstance = this.LoadSettingsJSON<Settings>();
-            dynamic smsSender = Utilities.GetReferenceOfPlugin("SMSSender");
-            if (smsSender == null)
+            dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
+            if (libSMS == null)
             {
-                this.ShowNotify("SMSSender isn't found! Plugin will not work.", true, true);
-                this.LogPrint("SMSSender isn't found! Plugin will not work.");
+                this.ShowNotify("LibSMS isn't found! Plugin will not work.", true, true);
+                this.LogPrint("LibSMS isn't found! Plugin will not work.");
                 return;
             }
-            if (smsSender.GetType().GetMethod("SendSMS") == null)
+            if (libSMS.GetType().GetMethod("SendSMS") == null)
             {
-                this.ShowNotify("SMSSender.SendSMS method isn't found! Plugin will not work.", true, true);
-                this.LogPrint("SMSSender.SendSMS method isn't found! Plugin will not work.");
+                this.ShowNotify("LibSMS.SendSMS method isn't found! Plugin will not work.", true, true);
+                this.LogPrint("LibSMS.SendSMS method isn't found! Plugin will not work.");
                 return;
             }
-            this.LogPrint("SMSSender is OK");
+            this.LogPrint("LibSMS is OK");
             if (settingsInstance.OnWhisper || settingsInstance.OnBNetWhisper)
             {
                 GameFunctions.NewChatMessage += GameFunctionsOnNewChatMessage;
@@ -91,8 +91,8 @@ namespace WoWPlugin_Notifier
             if (frame != null && frame.IsVisible)
             {
                 this.LogPrint("Static popup is visible!");
-                dynamic smsSender = Utilities.GetReferenceOfPlugin("SMSSender");
-                smsSender.SendSMS("Static popup is visible!");
+                dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
+                libSMS.SendSMS("Static popup is visible!");
                 for (int i = 0; i < 60; i++)
                 {
                     if (timerStaticPopup.IsRunning)
@@ -113,8 +113,8 @@ namespace WoWPlugin_Notifier
             if ((settingsInstance.OnWhisper && obj.Type == 7) || (settingsInstance.OnBNetWhisper && obj.Type == 51))
             {
                 this.LogPrint(string.Format("New PM from {0}: {1}", obj.Sender, obj.Text));
-                dynamic smsSender = Utilities.GetReferenceOfPlugin("SMSSender");
-                smsSender.SendSMS(string.Format("New PM from {0}: {1}", obj.Sender, obj.Text));
+                dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
+                libSMS.SendSMS(string.Format("New PM from {0}: {1}", obj.Sender, obj.Text));
             }
         }
 
@@ -123,8 +123,8 @@ namespace WoWPlugin_Notifier
         #endregion
 
         private Settings settingsInstance;
-        private SingleThreadTimer timerChat;
-        private SingleThreadTimer timerStaticPopup;
+        private SafeTimer timerChat;
+        private SafeTimer timerStaticPopup;
 
     }
 }

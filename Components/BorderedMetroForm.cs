@@ -41,7 +41,7 @@ namespace Components
             }
         }
 
-        public void InvokePost(Action action)
+        public void PostInvoke(Action action)
         {
             BeginInvoke(new MethodInvoker(action));
         }

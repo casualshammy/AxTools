@@ -8,18 +8,17 @@ using System.Timers;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
-namespace AxTools.Services
+namespace Dummy
 {
     internal static class KeyboardListener2
     {
         private static readonly Timer _timer = new Timer(50);
         private static KeyExt[] _uniqKeys;
-        private static readonly Dictionary<uint, Keys[]> keysInstances = new Dictionary<uint, Keys[]>();
-        private static uint keysInstancesCounter = 0;
-        private static readonly List<Keys> _keys = new List<Keys>();
+        private static readonly Dictionary<uint, Keys[]> KeysInstances = new Dictionary<uint, Keys[]>();
+        private static uint _keysInstancesCounter;
         private static readonly object _locker = new object();
-        internal static readonly Stopwatch _stopwatch = new Stopwatch();
-        internal static int counter;
+        internal static readonly Stopwatch Stopwatch = new Stopwatch();
+        internal static int Counter;
         private static int _intLocker;
 
         /// <summary>
@@ -52,11 +51,11 @@ namespace AxTools.Services
                 {
                     Thread.Sleep(1);
                 }
-                keysInstancesCounter++;
-                keysInstances[keysInstancesCounter] = keysToHandle;
+                _keysInstancesCounter++;
+                KeysInstances[_keysInstancesCounter] = keysToHandle;
                 RebuildUniqueKeys();
                 _timer.Enabled = true;
-                return keysInstancesCounter;
+                return _keysInstancesCounter;
             }
         }
 
@@ -68,14 +67,14 @@ namespace AxTools.Services
         {
             lock (_locker)
             {
-                if (keysInstances.ContainsKey(identifier))
+                if (KeysInstances.ContainsKey(identifier))
                 {
                     _timer.Enabled = false;
                     while (_intLocker != 0)
                     {
                         Thread.Sleep(1);
                     }
-                    keysInstances.Remove(identifier);
+                    KeysInstances.Remove(identifier);
                     RebuildUniqueKeys();
                     if (_uniqKeys.Length != 0)
                     {
@@ -90,7 +89,7 @@ namespace AxTools.Services
         private static void RebuildUniqueKeys()
         {
             HashSet<Keys> hashSet = new HashSet<Keys>();
-            foreach (Keys key in keysInstances.Values.SelectMany(keys => keys))
+            foreach (Keys key in KeysInstances.Values.SelectMany(keys => keys))
             {
                 hashSet.Add(key);
             }
@@ -99,8 +98,8 @@ namespace AxTools.Services
 
         private static void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            counter++;
-            _stopwatch.Start();
+            Counter++;
+            Stopwatch.Start();
             Interlocked.Increment(ref _intLocker);
             try
             {
@@ -118,7 +117,7 @@ namespace AxTools.Services
             {
                 Interlocked.Decrement(ref _intLocker);
             }
-            _stopwatch.Stop();
+            Stopwatch.Stop();
         }
 
         private class KeyExt

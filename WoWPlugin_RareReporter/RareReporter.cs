@@ -17,7 +17,7 @@ namespace WoWPlugin_RareReporter
 
         public Version Version { get { return new Version(1, 0); } }
 
-        public string Description { get { return "Reports about rare respawn via SMS (need SMSSender)"; } }
+        public string Description { get { return "Reports about rare respawn via SMS (need LibSMS)"; } }
 
         private Image trayIcon;
         public Image TrayIcon { get { return trayIcon ?? (trayIcon = null); } }
@@ -37,20 +37,20 @@ namespace WoWPlugin_RareReporter
 
         public void OnStart()
         {
-            dynamic smsSender = Utilities.GetReferenceOfPlugin("SMSSender");
-            if (smsSender == null)
+            dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
+            if (libSMS == null)
             {
-                this.ShowNotify("SMSSender isn't found! Plugin will not work.", true, true);
-                this.LogPrint("SMSSender isn't found! Plugin will not work.");
+                this.ShowNotify("LibSMS isn't found! Plugin will not work.", true, true);
+                this.LogPrint("LibSMS isn't found! Plugin will not work.");
                 return;
             }
-            if (smsSender.GetType().GetMethod("SendSMS") == null)
+            if (libSMS.GetType().GetMethod("SendSMS") == null)
             {
-                this.ShowNotify("SMSSender.SendSMS method isn't found! Plugin will not work.", true, true);
-                this.LogPrint("SMSSender.SendSMS method isn't found! Plugin will not work.");
+                this.ShowNotify("LibSMS.SendSMS method isn't found! Plugin will not work.", true, true);
+                this.LogPrint("LibSMS.SendSMS method isn't found! Plugin will not work.");
                 return;
             }
-            this.LogPrint("SMSSender is OK");
+            this.LogPrint("LibSMS is OK");
             lastTimeSmsSent = DateTime.MinValue;
             (timer = this.CreateTimer(50, TimerElapsed)).Start();
         }
@@ -75,10 +75,10 @@ namespace WoWPlugin_RareReporter
                     {
                         lastTimeSmsSent = DateTime.UtcNow;
                         this.LogPrint("Timing is OK");
-                        dynamic smsSender = Utilities.GetReferenceOfPlugin("SMSSender");
-                        if (smsSender != null)
+                        dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
+                        if (libSMS != null)
                         {
-                            smsSender.SendSMS("New rare found: " + name);
+                            libSMS.SendSMS("New rare found: " + name);
                             this.LogPrint("SMS is sent");
                         }
                     }
@@ -90,7 +90,7 @@ namespace WoWPlugin_RareReporter
 
         #region Fields
 
-        private SingleThreadTimer timer;
+        private SafeTimer timer;
         private DateTime lastTimeSmsSent;
         private readonly List<WowNpc> npcs = new List<WowNpc>();
         private readonly List<WowObject> objects = new List<WowObject>();

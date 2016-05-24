@@ -165,7 +165,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private uint currentZone;
         private string[] searchingObjects;
         private readonly List<WowObject> wowObjects = new List<WowObject>();
-        private SingleThreadTimer timer;
+        private SafeTimer timer;
 
         #endregion
 

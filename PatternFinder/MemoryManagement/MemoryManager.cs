@@ -7,7 +7,7 @@ using System.Security;
 
 namespace PatternFinder.MemoryManagement
 {
-    public unsafe sealed class MemoryManager : IDisposable
+    public sealed unsafe class MemoryManager : IDisposable
     {
         /// <summary>
         ///     Gets or sets the process handle.

@@ -156,12 +156,13 @@
       <DependentUpon>AppSettingsWoWBinds.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Helpers\RadarObject.cs" />
-    <Compile Include="Helpers\AppSpecUtils.cs" />
+    <Compile Include="Helpers\AppFolders.cs" />
     <Compile Include="Helpers\ErrorProviderExt.cs" />
     <Compile Include="Helpers\MemoryManagement\Imports.cs" />
     <Compile Include="Helpers\MemoryManagement\MarshalCache.cs" />
     <Compile Include="Helpers\MemoryManagement\MemoryManager.cs" />
     <Compile Include="Helpers\MemoryManagement\SafeHandle.cs" />
+    <Compile Include="Helpers\Notify.cs" />
     <Compile Include="Helpers\VersionExt.cs" />
     <Compile Include="Services\AddonsBackup.cs" />
     <Compile Include="Services\Clicker.cs" />

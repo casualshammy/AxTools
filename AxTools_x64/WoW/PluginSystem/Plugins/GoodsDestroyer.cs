@@ -153,7 +153,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         #region Variables
 
-        private SingleThreadTimer timer;
+        private SafeTimer timer;
 
         internal GoodsDestroyerSettings SettingsInstance;
 

@@ -66,7 +66,7 @@ namespace AxTools.Updater
 
         private static void DownloadExtractUpdate(UpdateInfo0 updateInfo)
         {
-            AppSpecUtils.CheckCreateTempDir();
+            AppFolders.CreateTempDir();
             string distrZipFile = Globals.TempPath + "\\_distr.zip";
             string updaterZipFile = Globals.TempPath + "\\_updater.zip";
             File.Delete(distrZipFile);
@@ -127,7 +127,7 @@ namespace AxTools.Updater
                 return;
             }
             TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No), TaskDialogIcon.Information);
-            AppSpecUtils.NotifyUser("Update for AxTools is ready to install", "Click on icon to install", NotifyUserType.Info, true);
+            Notify.SmartNotify("Update for AxTools is ready to install", "Click on icon to install", NotifyUserType.Info, true);
             if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
             {
                 try
@@ -159,13 +159,13 @@ namespace AxTools.Updater
             {
                 if (webEx.Status == WebExceptionStatus.ProtocolError && webEx.Response is HttpWebResponse && ((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    AppSpecUtils.NotifyUser("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact devs", NotifyUserType.Error, false);
+                    Notify.SmartNotify("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact devs", NotifyUserType.Error, false);
                     _timer.Elapsed -= timer_Elapsed;
                     Log.Info(string.Format("[Updater] Your credentials are invalid. Updater is disabled. Please contact devs (status {0}): {1}", webEx.Status, webEx.Message));
                 }
                 else if (webEx.Status == WebExceptionStatus.TrustFailure || webEx.Status == WebExceptionStatus.SecureChannelFailure)
                 {
-                    AppSpecUtils.NotifyUser("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, false);
+                    Notify.SmartNotify("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, false);
                     _timer.Elapsed -= timer_Elapsed;
                     Log.Info(string.Format("[Updater] Cannot validate remote server. Your internet connection is compromised (status {0}): {1}", webEx.Status, webEx.Message));
                 }

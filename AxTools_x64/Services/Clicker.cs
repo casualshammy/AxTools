@@ -72,7 +72,7 @@ namespace AxTools.Services
             {
                 if (_settings.ClickerKey == Keys.None)
                 {
-                    AppSpecUtils.NotifyUser("Incorrect input!", "Please select key to be pressed", NotifyUserType.Error, true);
+                    Notify.SmartNotify("Incorrect input!", "Please select key to be pressed", NotifyUserType.Error, true);
                     return;
                 }
                 if (Enabled)

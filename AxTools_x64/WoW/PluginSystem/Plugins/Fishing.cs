@@ -208,7 +208,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         #region Fields, propeties
 
         private FishingSettings fishingSettings;
-        private SingleThreadTimer timer;
+        private SafeTimer timer;
         private bool pluginIsActive;
         private string fishingSpellName;
         private DateTime lastTimeLureApplied = DateTime.MinValue;

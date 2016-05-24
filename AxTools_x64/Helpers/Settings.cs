@@ -122,7 +122,7 @@ namespace AxTools.Helpers
                 }
             }
             string json = sb.ToString();
-            AppSpecUtils.CheckCreateDir();
+            AppFolders.CreateConfigDir();
             File.WriteAllText(Globals.CfgPath + "\\settings.json", json, Encoding.UTF8);
             Log.Info("Settings file has been updated, time: " + stopwatch.ElapsedMilliseconds + "ms");
         }

@@ -40,7 +40,7 @@ namespace AxTools
                         Application.SetCompatibleTextRenderingDefault(false);
                         WebRequest.DefaultWebProxy = null;
                         DeleteTempFolder();
-                        AppSpecUtils.Legacy();
+                        Legacy();
                         Log.Info(string.Format("[AxTools] Starting application... ({0})", Globals.AppVersion));
                         Application.Run(MainForm.Instance = new MainForm());
                         Log.Info("[AxTools] Application is closed");
@@ -73,6 +73,24 @@ namespace AxTools
                 {
                     //
                 }
+            }
+        }
+
+        private static void Legacy()
+        {
+            try
+            {
+                // 08.10.2015
+                string mySettingsDir = Globals.PluginsSettingsPath + "\\Fishing";
+                string mySettingsFile = mySettingsDir + "\\FishingSettings.json";
+                if (File.Exists(mySettingsFile))
+                {
+                    File.Move(mySettingsFile, mySettingsDir + "\\settings.json");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 

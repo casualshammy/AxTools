@@ -9,31 +9,7 @@ namespace AxTools.Helpers
 {
     internal static class Extensions
     {
-        /// <summary>
-        /// Shows TaskDialog via form.Invoke() if required, direct call otherwise
-        /// </summary>
-        /// <param name="form">Parent form of new TaskDialog</param>
-        /// <param name="title">Message of new TaskDialog</param>
-        /// <param name="text">Content text of new TaskDialog</param>
-        /// <param name="button"></param>
-        /// <param name="icon"></param>
-        internal static void ShowTaskDialog(this Form form, string title, string text, TaskDialogButton button, TaskDialogIcon icon)
-        {
-            if (form.InvokeRequired)
-            {
-                form.Invoke((MethodInvoker) delegate
-                {
-                    form.Activate();
-                    new TaskDialog(title, "AxTools", text, button, icon).Show(form);
-                });
-            }
-            else
-            {
-                form.Activate();
-                new TaskDialog(title, "AxTools", text, button, icon).Show(form);
-            }
-        }
-
+        
         internal static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
             HashSet<TKey> knownKeys = new HashSet<TKey>();

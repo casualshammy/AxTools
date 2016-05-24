@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using AxTools.Forms;
 using AxTools.Helpers;
 using AxTools.WoW.Helpers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace AxTools.WoW.PluginSystem.API
 {
@@ -41,15 +41,15 @@ namespace AxTools.WoW.PluginSystem.API
         }
 
         /// <summary>
-        ///     Creates new <see cref="SingleThreadTimer"/> timer.
+        ///     Creates new <see cref="SafeTimer"/> timer.
         /// </summary>
         /// <param name="plugin"></param>
         /// <param name="interval"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        public static SingleThreadTimer CreateTimer(this IPlugin plugin, int interval, Action action)
+        public static SafeTimer CreateTimer(this IPlugin plugin, int interval, Action action)
         {
-            return new SingleThreadTimer(interval, action) { PluginName = plugin.Name };
+            return new SafeTimer(interval, action) { PluginName = plugin.Name };
         }
 
         public static void SaveSettingsJSON<T>(this IPlugin plugin, T data, string path = null) where T : class
@@ -60,14 +60,14 @@ namespace AxTools.WoW.PluginSystem.API
                 using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
                 {
                     JsonSerializer js = new JsonSerializer();
-                    js.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                    js.Converters.Add(new StringEnumConverter());
                     jsonWriter.Formatting = Formatting.Indented;
                     jsonWriter.IndentChar = ' ';
                     jsonWriter.Indentation = 4;
                     js.Serialize(jsonWriter, data);
                 }
             }
-            AppSpecUtils.CheckCreateDir();
+            AppFolders.CreatePluginsSettingsDir();
             string mySettingsDir = Globals.PluginsSettingsPath + "\\" + plugin.Name;
             if (!Directory.Exists(mySettingsDir))
             {
@@ -128,5 +128,17 @@ namespace AxTools.WoW.PluginSystem.API
             b = GameFunctions.IsInGame;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="plugin"></param>
+        /// <param name="text">Any text you want</param>
+        /// <param name="warning">Is it warning or info</param>
+        /// <param name="sound">Play sound</param>
+        public static void ShowNotify(this IPlugin plugin, string text, bool warning, bool sound)
+        {
+            Notify.Balloon("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound);
+        }
+    
     }
 }

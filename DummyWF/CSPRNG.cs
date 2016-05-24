@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace AxTools.Helpers
+namespace DummyWF
 {
     internal class CSPRNG : IDisposable
     {

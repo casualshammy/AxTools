@@ -6,7 +6,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Helpers
 {
-    public class SingleThreadTimer : IDisposable
+    public class SafeTimer : IDisposable
     {
         private Stopwatch balancingStopwatch;
         private readonly object _lock = new object();
@@ -18,7 +18,7 @@ namespace AxTools.WoW.Helpers
         // optional variable
         public string PluginName;
 
-        public SingleThreadTimer(int interval, Action action)
+        public SafeTimer(int interval, Action action)
         {
             this.interval = interval;
             this.action = action;
@@ -48,7 +48,7 @@ namespace AxTools.WoW.Helpers
                     flag = false;
                     if (!thread.Join(5000))
                     {
-                        throw new Exception(string.Format("{0}:{1} :: [{2}] SingleThreadTimer: Can't stop!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? ""));
+                        throw new Exception(string.Format("{0}:{1} :: [{2}] SafeTimer: Can't stop!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? ""));
                     }
                     thread = null;
                 }
@@ -68,7 +68,7 @@ namespace AxTools.WoW.Helpers
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(string.Format("{0}:{1} :: [{2}] SingleThreadTimer error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? "", ex.Message));
+                        Log.Error(string.Format("{0}:{1} :: [{2}] SafeTimer error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? "", ex.Message));
                     }
                 }
                 int shouldWait = (int) (interval - balancingStopwatch.ElapsedMilliseconds);

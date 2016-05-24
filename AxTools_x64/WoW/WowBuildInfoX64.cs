@@ -138,6 +138,7 @@ namespace AxTools.WoW
         internal const int UIFrameVisible1 = 0x1A;
         internal const int UIFrameVisible2 = 1;
         internal const int UIFrameName = 0x30;
+        internal const int UIEditBoxText = 0x360;
 
         internal static readonly byte[] HookPattern = {0x48, 0x89, 0x7C, 0x24, 0x20, 0x55, 0x48, 0x8D, 0x6C, 0x24, 0xA0, 0x48, 0x81, 0xEC, 0x60, 0x01, 0x00, 0x00};
         internal static readonly int HookLength = HookPattern.Length;

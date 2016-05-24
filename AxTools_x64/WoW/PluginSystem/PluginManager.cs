@@ -1,14 +1,13 @@
-﻿using AxTools.Forms;
-using AxTools.Helpers;
+﻿using AxTools.Helpers;
 using AxTools.WoW.PluginSystem.Plugins;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using WindowsFormsAero.TaskDialog;
 using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.PluginSystem
@@ -65,11 +64,11 @@ namespace AxTools.WoW.PluginSystem
                 {
                     if (RunningPlugins.Count() == 1)
                     {
-                        AppSpecUtils.NotifyUser("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is started", NotifyUserType.Info, false, true);
+                        Notify.Balloon("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is started", NotifyUserType.Info, false);
                     }
                     else
                     {
-                        AppSpecUtils.NotifyUser("AxTools", "Plugins are started", NotifyUserType.Info, false, true);
+                        Notify.Balloon("AxTools", "Plugins are started", NotifyUserType.Info, false);
                     }
                 }
                 if (PluginStateChanged != null)
@@ -106,11 +105,11 @@ namespace AxTools.WoW.PluginSystem
                 {
                     if (RunningPlugins.Count() == 1)
                     {
-                        AppSpecUtils.NotifyUser("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is stopped", NotifyUserType.Info, false, true);
+                        Notify.Balloon("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is stopped", NotifyUserType.Info, false);
                     }
                     else
                     {
-                        AppSpecUtils.NotifyUser("AxTools", "Plugins are stopped", NotifyUserType.Info, false, true);
+                        Notify.Balloon("AxTools", "Plugins are stopped", NotifyUserType.Info, false);
                     }
                 }
                 foreach (PluginContainer pluginContainer in _pluginContainers.Where(l => l.IsRunning))
@@ -145,7 +144,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 if (Settings.Instance.WoWPluginShowIngameNotifications)
                 {
-                    AppSpecUtils.NotifyUser("AxTools", "Plugin <" + plugin.Name + "> is started", NotifyUserType.Info, false, true);
+                    Notify.Balloon("AxTools", "Plugin <" + plugin.Name + "> is started", NotifyUserType.Info, false);
                 }
                 if (PluginStateChanged != null)
                 {
@@ -171,7 +170,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && GameFunctions.IsInGame)
                 {
-                    AppSpecUtils.NotifyUser("AxTools", "Plugin <" + plugin.Name + "> is stopped", NotifyUserType.Info, false, true);
+                    Notify.Balloon("AxTools", "Plugin <" + plugin.Name + "> is stopped", NotifyUserType.Info, false);
                 }
                 _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = false;
                 if (PluginStateChanged != null)
@@ -224,7 +223,8 @@ namespace AxTools.WoW.PluginSystem
 
         private static void LoadPluginsFromDisk()
         {
-            CreatePluginsDirsIfNotExist();
+            AppFolders.CreatePluginsDir();
+            AppFolders.CreatePluginsBinariesDir();
             string[] directories = Directory.GetDirectories(Globals.PluginsPath);
             foreach (string directory in directories)
             {
@@ -243,40 +243,45 @@ namespace AxTools.WoW.PluginSystem
                         dll = Assembly.LoadFile(dllPath);
                         Log.Info(string.Format("[PluginManager] Plugin from directory {0} with hash {1} is already compiled", directory, md5ForFolder));
                     }
-                    if (dll == null)
+                    if (dll != null)
                     {
-                        throw new Exception("Plugin image is null!");
-                    }
-                    Type type = dll.GetTypes().FirstOrDefault(k => k.IsClass && typeof (IPlugin).IsAssignableFrom(k));
-                    if (type != default(Type))
-                    {
-                        IPlugin temp = (IPlugin) Activator.CreateInstance(type);
-                        if (_pluginContainers.Select(l => l.Plugin).All(l => l.Name != temp.Name))
+                        Type type = dll.GetTypes().FirstOrDefault(k => k.IsClass && typeof (IPlugin).IsAssignableFrom(k));
+                        if (type != default(Type))
                         {
-                            if (!string.IsNullOrWhiteSpace(temp.Name))
+                            IPlugin temp = (IPlugin) Activator.CreateInstance(type);
+                            if (_pluginContainers.Select(l => l.Plugin).All(l => l.Name != temp.Name))
                             {
-                                _pluginContainers.Add(new PluginContainer(temp, Settings.Instance.EnabledPluginsList.Contains(temp.Name)));
-                                Log.Info(string.Format("[PluginManager] Plugin loaded: {0} {1}", temp.Name, temp.Version));
+                                if (!string.IsNullOrWhiteSpace(temp.Name))
+                                {
+                                    _pluginContainers.Add(new PluginContainer(temp, Settings.Instance.EnabledPluginsList.Contains(temp.Name)));
+                                    Log.Info(string.Format("[PluginManager] Plugin loaded: {0} {1}", temp.Name, temp.Version));
+                                }
+                                else
+                                {
+                                    throw new Exception("<IPlugin.Name> is empty");
+                                }
                             }
                             else
                             {
-                                throw new Exception("<IPlugin.Name> is empty");
+                                Log.Info(string.Format("[PluginManager] Can't load plugin [{0}]: already loaded", temp.Name));
                             }
                         }
                         else
                         {
-                            Log.Info(string.Format("[PluginManager] Can't load plugin [{0}]: already loaded", temp.Name));
+                            throw new Exception("Can't find IPlugin interface in plugin image!");
                         }
                     }
                     else
                     {
-                        throw new Exception("Can't find IPlugin interface in plugin image!");
+                        throw new Exception("Plugin image is null!");
                     }
                 }
                 catch (Exception ex)
                 {
                     Log.Info(string.Format("[PluginManager] Can't load plugin [{0}]: {1}", directory, ex.Message));
-                    MainForm.Instance.ShowTaskDialog("[PluginManager] Plugin error", "Error has occured during compiling plugins\r\nSome plugins could not be loaded and are disabled", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                    Notify.TaskDialog("[PluginManager] Plugin error",
+                        string.Format("Error has occured during compiling plugins. Some plugins could not be loaded and are disabled\r\n\r\nVisit <a href=\"{0}\">this website</a> to download the latest versions of plugins",
+                            Globals.PluginsURL), NotifyUserType.Warn, (sender, args) => Process.Start(Globals.PluginsURL));
                 }
             }
             ClearOldAssemblies();
@@ -313,23 +318,7 @@ namespace AxTools.WoW.PluginSystem
             }
             return cc.CompiledAssembly;
         }
-
-        private static void CreatePluginsDirsIfNotExist()
-        {
-            if (!Directory.Exists(Globals.PluginsPath))
-            {
-                Directory.CreateDirectory(Globals.PluginsPath);
-            }
-            if (!Directory.Exists(Globals.PluginsAssembliesPath))
-            {
-                Directory.CreateDirectory(Globals.PluginsAssembliesPath);
-            }
-            if (!Directory.Exists(Globals.PluginsSettingsPath))
-            {
-                Directory.CreateDirectory(Globals.PluginsSettingsPath);
-            }
-        }
-
+    
     }
 
 }

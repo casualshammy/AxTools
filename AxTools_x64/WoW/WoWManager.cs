@@ -43,16 +43,16 @@ namespace AxTools.WoW
                             return true;
                         }
                         Log.Info(string.Format("{0} [WoW hook] Player isn't logged in", wowProcess));
-                        AppSpecUtils.NotifyUser("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
+                        Notify.SmartNotify("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
                         return false;
                     }
                     Log.Error(string.Format("{0} [WoW hook] Incorrect WoW build", wowProcess));
-                    AppSpecUtils.NotifyUser("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
+                    Notify.SmartNotify("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
                     return false;
                 }
                 return true;
             }
-            AppSpecUtils.NotifyUser("Module error", "No WoW process found", NotifyUserType.Error, true);
+            Notify.SmartNotify("Module error", "No WoW process found", NotifyUserType.Error, true);
             return false;
         }
 

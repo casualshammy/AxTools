@@ -62,9 +62,9 @@ namespace AxTools.Forms
             HotkeyManager.KeyPressed += KeyboardListener2_KeyPressed;
             if (!InitializeHook())
             {
-                InvokePost(() =>
+                PostInvoke(() =>
                 {
-                    AppSpecUtils.NotifyUser("Hooking is failed", "Lua console will be closed", NotifyUserType.Error, true);
+                    Notify.SmartNotify("Hooking is failed", "Lua console will be closed", NotifyUserType.Error, true);
                     Close();
                 });
             }
@@ -129,7 +129,7 @@ namespace AxTools.Forms
             {
                 if (_wowProcess.IsMinimized)
                 {
-                    AppSpecUtils.NotifyUser("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Please activate WoW window!", NotifyUserType.Warn, true);
+                    Notify.SmartNotify("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Please activate WoW window!", NotifyUserType.Warn, true);
                 }
                 _hookJmp.Apply();
                 _hookJmp.Executor.Execute<long>(asm, true);
@@ -149,7 +149,7 @@ namespace AxTools.Forms
                 if (!settings.WoWLuaConsoleIgnoreGameState)
                 {
                     Log.Info(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
-                    AppSpecUtils.NotifyUser("Lua console's timer is stopped", "The player isn't active or not in the game", NotifyUserType.Warn, false);
+                    Notify.SmartNotify("Lua console's timer is stopped", "The player isn't active or not in the game", NotifyUserType.Warn, false);
                     Invoke(new Action(() => InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty)));
                     return;
                 }
@@ -248,7 +248,7 @@ namespace AxTools.Forms
         private void PictureBoxOpenLuaFileClick(object sender, EventArgs e)
         {
             Select();
-            AppSpecUtils.CheckCreateDir();
+            AppFolders.CreateUserfilesDir();
             using (OpenFileDialog p = new OpenFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = Globals.UserfilesPath })
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
@@ -263,7 +263,7 @@ namespace AxTools.Forms
         private void PictureBoxSaveLuaFileClick(object sender, EventArgs e)
         {
             Select();
-            AppSpecUtils.CheckCreateDir();
+            AppFolders.CreateUserfilesDir();
             using (SaveFileDialog p = new SaveFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = Globals.UserfilesPath })
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
@@ -372,7 +372,7 @@ namespace AxTools.Forms
                               : "UNKNOWN:null :: Lua timer disabled");
                 if (settings.WoWLuaConsoleShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && GameFunctions.IsInGame)
                 {
-                    GameFunctions.ShowNotify("LTimer is stopped");
+                    Notify.Balloon("LuaConsole", "Timer is stopped", NotifyUserType.Info, false);
                 }
                 TimerEnabled = false;
                 SetupTimerControls(false);
@@ -401,7 +401,7 @@ namespace AxTools.Forms
                 timerLua.Enabled = true;
                 if (settings.WoWLuaConsoleShowIngameNotifications)
                 {
-                    GameFunctions.ShowNotify("LTimer is started");
+                    Notify.Balloon("LuaConsole", "Timer is started", NotifyUserType.Info, false);
                 }
                 Log.Info(string.Format("{0}:{1} :: [Lua console] Lua timer enabled", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
             }

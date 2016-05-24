@@ -32,6 +32,7 @@ namespace Components
 
         protected override void WndProc(ref Message m)
         {
+            // ReSharper disable once InconsistentNaming
             int WM_PAINT = 0x000F;
             base.WndProc(ref m);
             if (m.Msg == WM_PAINT)

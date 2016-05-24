@@ -111,7 +111,7 @@ namespace InkCrafter
 
         #endregion
 
-        private SingleThreadTimer timer;
+        private SafeTimer timer;
         internal InkCrafterSettings SettingsInstance;
         private readonly string tableNames = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6));
         private readonly string tableAvailable = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6));

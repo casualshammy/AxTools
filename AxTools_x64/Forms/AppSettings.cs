@@ -448,12 +448,12 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    this.ShowTaskDialog("Cannot open log file", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                    this.TaskDialog("Cannot open log file", ex.Message, NotifyUserType.Error);
                 }
             }
             else
             {
-                this.ShowTaskDialog("Cannot open log file", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                this.TaskDialog("Cannot open log file", "It doesn't exist", NotifyUserType.Error);
             }
         }
 
@@ -472,7 +472,7 @@ namespace AxTools.Forms
                     catch (Exception ex)
                     {
                         Log.Error("Can't send log: " + ex.Message);
-                        this.ShowTaskDialog("Can't send log", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                        this.TaskDialog("Can't send log", ex.Message, NotifyUserType.Error);
                     }
                     finally
                     {
@@ -482,7 +482,8 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                this.ShowTaskDialog("Log file sending error", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                Log.Info("Can't send log file: " + ex.Message);
+                this.TaskDialog("Log file sending error", ex.Message, NotifyUserType.Error);
             }
         }
 

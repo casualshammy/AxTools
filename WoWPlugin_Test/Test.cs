@@ -23,7 +23,7 @@ namespace WoWPlugin_Test
 
         public string Description { get { return "Test plugin"; } }
 
-        private Image trayIcon = null;
+        private readonly Image trayIcon = null;
         public Image TrayIcon { get { return trayIcon; } }
 
         public string WowIcon { get { return string.Empty; } }
@@ -70,7 +70,9 @@ namespace WoWPlugin_Test
 
         private void OnPulse(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            //GameFunctions.ReadChat();
+            WoWUIFrame frame = WoWUIFrame.GetFrameByName("ChatFrame1EditBox");
+            frm.label1.Text = frame != null ? string.Format("Visible: {0}; Editbox text:{1}", frame.IsVisible, frame.EditboxText) : "null";
+            frm.Invalidate();
         }
 
         public void OnStop()
@@ -83,8 +85,8 @@ namespace WoWPlugin_Test
 
         #endregion
 
-        //private SingleThreadTimer timer;
-        private System.Timers.Timer t = new System.Timers.Timer(50);
+        //private SafeTimer timer;
+        private readonly System.Timers.Timer t = new System.Timers.Timer(50);
         private MainForm frm;
     }
 }

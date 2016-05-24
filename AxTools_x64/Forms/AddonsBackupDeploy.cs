@@ -39,12 +39,12 @@ namespace AxTools.Forms
 
         private void AddonsBackup_IsRunningChanged(bool obj)
         {
-            InvokePost(() => { progressBarExtract.Visible = obj; });
+            PostInvoke(() => { progressBarExtract.Visible = obj; });
         }
 
         private void AddonsBackup_ProgressPercentageChanged(int obj)
         {
-            InvokePost(() => { progressBarExtract.Value = obj; });
+            PostInvoke(() => { progressBarExtract.Value = obj; });
         }
 
         private void buttonBeginDeployment_Click(object sender, EventArgs e)

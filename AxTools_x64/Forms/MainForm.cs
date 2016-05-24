@@ -137,7 +137,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    this.ShowTaskDialog("Log file sending error", ex.Message, TaskDialogButton.OK, TaskDialogIcon.Stop);
+                    this.TaskDialog("Log file sending error", ex.Message, NotifyUserType.Error);
                 }
             }
         }
@@ -271,15 +271,22 @@ namespace AxTools.Forms
                     foreach (IPlugin i in PluginManagerEx.LoadedPlugins.Where(i => !nativePlugins.Contains(i.GetType())))
                     {
                         IPlugin plugin = i;
-                        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
-                        toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
+                        try
                         {
-                            if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
-                            else if (plugin.ConfigAvailable) plugin.OnConfig();
-                            contextMenuStripMain.Hide();
-                        };
-                        toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
-                        customPlugins.DropDownItems.Add(toolStripMenuItem);
+                            ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
+                            toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
+                            {
+                                if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
+                                else if (plugin.ConfigAvailable) plugin.OnConfig();
+                                contextMenuStripMain.Hide();
+                            };
+                            toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
+                            customPlugins.DropDownItems.Add(toolStripMenuItem);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(string.Format("Error occured while building tray icon for plugin <{0}>: {1}", plugin.Name, ex.Message));
+                        }
                     }
                 }
             }
@@ -305,7 +312,7 @@ namespace AxTools.Forms
                 }
                 else
                 {
-                    AppSpecUtils.NotifyUser("Warning", "AxTools isn't attached to any WoW process", NotifyUserType.Warn, true);
+                    Notify.SmartNotify("Warning", "AxTools isn't attached to any WoW process", NotifyUserType.Warn, true);
                 }
             }, "Detach from current WoW process");
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
@@ -403,7 +410,7 @@ namespace AxTools.Forms
             }
             else
             {
-                this.ShowTaskDialog("WoW client not found or corrupted", "Can't locate \"Wow-64.exe\"", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                this.TaskDialog("WoW client not found or corrupted", "Can't locate \"Wow-64.exe\"", NotifyUserType.Error);
             }
         }
 
@@ -443,7 +450,7 @@ namespace AxTools.Forms
         {
             if (Clicker.Enabled)
             {
-                this.ShowTaskDialog("Clicker settings", "Please switch clicker off before", TaskDialogButton.OK, TaskDialogIcon.Warning);
+                this.TaskDialog("Clicker settings", "Please switch clicker off before", NotifyUserType.Warn);
             }
             else
             {
@@ -467,7 +474,7 @@ namespace AxTools.Forms
         private void toolStripMenuItemBackupWoWAddOns_Click(object sender, EventArgs e)
         {
             Task.Factory.StartNew(AddonsBackup.ManualBackup)
-                .ContinueWith(l => this.ShowTaskDialog("Backup is complete", "New archive is placed to [" + settings.WoWAddonsBackupPath + "]", TaskDialogButton.OK, TaskDialogIcon.Information));
+                .ContinueWith(l => this.TaskDialog("Backup is complete", "New archive is placed to [" + settings.WoWAddonsBackupPath + "]", NotifyUserType.Info));
         }
 
         private void toolStripMenuItemDeployArchive_Click(object sender, EventArgs e)
@@ -491,7 +498,7 @@ namespace AxTools.Forms
             }
             else
             {
-                this.ShowTaskDialog("Can't open WoW logs folder", "It doesn't exist", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                this.TaskDialog("Can't open WoW logs folder", "It doesn't exist", NotifyUserType.Error);
             }
         }
 
@@ -539,7 +546,7 @@ namespace AxTools.Forms
             }
             else
             {
-                this.ShowTaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                this.TaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", NotifyUserType.Error);
             }
         }
 
@@ -556,7 +563,7 @@ namespace AxTools.Forms
             }
             else
             {
-                this.ShowTaskDialog("Executable not found", "Can't locate \"ts3client_win32.exe\"/\"ts3client_win64.exe\". Check paths in settings dialog", TaskDialogButton.OK, TaskDialogIcon.Stop);
+                this.TaskDialog("Executable not found", "Can't locate \"ts3client_win32.exe\"/\"ts3client_win64.exe\". Check paths in settings dialog", NotifyUserType.Error);
                 return;
             }
             Process.Start(new ProcessStartInfo
@@ -581,7 +588,7 @@ namespace AxTools.Forms
             }
             else
             {
-                AppSpecUtils.NotifyUser("Executable not found", "Can't locate \"raidcall.exe\". Check paths in settings window", NotifyUserType.Error, false);
+                Notify.SmartNotify("Executable not found", "Can't locate \"raidcall.exe\". Check paths in settings window", NotifyUserType.Error, false);
             }
         }
 
@@ -598,7 +605,7 @@ namespace AxTools.Forms
             }
             else
             {
-                AppSpecUtils.NotifyUser("Executable not found", "Can't locate \"mumble.exe\". Check paths in settings window", NotifyUserType.Error, false);
+                Notify.SmartNotify("Executable not found", "Can't locate \"mumble.exe\". Check paths in settings window", NotifyUserType.Error, false);
             }
         }
 
@@ -703,13 +710,13 @@ namespace AxTools.Forms
                         }
                         else
                         {
-                            AppSpecUtils.NotifyUser("Plugin error", "Player isn't logged in", NotifyUserType.Error, true);
+                            Notify.SmartNotify("Plugin error", "Player isn't logged in", NotifyUserType.Error, true);
                         }
                     }
                 }
                 else
                 {
-                    AppSpecUtils.NotifyUser("Plugin error", "You didn't select valid plugin", NotifyUserType.Error, true);
+                    Notify.SmartNotify("Plugin error", "You didn't select valid plugin", NotifyUserType.Error, true);
                 }
             }
             else
@@ -721,7 +728,7 @@ namespace AxTools.Forms
                 catch
                 {
                     Log.Error("Plugin task failed to cancel");
-                    AppSpecUtils.NotifyUser("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
+                    Notify.SmartNotify("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
                 }
             }
             buttonStartStopPlugin.Enabled = true;
@@ -784,7 +791,7 @@ namespace AxTools.Forms
                 }
                 else
                 {
-                    AppSpecUtils.NotifyUser(plugin.Name, "This plugin hasn't settings dialog", NotifyUserType.Info, false);
+                    Notify.SmartNotify(plugin.Name, "This plugin hasn't settings dialog", NotifyUserType.Info, false);
                 }
             }
         }
@@ -821,7 +828,7 @@ namespace AxTools.Forms
 
         private void linkDownloadPlugins_Click(object sender, EventArgs e)
         {
-            Process.Start("https://axio.name/axtools/plugins/");
+            Process.Start(Globals.PluginsURL);
         }
 
         #endregion
