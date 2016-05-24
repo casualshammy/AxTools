@@ -24,11 +24,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
             get { return new Version(1, 1); }
         }
 
-        public string Author
-        {
-            get { return "CasualShammy"; }
-        }
-
         public string Description
         {
             get
@@ -38,11 +33,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
         }
 
         public Image TrayIcon { get { return Resources.inv_misc_gem_bloodgem_01; } }
-
-        public string WowIcon
-        {
-            get { return "Interface\\\\Icons\\\\inv_misc_gem_bloodgem_01"; }
-        }
 
         public bool ConfigAvailable
         {

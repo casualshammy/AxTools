@@ -26,11 +26,6 @@ namespace AxTools.WoW.PluginSystem
         Image TrayIcon { get; }
 
         /// <summary>
-        ///     Icon in format "Interface\\\\Icons\\\\trade_fishing"
-        /// </summary>
-        string WowIcon { get; }
-
-        /// <summary>
         ///     
         /// </summary>
         bool ConfigAvailable { get; }

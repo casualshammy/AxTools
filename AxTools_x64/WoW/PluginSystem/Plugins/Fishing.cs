@@ -26,22 +26,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
             get { return new Version(1, 0); }
         }
 
-        public string Author
-        {
-            get { return "CasualShammy"; }
-        }
-
         public string Description
         {
-            get { return "This is a very simple fish bot. It supports Nat's Hat and Weather-Beaten Fishing Hat if equipped"; }
+            get { return "This is a very simple fish bot. It supports baits and special WoD baits; also it makes breaks to avoid being too tireless"; }
         }
 
         public Image TrayIcon { get { return Resources.trade_fishing; } }
-
-        public string WowIcon
-        {
-            get { return "Interface\\\\Icons\\\\trade_fishing"; }
-        }
 
         public bool ConfigAvailable
         {

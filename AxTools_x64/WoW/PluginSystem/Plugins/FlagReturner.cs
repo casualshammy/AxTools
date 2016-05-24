@@ -22,25 +22,15 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public Version Version { get { return new Version(1, 2); } }
 
-        public string Author
-        {
-            get { return "CasualShammy"; }
-        }
-
         public string Description
         {
             get
             {
-                return "This plugin will automatically return or pickup flags in Warsong Gulch, Twin Peaks and EotS, also it will pickup orbs in ToK";
+                return "This plugin will automatically return or pickup flags in Warsong Gulch, Twin Peaks and EotS, it will pickup orbs in ToK and return carts in Deepwind Gorge";
             }
         }
 
         public Image TrayIcon { get { return Resources.achievement_bg_winwsg; } }
-
-        public string WowIcon
-        {
-            get { return "Interface\\\\Icons\\\\achievement_bg_winwsg"; }
-        }
 
         public bool ConfigAvailable
         {
