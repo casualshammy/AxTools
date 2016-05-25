@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Windows.Forms;
 
 namespace AxTools.Helpers
 {
@@ -64,6 +65,13 @@ namespace AxTools.Helpers
         {
             string credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(username + ":" + password));
             webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Basic {0}", credentials);
+        }
+
+        public static void ActivateBrutal(this Form form)
+        {
+            form.Show();
+            form.WindowState = FormWindowState.Normal;
+            form.Activate();
         }
 
     }

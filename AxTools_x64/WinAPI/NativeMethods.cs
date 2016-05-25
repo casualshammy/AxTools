@@ -55,6 +55,9 @@ namespace AxTools.WinAPI
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool VirtualProtectEx(SafeMemoryHandle hProcess, IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
 
+        [DllImport("shell32.dll")]
+        internal static extern IntPtr SHAppBarMessage(uint dwMessage, [In] ref APPBARDATA pData);
+
         // ReSharper disable InconsistentNaming
         internal static int WS_CAPTION = 0xC00000;
         internal static int WS_THICKFRAME = 0x40000;

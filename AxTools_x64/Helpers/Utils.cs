@@ -89,7 +89,7 @@ namespace AxTools.Helpers
 
         internal static void PlaySystemNotificationAsync()
         {
-            Task.Factory.StartNew(() => NativeMethods.sndPlaySoundW("SystemNotification", 65536 | 2));  //SND_ALIAS = 65536; SND_NODEFAULT = 2;);
+            Task.Factory.StartNew(() => NativeMethods.sndPlaySoundW("SystemNotification", Win32Consts.SND_ALIAS | Win32Consts.SND_NODEFAULT));
         }
 
         internal static Image Base64ToImage(string base64)
@@ -170,7 +170,7 @@ namespace AxTools.Helpers
             return _hardwareID;
         }
 
-        public static string CreateMd5ForFolder(string path)
+        internal static string CreateMd5ForFolder(string path)
         {
             List<string> files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).OrderBy(p => p).ToList();
             using (MD5 md5 = MD5.Create())
@@ -193,6 +193,23 @@ namespace AxTools.Helpers
                 }
                 return BitConverter.ToString(md5.Hash).Replace("-", "");
             }
+        }
+
+        internal static string WordWrap(string text, int chunkSize)
+        {
+            List<string> words = text.Split(' ').ToList();
+            string result = "";
+            while (words.Any())
+            {
+                string buffer = "";
+                while (words.Any() && buffer.Length + 1 + words.First().Length <= 55)
+                {
+                    buffer += " " + words.First();
+                    words.RemoveAt(0);
+                }
+                result += buffer + "\r\n";
+            }
+            return result.TrimEnd('\n').TrimEnd('\r');
         }
 
     }

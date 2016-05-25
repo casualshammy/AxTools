@@ -115,49 +115,58 @@ namespace AxTools.WoW.PluginSystem.API
 
         private static void ChatboxSendText(string text)
         {
-            lock (ChatLock)
+            if (text.Length <= 254) // 254 - max length of non-latin string in game chat box
             {
-                WaitWhileWoWIsMinimized();
-                if (IsInGame && !IsLoadingScreen)
+                lock (ChatLock)
                 {
-                    if (ChatIsOpened)
+                    WaitWhileWoWIsMinimized();
+                    if (IsInGame && !IsLoadingScreen)
                     {
-                        IntPtr vkLControl = (IntPtr) (long) 0xA2, vkA = (IntPtr) (long) 0x41, vkDelete = (IntPtr) (long) 0x2E;
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, vkLControl, IntPtr.Zero);
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, vkA, IntPtr.Zero);
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, vkA, IntPtr.Zero);
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, vkLControl, IntPtr.Zero);
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, vkDelete, IntPtr.Zero);
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, vkDelete, IntPtr.Zero);
-                        Thread.Sleep(200);
-                    }
-                    else
-                    {
-                        int counter = 1000;
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)13, IntPtr.Zero);
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)13, IntPtr.Zero);
-                        while (!ChatIsOpened && counter > 0)
+                        if (ChatIsOpened)
                         {
-                            counter -= 10;
-                            Thread.Sleep(10);
+                            IntPtr vkLControl = (IntPtr) (long) 0xA2, vkA = (IntPtr) (long) 0x41, vkDelete = (IntPtr) (long) 0x2E;
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, vkLControl, IntPtr.Zero);
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, vkA, IntPtr.Zero);
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, vkA, IntPtr.Zero);
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, vkLControl, IntPtr.Zero);
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, vkDelete, IntPtr.Zero);
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, vkDelete, IntPtr.Zero);
+                            Thread.Sleep(200);
+                        }
+                        else
+                        {
+                            int counter = 1000;
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr) 13, IntPtr.Zero);
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr) 13, IntPtr.Zero);
+                            while (!ChatIsOpened && counter > 0)
+                            {
+                                counter -= 10;
+                                Thread.Sleep(10);
+                            }
+                            Thread.Sleep(250);
+                        }
+                        foreach (char ch in text)
+                        {
+                            NativeMethods.PostMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr) ch, IntPtr.Zero);
                         }
                         Thread.Sleep(250);
-                    }
-                    foreach (char ch in text)
-                    {
-                        NativeMethods.PostMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
-                    }
-                    Thread.Sleep(250);
-                    if (text == GetEditboxText())
-                    {
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr) 13, IntPtr.Zero);
-                        NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr) 13, IntPtr.Zero);
-                    }
-                    else
-                    {
-                        Notify.Balloon("Can't send command via chat", "Please don't type while this bot is working", NotifyUserType.Warn, true);
+                        string editboxText = GetEditboxText();
+                        if (text == editboxText)
+                        {
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr) 13, IntPtr.Zero);
+                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr) 13, IntPtr.Zero);
+                        }
+                        else
+                        {
+                            Log.Error(string.Format("ChatboxSendText: text and editboxText are not equal; text: {0}; editboxText: {1}", text, editboxText));
+                            Notify.Balloon("Can't send command via chat", "Please don't type while this bot is working", NotifyUserType.Warn, true);
+                        }
                     }
                 }
+            }
+            else
+            {
+                Log.Error(string.Format("ChatboxSendText: too long string (length={0}): {1}", text.Length, text));
             }
         }
 

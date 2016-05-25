@@ -2,6 +2,7 @@
 {
     internal static class Win32Consts
     {
+
         internal const uint WM_NULL = 0x0;
         internal const uint WM_QUERYENDSESSION = 0x11;
         internal const uint WM_KEYDOWN = 0x100;
@@ -19,5 +20,8 @@
         internal const uint WS_EX_TRANSPARENT = 0x20;
         internal const uint LWA_ALPHA = 0x2;
         internal const uint PAGE_EXECUTE_READWRITE = 64;
+        internal const int SND_ALIAS = 65536;
+        internal const int SND_NODEFAULT = 2;
+
     }
 }

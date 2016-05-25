@@ -156,6 +156,12 @@
       <DependentUpon>AppSettingsWoWBinds.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Helpers\RadarObject.cs" />
+    <Compile Include="Forms\TrayPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TrayPopup.Designer.cs">
+      <DependentUpon>TrayPopup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\AppFolders.cs" />
     <Compile Include="Helpers\ErrorProviderExt.cs" />
     <Compile Include="Helpers\MemoryManagement\Imports.cs" />
@@ -174,6 +180,9 @@
     <Compile Include="Services\PingerHelpers\PingResult.cs" />
     <Compile Include="Updater\UpdateInfo.cs" />
     <Compile Include="Updater\UpdaterService.cs" />
+    <Compile Include="WinAPI\ABE.cs" />
+    <Compile Include="WinAPI\APPBARDATA.cs" />
+    <Compile Include="WinAPI\APPBARMESSAGE.cs" />
     <Compile Include="WinAPI\Win32Consts.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
     <Compile Include="WoW\Internals\WoWUIFrame.cs" />
@@ -187,7 +196,7 @@
     <Compile Include="WoW\Internals\WoWGUID.cs" />
     <Compile Include="WoW\Helpers\ChatMsg.cs" />
     <Compile Include="WoW\Helpers\MoveHelper.cs" />
-    <Compile Include="WoW\Helpers\SingleThreadTimer.cs" />
+    <Compile Include="WoW\Helpers\SafeTimer.cs" />
     <Compile Include="WoW\PluginSystem\PluginContainer.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.cs">
       <SubType>Form</SubType>
@@ -350,6 +359,9 @@
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TrayPopup.resx">
+      <DependentUpon>TrayPopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WaitingOverlay.resx">
       <DependentUpon>WaitingOverlay.cs</DependentUpon>

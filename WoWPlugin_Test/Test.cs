@@ -2,6 +2,9 @@
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Media;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using AxTools.WoW.Helpers;
@@ -57,6 +60,48 @@ namespace WoWPlugin_Test
             {
                 //MessageBox.Show(ex.Message);
             }
+            beep(beepType.Asterisk);
+            Thread.Sleep(1000);
+            beep(beepType.Exclamation);
+            Thread.Sleep(1000);
+            beep(beepType.OK);
+            Thread.Sleep(1000);
+            beep(beepType.Question);
+            Thread.Sleep(1000);
+            beep(beepType.SimpleBeep);
+        }
+
+        public enum beepType
+        {
+            /// <summary>
+            /// A simple windows beep
+            /// </summary>            
+            SimpleBeep  = -1,
+            /// <summary>
+            /// A standard windows OK beep
+            /// </summary>
+            OK    = 0x00,
+            /// <summary>
+            /// A standard windows Question beep
+            /// </summary>
+            Question  = 0x20,
+            /// <summary>
+            /// A standard windows Exclamation beep
+            /// </summary>
+            Exclamation  = 0x30,
+            /// <summary>
+            /// A standard windows Asterisk beep
+            /// </summary>
+            Asterisk  = 0x40,
+        }
+
+        [DllImport("User32.dll", ExactSpelling=true)]
+        private static extern bool MessageBeep(uint type);
+
+        
+        public static void beep(beepType type)
+        {
+            MessageBeep((uint)type);
         }
 
         private void GameFunctionsOnNewChatMessage(ChatMsg chatMsg)

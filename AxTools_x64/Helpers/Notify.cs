@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.Forms;
+using AxTools.Properties;
 using AxTools.WinAPI;
 
 namespace AxTools.Helpers
@@ -89,6 +91,17 @@ namespace AxTools.Helpers
             {
                 taskDialog.HyperlinkClick -= onHyperlinkClick;
             }
+        }
+
+        internal static void TrayPopup(string title, string message, Image image = null, EventHandler onClick = null)
+        {
+            TrayPopup trayPopup = new TrayPopup(title, message, image ?? Resources.AppIcon1);
+            if (onClick != null)
+            {
+                trayPopup.Click += onClick;
+                trayPopup.Click += (sender, args) => trayPopup.Close();
+            }
+            trayPopup.Show(10);
         }
 
     }
