@@ -772,7 +772,7 @@ namespace AxTools.Forms
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            unit.Target();
+                            Task.Run(() => unit.Target());
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
@@ -785,7 +785,7 @@ namespace AxTools.Forms
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            npc.Target();
+                            Task.Run(() => npc.Target());
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
@@ -798,7 +798,7 @@ namespace AxTools.Forms
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            GameFunctions.Interact(wowObject.GUID);
+                            Task.Run(() => wowObject.Interact());
                         }
                         else if (e.Button == MouseButtons.Right)
                         {

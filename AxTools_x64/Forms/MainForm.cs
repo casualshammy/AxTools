@@ -32,6 +32,7 @@ namespace AxTools.Forms
         private bool isClosing;
         private readonly Settings settings = Settings.Instance;
         internal static event Action ClosingEx;
+        internal static int UIThreadID;
 
         internal MainForm()
         {
@@ -51,6 +52,7 @@ namespace AxTools.Forms
             progressBarAddonsBackup.Visible = false;
             metroToolTip1.SetToolTip(buttonStartStopPlugin, "Check plugins you want to enable and\r\nclick this button to launch.\r\nDouble click on a row to open settings dialog");
 
+            UIThreadID = Thread.CurrentThread.ManagedThreadId;
             BeginInvoke((MethodInvoker) AfterInitializing);
             Log.Info(string.Format("[AxTools] Registered for: {0}", Settings.Instance.UserID));
             Log.Info("[AxTools] Initial loading is finished");
@@ -312,7 +314,7 @@ namespace AxTools.Forms
                 }
                 else
                 {
-                    Notify.SmartNotify("Warning", "AxTools isn't attached to any WoW process", NotifyUserType.Warn, true);
+                    Notify.Balloon("Warning", "AxTools isn't attached to any WoW process", NotifyUserType.Warn, true);
                 }
             }, "Detach from current WoW process");
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
@@ -627,6 +629,10 @@ namespace AxTools.Forms
         private void TileMumbleClick(object sender, EventArgs e)
         {
             StartMumble();
+            Notify.TrayPopup("AxTools", "1 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.", NotifyUserType.Info, false);
+            Notify.TrayPopup("AxTools", "2 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.", NotifyUserType.Info, false);
+            Notify.TrayPopup("AxTools", "3 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.", NotifyUserType.Info, false);
+            Notify.TrayPopup("AxTools", "4 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.", NotifyUserType.Info, false);
         }
 
         private void checkBoxStartVenriloWithWow_CheckedChanged(object sender, EventArgs e)
@@ -791,7 +797,7 @@ namespace AxTools.Forms
                 }
                 else
                 {
-                    Notify.SmartNotify(plugin.Name, "This plugin hasn't settings dialog", NotifyUserType.Info, false);
+                    this.TaskDialog(plugin.Name, "This plugin hasn't settings dialog", NotifyUserType.Info);
                 }
             }
         }

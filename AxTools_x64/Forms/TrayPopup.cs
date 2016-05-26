@@ -81,35 +81,16 @@ namespace AxTools.Forms
 
         protected override void OnLoad(EventArgs e)
         {
-            IntPtr taskbarHandle = NativeMethods.FindWindow("Shell_TrayWnd", null);
-            APPBARDATA data = new APPBARDATA
-            {
-                cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA)),
-                hWnd = taskbarHandle
-            };
-            IntPtr result = NativeMethods.SHAppBarMessage((uint)APPBARMESSAGE.GetTaskbarPos, ref data);
-            if (result == IntPtr.Zero)
-            {
-                throw new InvalidOperationException();
-            }
-            if (data.uEdge == ABE.Top)
-            {
-                startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
-                startPosY = 0;
-            }
-            else
-            {
-                startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
-                startPosY = Screen.PrimaryScreen.WorkingArea.Height - Height;
-            }
             base.OnLoad(e);
-            SetDesktopLocation(startPosX, startPosY);
+            SetLocation();
             loadTime = DateTime.UtcNow;
             timer.Start();
             Timeout = Timeout == 0 ? 30 : Timeout;
+            MouseClick += ALL_MouseClick;
             foreach (Control control in Controls)
             {
                 control.MouseEnter += ALL_MouseEnter;
+                control.MouseClick += ALL_MouseClick;
             }
         }
 
@@ -132,6 +113,46 @@ namespace AxTools.Forms
         {
             loadTime = DateTime.UtcNow;
             Opacity = 1.0d;
+        }
+
+        private void ALL_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                Close();
+            }
+        }
+
+        private void SetLocation()
+        {
+            IntPtr taskbarHandle = NativeMethods.FindWindow("Shell_TrayWnd", null);
+            APPBARDATA data = new APPBARDATA
+            {
+                cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA)),
+                hWnd = taskbarHandle
+            };
+            IntPtr result = NativeMethods.SHAppBarMessage((uint)APPBARMESSAGE.GetTaskbarPos, ref data);
+            if (result == IntPtr.Zero)
+            {
+                throw new InvalidOperationException();
+            }
+            List<TrayPopup> popups = Utils.FindForms<TrayPopup>().ToList();
+            popups.Remove(this);
+            if (data.uEdge == ABE.Top)
+            {
+                startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
+                startPosY = popups.Any() ? popups.Select(l => l.Height + l.DesktopLocation.Y + 10).Max() : 0;
+            }
+            else
+            {
+                startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
+                startPosY = popups.Any() ? popups.Select(l => l.DesktopLocation.Y - 10).Min() : Screen.PrimaryScreen.WorkingArea.Height - Height;
+                foreach (TrayPopup trayPopup in popups)
+                {
+                    startPosY -= trayPopup.Height - 10;
+                }
+            }
+            SetDesktopLocation(startPosX, startPosY);
         }
 
     }

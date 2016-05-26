@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Timers;
 using System.Windows.Forms;
+using AxTools.Forms;
 using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW;
@@ -72,7 +73,18 @@ namespace AxTools.Services
             {
                 if (_settings.ClickerKey == Keys.None)
                 {
-                    Notify.SmartNotify("Incorrect input!", "Please select key to be pressed", NotifyUserType.Error, true);
+                    Notify.TrayPopup("Incorrect input!", "Clicker don't know what key it should press. Click here to setup clicker", NotifyUserType.Error, true, null, 10, (sender, args) =>
+                    {
+                        ClickerSettings clickerSettings = Utils.FindForm<ClickerSettings>();
+                        if (clickerSettings == null)
+                        {
+                            new ClickerSettings().Show(MainForm.Instance);
+                        }
+                        else
+                        {
+                            clickerSettings.ActivateBrutal();
+                        }
+                    });
                     return;
                 }
                 if (Enabled)

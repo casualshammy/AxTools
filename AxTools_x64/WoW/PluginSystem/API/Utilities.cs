@@ -119,15 +119,6 @@ namespace AxTools.WoW.PluginSystem.API
             return PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pluginName);
         }
 
-        public static void TestFunc(out byte r0, out byte r1, out byte r2, out byte r3, out bool b)
-        {
-            r0 = WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState - 2);
-            r1 = WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState - 1);
-            r2 = WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState);
-            r3 = WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState + 1);
-            b = GameFunctions.IsInGame;
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -135,9 +126,10 @@ namespace AxTools.WoW.PluginSystem.API
         /// <param name="text">Any text you want</param>
         /// <param name="warning">Is it warning or info</param>
         /// <param name="sound">Play sound</param>
-        public static void ShowNotify(this IPlugin plugin, string text, bool warning, bool sound)
+        /// <param name="timeout">Time in seconds before popup disappears</param>
+        public static void ShowNotify(this IPlugin plugin, string text, bool warning, bool sound, int timeout = 10)
         {
-            Notify.Balloon("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound);
+            Notify.TrayPopup("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, plugin.TrayIcon);
         }
     
     }

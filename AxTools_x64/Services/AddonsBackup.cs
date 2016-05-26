@@ -74,19 +74,19 @@ namespace AxTools.Services
                     else
                     {
                         Log.Info("[BackupAddons] Archive " + path + " isn't found");
-                        Notify.SmartNotify("Backup error", "Archive " + path + " isn't found", NotifyUserType.Error, true);
+                        Notify.Balloon("Backup error", "Archive " + path + " isn't found", NotifyUserType.Error, true);
                     }
                 }
                 else
                 {
                     Log.Info("[BackupAddons] WoW dir (" + _settings.WoWDirectory + ") isn't found");
-                    Notify.SmartNotify("Backup error", "WoW dir (" + _settings.WoWDirectory + ") isn't found", NotifyUserType.Error, true);
+                    Notify.Balloon("Backup error", "WoW dir (" + _settings.WoWDirectory + ") isn't found", NotifyUserType.Error, true);
                 }
             }
             catch (Exception ex)
             {
                 Log.Error("[BackupAddons] Deploying error: " + ex.Message);
-                Notify.SmartNotify("Deploying error", ex.Message, NotifyUserType.Error, true);
+                Notify.Balloon("Deploying error", ex.Message, NotifyUserType.Error, true);
             }
             if (IsRunningChanged != null)
             {
@@ -143,19 +143,19 @@ namespace AxTools.Services
                     catch (Exception ex)
                     {
                         Log.Error("[BackupAddons] Backup error: " + ex.Message);
-                        Notify.SmartNotify("Backup error", ex.Message, NotifyUserType.Error, true);
+                        Notify.Balloon("Backup error", ex.Message, NotifyUserType.Error, true);
                     }
                 }
                 else
                 {
                     Log.Info("[BackupAddons] WTF directory is too large");
-                    Notify.SmartNotify("Backup error", "WTF directory is too large (> 1GB)", NotifyUserType.Error, true);
+                    Notify.Balloon("Backup error", "WTF directory is too large (> 1GB)", NotifyUserType.Error, true);
                 }
             }
             else
             {
                 Log.Info("[BackupAddons] WTF directory isn't found");
-                Notify.SmartNotify("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
+                Notify.Balloon("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
             }
             if (IsRunningChanged != null)
             {

@@ -60,6 +60,7 @@ namespace WoWPlugin_Notifier
             this.LogPrint("LibSMS is OK");
             if (settingsInstance.OnWhisper || settingsInstance.OnBNetWhisper)
             {
+                GameFunctions.ReadChat();
                 GameFunctions.NewChatMessage += GameFunctionsOnNewChatMessage;
                 (timerChat = this.CreateTimer(1000, TimerChat_OnElapsed)).Start();
                 this.LogPrint("Whisper notification enabled");

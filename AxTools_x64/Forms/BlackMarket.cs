@@ -64,7 +64,7 @@ namespace AxTools.Forms
                         catch (Exception ex)
                         {
                             Log.Error(string.Format("{0} [BlackMarket tracker] Refresh error: {1}", WoWManager.WoWProcess, ex.Message));
-                            Notify.SmartNotify("BM refresh error", ex.Message, NotifyUserType.Error, false);
+                            this.TaskDialog("BM refresh error", ex.Message, NotifyUserType.Error);
                         }
                         finally
                         {
@@ -76,7 +76,7 @@ namespace AxTools.Forms
                 else
                 {
                     Log.Info(string.Format("{0} [BlackMarket tracker] Nothing to scan!", WoWManager.WoWProcess));
-                    Notify.SmartNotify("Item count is null", "Are you sure the black market window is open?", NotifyUserType.Error, false);
+                    this.TaskDialog("BM Tracker: Item count is null", "Are you sure the black market window is open?", NotifyUserType.Error);
                 }
             }
             else

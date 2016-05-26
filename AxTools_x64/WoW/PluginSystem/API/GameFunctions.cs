@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using AxTools.Forms;
 using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW.Helpers;
@@ -41,8 +42,8 @@ namespace AxTools.WoW.PluginSystem.API
                 }
                 else
                 {
-                    Notify.SmartNotify("Attention!", "Please set up WoW internal keybinds in <Settings -> World of Warcraft -> Ingame key binds>", NotifyUserType.Warn, true);
-                    Thread.Sleep(1000);
+                    Notify.TrayPopup("Attention!", "Please set up WoW internal keybinds in <Settings -> World of Warcraft -> Ingame key binds>", NotifyUserType.Warn, true);
+                    Thread.Sleep(3000);
                 }
             }
         }
@@ -74,8 +75,8 @@ namespace AxTools.WoW.PluginSystem.API
                 }
                 else
                 {
-                    Notify.SmartNotify("Attention!", "Please set up WoW internal keybinds in <Settings -> World of Warcraft -> Ingame key binds>", NotifyUserType.Warn, true);
-                    Thread.Sleep(1000);
+                    Notify.TrayPopup("Attention!", "Please set up WoW internal keybinds in <Settings -> World of Warcraft -> Ingame key binds>", NotifyUserType.Warn, true);
+                    Thread.Sleep(3000);
                 }
             }
         }
@@ -450,7 +451,9 @@ namespace AxTools.WoW.PluginSystem.API
         {
             if (WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsMinimized)
             {
-                Notify.SmartNotify("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Please activate WoW window!", NotifyUserType.Warn, true);
+                Notify.TrayPopup("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Click to activate WoW window", NotifyUserType.Warn, true, null, 10,
+                    (sender, args) => NativeMethods.ShowWindow(WoWManager.WoWProcess.MainWindowHandle, 9));
+                Utils.LogIfCalledFromUIThread();
                 while (WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsMinimized)
                 {
                     Thread.Sleep(100);

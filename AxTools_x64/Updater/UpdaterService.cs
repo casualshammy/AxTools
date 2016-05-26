@@ -128,7 +128,7 @@ namespace AxTools.Updater
             }
             TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No), TaskDialogIcon.Information);
             //Notify.SmartNotify("Update for AxTools is ready to install", "Click on icon to install", NotifyUserType.Info, true);
-            Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", null, (sender, args) => MainForm.Instance.ActivateBrutal());
+            Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 10, (sender, args) => MainForm.Instance.ActivateBrutal());
             if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
             {
                 try
@@ -161,14 +161,14 @@ namespace AxTools.Updater
                 if (webEx.Status == WebExceptionStatus.ProtocolError && webEx.Response is HttpWebResponse && ((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Unauthorized)
                 {
                     //Notify.SmartNotify("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact devs", NotifyUserType.Error, false);
-                    Notify.TrayPopup("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact devs");
+                    Notify.TrayPopup("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact devs", NotifyUserType.Error, false);
                     _timer.Elapsed -= timer_Elapsed;
                     Log.Info(string.Format("[Updater] Your credentials are invalid. Updater is disabled. Please contact devs (status {0}): {1}", webEx.Status, webEx.Message));
                 }
                 else if (webEx.Status == WebExceptionStatus.TrustFailure || webEx.Status == WebExceptionStatus.SecureChannelFailure)
                 {
                     //Notify.SmartNotify("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, false);
-                    Notify.TrayPopup("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised");
+                    Notify.TrayPopup("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, true);
                     _timer.Elapsed -= timer_Elapsed;
                     Log.Info(string.Format("[Updater] Cannot validate remote server. Your internet connection is compromised (status {0}): {1}", webEx.Status, webEx.Message));
                 }

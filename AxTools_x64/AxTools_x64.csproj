@@ -429,6 +429,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
+    <None Include="Resources\dialog_warning.png" />
+    <None Include="Resources\dialog_information.png" />
+    <None Include="Resources\dialog_error.png" />
     <None Include="Resources\boxes37.png" />
     <None Include="Resources\Ashran.txt" />
     <None Include="Resources\1435959119_add-item.png" />

@@ -93,15 +93,44 @@ namespace AxTools.Helpers
             }
         }
 
-        internal static void TrayPopup(string title, string message, Image image = null, EventHandler onClick = null)
+        internal static void TrayPopup(string title, string message, NotifyUserType type, bool sound, Image image = null, int timeout = 10, EventHandler onClick = null)
         {
-            TrayPopup trayPopup = new TrayPopup(title, message, image ?? Resources.AppIcon1);
-            if (onClick != null)
+            MainForm.Instance.BeginInvoke((MethodInvoker) delegate
             {
-                trayPopup.Click += onClick;
-                trayPopup.Click += (sender, args) => trayPopup.Close();
-            }
-            trayPopup.Show(10);
+                TrayPopup trayPopup = new TrayPopup(title, message, image);
+                if (image == null)
+                {
+                    if (type == NotifyUserType.Error)
+                    {
+                        trayPopup.Icon = Resources.dialog_error;
+                    }
+                    else if (type == NotifyUserType.Warn)
+                    {
+                        trayPopup.Icon = Resources.dialog_warning;
+                    }
+                    else
+                    {
+                        trayPopup.Icon = Resources.dialog_information;
+                    }
+                }
+                if (onClick != null)
+                {
+                    trayPopup.Click += onClick;
+                    trayPopup.Click += (sender, args) => trayPopup.Close();
+                }
+                trayPopup.Show(timeout);
+                if (sound)
+                {
+                    if (type == NotifyUserType.Error || type == NotifyUserType.Warn)
+                    {
+                        SystemSounds.Hand.Play();
+                    }
+                    else
+                    {
+                        Utils.PlaySystemNotificationAsync();
+                    }
+                }
+            });
         }
 
     }

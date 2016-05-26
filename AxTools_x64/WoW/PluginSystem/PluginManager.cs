@@ -64,11 +64,11 @@ namespace AxTools.WoW.PluginSystem
                 {
                     if (RunningPlugins.Count() == 1)
                     {
-                        Notify.Balloon("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is started", NotifyUserType.Info, false);
+                        Notify.TrayPopup("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is started", NotifyUserType.Info, false, RunningPlugins.First().TrayIcon);
                     }
                     else
                     {
-                        Notify.Balloon("AxTools", "Plugins are started", NotifyUserType.Info, false);
+                        Notify.TrayPopup("AxTools", string.Format("Plugins are started ({0})", string.Join(", ", RunningPlugins.Select(l => l.Name))), NotifyUserType.Info, false);
                     }
                 }
                 if (PluginStateChanged != null)
@@ -105,11 +105,11 @@ namespace AxTools.WoW.PluginSystem
                 {
                     if (RunningPlugins.Count() == 1)
                     {
-                        Notify.Balloon("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is stopped", NotifyUserType.Info, false);
+                        Notify.TrayPopup("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is stopped", NotifyUserType.Info, false, RunningPlugins.First().TrayIcon);
                     }
                     else
                     {
-                        Notify.Balloon("AxTools", "Plugins are stopped", NotifyUserType.Info, false);
+                        Notify.TrayPopup("AxTools", string.Format("Plugins are stopped ({0})", string.Join(", ", RunningPlugins.Select(l => l.Name))), NotifyUserType.Info, false);
                     }
                 }
                 foreach (PluginContainer pluginContainer in _pluginContainers.Where(l => l.IsRunning))
@@ -144,7 +144,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 if (Settings.Instance.WoWPluginShowIngameNotifications)
                 {
-                    Notify.Balloon("AxTools", "Plugin <" + plugin.Name + "> is started", NotifyUserType.Info, false);
+                    Notify.TrayPopup("AxTools", "Plugin <" + plugin.Name + "> is started", NotifyUserType.Info, false, plugin.TrayIcon);
                 }
                 if (PluginStateChanged != null)
                 {

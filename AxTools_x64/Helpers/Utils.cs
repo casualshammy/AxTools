@@ -2,6 +2,7 @@
 using AxTools.WinAPI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
@@ -10,8 +11,10 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AxTools.Forms;
 
 namespace AxTools.Helpers
 {
@@ -210,6 +213,16 @@ namespace AxTools.Helpers
                 result += buffer + "\r\n";
             }
             return result.TrimEnd('\n').TrimEnd('\r');
+        }
+
+        internal static void LogIfCalledFromUIThread()
+        {
+            if (Thread.CurrentThread.ManagedThreadId == MainForm.UIThreadID)
+            {
+                StackTrace stackTrace = new StackTrace();
+                StackFrame[] stackFrames = stackTrace.GetFrames();
+                Log.Error("Trying to call from UI thread; call stack: " + string.Join(" -->> ", stackFrames != null ? stackFrames.Select(l => l.GetMethod().Name).Reverse() : new[] {"Stack is null"}));
+            }
         }
 
     }

@@ -41,7 +41,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_RareReporter", "W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_Notifier", "WoWPlugin_Notifier\WoWPlugin_Notifier.csproj", "{5821643F-1906-497C-BC75-87091956B19C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_SMSSender", "C:\Program Files (x86)\AxTools\plugins\LibSMS\WoWPlugin_SMSSender.csproj", "{7C99C628-6AF4-4845-9810-C76D47B5556B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_LibSMS", "C:\Program Files (x86)\AxTools\plugins\LibSMS\WoWPlugin_LibSMS.csproj", "{7C99C628-6AF4-4845-9810-C76D47B5556B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

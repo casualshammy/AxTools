@@ -58,6 +58,10 @@ namespace AxTools.WinAPI
         [DllImport("shell32.dll")]
         internal static extern IntPtr SHAppBarMessage(uint dwMessage, [In] ref APPBARDATA pData);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
         // ReSharper disable InconsistentNaming
         internal static int WS_CAPTION = 0xC00000;
         internal static int WS_THICKFRAME = 0x40000;

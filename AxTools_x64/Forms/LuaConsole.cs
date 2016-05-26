@@ -64,7 +64,7 @@ namespace AxTools.Forms
             {
                 PostInvoke(() =>
                 {
-                    Notify.SmartNotify("Hooking is failed", "Lua console will be closed", NotifyUserType.Error, true);
+                    Notify.TrayPopup("Hooking is failed", "Lua console will be closed", NotifyUserType.Error, true);
                     Close();
                 });
             }
@@ -129,7 +129,7 @@ namespace AxTools.Forms
             {
                 if (_wowProcess.IsMinimized)
                 {
-                    Notify.SmartNotify("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Please activate WoW window!", NotifyUserType.Warn, true);
+                    Notify.Balloon("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Please activate WoW window!", NotifyUserType.Warn, true);
                 }
                 _hookJmp.Apply();
                 _hookJmp.Executor.Execute<long>(asm, true);
@@ -149,7 +149,7 @@ namespace AxTools.Forms
                 if (!settings.WoWLuaConsoleIgnoreGameState)
                 {
                     Log.Info(string.Format("{0}:{1} :: Lua console's timer is stopped: the player isn't active or not in the game", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID));
-                    Notify.SmartNotify("Lua console's timer is stopped", "The player isn't active or not in the game", NotifyUserType.Warn, false);
+                    Notify.Balloon("Lua console's timer is stopped", "The player isn't active or not in the game", NotifyUserType.Warn, false);
                     Invoke(new Action(() => InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty)));
                     return;
                 }
