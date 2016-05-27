@@ -460,14 +460,14 @@ namespace AxTools.Helpers
 
         private static string GetWowPath()
         {
-            using (RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Blizzard Entertainment\\\\World of Warcraft"))
+            using (RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Wow6432Node\\\\Blizzard Entertainment\\\\World of Warcraft"))
             {
                 try
                 {
                     if (regVersion != null && regVersion.GetValue("InstallPath") != null)
                     {
                         string raw = regVersion.GetValue("InstallPath").ToString();
-                        return raw.Replace("\"", string.Empty).Replace("World of Warcraft\\", "World of Warcraft");
+                        return raw.Remove(raw.Length - 1);
                     }
                     return string.Empty;
                 }

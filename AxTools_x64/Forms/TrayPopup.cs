@@ -141,15 +141,45 @@ namespace AxTools.Forms
             if (data.uEdge == ABE.Top)
             {
                 startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
-                startPosY = popups.Any() ? popups.Select(l => l.Height + l.DesktopLocation.Y + 10).Max() : 0;
+                startPosY = 0;
+                if (popups.Any())
+                {
+                    List<int> yTopLeft = popups.Select(l => l.DesktopLocation.Y).Concat(new[] {Screen.PrimaryScreen.WorkingArea.Height}).ToList();
+                    yTopLeft.Sort();
+                    List<int> yBottomLeft = new[] {-10}.Concat(popups.Select(l => l.DesktopLocation.Y + l.Height)).ToList();
+                    yBottomLeft.Sort();
+                    for (int i = 0; i < yTopLeft.Count; i++)
+                    {
+                        int availHeight = yTopLeft[i] - yBottomLeft[i];
+                        if (availHeight >= Height + 10 + 10)
+                        {
+                            startPosY = yBottomLeft[i] + 10;
+                            break;
+                        }
+                    }
+                }
             }
             else
             {
                 startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
-                startPosY = popups.Any() ? popups.Select(l => l.DesktopLocation.Y - 10).Min() : Screen.PrimaryScreen.WorkingArea.Height - Height;
-                foreach (TrayPopup trayPopup in popups)
+                startPosY = Screen.PrimaryScreen.WorkingArea.Height - Height;
+                if (popups.Any())
                 {
-                    startPosY -= trayPopup.Height - 10;
+                    List<int> yTopLeft = new[] {Screen.PrimaryScreen.WorkingArea.Height + 10}.Concat(popups.Select(l => l.DesktopLocation.Y)).ToList();
+                    yTopLeft.Sort();
+                    yTopLeft.Reverse();
+                    List<int> yBottomLeft = popups.Select(l => l.DesktopLocation.Y + l.Height).Concat(new[] {0}).ToList();
+                    yBottomLeft.Sort();
+                    yBottomLeft.Reverse();
+                    for (int i = 0; i < yTopLeft.Count; i++)
+                    {
+                        int availHeight = yTopLeft[i] - yBottomLeft[i];
+                        if (availHeight >= Height + 10 + 10)
+                        {
+                            startPosY = yTopLeft[i] - 10 - Height;
+                            break;
+                        }
+                    }
                 }
             }
             SetDesktopLocation(startPosX, startPosY);

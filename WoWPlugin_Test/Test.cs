@@ -11,6 +11,7 @@ using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
+using Microsoft.Win32;
 using Timer = System.Windows.Forms.Timer;
 
 namespace WoWPlugin_Test
@@ -49,6 +50,22 @@ namespace WoWPlugin_Test
             GameFunctions.NewChatMessage += GameFunctionsOnNewChatMessage;
             t.Start();
             t.Elapsed += OnPulse;
+            using (RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Wow6432Node\\\\Blizzard Entertainment\\\\World of Warcraft"))
+            {
+                try
+                {
+                    if (regVersion != null && regVersion.GetValue("InstallPath") != null)
+                    {
+                        string raw = regVersion.GetValue("InstallPath").ToString();
+                        MessageBox.Show(raw);
+                    }
+                    MessageBox.Show(string.Empty);
+                }
+                catch
+                {
+                    MessageBox.Show(string.Empty);
+                }
+            }
         }
 
         private void OnPulse(object sender, ElapsedEventArgs e)
