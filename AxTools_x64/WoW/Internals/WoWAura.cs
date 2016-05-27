@@ -8,10 +8,10 @@ namespace AxTools.WoW.Internals
     [StructLayout(LayoutKind.Explicit, Size = 0x68)]
     public struct WoWAura
     {
-        [FieldOffset(0x40)] internal WoWGUID OwnerGUID;
-        [FieldOffset(0x50)] internal int SpellId;
-        [FieldOffset(0x59)] internal byte Stack;
-        [FieldOffset(0x60)] internal uint TimeLeftInMs;
+        [FieldOffset(0x40)] public WoWGUID OwnerGUID;
+        [FieldOffset(0x50)] public int SpellId;
+        [FieldOffset(0x59)] public byte Stack;
+        [FieldOffset(0x60)] public uint TimeLeftInMs;
 
         internal WoWAura(WoWGUID ownerGUID, int spellID, byte stack, uint timeLeft)
         {

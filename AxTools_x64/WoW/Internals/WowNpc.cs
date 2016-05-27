@@ -17,7 +17,7 @@ namespace AxTools.WoW.Internals
 
         internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
 
-        internal IntPtr Address;
+        public IntPtr Address;
 
         private IntPtr mDescriptors = IntPtr.Zero;
         internal IntPtr Descriptors
@@ -130,7 +130,7 @@ namespace AxTools.WoW.Internals
         }
 
         private uint mEntryID;
-        internal uint EntryID
+        public uint EntryID
         {
             get
             {

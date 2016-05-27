@@ -56,7 +56,7 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        internal readonly IntPtr Address;
+        public readonly IntPtr Address;
 
         /// <summary>
         ///     The GUID of the object this unit is targeting.
@@ -68,7 +68,7 @@ namespace AxTools.WoW.Internals
         /// <summary>
         ///     The unit's level.
         /// </summary>
-        internal readonly uint Level;
+        public readonly uint Level;
 
         /// <summary>
         ///     The unit's health.
@@ -89,7 +89,7 @@ namespace AxTools.WoW.Internals
         /// <summary>
         ///     Gets the class of the unit.
         /// </summary>
-        internal readonly WowPlayerClass Class;
+        public readonly WowPlayerClass Class;
         
         protected WoWGUID MGUID;
         public WoWGUID GUID
@@ -104,7 +104,7 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        internal string Name
+        public string Name
         {
             get
             {

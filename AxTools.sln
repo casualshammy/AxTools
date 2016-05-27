@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_Notifier", "WoWPl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_LibSMS", "C:\Program Files (x86)\AxTools\plugins\LibSMS\WoWPlugin_LibSMS.csproj", "{7C99C628-6AF4-4845-9810-C76D47B5556B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_Dumper", "WoWPlugins\WoWPlugin_Dumper\WoWPlugin_Dumper.csproj", "{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -499,6 +501,27 @@ Global
 		{7C99C628-6AF4-4845-9810-C76D47B5556B}.Template|Win32.ActiveCfg = Release|Any CPU
 		{7C99C628-6AF4-4845-9810-C76D47B5556B}.Template|x64.ActiveCfg = Release|Any CPU
 		{7C99C628-6AF4-4845-9810-C76D47B5556B}.Template|x86.ActiveCfg = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Release|Win32.ActiveCfg = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Release|x64.ActiveCfg = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Release|x86.ActiveCfg = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Template|Any CPU.ActiveCfg = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Template|Any CPU.Build.0 = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Template|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Template|Mixed Platforms.Build.0 = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Template|Win32.ActiveCfg = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Template|x64.ActiveCfg = Release|Any CPU
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Template|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -515,5 +538,6 @@ Global
 		{1EB1B6EA-12A4-4D0B-A92F-A21B34579B6D} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 		{5821643F-1906-497C-BC75-87091956B19C} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 		{7C99C628-6AF4-4845-9810-C76D47B5556B} = {3D634715-DB81-45D6-8812-701A66BFF21E}
+		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 	EndGlobalSection
 EndGlobal

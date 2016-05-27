@@ -18,7 +18,7 @@ namespace AxTools.WoW.Internals
             Location = info.Location;
         }
 
-        internal readonly IntPtr Address;
+        public readonly IntPtr Address;
 
         internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
 
@@ -29,7 +29,7 @@ namespace AxTools.WoW.Internals
         internal readonly bool Bobbing;
 
         private WoWGUID mOwnerGUID;
-        internal WoWGUID OwnerGUID
+        public WoWGUID OwnerGUID
         {
             get
             {

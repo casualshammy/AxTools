@@ -323,6 +323,11 @@ namespace AxTools.WoW.PluginSystem.API
             return false;
         }
 
+        public static WoWGUID MouseoverGUID
+        {
+            get { return WoWManager.WoWProcess.Memory.Read<WoWGUID>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.MouseoverGUID); }
+        }
+
         #endregion
 
         #region Moving

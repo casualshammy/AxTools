@@ -23,8 +23,6 @@ namespace WoWPlugin_Notifier
         private Image trayIcon;
         public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\Mobile-Sms-icon.png", Application.StartupPath, Name))); } }
 
-        public string WowIcon { get { return ""; } }
-
         public bool ConfigAvailable { get { return true; } }
 
         #endregion

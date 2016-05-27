@@ -1,6 +1,6 @@
 ﻿namespace AxTools.WoW.Internals
 {
-    internal enum WowPlayerClass : byte
+    public enum WowPlayerClass : byte
     {
         War = 1,
         Pal = 2,
