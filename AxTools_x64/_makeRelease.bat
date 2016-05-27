@@ -6,3 +6,4 @@ del "F:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\_updater1.zip"
 "F:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\_update1.json"
 pause
 "F:\programs\WinSCP\WinSCP.exe" /console /script="F:\Dropbox\Projects\AxTools\AxTools_x64\_makeReleaseWinSCP.txt"
+cscs "C:\Program Files (x86)\AxTools\plugins\_pack_and_send.cs"
