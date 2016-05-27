@@ -1,5 +1,4 @@
-﻿using AxTools.Forms;
-using AxTools.Properties;
+﻿using AxTools.Properties;
 using AxTools.Services;
 using AxTools.WoW.PluginSystem;
 using System.Drawing;
@@ -70,22 +69,7 @@ namespace AxTools.Helpers
 
         private static void ActualizingPhase()
         {
-            if (LuaConsole.TimerEnabled && PluginManagerEx.RunningPlugins.Count() != 0)
-            {
-                _notifyIcon.Icon = AppIconPluginOnLuaOn;
-            }
-            else if (LuaConsole.TimerEnabled)
-            {
-                _notifyIcon.Icon = AppIconPluginOffLuaOn;
-            }
-            else if (PluginManagerEx.RunningPlugins.Count() != 0)
-            {
-                _notifyIcon.Icon = AppIconPluginOnLuaOff;
-            }
-            else
-            {
-                _notifyIcon.Icon = AppIconNormal;
-            }
+            _notifyIcon.Icon = PluginManagerEx.RunningPlugins.Count() != 0 ? AppIconPluginOnLuaOff : AppIconNormal;
         }
 
         private enum Phase

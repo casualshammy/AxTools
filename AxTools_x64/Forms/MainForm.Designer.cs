@@ -48,7 +48,6 @@ namespace AxTools.Forms
             this.notifyIconMain = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.woWRadarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.luaConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.blackMarketTrackerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.stopActivePluginorPresshotkeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +64,6 @@ namespace AxTools.Forms
             this.tabPageModules = new MetroFramework.Controls.MetroTabPage();
             this.tileBMTracker = new Components.MetroTileExt(this.components);
             this.tileRadar = new Components.MetroTileExt(this.components);
-            this.tileLuaConsole = new Components.MetroTileExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
             this.linkDownloadPlugins = new MetroFramework.Controls.MetroLink();
             this.olvPlugins = new BrightIdeasSoftware.ObjectListView();
@@ -113,14 +111,13 @@ namespace AxTools.Forms
             // 
             this.contextMenuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.woWRadarToolStripMenuItem,
-            this.luaConsoleToolStripMenuItem,
             this.blackMarketTrackerToolStripMenuItem,
             this.toolStripSeparator2,
             this.stopActivePluginorPresshotkeyToolStripMenuItem,
             this.toolStripSeparator1,
             this.launchWoWToolStripMenuItem});
             this.contextMenuStripMain.Name = "contextMenuStripMain";
-            this.contextMenuStripMain.Size = new System.Drawing.Size(182, 126);
+            this.contextMenuStripMain.Size = new System.Drawing.Size(182, 104);
             // 
             // woWRadarToolStripMenuItem
             // 
@@ -129,14 +126,6 @@ namespace AxTools.Forms
             this.woWRadarToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.woWRadarToolStripMenuItem.Text = "WoW Radar";
             this.woWRadarToolStripMenuItem.Click += new System.EventHandler(this.WoWRadarToolStripMenuItemClick);
-            // 
-            // luaConsoleToolStripMenuItem
-            // 
-            this.luaConsoleToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("luaConsoleToolStripMenuItem.Image")));
-            this.luaConsoleToolStripMenuItem.Name = "luaConsoleToolStripMenuItem";
-            this.luaConsoleToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.luaConsoleToolStripMenuItem.Text = "Lua console";
-            this.luaConsoleToolStripMenuItem.Click += new System.EventHandler(this.LuaConsoleToolStripMenuItemClick);
             // 
             // blackMarketTrackerToolStripMenuItem
             // 
@@ -192,7 +181,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 2;
+            this.tabControl.SelectedIndex = 1;
             this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 59;
@@ -320,7 +309,6 @@ namespace AxTools.Forms
             // 
             this.tabPageModules.Controls.Add(this.tileBMTracker);
             this.tabPageModules.Controls.Add(this.tileRadar);
-            this.tabPageModules.Controls.Add(this.tileLuaConsole);
             this.tabPageModules.CustomBackground = false;
             this.tabPageModules.HorizontalScrollbar = false;
             this.tabPageModules.HorizontalScrollbarBarColor = true;
@@ -365,30 +353,13 @@ namespace AxTools.Forms
             this.tileRadar.Location = new System.Drawing.Point(3, 15);
             this.tileRadar.Name = "tileRadar";
             this.tileRadar.PaintTileCount = true;
-            this.tileRadar.Size = new System.Drawing.Size(205, 80);
+            this.tileRadar.Size = new System.Drawing.Size(415, 80);
             this.tileRadar.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileRadar.StyleManager = null;
             this.tileRadar.TabIndex = 7;
             this.tileRadar.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileRadar.TileCount = 0;
             this.tileRadar.Click += new System.EventHandler(this.tileRadar_Click);
-            // 
-            // tileLuaConsole
-            // 
-            this.tileLuaConsole.ActiveControl = null;
-            this.tileLuaConsole.CenterText = "Lua console";
-            this.tileLuaConsole.CustomBackground = false;
-            this.tileLuaConsole.CustomForeColor = false;
-            this.tileLuaConsole.Location = new System.Drawing.Point(214, 15);
-            this.tileLuaConsole.Name = "tileLuaConsole";
-            this.tileLuaConsole.PaintTileCount = true;
-            this.tileLuaConsole.Size = new System.Drawing.Size(204, 80);
-            this.tileLuaConsole.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileLuaConsole.StyleManager = null;
-            this.tileLuaConsole.TabIndex = 6;
-            this.tileLuaConsole.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileLuaConsole.TileCount = 0;
-            this.tileLuaConsole.Click += new System.EventHandler(this.tileLuaConsole_Click);
             // 
             // metroTabPage3
             // 
@@ -826,7 +797,6 @@ namespace AxTools.Forms
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem launchWoWToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem luaConsoleToolStripMenuItem;
         private MetroCheckBox checkBoxStartVenriloWithWow;
         private MetroCheckBox checkBoxStartRaidcallWithWow;
         private MetroCheckBox checkBoxStartTeamspeak3WithWow;
@@ -852,7 +822,6 @@ namespace AxTools.Forms
         private MetroTabPage tabPageModules;
         private MetroTileExt tileBMTracker;
         private MetroTileExt tileRadar;
-        private MetroTileExt tileLuaConsole;
         private ToolStripMenuItem toolStripMenuItemDeployArchive;
         private MetroLink linkDownloadPlugins;
     }

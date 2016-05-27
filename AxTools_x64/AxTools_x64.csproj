@@ -295,12 +295,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\PingerHelpers\SrvAddress.cs" />
-    <Compile Include="Forms\LuaConsole.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\LuaConsole.Designer.cs">
-      <DependentUpon>LuaConsole.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\InputBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -376,10 +370,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\LuaConsole.resx">
-      <DependentUpon>LuaConsole.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WoWProcessSelector.resx">
       <DependentUpon>WoWProcessSelector.cs</DependentUpon>

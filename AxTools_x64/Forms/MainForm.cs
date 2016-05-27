@@ -246,7 +246,6 @@ namespace AxTools.Forms
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
             {
                 woWRadarToolStripMenuItem,
-                luaConsoleToolStripMenuItem,
                 blackMarketTrackerToolStripMenuItem,
                 toolStripSeparator2
             });
@@ -355,11 +354,6 @@ namespace AxTools.Forms
         private void blackMarketTrackerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StartWoWModule<BlackMarket>();
-        }
-
-        private void LuaConsoleToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            StartWoWModule<LuaConsole>();
         }
 
         private void ExitAxToolsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -684,11 +678,6 @@ namespace AxTools.Forms
         private void tileRadar_Click(object sender, EventArgs e)
         {
             StartWoWModule<WowRadar>();
-        }
-
-        private void tileLuaConsole_Click(object sender, EventArgs e)
-        {
-            StartWoWModule<LuaConsole>();
         }
 
         private void tileBMTracker_Click(object sender, EventArgs e)

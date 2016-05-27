@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WindowsFormsAero.TaskDialog;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
@@ -119,10 +118,8 @@ namespace AxTools.Forms
             buttonVentriloPath.Click += Button9Click;
             checkBox_AntiAFK.CheckedChanged += CheckBox1CheckedChanged;
             textBoxClickerHotkey.KeyDown += textBoxClickerHotkey_KeyDown;
-            textBoxLuaHotkey.KeyDown += textBoxLuaHotkey_KeyDown;
             textBoxPluginsHotkey.KeyDown += textBoxPluginsHotkey_KeyDown;
             buttonClickerHotkey.Click += buttonClickerHotkey_Click;
-            buttonLuaHotkey.Click += buttonLuaHotkey_Click;
             buttonPluginsHotkey.Click += buttonPluginsHotkey_Click;
             buttonIngameKeyBinds.Click += buttonIngameKeyBinds_Click;
         }
@@ -200,11 +197,6 @@ namespace AxTools.Forms
         private void buttonPluginsHotkey_Click(object sender, EventArgs e)
         {
             textBoxPluginsHotkey_KeyDown(null, new KeyEventArgs(Keys.None));
-        }
-
-        private void buttonLuaHotkey_Click(object sender, EventArgs e)
-        {
-            textBoxLuaHotkey_KeyDown(null, new KeyEventArgs(Keys.None));
         }
 
         private void buttonClickerHotkey_Click(object sender, EventArgs e)
@@ -542,20 +534,6 @@ namespace AxTools.Forms
                 HotkeyManager.RemoveKeys(typeof(PluginManagerEx).ToString());
                 HotkeyManager.AddKeys(typeof(PluginManagerEx).ToString(), keys);
                 settings.WoWPluginHotkey = keys;
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }
-        }
-
-        private void textBoxLuaHotkey_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
-            {
-                Keys keys = LetOnlyOneKeyModifier(e);
-                textBoxLuaHotkey.Text = new KeysConverter().ConvertToInvariantString(keys);
-                HotkeyManager.RemoveKeys(typeof(LuaConsole).ToString());
-                HotkeyManager.AddKeys(typeof(LuaConsole).ToString(), keys);
-                settings.LuaTimerHotkey = keys;
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }

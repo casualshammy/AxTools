@@ -57,7 +57,7 @@ namespace AxTools.WoW
         }
 
         /// <summary>
-        ///     Closes //WowRadarOptions, WoWRadar, LuaConsole//
+        ///     Closes //WowRadarOptions, WoWRadar//
         ///     Stops WoW plugin
         ///     Releases DX hook
         /// </summary>
@@ -67,8 +67,6 @@ namespace AxTools.WoW
             if (pWowRadarOptions != null) pWowRadarOptions.Close();
             WowRadar pWowRadar = Utils.FindForm<WowRadar>();
             if (pWowRadar != null) pWowRadar.Close();
-            LuaConsole pLuaInjector = Utils.FindForm<LuaConsole>();
-            if (pLuaInjector != null) pLuaInjector.Close();
 
             if (PluginManagerEx.RunningPlugins.Any())
             {
