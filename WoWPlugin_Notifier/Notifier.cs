@@ -111,15 +111,13 @@ namespace WoWPlugin_Notifier
 
         private void GameFunctionsOnNewChatMessage(ChatMsg obj)
         {
-            if ((settingsInstance.OnWhisper && obj.Type == 7) || (settingsInstance.OnBNetWhisper && obj.Type == 51))
+            if ((settingsInstance.OnWhisper && obj.Type == WoWChatMsgType.Whisper) || (settingsInstance.OnBNetWhisper && obj.Type == WoWChatMsgType.BNetWisper))
             {
                 this.LogPrint(string.Format("New PM from {0}: {1}", obj.Sender, obj.Text));
                 dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
                 libSMS.SendSMS(string.Format("New PM from {0}: {1}", obj.Sender, obj.Text));
             }
         }
-
-        
 
         #endregion
 

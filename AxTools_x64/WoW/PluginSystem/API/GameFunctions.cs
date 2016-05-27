@@ -6,7 +6,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using AxTools.Forms;
 using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW.Helpers;
@@ -187,11 +186,12 @@ namespace AxTools.WoW.PluginSystem.API
         #region Chat
 
         private static readonly object _chatLock = new object();
-
         private static readonly List<string> ChatMessagesLast = new List<string>(Enumerable.Repeat("", 60));
-
         public static event Action<ChatMsg> NewChatMessage;
 
+        /// <summary>
+        ///     Invokes <see cref="GameFunctions.NewChatMessage"/> if new messages appears
+        /// </summary>
         public static void ReadChat()
         {
             lock (_chatLock)
@@ -218,14 +218,15 @@ namespace AxTools.WoW.PluginSystem.API
 
         private static ChatMsg ParseChatMsg(string s)
         {
+            Log.Info(s);
             // Type: [7], Channel: [], Player Name: [Тэлин-Гордунни], Sender GUID: [Player-1602-05E946D2], Active player: [Player-1929-0844D1FA], Text: [2]
-            Regex regex = new Regex("Type: \\[(\\d+)\\], Channel: \\[(.*)\\], Player Name: \\[(.*)\\], Sender GUID: \\[(.*)\\].*, Text: \\[(.*)\\]");
+            Regex regex = new Regex("Type: \\[(\\d+)\\], Channel: \\[(.*)\\], Player Name: \\[(.*)\\], Sender GUID: \\[(.*)\\], Active player: \\[.*\\], Text: \\[(.*)\\]");
             Match match = regex.Match(s);
             if (match.Success)
             {
                 return new ChatMsg
                 {
-                    Type = int.Parse(match.Groups[1].Value),
+                    Type = (WoWChatMsgType) int.Parse(match.Groups[1].Value),
                     Channel = match.Groups[2].Value,
                     Sender = match.Groups[3].Value,
                     SenderGUID = match.Groups[4].Value,
@@ -243,9 +244,6 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get
             {
-                //IntPtr zoneTextPtr = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.ZoneText);
-                //byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(zoneTextPtr, 100).TakeWhile(l => l != 0).ToArray();
-                //return Encoding.UTF8.GetString(bytes);
                 return Wowhead.GetZoneText(ZoneID);
             }
         }
@@ -278,7 +276,7 @@ namespace AxTools.WoW.PluginSystem.API
                 {
                     StackTrace stackTrace = new StackTrace();
                     StackFrame[] stackFrames = stackTrace.GetFrames();
-                    Log.Error("IsInGame: " + string.Join(" -->> ", stackFrames != null ? stackFrames.Select(l => l.GetMethod().Name).Reverse() : new[] { "Stack is null" }) + ex.Message);
+                    Log.Error(string.Format("IsInGame: stack trace: {0}; error message: {1}", string.Join(" -->> ", stackFrames != null ? stackFrames.Select(l => l.GetMethod().Name).Reverse() : new[] {"Stack is null"}), ex.Message));
                     return false;
                 }
             }
@@ -449,11 +447,11 @@ namespace AxTools.WoW.PluginSystem.API
 
         private static void WaitWhileWoWIsMinimized()
         {
+            Utils.LogIfCalledFromUIThread();
             if (WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsMinimized)
             {
                 Notify.TrayPopup("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Click to activate WoW window", NotifyUserType.Warn, true, null, 10,
                     (sender, args) => NativeMethods.ShowWindow(WoWManager.WoWProcess.MainWindowHandle, 9));
-                Utils.LogIfCalledFromUIThread();
                 while (WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsMinimized)
                 {
                     Thread.Sleep(100);

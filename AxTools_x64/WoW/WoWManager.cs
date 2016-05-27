@@ -57,7 +57,7 @@ namespace AxTools.WoW
         }
 
         /// <summary>
-        ///     Closes //WoWRadar, LuaConsole//
+        ///     Closes //WowRadarOptions, WoWRadar, LuaConsole//
         ///     Stops WoW plugin
         ///     Releases DX hook
         /// </summary>

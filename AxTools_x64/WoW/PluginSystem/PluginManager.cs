@@ -170,7 +170,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && GameFunctions.IsInGame)
                 {
-                    Notify.Balloon("AxTools", "Plugin <" + plugin.Name + "> is stopped", NotifyUserType.Info, false);
+                    Notify.TrayPopup("AxTools", "Plugin <" + plugin.Name + "> is stopped", NotifyUserType.Info, false, plugin.TrayIcon);
                 }
                 _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = false;
                 if (PluginStateChanged != null)

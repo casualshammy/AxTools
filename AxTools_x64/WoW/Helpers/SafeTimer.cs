@@ -31,7 +31,6 @@ namespace AxTools.WoW.Helpers
                 if (thread == null)
                 {
                     thread = new Thread(Loop) { IsBackground = true};
-                    thread.SetApartmentState(ApartmentState.STA);
                     balancingStopwatch = new Stopwatch();
                     flag = true;
                     thread.Start();
@@ -46,7 +45,7 @@ namespace AxTools.WoW.Helpers
                 if (thread != null)
                 {
                     flag = false;
-                    if (!thread.Join(5000))
+                    if (!thread.Join(60*1000))
                     {
                         throw new Exception(string.Format("{0}:{1} :: [{2}] SafeTimer: Can't stop!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? ""));
                     }

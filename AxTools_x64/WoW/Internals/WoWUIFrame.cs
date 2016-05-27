@@ -48,7 +48,6 @@ namespace AxTools.WoW.Internals
             get { return ((WoWManager.WoWProcess.Memory.Read<int>(address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) == 1; }
         }
 
-
         /// <summary>
         /// Gets the name of the frame by.
         /// </summary>
@@ -67,7 +66,10 @@ namespace AxTools.WoW.Internals
                     //File.AppendAllText(Application.StartupPath + "\\frames.txt", string.Format("New frame: {0}; Visible: {1}\r\n", f.GetName, f.IsVisible));
                     if (f.GetName == name)
                     {
-                        Log.Info(string.Format("WoWUIFrame.GetFrameByName: frame name: {0}; search time: {1}ms", name, stopwatch.ElapsedMilliseconds));
+                        if (stopwatch.ElapsedMilliseconds > 500)
+                        {
+                            Log.Error(string.Format("WoWUIFrame.GetFrameByName: frame name: {0}; search time: {1}ms", name, stopwatch.ElapsedMilliseconds));
+                        }
                         return f;
                     }
                 }
@@ -80,8 +82,12 @@ namespace AxTools.WoW.Internals
                     currentFrame = WoWManager.WoWProcess.Memory.Read<IntPtr>(currentFrame + WoWManager.WoWProcess.Memory.Read<int>(@base + WowBuildInfoX64.UINextFrame) + 8);
                 }
             }
-            Log.Info(string.Format("WoWUIFrame.GetFrameByName exec time: {0}ms", stopwatch.ElapsedMilliseconds));
+            if (stopwatch.ElapsedMilliseconds > 500)
+            {
+                Log.Error(string.Format("WoWUIFrame.GetFrameByName exec time: {0}ms", stopwatch.ElapsedMilliseconds));
+            }
             return null;
         }
+    
     }
 }

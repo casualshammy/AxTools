@@ -185,6 +185,7 @@
     <Compile Include="WinAPI\APPBARMESSAGE.cs" />
     <Compile Include="WinAPI\Win32Consts.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
+    <Compile Include="WoW\Internals\WoWChatMsgType.cs" />
     <Compile Include="WoW\Internals\WoWUIFrame.cs" />
     <Compile Include="WoW\IWoWModule.cs" />
     <Compile Include="WoW\Internals\WoWPlayerItems.cs" />

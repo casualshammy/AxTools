@@ -45,86 +45,31 @@ namespace WoWPlugin_Test
         public void OnStart()
         {
             (frm = new MainForm()).Show();
-            //GameFunctions.NewChatMessage += GameFunctionsOnNewChatMessage;
+            GameFunctions.ReadChat();
+            GameFunctions.NewChatMessage += GameFunctionsOnNewChatMessage;
             t.Start();
             t.Elapsed += OnPulse;
-            try
-            {
-                //WoWUIFrame.ReloadFrames();
-                //foreach (WoWUIFrame frame in WoWUIFrame.GetFrames)
-                //{
-                //    File.AppendAllText(Application.StartupPath + "\\1.txt", string.Format("{0}::{1}\r\n", frame.GetName, frame.IsVisible));
-                //}
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.Message);
-            }
-            beep(beepType.Asterisk);
-            Thread.Sleep(1000);
-            beep(beepType.Exclamation);
-            Thread.Sleep(1000);
-            beep(beepType.OK);
-            Thread.Sleep(1000);
-            beep(beepType.Question);
-            Thread.Sleep(1000);
-            beep(beepType.SimpleBeep);
         }
 
-        public enum beepType
+        private void OnPulse(object sender, ElapsedEventArgs e)
         {
-            /// <summary>
-            /// A simple windows beep
-            /// </summary>            
-            SimpleBeep  = -1,
-            /// <summary>
-            /// A standard windows OK beep
-            /// </summary>
-            OK    = 0x00,
-            /// <summary>
-            /// A standard windows Question beep
-            /// </summary>
-            Question  = 0x20,
-            /// <summary>
-            /// A standard windows Exclamation beep
-            /// </summary>
-            Exclamation  = 0x30,
-            /// <summary>
-            /// A standard windows Asterisk beep
-            /// </summary>
-            Asterisk  = 0x40,
-        }
-
-        [DllImport("User32.dll", ExactSpelling=true)]
-        private static extern bool MessageBeep(uint type);
-
-        
-        public static void beep(beepType type)
-        {
-            MessageBeep((uint)type);
+            GameFunctions.ReadChat();
         }
 
         private void GameFunctionsOnNewChatMessage(ChatMsg chatMsg)
         {
-            if (chatMsg.Type != 0x11)
+            if (chatMsg.Type != WoWChatMsgType.Channel)
             {
-                frm.label1.Text = string.Format("{0}::{1}::{2}::{3}", chatMsg.Type, chatMsg.Sender, chatMsg.Channel, chatMsg.Text);
+                frm.label1.Text = string.Format("Type: {0}; Sender: {1}; SenderGUID: {2}; Channel: {3}; Text: {4}", chatMsg.Type, chatMsg.Sender, chatMsg.SenderGUID, chatMsg.Channel, chatMsg.Text);
                 frm.Invalidate();
             }
-        }
-
-        private void OnPulse(object sender, ElapsedEventArgs elapsedEventArgs)
-        {
-            WoWUIFrame frame = WoWUIFrame.GetFrameByName("ChatFrame1EditBox");
-            frm.label1.Text = frame != null ? string.Format("Visible: {0}; Editbox text:{1}", frame.IsVisible, frame.EditboxText) : "null";
-            frm.Invalidate();
         }
 
         public void OnStop()
         {
             t.Elapsed -= OnPulse;
             t.Stop();
-            //GameFunctions.NewChatMessage -= GameFunctionsOnNewChatMessage;
+            GameFunctions.NewChatMessage -= GameFunctionsOnNewChatMessage;
             frm.Dispose();
         }
 

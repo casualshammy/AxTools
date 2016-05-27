@@ -53,7 +53,7 @@ namespace AxTools.Forms
             metroToolTip1.SetToolTip(buttonStartStopPlugin, "Check plugins you want to enable and\r\nclick this button to launch.\r\nDouble click on a row to open settings dialog");
 
             UIThreadID = Thread.CurrentThread.ManagedThreadId;
-            BeginInvoke((MethodInvoker) AfterInitializing);
+            PostInvoke(AfterInitializing);
             Log.Info(string.Format("[AxTools] Registered for: {0}", Settings.Instance.UserID));
             Log.Info("[AxTools] Initial loading is finished");
         }
@@ -182,7 +182,6 @@ namespace AxTools.Forms
             Pinger.IsEnabledChanged += PingerOnStateChanged;
             AddonsBackup.IsRunningChanged += AddonsBackup_IsRunningChanged;
             WoWAccount.AllAccounts.CollectionChanged += WoWAccounts_CollectionChanged;
-            olvPlugins.SelectedIndexChanged += objectListView1_SelectedIndexChanged;
             olvPlugins.CellToolTipShowing += objectListView1_CellToolTipShowing;
             olvPlugins.DoubleClick += OlvPluginsOnDoubleClick;
             // end of styling, events attaching...
@@ -190,9 +189,9 @@ namespace AxTools.Forms
             Pinger.Enabled = settings.PingerServerID != 0;              // set pinger
             WoWProcessManager.StartWatcher();                           // start WoW spy
             TrayIconAnimation.Initialize(notifyIconMain);               // initialize tray animation
-            HotkeyManager.KeyPressed += KeyboardHookKeyDown;        // start keyboard listener
+            HotkeyManager.KeyPressed += KeyboardHookKeyDown;            // start keyboard listener
             HotkeyManager.AddKeys(typeof(PluginManagerEx).ToString(), settings.WoWPluginHotkey);
-            await pluginsLoader;                                     // waiting for plugins to be loaded
+            await pluginsLoader;                                        // waiting for plugins to be loaded
             startupOverlay.Close();                                     // close startup overkay
             Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
             UpdaterService.Start();                                     // start updater service
@@ -742,6 +741,7 @@ namespace AxTools.Forms
 
         private void SetupOLVPlugins()
         {
+            olvColumn2.AspectToStringConverter = value => (bool) value ? "DblClick" : "";
             olvPlugins.SetObjects(PluginManagerEx.LoadedPlugins);
             foreach (IPlugin i in PluginManagerEx.EnabledPlugins)
             {
@@ -754,24 +754,6 @@ namespace AxTools.Forms
         private void buttonStartStopPlugin_Click(object sender, EventArgs e)
         {
             SwitchWoWPlugin();
-        }
-        
-        private void buttonPluginSettings_Click(object sender, EventArgs e)
-        {
-            IPlugin plugin = olvPlugins.SelectedObject as IPlugin;
-            if (plugin != null)
-            {
-                plugin.OnConfig();
-            }
-        }
-
-        private void objectListView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            IPlugin plugin = olvPlugins.SelectedObject as IPlugin;
-            if (plugin != null)
-            {
-                buttonPluginSettings.Enabled = plugin.ConfigAvailable;
-            }
         }
 
         private void objectListView1_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)

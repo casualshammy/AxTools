@@ -67,10 +67,10 @@ namespace AxTools.Forms
             this.tileRadar = new Components.MetroTileExt(this.components);
             this.tileLuaConsole = new Components.MetroTileExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
+            this.linkDownloadPlugins = new MetroFramework.Controls.MetroLink();
             this.olvPlugins = new BrightIdeasSoftware.ObjectListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.buttonPluginSettings = new System.Windows.Forms.Button();
             this.buttonStartStopPlugin = new MetroFramework.Controls.MetroButton();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.checkBoxStartTeamspeak3WithWow = new MetroFramework.Controls.MetroCheckBox();
@@ -91,7 +91,6 @@ namespace AxTools.Forms
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
-            this.linkDownloadPlugins = new MetroFramework.Controls.MetroLink();
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -395,7 +394,6 @@ namespace AxTools.Forms
             // 
             this.metroTabPage3.Controls.Add(this.linkDownloadPlugins);
             this.metroTabPage3.Controls.Add(this.olvPlugins);
-            this.metroTabPage3.Controls.Add(this.buttonPluginSettings);
             this.metroTabPage3.Controls.Add(this.buttonStartStopPlugin);
             this.metroTabPage3.CustomBackground = false;
             this.metroTabPage3.HorizontalScrollbar = false;
@@ -414,6 +412,23 @@ namespace AxTools.Forms
             this.metroTabPage3.VerticalScrollbarBarColor = true;
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
+            // 
+            // linkDownloadPlugins
+            // 
+            this.linkDownloadPlugins.CustomBackground = false;
+            this.linkDownloadPlugins.CustomForeColor = false;
+            this.linkDownloadPlugins.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkDownloadPlugins.FontWeight = MetroFramework.MetroLinkWeight.Bold;
+            this.linkDownloadPlugins.Location = new System.Drawing.Point(303, 134);
+            this.linkDownloadPlugins.Name = "linkDownloadPlugins";
+            this.linkDownloadPlugins.Size = new System.Drawing.Size(115, 23);
+            this.linkDownloadPlugins.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkDownloadPlugins.StyleManager = null;
+            this.linkDownloadPlugins.TabIndex = 82;
+            this.linkDownloadPlugins.Text = "Download plugins";
+            this.linkDownloadPlugins.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkDownloadPlugins.UseStyleColors = true;
+            this.linkDownloadPlugins.Click += new System.EventHandler(this.linkDownloadPlugins_Click);
             // 
             // olvPlugins
             // 
@@ -458,24 +473,12 @@ namespace AxTools.Forms
             this.olvColumn2.Text = "Settings";
             this.olvColumn2.Width = 55;
             // 
-            // buttonPluginSettings
-            // 
-            this.buttonPluginSettings.BackgroundImage = global::AxTools.Properties.Resources.pluginSettings;
-            this.buttonPluginSettings.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonPluginSettings.Enabled = false;
-            this.buttonPluginSettings.Location = new System.Drawing.Point(303, 15);
-            this.buttonPluginSettings.Name = "buttonPluginSettings";
-            this.buttonPluginSettings.Size = new System.Drawing.Size(29, 29);
-            this.buttonPluginSettings.TabIndex = 80;
-            this.buttonPluginSettings.UseVisualStyleBackColor = true;
-            this.buttonPluginSettings.Click += new System.EventHandler(this.buttonPluginSettings_Click);
-            // 
             // buttonStartStopPlugin
             // 
             this.buttonStartStopPlugin.Highlight = true;
-            this.buttonStartStopPlugin.Location = new System.Drawing.Point(338, 15);
+            this.buttonStartStopPlugin.Location = new System.Drawing.Point(303, 15);
             this.buttonStartStopPlugin.Name = "buttonStartStopPlugin";
-            this.buttonStartStopPlugin.Size = new System.Drawing.Size(80, 29);
+            this.buttonStartStopPlugin.Size = new System.Drawing.Size(115, 29);
             this.buttonStartStopPlugin.Style = MetroFramework.MetroColorStyle.Blue;
             this.buttonStartStopPlugin.StyleManager = null;
             this.buttonStartStopPlugin.TabIndex = 74;
@@ -773,23 +776,6 @@ namespace AxTools.Forms
             this.linkTitle.UseStyleColors = true;
             this.linkTitle.Click += new System.EventHandler(this.linkTitle_Click);
             // 
-            // linkDownloadPlugins
-            // 
-            this.linkDownloadPlugins.CustomBackground = false;
-            this.linkDownloadPlugins.CustomForeColor = false;
-            this.linkDownloadPlugins.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.linkDownloadPlugins.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.linkDownloadPlugins.Location = new System.Drawing.Point(303, 134);
-            this.linkDownloadPlugins.Name = "linkDownloadPlugins";
-            this.linkDownloadPlugins.Size = new System.Drawing.Size(115, 23);
-            this.linkDownloadPlugins.Style = MetroFramework.MetroColorStyle.Blue;
-            this.linkDownloadPlugins.StyleManager = null;
-            this.linkDownloadPlugins.TabIndex = 82;
-            this.linkDownloadPlugins.Text = "Download plugins";
-            this.linkDownloadPlugins.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.linkDownloadPlugins.UseStyleColors = true;
-            this.linkDownloadPlugins.Click += new System.EventHandler(this.linkDownloadPlugins_Click);
-            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(469, 234);
@@ -860,7 +846,6 @@ namespace AxTools.Forms
         private PictureBox pictureBox1;
         private MetroLink linkPing;
         private MetroLink linkTitle;
-        private Button buttonPluginSettings;
         private BrightIdeasSoftware.ObjectListView olvPlugins;
         private BrightIdeasSoftware.OLVColumn olvColumn1;
         private BrightIdeasSoftware.OLVColumn olvColumn2;
