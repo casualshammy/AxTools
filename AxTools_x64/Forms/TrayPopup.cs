@@ -100,12 +100,12 @@ namespace AxTools.Forms
             {
                 if (DateTime.UtcNow - loadTime > TimeSpan.FromSeconds(Timeout))
                 {
-                    Opacity = Opacity - 0.01f;
+                    PostInvoke(() => { Opacity = Opacity - 0.01f; });
                 }
             }
             else
             {
-                Close();
+                PostInvoke(Close);
             }
         }
 

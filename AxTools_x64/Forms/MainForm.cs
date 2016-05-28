@@ -537,7 +537,7 @@ namespace AxTools.Forms
                         counter--;
                     }
                 });
-                Log.Info("Ventrilo process started");
+                Log.Info("[VoIP] Ventrilo process started");
             }
             else
             {
@@ -567,7 +567,7 @@ namespace AxTools.Forms
                 FileName = ts3Executable,
                 Arguments = "-nosingleinstance"
             });
-            Log.Info("TS3 process started");
+            Log.Info("[VoIP] TS3 process started");
         }
 
         private void StartRaidcall()
@@ -579,7 +579,7 @@ namespace AxTools.Forms
                     WorkingDirectory = settings.RaidcallDirectory,
                     FileName = settings.RaidcallDirectory + "\\raidcall.exe"
                 });
-                Log.Info("Raidcall process started");
+                Log.Info("[VoIP] Raidcall process started");
             }
             else
             {
@@ -596,7 +596,7 @@ namespace AxTools.Forms
                     WorkingDirectory = settings.MumbleDirectory,
                     FileName = settings.MumbleDirectory + "\\mumble.exe"
                 });
-                Log.Info("Mumble process started");
+                Log.Info("[VoIP] Mumble process started");
             }
             else
             {

@@ -74,5 +74,10 @@ namespace AxTools.Helpers
             form.Activate();
         }
 
+        public static void PostInvoke(this Form form, Action action)
+        {
+            form.BeginInvoke(new MethodInvoker(action));
+        }
+
     }
 }

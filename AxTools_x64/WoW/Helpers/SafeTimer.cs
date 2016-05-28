@@ -73,9 +73,8 @@ namespace AxTools.WoW.Helpers
                 int shouldWait = (int) (interval - balancingStopwatch.ElapsedMilliseconds);
                 while (shouldWait > 0 && flag)
                 {
-                    int t = Math.Min(shouldWait, 100);
-                    shouldWait -= t;
-                    Thread.Sleep(t);
+                    Thread.Sleep(Math.Min(shouldWait, 100));
+                    shouldWait = (int)(interval - balancingStopwatch.ElapsedMilliseconds);
                 }
             }
         }

@@ -83,6 +83,11 @@ namespace WoWPlugin_Dumper
                     i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), i.Address.ToInt64(), i.Class, i.Level, i.Health, i.HealthMax,
                     i.TargetGUID, i.Faction, string.Join(",", i.Auras.Select(l => l.Name + "::" + l.Stack + "::" + l.TimeLeftInMs + "::" + l.OwnerGUID.ToString()))));
             }
+            dumper.LogPrint("UIFrames-----------------------------------------");
+            foreach (WoWUIFrame frame in WoWUIFrame.GetAllFrames())
+            {
+                dumper.LogPrint(string.Format("\tName: {0}; Visible: {1}; Text: {2}; EditboxText: {3}", frame.GetName, frame.IsVisible, frame.GetText, frame.EditboxText));
+            }
         }
     }
 }

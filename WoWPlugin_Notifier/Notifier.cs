@@ -90,8 +90,33 @@ namespace WoWPlugin_Notifier
             if (frame != null && frame.IsVisible)
             {
                 this.LogPrint("Static popup is visible!");
+                string message = "Static popup is visible!";
+                WoWUIFrame frameText = WoWUIFrame.GetFrameByName("StaticPopup1Text");
+                if (frameText != null)
+                {
+                    if (frameText.IsVisible)
+                    {
+                        if (!string.IsNullOrWhiteSpace(frameText.GetText))
+                        {
+                            message += string.Format(" ({0})", frameText.GetText);
+                        }
+                        else
+                        {
+                            this.LogPrint("StaticPopup1Text text is empty");
+                        }
+                    }
+                    else
+                    {
+                        this.LogPrint("StaticPopup1Text isn't visible");
+                    }
+                }
+                else
+                {
+                    this.LogPrint("StaticPopup1Text isn't found");
+                }
                 dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
-                libSMS.SendSMS("Static popup is visible!");
+                libSMS.SendSMS(message);
+                this.LogPrint("Message is sent: " + message);
                 for (int i = 0; i < 60; i++)
                 {
                     if (timerStaticPopup.IsRunning)
