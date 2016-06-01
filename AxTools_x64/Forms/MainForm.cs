@@ -622,10 +622,47 @@ namespace AxTools.Forms
         private void TileMumbleClick(object sender, EventArgs e)
         {
             StartMumble();
-            Notify.TrayPopup("AxTools", "1 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.", NotifyUserType.Info, false);
-            Notify.TrayPopup("AxTools", "2 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.", NotifyUserType.Info, false);
-            Notify.TrayPopup("AxTools", "3 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.", NotifyUserType.Info, false);
-            Notify.TrayPopup("AxTools", "4 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.", NotifyUserType.Info, false);
+
+
+
+            //using (IOdb db = OdbFactory.Open("wowhead-items.ndb"))
+            //{
+            //    for (uint i = 0; i < 5000; i++)
+            //    {
+            //        db.Store(new NDBEntry((int)i, JsonConvert.SerializeObject(new WowheadItemInfo("n" + i, i + 1, i + 2, i + 3) { Image = Resources.AppIcon1 })));
+            //    }
+            //}
+            //Stopwatch stopwatch = Stopwatch.StartNew();
+            //using (IOdb db = OdbFactory.Open("wowhead-items.ndb"))
+            //{
+            //    NDBEntry cc = db.QueryAndExecute<NDBEntry>().First(l => l.ID == 4950);
+            //    WowheadItemInfo c = JsonConvert.DeserializeObject<WowheadItemInfo>(cc.JSONData);
+            //    MessageBox.Show(c.Name + "::" + c.Quality + "\r\nElapsed: " + stopwatch.ElapsedMilliseconds);
+            //}
+
+
+            //using (LiteDatabase db = new LiteDatabase("wowhead-items.ldb"))
+            //{
+            //    db.BeginTrans();
+            //    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
+            //    for (uint i = 0; i < 5000; i++)
+            //    {
+            //        collection.Insert(new NDBEntry((int)i, JsonConvert.SerializeObject(new WowheadItemInfo("n" + i, i + 1, i + 2, i + 3) { Image = Resources.AppIcon1 })));
+            //    }
+            //    collection.EnsureIndex(x => x.ID);
+            //    db.Commit();
+            //}
+            //stopwatch.Restart();
+            //using (LiteDatabase db = new LiteDatabase("wowhead-items.ldb"))
+            //{
+            //    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
+            //    collection.EnsureIndex(x => x.ID);
+            //    NDBEntry entry = collection.FindOne(l => l.ID == 4950);
+            //    WowheadItemInfo c = JsonConvert.DeserializeObject<WowheadItemInfo>(entry.JSONData);
+            //    MessageBox.Show(c.Name + "::" + c.Quality + "\r\nElapsed: " + stopwatch.ElapsedMilliseconds);
+            //    MessageBox.Show("Entries count: " + collection.Find(l => l.ID == 4950).Count() + "; Total: " + collection.Count());
+            //}
+
         }
 
         private void checkBoxStartVenriloWithWow_CheckedChanged(object sender, EventArgs e)

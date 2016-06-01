@@ -46,7 +46,10 @@
 
         BNetWisper = 51,
 
-        RealId = 53
+        RealId = 53,
+
+        Instance = 63,
+        InstanceLeader = 64
         
     }
 }

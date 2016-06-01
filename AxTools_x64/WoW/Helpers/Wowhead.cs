@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AxTools.Helpers;
+using LiteDB;
 using Newtonsoft.Json;
 
 namespace AxTools.WoW.Helpers
@@ -19,6 +20,7 @@ namespace AxTools.WoW.Helpers
         private static readonly ConcurrentDictionary<uint, string> ZoneInfos = new ConcurrentDictionary<uint, string>();
         private static readonly string CacheDir = Application.StartupPath + "\\wowheadCache";
         private const string UNKNOWN = "UNKNOWN";
+        private static readonly object DBLock = new object();
 
         static Wowhead()
         {
@@ -147,44 +149,83 @@ namespace AxTools.WoW.Helpers
 
         private static WowheadItemInfo ItemInfo_GetCachedValue(uint itemID)
         {
-            string filepath = string.Format("{0}\\items\\item-{1}.json", CacheDir, itemID);
-            if (File.Exists(filepath))
+            //string filepath = string.Format("{0}\\items\\item-{1}.json", CacheDir, itemID);
+            //if (File.Exists(filepath))
+            //{
+            //    string rawText = File.ReadAllText(filepath, Encoding.UTF8);
+            //    WowheadItemInfo itemInfo = JsonConvert.DeserializeObject<WowheadItemInfo>(rawText);
+            //    return itemInfo;
+            //}
+            //return null;
+            lock (DBLock)
             {
-                string rawText = File.ReadAllText(filepath, Encoding.UTF8);
-                WowheadItemInfo itemInfo = JsonConvert.DeserializeObject<WowheadItemInfo>(rawText);
-                return itemInfo;
+                using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-items.ldb"))
+                {
+                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
+                    collection.EnsureIndex(x => x.ID);
+                    NDBEntry entry = collection.FindOne(l => l.ID == (int)itemID); // cast to int is neccessary
+                    return entry != null ? JsonConvert.DeserializeObject<WowheadItemInfo>(entry.JSONData) : null;
+                }
             }
-            return null;
         }
 
         private static void ItemInfo_SaveToCache(uint itemID, WowheadItemInfo info)
         {
-            string filepath = string.Format("{0}\\items\\item-{1}.json", CacheDir, itemID);
-            string s = JsonConvert.SerializeObject(info, Formatting.Indented);
-            FileInfo fileInfo = new FileInfo(filepath);
-            if (fileInfo.Directory != null) fileInfo.Directory.Create();
-            File.WriteAllText(filepath, s, Encoding.UTF8);
+            //string filepath = string.Format("{0}\\items\\item-{1}.json", CacheDir, itemID);
+            //string s = JsonConvert.SerializeObject(info, Formatting.Indented);
+            //FileInfo fileInfo = new FileInfo(filepath);
+            //if (fileInfo.Directory != null) fileInfo.Directory.Create();
+            //File.WriteAllText(filepath, s, Encoding.UTF8);
+            lock (DBLock)
+            {
+                using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-items.ldb"))
+                {
+                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
+                    collection.Insert(new NDBEntry((int)itemID, JsonConvert.SerializeObject(info)));
+                    collection.EnsureIndex(x => x.ID);
+                }
+            }
         }
 
         private static WowheadSpellInfo SpellInfo_GetCachedValue(int spellID)
         {
-            string filepath = string.Format("{0}\\spells\\spell-{1}.json", CacheDir, spellID);
-            if (File.Exists(filepath))
+            //string filepath = string.Format("{0}\\spells\\spell-{1}.json", CacheDir, spellID);
+            //if (File.Exists(filepath))
+            //{
+            //    string rawText = File.ReadAllText(filepath, Encoding.UTF8);
+            //    WowheadSpellInfo spellInfo = JsonConvert.DeserializeObject<WowheadSpellInfo>(rawText);
+            //    return spellInfo;
+            //}
+            //return null;
+            lock (DBLock)
             {
-                string rawText = File.ReadAllText(filepath, Encoding.UTF8);
-                WowheadSpellInfo spellInfo = JsonConvert.DeserializeObject<WowheadSpellInfo>(rawText);
-                return spellInfo;
+                using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-spells.ldb"))
+                {
+                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
+                    collection.EnsureIndex(x => x.ID);
+                    NDBEntry entry = collection.FindOne(l => l.ID == spellID);
+                    return entry != null ? JsonConvert.DeserializeObject<WowheadSpellInfo>(entry.JSONData) : null;
+                }
             }
-            return null;
         }
 
         private static void SpellInfo_SaveToCache(int spellID, WowheadSpellInfo info)
         {
-            string filepath = string.Format("{0}\\spells\\spell-{1}.json", CacheDir, spellID);
-            string s = JsonConvert.SerializeObject(info, Formatting.Indented);
-            FileInfo fileInfo = new FileInfo(filepath);
-            if (fileInfo.Directory != null) fileInfo.Directory.Create();
-            File.WriteAllText(filepath, s, Encoding.UTF8);
+            //string filepath = string.Format("{0}\\spells\\spell-{1}.json", CacheDir, spellID);
+            //string s = JsonConvert.SerializeObject(info, Formatting.Indented);
+            //FileInfo fileInfo = new FileInfo(filepath);
+            //if (fileInfo.Directory != null) fileInfo.Directory.Create();
+            //File.WriteAllText(filepath, s, Encoding.UTF8);
+            lock (DBLock)
+            {
+                using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-spells.ldb"))
+                {
+                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
+                    collection.Insert(new NDBEntry(spellID, JsonConvert.SerializeObject(info)));
+                    collection.EnsureIndex(x => x.ID);
+                }
+            }
+            
         }
 
         private static string ZoneInfo_GetCachedValue(uint zoneID)
@@ -206,6 +247,27 @@ namespace AxTools.WoW.Helpers
             if (fileInfo.Directory != null) fileInfo.Directory.Create();
             File.WriteAllText(filepath, s, Encoding.UTF8);
         }
+    }
+
+    public class NDBEntry
+    {
+        [BsonId]
+        public int BsonId { get; set; }
+
+        public int ID { get; set; }
+
+        public string JSONData { get; set; }
+
+        public NDBEntry()
+        {
+            
+        }
+
+        public NDBEntry(int id, string jsonData)
+        {
+            ID = id;
+            JSONData = jsonData;
+        }
 
     }
 
@@ -213,7 +275,7 @@ namespace AxTools.WoW.Helpers
     internal class WowheadItemInfo
     {
         [JsonConstructor]
-        internal WowheadItemInfo()
+        public WowheadItemInfo()
         {
 
         }

@@ -117,27 +117,30 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\.NET libs\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
+    <Reference Include="LiteDB, Version=1.0.4.0, Culture=neutral, PublicKeyToken=5c2fff750805920e, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.1.0.4\lib\net40\LiteDB.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MetroFramework, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\.NET libs\MetroFramework.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ObjectListView">
       <HintPath>..\..\.NET libs\ObjectListView.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="WindowsFormsAero">
       <HintPath>..\..\.NET libs\WindowsFormsAero.dll</HintPath>
     </Reference>
@@ -156,6 +159,7 @@
       <DependentUpon>AppSettingsWoWBinds.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Helpers\RadarObject.cs" />
+    <Compile Include="Forms\Helpers\RadarShowMode.cs" />
     <Compile Include="Forms\TrayPopup.cs">
       <SubType>Form</SubType>
     </Compile>

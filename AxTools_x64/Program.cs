@@ -3,10 +3,14 @@ using System;
 using System.IO;
 using System.Net;
 using System.Security.Principal;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
+using AxTools.Forms.Helpers;
 using AxTools.Helpers;
+using Newtonsoft.Json;
 
 namespace AxTools
 {
@@ -86,6 +90,39 @@ namespace AxTools
                 if (File.Exists(mySettingsFile))
                 {
                     File.Move(mySettingsFile, mySettingsDir + "\\settings.json");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            // 01.06.2016
+            try
+            {
+                //"WoWRadarShowMode": 2199040098561,
+                Regex regex = new Regex("\"WoWRadarShowMode\": (\\d+)");
+                string cfg = File.ReadAllText(Globals.CfgPath + "\\settings.json", Encoding.UTF8);
+                Match match = regex.Match(cfg);
+                if (match.Success)
+                {
+                    ulong radarShowMode = ulong.Parse(match.Groups[1].Value);
+                    byte[] p = BitConverter.GetBytes(radarShowMode);
+                    RadarShowMode newRadarShowMode = new RadarShowMode
+                    {
+                        Friends = p[0] == 1,
+                        Enemies = p[1] == 1,
+                        Npcs = p[2] == 1,
+                        Objects = p[3] == 1,
+                        Corpses = p[4] == 1,
+                        Zoom = p[5]*0.25F
+                    };
+                    if (newRadarShowMode.Zoom > 2F || newRadarShowMode.Zoom < 0.25F)
+                    {
+                        newRadarShowMode.Zoom = 0.5F;
+                    }
+                    string newCfg = cfg.Replace(match.Value, "\"WoWRadarShowMode\": " + JsonConvert.SerializeObject(newRadarShowMode));
+                    File.WriteAllText(Globals.CfgPath + "\\settings.json", newCfg, Encoding.UTF8);
                 }
             }
             catch (Exception ex)

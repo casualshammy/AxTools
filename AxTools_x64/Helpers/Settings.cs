@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AxTools.Forms.Helpers;
 using MetroFramework;
@@ -288,7 +289,7 @@ namespace AxTools.Helpers
         internal bool WoWRadarShowObjectsNames = true;
 
         [JsonProperty(Order = 38, PropertyName = "WoWRadarShowMode")]
-        internal ulong WoWRadarShowMode = 0;
+        internal RadarShowMode WoWRadarShowMode = new RadarShowMode {Corpses = true, Enemies = true, Friends = true, Npcs = true, Objects = true, Zoom = 0.5f};
 
         [JsonProperty(Order = 39, PropertyName = "WoWRadarFriendColor")]
         internal Color WoWRadarFriendColor = Color.Green;
@@ -384,8 +385,12 @@ namespace AxTools.Helpers
                 {
                     if (regVersion != null && regVersion.GetValue("") != null)
                     {
-                        string raw = regVersion.GetValue("").ToString();
-                        return raw.Replace("\"", string.Empty).Replace("\\ts3client_win64.exe %1", string.Empty).Replace("\\ts3client_win32.exe %1", string.Empty);
+                        Regex regex = new Regex("\"(.+)\" .*");
+                        Match match = regex.Match(regVersion.GetValue("").ToString());
+                        if (match.Success)
+                        {
+                            return match.Groups[1].Value;
+                        }
                     }
                     return string.Empty;
                 }
@@ -404,9 +409,12 @@ namespace AxTools.Helpers
                 {
                     if (regVersion != null && regVersion.GetValue("") != null)
                     {
-                        // "C:\Program Files\RaidCall\StartRC.exe" "%1"
-                        string raw = regVersion.GetValue("").ToString();
-                        return raw.Replace("\"", string.Empty).Replace("\\StartRC.exe %1", string.Empty);
+                        Regex regex = new Regex("\"(.+)\" .*");
+                        Match match = regex.Match(regVersion.GetValue("").ToString());
+                        if (match.Success)
+                        {
+                            return match.Groups[1].Value;
+                        }
                     }
                     return string.Empty;
                 }
@@ -425,8 +433,12 @@ namespace AxTools.Helpers
                 {
                     if (regVersion != null && regVersion.GetValue("") != null)
                     {
-                        string raw = regVersion.GetValue("").ToString();
-                        return raw.Replace("\"", string.Empty).Replace("\\Ventrilo.exe -l%1", string.Empty).Replace("PROGRA~1", "Program Files").Replace("PROGRA~2", "Program Files (x86)");
+                        Regex regex = new Regex("(.+) .*");
+                        Match match = regex.Match(regVersion.GetValue("").ToString());
+                        if (match.Success)
+                        {
+                            return match.Groups[1].Value;
+                        }
                     }
                     return string.Empty;
                 }
@@ -445,9 +457,12 @@ namespace AxTools.Helpers
                 {
                     if (regVersion != null && regVersion.GetValue("") != null)
                     {
-                        string raw = regVersion.GetValue("").ToString();
-                        string path = raw.Replace("\\mumble.exe \"%1\"", string.Empty);
-                        return path;
+                        Regex regex = new Regex("\"(.+)\" .*");
+                        Match match = regex.Match(regVersion.GetValue("").ToString());
+                        if (match.Success)
+                        {
+                            return match.Groups[1].Value;
+                        }
                     }
                     return string.Empty;
                 }

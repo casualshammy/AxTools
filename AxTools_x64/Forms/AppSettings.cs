@@ -497,7 +497,13 @@ namespace AxTools.Forms
                     {
                         Pinger.Enabled = true;
                     }
+                    else
+                    {
+                        Pinger.Enabled = false;
+                        Pinger.Enabled = true;
+                    }
                 }
+                
             }
         }
 

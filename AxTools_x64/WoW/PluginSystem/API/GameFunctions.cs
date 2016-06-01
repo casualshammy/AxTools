@@ -113,7 +113,7 @@ namespace AxTools.WoW.PluginSystem.API
             ChatboxSendText(command);
         }
 
-        private static void ChatboxSendText(string text)
+        private static void ChatboxSendText(string text, int attempts = 3)
         {
             if (text.Length <= 254) // 254 - max length of non-latin string in game chat box
             {
@@ -149,12 +149,26 @@ namespace AxTools.WoW.PluginSystem.API
                         {
                             NativeMethods.PostMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr) ch, IntPtr.Zero);
                         }
-                        Thread.Sleep(250);
-                        string editboxText = GetEditboxText();
-                        if (text == editboxText)
+                        string editboxText = null;
+                        int attemptsCounter = 0;
+                        Thread.Sleep(100);
+                        for (int i = 0; i < 10; i++)
                         {
-                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr) 13, IntPtr.Zero);
-                            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr) 13, IntPtr.Zero);
+                            if ((editboxText = GetEditboxText()) == text)
+                            {
+                                Log.Info(string.Format("ChatboxSendText: attemptsCounter: {0}", attemptsCounter));
+                                NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr) 13, IntPtr.Zero);
+                                NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr) 13, IntPtr.Zero);
+                                return;
+                            }
+                            Thread.Sleep(100);
+                            attemptsCounter++;
+                        }
+                        attempts--;
+                        if (attempts > 0)
+                        {
+                            Log.Error(string.Format("ChatboxSendText: recursive call, attempts: {0}", attempts));
+                            ChatboxSendText(text, attempts);
                         }
                         else
                         {
@@ -173,6 +187,10 @@ namespace AxTools.WoW.PluginSystem.API
         private static string GetEditboxText()
         {
             WoWUIFrame frame = WoWUIFrame.GetFrameByName("ChatFrame1EditBox");
+            if (frame == null)
+            {
+                Log.Error("GetEditboxText: ChatFrame1EditBox is null");
+            }
             return frame != null ? frame.EditboxText : null;
         }
 
@@ -218,13 +236,12 @@ namespace AxTools.WoW.PluginSystem.API
 
         private static ChatMsg ParseChatMsg(string s)
         {
-            Log.Info(s);
             // Type: [7], Channel: [], Player Name: [Тэлин-Гордунни], Sender GUID: [Player-1602-05E946D2], Active player: [Player-1929-0844D1FA], Text: [2]
             Regex regex = new Regex("Type: \\[(\\d+)\\], Channel: \\[(.*)\\], Player Name: \\[(.*)\\], Sender GUID: \\[(.*)\\], Active player: \\[.*\\], Text: \\[(.*)\\]");
             Match match = regex.Match(s);
             if (match.Success)
             {
-                return new ChatMsg
+                ChatMsg chatMsg = new ChatMsg
                 {
                     Type = (WoWChatMsgType) int.Parse(match.Groups[1].Value),
                     Channel = match.Groups[2].Value,
@@ -232,8 +249,11 @@ namespace AxTools.WoW.PluginSystem.API
                     SenderGUID = match.Groups[4].Value,
                     Text = match.Groups[5].Value
                 };
+                Log.Info(string.Format("Type: {0}; Channel: {1}; Player Name: {2}; Sender GUID: {3}; Text: {4}", chatMsg.Type, chatMsg.Channel, chatMsg.Sender, chatMsg.SenderGUID, chatMsg.Text));
+                return chatMsg;
             }
-            throw new Exception("This message is incorrect: " + s);
+            Log.Error("ParseChatMsg: unknown signature: " + s);
+            return new ChatMsg();
         }
 
         #endregion
@@ -276,7 +296,8 @@ namespace AxTools.WoW.PluginSystem.API
                 {
                     StackTrace stackTrace = new StackTrace();
                     StackFrame[] stackFrames = stackTrace.GetFrames();
-                    Log.Error(string.Format("IsInGame: stack trace: {0}; error message: {1}", string.Join(" -->> ", stackFrames != null ? stackFrames.Select(l => l.GetMethod().Name).Reverse() : new[] {"Stack is null"}), ex.Message));
+                    string stack = stackFrames != null ? string.Join(" -->> ", stackFrames.Select(l => string.Format("{0}::{1}", l.GetFileName(), l.GetMethod().Name)).Reverse()) : "Stack is null";
+                    Log.Error(string.Format("IsInGame: stack trace: {0}; error message: {1}", stack, ex.Message));
                     return false;
                 }
             }
@@ -300,7 +321,8 @@ namespace AxTools.WoW.PluginSystem.API
                 {
                     StackTrace stackTrace = new StackTrace();
                     StackFrame[] stackFrames = stackTrace.GetFrames();
-                    Log.Error("IsLoadingScreen: " + string.Join(" -->> ", stackFrames != null ? stackFrames.Select(l => l.GetMethod().Name).Reverse() : new[] { "Stack is null" }) + ex.Message);
+                    string stack = stackFrames != null ? string.Join(" -->> ", stackFrames.Select(l => string.Format("{0}::{1}", l.GetFileName(), l.GetMethod().Name)).Reverse()) : "Stack is null";
+                    Log.Error(string.Format("IsLoadingScreen: stack trace: {0}; error message: {1}", stack, ex.Message));
                     return false;
                 }
             }

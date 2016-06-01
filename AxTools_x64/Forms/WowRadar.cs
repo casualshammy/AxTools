@@ -48,7 +48,7 @@ namespace AxTools.Forms
         private Point tmpPoint = Point.Empty;
         private Point oldPoint = Point.Empty;
         private bool isDragging;
-        private float zoomR = 0.5F;
+        private float zoomR;
         private readonly int halfOfPictureboxSize;
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private readonly List<WowPlayer> wowPlayers = new List<WowPlayer>();
@@ -78,24 +78,13 @@ namespace AxTools.Forms
             checkBoxNpcs.ForeColor = settings.WoWRadarNPCColor;
             checkBoxObjects.ForeColor = settings.WoWRadarObjectColor;
             halfOfPictureboxSize = pictureBoxMain.Width / 2;
-            try
-            {
-                byte[] p = BitConverter.GetBytes(settings.WoWRadarShowMode);
-                checkBoxFriends.Checked = p[0] == 1;
-                checkBoxEnemies.Checked = p[1] == 1;
-                checkBoxNpcs.Checked = p[2] == 1;
-                checkBoxObjects.Checked = p[3] == 1;
-                checkBoxCorpses.Checked = p[4] == 1;
-                zoomR = p[5] * 0.25F;
-                if (zoomR > 2F || zoomR < 0.25F)
-                {
-                    zoomR = 0.5F;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(string.Format("{0}:{1} :: [Radar] Can't load radar settings: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
-            }
+
+            checkBoxFriends.Checked = settings.WoWRadarShowMode.Friends;
+            checkBoxEnemies.Checked = settings.WoWRadarShowMode.Enemies;
+            checkBoxNpcs.Checked = settings.WoWRadarShowMode.Npcs;
+            checkBoxObjects.Checked = settings.WoWRadarShowMode.Objects;
+            checkBoxCorpses.Checked = settings.WoWRadarShowMode.Corpses;
+            zoomR = settings.WoWRadarShowMode.Zoom;
 
             checkBoxFriends.CheckedChanged += SaveCheckBoxes;
             checkBoxEnemies.CheckedChanged += SaveCheckBoxes;
@@ -663,14 +652,12 @@ namespace AxTools.Forms
 
         private void SaveCheckBoxes(object sender, EventArgs e)
         {
-            byte[] p = new byte[8];
-            p[0] = (byte) (checkBoxFriends.Checked ? 1 : 0);
-            p[1] = (byte) (checkBoxEnemies.Checked ? 1 : 0);
-            p[2] = (byte) (checkBoxNpcs.Checked ? 1 : 0);
-            p[3] = (byte) (checkBoxObjects.Checked ? 1 : 0);
-            p[4] = (byte) (checkBoxCorpses.Checked ? 1 : 0);
-            p[5] = (byte) (zoomR/0.25F);
-            settings.WoWRadarShowMode = BitConverter.ToUInt64(p, 0);
+            settings.WoWRadarShowMode.Friends = checkBoxFriends.Checked;
+            settings.WoWRadarShowMode.Enemies = checkBoxEnemies.Checked;
+            settings.WoWRadarShowMode.Npcs = checkBoxNpcs.Checked;
+            settings.WoWRadarShowMode.Objects = checkBoxObjects.Checked;
+            settings.WoWRadarShowMode.Corpses = checkBoxCorpses.Checked;
+            settings.WoWRadarShowMode.Zoom = zoomR;
         }
 
         private void MeasureTooltip(Point mousePosition)

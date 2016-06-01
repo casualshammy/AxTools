@@ -130,5 +130,6 @@ namespace AxTools.Services
             int[] array = seq.ToArray();
             return array.Any() ? array.Max() : IncorrectPing;
         }
+
     }
 }
