@@ -110,9 +110,6 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.TextEditor">
-      <HintPath>..\..\.NET libs\ICSharpCode.TextEditor.dll</HintPath>
-    </Reference>
     <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\.NET libs\Ionic.Zip.Reduced.dll</HintPath>
@@ -530,10 +527,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MyMemory\MyMemory.vcxproj">
-      <Project>{3b4fbb66-598a-46b8-89ff-f6fa73cb6d7b}</Project>
-      <Name>MyMemory</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Components\Components.csproj">
       <Project>{63d3af8e-11d1-4d4e-b791-7fbf09e9aef3}</Project>
       <Name>Components</Name>
