@@ -89,6 +89,7 @@ namespace AxTools.Forms
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
+            this.labelTotalPluginsEnabled = new MetroFramework.Controls.MetroLabel();
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -181,7 +182,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 1;
+            this.tabControl.SelectedIndex = 2;
             this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 59;
@@ -363,6 +364,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage3
             // 
+            this.metroTabPage3.Controls.Add(this.labelTotalPluginsEnabled);
             this.metroTabPage3.Controls.Add(this.linkDownloadPlugins);
             this.metroTabPage3.Controls.Add(this.olvPlugins);
             this.metroTabPage3.Controls.Add(this.buttonStartStopPlugin);
@@ -747,6 +749,24 @@ namespace AxTools.Forms
             this.linkTitle.UseStyleColors = true;
             this.linkTitle.Click += new System.EventHandler(this.linkTitle_Click);
             // 
+            // labelTotalPluginsEnabled
+            // 
+            this.labelTotalPluginsEnabled.CustomBackground = false;
+            this.labelTotalPluginsEnabled.CustomForeColor = false;
+            this.labelTotalPluginsEnabled.FontSize = MetroFramework.MetroLabelSize.Small;
+            this.labelTotalPluginsEnabled.FontWeight = MetroFramework.MetroLabelWeight.Bold;
+            this.labelTotalPluginsEnabled.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.labelTotalPluginsEnabled.Location = new System.Drawing.Point(303, 47);
+            this.labelTotalPluginsEnabled.Name = "labelTotalPluginsEnabled";
+            this.labelTotalPluginsEnabled.Size = new System.Drawing.Size(115, 20);
+            this.labelTotalPluginsEnabled.Style = MetroFramework.MetroColorStyle.Blue;
+            this.labelTotalPluginsEnabled.StyleManager = null;
+            this.labelTotalPluginsEnabled.TabIndex = 83;
+            this.labelTotalPluginsEnabled.Text = "Plugins enabled: 99";
+            this.labelTotalPluginsEnabled.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.labelTotalPluginsEnabled.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.labelTotalPluginsEnabled.UseStyleColors = true;
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(469, 234);
@@ -824,6 +844,7 @@ namespace AxTools.Forms
         private MetroTileExt tileRadar;
         private ToolStripMenuItem toolStripMenuItemDeployArchive;
         private MetroLink linkDownloadPlugins;
+        private MetroLabel labelTotalPluginsEnabled;
     }
 }
 

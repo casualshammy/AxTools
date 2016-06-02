@@ -835,6 +835,7 @@ namespace AxTools.Forms
                     PluginManagerEx.DisablePlugin(plugin);
                     settings.EnabledPluginsList.RemoveAll(l => l == plugin.Name);
                 }
+                PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plugins enabled: " + PluginManagerEx.EnabledPlugins.Count(); });
                 BeginInvoke(new MethodInvoker(UpdateTrayContextMenu));
             }
             return newValue;
@@ -900,6 +901,7 @@ namespace AxTools.Forms
                 SetupOLVPlugins();
                 CreateTrayContextMenu();
                 UpdateTrayContextMenu();
+                labelTotalPluginsEnabled.Text = "Plugins enabled: " + PluginManagerEx.EnabledPlugins.Count();
             });
             PluginManagerEx.PluginsLoaded -= PluginManagerExOnPluginsLoaded;
         }

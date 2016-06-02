@@ -127,7 +127,7 @@ namespace AxTools.WoW.PluginSystem.API
         /// <param name="warning">Is it warning or info</param>
         /// <param name="sound">Play sound</param>
         /// <param name="timeout">Time in seconds before popup disappears</param>
-        public static void ShowNotify(this IPlugin plugin, string text, bool warning, bool sound, int timeout = 10)
+        public static void ShowNotify(this IPlugin plugin, string text, bool warning, bool sound, int timeout = 7)
         {
             Notify.TrayPopup("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, plugin.TrayIcon);
         }
