@@ -33,9 +33,17 @@ namespace AxTools.Helpers
                             string settingsFile = Globals.CfgPath + "\\settings.json";
                             if (File.Exists(settingsFile))
                             {
-                                string rawText = File.ReadAllText(settingsFile, Encoding.UTF8);
-                                _instance = JsonConvert.DeserializeObject<Settings>(rawText);
-                                Log.Info("[AxTools] Settings file is loaded");
+                                try
+                                {
+                                    string rawText = File.ReadAllText(settingsFile, Encoding.UTF8);
+                                    _instance = JsonConvert.DeserializeObject<Settings>(rawText);
+                                    Log.Info("[AxTools] Settings file is loaded");
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show("Cannot load settings file: " + ex.Message);
+                                    return null;
+                                }
                             }
                             else
                             {
@@ -60,18 +68,6 @@ namespace AxTools.Helpers
             if (MainWindowLocation.X < 0 || MainWindowLocation.Y < 0)
             {
                 MainWindowLocation = new Point(100, 100);
-            }
-            if (WoWLuaConsoleWindowSize.Height < 354)
-            {
-                WoWLuaConsoleWindowSize.Height = 354;
-            }
-            if (WoWLuaConsoleWindowSize.Width < 650)
-            {
-                WoWLuaConsoleWindowSize.Width = 650;
-            }
-            if (WoWLuaConsoleTimerInterval < 50)
-            {
-                WoWLuaConsoleTimerInterval = 50;
             }
             if (WoWAddonsBackupCompressionLevel < 0)
             {
@@ -149,118 +145,77 @@ namespace AxTools.Helpers
 
         #region WoW
 
-        [JsonProperty(Order = 6, PropertyName = "WoWDirectory")]
+        [JsonProperty(Order = 10, PropertyName = "WoWDirectory")]
         internal string WoWDirectory = string.Empty;
 
-        [JsonProperty(Order = 7, PropertyName = "WoWAccounts")]
+        [JsonProperty(Order = 11, PropertyName = "WoWAccounts")]
         internal byte[] WoWAccounts = new byte[0];
 
-        [JsonProperty(Order = 8, PropertyName = "WoWAntiKick")]
+        [JsonProperty(Order = 12, PropertyName = "WoWAntiKick")]
         internal bool WoWAntiKick = true;
 
-        [JsonProperty(Order = 9, PropertyName = "WoWInteractMouseover")]
+        [JsonProperty(Order = 13, PropertyName = "WoWInteractMouseover")]
         internal Keys WoWInteractMouseover = Keys.None;
 
-        [JsonProperty(Order = 10, PropertyName = "WoWTargetMouseover")]
+        [JsonProperty(Order = 14, PropertyName = "WoWTargetMouseover")]
         internal Keys WoWTargetMouseover = Keys.None;
 
-        [JsonProperty(Order = 11, PropertyName = "WoWCustomizeWindow")]
+        [JsonProperty(Order = 15, PropertyName = "WoWCustomizeWindow")]
         internal bool WoWCustomizeWindow = false;
 
-        [JsonProperty(Order = 12, PropertyName = "WoWCustomWindowRectangle")]
+        [JsonProperty(Order = 16, PropertyName = "WoWCustomWindowRectangle")]
         internal Rectangle WoWCustomWindowRectangle = new Rectangle(0, 0, 1366, 733);
 
-        [JsonProperty(Order = 13, PropertyName = "WoWCustomWindowNoBorder")]
+        [JsonProperty(Order = 17, PropertyName = "WoWCustomWindowNoBorder")]
         internal bool WoWCustomWindowNoBorder = false;
 
         #endregion
 
         #region Clicker
 
-        [JsonProperty(Order = 15, PropertyName = "ClickerHotkey")]
+        [JsonProperty(Order = 20, PropertyName = "ClickerHotkey")]
         internal Keys ClickerHotkey = Keys.None;
 
-        [JsonProperty(Order = 16, PropertyName = "ClickerInterval")]
+        [JsonProperty(Order = 21, PropertyName = "ClickerInterval")]
         internal int ClickerInterval = 0x3e8;
 
-        [JsonProperty(Order = 17, PropertyName = "ClickerKey")]
+        [JsonProperty(Order = 22, PropertyName = "ClickerKey")]
         internal Keys ClickerKey = Keys.None;
 
         #endregion
 
         #region VoIP
 
-        [JsonProperty(Order = 18, PropertyName = "MumbleDirectory")]
+        [JsonProperty(Order = 30, PropertyName = "MumbleDirectory")]
         internal string MumbleDirectory = string.Empty;
 
-        [JsonProperty(Order = 19, PropertyName = "MumbleStartWithWoW")]
+        [JsonProperty(Order = 31, PropertyName = "MumbleStartWithWoW")]
         internal bool MumbleStartWithWoW = false;
 
-        [JsonProperty(Order = 20, PropertyName = "RaidcallDirectory")]
+        [JsonProperty(Order = 32, PropertyName = "RaidcallDirectory")]
         internal string RaidcallDirectory = string.Empty;
 
-        [JsonProperty(Order = 21, PropertyName = "RaidcallStartWithWoW")]
+        [JsonProperty(Order = 33, PropertyName = "RaidcallStartWithWoW")]
         internal bool RaidcallStartWithWoW = false;
 
-        [JsonProperty(Order = 22, PropertyName = "TS3Directory")]
+        [JsonProperty(Order = 34, PropertyName = "TS3Directory")]
         internal string TS3Directory = string.Empty;
 
-        [JsonProperty(Order = 23, PropertyName = "TS3StartWithWoW")]
+        [JsonProperty(Order = 35, PropertyName = "TS3StartWithWoW")]
         internal bool TS3StartWithWoW = false;
 
-        [JsonProperty(Order = 24, PropertyName = "VentriloDirectory")]
+        [JsonProperty(Order = 36, PropertyName = "VentriloDirectory")]
         internal string VentriloDirectory = string.Empty;
 
-        [JsonProperty(Order = 25, PropertyName = "VentriloStartWithWoW")]
+        [JsonProperty(Order = 37, PropertyName = "VentriloStartWithWoW")]
         internal bool VentriloStartWithWoW = false;
-
-        #endregion
-
-        #region LuaConsole
-
-        [JsonProperty(Order = 26, PropertyName = "WoWLuaConsoleWindowSize")]
-        internal Size WoWLuaConsoleWindowSize = new Size(650, 354);
-
-        [JsonProperty(Order = 27, PropertyName = "WoWLuaConsoleTimerInterval")]
-        internal int WoWLuaConsoleTimerInterval = 1000;
-
-        [JsonProperty(Order = 28, PropertyName = "WoWLuaConsoleTimerRnd")]
-        internal bool WoWLuaConsoleTimerRnd = false;
-
-        internal event Action<Keys> LuaTimerHotkeyChanged;
-        private Keys luaTimerHotkey = Keys.None;
-        [JsonProperty(Order = 29, PropertyName = "WoWLuaConsoleTimerHotkey")]
-        internal Keys LuaTimerHotkey
-        {
-            get
-            {
-                return luaTimerHotkey;
-            }
-            set
-            {
-                luaTimerHotkey = value;
-                if (LuaTimerHotkeyChanged != null)
-                {
-                    LuaTimerHotkeyChanged(value);
-                }
-            }
-        }
-
-        [JsonProperty(Order = 30, PropertyName = "WoWLuaConsoleIgnoreGameState")]
-        internal bool WoWLuaConsoleIgnoreGameState = false;
-
-        [JsonProperty(Order = 31, PropertyName = "WoWLuaConsoleShowIngameNotifications")]
-        internal bool WoWLuaConsoleShowIngameNotifications = true;
-
-        [JsonProperty(Order = 32, PropertyName = "WoWLuaConsoleLastText")]
-        internal string WoWLuaConsoleLastText = string.Empty;
 
         #endregion
 
         #region Radar
 
         private readonly ObservableCollection<RadarObject> wowRadarList = new ObservableCollection<RadarObject>();
-        [JsonProperty(Order = 33, PropertyName = "WoWRadarList")]
+        [JsonProperty(Order = 50, PropertyName = "WoWRadarList")]
         internal ObservableCollection<RadarObject> WoWRadarList
         {
             get
@@ -276,53 +231,53 @@ namespace AxTools.Helpers
             }
         }
 
-        [JsonProperty(Order = 34, PropertyName = "WoWRadarLocation")]
+        [JsonProperty(Order = 51, PropertyName = "WoWRadarLocation")]
         internal Point WoWRadarLocation = Point.Empty;
 
-        [JsonProperty(Order = 35, PropertyName = "WoWRadarShowPlayersClasses")]
+        [JsonProperty(Order = 52, PropertyName = "WoWRadarShowPlayersClasses")]
         internal bool WoWRadarShowPlayersClasses = true;
 
-        [JsonProperty(Order = 36, PropertyName = "WoWRadarShowNPCsNames")]
+        [JsonProperty(Order = 53, PropertyName = "WoWRadarShowNPCsNames")]
         internal bool WoWRadarShowNPCsNames = true;
 
-        [JsonProperty(Order = 37, PropertyName = "WoWRadarShowObjectsNames")]
+        [JsonProperty(Order = 54, PropertyName = "WoWRadarShowObjectsNames")]
         internal bool WoWRadarShowObjectsNames = true;
 
-        [JsonProperty(Order = 38, PropertyName = "WoWRadarShowMode")]
+        [JsonProperty(Order = 55, PropertyName = "WoWRadarShowMode")]
         internal RadarShowMode WoWRadarShowMode = new RadarShowMode {Corpses = true, Enemies = true, Friends = true, Npcs = true, Objects = true, Zoom = 0.5f};
 
-        [JsonProperty(Order = 39, PropertyName = "WoWRadarFriendColor")]
+        [JsonProperty(Order = 56, PropertyName = "WoWRadarFriendColor")]
         internal Color WoWRadarFriendColor = Color.Green;
 
-        [JsonProperty(Order = 40, PropertyName = "WoWRadarEnemyColor")]
+        [JsonProperty(Order = 57, PropertyName = "WoWRadarEnemyColor")]
         internal Color WoWRadarEnemyColor = Color.Red;
 
-        [JsonProperty(Order = 41, PropertyName = "WoWRadarNPCColor")]
+        [JsonProperty(Order = 58, PropertyName = "WoWRadarNPCColor")]
         internal Color WoWRadarNPCColor = Color.GreenYellow;
 
-        [JsonProperty(Order = 42, PropertyName = "WoWRadarObjectColor")]
+        [JsonProperty(Order = 59, PropertyName = "WoWRadarObjectColor")]
         internal Color WoWRadarObjectColor = Color.Gold;
 
         #endregion
 
         #region AddonsBackup
 
-        [JsonProperty(Order = 43, PropertyName = "WoWAddonsBackupPath")]
+        [JsonProperty(Order = 60, PropertyName = "WoWAddonsBackupPath")]
         internal string WoWAddonsBackupPath = Globals.UserfilesPath;
 
-        [JsonProperty(Order = 44, PropertyName = "WoWAddonsBackupLastDate")]
+        [JsonProperty(Order = 61, PropertyName = "WoWAddonsBackupLastDate")]
         internal DateTime WoWAddonsBackupLastDate = new DateTime(1970, 1, 1);
 
-        [JsonProperty(Order = 45, PropertyName = "WoWAddonsBackupIsActive")]
+        [JsonProperty(Order = 62, PropertyName = "WoWAddonsBackupIsActive")]
         internal bool WoWAddonsBackupIsActive = true;
 
-        [JsonProperty(Order = 46, PropertyName = "WoWAddonsBackupNumberOfArchives")]
+        [JsonProperty(Order = 63, PropertyName = "WoWAddonsBackupNumberOfArchives")]
         internal int WoWAddonsBackupNumberOfArchives = 7;
 
-        [JsonProperty(Order = 47, PropertyName = "WoWAddonsBackupMinimumTimeBetweenBackup")]
+        [JsonProperty(Order = 64, PropertyName = "WoWAddonsBackupMinimumTimeBetweenBackup")]
         internal int WoWAddonsBackupMinimumTimeBetweenBackup = 24;
 
-        [JsonProperty(Order = 48, PropertyName = "WoWAddonsBackupCompressionLevel")]
+        [JsonProperty(Order = 65, PropertyName = "WoWAddonsBackupCompressionLevel")]
         internal int WoWAddonsBackupCompressionLevel = 6;
 
         #endregion
@@ -331,7 +286,7 @@ namespace AxTools.Helpers
 
         internal event Action<Keys> WoWPluginHotkeyChanged;
         private Keys wowPluginHotkey = Keys.None;
-        [JsonProperty(Order = 49, PropertyName = "WoWPluginHotkey")]
+        [JsonProperty(Order = 70, PropertyName = "WoWPluginHotkey")]
         internal Keys WoWPluginHotkey
         {
             get
@@ -348,29 +303,32 @@ namespace AxTools.Helpers
             }
         }
 
-        [JsonProperty(Order = 50, PropertyName = "WoWPluginShowIngameNotifications")]
+        [JsonProperty(Order = 71, PropertyName = "WoWPluginShowIngameNotifications")]
         internal bool WoWPluginShowIngameNotifications = true;
 
-        [JsonProperty(Order = 51, PropertyName = "EnabledPluginsList")]
+        [JsonProperty(Order = 72, PropertyName = "EnabledPluginsList")]
         internal List<string> EnabledPluginsList = new List<string>();
+
+        [JsonProperty(Order = 73, PropertyName = "PluginsUsageStat")]
+        internal Dictionary<string, int> PluginsUsageStat = new Dictionary<string, int>();
 
         #endregion
 
         #region Pinger
 
-        [JsonProperty(Order = 52, PropertyName = "PingerServerID")]
+        [JsonProperty(Order = 80, PropertyName = "PingerServerID")]
         internal int PingerServerID = 1;
 
-        [JsonProperty(Order = 53, PropertyName = "PingerBadPing")]
+        [JsonProperty(Order = 81, PropertyName = "PingerBadPing")]
         internal int PingerBadPing = 125;
 
-        [JsonProperty(Order = 54, PropertyName = "PingerBadPacketLoss")]
+        [JsonProperty(Order = 82, PropertyName = "PingerBadPacketLoss")]
         internal int PingerBadPacketLoss = 5;
 
-        [JsonProperty(Order = 55, PropertyName = "PingerVeryBadPing")]
+        [JsonProperty(Order = 83, PropertyName = "PingerVeryBadPing")]
         internal int PingerVeryBadPing = 250;
 
-        [JsonProperty(Order = 56, PropertyName = "PingerVeryBadPacketLoss")]
+        [JsonProperty(Order = 84, PropertyName = "PingerVeryBadPacketLoss")]
         internal int PingerVeryBadPacketLoss = 10;
 
         #endregion

@@ -63,6 +63,20 @@ namespace WoWPlugin_PathCreator
             Close();
         }
 
+        private void buttonWait_Click(object sender, EventArgs e)
+        {
+            int time;
+            if (int.TryParse(textBoxWait.Text, out time))
+            {
+                list.Add(new DoAction { ActionType = DoActionType.Wait, Data = textBoxWait.Text });
+                WriteJSON();
+            }
+            else
+            {
+                MessageBox.Show("Value must be a number");
+            }
+        }
+
     }
 
     [DataContract]
@@ -87,6 +101,7 @@ namespace WoWPlugin_PathCreator
         RunMacro,
         RunLua,
         SendChat,
-        StopProfile
+        StopProfile,
+        Wait
     }
 }

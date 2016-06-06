@@ -10,6 +10,7 @@ using AxTools.Properties;
 using AxTools.Services;
 using AxTools.WoW.PluginSystem;
 using Components;
+using Components.Forms;
 using MetroFramework;
 using MetroFramework.Forms;
 using Microsoft.Win32;
@@ -39,7 +40,6 @@ namespace AxTools.Forms
         private void SetupData()
         {
             textBoxClickerHotkey.Text = new KeysConverter().ConvertToInvariantString(settings.ClickerHotkey);
-            textBoxLuaHotkey.Text = new KeysConverter().ConvertToInvariantString(settings.LuaTimerHotkey);
             textBoxPluginsHotkey.Text = new KeysConverter().ConvertToInvariantString(settings.WoWPluginHotkey);
             textBoxBadNetworkStatusProcent.Text = settings.PingerBadPacketLoss.ToString();
             textBoxVeryBadNetworkStatusProcent.Text = settings.PingerVeryBadPacketLoss.ToString();
@@ -453,24 +453,27 @@ namespace AxTools.Forms
         {
             try
             {
-                string subject = InputBox.Input("Any comment? (optional)");
-                WaitingOverlay waitingOverlay = WaitingOverlay.Show(this);
-                Task.Factory.StartNew(() =>
+                string subject = InputBox.Input("Any comment? (optional)", settings.StyleColor);
+                if (subject != null)
                 {
-                    try
+                    WaitingOverlay waitingOverlay = WaitingOverlay.Show(this);
+                    Task.Factory.StartNew(() =>
                     {
-                        Log.UploadLog(subject);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error("Can't send log: " + ex.Message);
-                        this.TaskDialog("Can't send log", ex.Message, NotifyUserType.Error);
-                    }
-                    finally
-                    {
-                        Invoke(new Action(waitingOverlay.Close));
-                    }
-                });
+                        try
+                        {
+                            Log.UploadLog(subject);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Can't send log: " + ex.Message);
+                            this.TaskDialog("Can't send log", ex.Message, NotifyUserType.Error);
+                        }
+                        finally
+                        {
+                            Invoke(new Action(waitingOverlay.Close));
+                        }
+                    });
+                }
             }
             catch (Exception ex)
             {

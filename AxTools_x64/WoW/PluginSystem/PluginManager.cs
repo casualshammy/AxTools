@@ -53,7 +53,9 @@ namespace AxTools.WoW.PluginSystem
                     try
                     {
                         pluginContainer.Plugin.OnStart();
-                        Log.Info(string.Format("{0} [{1}] Plugin is started", WoWManager.WoWProcess, pluginContainer.Plugin.Name));
+                        Dictionary<string, int> pluginsUsageStat = Settings.Instance.PluginsUsageStat;
+                        pluginsUsageStat[pluginContainer.Plugin.Name] = pluginsUsageStat.ContainsKey(pluginContainer.Plugin.Name) ? pluginsUsageStat[pluginContainer.Plugin.Name] + 1 : 1;
+                        Log.Info(string.Format("{0} [{1}] Plugin is started, total usages: {2}", WoWManager.WoWProcess, pluginContainer.Plugin.Name, pluginsUsageStat[pluginContainer.Plugin.Name]));
                     }
                     catch (Exception ex)
                     {

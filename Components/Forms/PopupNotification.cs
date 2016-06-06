@@ -5,28 +5,41 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Forms;
-using AxTools.Helpers;
-using AxTools.WinAPI;
-using Components;
+using Components.WinAPI;
+using MetroFramework;
 
-namespace AxTools.Forms
+namespace Components.Forms
 {
-    public partial class TrayPopup : BorderedMetroForm
+    public partial class PopupNotification : BorderedMetroForm
     {
         private readonly System.Timers.Timer timer;
         private int startPosX;
         private int startPosY;
         private DateTime loadTime;
 
-        public TrayPopup(string title, string message, Image image)
+        public PopupNotification(string title, string message, Image image, MetroColorStyle metroColorStyle)
         {
             InitializeComponent();
-            StyleManager.Style = Settings.Instance.StyleColor;
+            StyleManager.Style = metroColorStyle;
+            TopMost = true;
             Title = title;
             Message = message;
             Icon = image;
             timer = new System.Timers.Timer(50);
             timer.Elapsed += timer_Tick;
+            BeginInvoke((MethodInvoker) delegate
+            {
+                SetLocation();
+                loadTime = DateTime.UtcNow;
+                timer.Start();
+                Timeout = Timeout == 0 ? 30 : Timeout;
+                MouseClick += ALL_MouseClick;
+                foreach (Control control in Controls)
+                {
+                    control.MouseEnter += ALL_MouseEnter;
+                    control.MouseClick += ALL_MouseClick;
+                }
+            });
         }
 
         public string Title
@@ -40,7 +53,7 @@ namespace AxTools.Forms
             get { return metroLabel2.Text; }
             set
             {
-                metroLabel2.Text = Utils.WordWrap(value, 55);
+                metroLabel2.Text = WordWrap(value, 55);
                 Size = new Size(Width, Math.Max(68, metroLabel2.Location.Y + metroLabel2.Size.Height + 10)); // 68 - standart heigth
             }
         }
@@ -76,21 +89,6 @@ namespace AxTools.Forms
                 {
                     control.Click -= value;
                 }
-            }
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            SetLocation();
-            loadTime = DateTime.UtcNow;
-            timer.Start();
-            Timeout = Timeout == 0 ? 30 : Timeout;
-            MouseClick += ALL_MouseClick;
-            foreach (Control control in Controls)
-            {
-                control.MouseEnter += ALL_MouseEnter;
-                control.MouseClick += ALL_MouseClick;
             }
         }
 
@@ -136,7 +134,7 @@ namespace AxTools.Forms
             {
                 throw new InvalidOperationException();
             }
-            List<TrayPopup> popups = Utils.FindForms<TrayPopup>().ToList();
+            List<PopupNotification> popups = FindForms<PopupNotification>().ToList();
             popups.Remove(this);
             if (data.uEdge == ABE.Top)
             {
@@ -144,9 +142,9 @@ namespace AxTools.Forms
                 startPosY = 0;
                 if (popups.Any())
                 {
-                    List<int> yTopLeft = popups.Select(l => l.DesktopLocation.Y).Concat(new[] {Screen.PrimaryScreen.WorkingArea.Height}).ToList();
+                    List<int> yTopLeft = popups.Select(l => l.DesktopLocation.Y).Concat(new[] { Screen.PrimaryScreen.WorkingArea.Height }).ToList();
                     yTopLeft.Sort();
-                    List<int> yBottomLeft = new[] {-10}.Concat(popups.Select(l => l.DesktopLocation.Y + l.Height)).ToList();
+                    List<int> yBottomLeft = new[] { -10 }.Concat(popups.Select(l => l.DesktopLocation.Y + l.Height)).ToList();
                     yBottomLeft.Sort();
                     for (int i = 0; i < yTopLeft.Count; i++)
                     {
@@ -165,10 +163,10 @@ namespace AxTools.Forms
                 startPosY = Screen.PrimaryScreen.WorkingArea.Height - Height;
                 if (popups.Any())
                 {
-                    List<int> yTopLeft = new[] {Screen.PrimaryScreen.WorkingArea.Height + 10}.Concat(popups.Select(l => l.DesktopLocation.Y)).ToList();
+                    List<int> yTopLeft = new[] { Screen.PrimaryScreen.WorkingArea.Height + 10 }.Concat(popups.Select(l => l.DesktopLocation.Y)).ToList();
                     yTopLeft.Sort();
                     yTopLeft.Reverse();
-                    List<int> yBottomLeft = popups.Select(l => l.DesktopLocation.Y + l.Height).Concat(new[] {0}).ToList();
+                    List<int> yBottomLeft = popups.Select(l => l.DesktopLocation.Y + l.Height).Concat(new[] { 0 }).ToList();
                     yBottomLeft.Sort();
                     yBottomLeft.Reverse();
                     for (int i = 0; i < yTopLeft.Count; i++)
@@ -183,6 +181,28 @@ namespace AxTools.Forms
                 }
             }
             SetDesktopLocation(startPosX, startPosY);
+        }
+
+        private string WordWrap(string text, int chunkSize)
+        {
+            List<string> words = text.Split(' ').ToList();
+            string result = "";
+            while (words.Any())
+            {
+                string buffer = "";
+                while (words.Any() && buffer.Length + 1 + words.First().Length <= chunkSize)
+                {
+                    buffer += " " + words.First();
+                    words.RemoveAt(0);
+                }
+                result += buffer + "\r\n";
+            }
+            return result.TrimEnd('\n').TrimEnd('\r');
+        }
+
+        private T[] FindForms<T>() where T : Form
+        {
+            return (from object i in Application.OpenForms where i.GetType() == typeof(T) select i as T).ToArray();
         }
 
     }

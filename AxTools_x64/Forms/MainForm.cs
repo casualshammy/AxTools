@@ -1,5 +1,4 @@
-﻿using Components;
-using Components.TaskbarProgressbar;
+﻿using Components.TaskbarProgressbar;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
@@ -22,6 +21,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.WoW.PluginSystem.API;
+using Components.Forms;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
@@ -253,7 +253,7 @@ namespace AxTools.Forms
             foreach (IPlugin i in PluginManagerEx.LoadedPlugins.Where(i => nativePlugins.Contains(i.GetType())))
             {
                 IPlugin plugin = i;
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) {Tag = plugin};
                 toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
                 {
                     if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
@@ -273,7 +273,7 @@ namespace AxTools.Forms
                         IPlugin plugin = i;
                         try
                         {
-                            ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon, null, "NativeN" + plugin.Name);
+                            ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
                             toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
                             {
                                 if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
@@ -331,19 +331,16 @@ namespace AxTools.Forms
         {
             foreach (IPlugin plugin in PluginManagerEx.LoadedPlugins)
             {
-                ToolStripItem[] items = contextMenuStripMain.Items.Find("NativeN" + plugin.Name, true);
-                foreach (ToolStripItem toolStripItem in items)
+                ToolStripMenuItem item = contextMenuStripMain.Items.GetAllToolStripItems().FirstOrDefault(l => (IPlugin) l.Tag != null && ((IPlugin) l.Tag).Name == plugin.Name) as ToolStripMenuItem;
+                if (item != null)
                 {
-                    ToolStripMenuItem item = toolStripItem as ToolStripMenuItem;
-                    if (item != null)
-                    {
-                        item.ShortcutKeyDisplayString = olvPlugins.CheckedObjects.Cast<IPlugin>().FirstOrDefault(i => i.Name == item.Text) != null ? settings.WoWPluginHotkey.ToString() : null;
-                        item.Enabled = !PluginManagerEx.RunningPlugins.Any();
-                    }
+                    item.ShortcutKeyDisplayString = olvPlugins.CheckedObjects.Cast<IPlugin>().Any(i => i.Name == item.Text) ? settings.WoWPluginHotkey.ToString() : null;
+                    item.Enabled = !PluginManagerEx.RunningPlugins.Any();
                 }
+                stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.Any();
+                stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = settings.WoWPluginHotkey.ToString();
             }
-            stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.Any();
-            stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = settings.WoWPluginHotkey.ToString();
+            
         }
 
         private void WoWRadarToolStripMenuItemClick(object sender, EventArgs e)
@@ -477,7 +474,7 @@ namespace AxTools.Forms
             AddonsBackupDeploy form = Utils.FindForm<AddonsBackupDeploy>();
             if (form != null)
             {
-                form.Show();
+                form.ActivateBrutal();
             }
             else
             {
@@ -768,7 +765,7 @@ namespace AxTools.Forms
         private void SetupOLVPlugins()
         {
             olvColumn2.AspectToStringConverter = value => (bool) value ? "DblClick" : "";
-            olvPlugins.SetObjects(PluginManagerEx.LoadedPlugins);
+            olvPlugins.SetObjects(PluginManagerEx.LoadedPlugins.OrderByDescending(l => settings.PluginsUsageStat.ContainsKey(l.Name) ? settings.PluginsUsageStat[l.Name] : 0));
             foreach (IPlugin i in PluginManagerEx.EnabledPlugins)
             {
                 olvPlugins.CheckObject(i);
@@ -799,13 +796,20 @@ namespace AxTools.Forms
             IPlugin plugin = olvPlugins.SelectedObject as IPlugin;
             if (plugin != null)
             {
-                if (plugin.ConfigAvailable)
+                if (PluginManagerEx.RunningPlugins.All(l => l.Name != plugin.Name))
                 {
-                    plugin.OnConfig();
+                    if (plugin.ConfigAvailable)
+                    {
+                        plugin.OnConfig();
+                    }
+                    else
+                    {
+                        this.TaskDialog(plugin.Name, "This plugin hasn't settings dialog", NotifyUserType.Info);
+                    }
                 }
                 else
                 {
-                    this.TaskDialog(plugin.Name, "This plugin hasn't settings dialog", NotifyUserType.Info);
+                    this.TaskDialog(plugin.Name, "Unable to edit settings of running plugin", NotifyUserType.Info);
                 }
             }
         }
@@ -828,11 +832,19 @@ namespace AxTools.Forms
                 if (newValue)
                 {
                     PluginManagerEx.EnablePlugin(plugin);
+                    if (PluginManagerEx.RunningPlugins.Any())
+                    {
+                        PluginManagerEx.AddPluginToRunning(plugin);
+                    }
                     settings.EnabledPluginsList.Add(plugin.Name);
                 }
                 else
                 {
                     PluginManagerEx.DisablePlugin(plugin);
+                    if (PluginManagerEx.RunningPlugins.Any())
+                    {
+                        PluginManagerEx.RemovePluginFromRunning(plugin);
+                    }
                     settings.EnabledPluginsList.RemoveAll(l => l == plugin.Name);
                 }
                 PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plugins enabled: " + PluginManagerEx.EnabledPlugins.Count(); });
@@ -889,7 +901,7 @@ namespace AxTools.Forms
             BeginInvoke((MethodInvoker) delegate
             {
                 buttonStartStopPlugin.Text = string.Format("{0} [{1}]", !PluginManagerEx.RunningPlugins.Any() ? "Start" : "Stop", settings.WoWPluginHotkey);
-                olvPlugins.Enabled = !PluginManagerEx.RunningPlugins.Any();
+                //olvPlugins.Enabled = !PluginManagerEx.RunningPlugins.Any();
                 UpdateTrayContextMenu();
             });
         }

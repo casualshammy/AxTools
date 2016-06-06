@@ -1,4 +1,4 @@
-﻿namespace Components
+﻿namespace Components.Forms
 {
     partial class CustomScriptEdit
     {

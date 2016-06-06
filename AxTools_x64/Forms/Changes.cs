@@ -3,6 +3,7 @@ using System.IO;
 using Components;
 using AxTools.Helpers;
 using AxTools.Properties;
+using Components.Forms;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms

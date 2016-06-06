@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Components;
 using AxTools.Properties;
 using AxTools.WoW;
+using Components.Forms;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms

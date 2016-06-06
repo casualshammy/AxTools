@@ -1,6 +1,6 @@
-﻿namespace AxTools.Forms
+﻿namespace Components.Forms
 {
-    partial class InputBox
+    public partial class InputBox
     {
         /// <summary>
         /// Required designer variable.

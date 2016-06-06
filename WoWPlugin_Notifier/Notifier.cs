@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Threading;
+using System.Timers;
 using System.Windows.Forms;
 using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
@@ -68,6 +69,13 @@ namespace WoWPlugin_Notifier
                 (timerStaticPopup = this.CreateTimer(15000, TimerStaticPopup_OnElapsed)).Start();
                 this.LogPrint("StaticPopup notification enabled");
             }
+            if (settingsInstance.OnDisconnect)
+            {
+                timerDisconnect = new System.Timers.Timer(100);
+                timerDisconnect.Elapsed += TimerDisconnect_OnElapsed;
+                timerDisconnect.Start();
+                this.LogPrint("Disconnect notification enabled");
+            }
             this.LogPrint("Successfully started");
         }
 
@@ -81,6 +89,14 @@ namespace WoWPlugin_Notifier
             if (settingsInstance.OnStaticPopup && timerStaticPopup != null)
             {
                 timerStaticPopup.Dispose();
+            }
+            if (settingsInstance.OnDisconnect)
+            {
+                TimerDisconnect_OnElapsed(null, null);
+                if (timerDisconnect != null)
+                {
+                    timerDisconnect.Dispose();
+                }
             }
         }
 
@@ -110,6 +126,18 @@ namespace WoWPlugin_Notifier
             GameFunctions.ReadChat();
         }
 
+        private void TimerDisconnect_OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            if (!GameFunctions.IsInGame && (DateTime.UtcNow - lastTimeNotifiedAboutDisconnect).TotalSeconds > 60)
+            {
+                lastTimeNotifiedAboutDisconnect = DateTime.UtcNow;
+                this.LogPrint("Player is not in game!");
+                this.ShowNotify("Player is not in game!", false, false);
+                dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
+                libSMS.SendSMS("Player is not in game!");
+            }
+        }
+
         private void GameFunctionsOnNewChatMessage(ChatMsg obj)
         {
             if ((settingsInstance.OnWhisper && obj.Type == WoWChatMsgType.Whisper) || (settingsInstance.OnBNetWhisper && obj.Type == WoWChatMsgType.BNetWisper))
@@ -126,6 +154,8 @@ namespace WoWPlugin_Notifier
         private Settings settingsInstance;
         private SafeTimer timerChat;
         private SafeTimer timerStaticPopup;
+        private System.Timers.Timer timerDisconnect;
+        private DateTime lastTimeNotifiedAboutDisconnect = DateTime.MinValue;
 
     }
 }

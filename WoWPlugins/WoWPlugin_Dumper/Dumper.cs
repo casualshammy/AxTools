@@ -35,6 +35,7 @@ namespace WoWPlugin_Dumper
         public void OnStart()
         {
             (form = new DumperForm(this)).Show();
+            form.Activate();
             (timer = this.CreateTimer(100, OnElapsed)).Start();
         }
 

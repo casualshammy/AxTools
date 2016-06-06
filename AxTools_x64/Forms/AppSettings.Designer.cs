@@ -88,7 +88,6 @@ namespace AxTools.Forms
             this.buttonLuaHotkey = new MetroFramework.Controls.MetroButton();
             this.buttonClickerHotkey = new MetroFramework.Controls.MetroButton();
             this.textBoxPluginsHotkey = new MetroFramework.Controls.MetroTextBox();
-            this.textBoxLuaHotkey = new MetroFramework.Controls.MetroTextBox();
             this.textBoxClickerHotkey = new MetroFramework.Controls.MetroTextBox();
             this.metroTabPage7 = new MetroFramework.Controls.MetroTabPage();
             this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
@@ -1153,7 +1152,6 @@ namespace AxTools.Forms
             this.metroTabPage2.Controls.Add(this.buttonLuaHotkey);
             this.metroTabPage2.Controls.Add(this.buttonClickerHotkey);
             this.metroTabPage2.Controls.Add(this.textBoxPluginsHotkey);
-            this.metroTabPage2.Controls.Add(this.textBoxLuaHotkey);
             this.metroTabPage2.Controls.Add(this.textBoxClickerHotkey);
             this.metroTabPage2.Controls.Add(this.labelWExecModule);
             this.metroTabPage2.Controls.Add(this.labelClickerHotkey);
@@ -1229,25 +1227,6 @@ namespace AxTools.Forms
             this.textBoxPluginsHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.textBoxPluginsHotkey, "Key to switch active WoW plugin on/off. Works only if WoW window is active");
             this.textBoxPluginsHotkey.UseStyleColors = true;
-            // 
-            // textBoxLuaHotkey
-            // 
-            this.textBoxLuaHotkey.CustomBackground = false;
-            this.textBoxLuaHotkey.CustomForeColor = false;
-            this.textBoxLuaHotkey.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxLuaHotkey.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxLuaHotkey.Location = new System.Drawing.Point(233, 54);
-            this.textBoxLuaHotkey.Multiline = false;
-            this.textBoxLuaHotkey.Name = "textBoxLuaHotkey";
-            this.textBoxLuaHotkey.SelectedText = "";
-            this.textBoxLuaHotkey.Size = new System.Drawing.Size(97, 23);
-            this.textBoxLuaHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxLuaHotkey.StyleManager = null;
-            this.textBoxLuaHotkey.TabIndex = 53;
-            this.textBoxLuaHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.textBoxLuaHotkey, "Key to switch Lua console\'s loop execution on/off. Works only if WoW window is ac" +
-        "tive");
-            this.textBoxLuaHotkey.UseStyleColors = true;
             // 
             // textBoxClickerHotkey
             // 
@@ -1652,7 +1631,6 @@ namespace AxTools.Forms
         private MetroLink linkTitle;
         private MetroCheckBox checkBoxPluginsShowIngameNotifications;
         private MetroTextBox textBoxPluginsHotkey;
-        private MetroTextBox textBoxLuaHotkey;
         private MetroTextBox textBoxClickerHotkey;
         private MetroButton buttonPluginsHotkey;
         private MetroButton buttonLuaHotkey;

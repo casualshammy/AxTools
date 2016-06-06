@@ -32,6 +32,7 @@
             this.linkLabelNote = new System.Windows.Forms.LinkLabel();
             this.checkBoxBNetPM = new System.Windows.Forms.CheckBox();
             this.checkBoxStaticPopup = new System.Windows.Forms.CheckBox();
+            this.checkBoxDisconnect = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // checkBoxPM
@@ -71,17 +72,29 @@
             this.checkBoxStaticPopup.AutoSize = true;
             this.checkBoxStaticPopup.Location = new System.Drawing.Point(35, 71);
             this.checkBoxStaticPopup.Name = "checkBoxStaticPopup";
-            this.checkBoxStaticPopup.Size = new System.Drawing.Size(146, 17);
+            this.checkBoxStaticPopup.Size = new System.Drawing.Size(181, 17);
             this.checkBoxStaticPopup.TabIndex = 3;
-            this.checkBoxStaticPopup.Text = "Static popup (e.g. invites)";
+            this.checkBoxStaticPopup.Text = "static popups visible (e.g. invites)";
             this.checkBoxStaticPopup.UseVisualStyleBackColor = true;
             this.checkBoxStaticPopup.CheckedChanged += new System.EventHandler(this.checkBoxStaticPopup_CheckedChanged);
+            // 
+            // checkBoxDisconnect
+            // 
+            this.checkBoxDisconnect.AutoSize = true;
+            this.checkBoxDisconnect.Location = new System.Drawing.Point(35, 94);
+            this.checkBoxDisconnect.Name = "checkBoxDisconnect";
+            this.checkBoxDisconnect.Size = new System.Drawing.Size(78, 17);
+            this.checkBoxDisconnect.TabIndex = 4;
+            this.checkBoxDisconnect.Text = "disconnect";
+            this.checkBoxDisconnect.UseVisualStyleBackColor = true;
+            this.checkBoxDisconnect.CheckedChanged += new System.EventHandler(this.checkBoxDisconnect_CheckedChanged);
             // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(208, 102);
+            this.ClientSize = new System.Drawing.Size(223, 123);
+            this.Controls.Add(this.checkBoxDisconnect);
             this.Controls.Add(this.checkBoxStaticPopup);
             this.Controls.Add(this.checkBoxBNetPM);
             this.Controls.Add(this.linkLabelNote);
@@ -99,5 +112,6 @@
         private System.Windows.Forms.LinkLabel linkLabelNote;
         private System.Windows.Forms.CheckBox checkBoxBNetPM;
         private System.Windows.Forms.CheckBox checkBoxStaticPopup;
+        private System.Windows.Forms.CheckBox checkBoxDisconnect;
     }
 }

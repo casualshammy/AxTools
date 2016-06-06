@@ -79,5 +79,24 @@ namespace AxTools.Helpers
             form.BeginInvoke(new MethodInvoker(action));
         }
 
+        public static IEnumerable<ToolStripItem> GetAllToolStripItems(this ToolStripItemCollection collection)
+        {
+            foreach (ToolStripItem toolStripItem in collection)
+            {
+                if (toolStripItem != null)
+                {
+                    yield return toolStripItem;
+                    ToolStripDropDownItem item = toolStripItem as ToolStripDropDownItem;
+                    if (item != null && item.HasDropDownItems)
+                    {
+                        foreach (ToolStripItem v in GetAllToolStripItems(item.DropDownItems))
+                        {
+                            yield return v;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

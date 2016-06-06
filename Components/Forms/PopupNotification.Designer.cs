@@ -1,6 +1,6 @@
-﻿namespace AxTools.Forms
+﻿namespace Components.Forms
 {
-    partial class TrayPopup
+    partial class PopupNotification
     {
         /// <summary>
         /// Required designer variable.
@@ -76,7 +76,7 @@
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
-            // TrayPopup
+            // PopupNotification
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -88,12 +88,11 @@
             this.Location = new System.Drawing.Point(0, 0);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "TrayPopup";
+            this.Name = "PopupNotification";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.Resizable = false;
             this.ShowInTaskbar = false;
             this.Text = "TrayPopup";
-            this.TopMost = true;
             this.MouseEnter += new System.EventHandler(this.ALL_MouseEnter);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

@@ -6,7 +6,7 @@ using MetroFramework.Components;
 using MetroFramework.Drawing;
 using MetroFramework.Forms;
 
-namespace Components
+namespace Components.Forms
 {
     public class BorderedMetroForm : MetroForm
     {

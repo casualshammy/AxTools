@@ -65,6 +65,7 @@ namespace AxTools.Forms
             this.tileBMTracker = new Components.MetroTileExt(this.components);
             this.tileRadar = new Components.MetroTileExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
+            this.labelTotalPluginsEnabled = new MetroFramework.Controls.MetroLabel();
             this.linkDownloadPlugins = new MetroFramework.Controls.MetroLink();
             this.olvPlugins = new BrightIdeasSoftware.ObjectListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -89,7 +90,6 @@ namespace AxTools.Forms
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
-            this.labelTotalPluginsEnabled = new MetroFramework.Controls.MetroLabel();
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -385,6 +385,24 @@ namespace AxTools.Forms
             this.metroTabPage3.VerticalScrollbarBarColor = true;
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
+            // 
+            // labelTotalPluginsEnabled
+            // 
+            this.labelTotalPluginsEnabled.CustomBackground = false;
+            this.labelTotalPluginsEnabled.CustomForeColor = false;
+            this.labelTotalPluginsEnabled.FontSize = MetroFramework.MetroLabelSize.Small;
+            this.labelTotalPluginsEnabled.FontWeight = MetroFramework.MetroLabelWeight.Bold;
+            this.labelTotalPluginsEnabled.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.labelTotalPluginsEnabled.Location = new System.Drawing.Point(303, 47);
+            this.labelTotalPluginsEnabled.Name = "labelTotalPluginsEnabled";
+            this.labelTotalPluginsEnabled.Size = new System.Drawing.Size(115, 20);
+            this.labelTotalPluginsEnabled.Style = MetroFramework.MetroColorStyle.Blue;
+            this.labelTotalPluginsEnabled.StyleManager = null;
+            this.labelTotalPluginsEnabled.TabIndex = 83;
+            this.labelTotalPluginsEnabled.Text = "Plugins enabled: 99";
+            this.labelTotalPluginsEnabled.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.labelTotalPluginsEnabled.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.labelTotalPluginsEnabled.UseStyleColors = true;
             // 
             // linkDownloadPlugins
             // 
@@ -748,24 +766,6 @@ namespace AxTools.Forms
             this.linkTitle.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkTitle.UseStyleColors = true;
             this.linkTitle.Click += new System.EventHandler(this.linkTitle_Click);
-            // 
-            // labelTotalPluginsEnabled
-            // 
-            this.labelTotalPluginsEnabled.CustomBackground = false;
-            this.labelTotalPluginsEnabled.CustomForeColor = false;
-            this.labelTotalPluginsEnabled.FontSize = MetroFramework.MetroLabelSize.Small;
-            this.labelTotalPluginsEnabled.FontWeight = MetroFramework.MetroLabelWeight.Bold;
-            this.labelTotalPluginsEnabled.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelTotalPluginsEnabled.Location = new System.Drawing.Point(303, 47);
-            this.labelTotalPluginsEnabled.Name = "labelTotalPluginsEnabled";
-            this.labelTotalPluginsEnabled.Size = new System.Drawing.Size(115, 20);
-            this.labelTotalPluginsEnabled.Style = MetroFramework.MetroColorStyle.Blue;
-            this.labelTotalPluginsEnabled.StyleManager = null;
-            this.labelTotalPluginsEnabled.TabIndex = 83;
-            this.labelTotalPluginsEnabled.Text = "Plugins enabled: 99";
-            this.labelTotalPluginsEnabled.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.labelTotalPluginsEnabled.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.labelTotalPluginsEnabled.UseStyleColors = true;
             // 
             // MainForm
             // 

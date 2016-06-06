@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_LibSMS", "C:\Prog
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_Dumper", "WoWPlugins\WoWPlugin_Dumper\WoWPlugin_Dumper.csproj", "{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Resources.csproj", "{81FFB0E9-01F0-46CD-96FA-01ADE2711843}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -522,6 +524,27 @@ Global
 		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Template|Win32.ActiveCfg = Release|Any CPU
 		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Template|x64.ActiveCfg = Release|Any CPU
 		{52F4DCCF-D5A3-439B-9E11-5E897B57E5B1}.Template|x86.ActiveCfg = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Release|Win32.ActiveCfg = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Release|x64.ActiveCfg = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Release|x86.ActiveCfg = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Template|Any CPU.ActiveCfg = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Template|Any CPU.Build.0 = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Template|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Template|Mixed Platforms.Build.0 = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Template|Win32.ActiveCfg = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Template|x64.ActiveCfg = Release|Any CPU
+		{81FFB0E9-01F0-46CD-96FA-01ADE2711843}.Template|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

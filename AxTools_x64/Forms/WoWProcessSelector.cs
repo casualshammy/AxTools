@@ -1,5 +1,4 @@
-﻿using Components;
-using AxTools.WinAPI;
+﻿using AxTools.WinAPI;
 using AxTools.WoW;
 using System;
 using System.Drawing;
@@ -7,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using AxTools.Helpers;
 using AxTools.WoW.PluginSystem.API;
+using Components.Forms;
 
 namespace AxTools.Forms
 {

@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using Components;
 using AxTools.Helpers;
 using Newtonsoft.Json;
 using System;
@@ -13,6 +12,7 @@ using System.Windows.Forms;
 using AxTools.Forms.Helpers;
 using AxTools.WoW;
 using AxTools.WoW.Internals;
+using Components.Forms;
 
 namespace AxTools.Forms
 {

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using AxTools.Helpers;
 using Components;
 using AxTools.Services;
+using Components.Forms;
 
 namespace AxTools.Forms
 {

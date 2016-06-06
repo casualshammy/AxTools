@@ -121,15 +121,6 @@
   <data name="radar" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\radar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="document_open" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\document_open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="document_save" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\document_save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="lua1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\lua.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="achievement_bg_winwsg" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\achievement_bg_winwsg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -142,59 +133,14 @@
   <data name="AppIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\AppIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Settings20px" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Settings20px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="AppIconPluginOnLuaOff" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\AppIconPluginOffLuaOn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="AppIconPluginOffLuaOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AppIconPluginOnLuaOff.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="AppIconPluginOnLuaOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AppIconPluginOnLuaOn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="BlackMarket" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\BlackMarket.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="AppIcon1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\AppIcon1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_forward" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\gtk-media-forward-ltr_6874.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_forward_grey" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\yellow_forward_grey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_forward_light" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\yellow_forward_light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_play" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\gtk-media-play-ltr_4659.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_play_grey" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\yellow_play_grey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_play_light" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\play_light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_record" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\gtk-media-record_6548.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_record_grey" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\yellow_record_grey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_record_light" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\yellow_record_light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\gtk-media-stop_6038.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_stop_grey" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\yellow_stop_grey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yellow_stop_light" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\yellow_stop_light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="close_26px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\close_26px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -204,12 +150,6 @@
   </data>
   <data name="data_backup" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\data_backup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="pluginSettings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pluginSettings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_1435959119_add_item" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\1435959119_add-item.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="data_deploy" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\boxes37.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

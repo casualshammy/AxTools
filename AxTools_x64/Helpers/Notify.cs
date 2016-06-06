@@ -6,6 +6,8 @@ using WindowsFormsAero.TaskDialog;
 using AxTools.Forms;
 using AxTools.Properties;
 using AxTools.WinAPI;
+using Components;
+using Components.Forms;
 
 namespace AxTools.Helpers
 {
@@ -97,7 +99,7 @@ namespace AxTools.Helpers
         {
             MainForm.Instance.BeginInvoke((MethodInvoker) delegate
             {
-                TrayPopup trayPopup = new TrayPopup(title, message, image);
+                PopupNotification trayPopup = new PopupNotification(title, message, image, Settings.Instance.StyleColor);
                 if (image == null)
                 {
                     if (type == NotifyUserType.Error)

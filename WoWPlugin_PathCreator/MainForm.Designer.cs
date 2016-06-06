@@ -37,6 +37,8 @@
             this.buttonSendChat = new System.Windows.Forms.Button();
             this.textBoxSendChat = new System.Windows.Forms.TextBox();
             this.buttonStopProfile = new System.Windows.Forms.Button();
+            this.buttonWait = new System.Windows.Forms.Button();
+            this.textBoxWait = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // buttonCreateWaypoint
@@ -111,7 +113,7 @@
             // 
             // buttonStopProfile
             // 
-            this.buttonStopProfile.Location = new System.Drawing.Point(176, 125);
+            this.buttonStopProfile.Location = new System.Drawing.Point(176, 153);
             this.buttonStopProfile.Name = "buttonStopProfile";
             this.buttonStopProfile.Size = new System.Drawing.Size(96, 22);
             this.buttonStopProfile.TabIndex = 9;
@@ -119,11 +121,30 @@
             this.buttonStopProfile.UseVisualStyleBackColor = true;
             this.buttonStopProfile.Click += new System.EventHandler(this.buttonStopProfile_Click);
             // 
+            // buttonWait
+            // 
+            this.buttonWait.Location = new System.Drawing.Point(176, 125);
+            this.buttonWait.Name = "buttonWait";
+            this.buttonWait.Size = new System.Drawing.Size(96, 22);
+            this.buttonWait.TabIndex = 11;
+            this.buttonWait.Text = "Wait (ms)";
+            this.buttonWait.UseVisualStyleBackColor = true;
+            this.buttonWait.Click += new System.EventHandler(this.buttonWait_Click);
+            // 
+            // textBoxWait
+            // 
+            this.textBoxWait.Location = new System.Drawing.Point(15, 126);
+            this.textBoxWait.Name = "textBoxWait";
+            this.textBoxWait.Size = new System.Drawing.Size(155, 20);
+            this.textBoxWait.TabIndex = 10;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 225);
+            this.Controls.Add(this.buttonWait);
+            this.Controls.Add(this.textBoxWait);
             this.Controls.Add(this.buttonStopProfile);
             this.Controls.Add(this.buttonSendChat);
             this.Controls.Add(this.textBoxSendChat);
@@ -152,5 +173,7 @@
         private System.Windows.Forms.Button buttonSendChat;
         private System.Windows.Forms.TextBox textBoxSendChat;
         private System.Windows.Forms.Button buttonStopProfile;
+        private System.Windows.Forms.Button buttonWait;
+        private System.Windows.Forms.TextBox textBoxWait;
     }
 }

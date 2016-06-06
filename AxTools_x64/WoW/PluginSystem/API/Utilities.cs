@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AxTools.Forms;
 using AxTools.Helpers;
+using AxTools.Services;
 using AxTools.WoW.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -131,6 +132,22 @@ namespace AxTools.WoW.PluginSystem.API
         {
             Notify.TrayPopup("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, plugin.TrayIcon);
         }
-    
+
+        public static bool ClickerEnabled
+        {
+            get { return Clicker.Enabled; }
+            set
+            {
+                if (value)
+                {
+                    Clicker.Start(Settings.Instance.ClickerInterval, WoWManager.WoWProcess.MainWindowHandle, (IntPtr) Settings.Instance.ClickerKey);
+                }
+                else
+                {
+                    Clicker.Stop();
+                }
+            }
+        }
+
     }
 }

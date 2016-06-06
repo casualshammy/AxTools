@@ -15,8 +15,6 @@ namespace AxTools.Helpers
         private static readonly Timer _timer = new Timer(500);
         private static readonly object _lock = new object();
         private static Phase _phase = Phase.Clearing;
-        private static readonly Icon AppIconPluginOnLuaOn = Icon.FromHandle(Resources.AppIconPluginOnLuaOn.GetHicon());
-        private static readonly Icon AppIconPluginOffLuaOn = Icon.FromHandle(Resources.AppIconPluginOffLuaOn.GetHicon());
         private static readonly Icon AppIconPluginOnLuaOff = Icon.FromHandle(Resources.AppIconPluginOnLuaOff.GetHicon());
         private static readonly Icon AppIconNormal = Icon.FromHandle(Resources.AppIcon1.GetHicon());
         private static readonly Icon EmptyIcon = Icon.FromHandle(new Bitmap(1, 1).GetHicon());
@@ -37,8 +35,6 @@ namespace AxTools.Helpers
             {
                 _timer.Elapsed -= Timer_OnElapsed;
                 _timer.Stop();
-                AppIconPluginOnLuaOn.Dispose();
-                AppIconPluginOffLuaOn.Dispose();
                 AppIconPluginOnLuaOff.Dispose();
                 AppIconNormal.Dispose();
                 EmptyIcon.Dispose();

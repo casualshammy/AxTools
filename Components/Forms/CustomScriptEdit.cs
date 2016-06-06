@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace Components
+namespace Components.Forms
 {
     internal partial class CustomScriptEdit : BorderedMetroForm
     {
