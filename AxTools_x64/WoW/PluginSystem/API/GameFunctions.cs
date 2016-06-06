@@ -150,19 +150,16 @@ namespace AxTools.WoW.PluginSystem.API
                             NativeMethods.PostMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr) ch, IntPtr.Zero);
                         }
                         string editboxText = null;
-                        int attemptsCounter = 0;
                         Thread.Sleep(100);
                         for (int i = 0; i < 10; i++)
                         {
                             if ((editboxText = GetEditboxText()) == text)
                             {
-                                Log.Info(string.Format("ChatboxSendText: attemptsCounter: {0}", attemptsCounter));
                                 NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr) 13, IntPtr.Zero);
                                 NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr) 13, IntPtr.Zero);
                                 return;
                             }
                             Thread.Sleep(100);
-                            attemptsCounter++;
                         }
                         attempts--;
                         if (attempts > 0)
