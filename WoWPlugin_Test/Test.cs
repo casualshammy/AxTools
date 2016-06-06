@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Media;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using AxTools.WoW.Helpers;
@@ -12,7 +7,6 @@ using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
 using Microsoft.Win32;
-using Timer = System.Windows.Forms.Timer;
 
 namespace WoWPlugin_Test
 {

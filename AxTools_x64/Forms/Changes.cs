@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.IO;
-using Components;
 using AxTools.Helpers;
 using AxTools.Properties;
 using Components.Forms;

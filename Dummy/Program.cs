@@ -1,22 +1,7 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Configuration;
-using System.Net.Mail;
-using System.Net.Mime;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using LiteDB;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace Dummy
 {
@@ -133,11 +118,6 @@ namespace Dummy
     
     public class DoAction
     {
-        public DoAction()
-        {
-            
-        }
-
         public string String0 { get; set; }
 
         public string String1 { get; set; }

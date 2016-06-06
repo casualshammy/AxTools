@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+// ReSharper disable StaticMemberInGenericType
 
 namespace PatternFinder.MemoryManagement
 {
@@ -102,7 +103,10 @@ namespace PatternFinder.MemoryManagement
                     if (attr.Length > 0)
                     {
                         FixedBufferAttribute fba = attr[0] as FixedBufferAttribute;
-                        totalSize += GetSizeOf(fba.ElementType)*fba.Length;
+                        if (fba != null)
+                        {
+                            totalSize += GetSizeOf(fba.ElementType)*fba.Length;
+                        }
                     }
 
 

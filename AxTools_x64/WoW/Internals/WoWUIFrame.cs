@@ -12,7 +12,6 @@ namespace AxTools.WoW.Internals
         private readonly IntPtr address;
         private string cachedName;
         private string cachedEditboxText;
-        private string cachedText;
 
         internal WoWUIFrame(IntPtr address)
         {
@@ -29,27 +28,6 @@ namespace AxTools.WoW.Internals
                     cachedName = Encoding.UTF8.GetString(bytes.TakeWhile(l => l != 0).ToArray());
                 }
                 return cachedName;
-            }
-        }
-
-        public string GetText
-        {
-            get
-            {
-                return "";
-                if (cachedText == null)
-                {
-                    try
-                    {
-                        byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(WoWManager.WoWProcess.Memory.Read<IntPtr>(address + WowBuildInfoX64.UIFrameText), 255 * 2); // 255 - max string length; 2 - utf8 char length
-                        cachedText = Encoding.UTF8.GetString(bytes.TakeWhile(l => l != 0).ToArray());
-                    }
-                    catch
-                    {
-                        return "";
-                    }
-                }
-                return cachedText;
             }
         }
 

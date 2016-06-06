@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Components;
 using AxTools.Helpers;
 using AxTools.Properties;
 using Components.Forms;

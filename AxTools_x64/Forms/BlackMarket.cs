@@ -1,13 +1,11 @@
 ﻿using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Components;
 using AxTools.Helpers;
 using AxTools.Properties;
 using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using WindowsFormsAero.TaskDialog;
 using AxTools.WoW;
 using AxTools.WoW.Helpers;
 using AxTools.WoW.PluginSystem.API;

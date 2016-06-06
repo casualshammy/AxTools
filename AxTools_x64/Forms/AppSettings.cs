@@ -9,7 +9,6 @@ using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
 using AxTools.WoW.PluginSystem;
-using Components;
 using Components.Forms;
 using MetroFramework;
 using MetroFramework.Forms;

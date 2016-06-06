@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using AxTools.Helpers;
-using Components;
 using Components.Forms;
 
 namespace AxTools.Forms

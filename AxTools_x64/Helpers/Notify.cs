@@ -6,7 +6,6 @@ using WindowsFormsAero.TaskDialog;
 using AxTools.Forms;
 using AxTools.Properties;
 using AxTools.WinAPI;
-using Components;
 using Components.Forms;
 
 namespace AxTools.Helpers

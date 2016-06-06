@@ -18,6 +18,7 @@ namespace WoWGold_Notifier.TaskbarProgressbar
                     {
                         if (_taskbarList == null)
                         {
+                            // ReSharper disable once SuspiciousTypeConversion.Global
                             _taskbarList = (ITaskbarList3) new CTaskbarList();
                             _taskbarList.HrInit();
                         }

@@ -77,6 +77,7 @@ namespace WoWPlugin_Dumper
             Log("Objects-----------------------------------------");
             foreach (WowObject i in wowObjects)
             {
+                // ReSharper disable once ImpureMethodCallOnReadonlyValueField
                 Log(string.Format("\t{0} - GUID: 0x{1}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4}; Address: 0x{5:X}; EntryID: {6}", i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), i.OwnerGUID,
                     i.Address.ToInt64(), i.EntryID));
             }
