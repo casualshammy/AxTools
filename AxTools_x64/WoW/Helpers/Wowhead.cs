@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -20,7 +22,9 @@ namespace AxTools.WoW.Helpers
         private static readonly ConcurrentDictionary<uint, string> ZoneInfos = new ConcurrentDictionary<uint, string>();
         private static readonly string CacheDir = Application.StartupPath + "\\wowheadCache";
         private const string UNKNOWN = "UNKNOWN";
-        private static readonly object DBLock = new object();
+        private static readonly object DBLockItems = new object();
+        private static readonly object DBLockSpells = new object();
+        private static readonly object DBLockZones = new object();
 
         static Wowhead()
         {
@@ -149,34 +153,37 @@ namespace AxTools.WoW.Helpers
 
         private static WowheadItemInfo ItemInfo_GetCachedValue(uint itemID)
         {
-            //string filepath = string.Format("{0}\\items\\item-{1}.json", CacheDir, itemID);
-            //if (File.Exists(filepath))
-            //{
-            //    string rawText = File.ReadAllText(filepath, Encoding.UTF8);
-            //    WowheadItemInfo itemInfo = JsonConvert.DeserializeObject<WowheadItemInfo>(rawText);
-            //    return itemInfo;
-            //}
-            //return null;
-            lock (DBLock)
+            lock (DBLockItems)
             {
-                using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-items.ldb"))
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                try
                 {
-                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
-                    collection.EnsureIndex(x => x.ID);
-                    NDBEntry entry = collection.FindOne(l => l.ID == (int)itemID); // cast to int is neccessary
-                    return entry != null ? JsonConvert.DeserializeObject<WowheadItemInfo>(entry.JSONData) : null;
+                    using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-items.ldb"))
+                    {
+                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
+                        collection.EnsureIndex(x => x.ID);
+                        NDBEntry entry = collection.FindOne(l => l.ID == (int) itemID); // cast to int is neccessary
+                        return entry != null ? JsonConvert.DeserializeObject<WowheadItemInfo>(entry.JSONData) : null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("[Wowhead.ItemInfo_GetCachedValue] Error: " + ex.Message);
+                    return null;
+                }
+                finally
+                {
+                    if (stopwatch.ElapsedMilliseconds > 50)
+                    {
+                        Log.Error(string.Format("[Wowhead.ItemInfo_GetCachedValue] Takes too long: {0}ms", stopwatch.ElapsedMilliseconds));
+                    }
                 }
             }
         }
 
         private static void ItemInfo_SaveToCache(uint itemID, WowheadItemInfo info)
         {
-            //string filepath = string.Format("{0}\\items\\item-{1}.json", CacheDir, itemID);
-            //string s = JsonConvert.SerializeObject(info, Formatting.Indented);
-            //FileInfo fileInfo = new FileInfo(filepath);
-            //if (fileInfo.Directory != null) fileInfo.Directory.Create();
-            //File.WriteAllText(filepath, s, Encoding.UTF8);
-            lock (DBLock)
+            lock (DBLockItems)
             {
                 using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-items.ldb"))
                 {
@@ -189,34 +196,37 @@ namespace AxTools.WoW.Helpers
 
         private static WowheadSpellInfo SpellInfo_GetCachedValue(int spellID)
         {
-            //string filepath = string.Format("{0}\\spells\\spell-{1}.json", CacheDir, spellID);
-            //if (File.Exists(filepath))
-            //{
-            //    string rawText = File.ReadAllText(filepath, Encoding.UTF8);
-            //    WowheadSpellInfo spellInfo = JsonConvert.DeserializeObject<WowheadSpellInfo>(rawText);
-            //    return spellInfo;
-            //}
-            //return null;
-            lock (DBLock)
+            lock (DBLockSpells)
             {
-                using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-spells.ldb"))
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                try
                 {
-                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
-                    collection.EnsureIndex(x => x.ID);
-                    NDBEntry entry = collection.FindOne(l => l.ID == spellID);
-                    return entry != null ? JsonConvert.DeserializeObject<WowheadSpellInfo>(entry.JSONData) : null;
+                    using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-spells.ldb"))
+                    {
+                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
+                        collection.EnsureIndex(x => x.ID);
+                        NDBEntry entry = collection.FindOne(l => l.ID == spellID);
+                        return entry != null ? JsonConvert.DeserializeObject<WowheadSpellInfo>(entry.JSONData) : null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("[Wowhead.SpellInfo_GetCachedValue] Error: " + ex.Message);
+                    return null;
+                }
+                finally
+                {
+                    if (stopwatch.ElapsedMilliseconds > 50)
+                    {
+                        Log.Error(string.Format("[Wowhead.SpellInfo_GetCachedValue] Takes too long: {0}ms", stopwatch.ElapsedMilliseconds));
+                    }
                 }
             }
         }
 
         private static void SpellInfo_SaveToCache(int spellID, WowheadSpellInfo info)
         {
-            //string filepath = string.Format("{0}\\spells\\spell-{1}.json", CacheDir, spellID);
-            //string s = JsonConvert.SerializeObject(info, Formatting.Indented);
-            //FileInfo fileInfo = new FileInfo(filepath);
-            //if (fileInfo.Directory != null) fileInfo.Directory.Create();
-            //File.WriteAllText(filepath, s, Encoding.UTF8);
-            lock (DBLock)
+            lock (DBLockSpells)
             {
                 using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-spells.ldb"))
                 {
@@ -225,28 +235,51 @@ namespace AxTools.WoW.Helpers
                     collection.EnsureIndex(x => x.ID);
                 }
             }
-            
         }
 
         private static string ZoneInfo_GetCachedValue(uint zoneID)
         {
-            string filepath = string.Format("{0}\\zones\\zone-{1}.json", CacheDir, zoneID);
-            if (File.Exists(filepath))
+            lock (DBLockZones)
             {
-                string rawText = File.ReadAllText(filepath, Encoding.UTF8);
-                return JsonConvert.DeserializeObject<string>(rawText);
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                try
+                {
+                    using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-zones.ldb"))
+                    {
+                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-zones");
+                        collection.EnsureIndex(x => x.ID);
+                        NDBEntry entry = collection.FindOne(l => l.ID == (int)zoneID);
+                        return entry != null ? JsonConvert.DeserializeObject<string>(entry.JSONData) : null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("[Wowhead.ZoneInfo_GetCachedValue] Error: " + ex.Message);
+                    return null;
+                }
+                finally
+                {
+                    if (stopwatch.ElapsedMilliseconds > 50)
+                    {
+                        Log.Error(string.Format("[Wowhead.ZoneInfo_GetCachedValue] Takes too long: {0}ms", stopwatch.ElapsedMilliseconds));
+                    }
+                }
             }
-            return null;
         }
 
         private static void ZoneInfo_SaveToCache(uint zoneID, string zoneText)
         {
-            string filepath = string.Format("{0}\\zones\\zone-{1}.json", CacheDir, zoneID);
-            string s = JsonConvert.SerializeObject(zoneText, Formatting.Indented);
-            FileInfo fileInfo = new FileInfo(filepath);
-            if (fileInfo.Directory != null) fileInfo.Directory.Create();
-            File.WriteAllText(filepath, s, Encoding.UTF8);
+            lock (DBLockZones)
+            {
+                using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-zones.ldb"))
+                {
+                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-zones");
+                    collection.Insert(new NDBEntry((int) zoneID, JsonConvert.SerializeObject(zoneText)));
+                    collection.EnsureIndex(x => x.ID);
+                }
+            }
         }
+    
     }
 
     public class NDBEntry
