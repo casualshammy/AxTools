@@ -29,11 +29,12 @@
         private void InitializeComponent()
         {
             this.buttonRefresh = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // buttonRefresh
             // 
-            this.buttonRefresh.Location = new System.Drawing.Point(12, 12);
+            this.buttonRefresh.Location = new System.Drawing.Point(12, 45);
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(225, 31);
             this.buttonRefresh.TabIndex = 1;
@@ -41,11 +42,19 @@
             this.buttonRefresh.UseVisualStyleBackColor = true;
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(12, 12);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(225, 27);
+            this.progressBar1.TabIndex = 2;
+            // 
             // DumperForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(249, 55);
+            this.ClientSize = new System.Drawing.Size(249, 88);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.buttonRefresh);
             this.Name = "DumperForm";
             this.Text = "DumperForm";
@@ -56,5 +65,6 @@
         #endregion
 
         private System.Windows.Forms.Button buttonRefresh;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
