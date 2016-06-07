@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using AxTools.Forms;
 using AxTools.Helpers;
 using LiteDB;
 using Newtonsoft.Json;
@@ -25,6 +26,8 @@ namespace AxTools.WoW.Helpers
         private static readonly object DBLockItems = new object();
         private static readonly object DBLockSpells = new object();
         private static readonly object DBLockZones = new object();
+        private static long _sumDBAccessTime;
+        private static int _numDBAccesses;
 
         static Wowhead()
         {
@@ -33,6 +36,7 @@ namespace AxTools.WoW.Helpers
                 Directory.CreateDirectory(CacheDir);
             }
             _locale = GetLocale();
+            MainForm.ClosingEx += delegate { Log.Error("[Wowhead] DB usage stats: numDBAccesses: " + _numDBAccesses + "; average access time: " + _sumDBAccessTime/(_numDBAccesses == 0 ? -1 : _numDBAccesses)); };
         }
 
         internal static WowheadItemInfo GetItemInfo(uint itemID)
@@ -177,6 +181,8 @@ namespace AxTools.WoW.Helpers
                     {
                         Log.Error(string.Format("[Wowhead.ItemInfo_GetCachedValue] Takes too long: {0}ms", stopwatch.ElapsedMilliseconds));
                     }
+                    _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
+                    _numDBAccesses++;
                 }
             }
         }
@@ -220,6 +226,8 @@ namespace AxTools.WoW.Helpers
                     {
                         Log.Error(string.Format("[Wowhead.SpellInfo_GetCachedValue] Takes too long: {0}ms", stopwatch.ElapsedMilliseconds));
                     }
+                    _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
+                    _numDBAccesses++;
                 }
             }
         }
@@ -263,6 +271,8 @@ namespace AxTools.WoW.Helpers
                     {
                         Log.Error(string.Format("[Wowhead.ZoneInfo_GetCachedValue] Takes too long: {0}ms", stopwatch.ElapsedMilliseconds));
                     }
+                    _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
+                    _numDBAccesses++;
                 }
             }
         }
