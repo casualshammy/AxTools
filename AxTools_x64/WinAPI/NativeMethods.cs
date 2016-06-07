@@ -62,14 +62,5 @@ namespace AxTools.WinAPI
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        // ReSharper disable InconsistentNaming
-        internal static int WS_CAPTION = 0xC00000;
-        internal static int WS_THICKFRAME = 0x40000;
-        internal static int GWL_STYLE = -16;
-        internal static int GWL_EXSTYLE = -20;
-        internal static int WS_EX_LAYERED = 0x80000;
-        internal static int WS_EX_TRANSPARENT = 0x20;
-        internal static uint LWA_ALPHA = 0x2;
-        // ReSharper restore InconsistentNaming
     }
 }

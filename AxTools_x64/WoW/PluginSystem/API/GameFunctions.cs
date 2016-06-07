@@ -238,7 +238,12 @@ namespace AxTools.WoW.PluginSystem.API
             Match match = regex.Match(s);
             if (match.Success)
             {
-                ChatMsg chatMsg = new ChatMsg
+                if (!Enum.IsDefined(typeof (WoWChatMsgType), int.Parse(match.Groups[1].Value)))
+                {
+                    Log.Error(string.Format("Type: {0}; Channel: {1}; Player Name: {2}; Sender GUID: {3}; Text: {4}",
+                        int.Parse(match.Groups[1].Value), match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value));
+                }
+                return new ChatMsg
                 {
                     Type = (WoWChatMsgType) int.Parse(match.Groups[1].Value),
                     Channel = match.Groups[2].Value,
@@ -246,8 +251,6 @@ namespace AxTools.WoW.PluginSystem.API
                     SenderGUID = match.Groups[4].Value,
                     Text = match.Groups[5].Value
                 };
-                Log.Info(string.Format("Type: {0}; Channel: {1}; Player Name: {2}; Sender GUID: {3}; Text: {4}", chatMsg.Type, chatMsg.Channel, chatMsg.Sender, chatMsg.SenderGUID, chatMsg.Text));
-                return chatMsg;
             }
             Log.Error("ParseChatMsg: unknown signature: " + s);
             return new ChatMsg();

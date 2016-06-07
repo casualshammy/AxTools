@@ -74,9 +74,16 @@ namespace AxTools.Helpers
             form.Activate();
         }
 
-        public static void PostInvoke(this Form form, Action action)
+        public static void PostInvoke(this Control control, Action action)
         {
-            form.BeginInvoke(new MethodInvoker(action));
+            if (control.InvokeRequired)
+            {
+                control.BeginInvoke(new MethodInvoker(action));
+            }
+            else
+            {
+                action();
+            }
         }
 
         public static IEnumerable<ToolStripItem> GetAllToolStripItems(this ToolStripItemCollection collection)
