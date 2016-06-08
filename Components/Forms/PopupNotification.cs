@@ -53,7 +53,7 @@ namespace Components.Forms
             get { return metroLabel2.Text; }
             set
             {
-                metroLabel2.Text = WordWrap(value, 55);
+                metroLabel2.Text = WordWrap(value);
                 Size = new Size(Width, Math.Max(68, metroLabel2.Location.Y + metroLabel2.Size.Height + 10)); // 68 - standart heigth
             }
         }
@@ -183,21 +183,27 @@ namespace Components.Forms
             SetDesktopLocation(startPosX, startPosY);
         }
 
-        private string WordWrap(string text, int chunkSize)
+        private string WordWrap(string text)
         {
-            List<string> words = text.Split(' ').ToList();
-            string result = "";
-            while (words.Any())
+            using (Font font = MetroFonts.Label(metroLabel2.FontSize, metroLabel2.FontWeight))
             {
-                string buffer = "";
-                while (words.Any() && buffer.Length + 1 + words.First().Length <= chunkSize)
+                List<string> words = text.Split(new[] {" ", "\r", "\n"}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                string result = "";
+                int sizeOfSpace = TextRenderer.MeasureText(" ", font).Width;
+                while (words.Any())
                 {
-                    buffer += " " + words.First();
-                    words.RemoveAt(0);
+                    string buffer = "";
+                    int sizePixels = 0;
+                    while (words.Any() && sizePixels + sizeOfSpace + TextRenderer.MeasureText(words.First(), font).Width <= 300) // 300 - max length of <metroLabel2>
+                    {
+                        buffer += " " + words.First();
+                        sizePixels += sizeOfSpace + TextRenderer.MeasureText(words.First(), font).Width;
+                        words.RemoveAt(0);
+                    }
+                    result += buffer + "\r\n";
                 }
-                result += buffer + "\r\n";
+                return result.TrimEnd('\n').TrimEnd('\r');
             }
-            return result.TrimEnd('\n').TrimEnd('\r');
         }
 
         private T[] FindForms<T>() where T : Form

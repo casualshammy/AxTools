@@ -47,6 +47,30 @@ namespace AxTools.Forms
             oListView.BooleanCheckStateGetter = OListView_BooleanCheckStateGetter;
             oListView.BooleanCheckStatePutter = OListView_BooleanCheckStatePutter;
             oListView.KeyUp += OListView_OnKeyUp;
+            oColumnInteract.AspectPutter = delegate(object rowObject, object value)
+            {
+                RadarObject radarObject = rowObject as RadarObject;
+                if (radarObject != null)
+                {
+                    RefreshRadarObject(radarObject, radarObject.Name, (bool)value, radarObject.SoundAlarm);
+                }
+            };
+            oColumnSoundAlarm.AspectPutter = delegate(object rowObject, object value)
+            {
+                RadarObject radarObject = rowObject as RadarObject;
+                if (radarObject != null)
+                {
+                    RefreshRadarObject(radarObject, radarObject.Name, radarObject.Interact, (bool)value);
+                }
+            };
+            oColumnName.AspectPutter = delegate(object rowObject, object value)
+            {
+                RadarObject radarObject = rowObject as RadarObject;
+                if (radarObject != null)
+                {
+                    RefreshRadarObject(radarObject, (string)value, radarObject.Interact, radarObject.SoundAlarm);
+                }
+            };
         }
 
         private bool OListView_BooleanCheckStateGetter(object rowObject)
@@ -237,6 +261,16 @@ namespace AxTools.Forms
             settings.WoWRadarList.Add(radarObject);
             oListView.AddObject(radarObject);
             oListView.Items[oListView.Items.Count - 1].EnsureVisible();
+        }
+
+        private void RefreshRadarObject(RadarObject radarObject, string name, bool interact, bool soundAlarm)
+        {
+            int indexOf = settings.WoWRadarList.IndexOf(radarObject);
+            settings.WoWRadarList.RemoveAt(indexOf);
+            radarObject.Name = name;
+            radarObject.Interact = interact;
+            radarObject.SoundAlarm = soundAlarm;
+            settings.WoWRadarList.Insert(indexOf, radarObject);
         }
 
     }

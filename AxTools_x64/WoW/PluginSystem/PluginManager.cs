@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.PluginSystem
 {
@@ -16,6 +15,7 @@ namespace AxTools.WoW.PluginSystem
     {
         private static readonly SynchronizedCollection<PluginContainer> _pluginContainers = new SynchronizedCollection<PluginContainer>();
         private static volatile bool _isRunning;
+        private static readonly object _lock = new object();
         internal static event Action PluginStateChanged;
         internal static event Action PluginsLoaded;
 
@@ -49,33 +49,7 @@ namespace AxTools.WoW.PluginSystem
             {
                 foreach (PluginContainer pluginContainer in _pluginContainers.Where(l => l.EnabledByUser))
                 {
-                    pluginContainer.IsRunning = true;
-                    try
-                    {
-                        pluginContainer.Plugin.OnStart();
-                        Dictionary<string, int> pluginsUsageStat = Settings.Instance.PluginsUsageStat;
-                        pluginsUsageStat[pluginContainer.Plugin.Name] = pluginsUsageStat.ContainsKey(pluginContainer.Plugin.Name) ? pluginsUsageStat[pluginContainer.Plugin.Name] + 1 : 1;
-                        Log.Info(string.Format("{0} [{1}] Plugin is started, total usages: {2}", WoWManager.WoWProcess, pluginContainer.Plugin.Name, pluginsUsageStat[pluginContainer.Plugin.Name]));
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(string.Format("Plugin OnStart error [{0}]: {1}", pluginContainer.Plugin.Name, ex.Message));
-                    }
-                }
-                if (Settings.Instance.WoWPluginShowIngameNotifications)
-                {
-                    if (RunningPlugins.Count() == 1)
-                    {
-                        Notify.TrayPopup("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is started", NotifyUserType.Info, false, RunningPlugins.First().TrayIcon);
-                    }
-                    else
-                    {
-                        Notify.TrayPopup("AxTools", string.Format("Plugins are started ({0})", string.Join(", ", RunningPlugins.Select(l => l.Name))), NotifyUserType.Info, false);
-                    }
-                }
-                if (PluginStateChanged != null)
-                {
-                    PluginStateChanged();
+                    AddPluginToRunning(pluginContainer.Plugin);
                 }
                 _isRunning = true;
             }
@@ -91,36 +65,7 @@ namespace AxTools.WoW.PluginSystem
             {
                 foreach (PluginContainer pluginContainer in _pluginContainers.Where(l => l.IsRunning))
                 {
-                    try
-                    {
-                        pluginContainer.Plugin.OnStop();
-                        Log.Info(WoWManager.WoWProcess != null
-                            ? string.Format("{0} [{1}] Plugin is stopped", WoWManager.WoWProcess, pluginContainer.Plugin.Name)
-                            : string.Format("[UNKNOWN] [{0}] Plugin is stopped", pluginContainer.Plugin.Name));
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(string.Format("{0} Can't shutdown plugin [{1}]: {2}", WoWManager.WoWProcess, pluginContainer.Plugin.Name, ex.Message));
-                    }
-                }
-                if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && GameFunctions.IsInGame)
-                {
-                    if (RunningPlugins.Count() == 1)
-                    {
-                        Notify.TrayPopup("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is stopped", NotifyUserType.Info, false, RunningPlugins.First().TrayIcon);
-                    }
-                    else
-                    {
-                        Notify.TrayPopup("AxTools", string.Format("Plugins are stopped ({0})", string.Join(", ", RunningPlugins.Select(l => l.Name))), NotifyUserType.Info, false);
-                    }
-                }
-                foreach (PluginContainer pluginContainer in _pluginContainers.Where(l => l.IsRunning))
-                {
-                    pluginContainer.IsRunning = false;
-                }
-                if (PluginStateChanged != null)
-                {
-                    PluginStateChanged();
+                    RemovePluginFromRunning(pluginContainer.Plugin);
                 }
                 _isRunning = false;
             }
@@ -132,52 +77,60 @@ namespace AxTools.WoW.PluginSystem
 
         internal static void AddPluginToRunning(IPlugin plugin)
         {
-            if (!RunningPlugins.Contains(plugin))
+            lock (_lock)
             {
-                _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = true;
-                try
+                if (!RunningPlugins.Contains(plugin))
                 {
-                    plugin.OnStart();
-                    Log.Info(string.Format("{0} [{1}] Plugin is started", WoWManager.WoWProcess, plugin.Name));
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(string.Format("Plugin OnStart error [{0}]: {1}", plugin.Name, ex.Message));
-                }
-                if (Settings.Instance.WoWPluginShowIngameNotifications)
-                {
-                    Notify.TrayPopup("AxTools", "Plugin <" + plugin.Name + "> is started", NotifyUserType.Info, false, plugin.TrayIcon);
-                }
-                if (PluginStateChanged != null)
-                {
-                    PluginStateChanged();
+                    _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = true;
+                    try
+                    {
+                        plugin.OnStart();
+                        Dictionary<string, int> pluginsUsageStat = Settings.Instance.PluginsUsageStat;
+                        pluginsUsageStat[plugin.Name] = pluginsUsageStat.ContainsKey(plugin.Name) ? pluginsUsageStat[plugin.Name] + 1 : 1;
+                        Log.Info(string.Format("{0} [{1}] Plugin is started, total usages: {2}", WoWManager.WoWProcess, plugin.Name, pluginsUsageStat[plugin.Name]));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(string.Format("Plugin OnStart error [{0}]: {1}", plugin.Name, ex.Message));
+                    }
+                    if (Settings.Instance.WoWPluginShowIngameNotifications)
+                    {
+                        Notify.TrayPopup("AxTools", "Plugin <" + plugin.Name + "> is started", NotifyUserType.Info, false, plugin.TrayIcon);
+                    }
+                    if (PluginStateChanged != null)
+                    {
+                        PluginStateChanged();
+                    }
                 }
             }
         }
 
         internal static void RemovePluginFromRunning(IPlugin plugin)
         {
-            if (RunningPlugins.Contains(plugin))
+            lock (_lock)
             {
-                try
+                if (RunningPlugins.Contains(plugin))
                 {
-                    plugin.OnStop();
-                    Log.Info(WoWManager.WoWProcess != null
-                        ? string.Format("{0} [{1}] Plugin is stopped", WoWManager.WoWProcess, plugin.Name)
-                        : string.Format("[UNKNOWN] [{0}] Plugin is stopped", plugin.Name));
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(string.Format("{0} Can't shutdown plugin [{1}]: {2}", WoWManager.WoWProcess, plugin.Name, ex.Message));
-                }
-                if (Settings.Instance.WoWPluginShowIngameNotifications && WoWManager.Hooked && WoWManager.WoWProcess != null && GameFunctions.IsInGame)
-                {
-                    Notify.TrayPopup("AxTools", "Plugin <" + plugin.Name + "> is stopped", NotifyUserType.Info, false, plugin.TrayIcon);
-                }
-                _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = false;
-                if (PluginStateChanged != null)
-                {
-                    PluginStateChanged();
+                    try
+                    {
+                        plugin.OnStop();
+                        Log.Info(WoWManager.WoWProcess != null
+                            ? string.Format("{0} [{1}] Plugin is stopped", WoWManager.WoWProcess, plugin.Name)
+                            : string.Format("[UNKNOWN] [{0}] Plugin is stopped", plugin.Name));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(string.Format("{0} Can't shutdown plugin [{1}]: {2}", WoWManager.WoWProcess, plugin.Name, ex.Message));
+                    }
+                    if (Settings.Instance.WoWPluginShowIngameNotifications)
+                    {
+                        Notify.TrayPopup("AxTools", "Plugin <" + plugin.Name + "> is stopped", NotifyUserType.Info, false, plugin.TrayIcon);
+                    }
+                    _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = false;
+                    if (PluginStateChanged != null)
+                    {
+                        PluginStateChanged();
+                    }
                 }
             }
         }

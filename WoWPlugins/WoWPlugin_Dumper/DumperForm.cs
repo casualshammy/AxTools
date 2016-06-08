@@ -109,7 +109,7 @@ namespace WoWPlugin_Dumper
             Log("UIFrames-----------------------------------------");
             foreach (WoWUIFrame frame in WoWUIFrame.GetAllFrames())
             {
-                Log(string.Format("\tName: {0}; Visible: {1}; Text: {2}; EditboxText: {3}", frame.GetName, frame.IsVisible, frame.GetText, frame.EditboxText));
+                Log(string.Format("\tName: {0}; Visible: {1}; EditboxText: {2}", frame.GetName, frame.IsVisible, frame.EditboxText));
             }
             progressBar1.Value++;
         }
