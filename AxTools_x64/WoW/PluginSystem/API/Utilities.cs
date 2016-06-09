@@ -93,6 +93,10 @@ namespace AxTools.WoW.PluginSystem.API
             return Utils.GetRandomString(size);
         }
 
+        /// <summary>
+        /// DO NOT USE INSIDE <see cref="IPlugin.OnStop"/> or <see cref="IPlugin.OnStart"/> METHODS!
+        /// </summary>
+        /// <param name="name"></param>
         public static void RequestStartPlugin(string name)
         {
             IPlugin plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == name);
@@ -106,6 +110,10 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
+        /// <summary>
+        /// DO NOT USE INSIDE <see cref="IPlugin.OnStop"/> or <see cref="IPlugin.OnStart"/> METHODS!
+        /// </summary>
+        /// <param name="name"></param>
         public static void RequestStopPlugin(string name)
         {
             IPlugin plugin = PluginManagerEx.RunningPlugins.FirstOrDefault(l => l.Name == name);

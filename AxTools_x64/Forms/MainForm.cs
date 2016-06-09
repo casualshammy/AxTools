@@ -829,9 +829,9 @@ namespace AxTools.Forms
             IPlugin plugin = rowObject as IPlugin;
             if (plugin != null)
             {
+                PluginManagerEx.SetPluginEnabled(plugin, newValue);
                 if (newValue)
                 {
-                    PluginManagerEx.EnablePlugin(plugin);
                     if (PluginManagerEx.RunningPlugins.Any())
                     {
                         PluginManagerEx.AddPluginToRunning(plugin);
@@ -840,7 +840,6 @@ namespace AxTools.Forms
                 }
                 else
                 {
-                    PluginManagerEx.DisablePlugin(plugin);
                     if (PluginManagerEx.RunningPlugins.Any())
                     {
                         PluginManagerEx.RemovePluginFromRunning(plugin);
