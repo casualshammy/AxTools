@@ -47,7 +47,6 @@ namespace AxTools.Forms
             this.CheckBox6 = new MetroFramework.Controls.MetroCheckBox();
             this.labelClickerHotkey = new MetroFramework.Controls.MetroLabel();
             this.labelWExecModule = new MetroFramework.Controls.MetroLabel();
-            this.labelWExecLuaTimer = new MetroFramework.Controls.MetroLabel();
             this.numericUpDownBackupTimer = new System.Windows.Forms.NumericUpDown();
             this.Hours = new MetroFramework.Controls.MetroLabel();
             this.numericUpDownBackupCopiesToKeep = new System.Windows.Forms.NumericUpDown();
@@ -85,7 +84,6 @@ namespace AxTools.Forms
             this.textBoxBackupPath = new Components.MetroTextboxExt();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.buttonPluginsHotkey = new MetroFramework.Controls.MetroButton();
-            this.buttonLuaHotkey = new MetroFramework.Controls.MetroButton();
             this.buttonClickerHotkey = new MetroFramework.Controls.MetroButton();
             this.textBoxPluginsHotkey = new MetroFramework.Controls.MetroTextBox();
             this.textBoxClickerHotkey = new MetroFramework.Controls.MetroTextBox();
@@ -425,7 +423,7 @@ namespace AxTools.Forms
             this.labelWExecModule.FontSize = MetroFramework.MetroLabelSize.Medium;
             this.labelWExecModule.FontWeight = MetroFramework.MetroLabelWeight.Light;
             this.labelWExecModule.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelWExecModule.Location = new System.Drawing.Point(3, 90);
+            this.labelWExecModule.Location = new System.Drawing.Point(3, 49);
             this.labelWExecModule.Name = "labelWExecModule";
             this.labelWExecModule.Size = new System.Drawing.Size(187, 19);
             this.labelWExecModule.Style = MetroFramework.MetroColorStyle.Blue;
@@ -435,26 +433,6 @@ namespace AxTools.Forms
             this.labelWExecModule.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.labelWExecModule, "Key to switch active WoW plugin on/off. Works only if WoW window is active");
             this.labelWExecModule.UseStyleColors = true;
-            // 
-            // labelWExecLuaTimer
-            // 
-            this.labelWExecLuaTimer.AutoSize = true;
-            this.labelWExecLuaTimer.CustomBackground = false;
-            this.labelWExecLuaTimer.CustomForeColor = false;
-            this.labelWExecLuaTimer.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.labelWExecLuaTimer.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.labelWExecLuaTimer.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelWExecLuaTimer.Location = new System.Drawing.Point(3, 55);
-            this.labelWExecLuaTimer.Name = "labelWExecLuaTimer";
-            this.labelWExecLuaTimer.Size = new System.Drawing.Size(224, 19);
-            this.labelWExecLuaTimer.Style = MetroFramework.MetroColorStyle.Blue;
-            this.labelWExecLuaTimer.StyleManager = null;
-            this.labelWExecLuaTimer.TabIndex = 48;
-            this.labelWExecLuaTimer.Text = "Lua console\'s timer start/stop hotkey:";
-            this.labelWExecLuaTimer.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.labelWExecLuaTimer, "Key to switch Lua console\'s loop execution on/off. Works only if WoW window is ac" +
-        "tive");
-            this.labelWExecLuaTimer.UseStyleColors = true;
             // 
             // numericUpDownBackupTimer
             // 
@@ -569,7 +547,7 @@ namespace AxTools.Forms
             this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
+            this.tabControl.SelectedIndex = 4;
             this.tabControl.Size = new System.Drawing.Size(565, 234);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 65;
@@ -1149,13 +1127,11 @@ namespace AxTools.Forms
             // metroTabPage2
             // 
             this.metroTabPage2.Controls.Add(this.buttonPluginsHotkey);
-            this.metroTabPage2.Controls.Add(this.buttonLuaHotkey);
             this.metroTabPage2.Controls.Add(this.buttonClickerHotkey);
             this.metroTabPage2.Controls.Add(this.textBoxPluginsHotkey);
             this.metroTabPage2.Controls.Add(this.textBoxClickerHotkey);
             this.metroTabPage2.Controls.Add(this.labelWExecModule);
             this.metroTabPage2.Controls.Add(this.labelClickerHotkey);
-            this.metroTabPage2.Controls.Add(this.labelWExecLuaTimer);
             this.metroTabPage2.CustomBackground = false;
             this.metroTabPage2.HorizontalScrollbar = false;
             this.metroTabPage2.HorizontalScrollbarBarColor = true;
@@ -1177,7 +1153,7 @@ namespace AxTools.Forms
             // buttonPluginsHotkey
             // 
             this.buttonPluginsHotkey.Highlight = true;
-            this.buttonPluginsHotkey.Location = new System.Drawing.Point(336, 89);
+            this.buttonPluginsHotkey.Location = new System.Drawing.Point(336, 48);
             this.buttonPluginsHotkey.Name = "buttonPluginsHotkey";
             this.buttonPluginsHotkey.Size = new System.Drawing.Size(61, 23);
             this.buttonPluginsHotkey.Style = MetroFramework.MetroColorStyle.Blue;
@@ -1185,18 +1161,6 @@ namespace AxTools.Forms
             this.buttonPluginsHotkey.TabIndex = 57;
             this.buttonPluginsHotkey.Text = "Clear";
             this.buttonPluginsHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // buttonLuaHotkey
-            // 
-            this.buttonLuaHotkey.Highlight = true;
-            this.buttonLuaHotkey.Location = new System.Drawing.Point(336, 54);
-            this.buttonLuaHotkey.Name = "buttonLuaHotkey";
-            this.buttonLuaHotkey.Size = new System.Drawing.Size(61, 23);
-            this.buttonLuaHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonLuaHotkey.StyleManager = null;
-            this.buttonLuaHotkey.TabIndex = 56;
-            this.buttonLuaHotkey.Text = "Clear";
-            this.buttonLuaHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // buttonClickerHotkey
             // 
@@ -1216,7 +1180,7 @@ namespace AxTools.Forms
             this.textBoxPluginsHotkey.CustomForeColor = false;
             this.textBoxPluginsHotkey.FontSize = MetroFramework.MetroTextBoxSize.Small;
             this.textBoxPluginsHotkey.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxPluginsHotkey.Location = new System.Drawing.Point(233, 89);
+            this.textBoxPluginsHotkey.Location = new System.Drawing.Point(233, 48);
             this.textBoxPluginsHotkey.Multiline = false;
             this.textBoxPluginsHotkey.Name = "textBoxPluginsHotkey";
             this.textBoxPluginsHotkey.SelectedText = "";
@@ -1586,7 +1550,6 @@ namespace AxTools.Forms
 
         private MetroLabel labelClickerHotkey;
         private MetroLabel labelWExecModule;
-        private MetroLabel labelWExecLuaTimer;
         private System.Windows.Forms.NumericUpDown numericUpDownBackupCopiesToKeep;
         private MetroLabel label9;
         private MetroCheckBox checkBoxAddonsBackup;
@@ -1633,7 +1596,6 @@ namespace AxTools.Forms
         private MetroTextBox textBoxPluginsHotkey;
         private MetroTextBox textBoxClickerHotkey;
         private MetroButton buttonPluginsHotkey;
-        private MetroButton buttonLuaHotkey;
         private MetroButton buttonClickerHotkey;
         private MetroTextboxExt textBoxVeryBadNetworkStatusPing;
         private MetroTextboxExt textBoxVeryBadNetworkStatusProcent;

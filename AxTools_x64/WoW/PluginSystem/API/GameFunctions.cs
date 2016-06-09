@@ -292,12 +292,8 @@ namespace AxTools.WoW.PluginSystem.API
                 {
                     return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState) == 1;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    StackTrace stackTrace = new StackTrace();
-                    StackFrame[] stackFrames = stackTrace.GetFrames();
-                    string stack = stackFrames != null ? string.Join(" -->> ", stackFrames.Select(l => string.Format("{0}::{1}", l.GetFileName(), l.GetMethod().Name)).Reverse()) : "Stack is null";
-                    Log.Error(string.Format("IsInGame: stack trace: {0}; error message: {1}", stack, ex.Message));
                     return false;
                 }
             }

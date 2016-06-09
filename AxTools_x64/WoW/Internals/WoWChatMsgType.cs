@@ -45,6 +45,7 @@
         Restricted = 46,
 
         BNetWisper = 51,
+        BNetWhisperInform = 52,
 
         RealId = 53,
 
