@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -57,31 +61,17 @@ namespace Dummy
 
         private static void Test()
         {
-            string p = "";
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            for (int i = 0; i < 1000000; i++)
-            {
-                p = GetRandomStringA(8);
-            }
-            Console.WriteLine("GetRandomStringA: " + stopwatch.ElapsedMilliseconds + "ms, " + p);
-            stopwatch.Restart();
-            for (int i = 0; i < 1000000; i++)
-            {
-                p = GetRandomStringB(8);
-            }
-            Console.WriteLine("GetRandomStringB: " + stopwatch.ElapsedMilliseconds + "ms, " + p);
-            stopwatch.Restart();
-            for (int i = 0; i < 1000000; i++)
-            {
-                p = GetRandomStringA(8);
-            }
-            Console.WriteLine("GetRandomStringA: " + stopwatch.ElapsedMilliseconds + "ms, " + p);
-            stopwatch.Restart();
-            for (int i = 0; i < 1000000; i++)
-            {
-                p = GetRandomStringB(8);
-            }
-            Console.WriteLine("GetRandomStringB: " + stopwatch.ElapsedMilliseconds + "ms, " + p);
+            var p = new HashSet<string>
+        	{
+        		"95.213.135.221",
+		        "37.187.75.63",
+		        "109.95.210.229",
+		        "216.127.64.69",
+		        "109.73.39.244",
+				"144.76.84.2",
+				// "109.120.165.239", // VPS-SPB
+        	};
+            p.Add()
         }
 
         internal static readonly Random Rnd = new Random();

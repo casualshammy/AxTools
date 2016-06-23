@@ -190,16 +190,15 @@ namespace AxTools.Updater
                     UpdateInfo0 updateInfo = UpdateInfo0.FromJSON(updateString);
                     if (updateInfo != null)
                     {
-                        Log.Info("[Updater] Server version: <" + updateInfo.Version + ">, local version: <" + Globals.AppVersion + ">");
                         if (Globals.AppVersion != updateInfo.Version)
                         {
-                            Log.Info("[Updater] Downloading new version...");
+                            Log.Info(string.Format("[Updater] Server version: <{0}>, local version: <{1}>; downloading new version...", updateInfo.Version, Globals.AppVersion));
                             _timer.Elapsed -= timer_Elapsed;
                             DownloadExtractUpdate(updateInfo);
                         }
                         else
                         {
-                            Log.Info("[Updater] No update is needed");
+                            Log.Info(string.Format("[Updater] Server version: <{0}>, local version: <{1}>; no update is needed", updateInfo.Version, Globals.AppVersion));
                         }
                     }
                     else
