@@ -19,7 +19,7 @@ namespace AxTools.Updater
     [Obfuscation(Exclude = false, Feature = "constants")]
     internal static class UpdaterService
     {
-        private static readonly System.Timers.Timer _timer = new System.Timers.Timer(900000);
+        private static readonly System.Timers.Timer _timer = new System.Timers.Timer(600000);
         private static readonly string DistrDirectory = Globals.TempPath + "\\update";
         private static string _updateFileURL;
         private const string UpdateFileDnsTxt = "axtools-update-file-1.axio.name";
