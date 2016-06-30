@@ -141,36 +141,6 @@ namespace AxTools.WoW
         internal const int UIFrameText = 0x1A0;
         internal const int UIEditBoxText = 0x360;
 
-        internal static readonly byte[] HookPattern = {0x48, 0x89, 0x7C, 0x24, 0x20, 0x55, 0x48, 0x8D, 0x6C, 0x24, 0xA0, 0x48, 0x81, 0xEC, 0x60, 0x01, 0x00, 0x00};
-        internal static readonly int HookLength = HookPattern.Length;
-
-        //internal static readonly int LastHardwareAction = 0x1446208;
-        //internal static readonly int TickCount = 0x1439160;
-        //internal static readonly int GameState = 0x16A179E;
-        //internal static readonly int Possible_NotLoadingScreen = 0x135474C;
-        //internal static readonly int PlayerZoneID = 0x16A1820;
-        //internal static readonly int PlayerIsLooting = 0x1715264;
-        //internal static readonly int BlackMarketNumItems = 0x1756528;
-        //internal static readonly int BlackMarketItems = 0x1756530;
-        //internal static readonly int ObjectManager = 0x14E4DC0;
-        //internal static readonly int PlayerPtr = 0x1606320;
-        //internal static readonly int GlueState = 0x14CE2E4;
-        //internal static readonly int FocusedWidget = 0x1445DB8;
-        //internal const int NameCacheBase = 0x14C2818;
-        //internal const int MouseoverGUID = 0x16A1DD8;
-        //internal const int KnownSpells = 0x16FFC28;
-        //internal const int KnownSpellsCount = 0x16FFC20;
-        //internal const int ChatIsOpened = 0x1454030;
-        //internal const int CVarAutoInteract = 0x16A1988;
-        //internal const int ZoneText = 0x16A17C0;
-        //internal const int ChatBuffer = 0x16A3B30;
-
-        #endregion
-
-        #region Injected methods
-
-
-
         #endregion
 
         #region Object manager
@@ -250,7 +220,6 @@ namespace AxTools.WoW
 
         #region Misc
 
-        internal const int CVarAutoInteract_Enabled = 92;
         internal const int ChatNextMessage = 0x17F0;
         internal const int ChatFullMessageOffset = 0x65;
 

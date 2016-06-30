@@ -45,7 +45,7 @@ namespace PatternFinder
                 Pattern.FromTextstyle("KnownSpells", "40 53 48 83 EC 20 8B 15 ?? ?? ?? ?? 8D 42 FF 48 63 D8 85 C0 78 63 4C 8B 05 ?? ?? ?? ?? 0F 1F 00 49 8B 0C D8", new AddModifier(25), new LeaModifier(LeaType.CmpMinusOne)),
                 Pattern.FromTextstyle("ZoneText", "48 85 C0 74 16 48 63 48 18 85 C9 74 0E 48 8D 5C 08 18 EB 07 48 8B 1D ?? ?? ?? ?? 48 8B D3 48 8B CF", new AddModifier(23), new LeaModifier(LeaType.CmpMinusOne)),
                 Pattern.FromTextstyle("ChatBuffer", "45 33 FF 4C 8B F1 41 8B E8 4C 8B EA 41 83 CC FF 48 8D 0D ?? ?? ?? ?? 41 8B FF 48 89 74 24 50", new AddModifier(19), new LeaModifier(LeaType.CmpMinusOne)),
-
+                Pattern.FromTextstyle("UIFrameBase", "48 8B 05 ?? ?? ?? ?? 48 8B 98 ?? ?? ?? ?? F6 C3 01", new AddModifier(3), new LeaModifier(LeaType.CmpMinusOne)),
 
 
 
