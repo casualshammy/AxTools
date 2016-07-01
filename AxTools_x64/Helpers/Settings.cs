@@ -258,27 +258,8 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 59, PropertyName = "WoWRadarObjectColor")]
         internal Color WoWRadarObjectColor = Color.Gold;
 
-        #endregion
-
-        #region AddonsBackup
-
-        [JsonProperty(Order = 60, PropertyName = "WoWAddonsBackupPath")]
-        internal string WoWAddonsBackupPath = Globals.UserfilesPath;
-
-        [JsonProperty(Order = 61, PropertyName = "WoWAddonsBackupLastDate")]
-        internal DateTime WoWAddonsBackupLastDate = new DateTime(1970, 1, 1);
-
-        [JsonProperty(Order = 62, PropertyName = "WoWAddonsBackupIsActive")]
-        internal bool WoWAddonsBackupIsActive = true;
-
-        [JsonProperty(Order = 63, PropertyName = "WoWAddonsBackupNumberOfArchives")]
-        internal int WoWAddonsBackupNumberOfArchives = 7;
-
-        [JsonProperty(Order = 64, PropertyName = "WoWAddonsBackupMinimumTimeBetweenBackup")]
-        internal int WoWAddonsBackupMinimumTimeBetweenBackup = 24;
-
-        [JsonProperty(Order = 65, PropertyName = "WoWAddonsBackupCompressionLevel")]
-        internal int WoWAddonsBackupCompressionLevel = 6;
+        [JsonProperty(Order = 60, PropertyName = "WoWRadarAlarmSoundFile")]
+        internal string WoWRadarAlarmSoundFile = Globals.ResourcesPath + "\\alarm.wav";
 
         #endregion
 
@@ -330,6 +311,28 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 84, PropertyName = "PingerVeryBadPacketLoss")]
         internal int PingerVeryBadPacketLoss = 10;
+
+        #endregion
+
+        #region AddonsBackup
+
+        [JsonProperty(Order = 90, PropertyName = "WoWAddonsBackupPath")]
+        internal string WoWAddonsBackupPath = Globals.UserfilesPath;
+
+        [JsonProperty(Order = 91, PropertyName = "WoWAddonsBackupLastDate")]
+        internal DateTime WoWAddonsBackupLastDate = new DateTime(1970, 1, 1);
+
+        [JsonProperty(Order = 92, PropertyName = "WoWAddonsBackupIsActive")]
+        internal bool WoWAddonsBackupIsActive = true;
+
+        [JsonProperty(Order = 93, PropertyName = "WoWAddonsBackupNumberOfArchives")]
+        internal int WoWAddonsBackupNumberOfArchives = 7;
+
+        [JsonProperty(Order = 94, PropertyName = "WoWAddonsBackupMinimumTimeBetweenBackup")]
+        internal int WoWAddonsBackupMinimumTimeBetweenBackup = 24;
+
+        [JsonProperty(Order = 95, PropertyName = "WoWAddonsBackupCompressionLevel")]
+        internal int WoWAddonsBackupCompressionLevel = 6;
 
         #endregion
 

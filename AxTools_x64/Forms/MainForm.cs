@@ -764,7 +764,7 @@ namespace AxTools.Forms
 
         private void SetupOLVPlugins()
         {
-            olvColumn2.AspectToStringConverter = value => (bool) value ? "DblClick" : "";
+            olvColumn2.AspectToStringConverter = value => (bool) value ? "+" : "";
             olvPlugins.SetObjects(PluginManagerEx.LoadedPlugins.OrderByDescending(l => settings.PluginsUsageStat.ContainsKey(l.Name) ? settings.PluginsUsageStat[l.Name] : 0));
             foreach (IPlugin i in PluginManagerEx.EnabledPlugins)
             {

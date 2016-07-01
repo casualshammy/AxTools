@@ -542,10 +542,9 @@ namespace AxTools.Forms
 
         private void PlayAlarmFile()
         {
-            string path = Globals.ResourcesPath + "\\alarm.wav";
-            if (File.Exists(path))
+            if (File.Exists(settings.WoWRadarAlarmSoundFile))
             {
-                using (SoundPlayer pPlayer = new SoundPlayer(path))
+                using (SoundPlayer pPlayer = new SoundPlayer(settings.WoWRadarAlarmSoundFile))
                 {
                     pPlayer.PlaySync();
                 }

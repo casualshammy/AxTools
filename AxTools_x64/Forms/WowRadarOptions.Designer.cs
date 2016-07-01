@@ -53,6 +53,8 @@ namespace AxTools.Forms
             this.buttonSaveFile = new MetroFramework.Controls.MetroButton();
             this.buttonOpenFile = new MetroFramework.Controls.MetroButton();
             this.tabPageAppearance = new MetroFramework.Controls.MetroTabPage();
+            this.textboxAlarmSound = new Components.MetroTextboxExt();
+            this.labelAlarmSound = new MetroFramework.Controls.MetroLabel();
             this.metroTabControl1.SuspendLayout();
             this.tabPageTrackingUnits.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.oListView)).BeginInit();
@@ -226,7 +228,7 @@ namespace AxTools.Forms
             this.metroTabControl1.Location = new System.Drawing.Point(15, 30);
             this.metroTabControl1.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.SelectedIndex = 1;
             this.metroTabControl1.Size = new System.Drawing.Size(402, 368);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.TabIndex = 62;
@@ -350,6 +352,8 @@ namespace AxTools.Forms
             // 
             // tabPageAppearance
             // 
+            this.tabPageAppearance.Controls.Add(this.textboxAlarmSound);
+            this.tabPageAppearance.Controls.Add(this.labelAlarmSound);
             this.tabPageAppearance.Controls.Add(this.metroCheckBoxShowPlayersClasses);
             this.tabPageAppearance.Controls.Add(this.metroCheckBoxShowNpcsNames);
             this.tabPageAppearance.Controls.Add(this.metroCheckBoxShowObjectsNames);
@@ -370,6 +374,44 @@ namespace AxTools.Forms
             this.tabPageAppearance.VerticalScrollbarBarColor = true;
             this.tabPageAppearance.VerticalScrollbarHighlightOnWheel = false;
             this.tabPageAppearance.VerticalScrollbarSize = 10;
+            // 
+            // textboxAlarmSound
+            // 
+            this.textboxAlarmSound.CustomBackground = false;
+            this.textboxAlarmSound.CustomForeColor = false;
+            this.textboxAlarmSound.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textboxAlarmSound.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
+            this.textboxAlarmSound.Location = new System.Drawing.Point(120, 78);
+            this.textboxAlarmSound.Multiline = false;
+            this.textboxAlarmSound.Name = "textboxAlarmSound";
+            this.textboxAlarmSound.ReadOnly = false;
+            this.textboxAlarmSound.SelectedText = "";
+            this.textboxAlarmSound.Size = new System.Drawing.Size(271, 23);
+            this.textboxAlarmSound.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textboxAlarmSound.StyleManager = null;
+            this.textboxAlarmSound.TabIndex = 52;
+            this.textboxAlarmSound.Text = "path...";
+            this.textboxAlarmSound.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.textboxAlarmSound.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textboxAlarmSound.UseStyleColors = true;
+            // 
+            // labelAlarmSound
+            // 
+            this.labelAlarmSound.AutoSize = true;
+            this.labelAlarmSound.CustomBackground = false;
+            this.labelAlarmSound.CustomForeColor = false;
+            this.labelAlarmSound.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.labelAlarmSound.FontWeight = MetroFramework.MetroLabelWeight.Regular;
+            this.labelAlarmSound.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.labelAlarmSound.Location = new System.Drawing.Point(3, 79);
+            this.labelAlarmSound.Name = "labelAlarmSound";
+            this.labelAlarmSound.Size = new System.Drawing.Size(111, 19);
+            this.labelAlarmSound.Style = MetroFramework.MetroColorStyle.Blue;
+            this.labelAlarmSound.StyleManager = null;
+            this.labelAlarmSound.TabIndex = 50;
+            this.labelAlarmSound.Text = "Alarm sound file:";
+            this.labelAlarmSound.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.labelAlarmSound.UseStyleColors = true;
             // 
             // WowRadarOptions
             // 
@@ -418,5 +460,7 @@ namespace AxTools.Forms
         private BrightIdeasSoftware.OLVColumn oColumnName;
         private BrightIdeasSoftware.OLVColumn oColumnInteract;
         private BrightIdeasSoftware.OLVColumn oColumnSoundAlarm;
+        private MetroLabel labelAlarmSound;
+        private MetroTextboxExt textboxAlarmSound;
     }
 }

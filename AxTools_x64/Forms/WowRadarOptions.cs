@@ -28,6 +28,8 @@ namespace AxTools.Forms
             metroCheckBoxShowPlayersClasses.Checked = settings.WoWRadarShowPlayersClasses;
             metroCheckBoxShowNpcsNames.Checked = settings.WoWRadarShowNPCsNames;
             metroCheckBoxShowObjectsNames.Checked = settings.WoWRadarShowObjectsNames;
+            textboxAlarmSound.Text = settings.WoWRadarAlarmSoundFile;
+            textboxAlarmSound.TextChanged += textboxAlarmSound_TextChanged;
             metroTabControl1.SelectedIndex = 0;
             BeginInvoke((MethodInvoker) delegate
             {
@@ -71,6 +73,11 @@ namespace AxTools.Forms
                     RefreshRadarObject(radarObject, (string)value, radarObject.Interact, radarObject.SoundAlarm);
                 }
             };
+        }
+
+        private void textboxAlarmSound_TextChanged(object sender, EventArgs e)
+        {
+            settings.WoWRadarAlarmSoundFile = textboxAlarmSound.Text;
         }
 
         private bool OListView_BooleanCheckStateGetter(object rowObject)
