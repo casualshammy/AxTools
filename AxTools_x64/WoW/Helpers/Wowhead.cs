@@ -177,10 +177,6 @@ namespace AxTools.WoW.Helpers
                 }
                 finally
                 {
-                    if (stopwatch.ElapsedMilliseconds > 50)
-                    {
-                        Log.Error(string.Format("[Wowhead.ItemInfo_GetCachedValue] Takes too long: {0}ms", stopwatch.ElapsedMilliseconds));
-                    }
                     _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
                     _numDBAccesses++;
                 }
@@ -222,10 +218,6 @@ namespace AxTools.WoW.Helpers
                 }
                 finally
                 {
-                    if (stopwatch.ElapsedMilliseconds > 50)
-                    {
-                        Log.Error(string.Format("[Wowhead.SpellInfo_GetCachedValue] Takes too long: {0}ms", stopwatch.ElapsedMilliseconds));
-                    }
                     _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
                     _numDBAccesses++;
                 }
@@ -267,10 +259,6 @@ namespace AxTools.WoW.Helpers
                 }
                 finally
                 {
-                    if (stopwatch.ElapsedMilliseconds > 50)
-                    {
-                        Log.Error(string.Format("[Wowhead.ZoneInfo_GetCachedValue] Takes too long: {0}ms", stopwatch.ElapsedMilliseconds));
-                    }
                     _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
                     _numDBAccesses++;
                 }
