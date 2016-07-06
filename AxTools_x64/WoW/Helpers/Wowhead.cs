@@ -21,19 +21,17 @@ namespace AxTools.WoW.Helpers
         private static readonly ConcurrentDictionary<uint, WowheadItemInfo> ItemInfos = new ConcurrentDictionary<uint, WowheadItemInfo>();
         private static readonly ConcurrentDictionary<int, WowheadSpellInfo> SpellInfos = new ConcurrentDictionary<int, WowheadSpellInfo>();
         private static readonly ConcurrentDictionary<uint, string> ZoneInfos = new ConcurrentDictionary<uint, string>();
-        private static readonly string CacheDir = Application.StartupPath + "\\wowheadCache";
+        private static readonly string DataDir = Application.StartupPath + "\\data";
         private const string UNKNOWN = "UNKNOWN";
-        private static readonly object DBLockItems = new object();
-        private static readonly object DBLockSpells = new object();
-        private static readonly object DBLockZones = new object();
+        private static readonly object DBLock = new object();
         private static long _sumDBAccessTime;
         private static int _numDBAccesses;
 
         static Wowhead()
         {
-            if (!Directory.Exists(CacheDir))
+            if (!Directory.Exists(DataDir))
             {
-                Directory.CreateDirectory(CacheDir);
+                Directory.CreateDirectory(DataDir);
             }
             _locale = GetLocale();
             MainForm.ClosingEx += delegate { Log.Error("[Wowhead] DB usage stats: numDBAccesses: " + _numDBAccesses + "; average access time: " + _sumDBAccessTime/(_numDBAccesses == 0 ? -1 : _numDBAccesses)); };
@@ -157,12 +155,12 @@ namespace AxTools.WoW.Helpers
 
         private static WowheadItemInfo ItemInfo_GetCachedValue(uint itemID)
         {
-            lock (DBLockItems)
+            lock (DBLock)
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-items.ldb"))
+                    using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
                     {
                         LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
                         collection.EnsureIndex(x => x.ID);
@@ -185,9 +183,9 @@ namespace AxTools.WoW.Helpers
 
         private static void ItemInfo_SaveToCache(uint itemID, WowheadItemInfo info)
         {
-            lock (DBLockItems)
+            lock (DBLock)
             {
-                using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-items.ldb"))
+                using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
                 {
                     LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
                     collection.Insert(new NDBEntry((int)itemID, JsonConvert.SerializeObject(info)));
@@ -198,12 +196,12 @@ namespace AxTools.WoW.Helpers
 
         private static WowheadSpellInfo SpellInfo_GetCachedValue(int spellID)
         {
-            lock (DBLockSpells)
+            lock (DBLock)
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-spells.ldb"))
+                    using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
                     {
                         LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
                         collection.EnsureIndex(x => x.ID);
@@ -226,9 +224,9 @@ namespace AxTools.WoW.Helpers
 
         private static void SpellInfo_SaveToCache(int spellID, WowheadSpellInfo info)
         {
-            lock (DBLockSpells)
+            lock (DBLock)
             {
-                using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-spells.ldb"))
+                using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
                 {
                     LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
                     collection.Insert(new NDBEntry(spellID, JsonConvert.SerializeObject(info)));
@@ -239,12 +237,12 @@ namespace AxTools.WoW.Helpers
 
         private static string ZoneInfo_GetCachedValue(uint zoneID)
         {
-            lock (DBLockZones)
+            lock (DBLock)
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-zones.ldb"))
+                    using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
                     {
                         LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-zones");
                         collection.EnsureIndex(x => x.ID);
@@ -267,9 +265,9 @@ namespace AxTools.WoW.Helpers
 
         private static void ZoneInfo_SaveToCache(uint zoneID, string zoneText)
         {
-            lock (DBLockZones)
+            lock (DBLock)
             {
-                using (LiteDatabase db = new LiteDatabase(CacheDir + "\\wowhead-zones.ldb"))
+                using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
                 {
                     LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-zones");
                     collection.Insert(new NDBEntry((int) zoneID, JsonConvert.SerializeObject(zoneText)));

@@ -186,7 +186,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         private uint GetBestBaitID(WoWPlayerMe me)
         {
-            if (fishingRods.Contains(me.Inventory[15].EntryID) && (DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10)
+            if (me.Inventory.Length > 15 && fishingRods.Contains(me.Inventory[15].EntryID) && (DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10)
             {
                 return baits.FirstOrDefault(l => me.ItemsInBags.Any(k => k.EntryID == l));
             }
