@@ -111,6 +111,16 @@ namespace AxTools.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Axio_Lab_CA {
+            get {
+                object obj = ResourceManager.GetObject("Axio_Lab_CA", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap BlackMarket {

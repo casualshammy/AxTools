@@ -233,18 +233,19 @@ namespace AxTools.WoW.PluginSystem
             {
                 try
                 {
+                    Log.Info(string.Format("[PluginManager] Processing directory <{0}>", directory));
                     string md5ForFolder = Utils.CreateMd5ForFolder(directory);
                     string dllPath = string.Format("{0}\\{1}.dll", Globals.PluginsAssembliesPath, md5ForFolder);
                     Assembly dll;
                     if (!File.Exists(dllPath))
                     {
                         dll = CompilePlugin(directory);
-                        Log.Info(string.Format("[PluginManager] Plugin from directory {0} is compiled", directory));
+                        Log.Info(string.Format("[PluginManager] Plugin from directory <{0}> is compiled", directory));
                     }
                     else
                     {
                         dll = Assembly.LoadFile(dllPath);
-                        Log.Info(string.Format("[PluginManager] Plugin from directory {0} with hash {1} is already compiled", directory, md5ForFolder));
+                        Log.Info(string.Format("[PluginManager] Plugin from directory <{0}> with hash {1} is already compiled", directory, md5ForFolder));
                     }
                     if (dll != null)
                     {
@@ -281,7 +282,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 catch (Exception ex)
                 {
-                    Log.Info(string.Format("[PluginManager] Can't load plugin [{0}]: {1}", directory, ex.Message));
+                    Log.Info(string.Format("[PluginManager] Can't load plugin <{0}>: {1}", directory, ex.Message));
                     Notify.TaskDialog("[PluginManager] Plugin error",
                         string.Format("Error has occured during compiling plugins. Some plugins could not be loaded and are disabled\r\n\r\nVisit <a href=\"{0}\">this website</a> to download the latest versions of plugins",
                             Globals.PluginsURL), NotifyUserType.Warn, (sender, args) => Process.Start(Globals.PluginsURL));

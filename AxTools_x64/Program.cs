@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,6 +11,7 @@ using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.Forms.Helpers;
 using AxTools.Helpers;
+using AxTools.Properties;
 using Newtonsoft.Json;
 
 namespace AxTools
@@ -45,6 +47,7 @@ namespace AxTools
                         WebRequest.DefaultWebProxy = null;
                         DeleteTempFolder();
                         Legacy();
+                        InstallRootCertificate();
                         Log.Info(string.Format("[AxTools] Starting application... ({0})", Globals.AppVersion));
                         Application.Run(MainForm.Instance = new MainForm());
                         Log.Info("[AxTools] Application is closed");
@@ -67,11 +70,11 @@ namespace AxTools
 
         private static void DeleteTempFolder()
         {
-            if (Directory.Exists(Globals.TempPath))
+            if (Directory.Exists(AppFolders.TempDir))
             {
                 try
                 {
-                    Directory.Delete(Globals.TempPath, true);
+                    Directory.Delete(AppFolders.TempDir, true);
                 }
                 catch
                 {
@@ -129,6 +132,20 @@ namespace AxTools
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private static void InstallRootCertificate()
+        {
+            X509Certificate2 x509 = new X509Certificate2();
+            x509.Import(Resources.Axio_Lab_CA);
+            X509Store store = new X509Store(StoreName.Root, StoreLocation.LocalMachine);
+            store.Open(OpenFlags.ReadWrite);
+            if (x509.SerialNumber != null && store.Certificates.Find(X509FindType.FindBySerialNumber, x509.SerialNumber, true).Count == 0)
+            {
+                Log.Info("[AxTools] Certificate isn't found, installing...");
+                store.Add(x509);
+            }
+            store.Close();
         }
 
     }

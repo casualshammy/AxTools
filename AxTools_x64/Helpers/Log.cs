@@ -71,7 +71,6 @@ namespace AxTools.Helpers
         {
             if (_stringBuilder.Length != 0)
             {
-                AppFolders.CreateTempDir();
                 lock (_lock)
                 {
                     File.AppendAllText(Globals.LogFileName, _stringBuilder.ToString(), Encoding.UTF8);

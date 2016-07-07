@@ -7,7 +7,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using AxTools.Forms;
 using AxTools.Helpers;
 using LiteDB;
@@ -21,7 +20,6 @@ namespace AxTools.WoW.Helpers
         private static readonly ConcurrentDictionary<uint, WowheadItemInfo> ItemInfos = new ConcurrentDictionary<uint, WowheadItemInfo>();
         private static readonly ConcurrentDictionary<int, WowheadSpellInfo> SpellInfos = new ConcurrentDictionary<int, WowheadSpellInfo>();
         private static readonly ConcurrentDictionary<uint, string> ZoneInfos = new ConcurrentDictionary<uint, string>();
-        private static readonly string DataDir = Application.StartupPath + "\\data";
         private const string UNKNOWN = "UNKNOWN";
         private static readonly object DBLock = new object();
         private static long _sumDBAccessTime;
@@ -29,10 +27,6 @@ namespace AxTools.WoW.Helpers
 
         static Wowhead()
         {
-            if (!Directory.Exists(DataDir))
-            {
-                Directory.CreateDirectory(DataDir);
-            }
             _locale = GetLocale();
             MainForm.ClosingEx += delegate { Log.Error("[Wowhead] DB usage stats: numDBAccesses: " + _numDBAccesses + "; average access time: " + _sumDBAccessTime/(_numDBAccesses == 0 ? -1 : _numDBAccesses)); };
         }
@@ -160,7 +154,7 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
+                    using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                     {
                         LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
                         collection.EnsureIndex(x => x.ID);
@@ -185,7 +179,7 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
+                using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                 {
                     LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
                     collection.Insert(new NDBEntry((int)itemID, JsonConvert.SerializeObject(info)));
@@ -201,7 +195,7 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
+                    using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                     {
                         LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
                         collection.EnsureIndex(x => x.ID);
@@ -226,7 +220,7 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
+                using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                 {
                     LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
                     collection.Insert(new NDBEntry(spellID, JsonConvert.SerializeObject(info)));
@@ -242,7 +236,7 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
+                    using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                     {
                         LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-zones");
                         collection.EnsureIndex(x => x.ID);
@@ -267,7 +261,7 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                using (LiteDatabase db = new LiteDatabase(DataDir + "\\wowhead.ldb"))
+                using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                 {
                     LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-zones");
                     collection.Insert(new NDBEntry((int) zoneID, JsonConvert.SerializeObject(zoneText)));

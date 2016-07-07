@@ -20,7 +20,7 @@ namespace AxTools.Updater
     internal static class UpdaterService
     {
         private static readonly System.Timers.Timer _timer = new System.Timers.Timer(600000);
-        private static readonly string DistrDirectory = Globals.TempPath + "\\update";
+        private static readonly string DistrDirectory = AppFolders.TempDir + "\\update";
         private static string _updateFileURL;
         private const string UpdateFileDnsTxt = "axtools-update-file-1.axio.name";
         private static string _hardwareID;
@@ -66,9 +66,8 @@ namespace AxTools.Updater
 
         private static void DownloadExtractUpdate(UpdateInfo0 updateInfo)
         {
-            AppFolders.CreateTempDir();
-            string distrZipFile = Globals.TempPath + "\\_distr.zip";
-            string updaterZipFile = Globals.TempPath + "\\_updater.zip";
+            string distrZipFile = AppFolders.TempDir + "\\_distr.zip";
+            string updaterZipFile = AppFolders.TempDir + "\\_updater.zip";
             File.Delete(distrZipFile);
             File.Delete(updaterZipFile);
             using (WebClient webClient = new WebClient())
@@ -111,19 +110,19 @@ namespace AxTools.Updater
                 using (ZipFile zip = new ZipFile(updaterZipFile, Encoding.UTF8))
                 {
                     zip.Password = "3aTaTre6agA$-E+e";
-                    zip.ExtractAll(Globals.TempPath, ExtractExistingFileAction.OverwriteSilently);
+                    zip.ExtractAll(AppFolders.TempDir, ExtractExistingFileAction.OverwriteSilently);
                 }
-                Log.Info("[Updater] Package <updater> is extracted to " + Globals.TempPath);
+                Log.Info("[Updater] Package <updater> is extracted to " + AppFolders.TempDir);
             }
             catch (Exception ex)
             {
                 Log.Error("[Updater] Can't extract <updater> package: " + ex.Message);
                 return;
             }
-            FileInfo updaterExe = new DirectoryInfo(Globals.TempPath).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
+            FileInfo updaterExe = new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
             if (updaterExe == null)
             {
-                Log.Error("[Updater] Can't find updater executable! Files: " + string.Join(", ", new DirectoryInfo(Globals.TempPath).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().Select(l => l.Name)));
+                Log.Error("[Updater] Can't find updater executable! Files: " + string.Join(", ", new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().Select(l => l.Name)));
                 return;
             }
             TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No), TaskDialogIcon.Information);
@@ -220,7 +219,7 @@ namespace AxTools.Updater
         private static void ApplicationOnApplicationExit(object sender, EventArgs eventArgs)
         {
             Application.ApplicationExit -= ApplicationOnApplicationExit;
-            FileInfo updaterExe = new DirectoryInfo(Globals.TempPath).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
+            FileInfo updaterExe = new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
             if (updaterExe != null)
             {
                 Process.Start(new ProcessStartInfo

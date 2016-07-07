@@ -1,18 +1,11 @@
 ﻿using System.IO;
+using System.Windows.Forms;
 
 namespace AxTools.Helpers
 {
     internal class AppFolders
     {
         
-        internal static void CreateTempDir()
-        {
-            if (!Directory.Exists(Globals.TempPath))
-            {
-                Directory.CreateDirectory(Globals.TempPath);
-            }
-        }
-
         internal static void CreateUserfilesDir()
         {
             if (!Directory.Exists(Globals.UserfilesPath))
@@ -50,6 +43,32 @@ namespace AxTools.Helpers
             if (!Directory.Exists(Globals.PluginsSettingsPath))
             {
                 Directory.CreateDirectory(Globals.PluginsSettingsPath);
+            }
+        }
+
+        internal static string DataDir
+        {
+            get
+            {
+                string path = Application.StartupPath + "\\data";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return path;
+            }
+        }
+
+        internal static string TempDir
+        {
+            get
+            {
+                string path = Application.StartupPath + "\\tmp";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return path;
             }
         }
 

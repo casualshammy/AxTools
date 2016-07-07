@@ -6,11 +6,10 @@ namespace AxTools.Helpers
 {
     internal class Globals
     {
-        internal static readonly string TempPath = Application.StartupPath + "\\tmp";
         internal static readonly string CfgPath = Application.StartupPath + "\\cfg";
         internal static readonly string UserfilesPath = Application.StartupPath + "\\userfiles";
         internal static readonly string ResourcesPath = Application.StartupPath + "\\resources";
-        internal static readonly string LogFileName = TempPath + "\\AxTools.log";
+        internal static readonly string LogFileName = AppFolders.TempDir + "\\AxTools.log";
         internal static readonly string PluginsPath = Application.StartupPath + "\\plugins";
         internal static readonly string PluginsAssembliesPath = Application.StartupPath + "\\pluginsAssemblies";
         internal static readonly string PluginsSettingsPath = Application.StartupPath + "\\pluginsSettings";
