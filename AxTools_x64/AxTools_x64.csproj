@@ -35,7 +35,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.1.54.1215</AssemblyVersion>
+    <AssemblyVersion>12.1.54.1228</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -177,6 +177,7 @@
     <Compile Include="Services\Pinger.cs" />
     <Compile Include="Helpers\NotifyUserType.cs" />
     <Compile Include="Helpers\TrayIconAnimation.cs" />
+    <Compile Include="Services\PingerHelpers\GameServers.cs" />
     <Compile Include="Services\PingerHelpers\PingerReply.cs" />
     <Compile Include="Services\PingerHelpers\PingResult.cs" />
     <Compile Include="Updater\UpdateInfo.cs" />

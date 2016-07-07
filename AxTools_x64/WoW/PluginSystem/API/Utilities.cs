@@ -68,8 +68,7 @@ namespace AxTools.WoW.PluginSystem.API
                     js.Serialize(jsonWriter, data);
                 }
             }
-            AppFolders.CreatePluginsSettingsDir();
-            string mySettingsDir = Globals.PluginsSettingsPath + "\\" + plugin.Name;
+            string mySettingsDir = AppFolders.PluginsSettingsDir + "\\" + plugin.Name;
             if (!Directory.Exists(mySettingsDir))
             {
                 Directory.CreateDirectory(mySettingsDir);
@@ -79,7 +78,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static T LoadSettingsJSON<T>(this IPlugin plugin, string path = null) where T : class, new()
         {
-            string mySettingsFile = path ?? string.Format("{0}\\{1}\\settings.json", Globals.PluginsSettingsPath, plugin.Name);
+            string mySettingsFile = path ?? string.Format("{0}\\{1}\\settings.json", AppFolders.PluginsSettingsDir, plugin.Name);
             if (File.Exists(mySettingsFile))
             {
                 string rawText = File.ReadAllText(mySettingsFile, Encoding.UTF8);

@@ -226,16 +226,14 @@ namespace AxTools.WoW.PluginSystem
 
         private static void LoadPluginsFromDisk()
         {
-            AppFolders.CreatePluginsDir();
-            AppFolders.CreatePluginsBinariesDir();
-            string[] directories = Directory.GetDirectories(Globals.PluginsPath);
+            string[] directories = Directory.GetDirectories(AppFolders.PluginsDir);
             foreach (string directory in directories)
             {
                 try
                 {
                     Log.Info(string.Format("[PluginManager] Processing directory <{0}>", directory));
                     string md5ForFolder = Utils.CreateMd5ForFolder(directory);
-                    string dllPath = string.Format("{0}\\{1}.dll", Globals.PluginsAssembliesPath, md5ForFolder);
+                    string dllPath = string.Format("{0}\\{1}.dll", AppFolders.PluginsBinariesDir, md5ForFolder);
                     Assembly dll;
                     if (!File.Exists(dllPath))
                     {
@@ -293,7 +291,7 @@ namespace AxTools.WoW.PluginSystem
 
         private static void ClearOldAssemblies()
         {
-            string[] assemblies = Directory.GetFiles(Globals.PluginsAssembliesPath);
+            string[] assemblies = Directory.GetFiles(AppFolders.PluginsBinariesDir);
             foreach (string assembly in assemblies)
             {
                 try

@@ -94,7 +94,7 @@ namespace AxTools.Services
                     using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                     {
                         _stopwatch.Restart();
-                        bool result = pSocket.BeginConnect(Globals.GameServers[_settings.PingerServerID].Ip, Globals.GameServers[_settings.PingerServerID].Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
+                        bool result = pSocket.BeginConnect(GameServers.Entries[_settings.PingerServerID].Ip, GameServers.Entries[_settings.PingerServerID].Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
                         long elapsed = _stopwatch.ElapsedMilliseconds;
                         if (_pingList.Count == 100)
                         {

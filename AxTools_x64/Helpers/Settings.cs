@@ -30,7 +30,7 @@ namespace AxTools.Helpers
                     {
                         if (_instance == null)
                         {
-                            string settingsFile = Globals.CfgPath + "\\settings.json";
+                            string settingsFile = AppFolders.ConfigDir + "\\settings.json";
                             if (File.Exists(settingsFile))
                             {
                                 try
@@ -119,8 +119,7 @@ namespace AxTools.Helpers
                 }
             }
             string json = sb.ToString();
-            AppFolders.CreateConfigDir();
-            File.WriteAllText(Globals.CfgPath + "\\settings.json", json, Encoding.UTF8);
+            File.WriteAllText(AppFolders.ConfigDir + "\\settings.json", json, Encoding.UTF8);
             Log.Info("Settings file has been updated, time: " + stopwatch.ElapsedMilliseconds + "ms");
         }
 
@@ -259,7 +258,7 @@ namespace AxTools.Helpers
         internal Color WoWRadarObjectColor = Color.Gold;
 
         [JsonProperty(Order = 60, PropertyName = "WoWRadarAlarmSoundFile")]
-        internal string WoWRadarAlarmSoundFile = Globals.ResourcesPath + "\\alarm.wav";
+        internal string WoWRadarAlarmSoundFile = AppFolders.ResourcesDir + "\\alarm.wav";
 
         #endregion
 
@@ -317,7 +316,7 @@ namespace AxTools.Helpers
         #region AddonsBackup
 
         [JsonProperty(Order = 90, PropertyName = "WoWAddonsBackupPath")]
-        internal string WoWAddonsBackupPath = Globals.UserfilesPath;
+        internal string WoWAddonsBackupPath = AppFolders.UserfilesDir;
 
         [JsonProperty(Order = 91, PropertyName = "WoWAddonsBackupLastDate")]
         internal DateTime WoWAddonsBackupLastDate = new DateTime(1970, 1, 1);

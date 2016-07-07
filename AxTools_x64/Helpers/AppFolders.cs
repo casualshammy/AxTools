@@ -5,44 +5,81 @@ namespace AxTools.Helpers
 {
     internal class AppFolders
     {
-        
-        internal static void CreateUserfilesDir()
+        internal static string UserfilesDir
         {
-            if (!Directory.Exists(Globals.UserfilesPath))
+            get
             {
-                Directory.CreateDirectory(Globals.UserfilesPath);
+                string path = Application.StartupPath + "\\userfiles";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return path;
             }
         }
 
-        internal static void CreateConfigDir()
+        internal static string ConfigDir
         {
-            if (!Directory.Exists(Globals.CfgPath))
+            get
             {
-                Directory.CreateDirectory(Globals.CfgPath);
+                string path = Application.StartupPath + "\\cfg";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return path;
             }
         }
 
-        internal static void CreatePluginsDir()
+        internal static string PluginsDir
         {
-            if (!Directory.Exists(Globals.PluginsPath))
+            get
             {
-                Directory.CreateDirectory(Globals.PluginsPath);
+                string path = Application.StartupPath + "\\plugins";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return path;
             }
         }
 
-        internal static void CreatePluginsBinariesDir()
+        internal static string PluginsBinariesDir
         {
-            if (!Directory.Exists(Globals.PluginsAssembliesPath))
+            get
             {
-                Directory.CreateDirectory(Globals.PluginsAssembliesPath);
+                string path = Application.StartupPath + "\\pluginsAssemblies";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return path;
             }
         }
 
-        internal static void CreatePluginsSettingsDir()
+        internal static string PluginsSettingsDir
         {
-            if (!Directory.Exists(Globals.PluginsSettingsPath))
+            get
             {
-                Directory.CreateDirectory(Globals.PluginsSettingsPath);
+                string path = Application.StartupPath + "\\pluginsSettings";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return path;
+            }
+        }
+
+        internal static string ResourcesDir
+        {
+            get
+            {
+                string path = Application.StartupPath + "\\resources";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return path;
             }
         }
 

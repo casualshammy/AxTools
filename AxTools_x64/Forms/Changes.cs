@@ -30,7 +30,7 @@ namespace AxTools.Forms
         {
             if (Globals.AppVersion.Major != Settings.Instance.LastUsedVersion.Major || Globals.AppVersion.Minor != Settings.Instance.LastUsedVersion.Minor)
             {
-                string file = Globals.ResourcesPath + "\\changes.jpg";
+                string file = AppFolders.ResourcesDir + "\\changes.jpg";
                 if (File.Exists(file))
                 {
                     new Changes(file).ShowDialog();

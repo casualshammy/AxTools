@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
+using AxTools.Services.PingerHelpers;
 using AxTools.WoW.PluginSystem;
 using Components.Forms;
 using MetroFramework;
@@ -45,7 +46,7 @@ namespace AxTools.Forms
             textBoxBadNetworkStatusPing.Text = settings.PingerBadPing.ToString();
             textBoxVeryBadNetworkStatusPing.Text = settings.PingerVeryBadPing.ToString();
             ComboBox_server_ip.Items.Clear();
-            ComboBox_server_ip.Items.AddRange(Globals.GameServers.Select(k => k.Description).Cast<object>().ToArray());
+            ComboBox_server_ip.Items.AddRange(GameServers.Entries.Select(k => k.Description).Cast<object>().ToArray());
             ComboBox_server_ip.SelectedIndex = settings.PingerServerID;
             checkBoxAddonsBackup.Checked = settings.WoWAddonsBackupIsActive;
             numericUpDownBackupCopiesToKeep.Value = settings.WoWAddonsBackupNumberOfArchives;

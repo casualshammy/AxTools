@@ -217,9 +217,8 @@ namespace AxTools.Forms
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                AppFolders.CreateUserfilesDir();
                 openFileDialog.Filter = @"JSON file|*.json";
-                openFileDialog.InitialDirectory = Globals.UserfilesPath;
+                openFileDialog.InitialDirectory = AppFolders.UserfilesDir;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string rawText = File.ReadAllText(openFileDialog.FileName, Encoding.UTF8);
@@ -239,9 +238,8 @@ namespace AxTools.Forms
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                AppFolders.CreateUserfilesDir();
                 saveFileDialog.Filter = @"JSON file|*.json";
-                saveFileDialog.InitialDirectory = Globals.UserfilesPath;
+                saveFileDialog.InitialDirectory = AppFolders.UserfilesDir;
                 saveFileDialog.AddExtension = true;
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {

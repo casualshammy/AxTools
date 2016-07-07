@@ -88,7 +88,7 @@ namespace AxTools
             try
             {
                 // 08.10.2015
-                string mySettingsDir = Globals.PluginsSettingsPath + "\\Fishing";
+                string mySettingsDir = AppFolders.PluginsSettingsDir + "\\Fishing";
                 string mySettingsFile = mySettingsDir + "\\FishingSettings.json";
                 if (File.Exists(mySettingsFile))
                 {
@@ -105,7 +105,7 @@ namespace AxTools
             {
                 //"WoWRadarShowMode": 2199040098561,
                 Regex regex = new Regex("\"WoWRadarShowMode\": (\\d+)");
-                string cfg = File.ReadAllText(Globals.CfgPath + "\\settings.json", Encoding.UTF8);
+                string cfg = File.ReadAllText(AppFolders.ConfigDir + "\\settings.json", Encoding.UTF8);
                 Match match = regex.Match(cfg);
                 if (match.Success)
                 {
@@ -125,7 +125,7 @@ namespace AxTools
                         newRadarShowMode.Zoom = 0.5F;
                     }
                     string newCfg = cfg.Replace(match.Value, "\"WoWRadarShowMode\": " + JsonConvert.SerializeObject(newRadarShowMode));
-                    File.WriteAllText(Globals.CfgPath + "\\settings.json", newCfg, Encoding.UTF8);
+                    File.WriteAllText(AppFolders.ConfigDir + "\\settings.json", newCfg, Encoding.UTF8);
                 }
             }
             catch (Exception ex)
