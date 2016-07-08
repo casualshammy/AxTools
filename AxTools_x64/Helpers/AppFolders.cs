@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace AxTools.Helpers
 {
-    internal class AppFolders
+    internal static class AppFolders
     {
         internal static string UserfilesDir
         {

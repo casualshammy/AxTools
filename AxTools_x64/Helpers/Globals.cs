@@ -2,7 +2,7 @@
 
 namespace AxTools.Helpers
 {
-    internal class Globals
+    internal static class Globals
     {
         internal static readonly string LogFileName = AppFolders.TempDir + "\\AxTools.log";
         internal static readonly VersionExt AppVersion = new VersionExt(Assembly.GetExecutingAssembly().GetName().Version);
