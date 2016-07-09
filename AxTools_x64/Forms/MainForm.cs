@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -764,7 +765,9 @@ namespace AxTools.Forms
 
         private void SetupOLVPlugins()
         {
-            olvColumn2.AspectToStringConverter = value => (bool) value ? "+" : "";
+            string checkMark = Encoding.UTF8.GetString(new byte[] {0xE2, 0x9C, 0x93});
+            olvColumn2.AspectToStringConverter = value => (bool)value ? checkMark : "";
+            olvColumn2.TextAlign = HorizontalAlignment.Center;
             olvPlugins.SetObjects(PluginManagerEx.LoadedPlugins.OrderByDescending(l => settings.PluginsUsageStat.ContainsKey(l.Name) ? settings.PluginsUsageStat[l.Name] : 0));
             foreach (IPlugin i in PluginManagerEx.EnabledPlugins)
             {
