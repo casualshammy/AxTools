@@ -228,7 +228,7 @@ namespace AxTools.Forms
             this.metroTabControl1.Location = new System.Drawing.Point(15, 30);
             this.metroTabControl1.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
+            this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Size = new System.Drawing.Size(402, 368);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.TabIndex = 62;
@@ -258,7 +258,7 @@ namespace AxTools.Forms
             this.tabPageTrackingUnits.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabPageTrackingUnits.StyleManager = null;
             this.tabPageTrackingUnits.TabIndex = 0;
-            this.tabPageTrackingUnits.Text = "             Tracking units           ";
+            this.tabPageTrackingUnits.Text = "                  Tracking               ";
             this.tabPageTrackingUnits.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tabPageTrackingUnits.VerticalScrollbar = false;
             this.tabPageTrackingUnits.VerticalScrollbarBarColor = true;
@@ -368,7 +368,7 @@ namespace AxTools.Forms
             this.tabPageAppearance.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabPageAppearance.StyleManager = null;
             this.tabPageAppearance.TabIndex = 1;
-            this.tabPageAppearance.Text = "               Appearance            ";
+            this.tabPageAppearance.Text = "                  Settings               ";
             this.tabPageAppearance.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tabPageAppearance.VerticalScrollbar = false;
             this.tabPageAppearance.VerticalScrollbarBarColor = true;

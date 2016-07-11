@@ -71,7 +71,7 @@ namespace Dummy
 				"144.76.84.2",
 				// "109.120.165.239", // VPS-SPB
         	};
-            p.Add()
+            p.Add();
         }
 
         internal static readonly Random Rnd = new Random();
