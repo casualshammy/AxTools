@@ -85,9 +85,9 @@ namespace AxTools
 
         private static void Legacy()
         {
+            // 08.10.2015
             try
             {
-                // 08.10.2015
                 string mySettingsDir = AppFolders.PluginsSettingsDir + "\\Fishing";
                 string mySettingsFile = mySettingsDir + "\\FishingSettings.json";
                 if (File.Exists(mySettingsFile))
@@ -126,6 +126,19 @@ namespace AxTools
                     }
                     string newCfg = cfg.Replace(match.Value, "\"WoWRadarShowMode\": " + JsonConvert.SerializeObject(newRadarShowMode));
                     File.WriteAllText(AppFolders.ConfigDir + "\\settings.json", newCfg, Encoding.UTF8);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            // 11.07.2016
+            try
+            {
+                if (Directory.Exists(Application.StartupPath + "\\wowheadCache"))
+                {
+                    Directory.Delete(Application.StartupPath + "\\wowheadCache", true);
                 }
             }
             catch (Exception ex)
