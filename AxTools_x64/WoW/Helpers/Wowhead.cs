@@ -22,13 +22,19 @@ namespace AxTools.WoW.Helpers
         private static readonly ConcurrentDictionary<uint, string> ZoneInfos = new ConcurrentDictionary<uint, string>();
         private const string UNKNOWN = "UNKNOWN";
         private static readonly object DBLock = new object();
+        private static long _sumDBAccessTicks;
         private static long _sumDBAccessTime;
         private static int _numDBAccesses;
 
         static Wowhead()
         {
             _locale = GetLocale();
-            MainForm.ClosingEx += delegate { Log.Error("[Wowhead] DB usage stats: numDBAccesses: " + _numDBAccesses + "; average access time: " + _sumDBAccessTime/(_numDBAccesses == 0 ? -1 : _numDBAccesses)); };
+            MainForm.ClosingEx +=
+                delegate
+                {
+                    Log.Error(string.Format("[Wowhead] DB usage stats: numDBAccesses: {0}; average access time: {1} ms/call; average access time: {2} ticks/call",
+                        _numDBAccesses, _sumDBAccessTime/(_numDBAccesses == 0 ? -1 : _numDBAccesses), _sumDBAccessTicks/(_numDBAccesses == 0 ? -1 : _numDBAccesses)));
+                };
         }
 
         internal static WowheadItemInfo GetItemInfo(uint itemID)
@@ -169,6 +175,7 @@ namespace AxTools.WoW.Helpers
                 }
                 finally
                 {
+                    _sumDBAccessTicks += stopwatch.ElapsedTicks;
                     _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
                     _numDBAccesses++;
                 }
@@ -210,6 +217,7 @@ namespace AxTools.WoW.Helpers
                 }
                 finally
                 {
+                    _sumDBAccessTicks += stopwatch.ElapsedTicks;
                     _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
                     _numDBAccesses++;
                 }
@@ -251,6 +259,7 @@ namespace AxTools.WoW.Helpers
                 }
                 finally
                 {
+                    _sumDBAccessTicks += stopwatch.ElapsedTicks;
                     _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
                     _numDBAccesses++;
                 }
