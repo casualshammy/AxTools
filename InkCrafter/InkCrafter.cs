@@ -113,10 +113,10 @@ namespace InkCrafter
 
         private SafeTimer timer;
         internal InkCrafterSettings SettingsInstance;
-        private readonly string tableNames = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6));
-        private readonly string tableAvailable = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6));
-        private readonly string tableIndexes = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6));
-        private readonly string tableRemain = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6));
+        private readonly string tableNames = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6, true));
+        private readonly string tableAvailable = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6, true));
+        private readonly string tableIndexes = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6, true));
+        private readonly string tableRemain = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6, true));
         private Task startupTask;
 
         private readonly string[] inks =

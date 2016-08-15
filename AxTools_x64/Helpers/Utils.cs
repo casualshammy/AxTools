@@ -51,10 +51,10 @@ namespace AxTools.Helpers
             return num2;
         }
 
-        internal static string GetRandomString(int size)
+        internal static string GetRandomString(int size, bool onlyLetters)
         {
             StringBuilder builder = new StringBuilder(size);
-            string chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            string chars = onlyLetters ? "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" : "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             for (int i = 0; i < size; i++)
             {
                 char c = chars[Rnd.Next(0, chars.Length)];

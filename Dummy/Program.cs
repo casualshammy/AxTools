@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -61,17 +62,12 @@ namespace Dummy
 
         private static void Test()
         {
-            var p = new HashSet<string>
-        	{
-        		"95.213.135.221",
-		        "37.187.75.63",
-		        "109.95.210.229",
-		        "216.127.64.69",
-		        "109.73.39.244",
-				"144.76.84.2",
-				// "109.120.165.239", // VPS-SPB
-        	};
-            p.Add();
+            string[] lines = File.ReadAllLines("C:\\Users\\Axioma\\Desktop\\temp\\1\\1.txt");
+            foreach (string line in lines)
+            {
+                Process.Start(line);
+                Console.ReadLine();
+            }
         }
 
         internal static readonly Random Rnd = new Random();

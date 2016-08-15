@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AxTools.Helpers;
 
 namespace AxTools.WoW.Internals
 {
@@ -108,6 +109,7 @@ namespace AxTools.WoW.Internals
         {
             get
             {
+                //return "NOT_IMPLEMENTED_YET";
                 string temp;
                 if (!Names.TryGetValue(GUID, out temp))
                 {

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 
@@ -21,7 +23,7 @@ namespace WoWPlugin_Dumper
         {
             string origText = ((Button) sender).Text;
             ((Button) sender).Text = "Please wait";
-            progressBar1.Maximum = 7;
+            progressBar1.Maximum = 8;
             progressBar1.Value = 0;
             Dump();
             ((Button)sender).Text = origText;
@@ -58,60 +60,154 @@ namespace WoWPlugin_Dumper
                 Log("ERROR(0): " + ex.Message);
                 return;
             }
-            Log("Local player---------------------------------------");
-            Log(string.Format("\tGUID: 0x{0}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; IsLooting: {5}; Name: {6}", localPlayer.GUID, localPlayer.Address.ToInt64(), localPlayer.Location,
-                GameFunctions.ZoneID, GameFunctions.ZoneText, GameFunctions.IsLooting, localPlayer.Name));
-            Log("----Local player buffs----");
-            foreach (string info in localPlayer.Auras.AsParallel().Select(l => string.Format("ID: {0}; Name: {1}; Stack: {2}; TimeLeft: {3}; OwnerGUID: {4}", l.SpellId, l.Name, l.Stack, l.TimeLeftInMs, l.OwnerGUID)))
+            try
             {
-                Log("\t" + info);
+                Log("Local player---------------------------------------");
+                Log(string.Format("\tGUID: 0x{0}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; IsLooting: {5}; Name: {6}; TargetGUID: {7}; Class: {8}; Health/MaxHealth: {9}/{10}, Level: {11}; Faction: {12}; IsMounted: {13}",
+                    localPlayer.GUID, localPlayer.Address.ToInt64(), localPlayer.Location, GameFunctions.ZoneID, GameFunctions.ZoneText, GameFunctions.IsLooting, localPlayer.Name, localPlayer.TargetGUID, localPlayer.Class,
+                    localPlayer.Health, localPlayer.HealthMax,localPlayer.Level, localPlayer.Faction, localPlayer.IsMounted));
             }
-            Log("----Mouseover----");
-            Log(string.Format("\tGUID: {0}", GameFunctions.MouseoverGUID));
-            progressBar1.Value++;
-            Log("----Inventory slots----");
-            foreach (WoWItem item in localPlayer.Inventory.AsParallel())
+            catch (Exception ex)
             {
-                Log(string.Format("\tID: {0}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.Enchant));
+                Log(ex.Message);
             }
-            progressBar1.Value++;
-            Log("----Items in bags----");
-            foreach (WoWItem item in localPlayer.ItemsInBags)
+            try
             {
-                Log(string.Format("\tID: {0}; GUID: {7}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}; BagID, SlotID: {5} {6}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.Enchant,
-                    item.BagID, item.SlotID, item.GUID));
+                Log("----Local player buffs----");
+                foreach (string info in localPlayer.Auras.Select(l => string.Format("ID: {0}; Name: {1}; Stack: {2}; TimeLeft: {3}; OwnerGUID: {4}", l.SpellId, l.Name, l.Stack, l.TimeLeftInMs, l.OwnerGUID)))
+                {
+                    Log("\t" + info);
+                }
             }
-            progressBar1.Value++;
-            Log("Objects-----------------------------------------");
-            foreach (WowObject i in wowObjects)
+            catch (Exception ex)
             {
-                // ReSharper disable once ImpureMethodCallOnReadonlyValueField
-                Log(string.Format("\t{0} - GUID: 0x{1}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4}; Address: 0x{5:X}; EntryID: {6}", i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), i.OwnerGUID,
-                    i.Address.ToInt64(), i.EntryID));
+                Log(ex.Message);
             }
-            progressBar1.Value++;
-            Log("Npcs-----------------------------------------");
-            foreach (WowNpc i in wowNpcs)
+            try
             {
-                Log(string.Format("\t{0}; Location: {1}; Distance: {2}; HP:{3}; MaxHP:{4}; Address:0x{5:X}; GUID:0x{6}; EntryID: {7}", i.Name, i.Location,
-                    (int)i.Location.Distance(localPlayer.Location), i.Health, i.HealthMax, i.Address.ToInt64(), i.GUID, i.EntryID));
+                Log("----Mouseover----");
+                Log(string.Format("\tGUID: {0}", GameFunctions.MouseoverGUID));
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
             }
             progressBar1.Value++;
-            Log("Players-----------------------------------------");
-            foreach (WowPlayer i in wowUnits)
+            try
             {
-                Log(string.Format(
-                    "\t{0} - GUID: 0x{1}; Location: {2}; Distance: {3}; Address:{4:X}; Class:{5}; Level:{6}; HP:{7}; MaxHP:{8}; TargetGUID: 0x{9}; IsAlliance:{10}; Auras: {{ {11} }}",
-                    i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), i.Address.ToInt64(), i.Class, i.Level, i.Health, i.HealthMax,
-                    i.TargetGUID, i.Faction, string.Join(",", i.Auras.Select(l => l.Name + "::" + l.Stack + "::" + l.TimeLeftInMs + "::" + l.OwnerGUID.ToString()))));
+                Log("----Inventory slots----");
+                foreach (WoWItem item in localPlayer.Inventory.AsParallel())
+                {
+                    Log(string.Format("\tID: {0}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.Enchant));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
             }
             progressBar1.Value++;
-            Log("UIFrames-----------------------------------------");
-            foreach (WoWUIFrame frame in WoWUIFrame.GetAllFrames())
+            try
             {
-                Log(string.Format("\tName: {0}; Visible: {1}; EditboxText: {2}", frame.GetName, frame.IsVisible, frame.EditboxText));
+                Log("----Items in bags----");
+                foreach (WoWItem item in localPlayer.ItemsInBags)
+                {
+                    Log(string.Format("\tID: {0}; GUID: {7}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}; BagID, SlotID: {5} {6}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.Enchant,
+                        item.BagID, item.SlotID, item.GUID));
+                }
             }
-            progressBar1.Value++;
+            catch (Exception)
+            {
+                //
+            }
+            //progressBar1.Value++;
+            //try
+            //{
+            //    Log("Objects-----------------------------------------");
+            //    foreach (WowObject i in wowObjects)
+            //    {
+            //        // ReSharper disable once ImpureMethodCallOnReadonlyValueField
+            //        Log(string.Format("\t{0} - GUID: 0x{1}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4}; Address: 0x{5:X}; EntryID: {6}", i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), i.OwnerGUID,
+            //            i.Address.ToInt64(), i.EntryID));
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log(ex.Message);
+            //}
+            //progressBar1.Value++;
+            //try
+            //{
+            //    Log("Npcs-----------------------------------------");
+            //    Log("NPC count: " + wowNpcs.Count);
+            //    foreach (WowNpc i in wowNpcs)
+            //    {
+            //        //Log(string.Format("\t{0}; Location: {1}; Distance: {2}; HP:{3}; MaxHP:{4}; Address:0x{5:X}; GUID:0x{6}; EntryID: {7}", i.Name, i.Location,
+            //        //    (int)i.Location.Distance(localPlayer.Location), i.Health, i.HealthMax, i.Address.ToInt64(), i.GUID, i.EntryID));
+            //        Log(string.Format("\t{0}; EntryID: {1}; Location: {2}", i.Name, i.EntryID, i.Location));
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log(ex.Message);
+            //}
+            //progressBar1.Value++;
+            //try
+            //{
+            //    Log("Players-----------------------------------------");
+            //    foreach (WowPlayer i in wowUnits)
+            //    {
+            //        Log(string.Format(
+            //            "\t{0} - GUID: 0x{1}; Location: {2}; Distance: {3}; Address:{4:X}; Class:{5}; Level:{6}; HP:{7}; MaxHP:{8}; TargetGUID: 0x{9}; IsAlliance:{10}; Auras: {{ {11} }}",
+            //            i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), i.Address.ToInt64(), i.Class, i.Level, i.Health, i.HealthMax,
+            //            i.TargetGUID, i.Faction, string.Join(",", i.Auras.Select(l => l.Name + "::" + l.Stack + "::" + l.TimeLeftInMs + "::" + l.OwnerGUID.ToString()))));
+            //    }
+            //}
+            //catch (Exception)
+            //{
+            //    //
+            //}
+            //progressBar1.Value++;
+            //try
+            //{
+            //    Log("Chat messages-----------------------------------------");
+            //    GameFunctions.NewChatMessage += Chat_NewMessage;
+            //    GameFunctions.ReadChat();
+            //    GameFunctions.NewChatMessage -= Chat_NewMessage;
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log(ex.Message);
+            //}
+            //try
+            //{
+            //    Log("Lua get function return-----------------------------------------");
+            //    Task<string> task = Task.Run(() => GameFunctions.LuaGetFunctionReturn("UnitHealth(\"player\")"));
+            //    task.Wait();
+            //    Log("\tPlayer's health: " + task.Result);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log(ex.Message);
+            //}
+            //progressBar1.Value++;
+            //try
+            //{
+            //    Log("UIFrames-----------------------------------------");
+            //    foreach (WoWUIFrame frame in WoWUIFrame.GetAllFrames())
+            //    {
+            //        Log(string.Format("\tName: {0}; Visible: {1}; EditboxText: {2}", frame.GetName, frame.IsVisible, frame.EditboxText));
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log(ex.Message);
+            //}
+            //progressBar1.Value++;
+        }
+
+        private void Chat_NewMessage(ChatMsg msg)
+        {
+            Log(string.Format("\tType: {0}; Channel: {1}; Sender: {2}; SenderGUID: {3}; Text: {4}", msg.Type, msg.Channel, msg.Sender, msg.SenderGUID, msg.Text));
         }
 
     }

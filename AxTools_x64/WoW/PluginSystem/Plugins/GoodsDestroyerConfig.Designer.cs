@@ -30,11 +30,12 @@
         {
             this.buttonSave = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.checkBoxUseFastDraenorMill = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(12, 35);
+            this.buttonSave.Location = new System.Drawing.Point(11, 71);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(291, 23);
             this.buttonSave.TabIndex = 5;
@@ -52,11 +53,22 @@
             this.checkBox1.Text = "Launch InkCrafter plugin when player hasn\'t herbs to mill";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // checkBoxUseFastDraenorMill
+            // 
+            this.checkBoxUseFastDraenorMill.AutoSize = true;
+            this.checkBoxUseFastDraenorMill.Location = new System.Drawing.Point(12, 35);
+            this.checkBoxUseFastDraenorMill.Name = "checkBoxUseFastDraenorMill";
+            this.checkBoxUseFastDraenorMill.Size = new System.Drawing.Size(123, 17);
+            this.checkBoxUseFastDraenorMill.TabIndex = 8;
+            this.checkBoxUseFastDraenorMill.Text = "Use fast Draenor mill";
+            this.checkBoxUseFastDraenorMill.UseVisualStyleBackColor = true;
+            // 
             // GoodsDestroyerConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 69);
+            this.ClientSize = new System.Drawing.Size(314, 106);
+            this.Controls.Add(this.checkBoxUseFastDraenorMill);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.buttonSave);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -73,5 +85,6 @@
 
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox checkBoxUseFastDraenorMill;
     }
 }

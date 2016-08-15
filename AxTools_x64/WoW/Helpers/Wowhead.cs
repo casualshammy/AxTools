@@ -162,10 +162,10 @@ namespace AxTools.WoW.Helpers
                 {
                     using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                     {
-                        LiteCollection<DBWowheadItemInfo> collection = db.GetCollection<DBWowheadItemInfo>("wowhead-items");
+                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
                         collection.EnsureIndex(x => x.ID);
-                        DBWowheadItemInfo entry = collection.FindOne(l => l.ID == (int) itemID); // cast to int is neccessary
-                        return entry != null ? entry.Info : null;
+                        NDBEntry entry = collection.FindOne(l => l.ID == (int) itemID); // cast to int is neccessary
+                        return entry != null ? JsonConvert.DeserializeObject<WowheadItemInfo>(entry.JSONData) : null;
                     }
                 }
                 catch (Exception ex)
@@ -188,8 +188,8 @@ namespace AxTools.WoW.Helpers
             {
                 using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                 {
-                    LiteCollection<DBWowheadItemInfo> collection = db.GetCollection<DBWowheadItemInfo>("wowhead-items");
-                    collection.Insert(new DBWowheadItemInfo((int) itemID, info));
+                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
+                    collection.Insert(new NDBEntry((int)itemID, JsonConvert.SerializeObject(info)));
                     collection.EnsureIndex(x => x.ID);
                 }
             }
@@ -204,10 +204,10 @@ namespace AxTools.WoW.Helpers
                 {
                     using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                     {
-                        LiteCollection<DBWowheadSpellInfo> collection = db.GetCollection<DBWowheadSpellInfo>("wowhead-spells");
+                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
                         collection.EnsureIndex(x => x.ID);
-                        DBWowheadSpellInfo entry = collection.FindOne(l => l.ID == spellID);
-                        return entry != null ? entry.Info : null;
+                        NDBEntry entry = collection.FindOne(l => l.ID == spellID);
+                        return entry != null ? JsonConvert.DeserializeObject<WowheadSpellInfo>(entry.JSONData) : null;
                     }
                 }
                 catch (Exception ex)
@@ -230,8 +230,8 @@ namespace AxTools.WoW.Helpers
             {
                 using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                 {
-                    LiteCollection<DBWowheadSpellInfo> collection = db.GetCollection<DBWowheadSpellInfo>("wowhead-spells");
-                    collection.Insert(new DBWowheadSpellInfo(spellID, info));
+                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
+                    collection.Insert(new NDBEntry(spellID, JsonConvert.SerializeObject(info)));
                     collection.EnsureIndex(x => x.ID);
                 }
             }
@@ -246,10 +246,10 @@ namespace AxTools.WoW.Helpers
                 {
                     using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                     {
-                        LiteCollection<DBWowheadZoneInfo> collection = db.GetCollection<DBWowheadZoneInfo>("wowhead-zones");
+                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-zones");
                         collection.EnsureIndex(x => x.ID);
-                        DBWowheadZoneInfo entry = collection.FindOne(l => l.ID == (int)zoneID);
-                        return entry != null ? entry.Info : null;
+                        NDBEntry entry = collection.FindOne(l => l.ID == (int)zoneID);
+                        return entry != null ? JsonConvert.DeserializeObject<string>(entry.JSONData) : null;
                     }
                 }
                 catch (Exception ex)
@@ -272,8 +272,8 @@ namespace AxTools.WoW.Helpers
             {
                 using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
                 {
-                    LiteCollection<DBWowheadZoneInfo> collection = db.GetCollection<DBWowheadZoneInfo>("wowhead-zones");
-                    collection.Insert(new DBWowheadZoneInfo((int) zoneID, zoneText));
+                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-zones");
+                    collection.Insert(new NDBEntry((int) zoneID, JsonConvert.SerializeObject(zoneText)));
                     collection.EnsureIndex(x => x.ID);
                 }
             }
@@ -288,57 +288,23 @@ namespace AxTools.WoW.Helpers
 
         public int ID { get; set; }
 
-    }
+        public string JSONData { get; set; }
 
-    public class DBWowheadItemInfo : NDBEntry
-    {
-        public WowheadItemInfo Info { get; set; }
-
-        public DBWowheadItemInfo(int id, WowheadItemInfo data)
-        {
-            ID = id;
-            Info = data;
-        }
-
-        public DBWowheadItemInfo()
+        public NDBEntry()
         {
             
         }
-    }
 
-    public class DBWowheadSpellInfo : NDBEntry
-    {
-        public WowheadSpellInfo Info { get; set; }
-
-        public DBWowheadSpellInfo(int id, WowheadSpellInfo data)
+        public NDBEntry(int id, string jsonData)
         {
             ID = id;
-            Info = data;
+            JSONData = jsonData;
         }
 
-        public DBWowheadSpellInfo()
-        {
-        }
     }
-
-    public class DBWowheadZoneInfo : NDBEntry
-    {
-        public string Info { get; set; }
-
-        public DBWowheadZoneInfo(int id, string data)
-        {
-            ID = id;
-            Info = data;
-        }
-
-        public DBWowheadZoneInfo()
-        {
-        }
-    }
-
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class WowheadItemInfo
+    internal class WowheadItemInfo
     {
         [JsonConstructor]
         public WowheadItemInfo()
@@ -401,7 +367,7 @@ namespace AxTools.WoW.Helpers
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class WowheadSpellInfo
+    internal class WowheadSpellInfo
     {
         [JsonConstructor]
         internal WowheadSpellInfo()

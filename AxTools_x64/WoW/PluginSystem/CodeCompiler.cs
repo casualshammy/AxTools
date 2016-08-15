@@ -42,7 +42,7 @@ namespace AxTools.WoW.PluginSystem
             string str = "BW_" + Assembly.GetEntryAssembly().GetName().Version.Revision;
             Options.CompilerOptions = string.Format("/d:BW;{0} /unsafe", str);
             Options.TempFiles = new TempFileCollection(Path.GetTempPath());
-            string assemblyPath = Path.Combine(AppFolders.PluginsBinariesDir, (hash ?? Utils.GetRandomString(16)) + ".dll");
+            string assemblyPath = Path.Combine(AppFolders.PluginsBinariesDir, (hash ?? Utils.GetRandomString(16, false)) + ".dll");
             DeleteOldAssembly(assemblyPath);
             Options.OutputAssembly = assemblyPath;
             CompiledToLocation = Options.OutputAssembly;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
 
 namespace AxTools.WoW.Internals
@@ -11,10 +12,15 @@ namespace AxTools.WoW.Internals
     internal static class ObjectMgr
     {
         private static MemoryManager _memory;
-        
+
         internal static void Initialize(WowProcess process)
         {
             _memory = process.Memory;
+        }
+
+        private static int GetObjectType(IntPtr address)
+        {
+            return _memory.Read<int>(address + WowBuildInfoX64.ObjectType);
         }
 
         internal static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
@@ -26,10 +32,10 @@ namespace AxTools.WoW.Internals
             WoWGUID playerGUID = localPlayer.GUID;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
-                (i < 10) && (i > 0);
-                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            //Log.Info("Pulse-1: address: " + currObject + "; type: " + GetObjectType(currObject));
+            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {
+                //Log.Info("Pulse-1: address: " + currObject + "; type: " + GetObjectType(currObject));
                 switch (i)
                 {
                     case 3:
@@ -205,7 +211,7 @@ namespace AxTools.WoW.Internals
                         SixteenUInt128 itemsInContainer = _memory.Read<SixteenUInt128>(desc + WowBuildInfoX64.WoWContainerItems);
                         itemCountPerContainer.Add(p.GUID, new List<WoWGUID>(itemsInContainer.Slots));
                     }
-                }    
+                }
                 currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
             }
             //
@@ -266,7 +272,8 @@ namespace AxTools.WoW.Internals
         [StructLayout(LayoutKind.Sequential)]
         private struct SixteenUInt128
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 36)] internal readonly WoWGUID[] Slots;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 36)]
+            internal readonly WoWGUID[] Slots;
         }
 
     }

@@ -87,9 +87,9 @@ namespace AxTools.WoW.PluginSystem.API
             return new T();
         }
 
-        public static string GetRandomString(int size)
+        public static string GetRandomString(int size, bool onlyLetters)
         {
-            return Utils.GetRandomString(size);
+            return Utils.GetRandomString(size, onlyLetters);
         }
 
         /// <summary>

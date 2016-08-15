@@ -7,5 +7,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
     {
         [JsonProperty(PropertyName = "LaunchInkCrafter")]
         internal bool LaunchInkCrafter = false;
+
+        [JsonProperty(PropertyName = "UseFastDraenorMill")]
+        internal bool UseFastDraenorMill = true;
     }
 }

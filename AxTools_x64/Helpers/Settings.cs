@@ -99,7 +99,7 @@ namespace AxTools.Helpers
             }
             if (string.IsNullOrWhiteSpace(UserID))
             {
-                UserID = Environment.MachineName + "___" + Utils.GetRandomString(10).ToUpper();
+                UserID = Environment.MachineName + "___" + Utils.GetRandomString(10, false).ToUpper();
             }
         }
 

@@ -14,10 +14,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             GoodsDestroyerConfig goodsDestroyerConfig = new GoodsDestroyerConfig
             {
-                checkBox1 = {Checked = settingsInstance.LaunchInkCrafter}
+                checkBox1 = {Checked = settingsInstance.LaunchInkCrafter},
+                checkBoxUseFastDraenorMill = {Checked = settingsInstance.UseFastDraenorMill}
             };
             goodsDestroyerConfig.ShowDialog();
             settingsInstance.LaunchInkCrafter = goodsDestroyerConfig.checkBox1.Checked;
+            settingsInstance.UseFastDraenorMill = goodsDestroyerConfig.checkBoxUseFastDraenorMill.Checked;
         }
 
         // ReSharper disable once InconsistentNaming

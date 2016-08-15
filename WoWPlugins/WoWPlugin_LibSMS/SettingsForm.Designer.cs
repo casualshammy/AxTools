@@ -35,6 +35,7 @@
             this.textBoxPushbulletAPIKey = new System.Windows.Forms.TextBox();
             this.labelPushbulletRecipient = new System.Windows.Forms.Label();
             this.textBoxPushbulletRecipient = new System.Windows.Forms.TextBox();
+            this.buttonPBAuth = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxSMSAPI
@@ -76,7 +77,7 @@
             // 
             this.textBoxPushbulletAPIKey.Location = new System.Drawing.Point(12, 64);
             this.textBoxPushbulletAPIKey.Name = "textBoxPushbulletAPIKey";
-            this.textBoxPushbulletAPIKey.Size = new System.Drawing.Size(501, 20);
+            this.textBoxPushbulletAPIKey.Size = new System.Drawing.Size(420, 20);
             this.textBoxPushbulletAPIKey.TabIndex = 3;
             // 
             // labelPushbulletRecipient
@@ -95,11 +96,22 @@
             this.textBoxPushbulletRecipient.Size = new System.Drawing.Size(501, 20);
             this.textBoxPushbulletRecipient.TabIndex = 5;
             // 
+            // buttonPBAuth
+            // 
+            this.buttonPBAuth.Location = new System.Drawing.Point(438, 62);
+            this.buttonPBAuth.Name = "buttonPBAuth";
+            this.buttonPBAuth.Size = new System.Drawing.Size(75, 23);
+            this.buttonPBAuth.TabIndex = 7;
+            this.buttonPBAuth.Text = "Auth";
+            this.buttonPBAuth.UseVisualStyleBackColor = true;
+            this.buttonPBAuth.Click += new System.EventHandler(this.buttonPBAuth_Click);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(525, 165);
+            this.Controls.Add(this.buttonPBAuth);
             this.Controls.Add(this.labelPushbulletRecipient);
             this.Controls.Add(this.textBoxPushbulletRecipient);
             this.Controls.Add(this.labelPushbulletAPIKey);
@@ -126,5 +138,6 @@
         private System.Windows.Forms.TextBox textBoxPushbulletAPIKey;
         private System.Windows.Forms.Label labelPushbulletRecipient;
         private System.Windows.Forms.TextBox textBoxPushbulletRecipient;
+        private System.Windows.Forms.Button buttonPBAuth;
     }
 }

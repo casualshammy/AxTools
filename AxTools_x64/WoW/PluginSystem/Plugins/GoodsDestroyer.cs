@@ -70,7 +70,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     {
                         if (GameFunctions.IsSpellKnown(51005)) // mill
                         {
-                            if (me.ItemsInBags.Any(l => fastMillHerbs.Contains(l.EntryID) && l.StackSize >= 20))
+                            if (SettingsInstance.UseFastDraenorMill && me.ItemsInBags.Any(l => fastMillHerbs.Contains(l.EntryID) && l.StackSize >= 20))
                             {
                                 string s = "/run if(GetNumTradeSkills()>0) then for i=1,GetNumTradeSkills() do local n,_,a=GetTradeSkillInfo(i);if(strfind(n,\"Массовое измельчение\") and a>0) then DoTradeSkill(i,a);return;end end end";
                                 GameFunctions.SendToChat(s);

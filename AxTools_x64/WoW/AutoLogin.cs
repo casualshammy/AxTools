@@ -41,6 +41,7 @@ namespace AxTools.WoW
                             IntPtr focusedWidget = wowProcess.Memory.Read<IntPtr>(wowProcess.Memory.ImageBase + WowBuildInfoX64.FocusedWidget);
                             if (glueState == GlueState.Disconnected && focusedWidget != (IntPtr)0)
                             {
+                                Thread.Sleep(1000);
                                 foreach (char ch in wowAccount.Login)
                                 {
                                     NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr)ch, IntPtr.Zero);

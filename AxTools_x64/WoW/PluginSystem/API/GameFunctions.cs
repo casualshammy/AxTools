@@ -84,7 +84,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         #region Chat commands
 
-        private static readonly string GossipVarName = Utilities.GetRandomString(5);
+        private static readonly string GossipVarName = Utilities.GetRandomString(5, true);
         private static readonly object ChatLock = new object();
 
         public static void UseItemByID(uint id)
@@ -111,6 +111,30 @@ namespace AxTools.WoW.PluginSystem.API
         public static void SendToChat(string command)
         {
             ChatboxSendText(command);
+        }
+
+        public static string LuaGetFunctionReturn(string function)
+        {
+            string varname = Utilities.GetRandomString(6, true);
+            string tokenName = Utilities.GetRandomString(6, true);
+            SendToChat(string.Format("/run {0}={1}", varname, function));
+            SendToChat(string.Format("/run C_Timer.After(0.1, function() ChatFrame1EditBox:SetText(\"{1}=\"..{0}); ChatFrame1EditBox:Show(); ChatFrame1EditBox:SetFocus(); end)", varname, tokenName));
+            int counter = 2000;
+            while (counter > 0)
+            {
+                string editboxText = GetEditboxText();
+                if (editboxText != null)
+                {
+                    if (ChatIsOpened && editboxText.Contains(tokenName))
+                    {
+                        SendToChat("/run GetTime()");
+                        return editboxText.Remove(0, tokenName.Length + 1); // 1 - length of "="
+                    }
+                }
+                Thread.Sleep(10);
+                counter -= 10;
+            }
+            return null;
         }
 
         private static void ChatboxSendText(string text, int attempts = 3)
@@ -311,7 +335,7 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 try
                 {
-                    return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.Possible_NotLoadingScreen) == 0;
+                    return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.NotLoadingScreen) == 0;
                 }
                 catch (Exception ex)
                 {

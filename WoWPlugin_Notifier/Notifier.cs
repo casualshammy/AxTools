@@ -102,21 +102,27 @@ namespace WoWPlugin_Notifier
 
         private void TimerStaticPopup_OnElapsed()
         {
-            WoWUIFrame frame = WoWUIFrame.GetFrameByName("StaticPopup1");
-            if (frame != null && frame.IsVisible)
+            Tuple<string, string>[] frameNames = {new Tuple<string, string>("General popup", "StaticPopup1"), new Tuple<string, string>("PvP invite dialog", "PVPReadyDialogEnterBattleButton")};
+            foreach (Tuple<string, string> tuple in frameNames)
             {
-                this.LogPrint("Static popup is visible!");
-                string message = "Static popup is visible!";
-                dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
-                libSMS.SendSMS(message);
-                this.ShowNotify(message, false, false);
-                this.LogPrint("Message is sent: " + message);
-                for (int i = 0; i < 60; i++)
+                WoWUIFrame frame = WoWUIFrame.GetFrameByName(tuple.Item2);
+                if (frame != null && frame.IsVisible)
                 {
-                    if (timerStaticPopup.IsRunning)
+                    this.LogPrint(tuple.Item1 + " is visible!");
+                    string message = tuple.Item1 + " is visible!";
+                    dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
+                    libSMS.SendSMS(message);
+                    this.ShowNotify(message, false, false);
+                    this.LogPrint("Message is sent: " + message);
+                    for (int i = 0; i < 60; i++)
                     {
-                        Thread.Sleep(1000);
+                        if (timerStaticPopup.IsRunning)
+                        {
+                            Thread.Sleep(1000);
+                            
+                        }
                     }
+                    break;
                 }
             }
         }

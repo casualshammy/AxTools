@@ -5,7 +5,7 @@ using AxTools.WoW.Helpers;
 
 namespace AxTools.WoW.Internals
 {
-    [StructLayout(LayoutKind.Explicit, Size = 0x68)]
+    [StructLayout(LayoutKind.Explicit, Size = 0x78)]
     public struct WoWAura
     {
         [FieldOffset(0x40)] public WoWGUID OwnerGUID;

@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
@@ -145,6 +146,7 @@ namespace AxTools
             {
                 MessageBox.Show(ex.Message);
             }
+
         }
 
         private static void InstallRootCertificate()
