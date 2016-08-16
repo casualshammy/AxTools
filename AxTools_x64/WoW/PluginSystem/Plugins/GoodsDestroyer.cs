@@ -72,7 +72,10 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         {
                             if (SettingsInstance.UseFastDraenorMill && me.ItemsInBags.Any(l => fastMillHerbs.Contains(l.EntryID) && l.StackSize >= 20))
                             {
-                                string s = "/run if(GetNumTradeSkills()>0) then for i=1,GetNumTradeSkills() do local n,_,a=GetTradeSkillInfo(i);if(strfind(n,\"Массовое измельчение\") and a>0) then DoTradeSkill(i,a);return;end end end";
+                                GameFunctions.SendToChat(string.Format("/run {0}={{}}", someRandomString));
+                                string prepare = string.Format("/run local s=C_TradeSkillUI.GetFilteredRecipeIDs();local t={{}};if(#s>0) then for i=1,#s do C_TradeSkillUI.GetRecipeInfo(s[i], t);{0}[t.name]={{t.recipeID,t.numAvailable}}; end end", someRandomString);
+                                GameFunctions.SendToChat(prepare);
+                                string s = string.Format("/run for n,i in pairs({0}) do if(strfind(n,\"Массовое измельчение\") and i[2]>0) then C_TradeSkillUI.CraftRecipe(i[1],i[2]);return; end end", someRandomString);
                                 GameFunctions.SendToChat(s);
                                 Thread.Sleep(2000);
                                 return;
@@ -164,6 +167,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         };
 
         private readonly uint[] ores = {2770, 2771, 2772, 10620, 3858, 23424, 23425, 36909, 36912, 36910, 52185, 53038, 52183, 72093, 72094, 72103, 72092};
+
+        private readonly string someRandomString = Utilities.GetRandomString(6, true);
 
         #endregion
 

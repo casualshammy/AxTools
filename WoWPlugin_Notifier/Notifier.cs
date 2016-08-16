@@ -102,7 +102,7 @@ namespace WoWPlugin_Notifier
 
         private void TimerStaticPopup_OnElapsed()
         {
-            Tuple<string, string>[] frameNames = {new Tuple<string, string>("General popup", "StaticPopup1"), new Tuple<string, string>("PvP invite dialog", "PVPReadyDialogEnterBattleButton")};
+            Tuple<string, string>[] frameNames = { new Tuple<string, string>("General popup", "StaticPopup1") }; // , new Tuple<string, string>("PvP invite dialog", "PVPReadyDialogEnterBattleButton")
             foreach (Tuple<string, string> tuple in frameNames)
             {
                 WoWUIFrame frame = WoWUIFrame.GetFrameByName(tuple.Item2);

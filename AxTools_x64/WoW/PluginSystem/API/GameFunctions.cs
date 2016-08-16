@@ -85,6 +85,9 @@ namespace AxTools.WoW.PluginSystem.API
         #region Chat commands
 
         private static readonly string GossipVarName = Utilities.GetRandomString(5, true);
+        private static readonly string LuaReturnFrameName = Utilities.GetRandomString(5, true);
+        private static readonly string LuaReturnTokenName = Utilities.GetRandomString(5, true);
+        private static readonly string LuaReturnVarName = Utilities.GetRandomString(5, true);
         private static readonly object ChatLock = new object();
 
         public static void UseItemByID(uint id)
@@ -115,20 +118,18 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static string LuaGetFunctionReturn(string function)
         {
-            string varname = Utilities.GetRandomString(6, true);
-            string tokenName = Utilities.GetRandomString(6, true);
-            SendToChat(string.Format("/run {0}={1}", varname, function));
-            SendToChat(string.Format("/run C_Timer.After(0.1, function() ChatFrame1EditBox:SetText(\"{1}=\"..{0}); ChatFrame1EditBox:Show(); ChatFrame1EditBox:SetFocus(); end)", varname, tokenName));
+            SendToChat(string.Format("/run if(not {0})then CreateFrame(\"EditBox\", \"{0}\", UIParent);{0}:SetAutoFocus(false);{0}:ClearFocus(); end", LuaReturnFrameName));
+            SendToChat(string.Format("/run {0}={1}", LuaReturnVarName, function));
+            SendToChat(string.Format("/run {0}:SetText(\"{1}=\"..{2});", LuaReturnFrameName, LuaReturnTokenName, LuaReturnVarName));
             int counter = 2000;
             while (counter > 0)
             {
-                string editboxText = GetEditboxText();
+                string editboxText = GetEditboxText(LuaReturnFrameName);
                 if (editboxText != null)
                 {
-                    if (ChatIsOpened && editboxText.Contains(tokenName))
+                    if (editboxText.Contains(LuaReturnTokenName))
                     {
-                        SendToChat("/run GetTime()");
-                        return editboxText.Remove(0, tokenName.Length + 1); // 1 - length of "="
+                        return editboxText.Remove(0, LuaReturnTokenName.Length + 1); // 1 - length of "="
                     }
                 }
                 Thread.Sleep(10);
@@ -205,12 +206,12 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
-        private static string GetEditboxText()
+        private static string GetEditboxText(string frameName = null)
         {
-            WoWUIFrame frame = WoWUIFrame.GetFrameByName("ChatFrame1EditBox");
+            WoWUIFrame frame = WoWUIFrame.GetFrameByName(frameName ?? "ChatFrame1EditBox");
             if (frame == null)
             {
-                Log.Error("GetEditboxText: ChatFrame1EditBox is null");
+                Log.Error("GetEditboxText: " + (frameName ?? "ChatFrame1EditBox") + " is null");
             }
             return frame != null ? frame.EditboxText : null;
         }
