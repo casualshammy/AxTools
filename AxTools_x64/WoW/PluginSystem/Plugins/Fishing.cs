@@ -187,7 +187,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private uint GetBestBaitID(WoWPlayerMe me)
         {
             //this.LogPrint((me.Inventory.Length > 15) + "::" + me.Inventory[15].EntryID + "::" + fishingRods.Contains(me.Inventory[15].EntryID) + "::" + ((DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10));
-            if (me.Inventory.Length > 15 && me.Inventory.Any(l => fishingRods.Contains(l.EntryID)) && (DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10)
+            if (me.Inventory.Length > 15 && me.Inventory.Any(l => fishingRods.Contains(l.EntryID)) && (DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10) //  && GameFunctions.LuaGetFunctionReturn("tostring(GetWeaponEnchantInfo())") == "false"
             {
                 return baits.FirstOrDefault(l => me.ItemsInBags.Any(k => k.EntryID == l));
             }

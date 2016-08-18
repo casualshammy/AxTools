@@ -115,11 +115,28 @@ namespace WoWPlugin_GarrisonFishingHelper
                         }
                         else
                         {
-                            GameFunctions.CastSpellByName(killingSpellName);
+                            //GameFunctions.CastSpellByName(killingSpellName);
+                            CombatRotation();
                             this.LogPrint("Killing enemy --> " + enemy.GUID);
                         }
                     }
                 }
+            }
+        }
+
+        private void CombatRotation()
+        {
+            if (GameFunctions.LuaGetFunctionReturn("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
+            {
+                GameFunctions.CastSpellByName("Огненный шок");
+            }
+            else if (GameFunctions.LuaGetFunctionReturn("tostring(GetSpellCooldown(\"Выброс лавы\"))") == "0")
+            {
+                GameFunctions.CastSpellByName("Выброс лавы");
+            }
+            else
+            {
+                GameFunctions.CastSpellByName("Молния");
             }
         }
 

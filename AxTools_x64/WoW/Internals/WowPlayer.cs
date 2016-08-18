@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AxTools.Helpers;
 
 namespace AxTools.WoW.Internals
 {
@@ -139,7 +138,7 @@ namespace AxTools.WoW.Internals
         {
             get
             {
-                int isFlyingPointer = 0x230;
+                int isFlyingPointer = 0x210;
                 int isFlyingOffset = 0x58;
                 uint isFlyingMask = 0x1000000;
                 IntPtr p1 = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + isFlyingPointer);

@@ -118,9 +118,12 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static string LuaGetFunctionReturn(string function)
         {
-            SendToChat(string.Format("/run if(not {0})then CreateFrame(\"EditBox\", \"{0}\", UIParent);{0}:SetAutoFocus(false);{0}:ClearFocus(); end", LuaReturnFrameName));
-            SendToChat(string.Format("/run {0}={1}", LuaReturnVarName, function));
-            SendToChat(string.Format("/run {0}:SetText(\"{1}=\"..{2});", LuaReturnFrameName, LuaReturnTokenName, LuaReturnVarName));
+            WoWUIFrame myEditbox = WoWUIFrame.GetFrameByName(LuaReturnFrameName);
+            if (myEditbox == null)
+            {
+                SendToChat(string.Format("/run if(not {0})then CreateFrame(\"EditBox\", \"{0}\", UIParent);{0}:SetAutoFocus(false);{0}:ClearFocus(); end", LuaReturnFrameName));
+            }
+            SendToChat(string.Format("/run {0}={1};{2}:SetText(\"{3}=\"..{0});", LuaReturnVarName, function, LuaReturnFrameName, LuaReturnTokenName));
             int counter = 2000;
             while (counter > 0)
             {
