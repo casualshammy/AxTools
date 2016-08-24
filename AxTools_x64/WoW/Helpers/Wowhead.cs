@@ -67,7 +67,7 @@ namespace AxTools.WoW.Helpers
                         else
                         {
                             info = new WowheadItemInfo(UNKNOWN, 0, 0, 0);
-                            Log.Error("[Wowhead] Regex isn't match: " + JsonConvert.SerializeObject(xml));
+                            Log.Info("[Wowhead] Regex isn't match: " + JsonConvert.SerializeObject(xml));
                         }
                     }
                 }

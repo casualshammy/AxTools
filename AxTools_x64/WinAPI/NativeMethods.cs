@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
+using AxTools.WinAPI.TCPTable;
 
 namespace AxTools.WinAPI
 {
@@ -16,10 +17,6 @@ namespace AxTools.WinAPI
         [DllImport("user32", EntryPoint = "SetWindowPos", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SetWindowPos(IntPtr hwnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, SetWindowPosFlags wFlags);
-
-        //[return: MarshalAs(UnmanagedType.Bool)]
-        //[DllImport("user32", EntryPoint = "PostMessageA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-        //internal static extern bool PostMessage(IntPtr hwnd, uint wMsg, IntPtr wParam, IntPtr lParam);
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -61,6 +58,9 @@ namespace AxTools.WinAPI
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("iphlpapi.dll", SetLastError = true)]
+        internal static extern uint GetExtendedTcpTable(IntPtr pTcpTable, ref int dwOutBufLen, bool sort, int ipVersion, TCP_TABLE_CLASS tblClass, int reserved);
 
     }
 }

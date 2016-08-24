@@ -35,7 +35,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.2.3.1336</AssemblyVersion>
+    <AssemblyVersion>12.2.5.1359</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -185,6 +185,10 @@
     <Compile Include="WinAPI\ABE.cs" />
     <Compile Include="WinAPI\APPBARDATA.cs" />
     <Compile Include="WinAPI\APPBARMESSAGE.cs" />
+    <Compile Include="WinAPI\TCPTable\MIB_TCPROW_OWNER_PID.cs" />
+    <Compile Include="WinAPI\TCPTable\MIB_TCPTABLE_OWNER_PID.cs" />
+    <Compile Include="WinAPI\TCPTable\TCPConnectionInfo.cs" />
+    <Compile Include="WinAPI\TCPTable\TCP_TABLE_CLASS.cs" />
     <Compile Include="WinAPI\Win32Consts.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
     <Compile Include="WoW\Internals\WoWChatMsgType.cs" />

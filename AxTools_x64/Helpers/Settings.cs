@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AxTools.Forms.Helpers;
+using AxTools.Services.PingerHelpers;
 using MetroFramework;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -100,6 +101,10 @@ namespace AxTools.Helpers
             if (string.IsNullOrWhiteSpace(UserID))
             {
                 UserID = Environment.MachineName + "___" + Utils.GetRandomString(10, false).ToUpper();
+            }
+            if (PingerServerID > GameServers.Entries.Length - 1)
+            {
+                PingerServerID = GameServers.Entries.Length - 1;
             }
         }
 
@@ -310,6 +315,9 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 84, PropertyName = "PingerVeryBadPacketLoss")]
         internal int PingerVeryBadPacketLoss = 10;
+
+        [JsonProperty(Order = 85, PropertyName = "PingerLastWoWServerIP")]
+        internal string PingerLastWoWServerIP = "8.8.8.8";
 
         #endregion
 

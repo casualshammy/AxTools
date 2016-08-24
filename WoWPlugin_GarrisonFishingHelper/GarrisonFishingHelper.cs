@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -130,7 +131,7 @@ namespace WoWPlugin_GarrisonFishingHelper
             {
                 GameFunctions.CastSpellByName("Огненный шок");
             }
-            else if (GameFunctions.LuaGetFunctionReturn("tostring(GetSpellCooldown(\"Выброс лавы\"))") == "0")
+            else if (float.Parse(GameFunctions.LuaGetFunctionReturn("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
             {
                 GameFunctions.CastSpellByName("Выброс лавы");
             }

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Timers;
 using AxTools.Helpers;
 using AxTools.Services.PingerHelpers;
+using AxTools.WinAPI.TCPTable;
 using Timer = System.Timers.Timer;
 
 namespace AxTools.Services
@@ -21,6 +22,8 @@ namespace AxTools.Services
         private static int _lastPing;
         private static int _lastPacketLoss;
         private const int IncorrectPing = -1;
+        private static SrvAddress _cachedServer = new SrvAddress(string.Empty, 0, string.Empty);
+        private static readonly Timer AutodetectedIPUpdateTimer = new Timer(60000);
 
         internal static event Action<PingerStat> StatChanged;
 
@@ -56,6 +59,9 @@ namespace AxTools.Services
                 {
                     throw new Exception("Pinger is already running!");
                 }
+                AutodetectedIPUpdateTimer.Elapsed += AutodetectedIPUpdateTimerOnElapsed;
+                AutodetectedIPUpdateTimer.Start();
+                AutodetectedIPUpdateTimerOnElapsed(null, null);
                 _pingList = Enumerable.Repeat(new PingerReply(0, true), 10).ToList();
                 _stopwatch = new Stopwatch();
                 _timer = new Timer(2000);
@@ -74,6 +80,8 @@ namespace AxTools.Services
             {
                 if (_timer != null)
                 {
+                    AutodetectedIPUpdateTimer.Elapsed -= AutodetectedIPUpdateTimerOnElapsed;
+                    AutodetectedIPUpdateTimer.Stop();
                     _timer.Elapsed -= TimerOnElapsed;
                     _timer.Stop();
                     _timer.Close();
@@ -94,7 +102,7 @@ namespace AxTools.Services
                     using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                     {
                         _stopwatch.Restart();
-                        bool result = pSocket.BeginConnect(GameServers.Entries[_settings.PingerServerID].Ip, GameServers.Entries[_settings.PingerServerID].Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
+                        bool result = pSocket.BeginConnect(_cachedServer.Ip, _cachedServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
                         long elapsed = _stopwatch.ElapsedMilliseconds;
                         if (_pingList.Count == 100)
                         {
@@ -129,6 +137,91 @@ namespace AxTools.Services
         {
             int[] array = seq.ToArray();
             return array.Any() ? array.Max() : IncorrectPing;
+        }
+
+        private static string GetWoWRemoteIP()
+        {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            try
+            {
+                Process[] wowProcesses = Process.GetProcessesByName("Wow-64");
+                TCPConnectionInfo connectionInfo = TCPConnectionInfo.GetAllRemoteTcpConnections().FirstOrDefault(l => l.EndPoint.Port == 3724 && wowProcesses.Any(k => k.Id == l.ProcessID));
+                return connectionInfo != null ? connectionInfo.EndPoint.Address.ToString() : null;
+            }
+            finally
+            {
+                Log.Info("GetIPForProcess execution time: "+ stopwatch.ElapsedMilliseconds + "ms");
+            }
+        }
+
+        //private static string GetWoWRemoteIP()
+        //{
+        //    Stopwatch stopwatch = Stopwatch.StartNew();
+        //    try
+        //    {
+        //        ProcessStartInfo startInfo = new ProcessStartInfo("netstat")
+        //        {
+        //            Arguments = "-b -n",
+        //            RedirectStandardOutput = true,
+        //            UseShellExecute = false,
+        //            CreateNoWindow = true
+        //        };
+        //        using (Process cmd = Process.Start(startInfo))
+        //        {
+        //            if (cmd != null)
+        //            {
+        //                try
+        //                {
+        //                    string output = cmd.StandardOutput.ReadToEnd();
+        //                    Match match = Regex.Match(output, "\\s+TCP\\s+\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+\\s+(\\d+\\.\\d+\\.\\d+\\.\\d+):3724\\s+ESTABLISHED\r\n\\s+\\[Wow-64\\.exe\\]\r\n");
+        //                    if (match.Success)
+        //                    {
+        //                        return match.Groups[1].Value;
+        //                    }
+        //                }
+        //                catch
+        //                {
+        //                    return null;
+        //                }
+        //            }
+        //            return null;
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        Log.Info("GetWoWRemoteIP execution time: " + stopwatch.ElapsedMilliseconds + "ms");
+        //    }
+        //}
+
+        private static void AutodetectedIPUpdateTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            if (GameServers.Entries[_settings.PingerServerID].Description == GameServers.WoWAutodetect)
+            {
+                string remoteIP = GetWoWRemoteIP();
+                if (remoteIP != null)
+                {
+                    SrvAddress newRemoteAddress = new SrvAddress(remoteIP, GameServers.Entries[_settings.PingerServerID].Port, "Autodetected WoW server");
+                    if (_cachedServer.Ip != newRemoteAddress.Ip)
+                    {
+                        _cachedServer = newRemoteAddress;
+                        _settings.PingerLastWoWServerIP = remoteIP;
+                        Log.Info("[Pinger] WoW remote IP is detected: " + remoteIP);
+                    }
+                }
+                else
+                {
+                    SrvAddress srvAddress = new SrvAddress(_settings.PingerLastWoWServerIP, 3724, "Last seen WoW server");
+                    if (srvAddress.Ip != _cachedServer.Ip)
+                    {
+                        _cachedServer = srvAddress;
+                        Log.Info("[Pinger] Can't find WoW remote IP address, using last seen IP: " + _cachedServer.Ip);
+                    }
+                }
+            }
+            else
+            {
+                _cachedServer = GameServers.Entries[_settings.PingerServerID];
+            }
         }
 
     }
