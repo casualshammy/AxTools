@@ -97,33 +97,33 @@ namespace AxTools.WoW
 
         internal static readonly byte[] WoWHash =
         {
-	        0x8A, 0x61, 0xEA, 0xF2, 0xBB, 0xEE, 0x9A, 0xFF, 0xB3, 0x2B, 0xB0, 0x7D, 0x4C, 0xD9, 0xF9, 0x3F, 0x3E, 0xF8, 0x6C, 0x6D, 0x16, 0x1A, 0xB8, 0xF7, 0x2B, 0xBE, 0xEF, 0x40, 0x7E, 0xD4, 0x20, 0x7B
+	        0x8E, 0xDD, 0x07, 0x3E, 0xDA, 0x30, 0x8C, 0x24, 0x1B, 0xC8, 0xA6, 0x9B, 0x99, 0x18, 0xB7, 0x8C, 0xD5, 0x8D, 0x3D, 0x2C, 0xB3, 0x6D, 0x0D, 0x37, 0xC5, 0x05, 0x57, 0x37, 0x47, 0xDA, 0x89, 0xC7
         };
 
         #endregion
 
         #region Static infos
 
-        internal const int PlayerZoneID = 0x17374C4;
-        internal const int KnownSpellsCount = 0x17958E0;
-        internal const int GlueState = 0x155A74C;
-        internal const int LastHardwareAction = 0x14BF528;
-        internal const int GameState = 0x1737666;
-        internal const int TickCount = 0x14B246C;
-        internal const int PlayerPtr = 0x1696C38;
-        internal const int KnownSpells = 0x17958E8;
-        internal const int NotLoadingScreen = 0x11FE724;
-        internal const int PlayerName = 0x1820F40;
-        internal const int ZoneText = 0x1737AC8;
-        internal const int FocusedWidget = 0x14B30D0;
-        internal const int ObjectManager = 0x1570D90;
-        internal const int BlackMarketItems = 0x17E8E48;
-        internal const int ChatBuffer = 0x1738080;
-        internal const int MouseoverGUID = 0x1737B40;
-        internal const int ChatIsOpened = 0x14CC530;
-        internal const int UIFrameBase = 0x14BF520;
-        internal const int BlackMarketNumItems = 0x17E8E40;
-        internal const int PlayerIsLooting = 0x17AC50D;
+        internal const int PlayerZoneID = 0x173C558;
+        internal const int KnownSpellsCount = 0x179A960;
+        internal const int TickCount = 0x14B556C;
+        internal const int GameState = 0x173C66E;
+        internal const int PlayerPtr = 0x169BCB0;
+        internal const int LastHardwareAction = 0x14C2628;
+        internal const int KnownSpells = 0x179A968;
+        internal const int GlueState = 0x155F7CC;
+        internal const int ObjectManager = 0x1575E10;
+        internal const int ZoneText = 0x173CB60;
+        internal const int NotLoadingScreen = 0x1201724;
+        internal const int PlayerIsLooting = 0x17B158D;
+        internal const int ChatBuffer = 0x173D110;
+        internal const int PlayerName = 0x1825FC0;
+        internal const int FocusedWidget = 0x14B61D0;
+        internal const int BlackMarketItems = 0x17EDEC8;
+        internal const int MouseoverGUID = 0x173CBC8;
+        internal const int ChatIsOpened = 0x14CF630;
+        internal const int UIFrameBase = 0x14C2620;
+        internal const int BlackMarketNumItems = 0x17EDEC0;
         internal const int NameCacheBase = 0x1516A08;
 
 
