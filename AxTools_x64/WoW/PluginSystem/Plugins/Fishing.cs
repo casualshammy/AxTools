@@ -100,6 +100,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         GameFunctions.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
+                    else if (fishingSettings.UseArcaneLure && (baitItemID = GetArcaneLure(me)) != 0)
+                    {
+                        this.LogPrint(string.Format("Applying arcane lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
+                        GameFunctions.UseItemByID(baitItemID);
+                        Thread.Sleep(Utils.Rnd.Next(250, 750));
+                    }
                     else
                     {
                         Thread.Sleep(Utils.Rnd.Next(500, 1000));
@@ -190,6 +196,20 @@ namespace AxTools.WoW.PluginSystem.Plugins
             if (me.Inventory.Length > 15 && me.Inventory.Any(l => fishingRods.Contains(l.EntryID)) && (DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10) //  && GameFunctions.LuaGetFunctionReturn("tostring(GetWeaponEnchantInfo())") == "false"
             {
                 return baits.FirstOrDefault(l => me.ItemsInBags.Any(k => k.EntryID == l));
+            }
+            return 0;
+        }
+
+        private uint GetArcaneLure(WoWPlayerMe me)
+        {
+            string arcaneLureSpellName = Wowhead.GetSpellInfo(218861).Name;
+            if (me.Auras.All(l => l.Name != arcaneLureSpellName))
+            {
+                WoWItem item = me.ItemsInBags.FirstOrDefault(l => l.Name == arcaneLureSpellName);
+                if (item != null)
+                {
+                    return item.EntryID;
+                }
             }
             return 0;
         }

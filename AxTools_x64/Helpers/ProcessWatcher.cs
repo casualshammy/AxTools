@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Timers;
 using System.Windows.Forms;
@@ -14,14 +15,15 @@ namespace AxTools.Helpers
     internal static class ProcessWatcher
     {
         private static readonly Timer _timer = new Timer(1000);
-        private static Dictionary<int, string> _cache = new Dictionary<int, string>();
+        private static Dictionary<int, ProcessInfo> _cache = new Dictionary<int, ProcessInfo>();
         private static readonly object _lock = new object();
+        private static readonly ProcessInfoEqualityComparer ProcessInfoComparer = new ProcessInfoEqualityComparer();
 
-        private static Action<Process> _processStarted;
+        private static Action<ProcessInfo> _processStarted;
         /// <summary>
         ///     You should dispose this <see cref="Process"/> instance
         /// </summary>
-        internal static event Action<Process> ProcessStarted
+        internal static event Action<ProcessInfo> ProcessStarted
         {
             add
             {
@@ -42,8 +44,8 @@ namespace AxTools.Helpers
             }
         }
 
-        private static Action<int,string> _processExited;
-        internal static event Action<int, string> ProcessExited
+        private static Action<ProcessInfo> _processExited;
+        internal static event Action<ProcessInfo> ProcessExited
         {
             add
             {
@@ -64,8 +66,8 @@ namespace AxTools.Helpers
             }
         }
 
-        private static Stopwatch stopwatch = new Stopwatch();
-        private static int counter = 0;
+        private static readonly Stopwatch _stopwatch = new Stopwatch();
+        private static int _counter;
 
         static ProcessWatcher()
         {
@@ -76,38 +78,38 @@ namespace AxTools.Helpers
         private static void ApplicationOnApplicationExit(object sender, EventArgs eventArgs)
         {
             Application.ApplicationExit -= ApplicationOnApplicationExit;
-            Log.Info("ProcessWatcher: Elpsd: " + stopwatch.ElapsedMilliseconds + "ms, counter: " + counter);
+            Log.Info("ProcessWatcher: Elpsd: " + _stopwatch.ElapsedMilliseconds + "ms, counter: " + _counter);
         }
 
         private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            stopwatch.Start();
-            Dictionary<int, string> actualProcessInfos = new Dictionary<int, string>();
+            _stopwatch.Start();
+            Dictionary<int, ProcessInfo> actualProcessInfos = new Dictionary<int, ProcessInfo>();
             foreach (Process process in Process.GetProcesses())
             {
-                actualProcessInfos.Add(process.Id, process.ProcessName);
-                if (!_cache.ContainsKey(process.Id) && _processStarted != null)
+                string processName = GetProcessNameWithExtension(process);
+                int hash = process.Id ^ processName.GetHashCode();
+                ProcessInfo info = new ProcessInfo(process.Id, processName);
+                actualProcessInfos.Add(hash, info);
+                if (!_cache.ContainsKey(hash) && _processStarted != null)
                 {
-                    _processStarted(process);
+                    _processStarted(info);
                 }
-                else
-                {
-                    process.Dispose();
-                }
+                process.Dispose();
             }
             if (_processExited != null)
             {
-                foreach (KeyValuePair<int, string> processInfo in _cache.Except(actualProcessInfos))
+                foreach (KeyValuePair<int, ProcessInfo> processInfo in _cache.Except(actualProcessInfos, ProcessInfoComparer))
                 {
                     if (_processExited != null)
                     {
-                        _processExited(processInfo.Key, processInfo.Value);
+                        _processExited(processInfo.Value);
                     }
                 }
             }
             _cache = actualProcessInfos;
-            stopwatch.Stop();
-            counter++;
+            _stopwatch.Stop();
+            _counter++;
         }
 
         private static void CheckTimerIsNeeded()
@@ -127,29 +129,39 @@ namespace AxTools.Helpers
             _timer_Elapsed(null, null);
         }
 
-        //private class KeyValuePairEqualityComparer : IEqualityComparer<KeyValuePair<int, string>>
-        //{
+        private static string GetProcessNameWithExtension(Process process)
+        {
+            string moduleName = process.MainModule.ModuleName;
+            return Path.GetFileName(moduleName);
+        }
 
-        //    public bool Equals(KeyValuePair<int, string> b1, KeyValuePair<int, string> b2)
-        //    {
-        //        if (b1.Height == b2.Height & b1.Length == b2.Length
-        //                            & b1.Width == b2.Width)
-        //        {
-        //            return true;
-        //        }
-        //        else
-        //        {
-        //            return false;
-        //        }
-        //    }
+        private class ProcessInfoEqualityComparer : IEqualityComparer<KeyValuePair<int, ProcessInfo>>
+        {
 
+            public bool Equals(KeyValuePair<int, ProcessInfo> b1, KeyValuePair<int, ProcessInfo> b2)
+            {
+                return b1.Key == b2.Key;
+            }
 
-        //    public int GetHashCode(KeyValuePair<int, string> bx)
-        //    {
-        //        return bx.GetHashCode();
-        //    }
+            public int GetHashCode(KeyValuePair<int, ProcessInfo> bx)
+            {
+                return bx.Key;
+            }
 
-        //}
+        }
 
     }
+
+    internal class ProcessInfo
+    {
+        internal readonly string ProcessName;
+        internal readonly int ProcessID;
+
+        internal ProcessInfo(int id, string name)
+        {
+            ProcessName = name;
+            ProcessID = id;
+        }
+    }
+
 }

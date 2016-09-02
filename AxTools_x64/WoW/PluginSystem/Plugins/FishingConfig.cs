@@ -12,6 +12,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             FishingSettings thisSettings = fishingSettings;
             checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Checked = thisSettings.UseAnySpecialBaitIfPreferredIsNotAvailable;
             checkBoxGetSpecialBaitFromNatPagle.Checked = thisSettings.GetSpecialBaitFromNatPagle;
+            checkBoxUseArcaneLure.Checked = thisSettings.UseArcaneLure;
         }
 
         internal static void Open(FishingSettings fishingSettings)
@@ -28,6 +29,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             fishingSettings.SpecialBait = fishingConfig.comboBoxSpecialBait.Text;
             fishingSettings.UseAnySpecialBaitIfPreferredIsNotAvailable = fishingConfig.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Checked;
             fishingSettings.GetSpecialBaitFromNatPagle = fishingConfig.checkBoxGetSpecialBaitFromNatPagle.Checked;
+            fishingSettings.UseArcaneLure = fishingConfig.checkBoxUseArcaneLure.Checked;
         }
 
         private void button1_Click(object sender, EventArgs e)

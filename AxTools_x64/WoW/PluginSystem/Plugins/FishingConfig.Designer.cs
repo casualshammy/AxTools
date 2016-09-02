@@ -34,6 +34,11 @@
             this.checkBoxUseSpecialBait = new System.Windows.Forms.CheckBox();
             this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable = new System.Windows.Forms.CheckBox();
             this.checkBoxGetSpecialBaitFromNatPagle = new System.Windows.Forms.CheckBox();
+            this.groupBoxWOD = new System.Windows.Forms.GroupBox();
+            this.groupBoxLegion = new System.Windows.Forms.GroupBox();
+            this.checkBoxUseArcaneLure = new System.Windows.Forms.CheckBox();
+            this.groupBoxWOD.SuspendLayout();
+            this.groupBoxLegion.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxSpecialBait
@@ -48,7 +53,7 @@
             "Наживка для слепого озерного осетра",
             "Наживка для огненного аммонита",
             "Наживка для морского скорпиона"});
-            this.comboBoxSpecialBait.Location = new System.Drawing.Point(140, 35);
+            this.comboBoxSpecialBait.Location = new System.Drawing.Point(134, 17);
             this.comboBoxSpecialBait.Name = "comboBoxSpecialBait";
             this.comboBoxSpecialBait.Size = new System.Drawing.Size(229, 21);
             this.comboBoxSpecialBait.TabIndex = 1;
@@ -56,9 +61,9 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(12, 132);
+            this.button1.Location = new System.Drawing.Point(12, 242);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(357, 23);
+            this.button1.Size = new System.Drawing.Size(377, 23);
             this.button1.TabIndex = 4;
             this.button1.Text = "Save";
             this.button1.UseVisualStyleBackColor = true;
@@ -77,7 +82,7 @@
             // checkBoxUseSpecialBait
             // 
             this.checkBoxUseSpecialBait.AutoSize = true;
-            this.checkBoxUseSpecialBait.Location = new System.Drawing.Point(12, 37);
+            this.checkBoxUseSpecialBait.Location = new System.Drawing.Point(6, 19);
             this.checkBoxUseSpecialBait.Name = "checkBoxUseSpecialBait";
             this.checkBoxUseSpecialBait.Size = new System.Drawing.Size(122, 17);
             this.checkBoxUseSpecialBait.TabIndex = 6;
@@ -87,7 +92,7 @@
             // checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable
             // 
             this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.AutoSize = true;
-            this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Location = new System.Drawing.Point(12, 83);
+            this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Location = new System.Drawing.Point(6, 65);
             this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Name = "checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable";
             this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Size = new System.Drawing.Size(247, 17);
             this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.TabIndex = 7;
@@ -97,29 +102,66 @@
             // checkBoxGetSpecialBaitFromNatPagle
             // 
             this.checkBoxGetSpecialBaitFromNatPagle.AutoSize = true;
-            this.checkBoxGetSpecialBaitFromNatPagle.Location = new System.Drawing.Point(12, 60);
+            this.checkBoxGetSpecialBaitFromNatPagle.Location = new System.Drawing.Point(6, 42);
             this.checkBoxGetSpecialBaitFromNatPagle.Name = "checkBoxGetSpecialBaitFromNatPagle";
             this.checkBoxGetSpecialBaitFromNatPagle.Size = new System.Drawing.Size(172, 17);
             this.checkBoxGetSpecialBaitFromNatPagle.TabIndex = 8;
             this.checkBoxGetSpecialBaitFromNatPagle.Text = "Get special bait from Nat Pagle";
             this.checkBoxGetSpecialBaitFromNatPagle.UseVisualStyleBackColor = true;
             // 
+            // groupBoxWOD
+            // 
+            this.groupBoxWOD.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBoxWOD.Controls.Add(this.checkBoxUseSpecialBait);
+            this.groupBoxWOD.Controls.Add(this.checkBoxGetSpecialBaitFromNatPagle);
+            this.groupBoxWOD.Controls.Add(this.comboBoxSpecialBait);
+            this.groupBoxWOD.Controls.Add(this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable);
+            this.groupBoxWOD.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.groupBoxWOD.Location = new System.Drawing.Point(12, 35);
+            this.groupBoxWOD.Name = "groupBoxWOD";
+            this.groupBoxWOD.Size = new System.Drawing.Size(377, 92);
+            this.groupBoxWOD.TabIndex = 9;
+            this.groupBoxWOD.TabStop = false;
+            this.groupBoxWOD.Text = "Warlords of Draenor";
+            // 
+            // groupBoxLegion
+            // 
+            this.groupBoxLegion.Controls.Add(this.checkBoxUseArcaneLure);
+            this.groupBoxLegion.Location = new System.Drawing.Point(12, 133);
+            this.groupBoxLegion.Name = "groupBoxLegion";
+            this.groupBoxLegion.Size = new System.Drawing.Size(377, 100);
+            this.groupBoxLegion.TabIndex = 10;
+            this.groupBoxLegion.TabStop = false;
+            this.groupBoxLegion.Text = "Legion";
+            // 
+            // checkBoxUseArcaneLure
+            // 
+            this.checkBoxUseArcaneLure.AutoSize = true;
+            this.checkBoxUseArcaneLure.Location = new System.Drawing.Point(6, 19);
+            this.checkBoxUseArcaneLure.Name = "checkBoxUseArcaneLure";
+            this.checkBoxUseArcaneLure.Size = new System.Drawing.Size(101, 17);
+            this.checkBoxUseArcaneLure.TabIndex = 0;
+            this.checkBoxUseArcaneLure.Text = "Use arcane lure";
+            this.checkBoxUseArcaneLure.UseVisualStyleBackColor = true;
+            // 
             // FishingConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(381, 167);
-            this.Controls.Add(this.checkBoxGetSpecialBaitFromNatPagle);
-            this.Controls.Add(this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable);
-            this.Controls.Add(this.checkBoxUseSpecialBait);
+            this.ClientSize = new System.Drawing.Size(404, 277);
+            this.Controls.Add(this.groupBoxLegion);
+            this.Controls.Add(this.groupBoxWOD);
             this.Controls.Add(this.checkBoxUseBestBait);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.comboBoxSpecialBait);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FishingConfig";
             this.Text = "FishingSettings";
+            this.groupBoxWOD.ResumeLayout(false);
+            this.groupBoxWOD.PerformLayout();
+            this.groupBoxLegion.ResumeLayout(false);
+            this.groupBoxLegion.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -133,5 +175,8 @@
         private System.Windows.Forms.CheckBox checkBoxUseSpecialBait;
         private System.Windows.Forms.CheckBox checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable;
         private System.Windows.Forms.CheckBox checkBoxGetSpecialBaitFromNatPagle;
+        private System.Windows.Forms.GroupBox groupBoxWOD;
+        private System.Windows.Forms.GroupBox groupBoxLegion;
+        private System.Windows.Forms.CheckBox checkBoxUseArcaneLure;
     }
 }

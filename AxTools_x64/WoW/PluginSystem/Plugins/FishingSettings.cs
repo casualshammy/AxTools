@@ -20,5 +20,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         [JsonProperty(PropertyName = "GetSpecialBaitFromNatPagle")]
         internal bool GetSpecialBaitFromNatPagle = false;
 
+        [JsonProperty(PropertyName = "UseArcaneLure")]
+        internal bool UseArcaneLure = false;
+
     }
 }

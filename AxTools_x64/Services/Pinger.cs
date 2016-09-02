@@ -141,57 +141,10 @@ namespace AxTools.Services
 
         private static string GetWoWRemoteIP()
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            try
-            {
-                Process[] wowProcesses = Process.GetProcessesByName("Wow-64");
-                TCPConnectionInfo connectionInfo = TCPConnectionInfo.GetAllRemoteTcpConnections().FirstOrDefault(l => l.EndPoint.Port == 3724 && wowProcesses.Any(k => k.Id == l.ProcessID));
-                return connectionInfo != null ? connectionInfo.EndPoint.Address.ToString() : null;
-            }
-            finally
-            {
-                Log.Info("GetIPForProcess execution time: "+ stopwatch.ElapsedMilliseconds + "ms");
-            }
+            Process[] wowProcesses = Process.GetProcessesByName("Wow-64");
+            TCPConnectionInfo connectionInfo = TCPConnectionInfo.GetAllRemoteTcpConnections().FirstOrDefault(l => l.EndPoint.Port == 3724 && wowProcesses.Any(k => k.Id == l.ProcessID));
+            return connectionInfo != null ? connectionInfo.EndPoint.Address.ToString() : null;
         }
-
-        //private static string GetWoWRemoteIP()
-        //{
-        //    Stopwatch stopwatch = Stopwatch.StartNew();
-        //    try
-        //    {
-        //        ProcessStartInfo startInfo = new ProcessStartInfo("netstat")
-        //        {
-        //            Arguments = "-b -n",
-        //            RedirectStandardOutput = true,
-        //            UseShellExecute = false,
-        //            CreateNoWindow = true
-        //        };
-        //        using (Process cmd = Process.Start(startInfo))
-        //        {
-        //            if (cmd != null)
-        //            {
-        //                try
-        //                {
-        //                    string output = cmd.StandardOutput.ReadToEnd();
-        //                    Match match = Regex.Match(output, "\\s+TCP\\s+\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+\\s+(\\d+\\.\\d+\\.\\d+\\.\\d+):3724\\s+ESTABLISHED\r\n\\s+\\[Wow-64\\.exe\\]\r\n");
-        //                    if (match.Success)
-        //                    {
-        //                        return match.Groups[1].Value;
-        //                    }
-        //                }
-        //                catch
-        //                {
-        //                    return null;
-        //                }
-        //            }
-        //            return null;
-        //        }
-        //    }
-        //    finally
-        //    {
-        //        Log.Info("GetWoWRemoteIP execution time: " + stopwatch.ElapsedMilliseconds + "ms");
-        //    }
-        //}
 
         private static void AutodetectedIPUpdateTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
