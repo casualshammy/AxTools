@@ -32,8 +32,11 @@ namespace AxTools.WoW.Helpers
             MainForm.ClosingEx +=
                 delegate
                 {
-                    Log.Error(string.Format("[Wowhead] DB usage stats: numDBAccesses: {0}; average access time: {1} ms/call; average access time: {2} ticks/call",
-                        _numDBAccesses, _sumDBAccessTime/(_numDBAccesses == 0 ? -1 : _numDBAccesses), _sumDBAccessTicks/(_numDBAccesses == 0 ? -1 : _numDBAccesses)));
+                    if (_numDBAccesses > 100)
+                    {
+                        Log.Error(string.Format("[Wowhead] DB usage stats: numDBAccesses: {0}; average access time: {1} ms/call; average access time: {2} ticks/call",
+                            _numDBAccesses, _sumDBAccessTime/(_numDBAccesses == 0 ? -1 : _numDBAccesses), _sumDBAccessTicks/(_numDBAccesses == 0 ? -1 : _numDBAccesses)));
+                    }
                 };
         }
 

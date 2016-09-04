@@ -35,7 +35,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.2.9.1365</AssemblyVersion>
+    <AssemblyVersion>12.2.10.1367</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>

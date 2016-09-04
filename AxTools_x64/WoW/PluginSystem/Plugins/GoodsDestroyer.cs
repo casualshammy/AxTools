@@ -80,6 +80,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
                                 Thread.Sleep(2000);
                                 return;
                             }
+                            if (me.ItemsInBags.Any(l => l.EntryID == 136926)) // Кошмарный стручок
+                            {
+                                GameFunctions.UseItemByID(136926);
+                                Thread.Sleep(500);
+                                return;
+                            }
                             WoWItem herb = me.ItemsInBags.FirstOrDefault(l => herbs.Contains(l.EntryID) && l.StackSize >= 5);
                             if (herb != null)
                             {
