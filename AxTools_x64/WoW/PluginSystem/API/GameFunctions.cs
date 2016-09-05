@@ -192,7 +192,7 @@ namespace AxTools.WoW.PluginSystem.API
                         attempts--;
                         if (attempts > 0)
                         {
-                            Log.Error(string.Format("ChatboxSendText: recursive call, attempts: {0}", attempts));
+                            Log.Info(string.Format("ChatboxSendText: recursive call, attempts: {0}", attempts));
                             ChatboxSendText(text, attempts);
                         }
                         else
