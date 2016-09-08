@@ -124,7 +124,7 @@ namespace AxTools.WoW
         internal const int PlayerIsLooting = 0x17B158D;
         internal const int BlackMarketNumItems = 0x17EDEC0;
         internal const int UIFrameBase = 0x14C2620;
-        internal const int NameCacheBase = 0x1516A08;
+        internal const int NameCacheBase = 0x151BA88;
 
 
         //internal const int PlayerZoneID = 0x1735880;

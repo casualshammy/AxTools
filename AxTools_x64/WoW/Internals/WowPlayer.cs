@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Internals
 {
@@ -112,6 +113,12 @@ namespace AxTools.WoW.Internals
                 string temp;
                 if (!Names.TryGetValue(GUID, out temp))
                 {
+                    //ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
+                    // ReSharper disable ImpureMethodCallOnReadonlyValueField
+                    //temp = GameFunctions.LuaGetFunctionReturn("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
+                    // ReSharper restore ImpureMethodCallOnReadonlyValueField
+
+
                     IntPtr firstEntry = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.NameCacheBase + WowBuildInfoX64.NameCacheNext);
                     IntPtr nextEntry = firstEntry;
                     while (true)
