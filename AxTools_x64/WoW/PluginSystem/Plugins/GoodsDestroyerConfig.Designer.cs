@@ -31,15 +31,16 @@
             this.buttonSave = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBoxUseFastDraenorMill = new System.Windows.Forms.CheckBox();
+            this.checkBoxMillFelwort = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(11, 71);
+            this.buttonSave.Location = new System.Drawing.Point(12, 89);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(291, 23);
             this.buttonSave.TabIndex = 5;
-            this.buttonSave.Text = "Save";
+            this.buttonSave.Text = "Close";
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
@@ -58,16 +59,27 @@
             this.checkBoxUseFastDraenorMill.AutoSize = true;
             this.checkBoxUseFastDraenorMill.Location = new System.Drawing.Point(12, 35);
             this.checkBoxUseFastDraenorMill.Name = "checkBoxUseFastDraenorMill";
-            this.checkBoxUseFastDraenorMill.Size = new System.Drawing.Size(123, 17);
+            this.checkBoxUseFastDraenorMill.Size = new System.Drawing.Size(89, 17);
             this.checkBoxUseFastDraenorMill.TabIndex = 8;
-            this.checkBoxUseFastDraenorMill.Text = "Use fast Draenor mill";
+            this.checkBoxUseFastDraenorMill.Text = "Use mass mill";
             this.checkBoxUseFastDraenorMill.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMillFelwort
+            // 
+            this.checkBoxMillFelwort.AutoSize = true;
+            this.checkBoxMillFelwort.Location = new System.Drawing.Point(12, 58);
+            this.checkBoxMillFelwort.Name = "checkBoxMillFelwort";
+            this.checkBoxMillFelwort.Size = new System.Drawing.Size(78, 17);
+            this.checkBoxMillFelwort.TabIndex = 9;
+            this.checkBoxMillFelwort.Text = "Mill Felwort";
+            this.checkBoxMillFelwort.UseVisualStyleBackColor = true;
             // 
             // GoodsDestroyerConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 106);
+            this.ClientSize = new System.Drawing.Size(314, 124);
+            this.Controls.Add(this.checkBoxMillFelwort);
             this.Controls.Add(this.checkBoxUseFastDraenorMill);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.buttonSave);
@@ -86,5 +98,6 @@
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox checkBoxUseFastDraenorMill;
+        private System.Windows.Forms.CheckBox checkBoxMillFelwort;
     }
 }

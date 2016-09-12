@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -56,6 +57,10 @@ namespace AxTools.WoW.PluginSystem.Plugins
         public void OnStart()
         {
             SettingsInstance = this.LoadSettingsJSON<GoodsDestroyerSettings>();
+            if (SettingsInstance.MillFelwort)
+            {
+                herbs.Add(124106); // Felwort item id
+            }
             (timer = this.CreateTimer(50, OnPulse)).Start();
         }
 
@@ -156,11 +161,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         internal GoodsDestroyerSettings SettingsInstance;
 
-        private readonly uint[] herbs =
+        private readonly List<uint> herbs = new List<uint>
         {
             785, 2449, 2447, 765, 2450, 2453, 3820, 2452, 3369, 3356, 3357, 3355, 3819, 3818, 3821, 3358, 8836, 8839, 4625, 8846, 8831, 8838, 13463, 13464, 13465, 13466, 13467, 22786, 22785, 22793, 22791, 22792,
             22787, 22789, 36907, 36903, 36906, 36904, 36905, 36901, 39970, 37921, 52983, 52987, 52984, 52986, 52985, 52988, 22790, 72235, 72234, 72237, 79010, 79011, 89639, 109129, 109128, 109127, 109126, 109125, 109124, 8845,
-            128304, 124101, 124102, 124106, 124104, 124103, 124105
+            128304, 124101, 124102, 124104, 124103, 124105
         };
 
         private readonly uint[] fastMillHerbs =

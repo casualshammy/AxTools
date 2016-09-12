@@ -5,21 +5,24 @@ namespace AxTools.WoW.PluginSystem.Plugins
 {
     public partial class GoodsDestroyerConfig : Form
     {
-        public GoodsDestroyerConfig()
+        private GoodsDestroyerSettings settings;
+
+        public GoodsDestroyerConfig(GoodsDestroyerSettings settingsInstance)
         {
             InitializeComponent();
+            settings = settingsInstance;
+            checkBox1.Checked = settings.LaunchInkCrafter;
+            checkBoxUseFastDraenorMill.Checked = settings.UseFastDraenorMill;
+            checkBoxMillFelwort.Checked = settings.MillFelwort;
         }
 
         internal static void Open(GoodsDestroyerSettings settingsInstance)
         {
-            GoodsDestroyerConfig goodsDestroyerConfig = new GoodsDestroyerConfig
-            {
-                checkBox1 = {Checked = settingsInstance.LaunchInkCrafter},
-                checkBoxUseFastDraenorMill = {Checked = settingsInstance.UseFastDraenorMill}
-            };
+            GoodsDestroyerConfig goodsDestroyerConfig = new GoodsDestroyerConfig(settingsInstance);
             goodsDestroyerConfig.ShowDialog();
             settingsInstance.LaunchInkCrafter = goodsDestroyerConfig.checkBox1.Checked;
             settingsInstance.UseFastDraenorMill = goodsDestroyerConfig.checkBoxUseFastDraenorMill.Checked;
+            settingsInstance.MillFelwort = goodsDestroyerConfig.checkBoxMillFelwort.Checked;
         }
 
         // ReSharper disable once InconsistentNaming
