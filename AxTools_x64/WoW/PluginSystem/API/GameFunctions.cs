@@ -111,6 +111,12 @@ namespace AxTools.WoW.PluginSystem.API
             ChatboxSendText(string.Format("/run if(_G[\"{0}\"]>0)then SelectGossipOption(_G[\"{0}\"], nil, true) end", GossipVarName));
         }
 
+        public static void BuyMerchantItem(uint itemID, int count)
+        {
+            string itemName = Wowhead.GetItemInfo(itemID).Name;
+            SendToChat(string.Format("/run for i=1,GetMerchantNumItems() do if(GetMerchantItemInfo(i)==\"{0}\")then BuyMerchantItem(i,{1});return;end;end", itemName, count));
+        }
+
         public static void SendToChat(string command)
         {
             ChatboxSendText(command);

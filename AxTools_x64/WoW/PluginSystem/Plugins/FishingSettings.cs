@@ -23,5 +23,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         [JsonProperty(PropertyName = "UseArcaneLure")]
         internal bool UseArcaneLure = false;
 
+        [JsonProperty(PropertyName = "DalaranAchievement")]
+        internal bool DalaranAchievement = false;
+
     }
 }

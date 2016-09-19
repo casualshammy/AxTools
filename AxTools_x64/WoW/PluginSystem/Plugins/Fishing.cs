@@ -106,6 +106,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         GameFunctions.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
+                    else if (fishingSettings.DalaranAchievement && (baitItemID = DalaranAchievement(me)) != 0)
+                    {
+                        this.LogPrint(string.Format("Applying lure for Dalaran achievement --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
+                        GameFunctions.UseItemByID(baitItemID);
+                        Thread.Sleep(Utils.Rnd.Next(250, 750));
+                    }
                     else
                     {
                         Thread.Sleep(Utils.Rnd.Next(500, 1000));
@@ -214,6 +220,40 @@ namespace AxTools.WoW.PluginSystem.Plugins
             return 0;
         }
 
+        private uint DalaranAchievement(WoWPlayerMe me)
+        {
+            if (me.Auras.All(l => !dalaran_merchID_itemID_spellID.Select(k => k.Item3).Contains(l.SpellId) || l.TimeLeftInMs < 20000))
+            {
+                WoWItem lureInBags = me.ItemsInBags.FirstOrDefault(l => dalaran_merchID_itemID_spellID.Select(k => k.Item2).Contains(l.EntryID));
+                if (lureInBags != null)
+                {
+                    return lureInBags.EntryID;
+                }
+                this.LogPrint("Searching for Marcia Chase, id:95844");
+                List<WowNpc> npcs = new List<WowNpc>();
+                ObjMgr.Pulse(npcs);
+                WowNpc marciaChase = npcs.FirstOrDefault(npc => npc.EntryID == 95844);
+                if (marciaChase != null)
+                {
+                    this.LogPrint(string.Format("Marcia Chase is found, guid: {0}, interacting...", marciaChase.GUID));
+                    marciaChase.Interact();
+                    Thread.Sleep(Utils.Rnd.Next(750, 1250));
+                    this.LogPrint("I: I wish to buy something...");
+                    GameFunctions.SelectDialogOption("Мне бы хотелось купить что-нибудь у вас."); // todo: is it possible to localize it?
+                    Thread.Sleep(Utils.Rnd.Next(750, 1250));
+                    Tuple<int, uint, int> newLure = dalaran_merchID_itemID_spellID[Utils.Rnd.Next(0, dalaran_merchID_itemID_spellID.Count)];
+                    this.LogPrint("Buying lure " + Wowhead.GetItemInfo(newLure.Item2).Name + "...");
+                    GameFunctions.BuyMerchantItem(newLure.Item2, 1);
+                    Thread.Sleep(Utils.Rnd.Next(750, 1250));
+                    this.LogPrint("Closing dialog window...");
+                    GameFunctions.SendToChat("/run CloseMerchant()");
+                    return newLure.Item2;
+                }
+                return 0;
+            }
+            return 0;
+        }
+
         #endregion
 
         #region Fields, propeties
@@ -264,6 +304,18 @@ namespace AxTools.WoW.PluginSystem.Plugins
             {110274, 111669},
             {110294, 111663},
             {110292, 111665}, // Морской скорпион
+        };
+
+        private readonly List<Tuple<int, uint, int>> dalaran_merchID_itemID_spellID = new List<Tuple<int, uint, int>>
+        {
+            new Tuple<int, uint, int>(3, 138956, 217835),
+            new Tuple<int, uint, int>(4, 138957, 217836),
+            new Tuple<int, uint, int>(5, 138958, 217837),
+            new Tuple<int, uint, int>(6, 138959, 217838),
+            new Tuple<int, uint, int>(7, 138960, 217839),
+            new Tuple<int, uint, int>(8, 138961, 217840),
+            new Tuple<int, uint, int>(9, 138962, 217842),
+            new Tuple<int, uint, int>(10, 138963, 217844)
         };
 
         #endregion

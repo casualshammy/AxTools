@@ -36,6 +36,7 @@
             this.checkBoxGetSpecialBaitFromNatPagle = new System.Windows.Forms.CheckBox();
             this.groupBoxWOD = new System.Windows.Forms.GroupBox();
             this.groupBoxLegion = new System.Windows.Forms.GroupBox();
+            this.checkBoxDalaran = new System.Windows.Forms.CheckBox();
             this.checkBoxUseArcaneLure = new System.Windows.Forms.CheckBox();
             this.groupBoxWOD.SuspendLayout();
             this.groupBoxLegion.SuspendLayout();
@@ -126,6 +127,7 @@
             // 
             // groupBoxLegion
             // 
+            this.groupBoxLegion.Controls.Add(this.checkBoxDalaran);
             this.groupBoxLegion.Controls.Add(this.checkBoxUseArcaneLure);
             this.groupBoxLegion.Location = new System.Drawing.Point(12, 133);
             this.groupBoxLegion.Name = "groupBoxLegion";
@@ -133,6 +135,17 @@
             this.groupBoxLegion.TabIndex = 10;
             this.groupBoxLegion.TabStop = false;
             this.groupBoxLegion.Text = "Legion";
+            // 
+            // checkBoxDalaran
+            // 
+            this.checkBoxDalaran.AutoSize = true;
+            this.checkBoxDalaran.Location = new System.Drawing.Point(6, 42);
+            this.checkBoxDalaran.Name = "checkBoxDalaran";
+            this.checkBoxDalaran.Size = new System.Drawing.Size(271, 17);
+            this.checkBoxDalaran.TabIndex = 1;
+            this.checkBoxDalaran.Text = "Do Dalaran achievement (stand near Marcia Chase)";
+            this.checkBoxDalaran.UseVisualStyleBackColor = true;
+            this.checkBoxDalaran.CheckedChanged += new System.EventHandler(this.checkBoxDalaran_CheckedChanged);
             // 
             // checkBoxUseArcaneLure
             // 
@@ -178,5 +191,6 @@
         private System.Windows.Forms.GroupBox groupBoxWOD;
         private System.Windows.Forms.GroupBox groupBoxLegion;
         private System.Windows.Forms.CheckBox checkBoxUseArcaneLure;
+        private System.Windows.Forms.CheckBox checkBoxDalaran;
     }
 }

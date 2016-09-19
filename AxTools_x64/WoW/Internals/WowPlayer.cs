@@ -113,24 +113,10 @@ namespace AxTools.WoW.Internals
                 string temp;
                 if (!Names.TryGetValue(GUID, out temp))
                 {
-                    //ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
-                    // ReSharper disable ImpureMethodCallOnReadonlyValueField
-                    //temp = GameFunctions.LuaGetFunctionReturn("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
-                    // ReSharper restore ImpureMethodCallOnReadonlyValueField
-
-
-                    IntPtr firstEntry = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.NameCacheBase + WowBuildInfoX64.NameCacheNext);
-                    IntPtr nextEntry = firstEntry;
-                    while (true)
+                    temp = GetNameFromMemorySafe();
+                    if (string.IsNullOrWhiteSpace(temp))
                     {
-                        if (WoWManager.WoWProcess.Memory.Read<WoWGUID>(nextEntry + WowBuildInfoX64.NameCacheGuid) == GUID)
-                        {
-                            byte[] nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nextEntry + WowBuildInfoX64.NameCacheName, 48).TakeWhile(l => l != 0).ToArray();
-                            temp = Encoding.UTF8.GetString(nameBytes);
-                            break;
-                        }
-                        nextEntry = WoWManager.WoWProcess.Memory.Read<IntPtr>(nextEntry);
-                        if (nextEntry == firstEntry) break;
+                        temp = GetNameFromLuaSafe();
                     }
                     if (!string.IsNullOrWhiteSpace(temp))
                     {
@@ -138,6 +124,47 @@ namespace AxTools.WoW.Internals
                     }
                 }
                 return temp ?? "UNKNOWN";
+            }
+        }
+
+        private string GetNameFromMemorySafe()
+        {
+            try
+            {
+                string name = null;
+                IntPtr firstEntry = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.NameCacheBase + WowBuildInfoX64.NameCacheNext);
+                IntPtr nextEntry = firstEntry;
+                while (true)
+                {
+                    if (WoWManager.WoWProcess.Memory.Read<WoWGUID>(nextEntry + WowBuildInfoX64.NameCacheGuid) == GUID)
+                    {
+                        byte[] nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nextEntry + WowBuildInfoX64.NameCacheName, 48).TakeWhile(l => l != 0).ToArray();
+                        name = Encoding.UTF8.GetString(nameBytes);
+                        break;
+                    }
+                    nextEntry = WoWManager.WoWProcess.Memory.Read<IntPtr>(nextEntry);
+                    if (nextEntry == firstEntry) break;
+                }
+                return name;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private string GetNameFromLuaSafe()
+        {
+            try
+            {
+                ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
+                // ReSharper disable ImpureMethodCallOnReadonlyValueField
+                return GameFunctions.LuaGetFunctionReturn("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
+                // ReSharper restore ImpureMethodCallOnReadonlyValueField
+            }
+            catch
+            {
+                return null;
             }
         }
 

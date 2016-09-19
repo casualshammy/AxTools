@@ -6,13 +6,16 @@ namespace AxTools.WoW.PluginSystem.Plugins
 {
     internal partial class FishingConfig : Form
     {
+        private readonly FishingSettings thisSettings;
+
         public FishingConfig(FishingSettings fishingSettings)
         {
             InitializeComponent();
-            FishingSettings thisSettings = fishingSettings;
+            thisSettings = fishingSettings;
             checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Checked = thisSettings.UseAnySpecialBaitIfPreferredIsNotAvailable;
             checkBoxGetSpecialBaitFromNatPagle.Checked = thisSettings.GetSpecialBaitFromNatPagle;
             checkBoxUseArcaneLure.Checked = thisSettings.UseArcaneLure;
+            checkBoxDalaran.Checked = thisSettings.DalaranAchievement;
         }
 
         internal static void Open(FishingSettings fishingSettings)
@@ -48,5 +51,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 return myCp;
             }
         }
+
+        private void checkBoxDalaran_CheckedChanged(object sender, EventArgs e)
+        {
+            thisSettings.DalaranAchievement = checkBoxDalaran.Checked;
+        }
+
     }
 }
