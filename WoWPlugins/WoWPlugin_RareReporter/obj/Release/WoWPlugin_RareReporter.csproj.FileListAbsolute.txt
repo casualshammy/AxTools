@@ -1,0 +1,13 @@
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\bin\Release\WoWPlugin_RareReporter.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\bin\Release\WoWPlugin_RareReporter.pdb
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\bin\Release\AxTools.exe
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\bin\Release\Components.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\bin\Release\MetroFramework.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\bin\Release\WindowsFormsAero.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\bin\Release\Ionic.Zip.Reduced.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\bin\Release\ObjectListView.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\bin\Release\Newtonsoft.Json.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\bin\Release\LiteDB.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\obj\Release\WoWPlugin_RareReporter.csprojResolveAssemblyReference.cache
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\obj\Release\WoWPlugin_RareReporter.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_RareReporter\obj\Release\WoWPlugin_RareReporter.pdb

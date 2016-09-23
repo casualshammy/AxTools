@@ -1,0 +1,15 @@
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\bin\Release\WoWPlugin_Notifier.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\bin\Release\WoWPlugin_Notifier.pdb
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\bin\Release\AxTools.exe
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\bin\Release\Components.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\bin\Release\MetroFramework.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\bin\Release\WindowsFormsAero.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\bin\Release\Ionic.Zip.Reduced.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\bin\Release\ObjectListView.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\bin\Release\Newtonsoft.Json.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\bin\Release\LiteDB.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\obj\Release\WoWPlugin_Notifier.csprojResolveAssemblyReference.cache
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\obj\Release\WoWPlugin_Notifier.SettingsForm.resources
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\obj\Release\WoWPlugin_Notifier.csproj.GenerateResource.Cache
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\obj\Release\WoWPlugin_Notifier.dll
+F:\Dropbox\Projects\AxTools\WoWPlugin_Notifier\obj\Release\WoWPlugin_Notifier.pdb

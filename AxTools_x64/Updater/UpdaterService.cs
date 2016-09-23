@@ -58,7 +58,7 @@ namespace AxTools.Updater
                 }
                 else
                 {
-                    Log.Error("[Updater] Can't get update file URL from DNS!");
+                    Log.Info("[Updater] Can't get update file URL from DNS!");
                 }
                 _timer.Start();
             });

@@ -113,7 +113,7 @@ namespace AxTools.Forms
             while (isRunning)
             {
                 stopwatch.Restart();
-                if (!WoWManager.Hooked || !GameFunctions.IsInGame)
+                if (!WoWManager.Hooked || !GameFunctions.IsInGame || GameFunctions.IsLoadingScreen)
                 {
                     try
                     {
