@@ -26,5 +26,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
         [JsonProperty(PropertyName = "DalaranAchievement")]
         internal bool DalaranAchievement = false;
 
+        [JsonProperty(PropertyName = "LegionUseSpecialLure")]
+        internal bool LegionUseSpecialLure = false;
+
+        [JsonProperty(PropertyName = "LegionMargossSupport")]
+        internal bool LegionMargossSupport = false;
+
+        [JsonProperty(PropertyName = "EnableBreaks")]
+        internal bool EnableBreaks = true;
+
     }
 }

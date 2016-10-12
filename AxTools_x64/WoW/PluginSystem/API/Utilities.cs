@@ -140,6 +140,9 @@ namespace AxTools.WoW.PluginSystem.API
             Notify.TrayPopup("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, plugin.TrayIcon);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool ClickerEnabled
         {
             get { return Clicker.Enabled; }
@@ -154,6 +157,11 @@ namespace AxTools.WoW.PluginSystem.API
                     Clicker.Stop();
                 }
             }
+        }
+
+        public static IntPtr WoWWindowHandle
+        {
+            get { return WoWManager.WoWProcess.MainWindowHandle; }
         }
 
     }

@@ -16,6 +16,9 @@ namespace AxTools.WoW.PluginSystem.Plugins
             checkBoxGetSpecialBaitFromNatPagle.Checked = thisSettings.GetSpecialBaitFromNatPagle;
             checkBoxUseArcaneLure.Checked = thisSettings.UseArcaneLure;
             checkBoxDalaran.Checked = thisSettings.DalaranAchievement;
+            checkBoxLegionUseSpecialLure.Checked = thisSettings.LegionUseSpecialLure;
+            checkBoxLegionMargoss.Checked = thisSettings.LegionMargossSupport;
+            checkBoxBreaks.Checked = thisSettings.EnableBreaks;
         }
 
         internal static void Open(FishingSettings fishingSettings)
@@ -55,6 +58,21 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private void checkBoxDalaran_CheckedChanged(object sender, EventArgs e)
         {
             thisSettings.DalaranAchievement = checkBoxDalaran.Checked;
+        }
+
+        private void checkBoxLegionUseSpecialLure_CheckedChanged(object sender, EventArgs e)
+        {
+            thisSettings.LegionUseSpecialLure = checkBoxLegionUseSpecialLure.Checked;
+        }
+
+        private void checkBoxLegionMargoss_CheckedChanged(object sender, EventArgs e)
+        {
+            thisSettings.LegionMargossSupport = checkBoxLegionMargoss.Checked;
+        }
+
+        private void checkBoxBreaks_CheckedChanged(object sender, EventArgs e)
+        {
+            thisSettings.EnableBreaks = checkBoxBreaks.Checked;
         }
 
     }

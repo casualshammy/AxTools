@@ -36,8 +36,11 @@
             this.checkBoxGetSpecialBaitFromNatPagle = new System.Windows.Forms.CheckBox();
             this.groupBoxWOD = new System.Windows.Forms.GroupBox();
             this.groupBoxLegion = new System.Windows.Forms.GroupBox();
+            this.checkBoxLegionMargoss = new System.Windows.Forms.CheckBox();
+            this.checkBoxLegionUseSpecialLure = new System.Windows.Forms.CheckBox();
             this.checkBoxDalaran = new System.Windows.Forms.CheckBox();
             this.checkBoxUseArcaneLure = new System.Windows.Forms.CheckBox();
+            this.checkBoxBreaks = new System.Windows.Forms.CheckBox();
             this.groupBoxWOD.SuspendLayout();
             this.groupBoxLegion.SuspendLayout();
             this.SuspendLayout();
@@ -62,7 +65,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(12, 242);
+            this.button1.Location = new System.Drawing.Point(12, 297);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(377, 23);
             this.button1.TabIndex = 4;
@@ -118,7 +121,7 @@
             this.groupBoxWOD.Controls.Add(this.comboBoxSpecialBait);
             this.groupBoxWOD.Controls.Add(this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable);
             this.groupBoxWOD.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.groupBoxWOD.Location = new System.Drawing.Point(12, 35);
+            this.groupBoxWOD.Location = new System.Drawing.Point(12, 69);
             this.groupBoxWOD.Name = "groupBoxWOD";
             this.groupBoxWOD.Size = new System.Drawing.Size(377, 92);
             this.groupBoxWOD.TabIndex = 9;
@@ -127,19 +130,43 @@
             // 
             // groupBoxLegion
             // 
+            this.groupBoxLegion.Controls.Add(this.checkBoxLegionMargoss);
+            this.groupBoxLegion.Controls.Add(this.checkBoxLegionUseSpecialLure);
             this.groupBoxLegion.Controls.Add(this.checkBoxDalaran);
             this.groupBoxLegion.Controls.Add(this.checkBoxUseArcaneLure);
-            this.groupBoxLegion.Location = new System.Drawing.Point(12, 133);
+            this.groupBoxLegion.Location = new System.Drawing.Point(12, 167);
             this.groupBoxLegion.Name = "groupBoxLegion";
-            this.groupBoxLegion.Size = new System.Drawing.Size(377, 100);
+            this.groupBoxLegion.Size = new System.Drawing.Size(377, 124);
             this.groupBoxLegion.TabIndex = 10;
             this.groupBoxLegion.TabStop = false;
             this.groupBoxLegion.Text = "Legion";
             // 
+            // checkBoxLegionMargoss
+            // 
+            this.checkBoxLegionMargoss.AutoSize = true;
+            this.checkBoxLegionMargoss.Location = new System.Drawing.Point(6, 88);
+            this.checkBoxLegionMargoss.Name = "checkBoxLegionMargoss";
+            this.checkBoxLegionMargoss.Size = new System.Drawing.Size(110, 17);
+            this.checkBoxLegionMargoss.TabIndex = 3;
+            this.checkBoxLegionMargoss.Text = "Farm Margoss rep";
+            this.checkBoxLegionMargoss.UseVisualStyleBackColor = true;
+            this.checkBoxLegionMargoss.CheckedChanged += new System.EventHandler(this.checkBoxLegionMargoss_CheckedChanged);
+            // 
+            // checkBoxLegionUseSpecialLure
+            // 
+            this.checkBoxLegionUseSpecialLure.AutoSize = true;
+            this.checkBoxLegionUseSpecialLure.Location = new System.Drawing.Point(6, 42);
+            this.checkBoxLegionUseSpecialLure.Name = "checkBoxLegionUseSpecialLure";
+            this.checkBoxLegionUseSpecialLure.Size = new System.Drawing.Size(101, 17);
+            this.checkBoxLegionUseSpecialLure.TabIndex = 2;
+            this.checkBoxLegionUseSpecialLure.Text = "Use special lure";
+            this.checkBoxLegionUseSpecialLure.UseVisualStyleBackColor = true;
+            this.checkBoxLegionUseSpecialLure.CheckedChanged += new System.EventHandler(this.checkBoxLegionUseSpecialLure_CheckedChanged);
+            // 
             // checkBoxDalaran
             // 
             this.checkBoxDalaran.AutoSize = true;
-            this.checkBoxDalaran.Location = new System.Drawing.Point(6, 42);
+            this.checkBoxDalaran.Location = new System.Drawing.Point(6, 65);
             this.checkBoxDalaran.Name = "checkBoxDalaran";
             this.checkBoxDalaran.Size = new System.Drawing.Size(271, 17);
             this.checkBoxDalaran.TabIndex = 1;
@@ -157,11 +184,23 @@
             this.checkBoxUseArcaneLure.Text = "Use arcane lure";
             this.checkBoxUseArcaneLure.UseVisualStyleBackColor = true;
             // 
+            // checkBoxBreaks
+            // 
+            this.checkBoxBreaks.AutoSize = true;
+            this.checkBoxBreaks.Location = new System.Drawing.Point(12, 35);
+            this.checkBoxBreaks.Name = "checkBoxBreaks";
+            this.checkBoxBreaks.Size = new System.Drawing.Size(126, 17);
+            this.checkBoxBreaks.TabIndex = 11;
+            this.checkBoxBreaks.Text = "Make random breaks";
+            this.checkBoxBreaks.UseVisualStyleBackColor = true;
+            this.checkBoxBreaks.CheckedChanged += new System.EventHandler(this.checkBoxBreaks_CheckedChanged);
+            // 
             // FishingConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(404, 277);
+            this.ClientSize = new System.Drawing.Size(404, 332);
+            this.Controls.Add(this.checkBoxBreaks);
             this.Controls.Add(this.groupBoxLegion);
             this.Controls.Add(this.groupBoxWOD);
             this.Controls.Add(this.checkBoxUseBestBait);
@@ -192,5 +231,8 @@
         private System.Windows.Forms.GroupBox groupBoxLegion;
         private System.Windows.Forms.CheckBox checkBoxUseArcaneLure;
         private System.Windows.Forms.CheckBox checkBoxDalaran;
+        private System.Windows.Forms.CheckBox checkBoxLegionUseSpecialLure;
+        private System.Windows.Forms.CheckBox checkBoxLegionMargoss;
+        private System.Windows.Forms.CheckBox checkBoxBreaks;
     }
 }

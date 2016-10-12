@@ -77,7 +77,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
                 {
                     uint baitItemID;
-                    if (Utils.Rnd.Next(0, 30) == 0)
+                    if (fishingSettings.EnableBreaks && Utils.Rnd.Next(0, 30) == 0)
                     {
                         int breakTime = Utils.Rnd.Next(15, 45);
                         this.LogPrint(string.Format("I'm human! Let's have a break ({0} sec)", breakTime));
@@ -106,11 +106,21 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         GameFunctions.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
+                    else if (fishingSettings.LegionUseSpecialLure && (baitItemID = GetLegionSpecialLure(me)) != 0)
+                    {
+                        this.LogPrint(string.Format("Applying Legion special lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
+                        GameFunctions.UseItemByID(baitItemID);
+                        Thread.Sleep(Utils.Rnd.Next(250, 750));
+                    }
                     else if (fishingSettings.DalaranAchievement && (baitItemID = DalaranAchievement(me)) != 0)
                     {
                         this.LogPrint(string.Format("Applying lure for Dalaran achievement --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
                         GameFunctions.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
+                    }
+                    else if (fishingSettings.LegionMargossSupport && (baitItemID = GetMargossLure(me)) != 0)
+                    {
+                        Thread.Sleep(Utils.Rnd.Next(1000, 2000));
                     }
                     else
                     {
@@ -222,9 +232,9 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         private uint DalaranAchievement(WoWPlayerMe me)
         {
-            if (me.Auras.All(l => !dalaran_merchID_itemID_spellID.Select(k => k.Item3).Contains(l.SpellId) || l.TimeLeftInMs < 20000))
+            if (me.Auras.All(l => !dalaranTradeItems.Select(k => k.AuraID).Contains(l.SpellId) || l.TimeLeftInMs < 20000))
             {
-                WoWItem lureInBags = me.ItemsInBags.FirstOrDefault(l => dalaran_merchID_itemID_spellID.Select(k => k.Item2).Contains(l.EntryID));
+                WoWItem lureInBags = me.ItemsInBags.FirstOrDefault(l => dalaranTradeItems.Select(k => k.ItemID).Contains(l.EntryID));
                 if (lureInBags != null)
                 {
                     return lureInBags.EntryID;
@@ -241,15 +251,57 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     this.LogPrint("I: I wish to buy something...");
                     GameFunctions.SelectDialogOption("Мне бы хотелось купить что-нибудь у вас."); // todo: is it possible to localize it?
                     Thread.Sleep(Utils.Rnd.Next(750, 1250));
-                    Tuple<int, uint, int> newLure = dalaran_merchID_itemID_spellID[Utils.Rnd.Next(0, dalaran_merchID_itemID_spellID.Count)];
-                    this.LogPrint("Buying lure " + Wowhead.GetItemInfo(newLure.Item2).Name + "...");
-                    GameFunctions.BuyMerchantItem(newLure.Item2, 1);
+                    DalaranTradeItems newLure = dalaranTradeItems[Utils.Rnd.Next(0, dalaranTradeItems.Count)];
+                    this.LogPrint("Buying lure " + Wowhead.GetItemInfo(newLure.ItemID).Name + "...");
+                    GameFunctions.BuyMerchantItem(newLure.ItemID, 1);
                     Thread.Sleep(Utils.Rnd.Next(750, 1250));
                     this.LogPrint("Closing dialog window...");
                     GameFunctions.SendToChat("/run CloseMerchant()");
-                    return newLure.Item2;
+                    return newLure.ItemID;
                 }
                 return 0;
+            }
+            return 0;
+        }
+
+        private uint GetLegionSpecialLure(WoWPlayerMe me)
+        {
+            try
+            {
+                uint zone = GameFunctions.ZoneID;
+                string[] allBuffNames = legionSpecialLuresByZone.SelectMany(l => l.Lures).Select(l => Wowhead.GetItemInfo(l).Name).ToArray();
+                if (me.Auras.All(k => !allBuffNames.Contains(k.Name)))
+                {
+                    SpecialLuresForZone info = legionSpecialLuresByZone.FirstOrDefault(l => l.ZoneID == zone);
+                    if (info != null)
+                    {
+                        WoWItem item = me.ItemsInBags.FirstOrDefault(l => info.Lures.Contains(l.EntryID));
+                        if (item != null)
+                        {
+                            return item.EntryID;
+                        }
+                    }
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                this.LogPrint(ex.Message + "\r\n" + ex.StackTrace);
+                return 0;
+            }
+        }
+
+        private uint GetMargossLure(WoWPlayerMe me)
+        {
+            if (me.ItemsInBags.Any(l => l.EntryID == 141975)) // Mark of Aquaos
+            {
+                this.ShowNotify("You can and should summon Aquaos", false, true);
+                return 1;
+            }
+            if (me.ItemsInBags.Where(l => l.EntryID == 138777).Sum(l => l.StackSize) >= 100) // Утопленная мана
+            {
+                this.ShowNotify("You cannot get more Drowned Mana", false, true);
+                return 1;
             }
             return 0;
         }
@@ -306,17 +358,39 @@ namespace AxTools.WoW.PluginSystem.Plugins
             {110292, 111665}, // Морской скорпион
         };
 
-        private readonly List<Tuple<int, uint, int>> dalaran_merchID_itemID_spellID = new List<Tuple<int, uint, int>>
+        private readonly List<DalaranTradeItems> dalaranTradeItems = new List<DalaranTradeItems>
         {
-            new Tuple<int, uint, int>(3, 138956, 217835),
-            new Tuple<int, uint, int>(4, 138957, 217836),
-            new Tuple<int, uint, int>(5, 138958, 217837),
-            new Tuple<int, uint, int>(6, 138959, 217838),
-            new Tuple<int, uint, int>(7, 138960, 217839),
-            new Tuple<int, uint, int>(8, 138961, 217840),
-            new Tuple<int, uint, int>(9, 138962, 217842),
-            new Tuple<int, uint, int>(10, 138963, 217844)
+            new DalaranTradeItems {ItemID = 138956, AuraID = 217835},
+            new DalaranTradeItems {ItemID = 138957, AuraID = 217836},
+            new DalaranTradeItems {ItemID = 138958, AuraID = 217837},
+            new DalaranTradeItems {ItemID = 138959, AuraID = 217838},
+            new DalaranTradeItems {ItemID = 138960, AuraID = 217839},
+            new DalaranTradeItems {ItemID = 138961, AuraID = 217840},
+            new DalaranTradeItems {ItemID = 138962, AuraID = 217842},
+            new DalaranTradeItems {ItemID = 138963, AuraID = 217844}
         };
+
+        private readonly List<SpecialLuresForZone> legionSpecialLuresByZone = new List<SpecialLuresForZone>
+        {
+            new SpecialLuresForZone {ZoneID = 7731, Lures = new uint[] {133710, 133711, 133712}},   // Громовой Тотем
+            new SpecialLuresForZone {ZoneID = 7503, Lures = new uint[] {133710, 133711, 133712}}    // Крутогорье
+        };
+
+        #endregion
+
+        #region Classes
+
+        private class SpecialLuresForZone
+        {
+            internal uint ZoneID;
+            internal uint[] Lures;
+        }
+
+        private class DalaranTradeItems
+        {
+            internal uint ItemID;
+            internal int AuraID;
+        }
 
         #endregion
 

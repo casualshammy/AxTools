@@ -55,6 +55,22 @@ namespace AxTools.Forms
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
         private readonly Dictionary<WoWGUID, Point> objectsPointsInRadarCoords = new Dictionary<WoWGUID, Point>();
 
+        private readonly Dictionary<WowPlayerClass, Color> wowClassColors = new Dictionary<WowPlayerClass, Color>
+        {
+            {WowPlayerClass.DK, WowRaidClassColors.Deathknight},
+            {WowPlayerClass.Dru, WowRaidClassColors.Druid},
+            {WowPlayerClass.Hun, WowRaidClassColors.Hunter},
+            {WowPlayerClass.Mg, WowRaidClassColors.Mage},
+            {WowPlayerClass.Mnk, WowRaidClassColors.Monk},
+            {WowPlayerClass.Pal, WowRaidClassColors.Paladin},
+            {WowPlayerClass.Pri, WowRaidClassColors.Priest},
+            {WowPlayerClass.Rog, WowRaidClassColors.Rogue},
+            {WowPlayerClass.Sha, WowRaidClassColors.Shaman},
+            {WowPlayerClass.WL, WowRaidClassColors.Warlock},
+            {WowPlayerClass.War, WowRaidClassColors.Warrior},
+            {WowPlayerClass.DeH, Color.FromArgb(163, 48, 201)},
+        };
+
         private WoWPlayerMe localPlayer;
         private WowPlayer[] friends;
         private WowPlayer[] enemies;
@@ -64,6 +80,7 @@ namespace AxTools.Forms
         private volatile bool isRunning;
         private volatile bool shouldDrawObjects;
         private bool flicker;
+        private Point lastMouseLocation = Point.Empty;
 
         #endregion
 
@@ -665,6 +682,7 @@ namespace AxTools.Forms
             {
                 if (Math.Abs(pair.Value.X - mousePosition.X) < 4 && Math.Abs(pair.Value.Y - mousePosition.Y) < 4)
                 {
+                    lastMouseLocation = mousePosition;
                     WowPlayer unit = wowPlayers.FirstOrDefault(i => i.GUID == pair.Key);
                     if (unit != null)
                     {
@@ -687,7 +705,10 @@ namespace AxTools.Forms
                     }
                 }
             }
-            textBoxDetailedInfo.Visible = false;
+            if (lastMouseLocation != mousePosition)
+            {
+                textBoxDetailedInfo.Visible = false;
+            }
         }
         private void DrawTooltip(Point e, string text, WowPlayerClass _class)
         {
@@ -703,42 +724,7 @@ namespace AxTools.Forms
                 textBoxDetailedInfo.Location = new Point(e.X - textBoxDetailedInfo.Size.Width - 5, e.Y);
                 textBoxDetailedInfo.TextAlign = HorizontalAlignment.Right;
             }
-            switch (_class)
-            {
-                case WowPlayerClass.DK:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Deathknight;
-                    break;
-                case WowPlayerClass.Dru:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Druid;
-                    break;
-                case WowPlayerClass.Hun:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Hunter;
-                    break;
-                case WowPlayerClass.Mg:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Mage;
-                    break;
-                case WowPlayerClass.Mnk:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Monk;
-                    break;
-                case WowPlayerClass.Pal:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Paladin;
-                    break;
-                case WowPlayerClass.Pri:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Priest;
-                    break;
-                case WowPlayerClass.Rog:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Rogue;
-                    break;
-                case WowPlayerClass.Sha:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Shaman;
-                    break;
-                case WowPlayerClass.WL:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Warlock;
-                    break;
-                case WowPlayerClass.War:
-                    textBoxDetailedInfo.BackColor = WowRaidClassColors.Warrior;
-                    break;
-            }
+            textBoxDetailedInfo.BackColor = wowClassColors[_class];
             textBoxDetailedInfo.Visible = true;
         }
 

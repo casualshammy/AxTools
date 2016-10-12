@@ -16,6 +16,33 @@ namespace AxTools.WoW.PluginSystem.API
     public static class GameFunctions
     {
 
+        #region Private fields and methods
+
+        private static void SetMouseoverUnit(WoWGUID guid)
+        {
+            WoWGUID mouseoverGUID = WoWManager.WoWProcess.Memory.Read<WoWGUID>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.MouseoverGUID);
+            if (mouseoverGUID != guid)
+            {
+                WoWManager.WoWProcess.Memory.Write(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.MouseoverGUID, guid);
+            }
+        }
+
+        private static void WaitWhileWoWIsMinimized()
+        {
+            Utils.LogIfCalledFromUIThread();
+            if (WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsMinimized)
+            {
+                Notify.TrayPopup("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Click to activate WoW window", NotifyUserType.Warn, true, null, 10,
+                    (sender, args) => NativeMethods.ShowWindow(WoWManager.WoWProcess.MainWindowHandle, 9));
+                while (WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsMinimized)
+                {
+                    Thread.Sleep(100);
+                }
+            }
+        }
+
+        #endregion
+
         #region Interact
 
         public static void Interact(this WowObject wowObject)
@@ -35,7 +62,7 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 if (Settings.Instance.WoWInteractMouseover != Keys.None)
                 {
-                    WoWManager.WoWProcess.Memory.Write(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.MouseoverGUID, guid);
+                    SetMouseoverUnit(guid);
                     NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Settings.Instance.WoWInteractMouseover, IntPtr.Zero);
                     NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Settings.Instance.WoWInteractMouseover, IntPtr.Zero);
                 }
@@ -68,7 +95,7 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 if (Settings.Instance.WoWTargetMouseover != Keys.None)
                 {
-                    WoWManager.WoWProcess.Memory.Write(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.MouseoverGUID, guid);
+                    SetMouseoverUnit(guid);
                     NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Settings.Instance.WoWTargetMouseover, IntPtr.Zero);
                     NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Settings.Instance.WoWTargetMouseover, IntPtr.Zero);
                 }
@@ -502,19 +529,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         #endregion
 
-        private static void WaitWhileWoWIsMinimized()
-        {
-            Utils.LogIfCalledFromUIThread();
-            if (WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsMinimized)
-            {
-                Notify.TrayPopup("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Click to activate WoW window", NotifyUserType.Warn, true, null, 10,
-                    (sender, args) => NativeMethods.ShowWindow(WoWManager.WoWProcess.MainWindowHandle, 9));
-                while (WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsMinimized)
-                {
-                    Thread.Sleep(100);
-                }
-            }
-        }
+        
     
     }
 }
