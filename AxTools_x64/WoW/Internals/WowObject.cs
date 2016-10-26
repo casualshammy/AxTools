@@ -22,9 +22,9 @@ namespace AxTools.WoW.Internals
 
         private static int _maxNameLength = 80;
 
-        public readonly IntPtr Address;
-
         internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
+
+        public readonly IntPtr Address;
 
         public readonly WoWGUID GUID;
 
@@ -64,7 +64,7 @@ namespace AxTools.WoW.Internals
                             Log.Info("Max length for object names is increased to " + _maxNameLength);
                             nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
                         }
-                        temp = Encoding.UTF8.GetString(nameBytes).Split('\0')[0];
+                        temp = Encoding.UTF8.GetString(nameBytes.TakeWhile(l => l != 0).ToArray());
                         Names.Add(GUID, temp);
                     }
                     catch

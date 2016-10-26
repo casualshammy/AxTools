@@ -35,7 +35,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.2.21.1408</AssemblyVersion>
+    <AssemblyVersion>12.2.23.1418</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -273,7 +273,6 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Extensions.cs" />
-    <Compile Include="WoW\Helpers\WowRaidClassColors.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Helpers\Log.cs" />
     <Compile Include="Helpers\Settings.cs" />

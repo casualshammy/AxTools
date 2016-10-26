@@ -123,7 +123,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     searchingObjects = new[] { "Флаг Пустоверти" };
                     break;
                 case 6051:
-                    searchingObjects = new[] { "Сфера могущества" };
+                    searchingObjects = new[] { "Сфера могущества" }; // entry ids: 212091, 212092, 212093, 212094
                     break;
                 case 6665:
                     searchingObjects = new[] { "Вагонетка Альянса", "Вагонетка Орды" };

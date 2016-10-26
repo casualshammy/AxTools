@@ -387,6 +387,8 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static bool IsSpellKnown(uint spellID)
         {
+            return LuaGetFunctionReturn("tostring(IsSpellKnown(" + spellID + "))") == "true";
+
             uint totalKnownSpells = WoWManager.WoWProcess.Memory.Read<uint>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.KnownSpellsCount);
             IntPtr knownSpells = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.KnownSpells);
             for (int i = 0; i < totalKnownSpells; i++)

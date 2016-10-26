@@ -57,17 +57,17 @@ namespace AxTools.Forms
 
         private readonly Dictionary<WowPlayerClass, Color> wowClassColors = new Dictionary<WowPlayerClass, Color>
         {
-            {WowPlayerClass.DK, WowRaidClassColors.Deathknight},
-            {WowPlayerClass.Dru, WowRaidClassColors.Druid},
-            {WowPlayerClass.Hun, WowRaidClassColors.Hunter},
-            {WowPlayerClass.Mg, WowRaidClassColors.Mage},
-            {WowPlayerClass.Mnk, WowRaidClassColors.Monk},
-            {WowPlayerClass.Pal, WowRaidClassColors.Paladin},
-            {WowPlayerClass.Pri, WowRaidClassColors.Priest},
-            {WowPlayerClass.Rog, WowRaidClassColors.Rogue},
-            {WowPlayerClass.Sha, WowRaidClassColors.Shaman},
-            {WowPlayerClass.WL, WowRaidClassColors.Warlock},
-            {WowPlayerClass.War, WowRaidClassColors.Warrior},
+            {WowPlayerClass.DK, Color.FromArgb(196, 31, 59)},
+            {WowPlayerClass.Dru, Color.FromArgb(255, 125, 10)},
+            {WowPlayerClass.Hun, Color.FromArgb(171, 212, 115)},
+            {WowPlayerClass.Mg, Color.FromArgb(105, 204, 240)},
+            {WowPlayerClass.Mnk, Color.FromArgb(0, 255, 150)},
+            {WowPlayerClass.Pal, Color.FromArgb(245, 140, 186)},
+            {WowPlayerClass.Pri, Color.FromArgb(255, 255, 255)},
+            {WowPlayerClass.Rog, Color.FromArgb(255, 245, 105)},
+            {WowPlayerClass.Sha, Color.FromArgb(0, 112, 222)},
+            {WowPlayerClass.WL, Color.FromArgb(148, 130, 201)},
+            {WowPlayerClass.War, Color.FromArgb(199, 156, 110)},
             {WowPlayerClass.DeH, Color.FromArgb(163, 48, 201)},
         };
 
