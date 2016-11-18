@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Helpers;
 using AxTools.WinAPI;
@@ -116,6 +117,7 @@ namespace AxTools.WoW.PluginSystem.API
         private static readonly string LuaReturnTokenName = Utilities.GetRandomString(5, true);
         private static readonly string LuaReturnVarName = Utilities.GetRandomString(5, true);
         private static readonly object ChatLock = new object();
+        private static readonly object LuaLock = new object();
 
         public static void UseItemByID(uint id)
         {
@@ -151,27 +153,30 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static string LuaGetFunctionReturn(string function)
         {
-            WoWUIFrame myEditbox = WoWUIFrame.GetFrameByName(LuaReturnFrameName);
-            if (myEditbox == null)
+            lock (LuaLock)
             {
-                SendToChat(string.Format("/run if(not {0})then CreateFrame(\"EditBox\", \"{0}\", UIParent);{0}:SetAutoFocus(false);{0}:ClearFocus(); end", LuaReturnFrameName));
-            }
-            SendToChat(string.Format("/run {0}={1};{2}:SetText(\"{3}=\"..{0});", LuaReturnVarName, function, LuaReturnFrameName, LuaReturnTokenName));
-            int counter = 2000;
-            while (counter > 0)
-            {
-                string editboxText = GetEditboxText(LuaReturnFrameName);
-                if (editboxText != null)
+                WoWUIFrame myEditbox = WoWUIFrame.GetFrameByName(LuaReturnFrameName);
+                if (myEditbox == null)
                 {
-                    if (editboxText.Contains(LuaReturnTokenName))
-                    {
-                        return editboxText.Remove(0, LuaReturnTokenName.Length + 1); // 1 - length of "="
-                    }
+                    SendToChat(string.Format("/run if(not {0})then CreateFrame(\"EditBox\", \"{0}\", UIParent);{0}:SetAutoFocus(false);{0}:ClearFocus(); end", LuaReturnFrameName));
                 }
-                Thread.Sleep(10);
-                counter -= 10;
+                SendToChat(string.Format("/run {0}={1};{2}:SetText(\"{3}=\"..{0});", LuaReturnVarName, function, LuaReturnFrameName, LuaReturnTokenName));
+                int counter = 2000;
+                while (counter > 0)
+                {
+                    string editboxText = GetEditboxText(LuaReturnFrameName);
+                    if (editboxText != null)
+                    {
+                        if (editboxText.Contains(LuaReturnTokenName))
+                        {
+                            return editboxText.Remove(0, LuaReturnTokenName.Length + 1); // 1 - length of "="
+                        }
+                    }
+                    Thread.Sleep(10);
+                    counter -= 10;
+                }
+                return null;
             }
-            return null;
         }
 
         private static void ChatboxSendText(string text, int attempts = 3)
@@ -387,7 +392,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static bool IsSpellKnown(uint spellID)
         {
-            return LuaGetFunctionReturn("tostring(IsSpellKnown(" + spellID + "))") == "true";
+            //return LuaGetFunctionReturn("tostring(IsSpellKnown(" + spellID + "))") == "true";
 
             uint totalKnownSpells = WoWManager.WoWProcess.Memory.Read<uint>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.KnownSpellsCount);
             IntPtr knownSpells = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.KnownSpells);
@@ -531,7 +536,5 @@ namespace AxTools.WoW.PluginSystem.API
 
         #endregion
 
-        
-    
     }
 }

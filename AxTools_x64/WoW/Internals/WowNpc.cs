@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
+using AxTools.Helpers;
 
 namespace AxTools.WoW.Internals
 {
@@ -16,6 +18,8 @@ namespace AxTools.WoW.Internals
         }
 
         internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
+
+        private static int _maxNameLength = 80;
 
         public IntPtr Address;
 
@@ -56,7 +60,14 @@ namespace AxTools.WoW.Internals
                     {
                         IntPtr nameBase = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.NpcNameBase);
                         IntPtr nameAddress = WoWManager.WoWProcess.Memory.Read<IntPtr>(nameBase + WowBuildInfoX64.NpcNameOffset);
-                        temp = Encoding.UTF8.GetString(WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, 80)).Split('\0')[0];
+                        byte[] nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
+                        while (!nameBytes.Contains((byte)0))
+                        {
+                            _maxNameLength += 1;
+                            Log.Info("Max length for NPC names is increased to " + _maxNameLength);
+                            nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
+                        }
+                        temp = Encoding.UTF8.GetString(nameBytes.TakeWhile(l => l != 0).ToArray());
                         Names.Add(GUID, temp);
                     }
                     catch

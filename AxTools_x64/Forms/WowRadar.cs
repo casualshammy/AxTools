@@ -14,7 +14,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Forms.Helpers;
-using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
@@ -686,9 +685,7 @@ namespace AxTools.Forms
                     WowPlayer unit = wowPlayers.FirstOrDefault(i => i.GUID == pair.Key);
                     if (unit != null)
                     {
-                        DrawTooltip(mousePosition,
-                            string.Concat("   ", unit.Name, "  \r\n   (", unit.Class.ToString(), "*", unit.Level.ToString(), ") ",
-                                ((uint) (unit.Health/(float) unit.HealthMax*100)).ToString(), "%"), unit.Class);
+                        DrawTooltip(mousePosition, string.Format("   {0}  \r\n   ({1}*{2}) {3}%", unit.Name, unit.Class, unit.Level, (uint) (unit.Health/(float) unit.HealthMax*100)), unit.Class);
                         return;
                     }
                     WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);

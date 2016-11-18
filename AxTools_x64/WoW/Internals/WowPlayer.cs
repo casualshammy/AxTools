@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Internals
@@ -116,7 +117,7 @@ namespace AxTools.WoW.Internals
                     temp = GetNameFromMemorySafe();
                     if (string.IsNullOrWhiteSpace(temp))
                     {
-                        temp = GetNameFromLuaSafe();
+                        temp = Task.Factory.StartNew<string>(GetNameFromLuaSafe).Result;
                     }
                     if (!string.IsNullOrWhiteSpace(temp))
                     {
