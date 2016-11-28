@@ -1,0 +1,16 @@
+syntax: regexp
+AxTools_x64/bin/.*
+WoWPlugins/WoWPlugin_Follower/obj/.*
+WoWPlugins/WoWPlugin_LibSMS/obj/.*
+WoWPlugins/WoWPlugin_Dumper/obj/.*
+WoWPlugins/WoWPlugin_CombatRoutine/obj/.*
+AxTools_x64/obj/.*
+Components/obj/.*
+Dummy/obj/.*
+PatternFinder/obj/.*
+Resources/obj/.*
+WoWGold_Notifier/obj/.*
+WoWPlugins/WoWPlugin_AttackFirst/obj/.*
+WoWPlugins/WoWPlugin_AutoLoot/obj/.*
+WoWPlugins/WoWPlugin_PathPlayer/obj/.*
+axtools_updater_CSharp/obj/.*
