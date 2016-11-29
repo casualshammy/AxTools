@@ -45,7 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AxTools_x64\AxTools_x64.csproj">
+    <ProjectReference Include="..\..\AxTools_x64\AxTools_x64.csproj">
       <Project>{e579b921-37da-4da7-b0bf-fbeb2732f937}</Project>
       <Name>AxTools_x64</Name>
     </ProjectReference>
