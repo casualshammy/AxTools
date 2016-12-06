@@ -78,7 +78,7 @@ namespace AxTools.Helpers
         private static void ApplicationOnApplicationExit(object sender, EventArgs eventArgs)
         {
             Application.ApplicationExit -= ApplicationOnApplicationExit;
-            Log.Info("ProcessWatcher: Elpsd: " + _stopwatch.ElapsedMilliseconds + "ms, counter: " + _counter);
+            Log.Info(string.Format("ProcessWatcher: Elpsd: {0}ms, counter: {1}; so {2}ms/call", _stopwatch.ElapsedMilliseconds, _counter, (float)_stopwatch.ElapsedMilliseconds/_counter));
         }
 
         private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
