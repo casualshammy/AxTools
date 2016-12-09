@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Timers;
-using System.Windows.Forms;
+using AxTools.Forms;
 using Timer = System.Timers.Timer;
 
 namespace AxTools.Helpers
@@ -17,12 +16,11 @@ namespace AxTools.Helpers
         private static readonly Timer _timer = new Timer(1000);
         private static Dictionary<int, ProcessInfo> _cache = new Dictionary<int, ProcessInfo>();
         private static readonly object _lock = new object();
-        private static readonly ProcessInfoEqualityComparer ProcessInfoComparer = new ProcessInfoEqualityComparer();
-
         private static Action<ProcessInfo> _processStarted;
-        /// <summary>
-        ///     You should dispose this <see cref="Process"/> instance
-        /// </summary>
+        private static Action<ProcessInfo> _processExited;
+        private static readonly Stopwatch _stopwatch = new Stopwatch();
+        private static int _counter;
+
         internal static event Action<ProcessInfo> ProcessStarted
         {
             add
@@ -44,7 +42,6 @@ namespace AxTools.Helpers
             }
         }
 
-        private static Action<ProcessInfo> _processExited;
         internal static event Action<ProcessInfo> ProcessExited
         {
             add
@@ -66,19 +63,16 @@ namespace AxTools.Helpers
             }
         }
 
-        private static readonly Stopwatch _stopwatch = new Stopwatch();
-        private static int _counter;
-
         static ProcessWatcher()
         {
             _timer.Elapsed += _timer_Elapsed;
-            Application.ApplicationExit += ApplicationOnApplicationExit;
+            MainForm.ClosingEx += MainForm_ClosingEx;
         }
 
-        private static void ApplicationOnApplicationExit(object sender, EventArgs eventArgs)
+        private static void MainForm_ClosingEx()
         {
-            Application.ApplicationExit -= ApplicationOnApplicationExit;
-            Log.Info(string.Format("ProcessWatcher: Elpsd: {0}ms, counter: {1}; so {2}ms/call", _stopwatch.ElapsedMilliseconds, _counter, (float)_stopwatch.ElapsedMilliseconds/_counter));
+            MainForm.ClosingEx -= MainForm_ClosingEx;
+            Log.Error(string.Format("ProcessWatcher: Elpsd: {0}ms, counter: {1}; so {2}ms/call", _stopwatch.ElapsedMilliseconds, _counter, (float) _stopwatch.ElapsedMilliseconds/_counter));
         }
 
         private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -99,11 +93,14 @@ namespace AxTools.Helpers
             }
             if (_processExited != null)
             {
-                foreach (KeyValuePair<int, ProcessInfo> processInfo in _cache.Except(actualProcessInfos, ProcessInfoComparer))
+                foreach (KeyValuePair<int, ProcessInfo> processInfo in _cache)
                 {
-                    if (_processExited != null)
+                    if (!actualProcessInfos.ContainsKey(processInfo.Key))
                     {
-                        _processExited(processInfo.Value);
+                        if (_processExited != null)
+                        {
+                            _processExited(processInfo.Value);
+                        }
                     }
                 }
             }
@@ -131,23 +128,22 @@ namespace AxTools.Helpers
 
         private static string GetProcessNameWithExtension(Process process)
         {
-            string moduleName = process.MainModule.ModuleName;
-            return Path.GetFileName(moduleName);
-        }
-
-        private class ProcessInfoEqualityComparer : IEqualityComparer<KeyValuePair<int, ProcessInfo>>
-        {
-
-            public bool Equals(KeyValuePair<int, ProcessInfo> b1, KeyValuePair<int, ProcessInfo> b2)
+            try
             {
-                return b1.Key == b2.Key;
+                string moduleName = process.MainModule.ModuleName;
+                return Path.GetFileName(moduleName);
             }
-
-            public int GetHashCode(KeyValuePair<int, ProcessInfo> bx)
+            catch
             {
-                return bx.Key;
+                try
+                {
+                    return process.ProcessName;
+                }
+                catch
+                {
+                    return "";
+                }
             }
-
         }
 
     }

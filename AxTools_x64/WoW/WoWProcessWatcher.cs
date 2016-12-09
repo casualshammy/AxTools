@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Management;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,21 +28,76 @@ namespace AxTools.WoW
 
         private static readonly object _listLock = new object();
         private static readonly List<WowProcess> _sharedList = new List<WowProcess>();
-        private static ManagementEventWatcher _wowWatcherStart;
-        private static ManagementEventWatcher _wowWatcherStop;
         private static readonly object _lock = new object();
 
         internal static void StartWatcher()
         {
             lock (_lock)
             {
-                _wowWatcherStart = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace"));
-                _wowWatcherStop = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
-                _wowWatcherStart.EventArrived += WowProcessStarted;
-                _wowWatcherStop.EventArrived += WowProcessStopped;
-                _wowWatcherStart.Start();
-                _wowWatcherStop.Start();
+                ProcessWatcherWMI.ProcessStarted += ProcessWatcher_ProcessStarted;
+                ProcessWatcherWMI.ProcessExited += ProcessWatcher_ProcessExited;
                 GetWoWProcesses();
+            }
+        }
+
+        private static void ProcessWatcher_ProcessExited(ProcessInfo obj)
+        {
+            try
+            {
+                if (obj.ProcessName.ToLower() == "wow-64.exe")
+                {
+                    WowProcess pWowProcess = List.FirstOrDefault(x => x.ProcessID == obj.ProcessID);
+                    if (pWowProcess != null)
+                    {
+                        if (WoWManager.Hooked && WoWManager.WoWProcess.ProcessID == pWowProcess.ProcessID)
+                        {
+                            WoWManager.Unhook();
+                        }
+                        pWowProcess.Dispose();
+                        Log.Info(string.Format("{0} [WoW hook] Memory manager disposed", pWowProcess));
+                        if (List.Remove(pWowProcess))
+                        {
+                            Log.Info(string.Format("{0} [Process watcher] Process closed, {1} total", pWowProcess, List.Count));
+                        }
+                        else
+                        {
+                            Log.Error(string.Format("{0} [Process watcher] Can't delete WowProcess instance", pWowProcess));
+                        }
+                    }
+                    else
+                    {
+                        string name = obj.ProcessName.Substring(0, obj.ProcessName.Length - 4);
+                        Log.Error(string.Format("[{0}:{1}] [Process watcher] Closed WoW process not found", name, obj.ProcessID));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(string.Format("[{0}:{1}] [Process watcher] Process stopped with error: {2}", obj.ProcessName, obj.ProcessID, ex.Message));
+            }
+        }
+
+        private static void ProcessWatcher_ProcessStarted(ProcessInfo obj)
+        {
+            try
+            {
+                string processName = obj.ProcessName.ToLower();
+                if (processName == "wow.exe")
+                {
+                    Notify.TrayPopup("Unsupported WoW version", "AxTools doesn't support x86 versions of WoW client", NotifyUserType.Warn, true);
+                    Log.Error(string.Format("[{0}:{1}] [Process watcher] 32bit WoW processes aren't supported", processName, obj.ProcessID));
+                }
+                else if (processName == "wow-64.exe")
+                {
+                    WowProcess wowProcess = new WowProcess(obj.ProcessID);
+                    List.Add(wowProcess);
+                    Log.Info(string.Format("{0} [Process watcher] Process started, {1} total", wowProcess, List.Count));
+                    Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(string.Format("[{0}:{1}] [Process watcher] Process started with error: {2}", obj.ProcessName, obj.ProcessID, ex.Message));
             }
         }
 
@@ -51,19 +105,8 @@ namespace AxTools.WoW
         {
             lock (_lock)
             {
-                if (_wowWatcherStart != null && _wowWatcherStop != null)
-                {
-                    _wowWatcherStart.EventArrived -= WowProcessStarted;
-                    _wowWatcherStop.EventArrived -= WowProcessStopped;
-                    _wowWatcherStop.Stop();
-                    _wowWatcherStart.Stop();
-                    _wowWatcherStop.Dispose();
-                    _wowWatcherStart.Dispose();
-                }
-                else
-                {
-                    throw new Exception("[WoWProcessWatcher] Stop(): watcher isn't started");
-                }
+                ProcessWatcherWMI.ProcessStarted -= ProcessWatcher_ProcessStarted;
+                ProcessWatcherWMI.ProcessExited -= ProcessWatcher_ProcessExited;
             }
         }
 
@@ -83,77 +126,6 @@ namespace AxTools.WoW
                         Task.Factory.StartNew(OnWowProcessStartup, process);
                         break;
                 }
-            }
-        }
-
-        private static void WowProcessStarted(object sender, EventArrivedEventArgs e)
-        {
-            try
-            {
-                int processId = Convert.ToInt32(e.NewEvent["ProcessID"]);
-                string processName = e.NewEvent["ProcessName"].ToString().ToLower();
-                if (processName == "wow.exe")
-                {
-                    Notify.TrayPopup("Unsupported WoW version", "AxTools doesn't support x86 versions of WoW client", NotifyUserType.Warn, true);
-                    Log.Error(string.Format("[{0}:{1}] [Process watcher] 32bit WoW processes aren't supported", processName, processId));
-                }
-                else if (processName == "wow-64.exe")
-                {
-                    WowProcess wowProcess = new WowProcess(processId);
-                    List.Add(wowProcess);
-                    Log.Info(string.Format("{0} [Process watcher] Process started, {1} total", wowProcess, List.Count));
-                    Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(string.Format("[{0}:{1}] [Process watcher] Process started with error: {2}", e.NewEvent["ProcessName"], e.NewEvent["ProcessID"], ex.Message));
-            }
-            finally
-            {
-                e.NewEvent.Dispose();
-            }
-        }
-
-        private static void WowProcessStopped(object sender, EventArrivedEventArgs e)
-        {
-            try
-            {
-                if (e.NewEvent["ProcessName"].ToString().ToLower() == "wow-64.exe")
-                {
-                    int pid = Convert.ToInt32(e.NewEvent["ProcessID"]);
-                    string name = e.NewEvent["ProcessName"].ToString().Substring(0, e.NewEvent["ProcessName"].ToString().Length - 4);
-                    WowProcess pWowProcess = List.FirstOrDefault(x => x.ProcessID == pid);
-                    if (pWowProcess != null)
-                    {
-                        if (WoWManager.Hooked && WoWManager.WoWProcess.ProcessID == pWowProcess.ProcessID)
-                        {
-                            WoWManager.Unhook();
-                        }
-                        pWowProcess.Dispose();
-                        Log.Info(string.Format("[{0}:{1}] [WoW hook] Memory manager disposed", name, pid));
-                        if (List.Remove(pWowProcess))
-                        {
-                            Log.Info(string.Format("[{0}:{1}] [Process watcher] Process closed, {2} total", name, pid, List.Count));
-                        }
-                        else
-                        {
-                            Log.Error(string.Format("[{0}:{1}] [Process watcher] Can't delete WowProcess instance", name, pid));
-                        }
-                    }
-                    else
-                    {
-                        Log.Error(string.Format("[{0}:{1}] [Process watcher] Closed WoW process not found", name, pid));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(string.Format("[{0}:{1}] [Process watcher] Process stopped with error: {2}", e.NewEvent["ProcessName"], e.NewEvent["ProcessID"], ex.Message));
-            }
-            finally
-            {
-                e.NewEvent.Dispose();
             }
         }
 

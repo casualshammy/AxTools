@@ -35,7 +35,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.2.26.1427</AssemblyVersion>
+    <AssemblyVersion>12.2.26.1461</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -164,6 +164,7 @@
     <Compile Include="Forms\Helpers\RadarObject.cs" />
     <Compile Include="Forms\Helpers\RadarShowMode.cs" />
     <Compile Include="Helpers\AppFolders.cs" />
+    <Compile Include="Helpers\ProcessWatcherWMI.cs" />
     <Compile Include="Helpers\ErrorProviderExt.cs" />
     <Compile Include="Helpers\MemoryManagement\Imports.cs" />
     <Compile Include="Helpers\MemoryManagement\MarshalCache.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="Helpers\MemoryManagement\SafeHandle.cs" />
     <Compile Include="Helpers\Notify.cs" />
     <Compile Include="Helpers\ProcessWatcher.cs" />
+    <Compile Include="WinAPI\TaskScheduler.cs" />
     <Compile Include="Helpers\VersionExt.cs" />
     <Compile Include="Services\AddonsBackup.cs" />
     <Compile Include="Services\Clicker.cs" />
@@ -398,6 +400,7 @@
   <ItemGroup>
     <None Include="Resources\Ashran.lua" />
     <None Include="Resources\Axio.Lab CA.crt" />
+    <None Include="Resources\axtools-start.bin" />
     <None Include="Resources\repeat_7959.png" />
   </ItemGroup>
   <ItemGroup>
@@ -414,6 +417,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
+    <None Include="Resources\axtools-start.xml" />
     <None Include="Resources\dialog_warning.png" />
     <None Include="Resources\dialog_information.png" />
     <None Include="Resources\dialog_error.png" />

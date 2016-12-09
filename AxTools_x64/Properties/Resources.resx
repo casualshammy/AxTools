@@ -166,4 +166,7 @@
   <data name="Axio_Lab_CA" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Axio.Lab CA.crt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="axtools_start" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\axtools-start.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

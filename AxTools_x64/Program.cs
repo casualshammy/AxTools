@@ -13,6 +13,7 @@ using WindowsFormsAero.TaskDialog;
 using AxTools.Forms.Helpers;
 using AxTools.Helpers;
 using AxTools.Properties;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace AxTools
@@ -147,6 +148,27 @@ namespace AxTools
                 MessageBox.Show(ex.Message);
             }
 
+            // 08.12.2016
+            try
+            {
+                RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
+                if (regVersion != null)
+                {
+                    if (regVersion.GetValue("AxTools") != null)
+                    {
+                        regVersion.DeleteValue("AxTools");
+                        regVersion.Close();
+                        string xml = Encoding.Unicode.GetString(Resources.axtools_start).Replace("<Command></Command>", string.Format("<Command>{0}</Command>", Application.ExecutablePath));
+                        string xmlPath = string.Format("{0}\\{1}.xml", AppFolders.TempDir, Globals.TaskSchedulerTaskname);
+                        File.WriteAllText(xmlPath, xml, Encoding.Unicode);
+                        WinAPI.TaskScheduler.CreateTask(Globals.TaskSchedulerTaskname, xmlPath);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private static void InstallRootCertificate()
