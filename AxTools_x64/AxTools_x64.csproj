@@ -35,7 +35,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.2.26.1461</AssemblyVersion>
+    <AssemblyVersion>12.2.26.1468</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -164,15 +164,13 @@
     <Compile Include="Forms\Helpers\RadarObject.cs" />
     <Compile Include="Forms\Helpers\RadarShowMode.cs" />
     <Compile Include="Helpers\AppFolders.cs" />
-    <Compile Include="Helpers\ProcessWatcherWMI.cs" />
     <Compile Include="Helpers\ErrorProviderExt.cs" />
     <Compile Include="Helpers\MemoryManagement\Imports.cs" />
     <Compile Include="Helpers\MemoryManagement\MarshalCache.cs" />
     <Compile Include="Helpers\MemoryManagement\MemoryManager.cs" />
     <Compile Include="Helpers\MemoryManagement\SafeHandle.cs" />
     <Compile Include="Helpers\Notify.cs" />
-    <Compile Include="Helpers\ProcessWatcher.cs" />
-    <Compile Include="WinAPI\TaskScheduler.cs" />
+    <Compile Include="Helpers\ProcessWatcherWMI.cs" />
     <Compile Include="Helpers\VersionExt.cs" />
     <Compile Include="Services\AddonsBackup.cs" />
     <Compile Include="Services\Clicker.cs" />

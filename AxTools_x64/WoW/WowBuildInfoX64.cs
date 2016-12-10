@@ -8,6 +8,28 @@ namespace AxTools.WoW
 
         #region Comments
 
+        //internal const int PlayerZoneID = 0x1735880;
+        //internal const int ZoneText = 0x1734BE0;
+        //internal const int ChatBuffer = 0x1736250;
+        //internal const int PlayerPtr = 0x1694B10; // Script_GetCurrentTitle
+        //internal const int NameCacheBase = 0x0;
+        //internal const int GameState = 0x1734705;
+        //internal const int GlueState = 0x155862C; // Search for string "Copy request %d finished"
+        //internal const int LastHardwareAction = 0x14BD468;
+        //internal const int FocusedWidget = 0x14B1010; // Script_GetCurrentKeyBoardFocus
+        //internal const int BlackMarketNumItems = 0x17E6FC0; // Script_C_BlackMarket.GetItemInfoByIndex
+        //internal const int Possible_NotLoadingScreen = 0x11FC734; // go to upper functions, look for strings there
+        //internal const int KnownSpellsCount = 0x17937A0;
+        //internal const int BlackMarketItems = 0x17E6FC8; // Script_C_BlackMarket.GetItemInfoByIndex
+        //internal const int KnownSpells = 0x17937A8;
+        //internal const int MouseoverGUID = 0x17359F0; // Search for string "Current Object Track"
+        //internal const int TickCount = 0x14B038C; // Uper function: Script_GetSessionTime
+        //internal const int PlayerIsLooting = 0x17AA2CD;
+        //internal const int ChatIsOpened = 0x14CA470; // CheatEngine :(
+        //internal const int ObjectManager = 0x156EC50;
+        //internal const int PlayerName = 0x181F0B0;
+        //internal const int UIFrameBase = 0x14BD460; // Script_EnumerateFrames
+
         /*
         internal static readonly int LastHardwareAction = 0x1446208; // [int] CGGameUI::UpdatePlayerAFK / WRITE
         internal static readonly int TickCount = 0x1439160; // [int]
@@ -125,31 +147,6 @@ namespace AxTools.WoW
         internal const int ZoneText = 0x17D3C90;
         internal const int UIFrameBase = 0x154F700;
         internal const int NameCacheBase = 0x151DCE8;
-
-
-        //internal const int PlayerZoneID = 0x1735880;
-        //internal const int ZoneText = 0x1734BE0;
-        //internal const int ChatBuffer = 0x1736250;
-        //internal const int PlayerPtr = 0x1694B10; // Script_GetCurrentTitle
-        //internal const int NameCacheBase = 0x0;
-        //internal const int GameState = 0x1734705;
-        //internal const int GlueState = 0x155862C; // Search for string "Copy request %d finished"
-        //internal const int LastHardwareAction = 0x14BD468;
-        //internal const int FocusedWidget = 0x14B1010; // Script_GetCurrentKeyBoardFocus
-        //internal const int BlackMarketNumItems = 0x17E6FC0; // Script_C_BlackMarket.GetItemInfoByIndex
-        //internal const int Possible_NotLoadingScreen = 0x11FC734; // go to upper functions, look for strings there
-        //internal const int KnownSpellsCount = 0x17937A0;
-        //internal const int BlackMarketItems = 0x17E6FC8; // Script_C_BlackMarket.GetItemInfoByIndex
-        //internal const int KnownSpells = 0x17937A8;
-        //internal const int MouseoverGUID = 0x17359F0; // Search for string "Current Object Track"
-        //internal const int TickCount = 0x14B038C; // Uper function: Script_GetSessionTime
-        //internal const int PlayerIsLooting = 0x17AA2CD;
-        //internal const int ChatIsOpened = 0x14CA470; // CheatEngine :(
-        //internal const int ObjectManager = 0x156EC50;
-        //internal const int PlayerName = 0x181F0B0;
-        //internal const int UIFrameBase = 0x14BD460; // Script_EnumerateFrames
-
-        
 
         #endregion
 

@@ -3,18 +3,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
 using AxTools.Services.PingerHelpers;
-using AxTools.WinAPI;
 using AxTools.WoW.PluginSystem;
 using Components.Forms;
 using MetroFramework;
 using MetroFramework.Forms;
+using Microsoft.Win32;
 using Settings = AxTools.Helpers.Settings;
 
 namespace AxTools.Forms
@@ -75,13 +74,15 @@ namespace AxTools.Forms
             TextBox4.Text = settings.WoWCustomWindowRectangle.Y.ToString();
             try
             {
-                ScheduledTaskInfo info = WinAPI.TaskScheduler.GetTaskInfo(Globals.TaskSchedulerTaskname);
-                CheckBoxStartAxToolsWithWindows.Checked = info != null && info.TaskToRun == Application.ExecutablePath;
+                using (RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run"))
+                {
+                    CheckBoxStartAxToolsWithWindows.Checked = regVersion != null && regVersion.GetValue("AxTools") != null && regVersion.GetValue("AxTools").ToString() == Application.ExecutablePath;
+                }
             }
             catch (Exception ex)
             {
                 CheckBoxStartAxToolsWithWindows.Checked = false;
-                Log.Error("Error occured then trying to open task [" + Globals.TaskSchedulerTaskname + "]: " + ex.Message);
+                Log.Error("Error occured then trying to open registry key [SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run]: " + ex.Message);
             }
             toolTip.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
         }
@@ -209,10 +210,13 @@ namespace AxTools.Forms
             {
                 try
                 {
-                    string xml = Encoding.Unicode.GetString(Resources.axtools_start).Replace("<Command></Command>", string.Format("<Command>{0}</Command>", Application.ExecutablePath));
-                    string xmlPath = string.Format("{0}\\{1}.xml", AppFolders.TempDir, Globals.TaskSchedulerTaskname);
-                    File.WriteAllText(xmlPath, xml, Encoding.Unicode);
-                    WinAPI.TaskScheduler.CreateTask(Globals.TaskSchedulerTaskname, xmlPath);
+                    RegistryKey regVersion =
+                        Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
+                    if (regVersion != null)
+                    {
+                        regVersion.SetValue("AxTools", Application.ExecutablePath);
+                        regVersion.Close();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -223,7 +227,16 @@ namespace AxTools.Forms
             {
                 try
                 {
-                    WinAPI.TaskScheduler.DeleteTask(Globals.TaskSchedulerTaskname);
+                    RegistryKey regVersion =
+                        Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
+                    if (regVersion != null)
+                    {
+                        if (regVersion.GetValue("AxTools") != null)
+                        {
+                            regVersion.DeleteValue("AxTools");
+                            regVersion.Close();
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {

@@ -96,4 +96,16 @@ namespace AxTools.Helpers
 
     }
 
+    internal class ProcessInfo
+    {
+        internal readonly string ProcessName;
+        internal readonly int ProcessID;
+
+        internal ProcessInfo(int id, string name)
+        {
+            ProcessName = name;
+            ProcessID = id;
+        }
+    }
+
 }

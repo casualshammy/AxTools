@@ -7,6 +7,5 @@ namespace AxTools.Helpers
         internal static readonly string LogFileName = AppFolders.TempDir + "\\AxTools.log";
         internal static readonly VersionExt AppVersion = new VersionExt(Assembly.GetExecutingAssembly().GetName().Version);
         internal static readonly string PluginsURL = "https://axio.name/axtools/plugins/";
-        internal static readonly string TaskSchedulerTaskname = "axtools-start";
     }
 }
