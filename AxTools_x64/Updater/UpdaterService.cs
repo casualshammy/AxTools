@@ -21,6 +21,7 @@ namespace AxTools.Updater
     {
         private static readonly System.Timers.Timer _timer = new System.Timers.Timer(600000);
         private static readonly string DistrDirectory = AppFolders.TempDir + "\\update";
+        private static readonly string[] JunkFiles = {};
         private static string _updateFileURL;
         private const string UpdateFileDnsTxt = "axtools-update-file-1.axio.name";
         private static string _hardwareID;
@@ -30,6 +31,30 @@ namespace AxTools.Updater
             _timer.Elapsed += timer_Elapsed;
             _timer.Start();
             OnElapsed();
+        }
+
+        internal static void ApplyUpdate(string updateDir, string axtoolsDir)
+        {
+            Utils.DirectoryCopy(updateDir, axtoolsDir, true);
+            DirectoryInfo pluginsDirectoryInfo = new DirectoryInfo(Path.Combine(axtoolsDir, "pluginsAssemblies"));
+            if (pluginsDirectoryInfo.Exists)
+            {
+                pluginsDirectoryInfo.Delete(true);
+            }
+            foreach (string i in JunkFiles)
+            {
+                // ReSharper disable once RedundantEmptyFinallyBlock
+                try
+                {
+                    File.Delete(Path.Combine(axtoolsDir, i));
+                }
+                finally { }
+            }
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Path.Combine(axtoolsDir, "AxTools.exe"),
+                WorkingDirectory = axtoolsDir
+            });
         }
 
         private static void timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -219,15 +244,11 @@ namespace AxTools.Updater
         private static void ApplicationOnApplicationExit(object sender, EventArgs eventArgs)
         {
             Application.ApplicationExit -= ApplicationOnApplicationExit;
-            FileInfo updaterExe = new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
-            if (updaterExe != null)
+            Process.Start(new ProcessStartInfo
             {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = updaterExe.FullName,
-                    Arguments = string.Format("-update-dir \"{0}\" -axtools-dir \"{1}\"", DistrDirectory, Application.StartupPath)
-                });
-            }
+                FileName = Path.Combine(DistrDirectory, "AxTools.exe"),
+                Arguments = string.Format("-update-dir \"{0}\" -axtools-dir \"{1}\"", DistrDirectory, Application.StartupPath) // if you change arguments, don't forget to change regex in <ApplyUpdate> method
+            });
         }
 
         private static string GetUpdateFileURL(string hostname)

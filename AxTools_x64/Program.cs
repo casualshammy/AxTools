@@ -1,8 +1,9 @@
 ﻿using AxTools.Forms;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
@@ -13,7 +14,7 @@ using WindowsFormsAero.TaskDialog;
 using AxTools.Forms.Helpers;
 using AxTools.Helpers;
 using AxTools.Properties;
-using Microsoft.Win32;
+using AxTools.Updater;
 using Newtonsoft.Json;
 
 namespace AxTools
@@ -23,18 +24,18 @@ namespace AxTools
         internal static event Action Exit;
 
         [STAThread]
-        private static void Main()
+        private static void Main(string[] args)
         {
-            bool newInstance;
-            using (new Mutex(true, "AxToolsMainExecutable", out newInstance))
+            if (args.Length == 0)
             {
-                if (newInstance)
+                bool newInstance;
+                using (new Mutex(true, "AxToolsMainExecutable", out newInstance))
                 {
-                    if (Environment.OSVersion.Version >= new Version(6, 1))
+                    if (newInstance)
                     {
-                        using (WindowsIdentity p = WindowsIdentity.GetCurrent())
+                        if (Environment.OSVersion.Version >= new Version(6, 1))
                         {
-                            if (p != null)
+                            using (WindowsIdentity p = WindowsIdentity.GetCurrent())
                             {
                                 WindowsPrincipal pricipal = new WindowsPrincipal(p);
                                 if (!pricipal.IsInRole(WindowsBuiltInRole.Administrator))
@@ -43,30 +44,34 @@ namespace AxTools
                                     return;
                                 }
                             }
+                            Application.EnableVisualStyles();
+                            Application.SetCompatibleTextRenderingDefault(false);
+                            WebRequest.DefaultWebProxy = null;
+                            DeleteTempFolder();
+                            Legacy();
+                            InstallRootCertificate();
+                            Log.Info(string.Format("[AxTools] Starting application... ({0})", Globals.AppVersion));
+                            Application.Run(MainForm.Instance = new MainForm());
+                            Log.Info("[AxTools] Application is closed");
+                            if (Exit != null)
+                            {
+                                Exit();
+                            }
                         }
-                        Application.EnableVisualStyles();
-                        Application.SetCompatibleTextRenderingDefault(false);
-                        WebRequest.DefaultWebProxy = null;
-                        DeleteTempFolder();
-                        Legacy();
-                        InstallRootCertificate();
-                        Log.Info(string.Format("[AxTools] Starting application... ({0})", Globals.AppVersion));
-                        Application.Run(MainForm.Instance = new MainForm());
-                        Log.Info("[AxTools] Application is closed");
-                        if (Exit != null)
+                        else
                         {
-                            Exit();
+                            MessageBox.Show("This program works only on Windows 7 or higher", "AxTools", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                     else
                     {
-                        MessageBox.Show("This program works only on Windows 7 or higher", "AxTools", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        TaskDialog.Show("This program is already running", "AxTools", "", TaskDialogButton.OK, TaskDialogIcon.Warning);
                     }
                 }
-                else
-                {
-                    TaskDialog.Show("This program is already running", "AxTools", "", TaskDialogButton.OK, TaskDialogIcon.Warning);
-                }
+            }
+            else
+            {
+                ProcessArgs(args);
             }
         }
 
@@ -161,6 +166,31 @@ namespace AxTools
                 store.Add(x509);
             }
             store.Close();
+        }
+
+        private static void ProcessArgs(string[] args)
+        {
+            string arguments = string.Join(" ", args);
+            Match updatedir = new Regex("-update-dir \"(.+)\"").Match(arguments);
+            Match axtoolsdir = new Regex("-axtools-dir \"(.+)\"").Match(arguments);
+            if (updatedir.Success && axtoolsdir.Success)
+            {
+                Update(updatedir.Groups[1].Value, axtoolsdir.Groups[1].Value);
+            }
+            else
+            {
+                TaskDialog.Show("Invalid command line arguments", "AxTools", "", TaskDialogButton.OK, TaskDialogIcon.Warning);
+                Main(new string[] {});
+            }
+        }
+
+        private static void Update(string updateDir, string axtoolsDir)
+        {
+            while (Process.GetProcessesByName("AxTools").Length > 1)
+            {
+                Thread.Sleep(500);
+            }
+            UpdaterService.ApplyUpdate(updateDir, axtoolsDir);
         }
 
     }

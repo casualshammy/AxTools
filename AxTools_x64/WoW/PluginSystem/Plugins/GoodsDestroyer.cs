@@ -113,10 +113,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
                             Thread.Sleep(1000); // pause to prevent disenchanting nonexistent item 
                             DoDisenchant();
                         }
-                        //else
-                        //{
-                        //    Log.Info("This character can't mill, prospect or disenchant!");
-                        //}
+                        if ((DateTime.UtcNow - LastNotifiedAboutCompletion).TotalSeconds >= 60)
+                        {
+                            this.ShowNotify("Task is completed", false, true);
+                            LastNotifiedAboutCompletion = DateTime.UtcNow;
+                        }
                     }
                     else
                     {
@@ -186,6 +187,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private readonly uint[] ores = {2770, 2771, 2772, 10620, 3858, 23424, 23425, 36909, 36912, 36910, 52185, 53038, 52183, 72093, 72094, 72103, 72092};
 
         private readonly string someRandomString = Utilities.GetRandomString(6, true);
+
+        private DateTime LastNotifiedAboutCompletion = DateTime.MinValue;
 
         #endregion
 
