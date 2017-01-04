@@ -58,7 +58,7 @@ namespace AxTools.WoW
                                 IntPtr enterCode = new IntPtr(0x0D);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, enterCode, IntPtr.Zero);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, enterCode, IntPtr.Zero);
-                                Log.Info(string.Format("{0} [Account manager] Credendials have been entered [{1}]", wowProcess, wowAccount.Login));
+                                Log.Info(string.Format("{0} [Account manager] Credendials have been entered [{1}]", wowProcess, Utils.SecureString(wowAccount.Login)));
                                 break;
                             }
                         }

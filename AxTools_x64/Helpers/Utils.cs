@@ -253,5 +253,22 @@ namespace AxTools.Helpers
             }
         }
 
+        internal static string SecureString(string input)
+        {
+            int[] indexesToHide = new int[input.Length/2];
+            for (int i = 0; i < indexesToHide.Length; i++)
+            {
+                indexesToHide[i] = Rnd.Next(0, input.Length);
+            }
+            StringBuilder builder = new StringBuilder(input.Length);
+            int counter = 0;
+            foreach (char c in input)
+            {
+                builder.Append(indexesToHide.Contains(counter) ? '*' : c);
+                counter++;
+            }
+            return builder.ToString();
+        }
+
     }
 }

@@ -10,4 +10,4 @@ del "H:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\_updater1.zip"
 "H:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\_update1.json"
 pause
 "F:\programs\WinSCP\WinSCP.exe" /console /script="H:\Dropbox\Projects\AxTools\AxTools_x64\_makeReleaseWinSCP.txt"
-cscs "C:\Program Files (x86)\AxTools\plugins\_pack_and_send.cs"
+"F:\programs\luarocks\lua5.1.exe" "C:\Program Files (x86)\AxTools\plugins\_pack_and_send.lua"
