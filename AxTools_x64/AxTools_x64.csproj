@@ -205,6 +205,7 @@
     <Compile Include="WoW\Helpers\ChatMsg.cs" />
     <Compile Include="WoW\Helpers\MoveHelper.cs" />
     <Compile Include="WoW\Helpers\SafeTimer.cs" />
+    <Compile Include="WoW\PlayerNamesOnlineDB.cs" />
     <Compile Include="WoW\PluginSystem\PluginContainer.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.cs">
       <SubType>Form</SubType>
