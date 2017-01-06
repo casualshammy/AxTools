@@ -146,7 +146,7 @@ namespace AxTools.WoW
         internal const int BlackMarketNumItems = 0x1886100;
         internal const int UIFrameBase = 0x154F700;
         internal const int ChatIsOpened = 0x155C488;
-        internal const int NameCacheBase = 0x151DCE8;
+        internal const int NameCacheBase = 0x15A88C8;
 
         #endregion
 

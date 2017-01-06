@@ -92,16 +92,13 @@ namespace AxTools.Updater
         private static void DownloadExtractUpdate(UpdateInfo0 updateInfo)
         {
             string distrZipFile = AppFolders.TempDir + "\\_distr.zip";
-            string updaterZipFile = AppFolders.TempDir + "\\_updater.zip";
             File.Delete(distrZipFile);
-            File.Delete(updaterZipFile);
             using (WebClient webClient = new WebClient())
             {
                 try
                 {
                     webClient.ForceBasicAuth(Settings.Instance.UserID, _hardwareID);
                     webClient.DownloadFile(updateInfo.DistrZipURL, distrZipFile);
-                    webClient.DownloadFile(updateInfo.UpdaterZipURL, updaterZipFile);
                     Log.Info("[Updater] Packages are downloaded!");
                 }
                 catch (Exception ex)
@@ -130,20 +127,6 @@ namespace AxTools.Updater
                 Log.Error("[Updater] Can't extract <distr> package: " + ex.Message);
                 return;
             }
-            try
-            {
-                using (ZipFile zip = new ZipFile(updaterZipFile, Encoding.UTF8))
-                {
-                    zip.Password = "3aTaTre6agA$-E+e";
-                    zip.ExtractAll(AppFolders.TempDir, ExtractExistingFileAction.OverwriteSilently);
-                }
-                Log.Info("[Updater] Package <updater> is extracted to " + AppFolders.TempDir);
-            }
-            catch (Exception ex)
-            {
-                Log.Error("[Updater] Can't extract <updater> package: " + ex.Message);
-                return;
-            }
             FileInfo updaterExe = new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
             if (updaterExe == null)
             {
@@ -151,7 +134,6 @@ namespace AxTools.Updater
                 return;
             }
             TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No), TaskDialogIcon.Information);
-            //Notify.SmartNotify("Update for AxTools is ready to install", "Click on icon to install", NotifyUserType.Info, true);
             Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 10, (sender, args) => MainForm.Instance.ActivateBrutal());
             if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
             {

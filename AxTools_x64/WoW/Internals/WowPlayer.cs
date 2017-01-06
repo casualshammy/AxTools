@@ -115,30 +115,14 @@ namespace AxTools.WoW.Internals
                 string temp;
                 if (!Names.TryGetValue(GUID, out temp))
                 {
-                    bool existInOnlineDB = true;
-                    temp = GetNameFromOnlineDBSafe();
+                    temp = GetNameFromMemorySafe();
                     if (string.IsNullOrWhiteSpace(temp))
                     {
-                        existInOnlineDB = false;
-                        temp = GetNameFromMemorySafe();
-                        if (string.IsNullOrWhiteSpace(temp))
-                        {
-                            temp = Task.Factory.StartNew<string>(GetNameFromLuaSafe).Result;
-                        }
+                        temp = Task.Factory.StartNew<string>(GetNameFromLuaSafe).Result;
                     }
                     if (!string.IsNullOrWhiteSpace(temp))
                     {
                         Names.Add(GUID, temp);
-                        if (!existInOnlineDB)
-                        {
-                            Task.Factory.StartNew(() =>
-                            {
-                                if (!PlayerNamesOnlineDB.SendPlayerName(GUID, temp))
-                                {
-                                    Log.Error("PlayerNamesOnlineDB.SendPlayerName returned FALSE!");
-                                }
-                            });
-                        }
                     }
                 }
                 return temp ?? "UNKNOWN";
@@ -179,18 +163,6 @@ namespace AxTools.WoW.Internals
                 // ReSharper disable ImpureMethodCallOnReadonlyValueField
                 return GameFunctions.LuaGetFunctionReturn("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
                 // ReSharper restore ImpureMethodCallOnReadonlyValueField
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private string GetNameFromOnlineDBSafe()
-        {
-            try
-            {
-                return PlayerNamesOnlineDB.GetPlayerName(GUID);
             }
             catch
             {
