@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
 
 namespace AxTools.WoW.Internals

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AxTools.Helpers;
 using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Internals
@@ -93,7 +92,33 @@ namespace AxTools.WoW.Internals
         ///     Gets the class of the unit.
         /// </summary>
         public readonly WowPlayerClass Class;
-        
+
+        private int castingSpellID = -1;
+        public int CastingSpellID
+        {
+            get
+            {
+                if (castingSpellID == -1)
+                {
+                    castingSpellID = (int) WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitCastingID);
+                }
+                return castingSpellID;
+            }
+        }
+
+        private int channelSpellID = -1;
+        public int ChannelSpellID
+        {
+            get
+            {
+                if (channelSpellID == -1)
+                {
+                    channelSpellID = (int) WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID);
+                }
+                return channelSpellID;
+            }
+        }
+
         protected WoWGUID MGUID;
         public WoWGUID GUID
         {

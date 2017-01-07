@@ -118,6 +118,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         GameFunctions.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
+                    // ReSharper disable once RedundantAssignment
                     else if (fishingSettings.LegionMargossSupport && (baitItemID = GetMargossLure(me)) != 0)
                     {
                         Thread.Sleep(Utils.Rnd.Next(1000, 2000));

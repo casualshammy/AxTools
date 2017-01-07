@@ -5,6 +5,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
 {
     public partial class GoodsDestroyerConfig : Form
     {
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private GoodsDestroyerSettings settings;
 
         public GoodsDestroyerConfig(GoodsDestroyerSettings settingsInstance)

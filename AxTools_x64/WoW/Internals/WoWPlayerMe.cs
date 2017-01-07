@@ -13,32 +13,6 @@ namespace AxTools.WoW.Internals
 
         private readonly PlayerInventoryAndContainers inventoryAndContainers;
 
-        private uint castingSpellID;
-        public uint CastingSpellID
-        {
-            get
-            {
-                if (castingSpellID == 0)
-                {
-                    castingSpellID = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitCastingID);
-                }
-                return castingSpellID;
-            }
-        }
-
-        private uint channelSpellID;
-        public uint ChannelSpellID
-        {
-            get
-            {
-                if (channelSpellID == 0)
-                {
-                    channelSpellID = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID);
-                }
-                return channelSpellID;
-            }
-        }
-
         private bool rotationRead;
         private float rotation;
         public float Rotation
@@ -84,6 +58,7 @@ namespace AxTools.WoW.Internals
         {
             get { return Speed > 0f; }
         }
+    
     }
 }
 // ReSharper restore InconsistentNaming

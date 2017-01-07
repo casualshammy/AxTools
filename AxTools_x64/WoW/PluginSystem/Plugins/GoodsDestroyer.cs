@@ -113,10 +113,10 @@ namespace AxTools.WoW.PluginSystem.Plugins
                             Thread.Sleep(1000); // pause to prevent disenchanting nonexistent item 
                             DoDisenchant();
                         }
-                        if ((DateTime.UtcNow - LastNotifiedAboutCompletion).TotalSeconds >= 60)
+                        if ((DateTime.UtcNow - lastNotifiedAboutCompletion).TotalSeconds >= 60)
                         {
                             this.ShowNotify("Task is completed", false, true);
-                            LastNotifiedAboutCompletion = DateTime.UtcNow;
+                            lastNotifiedAboutCompletion = DateTime.UtcNow;
                         }
                     }
                     else
@@ -188,7 +188,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         private readonly string someRandomString = Utilities.GetRandomString(6, true);
 
-        private DateTime LastNotifiedAboutCompletion = DateTime.MinValue;
+        private DateTime lastNotifiedAboutCompletion = DateTime.MinValue;
 
         #endregion
 

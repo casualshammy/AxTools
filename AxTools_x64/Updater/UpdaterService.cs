@@ -22,8 +22,9 @@ namespace AxTools.Updater
         private static readonly System.Timers.Timer _timer = new System.Timers.Timer(600000);
         private static readonly string DistrDirectory = AppFolders.TempDir + "\\update";
         private static readonly string[] JunkFiles = {};
+        private static readonly string[] JunkFolders = { };
         private static string _updateFileURL;
-        private const string UpdateFileDnsTxt = "axtools-update-file-1.axio.name";
+        private const string UpdateFileDnsTxt = "axtools-update-file-2.axio.name";
         private static string _hardwareID;
 
         internal static void Start()
@@ -48,7 +49,15 @@ namespace AxTools.Updater
                 {
                     File.Delete(Path.Combine(axtoolsDir, i));
                 }
-                finally { }
+                catch {/* */}
+            }
+            foreach (string junkFolder in JunkFolders)
+            {
+                try
+                {
+                    Directory.Delete(Path.Combine(axtoolsDir, junkFolder), true);
+                }
+                catch {/* */}
             }
             Process.Start(new ProcessStartInfo
             {
@@ -89,7 +98,7 @@ namespace AxTools.Updater
             });
         }
 
-        private static void DownloadExtractUpdate(UpdateInfo0 updateInfo)
+        private static void DownloadExtractUpdate()
         {
             string distrZipFile = AppFolders.TempDir + "\\_distr.zip";
             File.Delete(distrZipFile);
@@ -98,7 +107,8 @@ namespace AxTools.Updater
                 try
                 {
                     webClient.ForceBasicAuth(Settings.Instance.UserID, _hardwareID);
-                    webClient.DownloadFile(updateInfo.DistrZipURL, distrZipFile);
+                    byte[] distrFile = webClient.UploadData(_updateFileURL, "POST", Encoding.UTF8.GetBytes("get-update-package"));
+                    File.WriteAllBytes(distrZipFile, distrFile);
                     Log.Info("[Updater] Packages are downloaded!");
                 }
                 catch (Exception ex)
@@ -159,7 +169,7 @@ namespace AxTools.Updater
                 using (WebClient webClient = new WebClient())
                 {
                     webClient.ForceBasicAuth(Settings.Instance.UserID, _hardwareID);
-                    updateString = webClient.DownloadString(_updateFileURL);
+                    updateString = webClient.UploadString(_updateFileURL, "POST", "get-update-info");
                 }
             }
             catch (WebException webEx)
@@ -167,7 +177,7 @@ namespace AxTools.Updater
                 if (webEx.Status == WebExceptionStatus.ProtocolError && webEx.Response is HttpWebResponse && ((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Unauthorized)
                 {
                     //Notify.SmartNotify("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact devs", NotifyUserType.Error, false);
-                    Notify.TrayPopup("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact devs", NotifyUserType.Error, false);
+                    Notify.TrayPopup("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact dev", NotifyUserType.Error, false);
                     _timer.Elapsed -= timer_Elapsed;
                     Log.Info(string.Format("[Updater] Your credentials are invalid. Updater is disabled. Please contact devs (status {0}): {1}", webEx.Status, webEx.Message));
                 }
@@ -193,14 +203,14 @@ namespace AxTools.Updater
             {
                 try
                 {
-                    UpdateInfo0 updateInfo = UpdateInfo0.FromJSON(updateString);
+                    UpdateInfo2 updateInfo = UpdateInfo2.FromJSON(updateString);
                     if (updateInfo != null)
                     {
                         if (Globals.AppVersion != updateInfo.Version)
                         {
                             Log.Info(string.Format("[Updater] Server version: <{0}>, local version: <{1}>; downloading new version...", updateInfo.Version, Globals.AppVersion));
                             _timer.Elapsed -= timer_Elapsed;
-                            DownloadExtractUpdate(updateInfo);
+                            DownloadExtractUpdate();
                         }
                         else
                         {
