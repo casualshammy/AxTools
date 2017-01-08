@@ -13,6 +13,6 @@ pause
 "F:\programs\WinSCP\WinSCP.com" /command ^
 	"option batch abort" ^
 	"option confirm off" ^
-	"open sftp://root@axio.name:52852 -hostkey=""ssh-rsa 2048 ca:35:fb:e6:d0:c8:6b:e4:ed:2f:42:2f:20:5c:4e:5b"" -privatekey=""F:\\programs\\Proxifier PE\\digitalocean-main.ppk""" ^
+	"open sftp://nginx@axio.name:52852 -hostkey=""ssh-rsa 2048 ca:35:fb:e6:d0:c8:6b:e4:ed:2f:42:2f:20:5c:4e:5b"" -privatekey=""F:\\programs\\Proxifier PE\\nginx@axio.name.ppk""" ^
 	"synchronize remote -nopermissions -transfer=binary ""..\_webservice"" ""/home/nginx/html/axio.name/axtools""" ^
 	"exit"
