@@ -93,27 +93,27 @@ namespace AxTools.WoW.Internals
         /// </summary>
         public readonly WowPlayerClass Class;
 
-        private int castingSpellID = -1;
-        public int CastingSpellID
+        private uint castingSpellID = uint.MaxValue;
+        public uint CastingSpellID
         {
             get
             {
-                if (castingSpellID == -1)
+                if (castingSpellID == uint.MaxValue)
                 {
-                    castingSpellID = (int) WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitCastingID);
+                    castingSpellID = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitCastingID);
                 }
                 return castingSpellID;
             }
         }
 
-        private int channelSpellID = -1;
-        public int ChannelSpellID
+        private uint channelSpellID = uint.MaxValue;
+        public uint ChannelSpellID
         {
             get
             {
-                if (channelSpellID == -1)
+                if (channelSpellID == uint.MaxValue)
                 {
-                    channelSpellID = (int) WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID);
+                    channelSpellID = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID);
                 }
                 return channelSpellID;
             }
