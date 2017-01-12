@@ -119,34 +119,34 @@ namespace AxTools.WoW
 
         internal static readonly byte[] WoWHash =
         {
-	        0xC2, 0x4F, 0x51, 0xB3, 0xCC, 0xBF, 0x15, 0x4A, 0xD8, 0xD1, 0x25, 0xFB, 0x72, 0x40, 0x36, 0x1C, 0x83, 0x35, 0x95, 0x74, 0xBE, 0xF3, 0x80, 0x65, 0xA1, 0xF5, 0x19, 0xDE, 0x3A, 0x24, 0xF6, 0x79
+	        0xDF, 0x15, 0x2E, 0x10, 0x5D, 0x5C, 0xF2, 0x92, 0x02, 0x1F, 0xCA, 0xCC, 0x9F, 0x36, 0x20, 0x36, 0x24, 0x78, 0x89, 0x61, 0xAD, 0x7A, 0xBA, 0x7F, 0x85, 0x6D, 0x3B, 0x77, 0xFC, 0x61, 0xE0, 0x9E
         };
 
         #endregion
 
         #region Static infos
 
-        internal const int KnownSpellsCount = 0x1832870;
-        internal const int PlayerZoneID = 0x17D4954;
-        internal const int LastHardwareAction = 0x154F708;
-        internal const int GlueState = 0x15EC48C;
-        internal const int GameState = 0x17D3C40;
-        internal const int PlayerPtr = 0x1733360;
-        internal const int TickCount = 0x154255C;
-        internal const int KnownSpells = 0x1832878;
-        internal const int FocusedWidget = 0x1543210;
-        internal const int NotLoadingScreen = 0x1293664;
-        internal const int ObjectManager = 0x1602B40;
-        internal const int ZoneText = 0x17D3C90;
-        internal const int PlayerName = 0x18BE420;
-        internal const int BlackMarketItems = 0x1886108;
-        internal const int ChatBuffer = 0x17D5000;
-        internal const int MouseoverGUID = 0x17D4AB8;
-        internal const int PlayerIsLooting = 0x184943D;
-        internal const int BlackMarketNumItems = 0x1886100;
-        internal const int UIFrameBase = 0x154F700;
-        internal const int ChatIsOpened = 0x155C488;
-        internal const int NameCacheBase = 0x15A88C8;
+        internal const int PlayerZoneID = 0x17DDCD0;
+        internal const int KnownSpellsCount = 0x183BC98;
+        internal const int GlueState = 0x15F549C;
+        internal const int LastHardwareAction = 0x1558858;
+        internal const int GameState = 0x17DCBDD;
+        internal const int PlayerPtr = 0x173C338;
+        internal const int TickCount = 0x154B6AC;
+        internal const int KnownSpells = 0x183BCA0;
+        internal const int FocusedWidget = 0x154C360;
+        internal const int ObjectManager = 0x160BBC0;
+        internal const int NotLoadingScreen = 0x129C664;
+        internal const int BlackMarketItems = 0x188F5D8;
+        internal const int PlayerName = 0x18C78D0;
+        internal const int ZoneText = 0x17DD008;
+        internal const int MouseoverGUID = 0x17DDED0;
+        internal const int BlackMarketNumItems = 0x188F5D0;
+        internal const int PlayerIsLooting = 0x185288D;
+        internal const int ChatBuffer = 0x17DE730;
+        internal const int ChatIsOpened = 0x1565618;
+        internal const int UIFrameBase = 0x1558850;
+        internal const int NameCacheBase = 0x15B1A78;
 
         #endregion
 
@@ -202,7 +202,7 @@ namespace AxTools.WoW
         internal const int UnitFlags = 0x190; // OK
         internal const int UnitMountDisplayID = 0x1BC; // OK
 
-        internal const int AuraCount1 = 0x2530; // OK
+        internal const int AuraCount1 = 0x2630; // OK
         internal const int AuraCount2 = 0x1DB0; // OK
         internal const int AuraTable1 = 0x1DB4; // OK
         internal const int AuraTable2 = 0x1DB8; // OK

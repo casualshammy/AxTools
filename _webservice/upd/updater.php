@@ -26,11 +26,13 @@ class ClientStatInfo {
 function LogInfo($message) {
 	$date = date('Y-m-d H:i:s');
 	file_put_contents("info.log", $date . " || " . $message . "\n", FILE_APPEND | LOCK_EX);
+	chmod("info.log", 0200);
 }
 
 function LogError($message) {
 	$date = date('Y-m-d H:i:s');
 	file_put_contents("error.log", $date . " || " . $message . "\n", FILE_APPEND | LOCK_EX);
+	chmod("error.log", 0200);
 }
 
 function GetHttpLogin() {
