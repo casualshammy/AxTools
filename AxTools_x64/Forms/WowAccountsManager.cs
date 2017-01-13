@@ -55,7 +55,7 @@ namespace AxTools.Forms
                 metroButtonWowAccountSaveUpdate.Text = "Add";
                 metroButtonWowAccountDelete.Enabled = false;
             }
-            metroButtonWowAccountSaveUpdate.Enabled = textBoxWowAccountPassword.Text.Trim().Length != 0 && Regex.IsMatch(textBoxWowAccountLogin.Text, "\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b");
+            metroButtonWowAccountSaveUpdate.Enabled = textBoxWowAccountPassword.Text.Trim().Length != 0 && Regex.IsMatch(textBoxWowAccountLogin.Text, "\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b", RegexOptions.IgnoreCase);
         }
 
         private void comboBoxWowAccounts_SelectedIndexChanged(object sender, EventArgs e)
