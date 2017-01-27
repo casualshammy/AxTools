@@ -146,7 +146,7 @@ namespace AxTools.WoW
         internal const int PlayerIsLooting = 0x18538ED;
         internal const int ChatIsOpened = 0x1566678;
         internal const int UIFrameBase = 0x15598B0;
-        internal const int NameCacheBase = 0x15B1A78;
+        internal const int NameCacheBase = 0x15B2AD8;
 
         #endregion
 
