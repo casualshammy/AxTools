@@ -5,6 +5,7 @@ AxTools_Dll_x64/x64/Release/.*
 packages/.*
 .*desktop.ini
 _webservice/upd/.+\.zip
+_webservice/plugins/.+?.zip
 syntax: glob
 AxTools.opensdf
 AxTools.sdf

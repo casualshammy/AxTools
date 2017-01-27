@@ -16,6 +16,7 @@ namespace Components.Forms
         private int startPosX;
         private int startPosY;
         private DateTime loadTime;
+        private IntPtr prevForegroundWindow;
 
         public PopupNotification(string title, string message, Image image, MetroColorStyle metroColorStyle)
         {
@@ -68,7 +69,9 @@ namespace Components.Forms
 
         public void Show(int timeout)
         {
+            prevForegroundWindow = NativeMethods.GetForegroundWindow();
             Timeout = timeout;
+            Shown += (sender, args) => NativeMethods.SetForegroundWindow(prevForegroundWindow);
             Show();
         }
 

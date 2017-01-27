@@ -36,34 +36,46 @@ namespace AxTools.Updater
 
         internal static void ApplyUpdate(string updateDir, string axtoolsDir)
         {
-            Utils.DirectoryCopy(updateDir, axtoolsDir, true);
-            DirectoryInfo pluginsDirectoryInfo = new DirectoryInfo(Path.Combine(axtoolsDir, "pluginsAssemblies"));
-            if (pluginsDirectoryInfo.Exists)
+            try
             {
-                pluginsDirectoryInfo.Delete(true);
-            }
-            foreach (string i in JunkFiles)
-            {
-                // ReSharper disable once RedundantEmptyFinallyBlock
-                try
+                Log.Info("Copying distr directory, updateDir: " + updateDir + "; axtoolsDir: " + axtoolsDir);
+                Utils.DirectoryCopy(updateDir, axtoolsDir, true);
+                DirectoryInfo pluginsDirectoryInfo = new DirectoryInfo(Path.Combine(axtoolsDir, "pluginsAssemblies"));
+                if (pluginsDirectoryInfo.Exists)
                 {
-                    File.Delete(Path.Combine(axtoolsDir, i));
+                    Log.Info("Deleting plugins assemblies directory...");
+                    pluginsDirectoryInfo.Delete(true);
                 }
-                catch {/* */}
-            }
-            foreach (string junkFolder in JunkFolders)
-            {
-                try
+                Log.Info("Deleting junk files...");
+                foreach (string i in JunkFiles)
                 {
-                    Directory.Delete(Path.Combine(axtoolsDir, junkFolder), true);
+                    // ReSharper disable once RedundantEmptyFinallyBlock
+                    try
+                    {
+                        File.Delete(Path.Combine(axtoolsDir, i));
+                        Log.Info("Junk file is deleted: " + Path.Combine(axtoolsDir, i));
+                    }
+                    catch {/* */}
                 }
-                catch {/* */}
+                foreach (string junkFolder in JunkFolders)
+                {
+                    try
+                    {
+                        Directory.Delete(Path.Combine(axtoolsDir, junkFolder), true);
+                    }
+                    catch {/* */}
+                }
+                Log.Info("Starting AxTools...");
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = Path.Combine(axtoolsDir, "AxTools.exe"),
+                    WorkingDirectory = axtoolsDir
+                });
             }
-            Process.Start(new ProcessStartInfo
+            catch (Exception ex)
             {
-                FileName = Path.Combine(axtoolsDir, "AxTools.exe"),
-                WorkingDirectory = axtoolsDir
-            });
+                TaskDialog.Show("Critical update error", "AxTools", ex.Message, TaskDialogButton.Close, TaskDialogIcon.Stop);
+            }
         }
 
         private static void timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -137,7 +149,7 @@ namespace AxTools.Updater
                 Log.Error("[Updater] Can't extract <distr> package: " + ex.Message);
                 return;
             }
-            FileInfo updaterExe = new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
+            FileInfo updaterExe = new DirectoryInfo(DistrDirectory).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
             if (updaterExe == null)
             {
                 Log.Error("[Updater] Can't find updater executable! Files: " + string.Join(", ", new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().Select(l => l.Name)));

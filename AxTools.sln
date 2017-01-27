@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_AttackFirst", "Wo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWPlugin_CombatRoutine", "WoWPlugins\WoWPlugin_CombatRoutine\WoWPlugin_CombatRoutine.csproj", "{9663DA87-0179-42CF-9546-D3D8021757A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talon's Vengeance Farmer", "WoWPlugins\Talon's Vengeance Farmer\Talon's Vengeance Farmer.csproj", "{DDBB62E4-A555-44AC-85D1-8A1534A600DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -493,6 +495,27 @@ Global
 		{9663DA87-0179-42CF-9546-D3D8021757A2}.Template|Win32.ActiveCfg = Release|Any CPU
 		{9663DA87-0179-42CF-9546-D3D8021757A2}.Template|x64.ActiveCfg = Release|Any CPU
 		{9663DA87-0179-42CF-9546-D3D8021757A2}.Template|x86.ActiveCfg = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Release|Win32.ActiveCfg = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Release|x64.ActiveCfg = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Release|x86.ActiveCfg = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Template|Any CPU.ActiveCfg = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Template|Any CPU.Build.0 = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Template|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Template|Mixed Platforms.Build.0 = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Template|Win32.ActiveCfg = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Template|x64.ActiveCfg = Release|Any CPU
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB}.Template|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -511,5 +534,6 @@ Global
 		{1EB1B6EA-12A4-4D0B-A92F-A21B34579B6D} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 		{EB709D73-EBF3-42F9-BD6B-F579D540122F} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 		{9663DA87-0179-42CF-9546-D3D8021757A2} = {3D634715-DB81-45D6-8812-701A66BFF21E}
+		{DDBB62E4-A555-44AC-85D1-8A1534A600DB} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 	EndGlobalSection
 EndGlobal

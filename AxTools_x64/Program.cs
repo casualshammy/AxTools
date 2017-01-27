@@ -2,6 +2,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Management;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
@@ -169,11 +171,13 @@ namespace AxTools
 
         private static void ProcessArgs(string[] args)
         {
-            string arguments = string.Join(" ", args);
-            Match updatedir = new Regex("-update-dir \"(.+)\"").Match(arguments);
-            Match axtoolsdir = new Regex("-axtools-dir \"(.+)\"").Match(arguments);
+            string arguments = Environment.CommandLine;
+            Log.Info("CMD arguments: " + arguments);
+            Match updatedir = new Regex("-update-dir \"(.+?)\"").Match(arguments);
+            Match axtoolsdir = new Regex("-axtools-dir \"(.+?)\"").Match(arguments);
             if (updatedir.Success && axtoolsdir.Success)
             {
+                Log.Info("Parsed update info, processing...");
                 Update(updatedir.Groups[1].Value, axtoolsdir.Groups[1].Value);
             }
             else
@@ -187,6 +191,7 @@ namespace AxTools
         {
             while (Process.GetProcessesByName("AxTools").Length > 1)
             {
+                Log.Info("Waiting for parent AxTools process...");
                 Thread.Sleep(500);
             }
             UpdaterService.ApplyUpdate(updateDir, axtoolsDir);
