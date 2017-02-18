@@ -23,6 +23,9 @@
         internal const int SND_ALIAS = 65536;
         internal const int SND_NODEFAULT = 2;
         internal const int WS_EX_TOPMOST = 0x00000008;
+        internal const int SW_SHOWNOACTIVATE = 4;
+        internal const int HWND_TOPMOST = -1;
+        internal const uint SWP_NOACTIVATE = 0x0010;
 
     }
 }

@@ -45,5 +45,15 @@ namespace Components.WinAPI
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        internal static extern bool SetWindowPos(
+             int hWnd,             // Window handle
+             int hWndInsertAfter,  // Placement-order handle
+             int X,                // Horizontal position
+             int Y,                // Vertical position
+             int cx,               // Width
+             int cy,               // Height
+             uint uFlags);         // Window positioning flags
+
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 using Components.WinAPI;
@@ -16,7 +18,7 @@ namespace Components.Forms
         private int startPosX;
         private int startPosY;
         private DateTime loadTime;
-        private IntPtr prevForegroundWindow;
+        //private IntPtr prevForegroundWindow;
 
         public PopupNotification(string title, string message, Image image, MetroColorStyle metroColorStyle)
         {
@@ -69,10 +71,23 @@ namespace Components.Forms
 
         public void Show(int timeout)
         {
-            prevForegroundWindow = NativeMethods.GetForegroundWindow();
+            //prevForegroundWindow = NativeMethods.GetForegroundWindow();
             Timeout = timeout;
-            Shown += (sender, args) => NativeMethods.SetForegroundWindow(prevForegroundWindow);
-            Show();
+            //Shown += (sender, args) =>
+            //{
+            //    Task.Run(() =>
+            //    {
+            //        Thread.Sleep(250);
+            //        NativeMethods.SetForegroundWindow(prevForegroundWindow);
+            //    });
+            //};
+            ShowInactiveTopmost(this);
+            base.Show();
+        }
+
+        public new void Show()
+        {
+            Show(7);
         }
 
         public new event EventHandler Click
@@ -212,6 +227,14 @@ namespace Components.Forms
         private T[] FindForms<T>() where T : Form
         {
             return (from object i in Application.OpenForms where i.GetType() == typeof(T) select i as T).ToArray();
+        }
+
+        private void ShowInactiveTopmost(Form frm)
+        {
+            NativeMethods.ShowWindow(frm.Handle, Win32Consts.SW_SHOWNOACTIVATE);
+            NativeMethods.SetWindowPos(frm.Handle.ToInt32(), Win32Consts.HWND_TOPMOST,
+            frm.Left, frm.Top, frm.Width, frm.Height,
+            Win32Consts.SWP_NOACTIVATE);
         }
 
     }

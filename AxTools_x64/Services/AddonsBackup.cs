@@ -21,6 +21,7 @@ namespace AxTools.Services
         private static bool _isBackingUp;
         private static Timer _timer;
         private static bool _serviceIsStarted;
+        private static readonly string[] FoldersToArchive = {"WTF", "Interface"};
         internal static event Action<bool> IsRunningChanged;
         internal static event Action<int> ProgressPercentageChanged;
 
@@ -210,8 +211,10 @@ namespace AxTools.Services
             using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
             {
                 zip.CompressionLevel = (CompressionLevel)_settings.WoWAddonsBackupCompressionLevel;
-                zip.AddDirectory(_settings.WoWDirectory + "\\WTF", "\\WTF");
-                zip.AddDirectory(_settings.WoWDirectory + "\\Interface", "\\Interface");
+                foreach (string dirName in FoldersToArchive)
+                {
+                    zip.AddDirectory(_settings.WoWDirectory + "\\" + dirName, "\\" + dirName);
+                }
                 zip.SaveProgress += AddonsBackup_SaveProgress;
                 zip.Save();
                 zip.SaveProgress -= AddonsBackup_SaveProgress;
