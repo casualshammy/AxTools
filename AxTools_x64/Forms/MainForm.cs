@@ -250,8 +250,9 @@ namespace AxTools.Forms
                 blackMarketTrackerToolStripMenuItem,
                 toolStripSeparator2
             });
-            Type[] nativePlugins = { typeof(Fishing), typeof(FlagReturner), typeof(GoodsDestroyer) };
-            foreach (IPlugin i in PluginManagerEx.LoadedPlugins.Where(i => nativePlugins.Contains(i.GetType())))
+            IPlugin[] sortedPlugins = PluginManagerEx.LoadedPlugins.OrderByDescending(l => settings.PluginsUsageStat.ContainsKey(l.Name) ? settings.PluginsUsageStat[l.Name] : 0).ToArray();
+            IPlugin[] topUsedPlugins = sortedPlugins.Take(3).ToArray();
+            foreach (IPlugin i in topUsedPlugins)
             {
                 IPlugin plugin = i;
                 ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) {Tag = plugin};
@@ -264,12 +265,12 @@ namespace AxTools.Forms
                 toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start only this plugin\r\nRight click to open settings" : "Left click to start only this plugin";
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
-            if (PluginManagerEx.LoadedPlugins.Count() > nativePlugins.Length)
+            if (sortedPlugins.Length > topUsedPlugins.Length)
             {
-                ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Custom plugins") as ToolStripMenuItem;
+                ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Other plugins") as ToolStripMenuItem;
                 if (customPlugins != null)
                 {
-                    foreach (IPlugin i in PluginManagerEx.LoadedPlugins.Where(i => !nativePlugins.Contains(i.GetType())))
+                    foreach (IPlugin i in sortedPlugins.Where(i => !topUsedPlugins.Select(l => l.Name).Contains(i.Name)))
                     {
                         IPlugin plugin = i;
                         try
