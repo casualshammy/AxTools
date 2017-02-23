@@ -114,7 +114,7 @@ namespace AxTools.Forms
 
             Task.Factory.StartNew(() =>
             {
-                Thread.Sleep(5000);
+                Thread.Sleep(6000);
                 BeginInvoke((MethodInvoker) (() => { labelHint.Visible = false; }));
             });
 
@@ -759,6 +759,10 @@ namespace AxTools.Forms
                         else if (e.Button == MouseButtons.Right)
                         {
                             MoveToWrapper(npc.Location);
+                        }
+                        else if (e.Button == MouseButtons.Middle)
+                        {
+                            Task.Run((Action) npc.Interact);
                         }
                         break;
                     }

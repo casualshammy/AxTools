@@ -181,7 +181,7 @@ namespace AxTools.Forms
             this.labelHint.Name = "labelHint";
             this.labelHint.Size = new System.Drawing.Size(123, 39);
             this.labelHint.TabIndex = 41;
-            this.labelHint.Text = "Left click: target/interact\r\nRight click: move to\r\nMouse wheel: zoom";
+            this.labelHint.Text = "Left click: target/interact\r\nMiddle click: interact with NPC\r\nRight click: move to\r\nMouse wheel: zoom";
             // 
             // WowRadar
             // 

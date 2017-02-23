@@ -13,10 +13,7 @@ namespace Components.Forms
     public partial class PopupNotification : BorderedMetroForm
     {
         private readonly System.Timers.Timer timer;
-        private int startPosX;
-        private int startPosY;
         private DateTime loadTime;
-        //private IntPtr prevForegroundWindow;
 
         public PopupNotification(string title, string message, Image image, MetroColorStyle metroColorStyle)
         {
@@ -69,18 +66,10 @@ namespace Components.Forms
 
         public void Show(int timeout)
         {
-            //prevForegroundWindow = NativeMethods.GetForegroundWindow();
+            IntPtr prevForegroundWindow = NativeMethods.GetForegroundWindow();
             Timeout = timeout;
-            //Shown += (sender, args) =>
-            //{
-            //    Task.Run(() =>
-            //    {
-            //        Thread.Sleep(250);
-            //        NativeMethods.SetForegroundWindow(prevForegroundWindow);
-            //    });
-            //};
-            ShowInactiveTopmost(this);
-            //base.Show();
+            base.Show();
+            NativeMethods.SetForegroundWindow(prevForegroundWindow);
         }
 
         public new void Show()
@@ -139,6 +128,8 @@ namespace Components.Forms
 
         private void SetLocation()
         {
+            int startPosX;
+            int startPosY;
             IntPtr taskbarHandle = NativeMethods.FindWindow("Shell_TrayWnd", null);
             APPBARDATA data = new APPBARDATA
             {
@@ -225,14 +216,6 @@ namespace Components.Forms
         private T[] FindForms<T>() where T : Form
         {
             return (from object i in Application.OpenForms where i.GetType() == typeof(T) select i as T).ToArray();
-        }
-
-        private void ShowInactiveTopmost(Form frm)
-        {
-            NativeMethods.ShowWindow(frm.Handle, Win32Consts.SW_SHOWNOACTIVATE);
-            NativeMethods.SetWindowPos(frm.Handle.ToInt32(), Win32Consts.HWND_TOPMOST,
-            frm.Left, frm.Top, frm.Width, frm.Height,
-            Win32Consts.SWP_NOACTIVATE);
         }
 
     }

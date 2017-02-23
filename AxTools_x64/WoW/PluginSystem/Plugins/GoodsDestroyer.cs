@@ -61,6 +61,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             {
                 herbs.Add(124106); // Felwort item id
             }
+            lastNotifiedAboutCompletion = DateTime.MinValue;
             (timer = this.CreateTimer(50, OnPulse)).Start();
         }
 
