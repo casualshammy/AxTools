@@ -31,7 +31,7 @@ namespace AxTools.WoW
                 {
                     if (wowProcess.IsValidBuild)
                     {
-                        if (GameFunctions.IsInGame_(wowProcess))
+                        if (GameFunctions.IsProcessInGame(wowProcess))
                         {
                             WoWProcess = wowProcess;
                             if (WoWProcess.Memory == null)

@@ -25,7 +25,7 @@ namespace AxTools.WoW
         {
             if (settings.WoWAntiKick)
             {
-                if (wowProcess.IsValidBuild && GameFunctions.IsInGame_(wowProcess))
+                if (wowProcess.IsValidBuild && GameFunctions.IsProcessInGame(wowProcess))
                 {
                     try
                     {

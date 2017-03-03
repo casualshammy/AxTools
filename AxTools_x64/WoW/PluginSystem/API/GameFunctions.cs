@@ -364,7 +364,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
-        internal static bool IsInGame_(WowProcess process)
+        internal static bool IsProcessInGame(WowProcess process)
         {
             if (process.Memory == null) return false;
             return process.Memory.Read<byte>(process.Memory.ImageBase + WowBuildInfoX64.GameState) == 1;

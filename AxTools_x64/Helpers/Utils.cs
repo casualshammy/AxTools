@@ -258,7 +258,12 @@ namespace AxTools.Helpers
             int[] indexesToHide = new int[input.Length/2];
             for (int i = 0; i < indexesToHide.Length; i++)
             {
-                indexesToHide[i] = Rnd.Next(0, input.Length);
+                int newValue = Rnd.Next(0, input.Length);
+                while (indexesToHide.Contains(newValue))
+                {
+                    newValue = Rnd.Next(0, input.Length);
+                }
+                indexesToHide[i] = newValue;
             }
             StringBuilder builder = new StringBuilder(input.Length);
             int counter = 0;
