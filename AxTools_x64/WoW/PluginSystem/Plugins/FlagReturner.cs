@@ -116,17 +116,17 @@ namespace AxTools.WoW.PluginSystem.Plugins
             {
                 case 3277:
                 case 5031:
-                    searchingObjects = new[] { "Флаг Альянса", "Флаг Орды" };
+                    searchingObjects = new[] { Wowhead.GetSpellInfo(23335).Name, Wowhead.GetSpellInfo(23333).Name }; // Флаг Альянса, Horde Flag
                     break;
                 case 3820:
                 case 5799:
-                    searchingObjects = new[] { "Флаг Пустоверти" };
+                    searchingObjects = new[] {  Wowhead.GetSpellInfo(34976).Name }; // Флаг Пустоверти
                     break;
                 case 6051:
-                    searchingObjects = new[] { "Сфера могущества" }; // entry ids: 212091, 212092, 212093, 212094
+                    searchingObjects = new[] { Wowhead.GetSpellInfo(121164).Name }; // entry ids: 212091, 212092, 212093, 212094; Сфера могущества
                     break;
                 case 6665:
-                    searchingObjects = new[] { "Вагонетка Альянса", "Вагонетка Орды" };
+                    searchingObjects = new[] { Wowhead.GetSpellInfo(140876).Name, Wowhead.GetSpellInfo(141210).Name }; // Вагонетка Альянса, Вагонетка Орды
                     break;
                 case 3703:
                     searchingObjects = new[] { "Хранилище гильдии" };

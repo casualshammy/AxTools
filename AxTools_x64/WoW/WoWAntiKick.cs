@@ -11,6 +11,7 @@ namespace AxTools.WoW
         private readonly WowProcess wowProcess;
         private readonly Timer timer;
         private int maxTime;
+        internal static event Action<IntPtr> ActionEmulated;
 
         internal WoWAntiKick(WowProcess wowProcess)
         {
@@ -35,6 +36,10 @@ namespace AxTools.WoW
                         {
                             maxTime = Utils.Rnd.Next(150000, 280000);
                             wowProcess.Memory.Write(wowProcess.Memory.ImageBase + WowBuildInfoX64.LastHardwareAction, tickCount);
+                            if (ActionEmulated != null)
+                            {
+                                ActionEmulated(wowProcess.MainWindowHandle);
+                            }
                             Log.Info(string.Format("{0} [Anti-AFK] Action emulated, next MaxTime: {1}", wowProcess, maxTime));
                         }
                     }

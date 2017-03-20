@@ -16,5 +16,9 @@ namespace WoWPlugin_Notifier
 
         [DataMember(Name = "OnDisconnect")]
         internal bool OnDisconnect;
+
+        [DataMember(Name = "EnableOnAfk")]
+        internal bool EnableOnAfk;
+
     }
 }

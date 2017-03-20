@@ -15,6 +15,17 @@ namespace AxTools.WoW.PluginSystem.API
 {
     public static class Utilities
     {
+        static Utilities()
+        {
+            WoWAntiKick.ActionEmulated += ptr =>
+            {
+                if (AntiAfkActionEmulated != null)
+                {
+                    AntiAfkActionEmulated(ptr);
+                }
+            };
+        }
+
         /// <summary>
         /// Makes a record to the log. WoW process name, process id and plugin name included
         /// </summary>
@@ -122,6 +133,31 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
+        public static bool TryEnableManager()
+        {
+            return WoWManager.Hooked || (WoWProcessManager.List.Count > 0 && WoWManager.HookWoWAndNotifyUserIfError());
+        }
+
+        public static bool TryStartOnlyOnePlugin(string name)
+        {
+            if (GameFunctions.IsInGame && !PluginManagerEx.RunningPlugins.Any())
+            {
+                IPlugin plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == name);
+                if (plugin != null)
+                {
+                    foreach (IPlugin enabledPlugin in PluginManagerEx.EnabledPlugins)
+                    {
+                        PluginManagerEx.SetPluginEnabled(enabledPlugin, false);
+                    }
+                    PluginManagerEx.SetPluginEnabled(plugin, true);
+                    PluginManagerEx.StartPlugins();
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+
         public static dynamic GetReferenceOfPlugin(string pluginName)
         {
             return PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pluginName);
@@ -163,6 +199,8 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get { return WoWManager.WoWProcess.MainWindowHandle; }
         }
+
+        public static event Action<IntPtr> AntiAfkActionEmulated;
 
     }
 }

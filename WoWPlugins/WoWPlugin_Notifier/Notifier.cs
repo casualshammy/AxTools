@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
@@ -29,6 +30,23 @@ namespace WoWPlugin_Notifier
         #endregion
 
         #region Methods
+
+        public Notifier()
+        {
+            settingsInstance = settingsInstance ?? this.LoadSettingsJSON<Settings>();
+            if (settingsInstance.EnableOnAfk)
+            {
+                this.LogPrint("Enabled on afk state");
+                Utilities.AntiAfkActionEmulated += ptr =>
+                {
+                    if (Utilities.TryEnableManager())
+                    {
+                        this.LogPrint("Plugin is enabled because player is afk");
+                        Utilities.TryStartOnlyOnePlugin(Name);
+                    }
+                };
+            }
+        }
 
         public void OnConfig()
         {
@@ -76,6 +94,7 @@ namespace WoWPlugin_Notifier
                 timerDisconnect.Start();
                 this.LogPrint("Disconnect notification enabled");
             }
+            running = true;
             this.LogPrint("Successfully started");
         }
 
@@ -98,6 +117,7 @@ namespace WoWPlugin_Notifier
                     timerDisconnect.Dispose();
                 }
             }
+            running = false;
         }
 
         private void TimerStaticPopup_OnElapsed()
@@ -162,6 +182,7 @@ namespace WoWPlugin_Notifier
         private SafeTimer timerStaticPopup;
         private System.Timers.Timer timerDisconnect;
         private DateTime lastTimeNotifiedAboutDisconnect = DateTime.MinValue;
+        private bool running = false;
 
     }
 }
