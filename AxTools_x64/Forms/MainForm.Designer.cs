@@ -90,6 +90,7 @@ namespace AxTools.Forms
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -182,7 +183,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 2;
+            this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 59;
@@ -706,9 +707,10 @@ namespace AxTools.Forms
             this.toolStripMenuItemBackupWoWAddOns,
             this.toolStripMenuItemDeployArchive,
             this.toolStripSeparator3,
+            this.toolStripMenuItem1,
             this.toolStripMenuItemOpenWoWLogsFolder});
             this.contextMenuStripBackupAndClean.Name = "contextMenuStripMain";
-            this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 76);
+            this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 120);
             // 
             // toolStripMenuItemBackupWoWAddOns
             // 
@@ -766,6 +768,13 @@ namespace AxTools.Forms
             this.linkTitle.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkTitle.UseStyleColors = true;
             this.linkTitle.Click += new System.EventHandler(this.linkTitle_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(194, 22);
+            this.toolStripMenuItem1.Text = "Open backup folder";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // MainForm
             // 
@@ -845,6 +854,7 @@ namespace AxTools.Forms
         private ToolStripMenuItem toolStripMenuItemDeployArchive;
         private MetroLink linkDownloadPlugins;
         private MetroLabel labelTotalPluginsEnabled;
+        private ToolStripMenuItem toolStripMenuItem1;
     }
 }
 

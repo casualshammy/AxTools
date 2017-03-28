@@ -7,7 +7,6 @@ using AxTools.Updater;
 using AxTools.WinAPI;
 using AxTools.WoW;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.Plugins;
 using BrightIdeasSoftware;
 using System;
 using System.Collections.Specialized;
@@ -493,6 +492,18 @@ namespace AxTools.Forms
             else
             {
                 this.TaskDialog("Can't open WoW logs folder", "It doesn't exist", NotifyUserType.Error);
+            }
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(settings.WoWAddonsBackupPath))
+            {
+                Process.Start(settings.WoWAddonsBackupPath);
+            }
+            else
+            {
+                Notify.TaskDialog("Can't open backup folder", "It doesn't exist", NotifyUserType.Error);
             }
         }
 
