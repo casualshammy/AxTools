@@ -17,9 +17,9 @@ namespace AxTools.WoW.Internals
             _memory = process.Memory;
         }
 
-        private static int GetObjectType(IntPtr address)
+        private static ushort GetObjectType(IntPtr address)
         {
-            return _memory.Read<int>(address + WowBuildInfoX64.ObjectType);
+            return _memory.Read<ushort>(address + WowBuildInfoX64.ObjectType);
         }
 
         internal static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
@@ -62,9 +62,7 @@ namespace AxTools.WoW.Internals
             wowNpcs.Clear();
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
-                (i < 10) && (i > 0);
-                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {
                 switch (i)
                 {
@@ -88,9 +86,7 @@ namespace AxTools.WoW.Internals
             WoWGUID playerGUID = localPlayer.GUID;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
-                (i < 10) && (i > 0);
-                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {
                 switch (i)
                 {
@@ -115,9 +111,7 @@ namespace AxTools.WoW.Internals
             wowObjects.Clear();
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
-                (i < 10) && (i > 0);
-                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {
                 if (i == 5)
                 {
@@ -135,9 +129,7 @@ namespace AxTools.WoW.Internals
             WoWGUID playerGUID = localPlayer.GUID;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
-                (i < 10) && (i > 0);
-                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {
                 if (i == 4)
                 {
@@ -155,29 +147,13 @@ namespace AxTools.WoW.Internals
         internal static WoWPlayerMe Pulse(List<WowNpc> wowNpcs)
         {
             wowNpcs.Clear();
-            //WoWPlayerMe localPlayer = null;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            //UInt128 playerGUID = _memory.Read<UInt128>(_memory.ImageBase + WowBuildInfo.PlayerGUID);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
-                (i < 10) && (i > 0);
-                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {
-                switch (i)
+                if (i == 3)
                 {
-                    case 3:
-                        wowNpcs.Add(new WowNpc(currObject));
-                        break;
-                    case 4:
-                        //if (localPlayer == null)
-                        //{
-                        //    UInt128 objectGUID = _memory.Read<UInt128>(currObject + WowBuildInfo.ObjectGUID);
-                        //    if (objectGUID == playerGUID)
-                        //    {
-                        //        localPlayer = new WoWPlayerMe(currObject, playerGUID);
-                        //    }
-                        //}
-                        break;
+                    wowNpcs.Add(new WowNpc(currObject));
                 }
                 currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
             }
@@ -197,9 +173,7 @@ namespace AxTools.WoW.Internals
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
             //
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
-                (i < 10) && (i > 0);
-                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {
                 if (i == 2)
                 {
@@ -215,9 +189,7 @@ namespace AxTools.WoW.Internals
             }
             //
             currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
-                (i < 10) && (i > 0);
-                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {
                 if (i == 1) // WoWItem
                 {
@@ -251,9 +223,7 @@ namespace AxTools.WoW.Internals
             List<WoWItem> items = new List<WoWItem>();
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType);
-                (i < 10) && (i > 0);
-                i = _memory.Read<int>(currObject + WowBuildInfoX64.ObjectType))
+            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {
                 if (i == 1) // WoWItem
                 {
