@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Forms;
 using AxTools.WoW.Internals;
 using System.Runtime.Serialization;
@@ -77,6 +78,12 @@ namespace WoWPlugin_PathCreator
             }
         }
 
+        private void buttonPrecision2D_Click(object sender, EventArgs e)
+        {
+            list.Add(new DoAction {ActionType = DoActionType.SetPrecision2D, Data = numericPrecision2D.Value.ToString(CultureInfo.InvariantCulture)});
+            WriteJSON();
+        }
+
     }
 
     [DataContract]
@@ -102,6 +109,7 @@ namespace WoWPlugin_PathCreator
         RunLua,
         SendChat,
         StopProfile,
-        Wait
+        Wait,
+        SetPrecision2D
     }
 }

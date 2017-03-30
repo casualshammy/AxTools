@@ -39,6 +39,9 @@
             this.buttonStopProfile = new System.Windows.Forms.Button();
             this.buttonWait = new System.Windows.Forms.Button();
             this.textBoxWait = new System.Windows.Forms.TextBox();
+            this.buttonPrecision2D = new System.Windows.Forms.Button();
+            this.numericPrecision2D = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.numericPrecision2D)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonCreateWaypoint
@@ -113,7 +116,7 @@
             // 
             // buttonStopProfile
             // 
-            this.buttonStopProfile.Location = new System.Drawing.Point(176, 153);
+            this.buttonStopProfile.Location = new System.Drawing.Point(176, 191);
             this.buttonStopProfile.Name = "buttonStopProfile";
             this.buttonStopProfile.Size = new System.Drawing.Size(96, 22);
             this.buttonStopProfile.TabIndex = 9;
@@ -138,11 +141,41 @@
             this.textBoxWait.Size = new System.Drawing.Size(155, 20);
             this.textBoxWait.TabIndex = 10;
             // 
+            // buttonPrecision2D
+            // 
+            this.buttonPrecision2D.Location = new System.Drawing.Point(176, 153);
+            this.buttonPrecision2D.Name = "buttonPrecision2D";
+            this.buttonPrecision2D.Size = new System.Drawing.Size(96, 22);
+            this.buttonPrecision2D.TabIndex = 12;
+            this.buttonPrecision2D.Text = "Set 2D precision";
+            this.buttonPrecision2D.UseVisualStyleBackColor = true;
+            this.buttonPrecision2D.Click += new System.EventHandler(this.buttonPrecision2D_Click);
+            // 
+            // numericPrecision2D
+            // 
+            this.numericPrecision2D.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericPrecision2D.Location = new System.Drawing.Point(15, 154);
+            this.numericPrecision2D.Name = "numericPrecision2D";
+            this.numericPrecision2D.Size = new System.Drawing.Size(155, 20);
+            this.numericPrecision2D.TabIndex = 13;
+            this.numericPrecision2D.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericPrecision2D.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 225);
+            this.Controls.Add(this.numericPrecision2D);
+            this.Controls.Add(this.buttonPrecision2D);
             this.Controls.Add(this.buttonWait);
             this.Controls.Add(this.textBoxWait);
             this.Controls.Add(this.buttonStopProfile);
@@ -157,6 +190,7 @@
             this.Name = "MainForm";
             this.Text = "Path Creator";
             this.TopMost = true;
+            ((System.ComponentModel.ISupportInitialize)(this.numericPrecision2D)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -175,5 +209,7 @@
         private System.Windows.Forms.Button buttonStopProfile;
         private System.Windows.Forms.Button buttonWait;
         private System.Windows.Forms.TextBox textBoxWait;
+        private System.Windows.Forms.Button buttonPrecision2D;
+        private System.Windows.Forms.NumericUpDown numericPrecision2D;
     }
 }

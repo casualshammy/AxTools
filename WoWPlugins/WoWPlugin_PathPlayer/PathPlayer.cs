@@ -49,6 +49,7 @@ namespace PathPlayer
 		public void OnStart()
 		{
 		    SettingsInstance = this.LoadSettingsJSON<Settings>();
+		    precision2D = 3f;
             actionsList.Clear();
 		    try
 		    {
@@ -102,7 +103,6 @@ namespace PathPlayer
                 switch (actionsList[counter].ActionType)
                 {
                     case DoActionType.Move:
-                        float tolerance2D = 3f;
                         double distance2D = me.Location.Distance2D(actionsList[counter].WowPoint);
                         double distance3D = me.Location.Distance(actionsList[counter].WowPoint);
                         if (me.IsFlying && (distance3D > 10f || (distance3D <= 10f && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
@@ -110,10 +110,10 @@ namespace PathPlayer
                             this.LogPrint(string.Format("Flying to point --> [{0}]; distance: {1}", actionsList[counter].WowPoint, distance3D));
                             GameFunctions.Move3D(actionsList[counter].WowPoint, 8f, 3f, 1000, true);
                         }
-                        else if (!me.IsFlying && (distance2D > tolerance2D || (distance2D <= tolerance2D && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
+                        else if (!me.IsFlying && (distance2D > precision2D || (distance2D <= precision2D && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
                         {
                             this.LogPrint(string.Format("Moving to point --> [{0}]; my loc: [{3}]; distance2D: {1}; speed: {2}", actionsList[counter].WowPoint, distance2D, me.Speed, me.Location));
-                            GameFunctions.Move2D(actionsList[counter].WowPoint, tolerance2D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
+                            GameFunctions.Move2D(actionsList[counter].WowPoint, precision2D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
                         }
                         else
                         {
@@ -171,6 +171,12 @@ namespace PathPlayer
                     case DoActionType.SetClicker:
                         Utilities.ClickerEnabled = bool.Parse(actionsList[counter].Data);
                         IncreaseCounterAndDoAction();
+                        break;
+                    case DoActionType.SetPrecision2D:
+                        if (!float.TryParse(actionsList[counter].Data, out precision2D))
+                        {
+                            precision2D = 3f;
+                        }
                         break;
                 }
             }
@@ -241,6 +247,7 @@ namespace PathPlayer
         internal Settings SettingsInstance;
 	    private SafeTimer timer;
 	    private const int RESOLUTION_INTERVAL = 50;
+        private float precision2D = 3f;
 
 	}
 }

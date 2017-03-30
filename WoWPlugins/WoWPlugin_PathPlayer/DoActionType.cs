@@ -11,6 +11,7 @@ namespace PathPlayer
         SendChat,
         StopProfile,
         Wait,
-        SetClicker
+        SetClicker,
+        SetPrecision2D
     }
 }
