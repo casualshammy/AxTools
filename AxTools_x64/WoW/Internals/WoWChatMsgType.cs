@@ -44,6 +44,8 @@
         BattlegroundLeader = 45,
         Restricted = 46,
 
+        PartyLeader = 49,
+
         BNetWisper = 51,
         BNetWhisperInform = 52,
 

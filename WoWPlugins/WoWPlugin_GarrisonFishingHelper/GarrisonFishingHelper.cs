@@ -84,7 +84,7 @@ namespace WoWPlugin_GarrisonFishingHelper
                     {
                         if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
                         {
-                            Utilities.RequestStopPlugin("Fishing");
+                            Utilities.RemovePluginFromRunning("Fishing");
                             this.LogPrint("Fishing is paused");
                             Thread.Sleep(rnd.Next(2000, 3000));
                             GameFunctions.UseItemByID(116158);
@@ -96,7 +96,7 @@ namespace WoWPlugin_GarrisonFishingHelper
                     else
                     {
                         Thread.Sleep(rnd.Next(500, 1500));
-                        Utilities.RequestStartPlugin("Fishing");
+                        Utilities.AddPluginToRunning("Fishing");
                         if (_isworking)
                         {
                             this.LogPrint("Fishing is resumed");

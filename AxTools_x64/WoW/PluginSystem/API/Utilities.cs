@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -107,7 +108,7 @@ namespace AxTools.WoW.PluginSystem.API
         /// DO NOT USE INSIDE <see cref="IPlugin.OnStop"/> or <see cref="IPlugin.OnStart"/> METHODS!
         /// </summary>
         /// <param name="name"></param>
-        public static void RequestStartPlugin(string name)
+        public static void AddPluginToRunning(string name)
         {
             IPlugin plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == name);
             if (plugin != null)
@@ -124,38 +125,13 @@ namespace AxTools.WoW.PluginSystem.API
         /// DO NOT USE INSIDE <see cref="IPlugin.OnStop"/> or <see cref="IPlugin.OnStart"/> METHODS!
         /// </summary>
         /// <param name="name"></param>
-        public static void RequestStopPlugin(string name)
+        public static void RemovePluginFromRunning(string name)
         {
             IPlugin plugin = PluginManagerEx.RunningPlugins.FirstOrDefault(l => l.Name == name);
             if (plugin != null)
             {
                 PluginManagerEx.RemovePluginFromRunning(plugin);
             }
-        }
-
-        public static bool TryEnableManager()
-        {
-            return WoWManager.Hooked || (WoWProcessManager.List.Count > 0 && WoWManager.HookWoWAndNotifyUserIfError());
-        }
-
-        public static bool TryStartOnlyOnePlugin(string name)
-        {
-            if (GameFunctions.IsInGame && !PluginManagerEx.RunningPlugins.Any())
-            {
-                IPlugin plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == name);
-                if (plugin != null)
-                {
-                    foreach (IPlugin enabledPlugin in PluginManagerEx.EnabledPlugins)
-                    {
-                        PluginManagerEx.SetPluginEnabled(enabledPlugin, false);
-                    }
-                    PluginManagerEx.SetPluginEnabled(plugin, true);
-                    PluginManagerEx.StartPlugins();
-                    return true;
-                }
-                return false;
-            }
-            return false;
         }
 
         public static dynamic GetReferenceOfPlugin(string pluginName)
@@ -171,9 +147,9 @@ namespace AxTools.WoW.PluginSystem.API
         /// <param name="warning">Is it warning or info</param>
         /// <param name="sound">Play sound</param>
         /// <param name="timeout">Time in seconds before popup disappears</param>
-        public static void ShowNotify(this IPlugin plugin, string text, bool warning, bool sound, int timeout = 7)
+        public static void ShowNotify(this IPlugin plugin, string text, bool warning, bool sound, int timeout = 10)
         {
-            Notify.TrayPopup("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, plugin.TrayIcon);
+            Notify.TrayPopup("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, plugin.TrayIcon, timeout);
         }
 
         /// <summary>

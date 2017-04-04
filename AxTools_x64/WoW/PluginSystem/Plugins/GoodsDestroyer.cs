@@ -62,6 +62,18 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 herbs.Add(124106); // Felwort item id
             }
             lastNotifiedAboutCompletion = DateTime.MinValue;
+            if (GameFunctions.IsSpellKnown(51005)) // mill
+            {
+                this.LogPrint("Milling: OK");
+            }
+            if (GameFunctions.IsSpellKnown(31252)) // prospect
+            {
+                this.LogPrint("Prospecting: OK");
+            }
+            if (GameFunctions.IsSpellKnown(13262)) // disenchant
+            {
+                this.LogPrint("Disenchanting: OK");
+            }
             (timer = this.CreateTimer(50, OnPulse)).Start();
         }
 
@@ -102,7 +114,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                             }
                             if (SettingsInstance.LaunchInkCrafter)
                             {
-                                Utilities.RequestStartPlugin("InkCrafter");
+                                Utilities.AddPluginToRunning("InkCrafter");
                             }
                         }
                         if (GameFunctions.IsSpellKnown(31252)) // prospect

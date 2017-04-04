@@ -785,6 +785,8 @@ namespace AxTools.Forms
             {
                 olvPlugins.CheckObject(i);
             }
+            PluginManagerEx.PluginDisabled += plugin => olvPlugins.BuildList();
+            PluginManagerEx.PluginEnabled += plugin => olvPlugins.BuildList();
             olvPlugins.BooleanCheckStateGetter = OlvPlugins_BooleanCheckStateGetter;
             olvPlugins.BooleanCheckStatePutter = OlvPlugins_BooleanCheckStatePutter;
         }
@@ -859,9 +861,9 @@ namespace AxTools.Forms
                     {
                         PluginManagerEx.RemovePluginFromRunning(plugin);
                     }
-                    settings.EnabledPluginsList.RemoveAll(l => l == plugin.Name);
+                    settings.EnabledPluginsList.Remove(plugin.Name);
                 }
-                PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plugins enabled: " + PluginManagerEx.EnabledPlugins.Count(); });
+                PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plugins enabled: " + PluginManagerEx.EnabledPlugins.Count; });
                 BeginInvoke(new MethodInvoker(UpdateTrayContextMenu));
             }
             return newValue;

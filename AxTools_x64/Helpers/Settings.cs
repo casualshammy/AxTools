@@ -292,7 +292,7 @@ namespace AxTools.Helpers
         internal bool WoWPluginShowIngameNotifications = true;
 
         [JsonProperty(Order = 72, PropertyName = "EnabledPluginsList")]
-        internal List<string> EnabledPluginsList = new List<string>();
+        internal HashSet<string> EnabledPluginsList = new HashSet<string>();
 
         [JsonProperty(Order = 73, PropertyName = "PluginsUsageStat")]
         internal Dictionary<string, int> PluginsUsageStat = new Dictionary<string, int>();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
 
 namespace AxTools.WoW.Internals
@@ -171,7 +172,6 @@ namespace AxTools.WoW.Internals
             Dictionary<WoWGUID, List<WoWGUID>> itemCountPerContainer = new Dictionary<WoWGUID, List<WoWGUID>>();
             List<WoWItem> items = new List<WoWItem>();
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            //
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
             for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {

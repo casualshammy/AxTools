@@ -118,46 +118,45 @@ namespace AxTools.WoW
 
         internal static readonly byte[] WoWHash =
         {
-	        0x57, 0xCC, 0x43, 0x9A, 0xE5, 0xFB, 0xA0, 0x09, 0x01, 0xC9, 0x7B, 0x80, 0xDE, 0x85, 0x54, 0x00, 0x0C, 0x0E, 0x0F, 0xA3, 0xBC, 0x4D, 0x67, 0x59, 0xF2, 0x86, 0x4F, 0x8F, 0xE8, 0xD0, 0x68, 0xBE
+	        0x58, 0x7E, 0xCF, 0x7E, 0xE7, 0x9C, 0xDA, 0xD5, 0xC9, 0x07, 0x63, 0xF8, 0x96, 0xEC, 0x82, 0x98, 0x24, 0x50, 0x8F, 0x62, 0xF0, 0x82, 0x31, 0x1D, 0x45, 0xA2, 0xA9, 0xED, 0xA6, 0xFA, 0xDF, 0x03
         };
 
         #endregion
 
         #region Static infos
 
-        internal const int NotLoadingScreen = 0x1351674;
         internal const int KnownSpells = 0x1921338;
+        internal const int NotLoadingScreen = 0x1351674;
         internal const int LastHardwareAction = 0x160C9B8;
-        internal const int GlueState = 0x169B364;
         internal const int ChatBuffer = 0x18C3D10;
-        internal const int GameState = 0x18C219B;
-        internal const int UIFrameBase = 0x160C9B0;
+        internal const int GlueState = 0x169B364;
+        internal const int GameState = 0x18C219F;
         internal const int MouseoverGUID = 0x18C3450;
-        internal const int KnownSpellsCount = 0x1921330;
-        internal const int BlackMarketNumItems = 0x1976190;
-        internal const int PlayerPtr = 0x181F9E0;
+        internal const int UIFrameBase = 0x160C9B0;
         internal const int PlayerName = 0x19B0500;
-        internal const int TickCount = 0x15FF79C;
+        internal const int PlayerPtr = 0x181F9E0;
         internal const int ChatIsOpened = 0x1620FF4;
-        internal const int FocusedWidget = 0x1600450;
-        internal const int BlackMarketItems = 0x1976198;
-        internal const int ObjectManager = 0x16B4BE0;
-        internal const int NameCacheBase = 0x166A918;
-
+        internal const int TickCount = 0x15FF79C;
+        internal const int BlackMarketNumItems = 0x1976190;
         internal const int PlayerZoneID = 0x1932420;
+        internal const int KnownSpellsCount = 0x1921330;
+        internal const int FocusedWidget = 0x1600450;
+        internal const int ObjectManager = 0x16B4BE0;
+        internal const int BlackMarketItems = 0x1976198;
         internal const int PlayerIsLooting = 0x193D1CD;
+        internal const int NameCacheBase = 0x166A918;
 
         #endregion
 
         #region UIFrame
 
-        internal const int UIFirstFrame = 0xCB8;
-        internal const int UINextFrame = 0xCA8;
+        internal const int UIFirstFrame = 0xCB0;
+        internal const int UINextFrame = 0xCA0;
         internal const int UIFrameVisible = 0xC8;
         internal const int UIFrameVisible1 = 0x13;
         internal const int UIFrameVisible2 = 1;
         internal const int UIFrameName = 0x20;
-        internal const int UIEditBoxText = 0x230;
+        internal const int UIEditBoxText = 0x238;
 
         #endregion
 
@@ -191,7 +190,7 @@ namespace AxTools.WoW
         internal static readonly int UnitRotation = UnitLocation + 0x10;
 
         internal const int UnitTargetGUID = 0xA0;
-        internal const int UnitClass = 0xE5;
+        internal const int UnitClass = 0xD5;
         internal const int UnitHealth = 0xE0;
         internal const int UnitPower = 0xE8;
         internal const int UnitHealthMax = 0x100;
@@ -201,16 +200,16 @@ namespace AxTools.WoW
         internal const int UnitFlags = 0x180;
         internal const int UnitMountDisplayID = 0x1AC;
 
-        internal const int AuraCount1 = 0x2630;
-        internal const int AuraCount2 = 0x1DB0;
-        internal const int AuraTable1 = 0x1DB4;
-        internal const int AuraTable2 = 0x1DB8;
+        internal const int AuraCount1 = 0x26C0;
+        internal const int AuraCount2 = 0x1DC0;
+        internal const int AuraTable1 = 0x1DC4;
+        internal const int AuraTable2 = 0x1DC8;
 
         internal const int NameCacheNext = 0x00;
         internal const int NameCacheGuid = 0x20;
         internal const int NameCacheName = 0x31;
 
-        internal const int PlayerInvSlots = 0x1104;
+        internal const int PlayerInvSlots = 0x10F4;
 
         internal const int PlayerSpeedBase = 0x210;
         internal const int PlayerSpeedOffset = 0xA4;
@@ -232,7 +231,7 @@ namespace AxTools.WoW
         internal const int WoWItemStackCount = 0x70;
         internal const int WoWItemEnchantment = 0x90;
 
-        internal const int WoWContainerItems = 0x150;
+        internal const int WoWContainerItems = 0x154;
 
         #endregion
 

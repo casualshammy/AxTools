@@ -3,6 +3,7 @@ using AxTools.WoW.PluginSystem.Plugins;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -20,28 +21,31 @@ namespace AxTools.WoW.PluginSystem
         private static readonly object AddRemoveLock = new object();
         internal static event Action PluginStateChanged;
         internal static event Action PluginsLoaded;
+        internal static event Action<IPlugin> PluginEnabled;
+        internal static event Action<IPlugin> PluginDisabled;
 
-        internal static IEnumerable<IPlugin> EnabledPlugins
+        internal static ReadOnlyCollection<IPlugin> EnabledPlugins
         {
             get
             {
-                return _pluginContainers.Where(l => l.EnabledByUser).Select(l => l.Plugin);
+                return new ReadOnlyCollection<IPlugin>(_pluginContainers.Where(l => l.EnabledByUser).Select(l => l.Plugin).ToList());
+                //return _pluginContainers.Where(l => l.EnabledByUser).Select(l => l.Plugin);
             }
         }
 
-        internal static IEnumerable<IPlugin> RunningPlugins
+        internal static ReadOnlyCollection<IPlugin> RunningPlugins
         {
             get
             {
-                return _pluginContainers.Where(l => l.IsRunning).Select(l => l.Plugin);
+                return new ReadOnlyCollection<IPlugin>(_pluginContainers.Where(l => l.IsRunning).Select(l => l.Plugin).ToList());
             }
         }
 
-        internal static IEnumerable<IPlugin> LoadedPlugins
+        internal static ReadOnlyCollection<IPlugin> LoadedPlugins
         {
             get
             {
-                return _pluginContainers.Select(l => l.Plugin);
+                return new ReadOnlyCollection<IPlugin>(_pluginContainers.Select(l => l.Plugin).ToList());
             }
         }
 
@@ -195,9 +199,23 @@ namespace AxTools.WoW.PluginSystem
         internal static void SetPluginEnabled(IPlugin plugin, bool enabled)
         {
             PluginContainer container = _pluginContainers.FirstOrDefault(l => l.Plugin == plugin);
-            if (container != null)
+            if (container != null && container.EnabledByUser != enabled)
             {
                 container.EnabledByUser = enabled;
+                if (enabled)
+                {
+                    if (PluginEnabled != null)
+                    {
+                        PluginEnabled(plugin);
+                    }
+                }
+                else
+                {
+                    if (PluginDisabled != null)
+                    {
+                        PluginDisabled(plugin);
+                    }
+                }
             }
         }
 
