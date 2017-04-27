@@ -4,14 +4,14 @@ namespace PathPlayer
     {
         Move,
         Interact,
-        DisableCTM,
         SelectGossipOption,
-        RunMacro,
         RunLua,
         SendChat,
+        SendToChatWhile,
         StopProfile,
+        StopProfileIf,
+        WaitWhile,
         Wait,
-        SetClicker,
         SetPrecision2D
     }
 }

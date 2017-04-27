@@ -48,7 +48,7 @@ namespace AxTools.WoW
         
         internal IntPtr MainWindowHandle
         {
-            get { return Process.MainWindowHandle; }
+            get => Process.MainWindowHandle;
         }
         
         private Process Process

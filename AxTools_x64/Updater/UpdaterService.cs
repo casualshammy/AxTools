@@ -29,7 +29,7 @@ namespace AxTools.Updater
 
         internal static void Start()
         {
-            _timer.Elapsed += timer_Elapsed;
+            _timer.Elapsed += Timer_Elapsed;
             _timer.Start();
             OnElapsed();
         }
@@ -78,7 +78,7 @@ namespace AxTools.Updater
             }
         }
 
-        private static void timer_Elapsed(object sender, ElapsedEventArgs e)
+        private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             OnElapsed();
         }
@@ -190,14 +190,14 @@ namespace AxTools.Updater
                 {
                     //Notify.SmartNotify("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact devs", NotifyUserType.Error, false);
                     Notify.TrayPopup("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact dev", NotifyUserType.Error, false);
-                    _timer.Elapsed -= timer_Elapsed;
+                    _timer.Elapsed -= Timer_Elapsed;
                     Log.Info(string.Format("[Updater] Your credentials are invalid. Updater is disabled. Please contact devs (status {0}): {1}", webEx.Status, webEx.Message));
                 }
                 else if (webEx.Status == WebExceptionStatus.TrustFailure || webEx.Status == WebExceptionStatus.SecureChannelFailure)
                 {
                     //Notify.SmartNotify("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, false);
                     Notify.TrayPopup("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, true);
-                    _timer.Elapsed -= timer_Elapsed;
+                    _timer.Elapsed -= Timer_Elapsed;
                     Log.Info(string.Format("[Updater] Cannot validate remote server. Your internet connection is compromised (status {0}): {1}", webEx.Status, webEx.Message));
                 }
                 else if (webEx.Status != WebExceptionStatus.NameResolutionFailure && webEx.Status != WebExceptionStatus.Timeout && webEx.Status != WebExceptionStatus.ConnectFailure)
@@ -221,7 +221,7 @@ namespace AxTools.Updater
                         if (Globals.AppVersion != updateInfo.Version)
                         {
                             Log.Info(string.Format("[Updater] Server version: <{0}>, local version: <{1}>; downloading new version...", updateInfo.Version, Globals.AppVersion));
-                            _timer.Elapsed -= timer_Elapsed;
+                            _timer.Elapsed -= Timer_Elapsed;
                             DownloadExtractUpdate();
                         }
                         else
@@ -274,8 +274,7 @@ namespace AxTools.Updater
                         Match match = Regex.Match(output, "text =\\s*\"(.+)\"");
                         if (match.Success)
                         {
-                            Uri uriResult;
-                            bool result = Uri.TryCreate(match.Groups[1].Value, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                            bool result = Uri.TryCreate(match.Groups[1].Value, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
                             return result ? match.Groups[1].Value : null;
                         }
                         return null;

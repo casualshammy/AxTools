@@ -66,7 +66,7 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         private void OnElapsed()
         {
-            WoWPlayerMe me = ObjMgr.Pulse(wowNpcs);
+            WoWPlayerMe me = ObjMgr.Pulse(null, null, wowNpcs);
             if (me != null)
             {
                 if (!me.InCombat)

@@ -81,10 +81,7 @@ namespace AxTools.Forms
         private void MainFormClosing(object sender, CancelEventArgs e)
         {
             isClosing = true;
-            if (ClosingEx != null)
-            {
-                ClosingEx();
-            }
+            ClosingEx?.Invoke();
             // Close all children forms
             Form[] forms = Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof (MainForm) && i.GetType() != typeof (MetroFlatDropShadow)).ToArray();
             foreach (Form i in forms)
@@ -182,7 +179,7 @@ namespace AxTools.Forms
             Pinger.IsEnabledChanged += PingerOnStateChanged;
             AddonsBackup.IsRunningChanged += AddonsBackup_IsRunningChanged;
             WoWAccount.AllAccounts.CollectionChanged += WoWAccounts_CollectionChanged;
-            olvPlugins.CellToolTipShowing += objectListView1_CellToolTipShowing;
+            olvPlugins.CellToolTipShowing += ObjectListView1_CellToolTipShowing;
             olvPlugins.DoubleClick += OlvPluginsOnDoubleClick;
             // end of styling, events attaching...
             AddonsBackup.StartService();                                // start backup service
@@ -198,7 +195,7 @@ namespace AxTools.Forms
             Log.Info("[AxTools] All start-up routines are finished");   // situation normal :)
         }
 
-        private void linkSettings_Click(object sender, EventArgs e)
+        private void LinkSettings_Click(object sender, EventArgs e)
         {
             AppSettings appSettings = Utils.FindForm<AppSettings>();
             if (appSettings != null)
@@ -211,12 +208,12 @@ namespace AxTools.Forms
             }
         }
 
-        private void linkTitle_Click(object sender, EventArgs e)
+        private void LinkTitle_Click(object sender, EventArgs e)
         {
             contextMenuStripMain.Show(linkTitle, linkTitle.Size.Width, 0);
         }
 
-        private void linkPing_MouseDown(object sender, MouseEventArgs e)
+        private void LinkPing_MouseDown(object sender, MouseEventArgs e)
         {
             switch (e.Button)
             {
@@ -266,8 +263,7 @@ namespace AxTools.Forms
             }
             if (sortedPlugins.Length > topUsedPlugins.Length)
             {
-                ToolStripMenuItem customPlugins = contextMenuStripMain.Items.Add("Other plugins") as ToolStripMenuItem;
-                if (customPlugins != null)
+                if (contextMenuStripMain.Items.Add("Other plugins") is ToolStripMenuItem customPlugins)
                 {
                     foreach (IPlugin i in sortedPlugins.Where(i => !topUsedPlugins.Select(l => l.Name).Contains(i.Name)))
                     {
@@ -275,7 +271,7 @@ namespace AxTools.Forms
                         try
                         {
                             ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
-                            toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
+                            toolStripMenuItem.MouseDown += delegate (object sender, MouseEventArgs args)
                             {
                                 if (args.Button == MouseButtons.Left) TrayContextMenu_PluginClicked(plugin);
                                 else if (plugin.ConfigAvailable) plugin.OnConfig();
@@ -332,8 +328,7 @@ namespace AxTools.Forms
         {
             foreach (IPlugin plugin in PluginManagerEx.LoadedPlugins)
             {
-                ToolStripMenuItem item = contextMenuStripMain.Items.GetAllToolStripItems().FirstOrDefault(l => (IPlugin) l.Tag != null && ((IPlugin) l.Tag).Name == plugin.Name) as ToolStripMenuItem;
-                if (item != null)
+                if (contextMenuStripMain.Items.GetAllToolStripItems().FirstOrDefault(l => (IPlugin)l.Tag != null && ((IPlugin)l.Tag).Name == plugin.Name) is ToolStripMenuItem item)
                 {
                     item.ShortcutKeyDisplayString = olvPlugins.CheckedObjects.Cast<IPlugin>().Any(i => i.Name == item.Text) ? settings.WoWPluginHotkey.ToString() : null;
                     item.Enabled = !PluginManagerEx.RunningPlugins.Any();
@@ -349,7 +344,7 @@ namespace AxTools.Forms
             StartWoWModule<WowRadar>();
         }
 
-        private void blackMarketTrackerToolStripMenuItem_Click(object sender, EventArgs e)
+        private void BlackMarketTrackerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StartWoWModule<BlackMarket>();
         }
@@ -363,7 +358,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void stopActivePluginorPresshotkeyToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void StopActivePluginorPresshotkeyToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             if (PluginManagerEx.RunningPlugins.Any())
             {
@@ -411,15 +406,13 @@ namespace AxTools.Forms
         {
             if (cmbboxAccSelect.SelectedIndex != -1)
             {
-                WoWAccount wowAccount = new WoWAccount(WoWAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Login, WoWAccount.AllAccounts[cmbboxAccSelect.SelectedIndex].Password);
-                StartWoW(wowAccount);
                 if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
                 {
                     StartVentrilo();
                 }
                 if (settings.TS3StartWithWoW && !Process.GetProcessesByName("ts3client_win64").Any() && !Process.GetProcessesByName("ts3client_win32").Any())
                 {
-                    StartTS3();
+                    StartTS3Wait();
                 }
                 if (settings.RaidcallStartWithWoW && !Process.GetProcessesByName("raidcall").Any())
                 {
@@ -429,17 +422,18 @@ namespace AxTools.Forms
                 {
                     StartMumble();
                 }
+                StartWoW(WoWAccount.AllAccounts[cmbboxAccSelect.SelectedIndex]);
                 cmbboxAccSelect.SelectedIndex = -1;
                 cmbboxAccSelect.Invalidate();
             }
         }
 
-        private void linkBackupAddons_Click(object sender, EventArgs e)
+        private void LinkBackupAddons_Click(object sender, EventArgs e)
         {
             contextMenuStripBackupAndClean.Show(linkBackup, linkBackup.Size.Width, 0);
         }
 
-        private void linkClickerSettings_Click(object sender, EventArgs e)
+        private void LinkClickerSettings_Click(object sender, EventArgs e)
         {
             if (Clicker.Enabled)
             {
@@ -459,18 +453,18 @@ namespace AxTools.Forms
             }
         }
 
-        private void linkEditWowAccounts_Click(object sender, EventArgs e)
+        private void LinkEditWowAccounts_Click(object sender, EventArgs e)
         {
             new WowAccountsManager().ShowDialog(this);
         }
 
-        private void toolStripMenuItemBackupWoWAddOns_Click(object sender, EventArgs e)
+        private void ToolStripMenuItemBackupWoWAddOns_Click(object sender, EventArgs e)
         {
             Task.Factory.StartNew(AddonsBackup.ManualBackup)
                 .ContinueWith(l => this.TaskDialog("Backup is complete", "New archive is placed to [" + settings.WoWAddonsBackupPath + "]", NotifyUserType.Info));
         }
 
-        private void toolStripMenuItemDeployArchive_Click(object sender, EventArgs e)
+        private void ToolStripMenuItemDeployArchive_Click(object sender, EventArgs e)
         {
             AddonsBackupDeploy form = Utils.FindForm<AddonsBackupDeploy>();
             if (form != null)
@@ -483,7 +477,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void toolStripMenuItemOpenWoWLogsFolder_Click(object sender, EventArgs e)
+        private void ToolStripMenuItemOpenWoWLogsFolder_Click(object sender, EventArgs e)
         {
             if (Directory.Exists(settings.WoWDirectory + "\\Logs"))
             {
@@ -495,7 +489,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        private void ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (Directory.Exists(settings.WoWAddonsBackupPath))
             {
@@ -555,7 +549,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void StartTS3()
+        private void StartTS3Wait()
         {
             string ts3Executable;
             if (File.Exists(settings.TS3Directory + "\\ts3client_win64.exe"))
@@ -576,7 +570,7 @@ namespace AxTools.Forms
                 WorkingDirectory = settings.TS3Directory,
                 FileName = ts3Executable,
                 Arguments = "-nosingleinstance"
-            });
+            }).WaitForInputIdle(10*1000);
             Log.Info("[VoIP] TS3 process started");
         }
 
@@ -626,7 +620,7 @@ namespace AxTools.Forms
 
         private void TileTeamspeak3Click(object sender, EventArgs e)
         {
-            StartTS3();
+            StartTS3Wait();
         }
 
         private void TileMumbleClick(object sender, EventArgs e)
@@ -675,22 +669,22 @@ namespace AxTools.Forms
 
         }
 
-        private void checkBoxStartVenriloWithWow_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxStartVenriloWithWow_CheckedChanged(object sender, EventArgs e)
         {
             settings.VentriloStartWithWoW = checkBoxStartVenriloWithWow.Checked;
         }
 
-        private void checkBoxStartRaidcallWithWow_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxStartRaidcallWithWow_CheckedChanged(object sender, EventArgs e)
         {
             settings.RaidcallStartWithWoW = checkBoxStartRaidcallWithWow.Checked;
         }
 
-        private void checkBoxStartMumbleWithWow_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxStartMumbleWithWow_CheckedChanged(object sender, EventArgs e)
         {
             settings.MumbleStartWithWoW = checkBoxStartMumbleWithWow.Checked;
         }
 
-        private void checkBoxStartTeamspeak3WithWow_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxStartTeamspeak3WithWow_CheckedChanged(object sender, EventArgs e)
         {
             settings.TS3StartWithWoW = checkBoxStartTeamspeak3WithWow.Checked;
         }
@@ -722,12 +716,12 @@ namespace AxTools.Forms
             }
         }
 
-        private void tileRadar_Click(object sender, EventArgs e)
+        private void TileRadar_Click(object sender, EventArgs e)
         {
             StartWoWModule<WowRadar>();
         }
 
-        private void tileBMTracker_Click(object sender, EventArgs e)
+        private void TileBMTracker_Click(object sender, EventArgs e)
         {
             StartWoWModule<BlackMarket>();
         }
@@ -791,15 +785,14 @@ namespace AxTools.Forms
             olvPlugins.BooleanCheckStatePutter = OlvPlugins_BooleanCheckStatePutter;
         }
 
-        private void buttonStartStopPlugin_Click(object sender, EventArgs e)
+        private void ButtonStartStopPlugin_Click(object sender, EventArgs e)
         {
             SwitchWoWPlugin();
         }
 
-        private void objectListView1_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
+        private void ObjectListView1_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
         {
-            IPlugin plugin = e.Model as IPlugin;
-            if (plugin != null)
+            if (e.Model is IPlugin plugin)
             {
                 e.IsBalloon = true;
                 e.StandardIcon = ToolTipControl.StandardIcons.InfoLarge;
@@ -810,8 +803,7 @@ namespace AxTools.Forms
 
         private void OlvPluginsOnDoubleClick(object sender, EventArgs eventArgs)
         {
-            IPlugin plugin = olvPlugins.SelectedObject as IPlugin;
-            if (plugin != null)
+            if (olvPlugins.SelectedObject is IPlugin plugin)
             {
                 if (PluginManagerEx.RunningPlugins.All(l => l.Name != plugin.Name))
                 {
@@ -833,8 +825,7 @@ namespace AxTools.Forms
 
         private bool OlvPlugins_BooleanCheckStateGetter(object rowObject)
         {
-            IPlugin plugin = rowObject as IPlugin;
-            if (plugin != null)
+            if (rowObject is IPlugin plugin)
             {
                 return PluginManagerEx.EnabledPlugins.Contains(plugin) || PluginManagerEx.RunningPlugins.Contains(plugin);
             }
@@ -843,8 +834,7 @@ namespace AxTools.Forms
 
         private bool OlvPlugins_BooleanCheckStatePutter(object rowObject, bool newValue)
         {
-            IPlugin plugin = rowObject as IPlugin;
-            if (plugin != null)
+            if (rowObject is IPlugin plugin)
             {
                 PluginManagerEx.SetPluginEnabled(plugin, newValue);
                 if (newValue)
@@ -869,7 +859,7 @@ namespace AxTools.Forms
             return newValue;
         }
 
-        private void linkDownloadPlugins_Click(object sender, EventArgs e)
+        private void LinkDownloadPlugins_Click(object sender, EventArgs e)
         {
             Process.Start(Globals.PluginsURL);
         }

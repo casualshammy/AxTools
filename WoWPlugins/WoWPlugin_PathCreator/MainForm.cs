@@ -11,13 +11,14 @@ namespace WoWPlugin_PathCreator
     public partial class MainForm : Form
     {
         private readonly PathCreator pathCreator;
-        private readonly string profileFilepath = string.Format("{0}\\pluginsSettings\\PathCreator\\{1:yyyyMMdd_HHmmss}.json", Application.StartupPath, DateTime.UtcNow);
+        private readonly string profileFilepath;
         private readonly List<DoAction> list = new List<DoAction>(); 
 
         public MainForm(PathCreator pathCreatorInstance)
         {
             InitializeComponent();
             pathCreator = pathCreatorInstance;
+            profileFilepath = $"{pathCreator.GetPluginSettingsDir()}\\{DateTime.UtcNow.ToString("yyyyMMdd_HHmmss")}.json";
         }
 
         private void WriteJSON()

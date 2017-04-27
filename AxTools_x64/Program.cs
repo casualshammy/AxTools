@@ -2,8 +2,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Management;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
@@ -54,10 +52,7 @@ namespace AxTools
                             Log.Info(string.Format("[AxTools] Starting application... ({0})", Globals.AppVersion));
                             Application.Run(MainForm.Instance = new MainForm());
                             Log.Info("[AxTools] Application is closed");
-                            if (Exit != null)
-                            {
-                                Exit();
-                            }
+                            Exit?.Invoke();
                         }
                         else
                         {
@@ -147,6 +142,23 @@ namespace AxTools
                 if (Directory.Exists(Application.StartupPath + "\\wowheadCache"))
                 {
                     Directory.Delete(Application.StartupPath + "\\wowheadCache", true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            // 17.04.2017
+            try
+            {
+                if (Helpers.Settings.Instance.LastUsedVersion <= new VersionExt(12, 2, 46))
+                {
+                    string fileName = AppFolders.DataDir + "\\wowhead.ldb";
+                    if (File.Exists(fileName))
+                    {
+                        File.Delete(fileName);
+                    }
                 }
             }
             catch (Exception ex)

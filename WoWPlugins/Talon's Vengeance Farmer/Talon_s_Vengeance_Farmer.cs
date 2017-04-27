@@ -61,7 +61,7 @@ namespace Talon_s_Vengeance_Farmer
 
         private void OnPulse()
         {
-            WoWPlayerMe me = ObjMgr.Pulse(players);
+            WoWPlayerMe me = ObjMgr.Pulse(null, players);
             if (me != null)
             {
                 WowPlayer targetPlayer = players.FirstOrDefault(l => l.GUID == me.TargetGUID);
@@ -81,6 +81,7 @@ namespace Talon_s_Vengeance_Farmer
 
         private readonly List<WowPlayer> players = new List<WowPlayer>();
         private bool IsMaster = true;
+        private SafeTimer timer;
 
         #endregion
 

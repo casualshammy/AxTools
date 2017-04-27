@@ -20,10 +20,7 @@ namespace AxTools.WoW.PluginSystem.API
         {
             WoWAntiKick.ActionEmulated += ptr =>
             {
-                if (AntiAfkActionEmulated != null)
-                {
-                    AntiAfkActionEmulated(ptr);
-                }
+                AntiAfkActionEmulated?.Invoke(ptr);
             };
         }
 
@@ -151,24 +148,10 @@ namespace AxTools.WoW.PluginSystem.API
         {
             Notify.TrayPopup("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, plugin.TrayIcon, timeout);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public static bool ClickerEnabled
+        
+        public static string GetPluginSettingsDir(this IPlugin plugin)
         {
-            get { return Clicker.Enabled; }
-            set
-            {
-                if (value)
-                {
-                    Clicker.Start(Settings.Instance.ClickerInterval, WoWManager.WoWProcess.MainWindowHandle, (IntPtr) Settings.Instance.ClickerKey);
-                }
-                else
-                {
-                    Clicker.Stop();
-                }
-            }
+            return $"{AppFolders.PluginsSettingsDir}\\{plugin.Name}";
         }
 
         public static IntPtr WoWWindowHandle

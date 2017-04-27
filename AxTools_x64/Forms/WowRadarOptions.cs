@@ -173,7 +173,7 @@ namespace AxTools.Forms
             try
             {
                 List<WowNpc> npcList = new List<WowNpc>();
-                WoWPlayerMe localPlayer = ObjectMgr.Pulse(npcList);
+                WoWPlayerMe localPlayer = ObjectMgr.Pulse(null, null, npcList);
                 List<WowNpc> npcsWithUniqueNames = npcList.DistinctBy(i => i.Name).ToList();
                 npcsWithUniqueNames.Sort(delegate(WowNpc o1, WowNpc o2)
                 {

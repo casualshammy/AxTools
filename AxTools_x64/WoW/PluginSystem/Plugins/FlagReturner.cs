@@ -68,9 +68,9 @@ namespace AxTools.WoW.PluginSystem.Plugins
             {
                 Log.Error(string.Format("{0}:{1} :: [{2}] TODO error0: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
             }
+            WoWPlayerMe localPlayer = null;
             if (searchingObjects.Length > 0)
             {
-                WoWPlayerMe localPlayer;
                 try
                 {
                     localPlayer = ObjectMgr.Pulse(wowObjects);
@@ -103,6 +103,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     Log.Error(string.Format("{0}:{1} :: [{2}] TODO error2: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
                 }
             }
+            // todo: delete this block
+            if ((currentZone == 3820 || currentZone == 5799) && localPlayer != null) // око бури
+            {
+                foreach (WowObject i in wowObjects.Where(l => l.Name.Contains("Флаг ") && l.Location.Distance2D(localPlayer.Location) <= 10))
+                {
+                    Log.Error($"{WoWManager.WoWProcess} [{Name}] Flag instance: {i.Name}");
+                }
+            }
         }
 
         public void OnStop()
@@ -115,21 +123,18 @@ namespace AxTools.WoW.PluginSystem.Plugins
             switch (zone)
             {
                 case 3277:
-                case 5031:
+                case 5031: // Два Пика
                     searchingObjects = new[] { Wowhead.GetSpellInfo(23335).Name, Wowhead.GetSpellInfo(23333).Name }; // Флаг Альянса, Horde Flag
                     break;
-                case 3820:
+                case 3820: // regular Око Бури
                 case 5799:
                     searchingObjects = new[] {  Wowhead.GetSpellInfo(34976).Name }; // Флаг Пустоверти
                     break;
                 case 6051:
                     searchingObjects = new[] { Wowhead.GetSpellInfo(121164).Name }; // entry ids: 212091, 212092, 212093, 212094; Сфера могущества
                     break;
-                case 6665:
+                case 6665: // Каньон Суровых Ветров
                     searchingObjects = new[] { Wowhead.GetSpellInfo(140876).Name, Wowhead.GetSpellInfo(141210).Name }; // Вагонетка Альянса, Вагонетка Орды
-                    break;
-                case 3703:
-                    searchingObjects = new[] { "Хранилище гильдии" };
                     break;
                 default:
                     searchingObjects = new string[] { };
@@ -143,7 +148,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
             else
             {
-                this.LogPrint("Unknown battlefield, ID: " + zone);
+                this.LogPrint("Unknown battlefield, ID: " + zone + "; zoneText: " + GameFunctions.ZoneText);
                 this.ShowNotify("Unknown battlefield (" + GameFunctions.ZoneText + "). I don't know what to do in this zone...", true, true);
             }
         }

@@ -62,24 +62,25 @@ namespace WoWPlugin_RareReporter
 
         public void TimerElapsed()
         {
-            WoWPlayerMe me = ObjMgr.Pulse(objects, npcs);
+            WoWPlayerMe me = ObjMgr.Pulse(objects, null, npcs);
             if (me != null)
             {
-                WowNpc npc = npcs.FirstOrDefault(l => l.Name == POI);
-                WowObject wowObject = objects.FirstOrDefault(l => l.Name == POI);
+                WowNpc npc = npcs.FirstOrDefault(l => l.Alive && POI.Contains(l.Name));
+                WowObject wowObject = objects.FirstOrDefault(l => POI.Contains(l.Name));
                 if (npc != null || wowObject != null)
                 {
                     string name = npc != null ? npc.Name : wowObject.Name;
                     this.LogPrint("Found new POI: " + name);
-                    if ((DateTime.UtcNow - lastTimeSmsSent).TotalSeconds >= 60)
+                    if ((DateTime.UtcNow - lastTimeSmsSent).TotalSeconds >= timeout)
                     {
                         lastTimeSmsSent = DateTime.UtcNow;
                         this.LogPrint("Timing is OK");
                         dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
                         if (libSMS != null)
                         {
-                            libSMS.SendSMS("New rare found: " + name);
-                            this.LogPrint("SMS is sent");
+                            libSMS.SendSMS($"Rare spawned: {name}\r\nTime: {DateTime.Now}");
+                            Utilities.ShowNotify(this, $"Rare spawned: {name}\r\nTime: {DateTime.Now}", true, true, int.MaxValue); // $"Rare spawned: {name}" // string.Format("Rare spawned: {0}", name)
+                            this.LogPrint($"Rare spawned: {name}; message is sent");
                         }
                     }
                 }
@@ -94,8 +95,10 @@ namespace WoWPlugin_RareReporter
         private DateTime lastTimeSmsSent;
         private readonly List<WowNpc> npcs = new List<WowNpc>();
         private readonly List<WowObject> objects = new List<WowObject>();
-        private const string POI = "Лук'хок";
+        private readonly string[] POI = new[] { "Скалгулот" };
+        private const int timeout = 120;
 
         #endregion
+
     }
 }

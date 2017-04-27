@@ -62,7 +62,7 @@ namespace WoWPlugin_CombatRoutine
 
         private void OnPulse()
         {
-            WoWPlayerMe me = ObjMgr.Pulse(npcs);
+            WoWPlayerMe me = ObjMgr.Pulse(null, null, npcs);
             if (me != null && me.InCombat)
             {
                 WowNpc nearestNpc = npcs.FirstOrDefault(l => l.GUID == me.TargetGUID);

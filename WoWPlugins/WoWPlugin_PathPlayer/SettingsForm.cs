@@ -6,19 +6,22 @@ namespace PathPlayer
     public partial class SettingsForm : Form
     {
 
+        private PathPlayer pluginInst;
+
         public SettingsForm()
         {
             InitializeComponent();
         }
 
-        internal static void Open(Settings settingsInstance)
+        internal static void Open(Settings settingsInstance, PathPlayer plugin)
         {
             SettingsForm fishingConfig = new SettingsForm
             {
                 textBoxPath = { Text = settingsInstance.Path },
                 checkBoxLoopPath = { Checked = settingsInstance.LoopPath },
                 checkBoxStartFromNearestPoint = { Checked = settingsInstance.StartFromNearestPoint },
-                checkBoxRandomJumps = { Checked = settingsInstance.RandomJumps }
+                checkBoxRandomJumps = { Checked = settingsInstance.RandomJumps },
+                pluginInst = plugin
             };
             fishingConfig.ShowDialog();
             settingsInstance.Path = fishingConfig.textBoxPath.Text;
@@ -46,7 +49,7 @@ namespace PathPlayer
 
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog p = new OpenFileDialog { Filter = @"Text files (*.txt, *.json)|*.txt;*.json", InitialDirectory = Application.StartupPath + "\\pluginsSettings\\PathPlayer" })
+            using (OpenFileDialog p = new OpenFileDialog { Filter = @"Text files (*.txt, *.json)|*.txt;*.json", InitialDirectory = AxTools.WoW.PluginSystem.API.Utilities.GetPluginSettingsDir(pluginInst) })
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {

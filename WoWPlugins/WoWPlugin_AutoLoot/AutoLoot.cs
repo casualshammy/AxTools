@@ -49,7 +49,7 @@ namespace AutoLoot
 
         public void OnPulse()
         {
-            WoWPlayerMe localPlayer = ObjMgr.Pulse(wowNpcs);
+            WoWPlayerMe localPlayer = ObjMgr.Pulse(null, null, wowNpcs);
             if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && !GameFunctions.IsLooting)
             {
                 WowNpc[] npcs = wowNpcs.Where(l => l.Lootable && l.Health == 0 && l.Location.Distance2D(localPlayer.Location) < 40).ToArray();

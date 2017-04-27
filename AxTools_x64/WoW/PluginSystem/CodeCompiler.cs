@@ -19,7 +19,6 @@ namespace AxTools.WoW.PluginSystem
         // Methods
         public CodeCompiler(string path)
         {
-            CompilerVersion = 4f;
             SourceFilePaths = new List<string>();
             string hash = null;
             if (File.Exists(path))
@@ -76,8 +75,6 @@ namespace AxTools.WoW.PluginSystem
 
         public string CompiledToLocation { get; private set; }
 
-        public float CompilerVersion { get; private set; }
-
         public FileStructureType FileStructure { get; private set; }
 
         public CompilerParameters Options { get; private set; }
@@ -106,10 +103,10 @@ namespace AxTools.WoW.PluginSystem
             Dictionary<string, string> providerOptions = new Dictionary<string, string>
             {
                 {
-                    "CompilerVersion", string.Format(CultureInfo.InvariantCulture.NumberFormat, "v{0:N1}", CompilerVersion)
+                    "CompilerVersion", string.Format(CultureInfo.InvariantCulture.NumberFormat, "v4.0")
                 }
             };
-            using (CSharpCodeProvider provider = new CSharpCodeProvider(providerOptions))
+            using (Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider provider = new Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider())
             {
                 provider.Supports(GeneratorSupport.Resources);
                 CompilerResults results = provider.CompileAssemblyFromFile(Options, SourceFilePaths.ToArray());
@@ -186,13 +183,13 @@ namespace AxTools.WoW.PluginSystem
             }
         }
 
-        private bool method_2(string string2)
+        private bool Method_2(string string2)
         {
             Class153 class2 = new Class153
             {
                 String0 = string2
             };
-            return AppDomain.CurrentDomain.GetAssemblies().Any(class2.method_0);
+            return AppDomain.CurrentDomain.GetAssemblies().Any(class2.Method_0);
         }
 
         public void ParseFilesForCompilerOptions()
@@ -217,7 +214,7 @@ namespace AxTools.WoW.PluginSystem
                                     options.CompilerOptions = options.CompilerOptions + " /optimise";
                                 }
                             }
-                            else if ((strArray2.Length == 3) && !string.IsNullOrEmpty(strArray2[2]) && strArray2[2].EndsWith(".dll") && !method_2(strArray2[2]))
+                            else if ((strArray2.Length == 3) && !string.IsNullOrEmpty(strArray2[2]) && strArray2[2].EndsWith(".dll") && !Method_2(strArray2[2]))
                             {
                                 AddReference(strArray2[2]);
                             }
@@ -238,7 +235,7 @@ namespace AxTools.WoW.PluginSystem
             public string String0;
 
             // Methods
-            public bool method_0(Assembly assembly0)
+            public bool Method_0(Assembly assembly0)
             {
                 return assembly0.GetName().Name.Contains(String0.Replace(".dll", string.Empty));
             }

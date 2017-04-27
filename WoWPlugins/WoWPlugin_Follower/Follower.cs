@@ -65,7 +65,7 @@ namespace Follower
 
         public void OnStart()
         {
-            WoWPlayerMe locaPlayer = ObjMgr.Pulse(players, npcs);
+            WoWPlayerMe locaPlayer = ObjMgr.Pulse(null, players, npcs);
             WowPlayer myTargetPlayer = players.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
             WowNpc myTargetNpc = npcs.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
             if (myTargetPlayer != null)
@@ -85,7 +85,7 @@ namespace Follower
 
         public void OnPulse()
         {
-            WoWPlayerMe locaPlayer = ObjMgr.Pulse(players, npcs);
+            WoWPlayerMe locaPlayer = ObjMgr.Pulse(null, players, npcs);
             if (locaPlayer.Health > 0)
             {
                 WowPlayer unitPlayer = players.FirstOrDefault(i => i.Health > 0 && i.GUID == guid);

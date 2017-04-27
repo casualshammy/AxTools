@@ -47,8 +47,7 @@ namespace AxTools.WoW.Helpers
             // <level>85</level>
             // <quality id="1">Обычный</quality>
             // "inv_misc_questionmark"
-            WowheadItemInfo info;
-            if (!ItemInfos.TryGetValue(itemID, out info))
+            if (!ItemInfos.TryGetValue(itemID, out WowheadItemInfo info))
             {
                 if ((info = ItemInfo_GetCachedValue(itemID)) == null)
                 {
@@ -81,8 +80,7 @@ namespace AxTools.WoW.Helpers
 
         internal static WowheadSpellInfo GetSpellInfo(int spellID)
         {
-            WowheadSpellInfo info;
-            if (!SpellInfos.TryGetValue(spellID, out info))
+            if (!SpellInfos.TryGetValue(spellID, out WowheadSpellInfo info))
             {
                 if ((info = SpellInfo_GetCachedValue(spellID)) == null)
                 {
@@ -115,8 +113,7 @@ namespace AxTools.WoW.Helpers
 
         internal static string GetZoneText(uint zoneID)
         {
-            string info;
-            if (!ZoneInfos.TryGetValue(zoneID, out info))
+            if (!ZoneInfos.TryGetValue(zoneID, out string info))
             {
                 if ((info = ZoneInfo_GetCachedValue(zoneID)) == null)
                 {

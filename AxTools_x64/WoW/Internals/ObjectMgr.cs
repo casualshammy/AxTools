@@ -23,144 +23,41 @@ namespace AxTools.WoW.Internals
             return _memory.Read<ushort>(address + WowBuildInfoX64.ObjectType);
         }
 
-        internal static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
+        internal static WoWPlayerMe Pulse(List<WowObject> wowObjects = null, List<WowPlayer> wowUnits = null, List<WowNpc> wowNpcs = null)
         {
-            wowObjects.Clear();
-            wowUnits.Clear();
-            wowNpcs.Clear();
+            wowObjects?.Clear();
+            wowUnits?.Clear();
+            wowNpcs?.Clear();
             WoWPlayerMe localPlayer = Pulse();
             WoWGUID playerGUID = localPlayer.GUID;
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            //Log.Info("Pulse-1: address: " + currObject + "; type: " + GetObjectType(currObject));
             for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
             {
-                //Log.Info("Pulse-1: address: " + currObject + "; type: " + GetObjectType(currObject));
                 switch (i)
                 {
                     case 3:
-                        wowNpcs.Add(new WowNpc(currObject));
+                        wowNpcs?.Add(new WowNpc(currObject));
                         break;
                     case 4:
-                        WoWGUID objectGUID = _memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID);
-                        if (objectGUID != playerGUID)
+                        if (wowUnits != null)
                         {
-                            wowUnits.Add(new WowPlayer(currObject, objectGUID));
+                            WoWGUID objectGUID = _memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID);
+                            if (objectGUID != playerGUID)
+                            {
+                                wowUnits.Add(new WowPlayer(currObject, objectGUID));
+                            }
                         }
                         break;
                     case 5:
-                        wowObjects.Add(new WowObject(currObject));
+                        wowObjects?.Add(new WowObject(currObject));
                         break;
                 }
                 currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
             }
             return localPlayer;
         }
-
-        internal static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowNpc> wowNpcs)
-        {
-            wowObjects.Clear();
-            wowNpcs.Clear();
-            IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
-            {
-                switch (i)
-                {
-                    case 3:
-                        wowNpcs.Add(new WowNpc(currObject));
-                        break;
-                    case 5:
-                        wowObjects.Add(new WowObject(currObject));
-                        break;
-                }
-                currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
-            }
-            return Pulse();
-        }
-
-        internal static WoWPlayerMe Pulse(List<WowPlayer> wowPlayers, List<WowNpc> wowNpcs)
-        {
-            wowPlayers.Clear();
-            wowNpcs.Clear();
-            WoWPlayerMe localPlayer = Pulse();
-            WoWGUID playerGUID = localPlayer.GUID;
-            IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
-            {
-                switch (i)
-                {
-                    case 3:
-                        wowNpcs.Add(new WowNpc(currObject));
-                        break;
-                    case 4:
-                        WoWGUID objectGUID = _memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID);
-                        if (objectGUID != playerGUID)
-                        {
-                            wowPlayers.Add(new WowPlayer(currObject, objectGUID));
-                        }
-                        break;
-                }
-                currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
-            }
-            return localPlayer;
-        }
-
-        internal static WoWPlayerMe Pulse(List<WowObject> wowObjects)
-        {
-            wowObjects.Clear();
-            IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
-            {
-                if (i == 5)
-                {
-                    wowObjects.Add(new WowObject(currObject));
-                }
-                currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
-            }
-            return Pulse();
-        }
-
-        internal static WoWPlayerMe Pulse(List<WowPlayer> wowPlayers)
-        {
-            wowPlayers.Clear();
-            WoWPlayerMe localPlayer = Pulse();
-            WoWGUID playerGUID = localPlayer.GUID;
-            IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
-            {
-                if (i == 4)
-                {
-                    WoWGUID objectGUID = _memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID);
-                    if (objectGUID != playerGUID)
-                    {
-                        wowPlayers.Add(new WowPlayer(currObject, objectGUID));
-                    }
-                }
-                currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
-            }
-            return localPlayer;
-        }
-
-        internal static WoWPlayerMe Pulse(List<WowNpc> wowNpcs)
-        {
-            wowNpcs.Clear();
-            IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
-            {
-                if (i == 3)
-                {
-                    wowNpcs.Add(new WowNpc(currObject));
-                }
-                currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
-            }
-            return Pulse();
-        }
-
+        
         internal static WoWPlayerMe Pulse()
         {
             IntPtr localPlayerPtr = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.PlayerPtr);

@@ -142,21 +142,24 @@ namespace AxTools.WoW
                     {
                         if (Settings.Instance.WoWCustomizeWindow)
                         {
-                            try
-                            {
-                                if (Settings.Instance.WoWCustomWindowNoBorder)
+                            Task.Run(() => {
+                                Thread.Sleep(1000); // because sometimes pause is needed
+                                try
                                 {
-                                    long styleWow = NativeMethods.GetWindowLong64(process.MainWindowHandle, Win32Consts.GWL_STYLE) & ~(Win32Consts.WS_CAPTION | Win32Consts.WS_THICKFRAME);
-                                    NativeMethods.SetWindowLong64(process.MainWindowHandle, Win32Consts.GWL_STYLE, styleWow);
+                                    if (Settings.Instance.WoWCustomWindowNoBorder)
+                                    {
+                                        long styleWow = NativeMethods.GetWindowLong64(process.MainWindowHandle, Win32Consts.GWL_STYLE) & ~(Win32Consts.WS_CAPTION | Win32Consts.WS_THICKFRAME);
+                                        NativeMethods.SetWindowLong64(process.MainWindowHandle, Win32Consts.GWL_STYLE, styleWow);
+                                    }
+                                    NativeMethods.MoveWindow(process.MainWindowHandle, Settings.Instance.WoWCustomWindowRectangle.X, Settings.Instance.WoWCustomWindowRectangle.Y,
+                                        Settings.Instance.WoWCustomWindowRectangle.Width, Settings.Instance.WoWCustomWindowRectangle.Height, false);
+                                    Log.Info(string.Format("{0} [WoW hook] Window style is changed", process));
                                 }
-                                NativeMethods.MoveWindow(process.MainWindowHandle, Settings.Instance.WoWCustomWindowRectangle.X, Settings.Instance.WoWCustomWindowRectangle.Y,
-                                    Settings.Instance.WoWCustomWindowRectangle.Width, Settings.Instance.WoWCustomWindowRectangle.Height, false);
-                                Log.Info(string.Format("{0} [WoW hook] Window style is changed", process));
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error(string.Format("{0} [WoW hook] Window changing failed with error: {1}", process, ex.Message));
-                            }
+                                catch (Exception ex)
+                                {
+                                    Log.Error(string.Format("{0} [WoW hook] Window changing failed with error: {1}", process, ex.Message));
+                                }
+                            });
                         }
                         try
                         {

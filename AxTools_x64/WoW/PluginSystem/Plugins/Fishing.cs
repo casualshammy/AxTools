@@ -183,7 +183,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             this.LogPrint("Searching for Nat Pagle, id:85984");
             List<WowNpc> npcs = new List<WowNpc>();
-            ObjMgr.Pulse(npcs);
+            ObjMgr.Pulse(null, null, npcs);
             WowNpc natPagle = npcs.FirstOrDefault(npc => npc.EntryID == 85984);
             if (natPagle != null)
             {
@@ -242,7 +242,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 }
                 this.LogPrint("Searching for Marcia Chase, id:95844");
                 List<WowNpc> npcs = new List<WowNpc>();
-                ObjMgr.Pulse(npcs);
+                ObjMgr.Pulse(null, null, npcs);
                 WowNpc marciaChase = npcs.FirstOrDefault(npc => npc.EntryID == 95844);
                 if (marciaChase != null)
                 {

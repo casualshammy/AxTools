@@ -135,7 +135,7 @@ namespace AxTools.Forms
             this.blackMarketTrackerToolStripMenuItem.Name = "blackMarketTrackerToolStripMenuItem";
             this.blackMarketTrackerToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.blackMarketTrackerToolStripMenuItem.Text = "Black Market tracker";
-            this.blackMarketTrackerToolStripMenuItem.Click += new System.EventHandler(this.blackMarketTrackerToolStripMenuItem_Click);
+            this.blackMarketTrackerToolStripMenuItem.Click += new System.EventHandler(this.BlackMarketTrackerToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -149,7 +149,7 @@ namespace AxTools.Forms
             this.stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.stopActivePluginorPresshotkeyToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.stopActivePluginorPresshotkeyToolStripMenuItem.Text = "Stop active plug-in";
-            this.stopActivePluginorPresshotkeyToolStripMenuItem.Click += new System.EventHandler(this.stopActivePluginorPresshotkeyToolStripMenuItem_Click_1);
+            this.stopActivePluginorPresshotkeyToolStripMenuItem.Click += new System.EventHandler(this.StopActivePluginorPresshotkeyToolStripMenuItem_Click_1);
             // 
             // toolStripSeparator1
             // 
@@ -249,7 +249,7 @@ namespace AxTools.Forms
             this.linkEditWowAccounts.Text = "Edit WoW accounts";
             this.linkEditWowAccounts.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkEditWowAccounts.UseStyleColors = true;
-            this.linkEditWowAccounts.Click += new System.EventHandler(this.linkEditWowAccounts_Click);
+            this.linkEditWowAccounts.Click += new System.EventHandler(this.LinkEditWowAccounts_Click);
             // 
             // linkClickerSettings
             // 
@@ -268,7 +268,7 @@ namespace AxTools.Forms
             this.linkClickerSettings.Text = "Clicker settings";
             this.linkClickerSettings.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkClickerSettings.UseStyleColors = true;
-            this.linkClickerSettings.Click += new System.EventHandler(this.linkClickerSettings_Click);
+            this.linkClickerSettings.Click += new System.EventHandler(this.LinkClickerSettings_Click);
             // 
             // linkBackup
             // 
@@ -287,7 +287,7 @@ namespace AxTools.Forms
             this.linkBackup.Text = "Backups";
             this.linkBackup.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkBackup.UseStyleColors = true;
-            this.linkBackup.Click += new System.EventHandler(this.linkBackupAddons_Click);
+            this.linkBackup.Click += new System.EventHandler(this.LinkBackupAddons_Click);
             // 
             // cmbboxAccSelect
             // 
@@ -344,7 +344,7 @@ namespace AxTools.Forms
             this.tileBMTracker.TabIndex = 8;
             this.tileBMTracker.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileBMTracker.TileCount = 0;
-            this.tileBMTracker.Click += new System.EventHandler(this.tileBMTracker_Click);
+            this.tileBMTracker.Click += new System.EventHandler(this.TileBMTracker_Click);
             // 
             // tileRadar
             // 
@@ -361,7 +361,7 @@ namespace AxTools.Forms
             this.tileRadar.TabIndex = 7;
             this.tileRadar.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileRadar.TileCount = 0;
-            this.tileRadar.Click += new System.EventHandler(this.tileRadar_Click);
+            this.tileRadar.Click += new System.EventHandler(this.TileRadar_Click);
             // 
             // metroTabPage3
             // 
@@ -420,7 +420,7 @@ namespace AxTools.Forms
             this.linkDownloadPlugins.Text = "Download plugins";
             this.linkDownloadPlugins.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkDownloadPlugins.UseStyleColors = true;
-            this.linkDownloadPlugins.Click += new System.EventHandler(this.linkDownloadPlugins_Click);
+            this.linkDownloadPlugins.Click += new System.EventHandler(this.LinkDownloadPlugins_Click);
             // 
             // olvPlugins
             // 
@@ -477,7 +477,7 @@ namespace AxTools.Forms
             this.buttonStartStopPlugin.Text = "Start [Insert]";
             this.buttonStartStopPlugin.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroToolTip1.SetToolTip(this.buttonStartStopPlugin, "Start/stop plugin");
-            this.buttonStartStopPlugin.Click += new System.EventHandler(this.buttonStartStopPlugin_Click);
+            this.buttonStartStopPlugin.Click += new System.EventHandler(this.ButtonStartStopPlugin_Click);
             // 
             // metroTabPage2
             // 
@@ -524,7 +524,7 @@ namespace AxTools.Forms
             this.checkBoxStartTeamspeak3WithWow.Theme = MetroFramework.MetroThemeStyle.Light;
             this.checkBoxStartTeamspeak3WithWow.UseStyleColors = true;
             this.checkBoxStartTeamspeak3WithWow.UseVisualStyleBackColor = true;
-            this.checkBoxStartTeamspeak3WithWow.CheckedChanged += new System.EventHandler(this.checkBoxStartTeamspeak3WithWow_CheckedChanged);
+            this.checkBoxStartTeamspeak3WithWow.CheckedChanged += new System.EventHandler(this.CheckBoxStartTeamspeak3WithWow_CheckedChanged);
             // 
             // checkBoxStartMumbleWithWow
             // 
@@ -543,7 +543,7 @@ namespace AxTools.Forms
             this.checkBoxStartMumbleWithWow.Theme = MetroFramework.MetroThemeStyle.Light;
             this.checkBoxStartMumbleWithWow.UseStyleColors = true;
             this.checkBoxStartMumbleWithWow.UseVisualStyleBackColor = true;
-            this.checkBoxStartMumbleWithWow.CheckedChanged += new System.EventHandler(this.checkBoxStartMumbleWithWow_CheckedChanged);
+            this.checkBoxStartMumbleWithWow.CheckedChanged += new System.EventHandler(this.CheckBoxStartMumbleWithWow_CheckedChanged);
             // 
             // checkBoxStartRaidcallWithWow
             // 
@@ -562,7 +562,7 @@ namespace AxTools.Forms
             this.checkBoxStartRaidcallWithWow.Theme = MetroFramework.MetroThemeStyle.Light;
             this.checkBoxStartRaidcallWithWow.UseStyleColors = true;
             this.checkBoxStartRaidcallWithWow.UseVisualStyleBackColor = true;
-            this.checkBoxStartRaidcallWithWow.CheckedChanged += new System.EventHandler(this.checkBoxStartRaidcallWithWow_CheckedChanged);
+            this.checkBoxStartRaidcallWithWow.CheckedChanged += new System.EventHandler(this.CheckBoxStartRaidcallWithWow_CheckedChanged);
             // 
             // checkBoxStartVenriloWithWow
             // 
@@ -581,7 +581,7 @@ namespace AxTools.Forms
             this.checkBoxStartVenriloWithWow.Theme = MetroFramework.MetroThemeStyle.Light;
             this.checkBoxStartVenriloWithWow.UseStyleColors = true;
             this.checkBoxStartVenriloWithWow.UseVisualStyleBackColor = true;
-            this.checkBoxStartVenriloWithWow.CheckedChanged += new System.EventHandler(this.checkBoxStartVenriloWithWow_CheckedChanged);
+            this.checkBoxStartVenriloWithWow.CheckedChanged += new System.EventHandler(this.CheckBoxStartVenriloWithWow_CheckedChanged);
             // 
             // tileRaidcall
             // 
@@ -680,7 +680,7 @@ namespace AxTools.Forms
         ":[packet loss in the last 200 seconds]  \r\nLeft-click to clear statistics\r\nRight-" +
         "click to open pinger settings");
             this.linkPing.UseStyleColors = true;
-            this.linkPing.MouseDown += new System.Windows.Forms.MouseEventHandler(this.linkPing_MouseDown);
+            this.linkPing.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LinkPing_MouseDown);
             // 
             // linkSettings
             // 
@@ -699,7 +699,7 @@ namespace AxTools.Forms
             this.linkSettings.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroToolTip1.SetToolTip(this.linkSettings, "Click to open settings dialog");
             this.linkSettings.UseStyleColors = true;
-            this.linkSettings.Click += new System.EventHandler(this.linkSettings_Click);
+            this.linkSettings.Click += new System.EventHandler(this.LinkSettings_Click);
             // 
             // contextMenuStripBackupAndClean
             // 
@@ -718,7 +718,7 @@ namespace AxTools.Forms
             this.toolStripMenuItemBackupWoWAddOns.Name = "toolStripMenuItemBackupWoWAddOns";
             this.toolStripMenuItemBackupWoWAddOns.Size = new System.Drawing.Size(194, 22);
             this.toolStripMenuItemBackupWoWAddOns.Text = "Backup WoW AddOns";
-            this.toolStripMenuItemBackupWoWAddOns.Click += new System.EventHandler(this.toolStripMenuItemBackupWoWAddOns_Click);
+            this.toolStripMenuItemBackupWoWAddOns.Click += new System.EventHandler(this.ToolStripMenuItemBackupWoWAddOns_Click);
             // 
             // toolStripMenuItemDeployArchive
             // 
@@ -726,7 +726,7 @@ namespace AxTools.Forms
             this.toolStripMenuItemDeployArchive.Name = "toolStripMenuItemDeployArchive";
             this.toolStripMenuItemDeployArchive.Size = new System.Drawing.Size(194, 22);
             this.toolStripMenuItemDeployArchive.Text = "Deploy archive...";
-            this.toolStripMenuItemDeployArchive.Click += new System.EventHandler(this.toolStripMenuItemDeployArchive_Click);
+            this.toolStripMenuItemDeployArchive.Click += new System.EventHandler(this.ToolStripMenuItemDeployArchive_Click);
             // 
             // toolStripSeparator3
             // 
@@ -738,7 +738,7 @@ namespace AxTools.Forms
             this.toolStripMenuItemOpenWoWLogsFolder.Name = "toolStripMenuItemOpenWoWLogsFolder";
             this.toolStripMenuItemOpenWoWLogsFolder.Size = new System.Drawing.Size(194, 22);
             this.toolStripMenuItemOpenWoWLogsFolder.Text = "Open WoW logs folder";
-            this.toolStripMenuItemOpenWoWLogsFolder.Click += new System.EventHandler(this.toolStripMenuItemOpenWoWLogsFolder_Click);
+            this.toolStripMenuItemOpenWoWLogsFolder.Click += new System.EventHandler(this.ToolStripMenuItemOpenWoWLogsFolder_Click);
             // 
             // pictureBox1
             // 
@@ -767,14 +767,14 @@ namespace AxTools.Forms
             this.linkTitle.Text = "AxTools";
             this.linkTitle.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkTitle.UseStyleColors = true;
-            this.linkTitle.Click += new System.EventHandler(this.linkTitle_Click);
+            this.linkTitle.Click += new System.EventHandler(this.LinkTitle_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(194, 22);
             this.toolStripMenuItem1.Text = "Open backup folder";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.ToolStripMenuItem1_Click);
             // 
             // MainForm
             // 

@@ -60,7 +60,7 @@ namespace WoWPlugin_AttackFirst
 
         private void OnPulse()
         {
-            WoWPlayerMe me = ObjMgr.Pulse(npcs);
+            WoWPlayerMe me = ObjMgr.Pulse(null, null, npcs);
             if (me != null)
             {
                 WowNpc npc = npcs.FirstOrDefault(l => l.Name == mobName && l.Location.Distance(me.Location) < 40);

@@ -6,74 +6,22 @@ namespace AxTools.WoW.PluginSystem.API
 {
     public static class ObjMgr
     {
-        public static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowPlayer> wowUnits, List<WowNpc> wowNpcs)
+        public static WoWPlayerMe Pulse(List<WowObject> wowObjects = null, List<WowPlayer> wowUnits = null, List<WowNpc> wowNpcs = null)
         {
             if (GameFunctions.IsInGame)
             {
                 return ObjectMgr.Pulse(wowObjects, wowUnits, wowNpcs);
             }
-            wowObjects.Clear();
-            wowUnits.Clear();
-            wowNpcs.Clear();
+            wowObjects?.Clear();
+            wowUnits?.Clear();
+            wowNpcs?.Clear();
             return null;
         }
-
-        public static WoWPlayerMe Pulse(List<WowObject> wowObjects, List<WowNpc> wowNpcs)
-        {
-            if (GameFunctions.IsInGame)
-            {
-                return ObjectMgr.Pulse(wowObjects, wowNpcs);
-            }
-            wowObjects.Clear();
-            wowNpcs.Clear();
-            return null;
-        }
-
-        public static WoWPlayerMe Pulse(List<WowObject> wowObjects)
-        {
-            if (GameFunctions.IsInGame)
-            {
-                return ObjectMgr.Pulse(wowObjects);
-            }
-            wowObjects.Clear();
-            return null;
-        }
-
-        public static WoWPlayerMe Pulse(List<WowPlayer> wowPlayers)
-        {
-            if (GameFunctions.IsInGame)
-            {
-                return ObjectMgr.Pulse(wowPlayers);
-            }
-            wowPlayers.Clear();
-            return null;
-        }
-
-        public static WoWPlayerMe Pulse(List<WowNpc> wowNpcs)
-        {
-            if (GameFunctions.IsInGame)
-            {
-                return ObjectMgr.Pulse(wowNpcs);
-            }
-            wowNpcs.Clear();
-            return null;
-        }
-
+        
         [Pure]
         public static WoWPlayerMe Pulse()
         {
             return GameFunctions.IsInGame ? ObjectMgr.Pulse() : null;
-        }
-
-        public static WoWPlayerMe Pulse(List<WowPlayer> wowPlayers, List<WowNpc> wowNpcs)
-        {
-            if (GameFunctions.IsInGame)
-            {
-                return ObjectMgr.Pulse(wowPlayers, wowNpcs);
-            }
-            wowPlayers.Clear();
-            wowNpcs.Clear();
-            return null;
         }
 
     }

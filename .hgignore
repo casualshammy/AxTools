@@ -10,3 +10,5 @@ syntax: glob
 AxTools.opensdf
 AxTools.sdf
 AxTools.v11.suo
+.vs/AxTools/v15/.suo
+AxTools_x64/AxTools_x64.csproj.user

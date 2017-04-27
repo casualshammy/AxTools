@@ -48,6 +48,34 @@ namespace AxTools.Helpers
             return !(a == b);
         }
 
+        public static bool operator >(VersionExt a, VersionExt b)
+        {
+            if (a.Major > b.Major || a.Minor > b.Minor || a.Build > b.Build)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool operator <(VersionExt a, VersionExt b)
+        {
+            if (a.Major < b.Major || a.Minor < b.Minor || a.Build < b.Build)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool operator <=(VersionExt a, VersionExt b)
+        {
+            return a < b || a == b;
+        }
+
+        public static bool operator >=(VersionExt a, VersionExt b)
+        {
+            return a > b || a == b;
+        }
+
         protected bool Equals(VersionExt other)
         {
             return Major == other.Major && Minor == other.Minor && Build == other.Build;
@@ -69,6 +97,6 @@ namespace AxTools.Helpers
         {
             return Major + "." + Minor + "." + Build;
         }
-    
+        
     }
 }
