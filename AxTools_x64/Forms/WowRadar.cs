@@ -341,7 +341,7 @@ namespace AxTools.Forms
                                 {
                                     graphics.DrawPolygon(pen, pts);
                                 }
-                                objectsPointsInRadarCoords.Add(i.GUID, point);
+                                objectsPointsInRadarCoords[i.GUID] = point;
                                 point.X += 3;
                                 point.Y += 3;
                                 if (settings.WoWRadarShowPlayersClasses)
@@ -414,7 +414,7 @@ namespace AxTools.Forms
                                 {
                                     graphics.DrawPolygon(pen, pts);
                                 }
-                                objectsPointsInRadarCoords.Add(i.GUID, point);
+                                objectsPointsInRadarCoords[i.GUID] = point;
                                 point.X += 3;
                                 point.Y += 3;
                                 if (settings.WoWRadarShowPlayersClasses)
@@ -470,7 +470,7 @@ namespace AxTools.Forms
                             }
                             graphics.DrawPolygon(objectPen, pts);
                             graphics.FillPolygon(objectBrush, pts);
-                            objectsPointsInRadarCoords.Add(i.GUID, point);
+                            objectsPointsInRadarCoords[i.GUID] = point;
                             if (settings.WoWRadarShowObjectsNames)
                             {
                                 point.X += 3;
@@ -516,7 +516,7 @@ namespace AxTools.Forms
                                 }
                                 graphics.DrawPolygon(i.Alive ? npcPen : grayPen, pts);
                                 graphics.FillPolygon(i.Alive ? npcBrush : grayBrush, pts);
-                                objectsPointsInRadarCoords.Add(i.GUID, point);
+                                objectsPointsInRadarCoords[i.GUID] = point;
                                 if (settings.WoWRadarShowNPCsNames)
                                 {
                                     point.X += 3;

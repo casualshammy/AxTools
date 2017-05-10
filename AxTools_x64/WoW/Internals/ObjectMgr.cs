@@ -22,7 +22,7 @@ namespace AxTools.WoW.Internals
         {
             return _memory.Read<ushort>(address + WowBuildInfoX64.ObjectType);
         }
-
+        
         internal static WoWPlayerMe Pulse(List<WowObject> wowObjects = null, List<WowPlayer> wowUnits = null, List<WowNpc> wowNpcs = null)
         {
             wowObjects?.Clear();

@@ -77,7 +77,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(string.Format("{0}:{1} :: [{2}] Pulse error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
+                    Log.Error($"{WoWManager.WoWProcess} [{Name}] <ObjectMgr.Pulse> error: {ex.Message}");
                     return;
                 }
                 // todo: delete try..catch
@@ -85,17 +85,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 {
                     foreach (WowObject i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(localPlayer.Location) <= 10))
                     {
-                        // todo: delete try..catch
-                        try
-                        {
-                            GameFunctions.Interact(i.GUID);
-                            Log.Error(string.Format("NAME: {0}; ENTRY ID: {1}; ZONE ID: {2}", i.Name, i.EntryID, currentZone));
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(string.Format("{0}:{1} :: [{2}] TODO error1: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
-                        }
-                        Log.Info(string.Format("{0}:{1} :: [{2}] Interacting with {3} ({4})", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, i.Name, i.GUID));
+                        GameFunctions.Interact(i.GUID);
+                        this.LogPrint($"Interacting with {i.Name} ({i.GUID})");
                     }
                 }
                 catch (Exception ex)

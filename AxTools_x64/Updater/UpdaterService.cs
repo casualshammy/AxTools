@@ -199,6 +199,7 @@ namespace AxTools.Updater
                     Notify.TrayPopup("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, true);
                     _timer.Elapsed -= Timer_Elapsed;
                     Log.Info(string.Format("[Updater] Cannot validate remote server. Your internet connection is compromised (status {0}): {1}", webEx.Status, webEx.Message));
+                    Log.Info($"[Updater] Inner exception: {webEx.InnerException?.Message}");
                 }
                 else if (webEx.Status != WebExceptionStatus.NameResolutionFailure && webEx.Status != WebExceptionStatus.Timeout && webEx.Status != WebExceptionStatus.ConnectFailure)
                 {
