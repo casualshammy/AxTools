@@ -1,19 +1,26 @@
-﻿using System;
+﻿using Components.WinAPI;
+using MetroFramework;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Forms;
-using Components.WinAPI;
-using MetroFramework;
 
 namespace Components.Forms
 {
     public partial class PopupNotification : BorderedMetroForm
     {
         private readonly System.Timers.Timer timer;
+        private static readonly System.Timers.Timer arrangementTimer = new System.Timers.Timer(250);
         private DateTime loadTime;
+
+        static PopupNotification()
+        {
+            arrangementTimer.Elapsed += ArrangementTimer_Elapsed;
+            arrangementTimer.Start();
+        }
 
         public PopupNotification(string title, string message, Image image, MetroColorStyle metroColorStyle)
         {
@@ -27,7 +34,8 @@ namespace Components.Forms
             timer.Elapsed += timer_Tick;
             BeginInvoke((MethodInvoker) delegate
             {
-                SetLocation();
+                //SetLocation();
+                ArrangementTimer_Elapsed(null, null);
                 loadTime = DateTime.UtcNow;
                 timer.Start();
                 Timeout = Timeout == 0 ? 30 : Timeout;
@@ -39,7 +47,7 @@ namespace Components.Forms
                 }
             });
         }
-
+        
         public string Title
         {
             get { return metroLabel1.Text; }
@@ -112,6 +120,37 @@ namespace Components.Forms
             }
         }
 
+        private static void ArrangementTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            APPBARDATA appBarData = GetAppBarData();
+            List<PopupNotification> popups = FindForms<PopupNotification>().ToList();
+            popups.Sort((first, second) => {
+                return appBarData.uEdge == ABE.Top ? first.DesktopLocation.Y.CompareTo(second.DesktopLocation.Y) : -first.DesktopLocation.Y.CompareTo(second.DesktopLocation.Y);
+            });
+            if (appBarData.uEdge == ABE.Top)
+            {
+                int x;
+                int y = 0;
+                foreach (PopupNotification popup in popups)
+                {
+                    x = Screen.PrimaryScreen.WorkingArea.Width - popup.Width;
+                    popup.SetDesktopLocation(x, y);
+                    y += popup.Height + 10;
+                }
+            }
+            else
+            {
+                int x;
+                int y = Screen.PrimaryScreen.WorkingArea.Height - (popups.FirstOrDefault() != null ? popups.FirstOrDefault().Height : 0);
+                foreach (PopupNotification popup in popups)
+                {
+                    x = Screen.PrimaryScreen.WorkingArea.Width - popup.Width;
+                    popup.SetDesktopLocation(x, y);
+                    y -= popup.Height - 10;
+                }
+            }
+        }
+
         private void ALL_MouseEnter(object sender, EventArgs e)
         {
             loadTime = DateTime.UtcNow;
@@ -126,69 +165,59 @@ namespace Components.Forms
             }
         }
 
-        private void SetLocation()
-        {
-            int startPosX;
-            int startPosY;
-            IntPtr taskbarHandle = NativeMethods.FindWindow("Shell_TrayWnd", null);
-            APPBARDATA data = new APPBARDATA
-            {
-                cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA)),
-                hWnd = taskbarHandle
-            };
-            IntPtr result = NativeMethods.SHAppBarMessage((uint)APPBARMESSAGE.GetTaskbarPos, ref data);
-            if (result == IntPtr.Zero)
-            {
-                throw new InvalidOperationException();
-            }
-            List<PopupNotification> popups = FindForms<PopupNotification>().ToList();
-            popups.Remove(this);
-            if (data.uEdge == ABE.Top)
-            {
-                startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
-                startPosY = 0;
-                if (popups.Any())
-                {
-                    List<int> yTopLeft = popups.Select(l => l.DesktopLocation.Y).Concat(new[] { Screen.PrimaryScreen.WorkingArea.Height }).ToList();
-                    yTopLeft.Sort();
-                    List<int> yBottomLeft = new[] { -10 }.Concat(popups.Select(l => l.DesktopLocation.Y + l.Height)).ToList();
-                    yBottomLeft.Sort();
-                    for (int i = 0; i < yTopLeft.Count; i++)
-                    {
-                        int availHeight = yTopLeft[i] - yBottomLeft[i];
-                        if (availHeight >= Height + 10 + 10)
-                        {
-                            startPosY = yBottomLeft[i] + 10;
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
-                startPosY = Screen.PrimaryScreen.WorkingArea.Height - Height;
-                if (popups.Any())
-                {
-                    List<int> yTopLeft = new[] { Screen.PrimaryScreen.WorkingArea.Height + 10 }.Concat(popups.Select(l => l.DesktopLocation.Y)).ToList();
-                    yTopLeft.Sort();
-                    yTopLeft.Reverse();
-                    List<int> yBottomLeft = popups.Select(l => l.DesktopLocation.Y + l.Height).Concat(new[] { 0 }).ToList();
-                    yBottomLeft.Sort();
-                    yBottomLeft.Reverse();
-                    for (int i = 0; i < yTopLeft.Count; i++)
-                    {
-                        int availHeight = yTopLeft[i] - yBottomLeft[i];
-                        if (availHeight >= Height + 10 + 10)
-                        {
-                            startPosY = yTopLeft[i] - 10 - Height;
-                            break;
-                        }
-                    }
-                }
-            }
-            SetDesktopLocation(startPosX, startPosY);
-        }
+        //private void SetLocation()
+        //{
+        //    int startPosX;
+        //    int startPosY;
+            
+        //    List<PopupNotification> popups = FindForms<PopupNotification>().ToList();
+        //    popups.Remove(this);
+        //    if (data.uEdge == ABE.Top)
+        //    {
+        //        startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
+        //        startPosY = 0;
+        //        if (popups.Any())
+        //        {
+        //            List<int> yTopLeft = popups.Select(l => l.DesktopLocation.Y).Concat(new[] { Screen.PrimaryScreen.WorkingArea.Height }).ToList();
+        //            yTopLeft.Sort();
+        //            List<int> yBottomLeft = new[] { -10 }.Concat(popups.Select(l => l.DesktopLocation.Y + l.Height)).ToList();
+        //            yBottomLeft.Sort();
+        //            for (int i = 0; i < yTopLeft.Count; i++)
+        //            {
+        //                int availHeight = yTopLeft[i] - yBottomLeft[i];
+        //                if (availHeight >= Height + 10 + 10)
+        //                {
+        //                    startPosY = yBottomLeft[i] + 10;
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
+        //        startPosY = Screen.PrimaryScreen.WorkingArea.Height - Height;
+        //        if (popups.Any())
+        //        {
+        //            List<int> yTopLeft = new[] { Screen.PrimaryScreen.WorkingArea.Height + 10 }.Concat(popups.Select(l => l.DesktopLocation.Y)).ToList();
+        //            yTopLeft.Sort();
+        //            yTopLeft.Reverse();
+        //            List<int> yBottomLeft = popups.Select(l => l.DesktopLocation.Y + l.Height).Concat(new[] { 0 }).ToList();
+        //            yBottomLeft.Sort();
+        //            yBottomLeft.Reverse();
+        //            for (int i = 0; i < yTopLeft.Count; i++)
+        //            {
+        //                int availHeight = yTopLeft[i] - yBottomLeft[i];
+        //                if (availHeight >= Height + 10 + 10)
+        //                {
+        //                    startPosY = yTopLeft[i] - 10 - Height;
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    SetDesktopLocation(startPosX, startPosY);
+        //}
 
         private string WordWrap(string text)
         {
@@ -213,9 +242,25 @@ namespace Components.Forms
             }
         }
 
-        private T[] FindForms<T>() where T : Form
+        private static T[] FindForms<T>() where T : Form
         {
             return (from object i in Application.OpenForms where i.GetType() == typeof(T) select i as T).ToArray();
+        }
+
+        private static APPBARDATA GetAppBarData()
+        {
+            IntPtr taskbarHandle = NativeMethods.FindWindow("Shell_TrayWnd", null);
+            APPBARDATA data = new APPBARDATA
+            {
+                cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA)),
+                hWnd = taskbarHandle
+            };
+            IntPtr result = NativeMethods.SHAppBarMessage((uint)APPBARMESSAGE.GetTaskbarPos, ref data);
+            if (result == IntPtr.Zero)
+            {
+                throw new InvalidOperationException();
+            }
+            return data;
         }
 
     }
