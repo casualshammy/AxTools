@@ -192,14 +192,17 @@ namespace AxTools.Updater
                     _timer.Elapsed -= Timer_Elapsed;
                     Log.Info(string.Format("[Updater] Your credentials are invalid. Updater is disabled. Please contact devs (status {0}): {1}", webEx.Status, webEx.Message));
                 }
-                else if (webEx.Status == WebExceptionStatus.TrustFailure || webEx.Status == WebExceptionStatus.SecureChannelFailure)
+                else if (webEx.Status == WebExceptionStatus.TrustFailure)
                 {
                     Notify.TrayPopup("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, true);
                     _timer.Elapsed -= Timer_Elapsed;
                     Log.Info(string.Format("[Updater] Cannot validate remote server. Your internet connection is compromised (status {0}): {1}", webEx.Status, webEx.Message));
                     Log.Info($"[Updater] Inner exception: {webEx.InnerException?.Message}");
                 }
-                else if (webEx.Status != WebExceptionStatus.NameResolutionFailure && webEx.Status != WebExceptionStatus.Timeout && webEx.Status != WebExceptionStatus.ConnectFailure)
+                else if (webEx.Status != WebExceptionStatus.NameResolutionFailure &&
+                         webEx.Status != WebExceptionStatus.Timeout &&
+                         webEx.Status != WebExceptionStatus.ConnectFailure &&
+                         webEx.Status != WebExceptionStatus.SecureChannelFailure)
                 {
                     Log.Error(string.Format("[Updater] Fetching info error (status {0}): {1}", webEx.Status, webEx.Message));
                 }
@@ -207,7 +210,7 @@ namespace AxTools.Updater
             }
             catch (Exception ex)
             {
-                Log.Error(string.Format("[Updater] Fetching info error ({0}): {1}", ex.GetType(), ex.Message));
+                Log.Info($"[Updater] Fetching info error ({ex.GetType()}): {ex.Message}");
                 return;
             }
             if (!string.IsNullOrWhiteSpace(updateString))
@@ -219,13 +222,13 @@ namespace AxTools.Updater
                     {
                         if (Globals.AppVersion != updateInfo.Version)
                         {
-                            Log.Info(string.Format("[Updater] Server version: <{0}>, local version: <{1}>; downloading new version...", updateInfo.Version, Globals.AppVersion));
+                            Log.Info($"[Updater] Server version: <{updateInfo.Version}>, local version: <{Globals.AppVersion}>; downloading new version...");
                             _timer.Elapsed -= Timer_Elapsed;
                             DownloadExtractUpdate();
                         }
                         else
                         {
-                            Log.Info(string.Format("[Updater] Server version: <{0}>, local version: <{1}>; no update is needed", updateInfo.Version, Globals.AppVersion));
+                            Log.Info($"[Updater] Server version: <{updateInfo.Version}>, local version: <{Globals.AppVersion}>; no update is needed");
                         }
                     }
                     else
@@ -240,7 +243,7 @@ namespace AxTools.Updater
             }
             else
             {
-                Log.Error("[Updater] Update file fetched, but it's empty!");
+                Log.Error("[Updater] Update file is fetched, but it's empty!");
             }
         }
 
