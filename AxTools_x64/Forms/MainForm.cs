@@ -797,7 +797,7 @@ namespace AxTools.Forms
                 e.IsBalloon = true;
                 e.StandardIcon = ToolTipControl.StandardIcons.InfoLarge;
                 e.Title = plugin.Name;
-                e.Text = plugin.Description + "\r\nVersion: " + plugin.Version;
+                e.Text = $"{plugin.Description}\r\nVersion: {plugin.Version}\r\nNumber of uses: {settings.PluginsUsageStat[plugin.Name]}";
             }
         }
 

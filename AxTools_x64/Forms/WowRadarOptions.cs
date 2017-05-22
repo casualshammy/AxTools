@@ -131,7 +131,14 @@ namespace AxTools.Forms
         {
             if (!string.IsNullOrWhiteSpace(metroTextBoxAddNew.Text))
             {
-                AddRadarObject(new RadarObject(true, metroTextBoxAddNew.Text, true, true));
+                if (!settings.WoWRadarList.Any(l => l.Name == metroTextBoxAddNew.Text))
+                {
+                    AddRadarObject(new RadarObject(true, metroTextBoxAddNew.Text, true, true));
+                }
+                else
+                {
+                    this.TaskDialog("Object with the same name is already exist!", "", NotifyUserType.Error);
+                }
             }
             else
             {
@@ -143,7 +150,14 @@ namespace AxTools.Forms
         {
             if (comboboxNPCs.SelectedIndex != -1 && comboboxNPCs.SelectedItem != null && !string.IsNullOrWhiteSpace(comboboxNPCs.SelectedItem.ToString()))
             {
-                AddRadarObject(new RadarObject(true, comboboxNPCs.SelectedItem.ToString(), false, true));
+                if (!settings.WoWRadarList.Any(l => l.Name == comboboxNPCs.SelectedItem.ToString()))
+                {
+                    AddRadarObject(new RadarObject(true, comboboxNPCs.SelectedItem.ToString(), false, true));
+                }
+                else
+                {
+                    this.TaskDialog("Object with the same name is already exist!", "", NotifyUserType.Error);
+                }
                 comboboxNPCs.SelectedIndex = -1;
                 comboboxNPCs.Invalidate();
             }
@@ -157,7 +171,14 @@ namespace AxTools.Forms
         {
             if (comboboxObjects.SelectedIndex != -1 && comboboxObjects.SelectedItem != null && !string.IsNullOrWhiteSpace(comboboxObjects.SelectedItem.ToString()))
             {
-                AddRadarObject(new RadarObject(true, comboboxObjects.SelectedItem.ToString(), true, true));
+                if (!settings.WoWRadarList.Any(l => l.Name == comboboxObjects.SelectedItem.ToString()))
+                {
+                    AddRadarObject(new RadarObject(true, comboboxObjects.SelectedItem.ToString(), true, true));
+                }
+                else
+                {
+                    this.TaskDialog("Object with the same name is already exist!", "", NotifyUserType.Error);
+                } 
                 comboboxObjects.SelectedIndex = -1;
                 comboboxObjects.Invalidate();
             }

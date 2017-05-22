@@ -119,7 +119,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     break;
                 case 3820: // regular Око Бури
                 case 5799:
-                    searchingObjects = new[] {  Wowhead.GetSpellInfo(34976).Name }; // Флаг Пустоверти
+                    searchingObjects = new[] {  Wowhead.GetSpellInfo(34976).Name, "Флаг Ока Бури" }; // Флаг Пустоверти
                     break;
                 case 6051:
                     searchingObjects = new[] { Wowhead.GetSpellInfo(121164).Name }; // entry ids: 212091, 212092, 212093, 212094; Сфера могущества
