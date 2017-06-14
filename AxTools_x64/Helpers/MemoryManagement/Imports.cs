@@ -131,7 +131,7 @@ namespace AxTools.Helpers.MemoryManagement
         /// </returns>
         /// <remarks>Created 2012-02-15</remarks>
         [DllImport("kernel32", EntryPoint = "VirtualAllocEx")]
-        internal static extern IntPtr VirtualAllocEx(SafeMemoryHandle hProcess, uint dwAddress, int nSize, MemoryAllocationType dwAllocationType, MemoryProtectionType dwProtect);
+        internal static extern IntPtr VirtualAllocEx(SafeMemoryHandle hProcess, IntPtr dwAddress, int nSize, MemoryAllocationType dwAllocationType, MemoryProtectionType dwProtect);
 
         /// <summary>
         ///     Releases, decommits, or releases and decommits a region of memory within the virtual address space of a specified

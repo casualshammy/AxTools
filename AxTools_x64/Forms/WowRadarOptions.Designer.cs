@@ -55,6 +55,7 @@ namespace AxTools.Forms
             this.tabPageAppearance = new MetroFramework.Controls.MetroTabPage();
             this.textboxAlarmSound = new Components.MetroTextboxExt();
             this.labelAlarmSound = new MetroFramework.Controls.MetroLabel();
+            this.checkBoxPlayerArrowOnTop = new MetroFramework.Controls.MetroCheckBox();
             this.metroTabControl1.SuspendLayout();
             this.tabPageTrackingUnits.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.oListView)).BeginInit();
@@ -78,7 +79,7 @@ namespace AxTools.Forms
             this.buttonAddNPC.TabIndex = 38;
             this.buttonAddNPC.Text = "Add";
             this.buttonAddNPC.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.buttonAddNPC.Click += new System.EventHandler(this.buttonAddNPC_Click);
+            this.buttonAddNPC.Click += new System.EventHandler(this.ButtonAddNPC_Click);
             // 
             // metroCheckBoxShowPlayersClasses
             // 
@@ -166,7 +167,7 @@ namespace AxTools.Forms
             this.buttonAddUnknown.TabIndex = 55;
             this.buttonAddUnknown.Text = "Add";
             this.buttonAddUnknown.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.buttonAddUnknown.Click += new System.EventHandler(this.buttonAddUnknown_Click);
+            this.buttonAddUnknown.Click += new System.EventHandler(this.ButtonAddUnknown_Click);
             // 
             // comboboxNPCs
             // 
@@ -184,7 +185,7 @@ namespace AxTools.Forms
             this.comboboxNPCs.StyleManager = null;
             this.comboboxNPCs.TabIndex = 59;
             this.comboboxNPCs.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboboxNPCs.Click += new System.EventHandler(this.comboboxNPCs_Click);
+            this.comboboxNPCs.Click += new System.EventHandler(this.ComboboxNPCs_Click);
             // 
             // comboboxObjects
             // 
@@ -202,7 +203,7 @@ namespace AxTools.Forms
             this.comboboxObjects.StyleManager = null;
             this.comboboxObjects.TabIndex = 60;
             this.comboboxObjects.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboboxObjects.Click += new System.EventHandler(this.comboboxObjects_Click);
+            this.comboboxObjects.Click += new System.EventHandler(this.ComboboxObjects_Click);
             // 
             // buttonAddObject
             // 
@@ -215,7 +216,7 @@ namespace AxTools.Forms
             this.buttonAddObject.TabIndex = 61;
             this.buttonAddObject.Text = "Add";
             this.buttonAddObject.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.buttonAddObject.Click += new System.EventHandler(this.buttonAddObject_Click);
+            this.buttonAddObject.Click += new System.EventHandler(this.ButtonAddObject_Click);
             // 
             // metroTabControl1
             // 
@@ -228,7 +229,7 @@ namespace AxTools.Forms
             this.metroTabControl1.Location = new System.Drawing.Point(15, 30);
             this.metroTabControl1.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.SelectedIndex = 1;
             this.metroTabControl1.Size = new System.Drawing.Size(402, 368);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.TabIndex = 62;
@@ -335,7 +336,7 @@ namespace AxTools.Forms
             this.buttonSaveFile.TabIndex = 64;
             this.buttonSaveFile.Text = "Save list to file";
             this.buttonSaveFile.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.buttonSaveFile.Click += new System.EventHandler(this.buttonSaveFile_Click);
+            this.buttonSaveFile.Click += new System.EventHandler(this.ButtonSaveFile_Click);
             // 
             // buttonOpenFile
             // 
@@ -348,10 +349,11 @@ namespace AxTools.Forms
             this.buttonOpenFile.TabIndex = 63;
             this.buttonOpenFile.Text = "Load list from file";
             this.buttonOpenFile.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.buttonOpenFile.Click += new System.EventHandler(this.buttonOpenFile_Click);
+            this.buttonOpenFile.Click += new System.EventHandler(this.ButtonOpenFile_Click);
             // 
             // tabPageAppearance
             // 
+            this.tabPageAppearance.Controls.Add(this.checkBoxPlayerArrowOnTop);
             this.tabPageAppearance.Controls.Add(this.textboxAlarmSound);
             this.tabPageAppearance.Controls.Add(this.labelAlarmSound);
             this.tabPageAppearance.Controls.Add(this.metroCheckBoxShowPlayersClasses);
@@ -381,7 +383,7 @@ namespace AxTools.Forms
             this.textboxAlarmSound.CustomForeColor = false;
             this.textboxAlarmSound.FontSize = MetroFramework.MetroTextBoxSize.Small;
             this.textboxAlarmSound.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textboxAlarmSound.Location = new System.Drawing.Point(120, 78);
+            this.textboxAlarmSound.Location = new System.Drawing.Point(120, 109);
             this.textboxAlarmSound.Multiline = false;
             this.textboxAlarmSound.Name = "textboxAlarmSound";
             this.textboxAlarmSound.ReadOnly = false;
@@ -403,7 +405,7 @@ namespace AxTools.Forms
             this.labelAlarmSound.FontSize = MetroFramework.MetroLabelSize.Medium;
             this.labelAlarmSound.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.labelAlarmSound.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelAlarmSound.Location = new System.Drawing.Point(3, 79);
+            this.labelAlarmSound.Location = new System.Drawing.Point(3, 110);
             this.labelAlarmSound.Name = "labelAlarmSound";
             this.labelAlarmSound.Size = new System.Drawing.Size(111, 19);
             this.labelAlarmSound.Style = MetroFramework.MetroColorStyle.Blue;
@@ -412,6 +414,25 @@ namespace AxTools.Forms
             this.labelAlarmSound.Text = "Alarm sound file:";
             this.labelAlarmSound.Theme = MetroFramework.MetroThemeStyle.Light;
             this.labelAlarmSound.UseStyleColors = true;
+            // 
+            // checkBoxPlayerArrowOnTop
+            // 
+            this.checkBoxPlayerArrowOnTop.AutoSize = true;
+            this.checkBoxPlayerArrowOnTop.CustomBackground = false;
+            this.checkBoxPlayerArrowOnTop.CustomForeColor = false;
+            this.checkBoxPlayerArrowOnTop.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.checkBoxPlayerArrowOnTop.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.checkBoxPlayerArrowOnTop.Location = new System.Drawing.Point(3, 60);
+            this.checkBoxPlayerArrowOnTop.Name = "checkBoxPlayerArrowOnTop";
+            this.checkBoxPlayerArrowOnTop.Size = new System.Drawing.Size(267, 19);
+            this.checkBoxPlayerArrowOnTop.Style = MetroFramework.MetroColorStyle.Blue;
+            this.checkBoxPlayerArrowOnTop.StyleManager = null;
+            this.checkBoxPlayerArrowOnTop.TabIndex = 53;
+            this.checkBoxPlayerArrowOnTop.Text = "Show local player rotation arrow on top";
+            this.checkBoxPlayerArrowOnTop.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.checkBoxPlayerArrowOnTop.UseStyleColors = true;
+            this.checkBoxPlayerArrowOnTop.UseVisualStyleBackColor = true;
+            this.checkBoxPlayerArrowOnTop.CheckedChanged += new System.EventHandler(this.CheckBoxPlayerArrowOnTop_CheckedChanged);
             // 
             // WowRadarOptions
             // 
@@ -462,5 +483,6 @@ namespace AxTools.Forms
         private BrightIdeasSoftware.OLVColumn oColumnSoundAlarm;
         private MetroLabel labelAlarmSound;
         private MetroTextboxExt textboxAlarmSound;
+        private MetroCheckBox checkBoxPlayerArrowOnTop;
     }
 }

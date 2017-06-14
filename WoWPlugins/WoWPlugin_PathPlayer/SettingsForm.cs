@@ -18,15 +18,11 @@ namespace PathPlayer
             SettingsForm fishingConfig = new SettingsForm
             {
                 textBoxPath = { Text = settingsInstance.Path },
-                checkBoxLoopPath = { Checked = settingsInstance.LoopPath },
-                checkBoxStartFromNearestPoint = { Checked = settingsInstance.StartFromNearestPoint },
                 checkBoxRandomJumps = { Checked = settingsInstance.RandomJumps },
                 pluginInst = plugin
             };
             fishingConfig.ShowDialog();
             settingsInstance.Path = fishingConfig.textBoxPath.Text;
-            settingsInstance.LoopPath = fishingConfig.checkBoxLoopPath.Checked;
-            settingsInstance.StartFromNearestPoint = fishingConfig.checkBoxStartFromNearestPoint.Checked;
             settingsInstance.RandomJumps = fishingConfig.checkBoxRandomJumps.Checked;
         }
 

@@ -1,7 +1,7 @@
 using System.Runtime.Serialization;
 using AxTools.WoW.Internals;
 
-namespace PathPlayer
+namespace LibNavigator
 {
     [DataContract]
     internal class DoAction
@@ -9,10 +9,10 @@ namespace PathPlayer
         [DataMember(Name = "ActionType")]
         internal DoActionType ActionType;
 
-        [DataMember(Name = "Data")]
+        [DataMember(Name = "Data", EmitDefaultValue = false)]
         internal string Data;
 
-        [DataMember(Name = "WowPoint")]
+        [DataMember(Name = "WowPoint", EmitDefaultValue = false)]
         internal WowPoint WowPoint;
     }
 }

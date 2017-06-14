@@ -58,10 +58,7 @@ namespace AxTools.Services
         internal static void DeployArchive(string path)
         {
             _isBackingUp = true;
-            if (IsRunningChanged != null)
-            {
-                IsRunningChanged(true);
-            }
+            IsRunningChanged?.Invoke(true);
             try
             {
                 if (Directory.Exists(_settings.WoWDirectory))
@@ -75,24 +72,21 @@ namespace AxTools.Services
                     else
                     {
                         Log.Info("[BackupAddons] Archive " + path + " isn't found");
-                        Notify.Balloon("Backup error", "Archive " + path + " isn't found", NotifyUserType.Error, true);
+                        Notify.TrayPopup("Backup error", "Archive " + path + " isn't found", NotifyUserType.Error, true);
                     }
                 }
                 else
                 {
                     Log.Info("[BackupAddons] WoW dir (" + _settings.WoWDirectory + ") isn't found");
-                    Notify.Balloon("Backup error", "WoW dir (" + _settings.WoWDirectory + ") isn't found", NotifyUserType.Error, true);
+                    Notify.TrayPopup("Backup error", "WoW dir (" + _settings.WoWDirectory + ") isn't found", NotifyUserType.Error, true);
                 }
             }
             catch (Exception ex)
             {
                 Log.Error("[BackupAddons] Deploying error: " + ex.Message);
-                Notify.Balloon("Deploying error", ex.Message, NotifyUserType.Error, true);
+                Notify.TrayPopup("Deploying error", ex.Message, NotifyUserType.Error, true);
             }
-            if (IsRunningChanged != null)
-            {
-                IsRunningChanged(false);
-            }
+            IsRunningChanged?.Invoke(false);
             _isBackingUp = false;
         }
 
@@ -123,10 +117,7 @@ namespace AxTools.Services
         private static void MakeNewArchive()
         {
             _isBackingUp = true;
-            if (IsRunningChanged != null)
-            {
-                IsRunningChanged(true);
-            }
+            IsRunningChanged?.Invoke(true);
             if (Directory.Exists(_settings.WoWDirectory + "\\WTF"))
             {
                 if (Utils.CalcDirectorySize(_settings.WoWDirectory + "\\WTF") <= 1024*1024*1024)
@@ -144,24 +135,21 @@ namespace AxTools.Services
                     catch (Exception ex)
                     {
                         Log.Error("[BackupAddons] Backup error: " + ex.Message);
-                        Notify.Balloon("Backup error", ex.Message, NotifyUserType.Error, true);
+                        Notify.TrayPopup("Backup error", ex.Message, NotifyUserType.Error, true);
                     }
                 }
                 else
                 {
                     Log.Info("[BackupAddons] WTF directory is too large");
-                    Notify.Balloon("Backup error", "WTF directory is too large (> 1GB)", NotifyUserType.Error, true);
+                    Notify.TrayPopup("Backup error", "WTF directory is too large (> 1GB)", NotifyUserType.Error, true);
                 }
             }
             else
             {
                 Log.Info("[BackupAddons] WTF directory isn't found");
-                Notify.Balloon("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
+                Notify.TrayPopup("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
             }
-            if (IsRunningChanged != null)
-            {
-                IsRunningChanged(false);
-            }
+            IsRunningChanged?.Invoke(false);
             _isBackingUp = false;
         }
 
@@ -241,10 +229,7 @@ namespace AxTools.Services
                 if (procent != _prevProcent && procent >= 0 && procent <= 100)
                 {
                     _prevProcent = procent;
-                    if (ProgressPercentageChanged != null)
-                    {
-                        ProgressPercentageChanged(procent);
-                    }
+                    ProgressPercentageChanged?.Invoke(procent);
                 }
             }
         }
@@ -257,10 +242,7 @@ namespace AxTools.Services
                 if (procent != _prevProcent && procent >= 0 && procent <= 100)
                 {
                     _prevProcent = procent;
-                    if (ProgressPercentageChanged != null)
-                    {
-                        ProgressPercentageChanged(procent);
-                    }
+                    ProgressPercentageChanged?.Invoke(procent);
                 }
             }
         }

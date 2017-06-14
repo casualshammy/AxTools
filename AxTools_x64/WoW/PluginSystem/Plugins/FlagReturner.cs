@@ -94,14 +94,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     Log.Error(string.Format("{0}:{1} :: [{2}] TODO error2: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
                 }
             }
-            // todo: delete this block
-            if ((currentZone == 3820 || currentZone == 5799) && localPlayer != null) // око бури
-            {
-                foreach (WowObject i in wowObjects.Where(l => l.Name.Contains("Флаг ") && l.Location.Distance2D(localPlayer.Location) <= 10))
-                {
-                    Log.Error($"{WoWManager.WoWProcess} [{Name}] Flag instance: {i.Name}");
-                }
-            }
         }
 
         public void OnStop()

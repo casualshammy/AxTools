@@ -281,15 +281,18 @@ namespace AxTools.Forms
 
                     #region Draw local player
 
-                    double d = -localPlayer.Rotation + 4.71238898038469;
-                    point.X = halfOfPictureboxSize;
-                    point.Y = halfOfPictureboxSize;
-                    graphics.FillRectangle(whiteBrush, point.X - 2, point.Y - 2, 4, 4);
-                    point2.X = point.X + (int) (15.0*Math.Cos(d));
-                    point2.Y = point.Y + (int) (15.0*Math.Sin(d));
-                    graphics.DrawLine(whitePen, point, point2);
-                    graphics.DrawEllipse(whitePen, point.X - 40*zoomR, point.Y - 40*zoomR, 80*zoomR, 80*zoomR);
-
+                    if (!settings.WoWRadarShowLocalPlayerRotationArrowOnTop)
+                    {
+                        double d = -localPlayer.Rotation + 4.71238898038469;
+                        point.X = halfOfPictureboxSize;
+                        point.Y = halfOfPictureboxSize;
+                        graphics.FillRectangle(whiteBrush, point.X - 2, point.Y - 2, 4, 4);
+                        point2.X = point.X + (int)(15.0 * Math.Cos(d));
+                        point2.Y = point.Y + (int)(15.0 * Math.Sin(d));
+                        graphics.DrawLine(whitePen, point, point2);
+                        graphics.DrawEllipse(whitePen, point.X - 40 * zoomR, point.Y - 40 * zoomR, 80 * zoomR, 80 * zoomR);
+                    }
+                    
                     #endregion
 
                     #region Draw friends
@@ -525,6 +528,22 @@ namespace AxTools.Forms
                                 }
                             }
                         }
+                    }
+
+                    #endregion
+
+                    #region Draw local player
+
+                    if (settings.WoWRadarShowLocalPlayerRotationArrowOnTop)
+                    {
+                        double d = -localPlayer.Rotation + 4.71238898038469;
+                        point.X = halfOfPictureboxSize;
+                        point.Y = halfOfPictureboxSize;
+                        graphics.FillRectangle(whiteBrush, point.X - 2, point.Y - 2, 4, 4);
+                        point2.X = point.X + (int)(15.0 * Math.Cos(d));
+                        point2.Y = point.Y + (int)(15.0 * Math.Sin(d));
+                        graphics.DrawLine(whitePen, point, point2);
+                        graphics.DrawEllipse(whitePen, point.X - 40 * zoomR, point.Y - 40 * zoomR, 80 * zoomR, 80 * zoomR);
                     }
 
                     #endregion

@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.2.52.1625</AssemblyVersion>
+    <AssemblyVersion>12.2.53.1637</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -187,7 +187,7 @@
     <Compile Include="Services\PingerHelpers\GameServers.cs" />
     <Compile Include="Services\PingerHelpers\PingerReply.cs" />
     <Compile Include="Services\PingerHelpers\PingResult.cs" />
-    <Compile Include="Updater\UpdateInfo.cs" />
+    <Compile Include="Updater\UpdateInfo2.cs" />
     <Compile Include="Updater\UpdaterService.cs" />
     <Compile Include="WinAPI\ABE.cs" />
     <Compile Include="WinAPI\APPBARDATA.cs" />
@@ -211,6 +211,7 @@
     <Compile Include="WoW\Helpers\ChatMsg.cs" />
     <Compile Include="WoW\Helpers\MoveHelper.cs" />
     <Compile Include="WoW\Helpers\SafeTimer.cs" />
+    <Compile Include="WoW\PluginSystem\IPlugin2.cs" />
     <Compile Include="WoW\PluginSystem\PluginContainer.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.cs">
       <SubType>Form</SubType>

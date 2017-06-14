@@ -13,9 +13,9 @@ namespace AxTools.Helpers
     internal static class Notify
     {
 
-        internal static void SmartNotify(string title, string message, NotifyUserType type, bool sound, bool showOnlyBallonTip = false)
+        internal static void SmartNotify(string title, string message, NotifyUserType type, bool sound, bool showOnlyTrayPopup = false)
         {
-            if (!showOnlyBallonTip && NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
+            if (!showOnlyTrayPopup && NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
             {
                 TaskDialog taskDialog = new TaskDialog(title, "AxTools", message, TaskDialogButton.OK);
                 switch (type)
@@ -38,26 +38,10 @@ namespace AxTools.Helpers
             }
             else
             {
-                Balloon(title, message, type, sound);
+                TrayPopup(title, message, type, sound);
             }
         }
-
-        internal static void Balloon(string title, string message, NotifyUserType type, bool sound)
-        {
-            MainForm.Instance.PostInvoke(() => { MainForm.Instance.notifyIconMain.ShowBalloonTip(30000, title, message, (ToolTipIcon) type); });
-            if (sound)
-            {
-                if (type == NotifyUserType.Error || type == NotifyUserType.Warn)
-                {
-                    SystemSounds.Hand.Play();
-                }
-                else
-                {
-                    Utils.PlaySystemNotificationAsync();
-                }
-            }
-        }
-
+        
         internal static void TaskDialog(string title, string message, NotifyUserType type, EventHandler<HyperlinkEventArgs> onHyperlinkClick = null)
         {
             TaskDialog(MainForm.Instance, title, message, type, onHyperlinkClick);

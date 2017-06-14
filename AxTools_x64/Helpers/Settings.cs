@@ -265,6 +265,9 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 60, PropertyName = "WoWRadarAlarmSoundFile")]
         internal string WoWRadarAlarmSoundFile = AppFolders.ResourcesDir + "\\alarm.wav";
 
+        [JsonProperty(Order = 61, PropertyName = "WoWRadarShowLocalPlayerRotationArrowOnTop")]
+        internal bool WoWRadarShowLocalPlayerRotationArrowOnTop = false;
+
         #endregion
 
         #region WoWPlugins
@@ -281,10 +284,7 @@ namespace AxTools.Helpers
             set
             {
                 wowPluginHotkey = value;
-                if (WoWPluginHotkeyChanged != null)
-                {
-                    WoWPluginHotkeyChanged(value);
-                }
+                WoWPluginHotkeyChanged?.Invoke(value);
             }
         }
 

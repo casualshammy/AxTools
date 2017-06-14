@@ -96,6 +96,11 @@ namespace AxTools.WoW.PluginSystem.API
             return new T();
         }
 
+        public static T LoadJSON<T>(this IPlugin plugin, string data) where T : class
+        {
+            return JsonConvert.DeserializeObject<T>(data);
+        }
+
         public static string GetRandomString(int size, bool onlyLetters)
         {
             return Utils.GetRandomString(size, onlyLetters);

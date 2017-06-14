@@ -28,8 +28,9 @@ namespace AxTools.Forms
             metroCheckBoxShowPlayersClasses.Checked = settings.WoWRadarShowPlayersClasses;
             metroCheckBoxShowNpcsNames.Checked = settings.WoWRadarShowNPCsNames;
             metroCheckBoxShowObjectsNames.Checked = settings.WoWRadarShowObjectsNames;
+            checkBoxPlayerArrowOnTop.Checked = settings.WoWRadarShowLocalPlayerRotationArrowOnTop;
             textboxAlarmSound.Text = settings.WoWRadarAlarmSoundFile;
-            textboxAlarmSound.TextChanged += textboxAlarmSound_TextChanged;
+            textboxAlarmSound.TextChanged += TextboxAlarmSound_TextChanged;
             metroTabControl1.SelectedIndex = 0;
             BeginInvoke((MethodInvoker) delegate
             {
@@ -51,31 +52,28 @@ namespace AxTools.Forms
             oListView.KeyUp += OListView_OnKeyUp;
             oColumnInteract.AspectPutter = delegate(object rowObject, object value)
             {
-                RadarObject radarObject = rowObject as RadarObject;
-                if (radarObject != null)
+                if (rowObject is RadarObject radarObject)
                 {
                     RefreshRadarObject(radarObject, radarObject.Name, (bool)value, radarObject.SoundAlarm);
                 }
             };
             oColumnSoundAlarm.AspectPutter = delegate(object rowObject, object value)
             {
-                RadarObject radarObject = rowObject as RadarObject;
-                if (radarObject != null)
+                if (rowObject is RadarObject radarObject)
                 {
                     RefreshRadarObject(radarObject, radarObject.Name, radarObject.Interact, (bool)value);
                 }
             };
             oColumnName.AspectPutter = delegate(object rowObject, object value)
             {
-                RadarObject radarObject = rowObject as RadarObject;
-                if (radarObject != null)
+                if (rowObject is RadarObject radarObject)
                 {
                     RefreshRadarObject(radarObject, (string)value, radarObject.Interact, radarObject.SoundAlarm);
                 }
             };
         }
 
-        private void textboxAlarmSound_TextChanged(object sender, EventArgs e)
+        private void TextboxAlarmSound_TextChanged(object sender, EventArgs e)
         {
             settings.WoWRadarAlarmSoundFile = textboxAlarmSound.Text;
         }
@@ -88,8 +86,7 @@ namespace AxTools.Forms
 
         private bool OListView_BooleanCheckStatePutter(object rowObject, bool value)
         {
-            RadarObject radarObject = rowObject as RadarObject;
-            if (radarObject != null)
+            if (rowObject is RadarObject radarObject)
             {
                 int indexOf = settings.WoWRadarList.IndexOf(radarObject);
                 settings.WoWRadarList.RemoveAt(indexOf);
@@ -103,8 +100,7 @@ namespace AxTools.Forms
         {
             if (args.KeyCode == Keys.Delete && !oListView.IsCellEditing)
             {
-                RadarObject radarObject = oListView.SelectedObject as RadarObject;
-                if (radarObject != null)
+                if (oListView.SelectedObject is RadarObject radarObject)
                 {
                     settings.WoWRadarList.Remove(radarObject);
                     oListView.RemoveObject(radarObject);
@@ -127,7 +123,7 @@ namespace AxTools.Forms
             settings.WoWRadarShowObjectsNames = metroCheckBoxShowObjectsNames.Checked;
         }
 
-        private void buttonAddUnknown_Click(object sender, EventArgs e)
+        private void ButtonAddUnknown_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(metroTextBoxAddNew.Text))
             {
@@ -146,7 +142,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void buttonAddNPC_Click(object sender, EventArgs e)
+        private void ButtonAddNPC_Click(object sender, EventArgs e)
         {
             if (comboboxNPCs.SelectedIndex != -1 && comboboxNPCs.SelectedItem != null && !string.IsNullOrWhiteSpace(comboboxNPCs.SelectedItem.ToString()))
             {
@@ -167,7 +163,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void buttonAddObject_Click(object sender, EventArgs e)
+        private void ButtonAddObject_Click(object sender, EventArgs e)
         {
             if (comboboxObjects.SelectedIndex != -1 && comboboxObjects.SelectedItem != null && !string.IsNullOrWhiteSpace(comboboxObjects.SelectedItem.ToString()))
             {
@@ -188,7 +184,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void comboboxNPCs_Click(object sender, EventArgs e)
+        private void ComboboxNPCs_Click(object sender, EventArgs e)
         {
             comboboxNPCs.Items.Clear();
             try
@@ -210,7 +206,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void comboboxObjects_Click(object sender, EventArgs e)
+        private void ComboboxObjects_Click(object sender, EventArgs e)
         {
             comboboxObjects.Items.Clear();
             try
@@ -234,7 +230,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void buttonOpenFile_Click(object sender, EventArgs e)
+        private void ButtonOpenFile_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
@@ -255,7 +251,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void buttonSaveFile_Click(object sender, EventArgs e)
+        private void ButtonSaveFile_Click(object sender, EventArgs e)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
@@ -299,5 +295,9 @@ namespace AxTools.Forms
             settings.WoWRadarList.Insert(indexOf, radarObject);
         }
 
+        private void CheckBoxPlayerArrowOnTop_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.WoWRadarShowLocalPlayerRotationArrowOnTop = checkBoxPlayerArrowOnTop.Checked;
+        }
     }
 }

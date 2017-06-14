@@ -309,7 +309,7 @@ namespace AxTools.Forms
                 }
                 else
                 {
-                    Notify.Balloon("Warning", "AxTools isn't attached to any WoW process", NotifyUserType.Warn, true);
+                    Notify.TrayPopup("Warning", "AxTools isn't attached to any WoW process", NotifyUserType.Warn, true);
                 }
             }, "Detach from current WoW process");
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]

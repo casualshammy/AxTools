@@ -80,10 +80,7 @@ namespace AxTools.WoW.PluginSystem
                         Notify.TrayPopup("AxTools", string.Format("Plugins are started ({0})", string.Join(", ", RunningPlugins.Select(l => l.Name))), NotifyUserType.Info, false);
                     }
                 }
-                if (PluginStateChanged != null)
-                {
-                    PluginStateChanged();
-                }
+                PluginStateChanged?.Invoke();
                 _isRunning = true;
             }
             else
@@ -126,10 +123,7 @@ namespace AxTools.WoW.PluginSystem
                 {
                     pluginContainer.IsRunning = false;
                 }
-                if (PluginStateChanged != null)
-                {
-                    PluginStateChanged();
-                }
+                PluginStateChanged?.Invoke();
                 _isRunning = false;
             }
             else
@@ -158,10 +152,7 @@ namespace AxTools.WoW.PluginSystem
                     {
                         Notify.TrayPopup("AxTools", "Plugin <" + plugin.Name + "> is started", NotifyUserType.Info, false, plugin.TrayIcon);
                     }
-                    if (PluginStateChanged != null)
-                    {
-                        PluginStateChanged();
-                    }
+                    PluginStateChanged?.Invoke();
                 }
             }
         }
@@ -188,10 +179,7 @@ namespace AxTools.WoW.PluginSystem
                         Notify.TrayPopup("AxTools", "Plugin <" + plugin.Name + "> is stopped", NotifyUserType.Info, false, plugin.TrayIcon);
                     }
                     _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = false;
-                    if (PluginStateChanged != null)
-                    {
-                        PluginStateChanged();
-                    }
+                    PluginStateChanged?.Invoke();
                 }
             }
         }
@@ -204,17 +192,11 @@ namespace AxTools.WoW.PluginSystem
                 container.EnabledByUser = enabled;
                 if (enabled)
                 {
-                    if (PluginEnabled != null)
-                    {
-                        PluginEnabled(plugin);
-                    }
+                    PluginEnabled?.Invoke(plugin);
                 }
                 else
                 {
-                    if (PluginDisabled != null)
-                    {
-                        PluginDisabled(plugin);
-                    }
+                    PluginDisabled?.Invoke(plugin);
                 }
             }
         }
@@ -236,10 +218,7 @@ namespace AxTools.WoW.PluginSystem
             _pluginContainers.Add(new PluginContainer(goodsDestroyer, Settings.Instance.EnabledPluginsList.Contains(goodsDestroyer.Name)));
             Log.Info(string.Format("[PluginManager] Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
             LoadPluginsFromDisk();
-            if (PluginsLoaded != null)
-            {
-                PluginsLoaded();
-            }
+            PluginsLoaded?.Invoke();
         }
 
         private static void LoadPluginsFromDisk()
@@ -304,7 +283,32 @@ namespace AxTools.WoW.PluginSystem
                             Globals.PluginsURL), NotifyUserType.Warn, (sender, args) => Process.Start(Globals.PluginsURL));
                 }
             }
+            CheckDependencies();
             ClearOldAssemblies();
+        }
+
+        private static void CheckDependencies()
+        {
+            HashSet<int> indexesOfPluginsWithUnresolvedDeps = new HashSet<int>();
+            for (int i = 0; i < _pluginContainers.Count; i++)
+            {
+                if (_pluginContainers[i].Plugin is IPlugin2 plugin2)
+                {
+                    foreach (string dep in plugin2.Dependencies)
+                    {
+                        if (!_pluginContainers.Select(l => l.Plugin.Name).Contains(dep))
+                        {
+                            indexesOfPluginsWithUnresolvedDeps.Add(i);
+                        }
+                    }
+                }
+            }
+            foreach (int indexOfPluginWithUnresolvedDeps in indexesOfPluginsWithUnresolvedDeps)
+            {
+                IPlugin2 plugin2 = _pluginContainers[indexOfPluginWithUnresolvedDeps].Plugin as IPlugin2;
+                _pluginContainers.RemoveAt(indexOfPluginWithUnresolvedDeps);
+                Notify.SmartNotify("Plugin error", $"Plugin {plugin2.Name} requires {string.Join(", ", plugin2.Dependencies)}", NotifyUserType.Error, true);
+            }
         }
 
         private static void ClearOldAssemblies()

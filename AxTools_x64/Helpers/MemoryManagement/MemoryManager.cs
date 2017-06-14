@@ -82,13 +82,13 @@ namespace AxTools.Helpers.MemoryManagement
                 byte[] buffer = new byte[count];
                 fixed (byte* buf = buffer)
                 {
-                    int numRead;
-                    if (ReadProcessMemory(ProcessHandle, address, buf, count, out numRead) && numRead == count)
+                    if (ReadProcessMemory(ProcessHandle, address, buf, count, out int numRead) && numRead == count)
                     {
                         return buffer;
                     }
                 }
-                throw new AccessViolationException(string.Format("Could not read bytes from {0} [{1}]!", address.ToString("X8"), Marshal.GetLastWin32Error()));
+                int lastError = Marshal.GetLastWin32Error();
+                throw new AccessViolationException(string.Format("Could not read bytes from {0} [{1}]!", address.ToString("X8"), lastError));
             }
             return new byte[0];
         }
@@ -213,13 +213,11 @@ namespace AxTools.Helpers.MemoryManagement
                 Marshal.FreeHGlobal(hObj);
             }
 
-            int numWritten;
-            uint oldProtect;
             // Fix the protection flags to EXECUTE_READWRITE to ensure we're not going to cause issues.
             // make sure we put back the old protection when we're done!
             // dwSize should be IntPtr or UIntPtr because the underlying type is SIZE_T and varies with the platform.
-            VirtualProtectEx(ProcessHandle, address, (IntPtr)MarshalCache<T>.Size, 0x40, out oldProtect);
-            bool ret = WriteProcessMemory(ProcessHandle, address, buffer, MarshalCache<T>.Size, out numWritten);
+            VirtualProtectEx(ProcessHandle, address, (IntPtr)MarshalCache<T>.Size, 0x40, out uint oldProtect);
+            bool ret = WriteProcessMemory(ProcessHandle, address, buffer, MarshalCache<T>.Size, out int numWritten);
             VirtualProtectEx(ProcessHandle, address, (IntPtr)MarshalCache<T>.Size, oldProtect, out oldProtect);
 
             return ret;
@@ -235,8 +233,7 @@ namespace AxTools.Helpers.MemoryManagement
         /// </returns>
         public int WriteBytes(IntPtr address, byte[] bytes)
         {
-            int numWritten;
-            bool success = WriteProcessMemory(ProcessHandle, address, bytes, bytes.Length, out numWritten);
+            bool success = WriteProcessMemory(ProcessHandle, address, bytes, bytes.Length, out int numWritten);
             if (!success || numWritten != bytes.Length)
             {
                 throw new AccessViolationException(string.Format("Could not write the specified bytes! {0} to {1} [{2}]", bytes.Length, address.ToString("X8"), new Win32Exception(Marshal.GetLastWin32Error()).Message));
@@ -253,7 +250,7 @@ namespace AxTools.Helpers.MemoryManagement
         /// <returns>Returns NULL on failure, or the base address of the allocated memory on success.</returns>
         public IntPtr AllocateMemory(int size, MemoryAllocationType allocationType = MemoryAllocationType.MEM_COMMIT, MemoryProtectionType protect = MemoryProtectionType.PAGE_EXECUTE_READWRITE)
         {
-            return Imports.VirtualAllocEx(ProcessHandle, 0, size, allocationType, protect);
+            return Imports.VirtualAllocEx(ProcessHandle, IntPtr.Zero, size, allocationType, protect);
         }
 
         /// <summary>

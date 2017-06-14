@@ -235,7 +235,7 @@ namespace AxTools.WoW.PluginSystem.API
                         else
                         {
                             Log.Error(string.Format("ChatboxSendText: text and editboxText are not equal; text: {0}; editboxText: {1}", text, editboxText));
-                            Notify.Balloon("Can't send command via chat", "Please don't type while this bot is working", NotifyUserType.Warn, true);
+                            Notify.TrayPopup("Can't send command via chat", "Please don't type while this bot is working", NotifyUserType.Warn, true);
                         }
                     }
                 }
@@ -253,7 +253,7 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 Log.Error("GetEditboxText: " + (frameName ?? "ChatFrame1EditBox") + " is null");
             }
-            return frame != null ? frame.EditboxText : null;
+            return frame?.EditboxText;
         }
 
         private static bool ChatIsOpened
@@ -286,10 +286,7 @@ namespace AxTools.WoW.PluginSystem.API
                         if (ChatMessagesLast[i] != s)
                         {
                             ChatMessagesLast[i] = s;
-                            if (NewChatMessage != null)
-                            {
-                                NewChatMessage(ParseChatMsg(s));
-                            }
+                            NewChatMessage?.Invoke(ParseChatMsg(s));
                         }
                     }
                 }

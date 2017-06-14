@@ -31,8 +31,6 @@
             this.textBoxPath = new System.Windows.Forms.TextBox();
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.buttonClose = new System.Windows.Forms.Button();
-            this.checkBoxLoopPath = new System.Windows.Forms.CheckBox();
-            this.checkBoxStartFromNearestPoint = new System.Windows.Forms.CheckBox();
             this.checkBoxRandomJumps = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
@@ -63,30 +61,10 @@
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
-            // checkBoxLoopPath
-            // 
-            this.checkBoxLoopPath.AutoSize = true;
-            this.checkBoxLoopPath.Location = new System.Drawing.Point(12, 40);
-            this.checkBoxLoopPath.Name = "checkBoxLoopPath";
-            this.checkBoxLoopPath.Size = new System.Drawing.Size(74, 17);
-            this.checkBoxLoopPath.TabIndex = 3;
-            this.checkBoxLoopPath.Text = "Loop path";
-            this.checkBoxLoopPath.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxStartFromNearestPoint
-            // 
-            this.checkBoxStartFromNearestPoint.AutoSize = true;
-            this.checkBoxStartFromNearestPoint.Location = new System.Drawing.Point(92, 40);
-            this.checkBoxStartFromNearestPoint.Name = "checkBoxStartFromNearestPoint";
-            this.checkBoxStartFromNearestPoint.Size = new System.Drawing.Size(135, 17);
-            this.checkBoxStartFromNearestPoint.TabIndex = 4;
-            this.checkBoxStartFromNearestPoint.Text = "Start from nearest point";
-            this.checkBoxStartFromNearestPoint.UseVisualStyleBackColor = true;
-            // 
             // checkBoxRandomJumps
             // 
             this.checkBoxRandomJumps.AutoSize = true;
-            this.checkBoxRandomJumps.Location = new System.Drawing.Point(233, 40);
+            this.checkBoxRandomJumps.Location = new System.Drawing.Point(12, 38);
             this.checkBoxRandomJumps.Name = "checkBoxRandomJumps";
             this.checkBoxRandomJumps.Size = new System.Drawing.Size(212, 17);
             this.checkBoxRandomJumps.TabIndex = 5;
@@ -99,8 +77,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(620, 69);
             this.Controls.Add(this.checkBoxRandomJumps);
-            this.Controls.Add(this.checkBoxStartFromNearestPoint);
-            this.Controls.Add(this.checkBoxLoopPath);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.buttonBrowse);
             this.Controls.Add(this.textBoxPath);
@@ -119,8 +95,6 @@
         private System.Windows.Forms.TextBox textBoxPath;
         private System.Windows.Forms.Button buttonBrowse;
         private System.Windows.Forms.Button buttonClose;
-        private System.Windows.Forms.CheckBox checkBoxLoopPath;
-        private System.Windows.Forms.CheckBox checkBoxStartFromNearestPoint;
         private System.Windows.Forms.CheckBox checkBoxRandomJumps;
     }
 }

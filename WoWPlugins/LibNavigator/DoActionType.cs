@@ -1,4 +1,4 @@
-namespace PathPlayer
+namespace LibNavigator
 {
     internal enum DoActionType
     {
@@ -12,6 +12,9 @@ namespace PathPlayer
         StopProfileIf,
         WaitWhile,
         Wait,
-        SetPrecision2D
+        SetPrecision2D,
+        SetPrecision3D,
+        SetLoopPath,
+        SetStartFromNearestPoint
     }
 }
