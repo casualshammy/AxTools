@@ -190,13 +190,14 @@ namespace AxTools.Updater
                 {
                     Notify.TrayPopup("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact dev", NotifyUserType.Error, false);
                     _timer.Elapsed -= Timer_Elapsed;
-                    Log.Info(string.Format("[Updater] Your credentials are invalid. Updater is disabled. Please contact devs (status {0}): {1}", webEx.Status, webEx.Message));
+                    Log.Info($"[Updater] Your credentials are invalid. Updater is disabled. Please contact devs (status {webEx.Status}): {webEx.Message}");
+                    Log.Error($"[Updater] Your username: {Settings.Instance.UserID}; your HWID: {_hardwareID}");
                 }
                 else if (webEx.Status == WebExceptionStatus.TrustFailure)
                 {
                     Notify.TrayPopup("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, true);
                     _timer.Elapsed -= Timer_Elapsed;
-                    Log.Info(string.Format("[Updater] Cannot validate remote server. Your internet connection is compromised (status {0}): {1}", webEx.Status, webEx.Message));
+                    Log.Info($"[Updater] Cannot validate remote server. Your internet connection is compromised (status {webEx.Status}): {webEx.Message}");
                     Log.Info($"[Updater] Inner exception: {webEx.InnerException?.Message}");
                 }
                 else if (webEx.Status != WebExceptionStatus.NameResolutionFailure &&
