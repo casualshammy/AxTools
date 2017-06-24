@@ -17,6 +17,8 @@ using AxTools.Forms.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 using Settings = AxTools.Helpers.Settings;
+using System.ComponentModel;
+using AxTools.WinAPI;
 
 namespace AxTools.Forms
 {
@@ -149,7 +151,14 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(string.Format("{0} [Radar] Pulsing error: {1}", WoWManager.WoWProcess, ex.Message));
+                    if (ex is Win32Exception win32ex && win32ex.NativeErrorCode == (int)Win32Error.ERROR_PARTIAL_COPY) // it's rarely happening, dunno why
+                    {
+                        Log.Info(string.Format("{0} [Radar] Pulsing error: {1}", WoWManager.WoWProcess, ex.Message));
+                    }
+                    else
+                    {
+                        Log.Error(string.Format("{0} [Radar] Pulsing error: {1}", WoWManager.WoWProcess, ex.Message));
+                    }
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
                     Thread.Sleep(100);

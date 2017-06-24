@@ -88,7 +88,7 @@ namespace AxTools.Helpers.MemoryManagement
                     }
                 }
                 int lastError = Marshal.GetLastWin32Error();
-                throw new AccessViolationException(string.Format("Could not read bytes from {0} [{1}]!", address.ToString("X8"), lastError));
+                throw new Win32Exception(lastError, $"Could not read bytes from 0x{address.ToString("X")}");
             }
             return new byte[0];
         }
