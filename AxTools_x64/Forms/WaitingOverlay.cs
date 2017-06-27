@@ -1,11 +1,12 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using MetroFramework;
+using MetroFramework.Drawing;
+using MetroFramework.Forms;
+using System;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AxTools.Helpers;
-using MetroFramework.Drawing;
-using MetroFramework.Forms;
 
 namespace AxTools.Forms
 {
@@ -13,6 +14,17 @@ namespace AxTools.Forms
     {
         private readonly MetroForm parentForm;
         private WaitingOverlaySub panel;
+
+        public string Label
+        {
+            get => panel.metroLabel1.Text;
+            set
+            {
+                panel.metroLabel1.Text = value;
+                panel.ClientSize = new Size(Math.Max(190, panel.metroLabel1.Location.X + 10 + TextRenderer.MeasureText(value, MetroFonts.Label(panel.metroLabel1.FontSize, panel.metroLabel1.FontWeight)).Width), 50); // 10 is neccessary
+                panel.Location = new Point(Location.X + Size.Width / 2 - panel.Size.Width / 2, Location.Y + Size.Height / 2 - panel.Size.Height / 2);
+            }
+        }
 
         private WaitingOverlay(MetroForm form)
         {
@@ -169,8 +181,8 @@ namespace AxTools.Forms
 
             #endregion
 
-            private MetroFramework.Controls.MetroLabel metroLabel1;
-            private MetroFramework.Controls.MetroProgressSpinner metroProgressSpinner1;
+            internal MetroFramework.Controls.MetroLabel metroLabel1;
+            internal MetroFramework.Controls.MetroProgressSpinner metroProgressSpinner1;
 
         }
     

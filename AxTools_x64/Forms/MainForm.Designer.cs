@@ -87,10 +87,11 @@ namespace AxTools.Forms
             this.toolStripMenuItemBackupWoWAddOns = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemDeployArchive = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tileExtDiscord = new Components.MetroTileExt(this.components);
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -183,7 +184,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
+            this.tabControl.SelectedIndex = 3;
             this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 59;
@@ -481,6 +482,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage2
             // 
+            this.metroTabPage2.Controls.Add(this.tileExtDiscord);
             this.metroTabPage2.Controls.Add(this.checkBoxStartTeamspeak3WithWow);
             this.metroTabPage2.Controls.Add(this.checkBoxStartMumbleWithWow);
             this.metroTabPage2.Controls.Add(this.checkBoxStartRaidcallWithWow);
@@ -606,7 +608,7 @@ namespace AxTools.Forms
             this.tileTeamspeak3.CenterText = "Teamspeak 3";
             this.tileTeamspeak3.CustomBackground = false;
             this.tileTeamspeak3.CustomForeColor = false;
-            this.tileTeamspeak3.Location = new System.Drawing.Point(3, 87);
+            this.tileTeamspeak3.Location = new System.Drawing.Point(3, 15);
             this.tileTeamspeak3.Name = "tileTeamspeak3";
             this.tileTeamspeak3.PaintTileCount = true;
             this.tileTeamspeak3.Size = new System.Drawing.Size(116, 66);
@@ -623,10 +625,10 @@ namespace AxTools.Forms
             this.tileMumble.CenterText = "Mumble";
             this.tileMumble.CustomBackground = false;
             this.tileMumble.CustomForeColor = false;
-            this.tileMumble.Location = new System.Drawing.Point(125, 87);
+            this.tileMumble.Location = new System.Drawing.Point(82, 87);
             this.tileMumble.Name = "tileMumble";
             this.tileMumble.PaintTileCount = true;
-            this.tileMumble.Size = new System.Drawing.Size(110, 66);
+            this.tileMumble.Size = new System.Drawing.Size(73, 66);
             this.tileMumble.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileMumble.StyleManager = null;
             this.tileMumble.TabIndex = 6;
@@ -640,10 +642,10 @@ namespace AxTools.Forms
             this.tileVentrilo.CenterText = "Ventrilo";
             this.tileVentrilo.CustomBackground = false;
             this.tileVentrilo.CustomForeColor = false;
-            this.tileVentrilo.Location = new System.Drawing.Point(3, 15);
+            this.tileVentrilo.Location = new System.Drawing.Point(3, 87);
             this.tileVentrilo.Name = "tileVentrilo";
             this.tileVentrilo.PaintTileCount = true;
-            this.tileVentrilo.Size = new System.Drawing.Size(116, 66);
+            this.tileVentrilo.Size = new System.Drawing.Size(73, 66);
             this.tileVentrilo.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileVentrilo.StyleManager = null;
             this.tileVentrilo.TabIndex = 5;
@@ -710,7 +712,7 @@ namespace AxTools.Forms
             this.toolStripMenuItem1,
             this.toolStripMenuItemOpenWoWLogsFolder});
             this.contextMenuStripBackupAndClean.Name = "contextMenuStripMain";
-            this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 120);
+            this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 98);
             // 
             // toolStripMenuItemBackupWoWAddOns
             // 
@@ -732,6 +734,13 @@ namespace AxTools.Forms
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(191, 6);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(194, 22);
+            this.toolStripMenuItem1.Text = "Open backup folder";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.ToolStripMenuItem1_Click);
             // 
             // toolStripMenuItemOpenWoWLogsFolder
             // 
@@ -769,12 +778,22 @@ namespace AxTools.Forms
             this.linkTitle.UseStyleColors = true;
             this.linkTitle.Click += new System.EventHandler(this.LinkTitle_Click);
             // 
-            // toolStripMenuItem1
+            // tileExtDiscord
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(194, 22);
-            this.toolStripMenuItem1.Text = "Open backup folder";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.ToolStripMenuItem1_Click);
+            this.tileExtDiscord.ActiveControl = null;
+            this.tileExtDiscord.CenterText = "Discord";
+            this.tileExtDiscord.CustomBackground = false;
+            this.tileExtDiscord.CustomForeColor = false;
+            this.tileExtDiscord.Location = new System.Drawing.Point(161, 87);
+            this.tileExtDiscord.Name = "tileExtDiscord";
+            this.tileExtDiscord.PaintTileCount = true;
+            this.tileExtDiscord.Size = new System.Drawing.Size(74, 66);
+            this.tileExtDiscord.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tileExtDiscord.StyleManager = null;
+            this.tileExtDiscord.TabIndex = 48;
+            this.tileExtDiscord.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.tileExtDiscord.TileCount = 0;
+            this.tileExtDiscord.Click += new System.EventHandler(this.TileExtDiscord_Click);
             // 
             // MainForm
             // 
@@ -855,6 +874,7 @@ namespace AxTools.Forms
         private MetroLink linkDownloadPlugins;
         private MetroLabel labelTotalPluginsEnabled;
         private ToolStripMenuItem toolStripMenuItem1;
+        private MetroTileExt tileExtDiscord;
     }
 }
 

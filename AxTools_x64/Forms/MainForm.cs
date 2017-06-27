@@ -167,6 +167,7 @@ namespace AxTools.Forms
             Location = settings.MainWindowLocation;                     // should do it here...
             OnActivated(EventArgs.Empty);                               // ...and calling OnActivated is necessary
             WaitingOverlay startupOverlay = WaitingOverlay.Show(this);  // form is visible, placing overlay
+            startupOverlay.Label = "Load WoW accounts...";
             WoWAccounts_CollectionChanged(null, null);                  // initial load wowaccounts
             // styling, events attaching...
             checkBoxStartVenriloWithWow.Checked = settings.VentriloStartWithWoW;
@@ -182,12 +183,16 @@ namespace AxTools.Forms
             olvPlugins.CellToolTipShowing += ObjectListView1_CellToolTipShowing;
             olvPlugins.DoubleClick += OlvPluginsOnDoubleClick;
             // end of styling, events attaching...
+            startupOverlay.Label = "Starting addons backup service...";
             AddonsBackup.StartService();                                // start backup service
+            startupOverlay.Label = "Starting pinger...";
             Pinger.Enabled = settings.PingerServerID != 0;              // set pinger
+            startupOverlay.Label = "Starting WoW process manager...";
             WoWProcessManager.StartWatcher();                           // start WoW spy
             TrayIconAnimation.Initialize(notifyIconMain);               // initialize tray animation
             HotkeyManager.KeyPressed += KeyboardHookKeyDown;            // start keyboard listener
             HotkeyManager.AddKeys(typeof(PluginManagerEx).ToString(), settings.WoWPluginHotkey);
+            startupOverlay.Label = "Waiting for plug-ins...";
             await pluginsLoader;                                        // waiting for plugins to be loaded
             startupOverlay.Close();                                     // close startup overkay
             Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
@@ -669,6 +674,24 @@ namespace AxTools.Forms
 
         }
 
+        private void TileExtDiscord_Click(object sender, EventArgs e)
+        {
+            if (VoIP.AvailableVoipClients.TryGetValue("Discord", out VoipInfo discordInfo))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    WorkingDirectory = discordInfo.DirectoryPath,
+                    FileName = discordInfo.ExecutablePath,
+                    Arguments = discordInfo.ExecutableArguments
+                });
+                Log.Info("[VoIP] Discord process started");
+            }
+            else
+            {
+                Notify.SmartNotify("Executable not found", "Can't locate \"Update.exe\". Check paths in settings window", NotifyUserType.Error, false);
+            }
+        }
+
         private void CheckBoxStartVenriloWithWow_CheckedChanged(object sender, EventArgs e)
         {
             settings.VentriloStartWithWoW = checkBoxStartVenriloWithWow.Checked;
@@ -1006,6 +1029,6 @@ namespace AxTools.Forms
         }
 
         #endregion
-
+        
     }
 }

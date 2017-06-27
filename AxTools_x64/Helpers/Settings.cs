@@ -61,7 +61,7 @@ namespace AxTools.Helpers
 
         private Settings()
         {
-            
+
         }
 
         internal void ValidateAndFix()
@@ -97,6 +97,10 @@ namespace AxTools.Helpers
             if (string.IsNullOrWhiteSpace(TS3Directory))
             {
                 TS3Directory = GetTeamspeakPath();
+            }
+            if (string.IsNullOrWhiteSpace(DiscordDirectory))
+            {
+                DiscordDirectory = GetDiscordPath();
             }
             if (string.IsNullOrWhiteSpace(UserID))
             {
@@ -189,7 +193,7 @@ namespace AxTools.Helpers
         #endregion
 
         #region VoIP
-
+        
         [JsonProperty(Order = 30, PropertyName = "MumbleDirectory")]
         internal string MumbleDirectory = string.Empty;
 
@@ -213,6 +217,9 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 37, PropertyName = "VentriloStartWithWoW")]
         internal bool VentriloStartWithWoW = false;
+
+        [JsonProperty(Order = 38, PropertyName = "DiscordDirectory")]
+        internal string DiscordDirectory = string.Empty;
 
         #endregion
 
@@ -439,6 +446,13 @@ namespace AxTools.Helpers
                     return string.Empty;
                 }
             }
+        }
+
+        private static string GetDiscordPath()
+        {
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord\\Update.exe");
+            Log.Info($"[Settings] Looking for Discord client in {path}");
+            return File.Exists(path) ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord") : string.Empty;
         }
 
         private static string GetWowPath()
