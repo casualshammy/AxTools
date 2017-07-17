@@ -98,10 +98,6 @@ namespace AxTools.Helpers
             {
                 TS3Directory = GetTeamspeakPath();
             }
-            if (string.IsNullOrWhiteSpace(DiscordDirectory))
-            {
-                DiscordDirectory = GetDiscordPath();
-            }
             if (string.IsNullOrWhiteSpace(UserID))
             {
                 UserID = Environment.MachineName + "___" + Utils.GetRandomString(10, false).ToUpper();
@@ -217,9 +213,6 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 37, PropertyName = "VentriloStartWithWoW")]
         internal bool VentriloStartWithWoW = false;
-
-        [JsonProperty(Order = 38, PropertyName = "DiscordDirectory")]
-        internal string DiscordDirectory = string.Empty;
 
         #endregion
 

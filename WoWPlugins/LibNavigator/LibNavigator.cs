@@ -223,7 +223,7 @@ namespace LibNavigator
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.WaitWhile:
-                        if (GameFunctions.LuaGetFunctionReturn(string.Format("tostring({0})", actionsList[counter].Data)) != "true")
+                        if (!GameFunctions.Lua.IsTrue(actionsList[counter].Data))
                         {
                             IncreaseCounterAndDoAction();
                         }
@@ -232,7 +232,7 @@ namespace LibNavigator
                         string[] p = actionsList[counter].Data.Split(new string[] { "##@##" }, StringSplitOptions.RemoveEmptyEntries);
                         string action = p[0];
                         string condition = p[1];
-                        if (GameFunctions.LuaGetFunctionReturn(string.Format("tostring({0})", condition)) == "true")
+                        if (GameFunctions.Lua.IsTrue(condition))
                         {
                             GameFunctions.SendToChat(action);
                         }
@@ -242,9 +242,20 @@ namespace LibNavigator
                         }
                         break;
                     case DoActionType.StopProfileIf:
-                        if (GameFunctions.LuaGetFunctionReturn(string.Format("tostring({0})", actionsList[counter].Data)) == "true")
+                        if (GameFunctions.Lua.IsTrue(actionsList[counter].Data))
                         {
                             counter = actionsList.Count - 1;
+                        }
+                        IncreaseCounterAndDoAction();
+                        break;
+                    case DoActionType.NotifyUser:
+                        this.ShowNotify(actionsList[counter].Data, false, false);
+                        IncreaseCounterAndDoAction();
+                        break;
+                    case DoActionType.NotifyUserIf:
+                        if (GameFunctions.Lua.IsTrue(actionsList[counter].AdditionalData))
+                        {
+                            this.ShowNotify(actionsList[counter].Data, false, false);
                         }
                         IncreaseCounterAndDoAction();
                         break;

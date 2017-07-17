@@ -109,6 +109,45 @@ namespace AxTools.WoW.PluginSystem.API
 
         #endregion
 
+        public static class Lua
+        {
+
+            public static string GetValue(string function)
+            {
+                lock (LuaLock)
+                {
+                    WoWUIFrame myEditbox = WoWUIFrame.GetFrameByName(LuaReturnFrameName);
+                    if (myEditbox == null)
+                    {
+                        SendToChat(string.Format("/run if(not {0})then CreateFrame(\"EditBox\", \"{0}\", UIParent);{0}:SetAutoFocus(false);{0}:ClearFocus(); end", LuaReturnFrameName));
+                    }
+                    SendToChat($"/run {LuaReturnVarName}={function};{LuaReturnFrameName}:SetText(\"{LuaReturnTokenName}=\"..{LuaReturnVarName});");
+                    int counter = 2000;
+                    while (counter > 0)
+                    {
+                        string editboxText = GetEditboxText(LuaReturnFrameName);
+                        if (editboxText != null)
+                        {
+                            if (editboxText.Contains(LuaReturnTokenName))
+                            {
+                                return editboxText.Remove(0, LuaReturnTokenName.Length + 1); // 1 - length of "="
+                            }
+                        }
+                        Thread.Sleep(10);
+                        counter -= 10;
+                    }
+                    return null;
+                }
+            }
+
+            public static bool IsTrue(string condition)
+            {
+                return GetValue($"tostring({condition})") == "true";
+            }
+
+
+        }
+
         #region Chat commands
 
         private static readonly string GossipVarName = Utilities.GetRandomString(5, true);
@@ -150,6 +189,7 @@ namespace AxTools.WoW.PluginSystem.API
             ChatboxSendText(command);
         }
 
+        [Obsolete("LuaGetFunctionReturn is deprecated, please use Lua.GetValue instead")]
         public static string LuaGetFunctionReturn(string function)
         {
             lock (LuaLock)
@@ -242,7 +282,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
             else
             {
-                Log.Error(string.Format("ChatboxSendText: too long string (length={0}): {1}", text.Length, text));
+                Log.Error(string.Format("ChatboxSendText: string is too long (length={0}): {1}", text.Length, text));
             }
         }
 

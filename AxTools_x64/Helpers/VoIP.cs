@@ -31,10 +31,6 @@ namespace AxTools.Helpers
                 {
                     Settings.Instance.TS3Directory = GetTeamspeakPath();
                 }
-                if (string.IsNullOrWhiteSpace(Settings.Instance.DiscordDirectory))
-                {
-                    Settings.Instance.DiscordDirectory = GetDiscordPath();
-                }
                 if (File.Exists(Settings.Instance.TS3Directory + "\\ts3client_win64.exe"))
                 {
                     list["Teamspeak 3"] = new VoipInfo(Settings.Instance.TS3Directory + "\\ts3client_win64.exe", "-nosingleinstance", Settings.Instance.TS3Directory);
@@ -55,10 +51,8 @@ namespace AxTools.Helpers
                 {
                     list["Mumble"] = new VoipInfo(settings.MumbleDirectory + "\\mumble.exe", "", settings.MumbleDirectory);
                 }
-                if (File.Exists(settings.DiscordDirectory + "\\Update.exe"))
-                {
-                    list["Discord"] = new VoipInfo(settings.DiscordDirectory + "\\Update.exe", "--processStart Discord.exe", settings.DiscordDirectory);
-                }
+                GetDiscord(list);
+                GetTwitch(list);
                 return list;
             }
         }
@@ -159,13 +153,40 @@ namespace AxTools.Helpers
             }
         }
 
-        private static string GetDiscordPath()
+        //private static string GetDiscordPath()
+        //{
+        //    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord");
+        //    Log.Info($"[Settings] Looking for Discord client in {path}");
+        //    return Directory.Exists(path) ? path : string.Empty;
+        //}
+
+        private static void GetDiscord(Dictionary<string, VoipInfo> dic)
         {
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord");
-            Log.Info($"[Settings] Looking for Discord client in {path}");
-            return Directory.Exists(path) ? path : string.Empty;
+            string discordDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord");
+            string discordExecutable = Path.Combine(discordDir, "Update.exe");
+            if (Directory.Exists(discordDir) && File.Exists(discordExecutable))
+            {
+                dic["Discord"] = new VoipInfo(discordExecutable, "--processStart Discord.exe", discordDir);
+            }
         }
-        
+
+        private static void GetTwitch(Dictionary<string, VoipInfo> dic)
+        {
+            string twitchDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Curse Client\\Bin");
+            string twitchExecutable = Path.Combine(twitchDir, "Twitch.exe");
+            if (Directory.Exists(twitchDir) && File.Exists(twitchExecutable))
+            {
+                dic["Twitch"] = new VoipInfo(twitchExecutable, "", twitchDir);
+            }
+        }
+
+        //private static string GetTwitchPath()
+        //{
+        //    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Curse Client\\Bin");
+        //    Log.Info($"[Settings] Looking for Twitch client in {path}");
+        //    return Directory.Exists(path) ? path : string.Empty;
+        //}
+
     }
 
     internal class VoipInfo

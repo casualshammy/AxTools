@@ -72,6 +72,8 @@ namespace AxTools.Forms
             this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.buttonStartStopPlugin = new MetroFramework.Controls.MetroButton();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
+            this.tileExtTwitch = new Components.MetroTileExt(this.components);
+            this.tileExtDiscord = new Components.MetroTileExt(this.components);
             this.checkBoxStartTeamspeak3WithWow = new MetroFramework.Controls.MetroCheckBox();
             this.checkBoxStartMumbleWithWow = new MetroFramework.Controls.MetroCheckBox();
             this.checkBoxStartRaidcallWithWow = new MetroFramework.Controls.MetroCheckBox();
@@ -91,7 +93,6 @@ namespace AxTools.Forms
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
-            this.tileExtDiscord = new Components.MetroTileExt(this.components);
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -482,6 +483,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage2
             // 
+            this.metroTabPage2.Controls.Add(this.tileExtTwitch);
             this.metroTabPage2.Controls.Add(this.tileExtDiscord);
             this.metroTabPage2.Controls.Add(this.checkBoxStartTeamspeak3WithWow);
             this.metroTabPage2.Controls.Add(this.checkBoxStartMumbleWithWow);
@@ -508,6 +510,40 @@ namespace AxTools.Forms
             this.metroTabPage2.VerticalScrollbarBarColor = true;
             this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.VerticalScrollbarSize = 10;
+            // 
+            // tileExtTwitch
+            // 
+            this.tileExtTwitch.ActiveControl = null;
+            this.tileExtTwitch.CenterText = "Twitch";
+            this.tileExtTwitch.CustomBackground = false;
+            this.tileExtTwitch.CustomForeColor = false;
+            this.tileExtTwitch.Location = new System.Drawing.Point(109, 87);
+            this.tileExtTwitch.Name = "tileExtTwitch";
+            this.tileExtTwitch.PaintTileCount = true;
+            this.tileExtTwitch.Size = new System.Drawing.Size(60, 66);
+            this.tileExtTwitch.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tileExtTwitch.StyleManager = null;
+            this.tileExtTwitch.TabIndex = 49;
+            this.tileExtTwitch.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.tileExtTwitch.TileCount = 0;
+            this.tileExtTwitch.Click += new System.EventHandler(this.tileExtTwitch_Click);
+            // 
+            // tileExtDiscord
+            // 
+            this.tileExtDiscord.ActiveControl = null;
+            this.tileExtDiscord.CenterText = "Discord";
+            this.tileExtDiscord.CustomBackground = false;
+            this.tileExtDiscord.CustomForeColor = false;
+            this.tileExtDiscord.Location = new System.Drawing.Point(3, 87);
+            this.tileExtDiscord.Name = "tileExtDiscord";
+            this.tileExtDiscord.PaintTileCount = true;
+            this.tileExtDiscord.Size = new System.Drawing.Size(100, 66);
+            this.tileExtDiscord.Style = MetroFramework.MetroColorStyle.Blue;
+            this.tileExtDiscord.StyleManager = null;
+            this.tileExtDiscord.TabIndex = 48;
+            this.tileExtDiscord.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.tileExtDiscord.TileCount = 0;
+            this.tileExtDiscord.Click += new System.EventHandler(this.TileExtDiscord_Click);
             // 
             // checkBoxStartTeamspeak3WithWow
             // 
@@ -591,10 +627,10 @@ namespace AxTools.Forms
             this.tileRaidcall.CenterText = "Raidcall";
             this.tileRaidcall.CustomBackground = false;
             this.tileRaidcall.CustomForeColor = false;
-            this.tileRaidcall.Location = new System.Drawing.Point(125, 15);
+            this.tileRaidcall.Location = new System.Drawing.Point(109, 15);
             this.tileRaidcall.Name = "tileRaidcall";
             this.tileRaidcall.PaintTileCount = true;
-            this.tileRaidcall.Size = new System.Drawing.Size(110, 66);
+            this.tileRaidcall.Size = new System.Drawing.Size(60, 66);
             this.tileRaidcall.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileRaidcall.StyleManager = null;
             this.tileRaidcall.TabIndex = 8;
@@ -611,7 +647,7 @@ namespace AxTools.Forms
             this.tileTeamspeak3.Location = new System.Drawing.Point(3, 15);
             this.tileTeamspeak3.Name = "tileTeamspeak3";
             this.tileTeamspeak3.PaintTileCount = true;
-            this.tileTeamspeak3.Size = new System.Drawing.Size(116, 66);
+            this.tileTeamspeak3.Size = new System.Drawing.Size(100, 66);
             this.tileTeamspeak3.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileTeamspeak3.StyleManager = null;
             this.tileTeamspeak3.TabIndex = 7;
@@ -625,10 +661,10 @@ namespace AxTools.Forms
             this.tileMumble.CenterText = "Mumble";
             this.tileMumble.CustomBackground = false;
             this.tileMumble.CustomForeColor = false;
-            this.tileMumble.Location = new System.Drawing.Point(82, 87);
+            this.tileMumble.Location = new System.Drawing.Point(175, 15);
             this.tileMumble.Name = "tileMumble";
             this.tileMumble.PaintTileCount = true;
-            this.tileMumble.Size = new System.Drawing.Size(73, 66);
+            this.tileMumble.Size = new System.Drawing.Size(60, 66);
             this.tileMumble.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileMumble.StyleManager = null;
             this.tileMumble.TabIndex = 6;
@@ -642,10 +678,10 @@ namespace AxTools.Forms
             this.tileVentrilo.CenterText = "Ventrilo";
             this.tileVentrilo.CustomBackground = false;
             this.tileVentrilo.CustomForeColor = false;
-            this.tileVentrilo.Location = new System.Drawing.Point(3, 87);
+            this.tileVentrilo.Location = new System.Drawing.Point(175, 87);
             this.tileVentrilo.Name = "tileVentrilo";
             this.tileVentrilo.PaintTileCount = true;
-            this.tileVentrilo.Size = new System.Drawing.Size(73, 66);
+            this.tileVentrilo.Size = new System.Drawing.Size(60, 66);
             this.tileVentrilo.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileVentrilo.StyleManager = null;
             this.tileVentrilo.TabIndex = 5;
@@ -778,23 +814,6 @@ namespace AxTools.Forms
             this.linkTitle.UseStyleColors = true;
             this.linkTitle.Click += new System.EventHandler(this.LinkTitle_Click);
             // 
-            // tileExtDiscord
-            // 
-            this.tileExtDiscord.ActiveControl = null;
-            this.tileExtDiscord.CenterText = "Discord";
-            this.tileExtDiscord.CustomBackground = false;
-            this.tileExtDiscord.CustomForeColor = false;
-            this.tileExtDiscord.Location = new System.Drawing.Point(161, 87);
-            this.tileExtDiscord.Name = "tileExtDiscord";
-            this.tileExtDiscord.PaintTileCount = true;
-            this.tileExtDiscord.Size = new System.Drawing.Size(74, 66);
-            this.tileExtDiscord.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileExtDiscord.StyleManager = null;
-            this.tileExtDiscord.TabIndex = 48;
-            this.tileExtDiscord.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileExtDiscord.TileCount = 0;
-            this.tileExtDiscord.Click += new System.EventHandler(this.TileExtDiscord_Click);
-            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(469, 234);
@@ -875,6 +894,7 @@ namespace AxTools.Forms
         private MetroLabel labelTotalPluginsEnabled;
         private ToolStripMenuItem toolStripMenuItem1;
         private MetroTileExt tileExtDiscord;
+        private MetroTileExt tileExtTwitch;
     }
 }
 

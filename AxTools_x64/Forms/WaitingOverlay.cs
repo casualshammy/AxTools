@@ -21,8 +21,9 @@ namespace AxTools.Forms
             set
             {
                 panel.metroLabel1.Text = value;
-                panel.ClientSize = new Size(Math.Max(190, panel.metroLabel1.Location.X + 10 + TextRenderer.MeasureText(value, MetroFonts.Label(panel.metroLabel1.FontSize, panel.metroLabel1.FontWeight)).Width), 50); // 10 is neccessary
+                panel.Size = new Size(Math.Max(190, panel.metroLabel1.Location.X + 10 + TextRenderer.MeasureText(value, MetroFonts.Label(panel.metroLabel1.FontSize, panel.metroLabel1.FontWeight)).Width), 50); // 10 is neccessary
                 panel.Location = new Point(Location.X + Size.Width / 2 - panel.Size.Width / 2, Location.Y + Size.Height / 2 - panel.Size.Height / 2);
+                panel.Invalidate();
             }
         }
 

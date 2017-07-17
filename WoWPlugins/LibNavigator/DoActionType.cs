@@ -15,6 +15,8 @@ namespace LibNavigator
         SetPrecision2D,
         SetPrecision3D,
         SetLoopPath,
-        SetStartFromNearestPoint
+        SetStartFromNearestPoint,
+        NotifyUser,
+        NotifyUserIf,
     }
 }

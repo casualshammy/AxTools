@@ -692,6 +692,24 @@ namespace AxTools.Forms
             }
         }
 
+        private void tileExtTwitch_Click(object sender, EventArgs e)
+        {
+            if (VoIP.AvailableVoipClients.TryGetValue("Twitch", out VoipInfo twitchInfo))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    WorkingDirectory = twitchInfo.DirectoryPath,
+                    FileName = twitchInfo.ExecutablePath,
+                    Arguments = twitchInfo.ExecutableArguments
+                });
+                Log.Info("[VoIP] Twitch process started");
+            }
+            else
+            {
+                Notify.SmartNotify("Executable not found", "Can't locate \"Twitch.exe\". Check paths in settings window", NotifyUserType.Error, false);
+            }
+        }
+
         private void CheckBoxStartVenriloWithWow_CheckedChanged(object sender, EventArgs e)
         {
             settings.VentriloStartWithWoW = checkBoxStartVenriloWithWow.Checked;
