@@ -127,11 +127,11 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         private void CombatRotation()
         {
-            if (GameFunctions.LuaGetFunctionReturn("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
+            if (GameFunctions.Lua.GetValue("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
             {
                 GameFunctions.CastSpellByName("Огненный шок");
             }
-            else if (float.Parse(GameFunctions.LuaGetFunctionReturn("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
+            else if (float.Parse(GameFunctions.Lua.GetValue("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
             {
                 GameFunctions.CastSpellByName("Выброс лавы");
             }

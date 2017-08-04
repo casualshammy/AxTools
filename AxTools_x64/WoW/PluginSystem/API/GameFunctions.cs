@@ -229,7 +229,7 @@ namespace AxTools.WoW.PluginSystem.API
                     {
                         if (ChatIsOpened)
                         {
-                            IntPtr vkLControl = (IntPtr) (long) 0xA2, vkA = (IntPtr) (long) 0x41, vkDelete = (IntPtr) (long) 0x2E;
+                            IntPtr vkLControl = (IntPtr)0xA2, vkA = (IntPtr)0x41, vkDelete = (IntPtr)0x2E;
                             NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, vkLControl, IntPtr.Zero);
                             NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, vkA, IntPtr.Zero);
                             NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, vkA, IntPtr.Zero);
@@ -362,6 +362,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         #region General Info
 
+        [Obsolete("Deprecated, use API.Info class")]
         public static string ZoneText
         {
             get
@@ -370,6 +371,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
+        [Obsolete("Deprecated, use API.Info class")]
         public static uint ZoneID
         {
             get
@@ -378,6 +380,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
+        [Obsolete("Deprecated, use API.Info class")]
         public static bool IsLooting
         {
             get
@@ -386,6 +389,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
+        [Obsolete("Deprecated, use API.Info class")]
         public static bool IsInGame
         {
             get
@@ -401,12 +405,14 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
+        [Obsolete("Deprecated, use API.Info class")]
         internal static bool IsProcessInGame(WowProcess process)
         {
             if (process.Memory == null) return false;
             return process.Memory.Read<byte>(process.Memory.ImageBase + WowBuildInfoX64.GameState) == 1;
         }
 
+        [Obsolete("Deprecated, use API.Info class")]
         public static bool IsLoadingScreen
         {
             get
@@ -426,6 +432,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
+        [Obsolete("Deprecated, use API.Info class")]
         public static bool IsSpellKnown(uint spellID)
         {
             //return LuaGetFunctionReturn("tostring(IsSpellKnown(" + spellID + "))") == "true";
@@ -445,6 +452,7 @@ namespace AxTools.WoW.PluginSystem.API
             return false;
         }
 
+        [Obsolete("Deprecated, use API.Info class")]
         public static WoWGUID MouseoverGUID
         {
             get { return WoWManager.WoWProcess.Memory.Read<WoWGUID>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.MouseoverGUID); }
@@ -479,18 +487,11 @@ namespace AxTools.WoW.PluginSystem.API
                         NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.W, IntPtr.Zero);
                         Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is pressed: {1}", WoWManager.WoWProcess, point)); // todo: remove
                     }
-                    //else
-                    //{
-                    //    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr) Keys.W, IntPtr.Zero);
-                    //    Log.Info(string.Format("{0} [GameFunctions.MoveTo] Pressing W: {1}", WoWManager.WoWProcess, point));
-                    //}
                 }
                 if ((!continueMovingIfFailed || timeoutInMs > 0) && (!continueMovingIfSuccessful || timeoutInMs <= 0))
                 {
                     NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr) Keys.W, IntPtr.Zero);
                     Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released2: {1}", WoWManager.WoWProcess, point)); // todo: remove
-                    //NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.S, IntPtr.Zero);
-                    //NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.S, IntPtr.Zero);
                 }
                 Log.Info(string.Format("{0} [GameFunctions.MoveTo] return; distance to dest: [{1}]", WoWManager.WoWProcess, me.Location.Distance2D(point))); // todo: remove
             }

@@ -186,7 +186,7 @@ namespace AxTools.WoW.Internals
             {
                 ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
                 // ReSharper disable ImpureMethodCallOnReadonlyValueField
-                return GameFunctions.LuaGetFunctionReturn("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
+                return GameFunctions.Lua.GetValue("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
                 // ReSharper restore ImpureMethodCallOnReadonlyValueField
             }
             catch
