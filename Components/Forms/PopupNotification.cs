@@ -162,6 +162,7 @@ namespace Components.Forms
             if (e.Button == MouseButtons.Right)
             {
                 Close();
+                ArrangementTimer_Elapsed(null, null);
             }
         }
 

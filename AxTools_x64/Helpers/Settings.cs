@@ -293,9 +293,9 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 72, PropertyName = "EnabledPluginsList")]
         internal HashSet<string> EnabledPluginsList = new HashSet<string>();
-
-        [JsonProperty(Order = 73, PropertyName = "PluginsUsageStat")]
-        internal Dictionary<string, int> PluginsUsageStat = new Dictionary<string, int>();
+        
+        [JsonProperty(Order = 73, PropertyName = "PluginsUsageStat2")]
+        internal Dictionary<string, List<DateTime>> PluginsUsageStat2 = new Dictionary<string, List<DateTime>>();
 
         #endregion
 

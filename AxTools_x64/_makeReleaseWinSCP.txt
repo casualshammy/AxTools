@@ -1,6 +1,0 @@
-option batch on
-option confirm off
-open -hostkey="ssh-rsa 2048 ca:35:fb:e6:d0:c8:6b:e4:ed:2f:42:2f:20:5c:4e:5b" sftp://root@axio.name:52852 -privatekey="F:\programs\Proxifier PE\digitalocean-main.ppk"
-put "H:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\_updater1.zip" "H:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\_update1.json" "H:\Dropbox\Projects\AxTools\AxTools_x64\bin\x64\Release\_update1.zip" "/home/nginx/html/axio.name/axtools/upd/"
-pause
-exit

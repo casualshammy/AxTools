@@ -251,7 +251,7 @@ namespace AxTools.Forms
                 blackMarketTrackerToolStripMenuItem,
                 toolStripSeparator2
             });
-            IPlugin[] sortedPlugins = PluginManagerEx.LoadedPlugins.OrderByDescending(l => settings.PluginsUsageStat.ContainsKey(l.Name) ? settings.PluginsUsageStat[l.Name] : 0).ToArray();
+            IPlugin[] sortedPlugins = PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray();
             IPlugin[] topUsedPlugins = sortedPlugins.Take(3).ToArray();
             foreach (IPlugin i in topUsedPlugins)
             {
@@ -815,7 +815,7 @@ namespace AxTools.Forms
             string checkMark = Encoding.UTF8.GetString(new byte[] {0xE2, 0x9C, 0x93});
             olvColumn2.AspectToStringConverter = value => (bool)value ? checkMark : "";
             olvColumn2.TextAlign = HorizontalAlignment.Center;
-            olvPlugins.SetObjects(PluginManagerEx.LoadedPlugins.OrderByDescending(l => settings.PluginsUsageStat.ContainsKey(l.Name) ? settings.PluginsUsageStat[l.Name] : 0));
+            olvPlugins.SetObjects(PluginManagerEx.GetSortedByUsageListOfPlugins());
             foreach (IPlugin i in PluginManagerEx.EnabledPlugins)
             {
                 olvPlugins.CheckObject(i);
@@ -838,7 +838,7 @@ namespace AxTools.Forms
                 e.IsBalloon = true;
                 e.StandardIcon = ToolTipControl.StandardIcons.InfoLarge;
                 e.Title = plugin.Name;
-                e.Text = $"{plugin.Description}\r\nVersion: {plugin.Version}\r\nNumber of uses: {settings.PluginsUsageStat[plugin.Name]}";
+                e.Text = $"{plugin.Description}\r\nVersion: {plugin.Version}";
             }
         }
 

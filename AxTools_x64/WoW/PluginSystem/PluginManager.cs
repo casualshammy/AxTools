@@ -60,9 +60,8 @@ namespace AxTools.WoW.PluginSystem
                     try
                     {
                         pluginContainer.Plugin.OnStart();
-                        Dictionary<string, int> pluginsUsageStat = Settings.Instance.PluginsUsageStat;
-                        pluginsUsageStat[pluginContainer.Plugin.Name] = pluginsUsageStat.ContainsKey(pluginContainer.Plugin.Name) ? pluginsUsageStat[pluginContainer.Plugin.Name] + 1 : 1;
-                        Log.Info(string.Format("{0} [{1}] Plugin is started, total usages: {2}", WoWManager.WoWProcess, pluginContainer.Plugin.Name, pluginsUsageStat[pluginContainer.Plugin.Name]));
+                        Settings.Instance.PluginsUsageStat2[pluginContainer.Plugin.Name].Add(DateTime.UtcNow);
+                        Log.Info(string.Format("{0} [{1}] Plugin is started", WoWManager.WoWProcess, pluginContainer.Plugin.Name));
                     }
                     catch (Exception ex)
                     {
@@ -142,6 +141,7 @@ namespace AxTools.WoW.PluginSystem
                     try
                     {
                         plugin.OnStart();
+                        Settings.Instance.PluginsUsageStat2[plugin.Name].Add(DateTime.UtcNow);
                         Log.Info(string.Format("{0} [{1}] Plugin is started", WoWManager.WoWProcess, plugin.Name));
                     }
                     catch (Exception ex)
@@ -206,6 +206,27 @@ namespace AxTools.WoW.PluginSystem
             return Task.Run((Action) LoadPlugins);
         }
 
+        internal static List<IPlugin> GetSortedByUsageListOfPlugins()
+        {
+            List<IPlugin> list = LoadedPlugins.ToList();
+            list.Sort((first, second) =>
+            {
+                // delete old timestamps
+                Settings.Instance.PluginsUsageStat2[first.Name].RemoveAll(l => (DateTime.UtcNow - l).TotalDays > 30);
+                Settings.Instance.PluginsUsageStat2[second.Name].RemoveAll(l => (DateTime.UtcNow - l).TotalDays > 30);
+                int cmp = Settings.Instance.PluginsUsageStat2[first.Name].Count.CompareTo(Settings.Instance.PluginsUsageStat2[second.Name].Count);
+                if (cmp == 0)
+                {
+                    return first.Name.CompareTo(second.Name);
+                }
+                else
+                {
+                    return -cmp; // by descending
+                }
+            });
+            return list;
+        }
+
         private static void LoadPlugins()
         {
             IPlugin fishing = new Fishing();
@@ -218,6 +239,13 @@ namespace AxTools.WoW.PluginSystem
             _pluginContainers.Add(new PluginContainer(goodsDestroyer, Settings.Instance.EnabledPluginsList.Contains(goodsDestroyer.Name)));
             Log.Info(string.Format("[PluginManager] Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
             LoadPluginsFromDisk();
+            foreach (IPlugin plugin in LoadedPlugins)
+            {
+                if (!Settings.Instance.PluginsUsageStat2.ContainsKey(plugin.Name))
+                {
+                    Settings.Instance.PluginsUsageStat2[plugin.Name] = new List<DateTime>();
+                }
+            }
             PluginsLoaded?.Invoke();
         }
 
