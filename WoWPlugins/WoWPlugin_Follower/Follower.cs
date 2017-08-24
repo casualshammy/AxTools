@@ -51,7 +51,7 @@ namespace Follower
 
         public bool ConfigAvailable
         {
-            get { return false; }
+            get { return true; }
         }
 
         #endregion
@@ -60,11 +60,17 @@ namespace Follower
 
         public void OnConfig()
         {
-
+            if (SettingsInstance == null)
+            {
+                SettingsInstance = this.LoadSettingsJSON<Settings>();
+            }
+            new SettingsForm(SettingsInstance).ShowDialog();
+            this.SaveSettingsJSON(SettingsInstance);
         }
 
         public void OnStart()
         {
+            SettingsInstance = this.LoadSettingsJSON<Settings>();
             WoWPlayerMe locaPlayer = ObjMgr.Pulse(null, players, npcs);
             WowPlayer myTargetPlayer = players.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
             WowNpc myTargetNpc = npcs.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
@@ -80,7 +86,7 @@ namespace Follower
             {
                 this.LogPrint("Unit isn't found!");
             }
-            (timer = this.CreateTimer(500, OnPulse)).Start();
+            (timer = this.CreateTimer(500, SettingsInstance.TrainMode ? (Action)OnPulse_Train : OnPulse)).Start();
         }
 
         public void OnPulse()
@@ -90,18 +96,33 @@ namespace Follower
             {
                 WowPlayer unitPlayer = players.FirstOrDefault(i => i.Health > 0 && i.GUID == guid);
                 WowNpc unitNpc = npcs.FirstOrDefault(i => i.Health > 0 && i.GUID == guid);
-                if (unitPlayer != null)
+                WowPoint? POILocation = unitPlayer != null ? unitPlayer.Location : unitNpc?.Location;
+                if (POILocation.HasValue && POILocation.Value.Distance(locaPlayer.Location) > 5)
                 {
-                    if (unitPlayer.Location.Distance(locaPlayer.Location) > 5)
-                    {
-                        GameFunctions.Move2D(WowPoint.GetNearestPoint(locaPlayer.Location, unitPlayer.Location, 1f), 3f, 1000, true, false);
-                    }
+                    GameFunctions.Move2D(WowPoint.GetNearestPoint(locaPlayer.Location, POILocation.Value, 1f), 3f, 1000, true, false);
                 }
-                else if (unitNpc != null)
+            }
+        }
+
+        private void OnPulse_Train()
+        {
+            WoWPlayerMe locaPlayer = ObjMgr.Pulse(null, players, npcs);
+            if (locaPlayer.Alive)
+            {
+                WowPlayer unitPlayer = players.FirstOrDefault(i => i.Alive && i.GUID == guid);
+                WowNpc unitNpc = npcs.FirstOrDefault(i => i.Alive && i.GUID == guid);
+                WowPoint? POILocation = unitPlayer != null ? unitPlayer.Location : unitNpc?.Location;
+                if (POILocation.HasValue)
                 {
-                    if (unitNpc.Location.Distance(locaPlayer.Location) > 5)
+                    trainQueue.Enqueue(POILocation.Value);
+                    WowPoint point;
+                    for (int i = 0; i < trainQueue.Count; i++)
                     {
-                        GameFunctions.Move2D(WowPoint.GetNearestPoint(locaPlayer.Location, unitNpc.Location, 1f), 3f, 1000, true, false);
+                        if ((point = trainQueue.Dequeue()).Distance(locaPlayer.Location) > 5)
+                        {
+                            GameFunctions.Move2D(WowPoint.GetNearestPoint(locaPlayer.Location, point, 1f), 3f, 1000, true, false);
+                            break;
+                        }
                     }
                 }
             }
@@ -118,6 +139,8 @@ namespace Follower
         private readonly List<WowNpc> npcs = new List<WowNpc>();
         private WoWGUID guid;
         private SafeTimer timer;
+        private Settings SettingsInstance;
+        private Queue<WowPoint> trainQueue = new Queue<WowPoint>();
 
     }
 }
