@@ -25,7 +25,7 @@ namespace AxTools.WoW.PluginSystem.API
         }
 
         /// <summary>
-        /// Makes a record to the log. WoW process name, process id and plugin name included
+        /// Makes a record to the log. WoW process name, process id and plugin name are included
         /// </summary>
         /// <param name="plugin"></param>
         /// <param name="text"></param>
@@ -99,6 +99,24 @@ namespace AxTools.WoW.PluginSystem.API
         public static T LoadJSON<T>(this IPlugin plugin, string data) where T : class
         {
             return JsonConvert.DeserializeObject<T>(data);
+        }
+
+        public static string GetJSON<T>(this IPlugin plugin, T data) where T : class
+        {
+            StringBuilder sb = new StringBuilder(1024);
+            using (StringWriter sw = new StringWriter(sb, CultureInfo.InvariantCulture))
+            {
+                using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
+                {
+                    JsonSerializer js = new JsonSerializer();
+                    js.Converters.Add(new StringEnumConverter());
+                    jsonWriter.Formatting = Formatting.Indented;
+                    jsonWriter.IndentChar = ' ';
+                    jsonWriter.Indentation = 4;
+                    js.Serialize(jsonWriter, data);
+                }
+            }
+            return sb.ToString();
         }
 
         public static string GetRandomString(int size, bool onlyLetters)

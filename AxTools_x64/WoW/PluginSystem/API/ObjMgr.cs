@@ -8,7 +8,7 @@ namespace AxTools.WoW.PluginSystem.API
     {
         public static WoWPlayerMe Pulse(List<WowObject> wowObjects = null, List<WowPlayer> wowUnits = null, List<WowNpc> wowNpcs = null)
         {
-            if (GameFunctions.IsInGame)
+            if (Info.IsInGame)
             {
                 return ObjectMgr.Pulse(wowObjects, wowUnits, wowNpcs);
             }

@@ -5,8 +5,12 @@ namespace Follower
     [DataContract]
     internal class Settings
     {
-        [DataMember(Name = "TrainMode")]
-        internal bool TrainMode = true;
+
+        [DataMember(Name = "MaxDistance")]
+        internal int MaxDistance = 5;
+
+        [DataMember(Name = "Precision")]
+        internal int Precision = 3;
 
     }
 }

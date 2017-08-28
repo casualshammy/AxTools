@@ -9,7 +9,7 @@ using AxTools.WoW.Helpers;
 namespace AxTools.WoW.Internals
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct WowPoint
+    public struct WowPoint : IEquatable<WowPoint>
     {
         public float X;
         public float Y;
@@ -100,6 +100,11 @@ namespace AxTools.WoW.Internals
             {
                 return X == 0 && Y == 0 && Z == 0;
             }
+        }
+
+        public bool Equals(WowPoint other)
+        {
+            return X == other.X && Y == other.Y && Z == other.Z;
         }
 
     }

@@ -86,25 +86,17 @@ namespace Follower
             {
                 this.LogPrint("Unit isn't found!");
             }
-            (timer = this.CreateTimer(500, SettingsInstance.TrainMode ? (Action)OnPulse_Train : OnPulse)).Start();
+            libNavigator = Utilities.GetReferenceOfPlugin("LibNavigator");
+            if (libNavigator == null)
+            {
+                this.ShowNotify("LibNavigator isn't found! Plugin will not work.", true, true);
+                this.LogPrint("LibNavigator isn't found! Plugin will not work.");
+                return;
+            }
+            (timer = this.CreateTimer(500, OnPulse)).Start();
         }
 
         public void OnPulse()
-        {
-            WoWPlayerMe locaPlayer = ObjMgr.Pulse(null, players, npcs);
-            if (locaPlayer.Health > 0)
-            {
-                WowPlayer unitPlayer = players.FirstOrDefault(i => i.Health > 0 && i.GUID == guid);
-                WowNpc unitNpc = npcs.FirstOrDefault(i => i.Health > 0 && i.GUID == guid);
-                WowPoint? POILocation = unitPlayer != null ? unitPlayer.Location : unitNpc?.Location;
-                if (POILocation.HasValue && POILocation.Value.Distance(locaPlayer.Location) > 5)
-                {
-                    GameFunctions.Move2D(WowPoint.GetNearestPoint(locaPlayer.Location, POILocation.Value, 1f), 3f, 1000, true, false);
-                }
-            }
-        }
-
-        private void OnPulse_Train()
         {
             WoWPlayerMe locaPlayer = ObjMgr.Pulse(null, players, npcs);
             if (locaPlayer.Alive)
@@ -112,18 +104,10 @@ namespace Follower
                 WowPlayer unitPlayer = players.FirstOrDefault(i => i.Alive && i.GUID == guid);
                 WowNpc unitNpc = npcs.FirstOrDefault(i => i.Alive && i.GUID == guid);
                 WowPoint? POILocation = unitPlayer != null ? unitPlayer.Location : unitNpc?.Location;
-                if (POILocation.HasValue)
+                if (POILocation.HasValue && POILocation.Value.Distance(locaPlayer.Location) > SettingsInstance.MaxDistance)
                 {
-                    trainQueue.Enqueue(POILocation.Value);
-                    WowPoint point;
-                    for (int i = 0; i < trainQueue.Count; i++)
-                    {
-                        if ((point = trainQueue.Dequeue()).Distance(locaPlayer.Location) > 5)
-                        {
-                            GameFunctions.Move2D(WowPoint.GetNearestPoint(locaPlayer.Location, point, 1f), 3f, 1000, true, false);
-                            break;
-                        }
-                    }
+                    // GameFunctions.Move2D(WowPoint.GetNearestPoint(locaPlayer.Location, POILocation.Value, 1f), SettingsInstance.Precision, 1000, true, false);
+                    libNavigator.Go(WowPoint.GetNearestPoint(locaPlayer.Location, POILocation.Value, 1f), (float)SettingsInstance.Precision);
                 }
             }
         }
@@ -140,7 +124,7 @@ namespace Follower
         private WoWGUID guid;
         private SafeTimer timer;
         private Settings SettingsInstance;
-        private Queue<WowPoint> trainQueue = new Queue<WowPoint>();
+        private dynamic libNavigator;
 
     }
 }

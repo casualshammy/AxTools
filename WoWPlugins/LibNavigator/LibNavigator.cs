@@ -47,6 +47,26 @@ namespace LibNavigator
 
         #region Methods
 
+        public void Go(WowPoint dest, float precision)
+        {
+            if (isRunning)
+            {
+                throw new InvalidOperationException("Script is already running");
+            }
+            else
+            {
+                //unstuckDictionary = new Dictionary<DateTime, WowPoint>();
+                isRunning = true;
+                precision2D = precision;
+                loopPath = false;
+                startFromNearestPoint = false;
+                counter = 0;
+                actionsList = new List<DoAction> { new DoAction() { ActionType = DoActionType.Move, WowPoint = dest } };
+                DoAction();
+                isRunning = false;
+            }
+        }
+
         public bool LoadScriptData(string data)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -86,6 +106,7 @@ namespace LibNavigator
             }
             else
             {
+                unstuckDictionary = new Dictionary<DateTime, WowPoint>();
                 isRunning = true;
                 precision2D = 3f;
                 loopPath = false;
@@ -141,6 +162,7 @@ namespace LibNavigator
             WoWPlayerMe me = ObjMgr.Pulse(wowObjects, null, wowNpcs);
             if (me != null)
             {
+                UnstuckIfNeeded(me.Location, actionsList[counter].ActionType);
                 switch (actionsList[counter].ActionType)
                 {
                     case DoActionType.Move:
@@ -149,12 +171,12 @@ namespace LibNavigator
                         if (me.IsFlying && (distance3D > 10f || (distance3D <= 10f && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
                         {
                             this.LogPrint(string.Format("Flying to point --> [{0}]; distance: {1}", actionsList[counter].WowPoint, distance3D));
-                            GameFunctions.Move3D(actionsList[counter].WowPoint, 8f, 3f, 1000, true);
+                            MoveMgr.Move3D(actionsList[counter].WowPoint, 8f, 3f, 1000, true);
                         }
                         else if (!me.IsFlying && (distance2D > precision2D || (distance2D <= precision2D && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
                         {
                             this.LogPrint(string.Format("Moving to point --> [{0}]; my loc: [{3}]; distance2D: {1}; speed: {2}", actionsList[counter].WowPoint, distance2D, me.Speed, me.Location));
-                            GameFunctions.Move2D(actionsList[counter].WowPoint, precision2D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
+                            MoveMgr.Move2D(actionsList[counter].WowPoint, precision2D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
                         }
                         else
                         {
@@ -295,6 +317,35 @@ namespace LibNavigator
             return actionsList[counter + 1];
         }
 
+        private void UnstuckIfNeeded(WowPoint playerLoc, DoActionType currentAction)
+        {
+            if (currentAction == DoActionType.Move)
+            {
+                unstuckDictionary.Add(DateTime.UtcNow, playerLoc);
+                if (unstuckDictionary.Count >= 2)
+                {
+                    if (unstuckDictionary.Count > 100) // sufficiently big value (until this method is called once per second)
+                    {
+                        unstuckDictionary.Remove(unstuckDictionary.Keys.First());
+                    }
+                    KeyValuePair<DateTime, WowPoint> last = unstuckDictionary.Last();
+                    KeyValuePair<DateTime, WowPoint> first = unstuckDictionary.LastOrDefault(l => (last.Key - l.Key).TotalSeconds >= 5);
+                    if (!first.Equals(default(KeyValuePair<DateTime, WowPoint>)))
+                    {
+                        if (last.Value.Distance(first.Value) < 1f)
+                        {
+                            this.LogPrint($"We are stuck at {playerLoc}. Trying to unstuck...");
+                            MoveMgr.Jump();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                unstuckDictionary.Clear();
+            }
+        }
+
         #endregion
 
         #region Fields
@@ -309,6 +360,7 @@ namespace LibNavigator
         private float precision3D = 8f;
         private volatile bool isRunning = false;
         private const int RESOLUTION_INTERVAL = 50;
+        private Dictionary<DateTime, WowPoint> unstuckDictionary = new Dictionary<DateTime, WowPoint>();
 
         #endregion
 

@@ -11,12 +11,19 @@ namespace Follower
         {
             InitializeComponent();
             _settings = settings;
-            checkBoxTrain.Checked = _settings.TrainMode;
+            numericMaxDistance.Value = _settings.MaxDistance;
+            numericPrecision.Value = _settings.Precision;
         }
 
-        private void CheckBoxTrain_CheckedChanged(object sender, EventArgs e)
+        private void NumericPrecision_ValueChanged(object sender, EventArgs e)
         {
-            _settings.TrainMode = checkBoxTrain.Checked;
+            _settings.Precision = (int)numericPrecision.Value;
         }
+
+        private void NumericMaxDistance_ValueChanged(object sender, EventArgs e)
+        {
+            _settings.MaxDistance = (int)numericMaxDistance.Value;
+        }
+
     }
 }

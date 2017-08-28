@@ -27,7 +27,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
-        private static void WaitWhileWoWIsMinimized()
+        internal static void WaitWhileWoWIsMinimized()
         {
             Utils.LogIfCalledFromUIThread();
             if (WoWManager.WoWProcess != null && WoWManager.WoWProcess.IsMinimized)
@@ -462,6 +462,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         #region Moving
 
+        [Obsolete("Use MoveMgr.Move2D")]
         public static void Move2D(WowPoint point, float precision, int timeoutInMs, bool continueMovingIfFailed, bool continueMovingIfSuccessful)
         {
             WaitWhileWoWIsMinimized();
@@ -497,6 +498,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
         }
 
+        [Obsolete("Use MoveMgr.Move3D")]
         public static void Move3D(WowPoint point, float precision2D, float precisionZ, int timeoutInMs, bool continueMoving)
         {
             WaitWhileWoWIsMinimized();
@@ -569,6 +571,13 @@ namespace AxTools.WoW.PluginSystem.API
                 }
                 Log.Info(string.Format("{0} [GameFunctions.Move3D] Return, timeout: {1}, diffXY: {2}, diffZ: {3}", WoWManager.WoWProcess, timeoutInMs, me.Location.Distance2D(point), zDiff)); // todo: remove
             }
+        }
+
+        [Obsolete("Use MoveMgr.Jump")]
+        public static void Jump()
+        {
+            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.Space, IntPtr.Zero);
+            NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.Space, IntPtr.Zero);
         }
 
         #endregion
