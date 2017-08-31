@@ -11,6 +11,7 @@ namespace AxTools.WoW.Internals
     [StructLayout(LayoutKind.Sequential)]
     public struct WowPoint : IEquatable<WowPoint>
     {
+
         public float X;
         public float Y;
         public float Z;
@@ -105,6 +106,26 @@ namespace AxTools.WoW.Internals
         public bool Equals(WowPoint other)
         {
             return X == other.X && Y == other.Y && Z == other.Z;
+        }
+
+        public override bool Equals(object other)
+        {
+            return other != null && other is WowPoint p && X == p.X && Y == p.Y && Z == p.Z;
+        }
+
+        public static bool operator ==(WowPoint a, WowPoint b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(WowPoint a, WowPoint b)
+        {
+            return !a.Equals(b);
+        }
+
+        public override int GetHashCode()
+        {
+            return BitConverter.ToInt32(BitConverter.GetBytes(X), 0) ^ BitConverter.ToInt32(BitConverter.GetBytes(Y), 0) ^ BitConverter.ToInt32(BitConverter.GetBytes(Z), 0);
         }
 
     }

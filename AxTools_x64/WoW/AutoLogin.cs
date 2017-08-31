@@ -35,11 +35,21 @@ namespace AxTools.WoW
                     if (process.MainWindowHandle != (IntPtr)0)
                     {
                         WowProcess wowProcess = WoWProcessManager.List.FirstOrDefault(i => i.ProcessID == process.Id);
-                        if (wowProcess != null && wowProcess.Memory != null && wowProcess.IsValidBuild)
+                        if (wowProcess != null && wowProcess.Memory != null)
                         {
-                            GlueState glueState = wowProcess.Memory.Read<GlueState>(wowProcess.Memory.ImageBase + WowBuildInfoX64.GlueState);
-                            IntPtr focusedWidget = wowProcess.Memory.Read<IntPtr>(wowProcess.Memory.ImageBase + WowBuildInfoX64.FocusedWidget);
-                            if (glueState == GlueState.Disconnected && focusedWidget != (IntPtr)0)
+                            bool okay = false;
+                            if (wowProcess.IsValidBuild)
+                            {
+                                GlueState glueState = wowProcess.Memory.Read<GlueState>(wowProcess.Memory.ImageBase + WowBuildInfoX64.GlueState);
+                                IntPtr focusedWidget = wowProcess.Memory.Read<IntPtr>(wowProcess.Memory.ImageBase + WowBuildInfoX64.FocusedWidget);
+                                okay = glueState == GlueState.Disconnected && focusedWidget != (IntPtr)0;
+                            }
+                            else
+                            {
+                                Thread.Sleep(3000);
+                                okay = true;
+                            }
+                            if (okay)
                             {
                                 foreach (char ch in wowAccount.Login)
                                 {

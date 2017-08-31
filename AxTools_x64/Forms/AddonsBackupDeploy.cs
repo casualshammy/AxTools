@@ -50,7 +50,10 @@ namespace AxTools.Forms
         private void buttonBeginDeployment_Click(object sender, EventArgs e)
         {
             buttonBeginDeployment.Enabled = false;
-            Task.Run(() => { AddonsBackup.DeployArchive(pathsToArchives[comboBoxArchives.SelectedIndex]); }).ContinueWith(task => { buttonBeginDeployment.Enabled = true; });
+            Task.Run(() => { AddonsBackup.DeployArchive(pathsToArchives[comboBoxArchives.SelectedIndex]); }).ContinueWith(task => {
+                this.TaskDialog("Operation successful", "", NotifyUserType.Info);
+                buttonBeginDeployment.Enabled = true;
+            });
         }
 
     }

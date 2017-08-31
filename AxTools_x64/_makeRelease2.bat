@@ -8,7 +8,6 @@ del "..\_webservice\upd\update-package2.zip"
 rem use only absolute paths in next line in source directory path
 "C:\Program Files\7-Zip\7z.exe" a -tzip "..\_webservice\upd\update-package2.zip" -p3aTaTre6agA$-E+e "F:\sync\private\Projects\AxTools\AxTools_x64\bin\x64\Release\distr2\*" -r -mx9
 _makeRelease2_update-file-version.py
-pause
 "F:\programs\luarocks\lua5.1.exe" "C:\Program Files (x86)\AxTools\plugins\_pack_and_send.lua"
 "F:\programs\WinSCP\WinSCP.com" /command ^
 	"option batch abort" ^
