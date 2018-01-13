@@ -14,6 +14,7 @@ namespace AxTools.WoW.Helpers
         private readonly Action action;
         private volatile bool flag;
         private Thread thread;
+        private static readonly Log2 log = new Log2("SafeTimer");
 
         // optional variable
         public string PluginName;
@@ -59,7 +60,7 @@ namespace AxTools.WoW.Helpers
             while (flag)
             {
                 balancingStopwatch.Restart();
-                if (GameFunctions.IsInGame)
+                if (Info.IsInGame)
                 {
                     try
                     {
@@ -67,7 +68,7 @@ namespace AxTools.WoW.Helpers
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(string.Format("{0}:{1} :: [{2}] SafeTimer error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? "", ex.Message));
+                        log.Error(string.Format("{0}:{1} :: [{2}] SafeTimer error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? "", ex.Message));
                     }
                 }
                 int shouldWait = (int) (interval - balancingStopwatch.ElapsedMilliseconds);

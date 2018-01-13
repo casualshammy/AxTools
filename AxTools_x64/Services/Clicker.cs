@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Timers;
 using System.Windows.Forms;
 using AxTools.Forms;
@@ -17,13 +18,14 @@ namespace AxTools.Services
         private static readonly object Lock = new object();
         internal static IntPtr Handle { get; private set; }
         private static readonly Settings _settings = Settings.Instance;
+        private static readonly Log2 logger = new Log2("Clicker");
 
         static Clicker()
         {
-            HotkeyManager.KeyPressed += KeyboardListener2_KeyPressed;
-            HotkeyManager.AddKeys(typeof (Clicker).ToString(), _settings.ClickerHotkey);
+            KeyboardWatcher.HotkeyManager.KeyPressed += KeyboardListener2_KeyPressed;
+            KeyboardWatcher.HotkeyManager.AddKeys(typeof(Clicker).ToString(), _settings.ClickerHotkey);
         }
-
+        
         internal static void Start(double interval, IntPtr hwnd, IntPtr keyToPress)
         {
             lock (Lock)
@@ -31,7 +33,7 @@ namespace AxTools.Services
                 if (_timer == null)
                 {
                     _timer = new Timer(interval);
-                    _timer.Elapsed += timer_Elapsed;
+                    _timer.Elapsed += Timer_Elapsed;
                     _key = keyToPress;
                     Handle = hwnd;
                     _timer.Start();
@@ -45,7 +47,7 @@ namespace AxTools.Services
             {
                 if (_timer != null)
                 {
-                    _timer.Elapsed -= timer_Elapsed;
+                    _timer.Elapsed -= Timer_Elapsed;
                     _timer.Stop();
                     _timer.Close();
                     _timer = null;
@@ -61,13 +63,13 @@ namespace AxTools.Services
             }
         }
 
-        private static void timer_Elapsed(object sender, ElapsedEventArgs e)
+        private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             NativeMethods.PostMessage(Handle, Win32Consts.WM_KEYDOWN, _key, IntPtr.Zero);
             NativeMethods.PostMessage(Handle, Win32Consts.WM_KEYUP, _key, IntPtr.Zero);
         }
 
-        private static void KeyboardListener2_KeyPressed(Keys obj)
+        private static void KeyboardListener2_KeyPressed(KeyboardWatcher.KeyExt obj)
         {
             if (obj == _settings.ClickerHotkey)
             {
@@ -91,9 +93,9 @@ namespace AxTools.Services
                 {
                     Stop();
                     WowProcess cProcess = WoWProcessManager.List.FirstOrDefault(i => i.MainWindowHandle == Handle);
-                    Log.Info(cProcess != null
-                        ? string.Format("{0} [Clicker] Disabled", cProcess)
-                        : "UNKNOWN:null :: [Clicker] Disabled");
+                    logger.Info(cProcess != null
+                        ? string.Format("{0} Disabled", cProcess)
+                        : "UNKNOWN:null :: Disabled");
                 }
                 else
                 {
@@ -101,7 +103,7 @@ namespace AxTools.Services
                     if (cProcess != null)
                     {
                         Start(_settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr)_settings.ClickerKey);
-                        Log.Info(string.Format("{0} [Clicker] Enabled, interval {1}ms, window handle 0x{2:X}", cProcess, _settings.ClickerInterval, cProcess.MainWindowHandle.ToInt64()));
+                        logger.Info(string.Format("{0} Enabled, interval {1}ms, window handle 0x{2:X}", cProcess, _settings.ClickerInterval, cProcess.MainWindowHandle.ToInt64()));
                     }
                 }
             }

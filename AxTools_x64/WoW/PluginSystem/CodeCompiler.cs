@@ -16,6 +16,8 @@ namespace AxTools.WoW.PluginSystem
 {
     internal class CodeCompiler
     {
+        private static readonly Log2 log = new Log2("CodeCompiler");
+
         // Methods
         public CodeCompiler(string path)
         {
@@ -56,7 +58,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(string.Format("[CodeCompiler] Can't add {0}: {1}", assembly.Location, ex.Message));
+                    log.Error(string.Format("Can't add {0}: {1}", assembly.Location, ex.Message));
                 }
             }
             string ver = string.Format("{0}.{1}.{2}", Environment.Version.Major, Environment.Version.MajorRevision, Environment.Version.Build);
@@ -67,7 +69,7 @@ namespace AxTools.WoW.PluginSystem
             }
             catch (Exception ex)
             {
-                Log.Error(string.Format("[CodeCompiler] Can't add Microsoft.CSharp ({0}): {1}", dllPath, ex.Message));
+                log.Error(string.Format("Can't add Microsoft.CSharp ({0}): {1}", dllPath, ex.Message));
             }
         }
 

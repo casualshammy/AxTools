@@ -24,7 +24,7 @@ namespace PatternFinder
             {
                 // x64
                 Pattern.FromTextstyle("GlueState", "45 33 C0 0F 57 DB 48 8D 15 ?? ?? ?? ?? 41 8D 48 05 C6 05 ?? ?? ?? ?? 01 E8 ?? ?? ?? ?? 0F 57 C0 48 83 C4 28 E9", new AddModifier(19), new LeaModifier(LeaType.Cmp)),
-                Pattern.FromTextstyle("GameState", "48 83 EC 28 80 3D ?? ?? ?? ?? 00 74 ?? E8 ?? ?? ?? ?? 84 C0 74 ?? 0F B6 0D ?? ?? ?? ?? 0F B6 C1 80 E1 FE", new AddModifier(6), new LeaModifier(LeaType.Cmp)),
+                Pattern.FromTextstyle("GameState", "B8 01 00 00 00 D2 E0 84 05 ?? ?? ?? ?? 0F 95 C0 C3", new AddModifier(9), new LeaModifier(LeaType.CmpMinusOne)),
                 Pattern.FromTextstyle("BlackMarketNumItems", "8B 15 ?? ?? ?? ?? 33 C0 F2 4C 0F 2C C0 85 D2 74 ?? 4C 8B 0D ?? ?? ?? ?? 49 8B C9 44 39 01 74", new AddModifier(2), new LeaModifier(LeaType.CmpMinusOne)),
                 Pattern.FromTextstyle("BlackMarketItems", "8B 15 ?? ?? ?? ?? 33 C0 F2 4C 0F 2C C0 85 D2 74 ?? 4C 8B 0D ?? ?? ?? ?? 49 8B C9 44 39 01 74", new AddModifier(20), new LeaModifier(LeaType.CmpMinusOne)),
                 Pattern.FromTextstyle("LastHardwareAction", "48 83 EC 28 2B 0D ?? ?? ?? ?? 8D 81 20 6C FB FF 85 C0 78 ?? 8D 81 C0 88 E4 FF 85 C0 78 ?? E8", new AddModifier(6), new LeaModifier(LeaType.E8)),
@@ -61,18 +61,18 @@ namespace PatternFinder
                     try
                     {
                         // ReSharper disable once AccessToDisposedClosure
-                        IntPtr[] addresses = pattern.Find(epr).ToArray();
+                        var addresses = pattern.Find(epr).ToArray();
                         if (addresses.Length == 1)
                         {
-                            consoleOutput = pattern.Name + ": 0x" + addresses[0].ToInt64().ToString("X");
+                            consoleOutput = pattern.Name + ": 0x" + addresses[0].address.ToInt64().ToString("X") + "; address of instruction: 0x" + addresses[0].unmodifiedAddress.ToInt64().ToString("X");
                             lock (locker)
                             {
-                                File.AppendAllLines(reportFilePath, new[] { "internal const int " + pattern.Name + " = 0x" + addresses[0].ToInt64().ToString("X") + ";" });
+                                File.AppendAllLines(reportFilePath, new[] { "internal const int " + pattern.Name + " = 0x" + addresses[0].address.ToInt64().ToString("X") + ";" });
                             }
                         }
                         else
                         {
-                            consoleOutput = "!!!  " + pattern.Name + ": 0x" + string.Join(", 0x", addresses.Select(l => l.ToInt64().ToString("X")));
+                            consoleOutput = "!!!  " + pattern.Name + ": 0x" + string.Join(", 0x", addresses.Select(l => l.address.ToInt64().ToString("X")));
                         }
                     }
                     catch (Exception ex)
@@ -117,6 +117,12 @@ namespace PatternFinder
         const long CacheSize = 0x500;
         public List<IModifier> Modifiers = new List<IModifier>();
 
+        public struct Result
+        {
+            public IntPtr address;
+            public IntPtr unmodifiedAddress;
+        }
+
         private bool DataCompare(byte[] data, uint dataOffset)
         {
             return !Mask.Where((t, i) => t && Bytes[i] != data[dataOffset + i]).Any();
@@ -149,7 +155,7 @@ namespace PatternFinder
             throw new InvalidDataException(string.Format("Pattern {0} not found", Name));
         }
 
-        public IEnumerable<IntPtr> Find(MemoryManagement.MemoryManager bm)
+        public IEnumerable<Result> Find(MemoryManagement.MemoryManager bm)
         {
             foreach (IntPtr intPtr in FindStart(bm))
             {
@@ -158,7 +164,7 @@ namespace PatternFinder
                 {
                     start = modifier.Apply(bm, start);
                 }
-                yield return new IntPtr((long) start - (long) bm.Process.MainModule.BaseAddress);
+                yield return new Result { address = new IntPtr((long)start - (long)bm.Process.MainModule.BaseAddress), unmodifiedAddress = new IntPtr(intPtr.ToInt64() - bm.Process.MainModule.BaseAddress.ToInt64()) };
             }
         }
 

@@ -72,7 +72,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             List<WowObject> wowObjects = new List<WowObject>();
             WoWPlayerMe me = ObjectMgr.Pulse(wowObjects);
-            if (!GameFunctions.IsLooting && !me.InCombat)
+            if (!Info.IsLooting && !me.InCombat)
             {
                 if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
                 {
@@ -188,7 +188,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             if (natPagle != null)
             {
                 this.LogPrint(string.Format("Nat Pagle is found, guid: {0}, moving to him...", natPagle.GUID));
-                GameFunctions.Move2D(natPagle.Location, 4f, 2000, false, false);
+                MoveMgr.Move2D(natPagle.Location, 4f, 2000, false, false);
                 Thread.Sleep(500);
                 this.LogPrint("Opening dialog window with Nat...");
                 natPagle.Interact();
@@ -200,7 +200,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 Thread.Sleep(1500);
                 WowPoint goodFishingPoint = new WowPoint(2024.49f, 191.33f, 83.86f);
                 this.LogPrint(string.Format("Moving to fishing point [{0}]", goodFishingPoint));
-                GameFunctions.Move2D(goodFishingPoint, 2f, 2000, false, false);
+                MoveMgr.Move2D(goodFishingPoint, 2f, 2000, false, false);
                 WowPoint water = new WowPoint((float) (Utils.Rnd.NextDouble()*5 + 2032.5f), (float) (Utils.Rnd.NextDouble()*5 + 208.5f), 82f);
                 this.LogPrint(string.Format("Facing water [{0}]", water));
                 water.Face();
@@ -269,7 +269,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             try
             {
-                uint zone = GameFunctions.ZoneID;
+                uint zone = Info.ZoneID;
                 string[] allBuffNames = legionSpecialLuresByZone.SelectMany(l => l.Lures).Select(l => Wowhead.GetItemInfo(l).Name).ToArray();
                 if (me.Auras.All(k => !allBuffNames.Contains(k.Name)))
                 {

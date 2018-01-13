@@ -526,7 +526,7 @@ namespace AxTools.Forms
             this.tileExtTwitch.TabIndex = 49;
             this.tileExtTwitch.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileExtTwitch.TileCount = 0;
-            this.tileExtTwitch.Click += new System.EventHandler(this.tileExtTwitch_Click);
+            this.tileExtTwitch.Click += new System.EventHandler(this.TileExtTwitch_Click);
             // 
             // tileExtDiscord
             // 

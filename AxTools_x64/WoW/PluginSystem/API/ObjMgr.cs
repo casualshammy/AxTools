@@ -17,11 +17,11 @@ namespace AxTools.WoW.PluginSystem.API
             wowNpcs?.Clear();
             return null;
         }
-        
+
         [Pure]
         public static WoWPlayerMe Pulse()
         {
-            return GameFunctions.IsInGame ? ObjectMgr.Pulse() : null;
+            return Info.IsInGame ? ObjectMgr.Pulse() : null;
         }
 
     }

@@ -14,6 +14,8 @@ namespace AxTools.WoW
     [DataContract(Name = "WowAccount")]
     internal class WoWAccount
     {
+        private static readonly Log2 log = new Log2("WoWAccount");
+
         [DataMember(Name = "WowAccountLogin")]
         internal string Login;
 
@@ -52,17 +54,17 @@ namespace AxTools.WoW
                     byte[] bytes = Crypt.Decrypt<RijndaelManaged>(Settings.Instance.WoWAccounts, strangeBytes);
                     ObservableCollection<WoWAccount> list = JsonConvert.DeserializeObject<ObservableCollection<WoWAccount>>(Encoding.UTF8.GetString(bytes));
                     list.CollectionChanged += WoWAccounts_Changed;
-                    Log.Info("[AxTools] WoW accounts was loaded");
+                    log.Info("WoW accounts was loaded");
                     return list;
                 }
                 ObservableCollection<WoWAccount> emptyList = new ObservableCollection<WoWAccount>();
                 emptyList.CollectionChanged += WoWAccounts_Changed;
-                Log.Info("[AxTools] WoW accounts: new collection is created");
+                log.Info("WoW accounts: new collection is created");
                 return emptyList;
             }
             catch (Exception ex)
             {
-                Log.Error("[AxTools] WoW accounts loading failed, new accounts will not be saved: " + ex.Message);
+                log.Error("WoW accounts loading failed, new accounts will not be saved: " + ex.Message);
                 return new ObservableCollection<WoWAccount>();
             }
         }
@@ -78,16 +80,16 @@ namespace AxTools.WoW
                     string json = JsonConvert.SerializeObject(_list);
                     byte[] strangeBytes = {0x2A, 0x26, 0x44, 0x56, 0x47, 0x2A, 0x37, 0x64, 0x76, 0x47, 0x26, 0x44, 0x2A, 0x48, 0x56, 0x37, 0x68, 0x26, 0x56, 0x68, 0x65, 0x68, 0x76, 0x26, 0x2A, 0x56, 0x48};
                     Settings.Instance.WoWAccounts = Crypt.Encrypt<RijndaelManaged>(Encoding.UTF8.GetBytes(json), strangeBytes);
-                    Log.Info("WoW accounts have been updated");
+                    log.Info("WoW accounts have been updated");
                 }
                 else
                 {
-                    Log.Error("WoW accounts saving failed: collection is null");
+                    log.Error("WoW accounts saving failed: collection is null");
                 }
             }
             catch (Exception ex)
             {
-                Log.Error("WoW accounts saving failed: " + ex.Message);
+                log.Error("WoW accounts saving failed: " + ex.Message);
             }
         }
 

@@ -14,6 +14,7 @@ namespace AxTools.Services
 {
     internal static class Pinger
     {
+        private static readonly Log2 log = new Log2("Pinger");
         private static readonly Settings _settings = Settings.Instance;
         private static Timer _timer;
         private static readonly object Lock = new object();
@@ -67,10 +68,7 @@ namespace AxTools.Services
                 _timer = new Timer(2000);
                 _timer.Elapsed += TimerOnElapsed;
                 _timer.Start();
-                if (IsEnabledChanged != null)
-                {
-                    IsEnabledChanged(true);
-                }
+                IsEnabledChanged?.Invoke(true);
             }
         }
 
@@ -86,10 +84,7 @@ namespace AxTools.Services
                     _timer.Stop();
                     _timer.Close();
                 }
-                if (IsEnabledChanged != null)
-                {
-                    IsEnabledChanged(false);
-                }
+                IsEnabledChanged?.Invoke(false);
             }
         }
 
@@ -113,10 +108,7 @@ namespace AxTools.Services
                         int packetLoss = _pingList.Count(l => !l.Successful);
                         if (ping != _lastPing || packetLoss != _lastPacketLoss)
                         {
-                            if (StatChanged != null)
-                            {
-                                StatChanged(new PingerStat(ping, packetLoss, ping != IncorrectPing));
-                            }
+                            StatChanged?.Invoke(new PingerStat(ping, packetLoss, ping != IncorrectPing));
                             _lastPing = ping;
                             _lastPacketLoss = packetLoss;
                         }
@@ -124,7 +116,7 @@ namespace AxTools.Services
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[Pinger] " + ex.Message);
+                    log.Error(ex.Message);
                 }
                 finally
                 {
@@ -143,7 +135,7 @@ namespace AxTools.Services
         {
             Process[] wowProcesses = Process.GetProcessesByName("Wow-64");
             TCPConnectionInfo connectionInfo = TCPConnectionInfo.GetAllRemoteTcpConnections().FirstOrDefault(l => l.EndPoint.Port == 3724 && wowProcesses.Any(k => k.Id == l.ProcessID));
-            return connectionInfo != null ? connectionInfo.EndPoint.Address.ToString() : null;
+            return connectionInfo?.EndPoint.Address.ToString();
         }
 
         private static void AutodetectedIPUpdateTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
@@ -158,7 +150,7 @@ namespace AxTools.Services
                     {
                         _cachedServer = newRemoteAddress;
                         _settings.PingerLastWoWServerIP = remoteIP;
-                        Log.Info("[Pinger] WoW remote IP is detected: " + remoteIP);
+                        log.Info("WoW remote IP is detected: " + remoteIP);
                     }
                 }
                 else
@@ -167,7 +159,7 @@ namespace AxTools.Services
                     if (srvAddress.Ip != _cachedServer.Ip)
                     {
                         _cachedServer = srvAddress;
-                        Log.Info("[Pinger] Can't find WoW remote IP address, using last seen IP: " + _cachedServer.Ip);
+                        log.Info("Can't find WoW remote IP address, using last seen IP: " + _cachedServer.Ip);
                     }
                 }
             }

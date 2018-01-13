@@ -16,6 +16,7 @@ namespace AxTools.Forms
 {
     internal partial class BlackMarket : BorderedMetroForm, IWoWModule
     {
+        private static readonly Log2 log = new Log2("BlackMarket");
         private DateTime lastRefresh = DateTime.UtcNow;
         private readonly unsafe int sizeofBmItem = sizeof(BlackMarketItem);
         private readonly object imageListLocker = new object();
@@ -26,18 +27,18 @@ namespace AxTools.Forms
            StyleManager.Style = Settings.Instance.StyleColor;
             Icon = Resources.AppIcon;
             timerUpdateList.Enabled = true;
-            Log.Info(string.Format("{0} [BlackMarket tracker] Opened", WoWManager.WoWProcess));
+            log.Info(string.Format("{0} Opened", WoWManager.WoWProcess));
         }
         
         private void BlackMarketFormClosing(object sender, FormClosingEventArgs e)
         {
             timerUpdateList.Enabled = false;
-            Log.Info(string.Format("{0} [BlackMarket tracker] Closed", WoWManager.WoWProcess));
+            log.Info(string.Format("{0} Closed", WoWManager.WoWProcess));
         }
 
         private void MetroLinkRefreshClick(object sender, EventArgs e)
         {
-            if (WoWManager.Hooked && GameFunctions.IsInGame)
+            if (WoWManager.Hooked && Info.IsInGame)
             {
                 int startTime = Environment.TickCount;
                 lastRefresh = DateTime.UtcNow;
@@ -62,19 +63,19 @@ namespace AxTools.Forms
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(string.Format("{0} [BlackMarket tracker] Refresh error: {1}", WoWManager.WoWProcess, ex.Message));
+                            log.Error(string.Format("{0} Refresh error: {1}", WoWManager.WoWProcess, ex.Message));
                             this.TaskDialog("BM refresh error", ex.Message, NotifyUserType.Error);
                         }
                         finally
                         {
                             Invoke(new Action(waitingOverlay.Close));
-                            Log.Info(string.Format("{0} [BlackMarket tracker] Refresh time: {1}", WoWManager.WoWProcess, Environment.TickCount - startTime));
+                            log.Info(string.Format("{0} Refresh time: {1}", WoWManager.WoWProcess, Environment.TickCount - startTime));
                         }
                     });
                 }
                 else
                 {
-                    Log.Info(string.Format("{0} [BlackMarket tracker] Nothing to scan!", WoWManager.WoWProcess));
+                    log.Info(string.Format("{0} Nothing to scan!", WoWManager.WoWProcess));
                     this.TaskDialog("BM Tracker: Item count is null", "Are you sure the black market window is open?", NotifyUserType.Error);
                 }
             }
@@ -114,7 +115,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(string.Format("{0} [BlackMarket tracker] SetItemNamesAndImages() error: {1}", WoWManager.WoWProcess, ex.Message));
+                    log.Error(string.Format("{0} SetItemNamesAndImages() error: {1}", WoWManager.WoWProcess, ex.Message));
                 }
             });
         }
@@ -135,7 +136,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void timerUpdateList_Tick(object sender, EventArgs e)
+        private void TimerUpdateList_Tick(object sender, EventArgs e)
         {
             foreach (ListViewItem i in listView1.Items)
             {

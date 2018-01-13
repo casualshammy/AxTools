@@ -11,6 +11,7 @@ using AxTools.Services;
 using AxTools.Services.PingerHelpers;
 using AxTools.WoW.PluginSystem;
 using Components.Forms;
+using KeyboardWatcher;
 using MetroFramework;
 using MetroFramework.Forms;
 using Microsoft.Win32;
@@ -20,6 +21,7 @@ namespace AxTools.Forms
 {
     internal partial class AppSettings : BorderedMetroForm
     {
+        private static readonly Log2 log = new Log2("AppSettings");
         private readonly Settings settings = Settings.Instance;
 
         internal AppSettings()
@@ -39,8 +41,8 @@ namespace AxTools.Forms
 
         private void SetupData()
         {
-            textBoxClickerHotkey.Text = new KeysConverter().ConvertToInvariantString(settings.ClickerHotkey);
-            textBoxPluginsHotkey.Text = new KeysConverter().ConvertToInvariantString(settings.WoWPluginHotkey);
+            textBoxClickerHotkey.Text = settings.ClickerHotkey.ToString();
+            textBoxPluginsHotkey.Text = settings.WoWPluginHotkey.ToString();
             textBoxBadNetworkStatusProcent.Text = settings.PingerBadPacketLoss.ToString();
             textBoxVeryBadNetworkStatusProcent.Text = settings.PingerVeryBadPacketLoss.ToString();
             textBoxBadNetworkStatusPing.Text = settings.PingerBadPing.ToString();
@@ -82,9 +84,11 @@ namespace AxTools.Forms
             catch (Exception ex)
             {
                 CheckBoxStartAxToolsWithWindows.Checked = false;
-                Log.Error("Error occured then trying to open registry key [SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run]: " + ex.Message);
+                log.Error("Error occured then trying to open registry key [SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run]: " + ex.Message);
             }
             toolTip.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
+            checkBoxMakeBackupNotWhilePlaying.Checked = settings.WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning;
+            toolTip.SetToolTip(checkBoxMakeBackupNotWhilePlaying, "Backup creation is CPU-intensive operation and can cause lag.\r\nThis option will prevent AxTools from making backups while WoW client is running.");
         }
 
         private void SetupEvents()
@@ -97,34 +101,40 @@ namespace AxTools.Forms
             TextBox5.TextChanged += TextBox5TextChanged;
             TextBox4.TextChanged += TextBox4TextChanged;
             ComboBox_server_ip.SelectedIndexChanged += ComboBox_server_ip_SelectedIndexChanged;
-            textBoxVeryBadNetworkStatusProcent.KeyUp += textBoxVeryBadNetworkStatusProcent_KeyUp;
-            textBoxBadNetworkStatusProcent.KeyUp += textBoxBadNetworkStatusProcent_KeyUp;
-            textBoxBadNetworkStatusPing.KeyUp += textBoxBadNetworkStatusPing_KeyUp;
-            textBoxVeryBadNetworkStatusPing.KeyUp += textBoxVeryBadNetworkStatusPing_KeyUp;
+            textBoxVeryBadNetworkStatusProcent.KeyUp += TextBoxVeryBadNetworkStatusProcent_KeyUp;
+            textBoxBadNetworkStatusProcent.KeyUp += TextBoxBadNetworkStatusProcent_KeyUp;
+            textBoxBadNetworkStatusPing.KeyUp += TextBoxBadNetworkStatusPing_KeyUp;
+            textBoxVeryBadNetworkStatusPing.KeyUp += TextBoxVeryBadNetworkStatusPing_KeyUp;
             buttonBackupPath.Click += ButtonBackupPathClick;
             metroComboBoxBackupCompressionLevel.SelectedIndexChanged += MetroComboBoxBackupCompressionLevelSelectedIndexChanged;
-            checkBoxPluginsShowIngameNotifications.CheckedChanged += metroCheckBox1_CheckedChanged;
+            checkBoxPluginsShowIngameNotifications.CheckedChanged += MetroCheckBox1_CheckedChanged;
             buttonTeamspeak3Path.Click += ButtonTeamspeak3PathClick;
             buttonMumblePath.Click += ButtonMumblePathClick;
             buttonRaidcallPath.Click += ButtonRaidcallPathClick;
-            buttonWowPath.Click += buttonWowPath_Click;
-            metroComboBoxStyle.SelectedIndexChanged += metroComboBoxStyle_SelectedIndexChanged;
-            linkShowLog.Click += linkShowLog_Click;
-            linkSendLogToDev.Click += linkSendLogToDev_Click;
-            checkBoxMinimizeToTray.CheckedChanged += checkBoxMinimizeToTray_CheckedChanged;
+            buttonWowPath.Click += ButtonWowPath_Click;
+            metroComboBoxStyle.SelectedIndexChanged += MetroComboBoxStyle_SelectedIndexChanged;
+            linkShowLog.Click += LinkShowLog_Click;
+            linkSendLogToDev.Click += LinkSendLogToDev_Click;
+            checkBoxMinimizeToTray.CheckedChanged += CheckBoxMinimizeToTray_CheckedChanged;
             checkBoxAddonsBackup.CheckedChanged += CheckBoxAddonsBackupCheckedChanged;
             numericUpDownBackupCopiesToKeep.ValueChanged += NumericUpDownBackupCopiesToKeepValueChanged;
             numericUpDownBackupTimer.ValueChanged += NumericUpDownBackupTimerValueChanged;
             buttonVentriloPath.Click += Button9Click;
             checkBox_AntiAFK.CheckedChanged += CheckBox1CheckedChanged;
-            textBoxClickerHotkey.KeyDown += textBoxClickerHotkey_KeyDown;
-            textBoxPluginsHotkey.KeyDown += textBoxPluginsHotkey_KeyDown;
-            buttonClickerHotkey.Click += buttonClickerHotkey_Click;
-            buttonPluginsHotkey.Click += buttonPluginsHotkey_Click;
-            buttonIngameKeyBinds.Click += buttonIngameKeyBinds_Click;
+            textBoxClickerHotkey.KeyDown += TextBoxClickerHotkey_KeyDown;
+            textBoxPluginsHotkey.KeyDown += TextBoxPluginsHotkey_KeyDown;
+            buttonClickerHotkey.Click += ButtonClickerHotkey_Click;
+            buttonPluginsHotkey.Click += ButtonPluginsHotkey_Click;
+            buttonIngameKeyBinds.Click += ButtonIngameKeyBinds_Click;
+            checkBoxMakeBackupNotWhilePlaying.CheckedChanged += CheckBoxMakeBackupNotWhilePlaying_CheckedChanged;
         }
 
-        private void buttonIngameKeyBinds_Click(object sender, EventArgs e)
+        private void CheckBoxMakeBackupNotWhilePlaying_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning = checkBoxMakeBackupNotWhilePlaying.Checked;
+        }
+
+        private void ButtonIngameKeyBinds_Click(object sender, EventArgs e)
         {
             AppSettingsWoWBinds form = Utils.FindForm<AppSettingsWoWBinds>();
             if (form != null)
@@ -138,10 +148,9 @@ namespace AxTools.Forms
             }
         }
 
-        private void textBoxVeryBadNetworkStatusPing_KeyUp(object sender, KeyEventArgs e)
+        private void TextBoxVeryBadNetworkStatusPing_KeyUp(object sender, KeyEventArgs e)
         {
-            int value;
-            if (int.TryParse(textBoxVeryBadNetworkStatusPing.Text, out value))
+            if (int.TryParse(textBoxVeryBadNetworkStatusPing.Text, out int value))
             {
                 ErrorProviderExt.ClearError(textBoxVeryBadNetworkStatusPing);
                 settings.PingerVeryBadPing = value;
@@ -152,10 +161,9 @@ namespace AxTools.Forms
             }
         }
 
-        private void textBoxBadNetworkStatusPing_KeyUp(object sender, KeyEventArgs e)
+        private void TextBoxBadNetworkStatusPing_KeyUp(object sender, KeyEventArgs e)
         {
-            int value;
-            if (int.TryParse(textBoxBadNetworkStatusPing.Text, out value))
+            if (int.TryParse(textBoxBadNetworkStatusPing.Text, out int value))
             {
                 ErrorProviderExt.ClearError(textBoxBadNetworkStatusPing);
                 settings.PingerBadPing = value;
@@ -166,10 +174,9 @@ namespace AxTools.Forms
             }
         }
 
-        private void textBoxBadNetworkStatusProcent_KeyUp(object sender, KeyEventArgs e)
+        private void TextBoxBadNetworkStatusProcent_KeyUp(object sender, KeyEventArgs e)
         {
-            int value;
-            if (int.TryParse(textBoxBadNetworkStatusProcent.Text, out value))
+            if (int.TryParse(textBoxBadNetworkStatusProcent.Text, out int value))
             {
                 ErrorProviderExt.ClearError(textBoxBadNetworkStatusProcent);
                 settings.PingerBadPacketLoss = value;
@@ -180,10 +187,9 @@ namespace AxTools.Forms
             }
         }
 
-        private void textBoxVeryBadNetworkStatusProcent_KeyUp(object sender, KeyEventArgs e)
+        private void TextBoxVeryBadNetworkStatusProcent_KeyUp(object sender, KeyEventArgs e)
         {
-            int value;
-            if (int.TryParse(textBoxVeryBadNetworkStatusProcent.Text, out value))
+            if (int.TryParse(textBoxVeryBadNetworkStatusProcent.Text, out int value))
             {
                 ErrorProviderExt.ClearError(textBoxVeryBadNetworkStatusProcent);
                 settings.PingerVeryBadPacketLoss = value;
@@ -194,14 +200,14 @@ namespace AxTools.Forms
             }
         }
 
-        private void buttonPluginsHotkey_Click(object sender, EventArgs e)
+        private void ButtonPluginsHotkey_Click(object sender, EventArgs e)
         {
-            textBoxPluginsHotkey_KeyDown(null, new KeyEventArgs(Keys.None));
+            TextBoxPluginsHotkey_KeyDown(null, new KeyEventArgs(Keys.None));
         }
 
-        private void buttonClickerHotkey_Click(object sender, EventArgs e)
+        private void ButtonClickerHotkey_Click(object sender, EventArgs e)
         {
-            textBoxClickerHotkey_KeyDown(null, new KeyEventArgs(Keys.None));
+            TextBoxClickerHotkey_KeyDown(null, new KeyEventArgs(Keys.None));
         }
 
         private void CheckBox9CheckedChanged(object sender, EventArgs e)
@@ -220,7 +226,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("app_sett.CheckBox9.CheckedChanged_1: " + ex.Message);
+                    log.Error("app_sett.CheckBox9.CheckedChanged_1: " + ex.Message);
                 }
             }
             else
@@ -240,7 +246,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("app_sett.CheckBox9.CheckedChanged_2: " + ex.Message);
+                    log.Error("app_sett.CheckBox9.CheckedChanged_2: " + ex.Message);
                 }
             }
         }
@@ -401,7 +407,7 @@ namespace AxTools.Forms
             settings.WoWAddonsBackupCompressionLevel = metroComboBoxBackupCompressionLevel.SelectedIndex;
         }
 
-        private void buttonWowPath_Click(object sender, EventArgs e)
+        private void ButtonWowPath_Click(object sender, EventArgs e)
         {
             using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
             {
@@ -414,7 +420,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void metroComboBoxStyle_SelectedIndexChanged(object sender, EventArgs e)
+        private void MetroComboBoxStyle_SelectedIndexChanged(object sender, EventArgs e)
         {
             int style = metroComboBoxStyle.SelectedIndex == 0 ? 0 : metroComboBoxStyle.SelectedIndex + 1;
             settings.StyleColor = (MetroColorStyle) style;
@@ -430,7 +436,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void linkShowLog_Click(object sender, EventArgs e)
+        private void LinkShowLog_Click(object sender, EventArgs e)
         {
             if (File.Exists(Globals.LogFileName))
             {
@@ -449,7 +455,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void linkSendLogToDev_Click(object sender, EventArgs e)
+        private void LinkSendLogToDev_Click(object sender, EventArgs e)
         {
             try
             {
@@ -461,11 +467,11 @@ namespace AxTools.Forms
                     {
                         try
                         {
-                            Log.UploadLog(subject);
+                            Log2.UploadLog(subject);
                         }
                         catch (Exception ex)
                         {
-                            Log.Error("Can't send log: " + ex.Message);
+                            log.Error("Can't send log: " + ex.Message);
                             this.TaskDialog("Can't send log", ex.Message, NotifyUserType.Error);
                         }
                         finally
@@ -477,7 +483,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Info("Can't send log file: " + ex.Message);
+                log.Info("Can't send log file: " + ex.Message);
                 this.TaskDialog("Log file sending error", ex.Message, NotifyUserType.Error);
             }
         }
@@ -510,60 +516,60 @@ namespace AxTools.Forms
             }
         }
 
-        private void checkBoxMinimizeToTray_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxMinimizeToTray_CheckedChanged(object sender, EventArgs e)
         {
             settings.MinimizeToTray = checkBoxMinimizeToTray.Checked;
         }
 
-        private void metroCheckBox1_CheckedChanged(object sender, EventArgs e)
+        private void MetroCheckBox1_CheckedChanged(object sender, EventArgs e)
         {
             settings.WoWPluginShowIngameNotifications = checkBoxPluginsShowIngameNotifications.Checked;
         }
 
-        private void textBoxClickerHotkey_KeyDown(object sender, KeyEventArgs e)
+        private void TextBoxClickerHotkey_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
             {
-                Keys keys = LetOnlyOneKeyModifier(e);
-                textBoxClickerHotkey.Text = new KeysConverter().ConvertToInvariantString(keys);
+                KeyExt key = new KeyExt(e.KeyCode, e.Alt, e.Shift, e.Control);
+                textBoxClickerHotkey.Text = key.ToString();
                 HotkeyManager.RemoveKeys(typeof (Clicker).ToString());
-                HotkeyManager.AddKeys(typeof (Clicker).ToString(), keys);
-                settings.ClickerHotkey = keys;
+                HotkeyManager.AddKeys(typeof(Clicker).ToString(), key);
+                settings.ClickerHotkey = key;
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
         }
 
-        private void textBoxPluginsHotkey_KeyDown(object sender, KeyEventArgs e)
+        private void TextBoxPluginsHotkey_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
             {
-                Keys keys = LetOnlyOneKeyModifier(e);
-                textBoxPluginsHotkey.Text = new KeysConverter().ConvertToInvariantString(keys);
+                KeyExt key = new KeyExt(e.KeyCode, e.Alt, e.Shift, e.Control);
+                textBoxPluginsHotkey.Text = key.ToString();
                 HotkeyManager.RemoveKeys(typeof(PluginManagerEx).ToString());
-                HotkeyManager.AddKeys(typeof(PluginManagerEx).ToString(), keys);
-                settings.WoWPluginHotkey = keys;
+                HotkeyManager.AddKeys(typeof(PluginManagerEx).ToString(), key);
+                settings.WoWPluginHotkey = key;
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
         }
 
-        private Keys LetOnlyOneKeyModifier(KeyEventArgs args)
-        {
-            switch (args.Modifiers)
-            {
-                case Keys.Shift | Keys.Control | Keys.Alt:
-                    return args.KeyData & ~Keys.Control & ~Keys.Alt;
-                case Keys.Shift | Keys.Control:
-                    return args.KeyData & ~Keys.Control;
-                case Keys.Shift | Keys.Alt:
-                    return args.KeyData & ~Keys.Alt;
-                case Keys.Control | Keys.Alt:
-                    return args.KeyData & ~Keys.Alt;
-                default:
-                    return args.KeyData;
-            }
-        }
+        //private Keys LetOnlyOneKeyModifier(KeyEventArgs args)
+        //{
+        //    switch (args.Modifiers)
+        //    {
+        //        case Keys.Shift | Keys.Control | Keys.Alt:
+        //            return args.KeyData & ~Keys.Control & ~Keys.Alt;
+        //        case Keys.Shift | Keys.Control:
+        //            return args.KeyData & ~Keys.Control;
+        //        case Keys.Shift | Keys.Alt:
+        //            return args.KeyData & ~Keys.Alt;
+        //        case Keys.Control | Keys.Alt:
+        //            return args.KeyData & ~Keys.Alt;
+        //        default:
+        //            return args.KeyData;
+        //    }
+        //}
     
     }
 }

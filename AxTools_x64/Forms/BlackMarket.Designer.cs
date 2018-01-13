@@ -97,7 +97,7 @@ namespace AxTools.Forms
             // timerUpdateList
             // 
             this.timerUpdateList.Interval = 500;
-            this.timerUpdateList.Tick += new System.EventHandler(this.timerUpdateList_Tick);
+            this.timerUpdateList.Tick += new System.EventHandler(this.TimerUpdateList_Tick);
             // 
             // imageListWowhead
             // 

@@ -57,7 +57,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             // todo: delete try..catch
             try
             {
-                uint zone = GameFunctions.ZoneID;
+                uint zone = Info.ZoneID;
                 if (zone != currentZone)
                 {
                     OnZoneChanged(zone);
@@ -125,14 +125,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
             if (searchingObjects.Length > 0)
             {
-                string zoneText = GameFunctions.ZoneText;
+                string zoneText = Info.ZoneText;
                 this.LogPrint(string.Format("We're in {0}, searching for {{{1}}}", zoneText, string.Join(", ", searchingObjects)));
                 this.ShowNotify(string.Format("{0}: {{{1}}}", zoneText, string.Join(", ", searchingObjects)), false, true);
             }
             else
             {
-                this.LogPrint("Unknown battlefield, ID: " + zone + "; zoneText: " + GameFunctions.ZoneText);
-                this.ShowNotify("Unknown battlefield (" + GameFunctions.ZoneText + "). I don't know what to do in this zone...", true, true);
+                this.LogPrint("Unknown battlefield, ID: " + zone + "; zoneText: " + Info.ZoneText);
+                this.ShowNotify("Unknown battlefield (" + Info.ZoneText + "). I don't know what to do in this zone...", true, true);
             }
         }
 

@@ -12,7 +12,6 @@ namespace AxTools.WoW
 		//internal const int ChatBuffer = 0x1736250;
 		//internal const int PlayerPtr = 0x1694B10; // Script_GetCurrentTitle
 		//internal const int NameCacheBase = 0x0;
-		//internal const int GameState = 0x1734705;
 		//internal const int GlueState = 0x155862C; // Search for string "Copy request %d finished"
 		//internal const int LastHardwareAction = 0x14BD468;
 		//internal const int FocusedWidget = 0x14B1010; // Script_GetCurrentKeyBoardFocus; Frame__HasFocus
@@ -32,7 +31,7 @@ namespace AxTools.WoW
 		/*
 		internal static readonly int LastHardwareAction = 0x1446208; // [int] CGGameUI::UpdatePlayerAFK / WRITE
 		internal static readonly int TickCount = 0x1439160; // [int]
-		internal static readonly int GameState = 0x16A179E; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound)
+		internal static readonly int GameState = 0x16A179E; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound) (it's equal to 2 if in game, 1 if loading from login screen)
 		internal static readonly int Possible_NotLoadingScreen = 0x135474C;
 		//internal static readonly int PlayerName = 0x17EF7E0; // ClientServices::GetCharacterName (or Script_UnitName/GetPlayerName)
 		//internal static readonly int PlayerRealm = 0x17EF996; // Гордунни = D0 93 D0 BE D1 80 D0 B4 D1 83 D0 BD D0 BD D0 B8 // Черный Шрам = D0 A7 D0 B5 D1 80 D0 BD D1 8B D0 B9 20 D0 A8 D1 80 D0 B0 D0 BC
@@ -118,32 +117,33 @@ namespace AxTools.WoW
 
 		internal static readonly byte[] WoWHash =
 		{
-			0xE7, 0x71, 0xE8, 0xB7, 0xFD, 0xDD, 0x97, 0x2B, 0x25, 0x65, 0x02, 0x70, 0xC6, 0xC3, 0x0F, 0x50, 0x14, 0x5F, 0xC9, 0x22, 0x20, 0x66, 0x25, 0x0F, 0xF4, 0xE3, 0xCE, 0x70, 0x98, 0x5B, 0xCA, 0x25
-		};
+            0xC6, 0x8C, 0x57, 0xB8, 0x4D, 0x6D, 0x24, 0x95, 0x53, 0x5C, 0x67, 0xE9, 0x62, 0x97, 0xBA, 0x74, 0xB2, 0x84, 0x19, 0xF4, 0xF4, 0x92, 0x6F, 0x0F, 0x8B, 0xFB, 0x05, 0xE0, 0x99, 0x6A, 0x56, 0x98
+        };
 
-		#endregion
+        #endregion
 
-		#region Static infos
+        #region Static infos
 
-		internal const int NotLoadingScreen = 0x1390654;
-		internal const int KnownSpells = 0x1961F88;
-		internal const int GlueState = 0x16DC834;
-		internal const int ChatBuffer = 0x19033A0;
-		internal const int LastHardwareAction = 0x164B860;
-		internal const int GameState = 0x195FE10;
-		internal const int MouseoverGUID = 0x1960CF8;
-		internal const int UIFrameBase = 0x164B858;
-		internal const int PlayerName = 0x19F0CB0;
+        internal const int NotLoadingScreen = 0x16D5634;
+        internal const int KnownSpells = 0x1CAE098;
+        internal const int LastHardwareAction = 0x19918D0;
+        internal const int GlueState = 0x1A22874;
+        internal const int ChatBuffer = 0x1C4F450;
+        internal const int GameState = 0x1CACE18;
+        internal const int MouseoverGUID = 0x1CACE20;
+        internal const int UIFrameBase = 0x19918C8;
+        internal const int PlayerName = 0x1D3D750;
+        internal const int ChatIsOpened = 0x19A6AA4;
+        internal const int BlackMarketNumItems = 0x1D03100;
+        internal const int TickCount = 0x1984A3C;
+        internal const int PlayerZoneID = 0x1CC1A78;
+        internal const int FocusedWidget = 0x1985380;
+        internal const int KnownSpellsCount = 0x1CAE090;
+        internal const int BlackMarketItems = 0x1D03108;
+        internal const int ObjectManager = 0x1A3C1C0;
+
+        internal const int PlayerIsLooting = 0x197BB41;
 		internal const int PlayerPtr = 0x1860698;
-		internal const int ChatIsOpened = 0x165FEA4;
-		internal const int BlackMarketNumItems = 0x19B6B20;
-		internal const int PlayerZoneID = 0x1975958;
-		internal const int TickCount = 0x163E9CC;
-		internal const int FocusedWidget = 0x163F308;
-		internal const int KnownSpellsCount = 0x1961F80;
-		internal const int BlackMarketItems = 0x19B6B28;
-		internal const int PlayerIsLooting = 0x197BB41;
-		internal const int ObjectManager = 0x16F5630;
 		internal const int NameCacheBase = 0x166A918;
 
 		#endregion

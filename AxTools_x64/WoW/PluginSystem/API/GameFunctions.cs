@@ -396,7 +396,7 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 try
                 {
-                    return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState) == 1;
+                    return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.GameState) == 2;
                 }
                 catch
                 {
@@ -409,7 +409,7 @@ namespace AxTools.WoW.PluginSystem.API
         internal static bool IsProcessInGame(WowProcess process)
         {
             if (process.Memory == null) return false;
-            return process.Memory.Read<byte>(process.Memory.ImageBase + WowBuildInfoX64.GameState) == 1;
+            return process.Memory.Read<byte>(process.Memory.ImageBase + WowBuildInfoX64.GameState) == 2;
         }
 
         [Obsolete("Deprecated, use API.Info class")]

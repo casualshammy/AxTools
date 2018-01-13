@@ -10,6 +10,8 @@ namespace AxTools.WoW
 {
     internal class WowProcess : IDisposable
     {
+        private static readonly Log2 log = new Log2("WowProcess");
+
         internal WowProcess(int processID)
         {
             ProcessID = processID;
@@ -73,40 +75,36 @@ namespace AxTools.WoW
         {
             get
             {
-                if (Memory != null)
+                if (isValidBuild == -1)
                 {
-                    if (isValidBuild == -1)
+                    lock (isValidBuildLocker)
                     {
-                        lock (isValidBuildLocker)
+                        if (isValidBuild == -1)
                         {
-                            if (isValidBuild == -1)
+                            try
                             {
-                                try
+                                Stopwatch stopwatch = Stopwatch.StartNew();
+                                using (SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider())
                                 {
-                                    Stopwatch stopwatch = Stopwatch.StartNew();
-                                    using (SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider())
+                                    using (FileStream fileStream = File.Open(Process.Modules[0].FileName, FileMode.Open, FileAccess.Read))
                                     {
-                                        using (FileStream fileStream = File.Open(Process.Modules[0].FileName, FileMode.Open, FileAccess.Read))
-                                        {
-                                            byte[] hash = provider.ComputeHash(fileStream);
-                                            isValidBuild = hash.SequenceEqual(WowBuildInfoX64.WoWHash) ? 1 : 0;
-                                            Log.Info(string.Format("{0} [WoW hook] Reference hash: {1}", ToString(), BitConverter.ToString(WowBuildInfoX64.WoWHash)));
-                                            Log.Info(string.Format("{0} [WoW hook] Actual hash:    {1}", ToString(), BitConverter.ToString(hash)));
-                                            Log.Info(string.Format("{0} [WoW hook] Hash is computed, took {1}ms", ToString(), stopwatch.ElapsedMilliseconds));
-                                        }
+                                        byte[] hash = provider.ComputeHash(fileStream);
+                                        isValidBuild = hash.SequenceEqual(WowBuildInfoX64.WoWHash) ? 1 : 0;
+                                        log.Info($"{ToString()} Reference hash: {BitConverter.ToString(WowBuildInfoX64.WoWHash)}");
+                                        log.Info($"{ToString()} Actual hash:    {BitConverter.ToString(hash)}");
+                                        log.Info($"{ToString()} Hash is computed, took {stopwatch.ElapsedMilliseconds}ms");
                                     }
                                 }
-                                catch (Exception ex)
-                                {
-                                    Log.Error(string.Format("{0} [WoW hook] IsValidBuild error: {1}", ToString(), ex.Message));
-                                    isValidBuild = 0;
-                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Error($"{ToString()} IsValidBuild error: {ex.Message}");
+                                isValidBuild = 0;
                             }
                         }
                     }
-                    return isValidBuild == 1;
                 }
-                return false;
+                return isValidBuild == 1;
             }
         }
 

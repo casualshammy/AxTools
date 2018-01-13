@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AxTools.Forms.Helpers;
 using AxTools.Services.PingerHelpers;
+using KeyboardWatcher;
 using MetroFramework;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -19,6 +20,7 @@ namespace AxTools.Helpers
     [JsonObject(MemberSerialization.OptIn)]
     internal class Settings
     {
+        private static readonly Log2 logger = new Log2("Settings");
         private static readonly object _lock = new object();
         private static Settings _instance;
         internal static Settings Instance
@@ -38,7 +40,7 @@ namespace AxTools.Helpers
                                 {
                                     string rawText = File.ReadAllText(settingsFile, Encoding.UTF8);
                                     _instance = JsonConvert.DeserializeObject<Settings>(rawText);
-                                    Log.Info("[AxTools] Settings file is loaded");
+                                    logger.Info("Settings file is loaded");
                                 }
                                 catch (Exception ex)
                                 {
@@ -49,7 +51,7 @@ namespace AxTools.Helpers
                             else
                             {
                                 _instance = new Settings();
-                                Log.Info("[AxTools] Settings file is not found!");
+                                logger.Info("Settings file is not found!");
                             }
                             _instance.ValidateAndFix();
                         }
@@ -125,7 +127,7 @@ namespace AxTools.Helpers
             }
             string json = sb.ToString();
             File.WriteAllText(AppFolders.ConfigDir + "\\settings.json", json, Encoding.UTF8);
-            Log.Info("Settings file has been updated, time: " + stopwatch.ElapsedMilliseconds + "ms");
+            logger.Info("Settings file has been updated, time: " + stopwatch.ElapsedMilliseconds + "ms");
         }
 
         #region General
@@ -178,7 +180,7 @@ namespace AxTools.Helpers
         #region Clicker
 
         [JsonProperty(Order = 20, PropertyName = "ClickerHotkey")]
-        internal Keys ClickerHotkey = Keys.None;
+        internal KeyExt ClickerHotkey = new KeyExt(Keys.None);
 
         [JsonProperty(Order = 21, PropertyName = "ClickerInterval")]
         internal int ClickerInterval = 0x3e8;
@@ -272,10 +274,10 @@ namespace AxTools.Helpers
 
         #region WoWPlugins
 
-        internal event Action<Keys> WoWPluginHotkeyChanged;
-        private Keys wowPluginHotkey = Keys.None;
+        internal event Action<KeyExt> WoWPluginHotkeyChanged;
+        private KeyExt wowPluginHotkey = new KeyExt(Keys.None);
         [JsonProperty(Order = 70, PropertyName = "WoWPluginHotkey")]
-        internal Keys WoWPluginHotkey
+        internal KeyExt WoWPluginHotkey
         {
             get
             {
@@ -340,6 +342,9 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 95, PropertyName = "WoWAddonsBackupCompressionLevel")]
         internal int WoWAddonsBackupCompressionLevel = 6;
+
+        [JsonProperty(Order = 96, PropertyName = "WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning")]
+        internal bool WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning = true;
 
         #endregion
 
@@ -444,7 +449,7 @@ namespace AxTools.Helpers
         private static string GetDiscordPath()
         {
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord\\Update.exe");
-            Log.Info($"[Settings] Looking for Discord client in {path}");
+            logger.Info($"Looking for Discord client in {path}");
             return File.Exists(path) ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord") : string.Empty;
         }
 

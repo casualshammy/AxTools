@@ -19,6 +19,7 @@ namespace AxTools.Updater
     [Obfuscation(Exclude = false, Feature = "constants")]
     internal static class UpdaterService
     {
+        private static readonly Log2 log = new Log2("UpdaterService");
         private static readonly System.Timers.Timer _timer = new System.Timers.Timer(600000);
         private static readonly string DistrDirectory = AppFolders.TempDir + "\\update";
         private static readonly string[] JunkFiles = {};
@@ -38,22 +39,22 @@ namespace AxTools.Updater
         {
             try
             {
-                Log.Info("Copying distr directory, updateDir: " + updateDir + "; axtoolsDir: " + axtoolsDir);
+                log.Info("Copying distr directory, updateDir: " + updateDir + "; axtoolsDir: " + axtoolsDir);
                 Utils.DirectoryCopy(updateDir, axtoolsDir, true);
                 DirectoryInfo pluginsDirectoryInfo = new DirectoryInfo(Path.Combine(axtoolsDir, "pluginsAssemblies"));
                 if (pluginsDirectoryInfo.Exists)
                 {
-                    Log.Info("Deleting plugins assemblies directory...");
+                    log.Info("Deleting plugins assemblies directory...");
                     pluginsDirectoryInfo.Delete(true);
                 }
-                Log.Info("Deleting junk files...");
+                log.Info("Deleting junk files...");
                 foreach (string i in JunkFiles)
                 {
                     // ReSharper disable once RedundantEmptyFinallyBlock
                     try
                     {
                         File.Delete(Path.Combine(axtoolsDir, i));
-                        Log.Info("Junk file is deleted: " + Path.Combine(axtoolsDir, i));
+                        log.Info("Junk file is deleted: " + Path.Combine(axtoolsDir, i));
                     }
                     catch {/* */}
                 }
@@ -65,7 +66,7 @@ namespace AxTools.Updater
                     }
                     catch {/* */}
                 }
-                Log.Info("Starting AxTools...");
+                log.Info("Starting AxTools...");
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = Path.Combine(axtoolsDir, "AxTools.exe"),
@@ -91,12 +92,12 @@ namespace AxTools.Updater
                 if (_hardwareID == null)
                 {
                     _hardwareID = Utils.GetComputerHID();
-                    Log.Info(string.Format("[Updater] Your credentials for updates: login: {0} password: {1}{2}", Settings.Instance.UserID, new string('*', _hardwareID.Length - 4), _hardwareID.Substring(_hardwareID.Length - 4)));
+                    log.Info(string.Format("Your credentials for updates: login: {0} password: {1}{2}", Settings.Instance.UserID, new string('*', _hardwareID.Length - 4), _hardwareID.Substring(_hardwareID.Length - 4)));
                 }
                 if (_updateFileURL == null)
                 {
                     _updateFileURL = GetUpdateFileURL(UpdateFileDnsTxt);
-                    Log.Info("[Updater] Update file URL: " + (_updateFileURL ?? "UNKNOWN"));
+                    log.Info("Update file URL: " + (_updateFileURL ?? "UNKNOWN"));
                 }
                 if (_updateFileURL != null)
                 {
@@ -104,7 +105,7 @@ namespace AxTools.Updater
                 }
                 else
                 {
-                    Log.Info("[Updater] Can't get update file URL from DNS!");
+                    log.Info("Can't get update file URL from DNS!");
                 }
                 _timer.Start();
             });
@@ -121,11 +122,11 @@ namespace AxTools.Updater
                     webClient.ForceBasicAuth(Settings.Instance.UserID, _hardwareID);
                     byte[] distrFile = webClient.UploadData(_updateFileURL, "POST", Encoding.UTF8.GetBytes("get-update-package"));
                     File.WriteAllBytes(distrZipFile, distrFile);
-                    Log.Info("[Updater] Packages are downloaded!");
+                    log.Info("Packages are downloaded!");
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[Updater] Can't download packages: " + ex.Message);
+                    log.Error("Can't download packages: " + ex.Message);
                     return;
                 }
             }
@@ -142,17 +143,17 @@ namespace AxTools.Updater
                     zip.Password = "3aTaTre6agA$-E+e";
                     zip.ExtractAll(DistrDirectory, ExtractExistingFileAction.OverwriteSilently);
                 }
-                Log.Info("[Updater] Package <distr> is extracted to " + DistrDirectory);
+                log.Info("Package <distr> is extracted to " + DistrDirectory);
             }
             catch (Exception ex)
             {
-                Log.Error("[Updater] Can't extract <distr> package: " + ex.Message);
+                log.Error("Can't extract <distr> package: " + ex.Message);
                 return;
             }
             FileInfo updaterExe = new DirectoryInfo(DistrDirectory).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
             if (updaterExe == null)
             {
-                Log.Error("[Updater] Can't find updater executable! Files: " + string.Join(", ", new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().Select(l => l.Name)));
+                log.Error("Can't find updater executable! Files: " + string.Join(", ", new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().Select(l => l.Name)));
                 return;
             }
             TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No), TaskDialogIcon.Information);
@@ -161,20 +162,20 @@ namespace AxTools.Updater
             {
                 try
                 {
-                    Log.Info("[Updater] Closing for update...");
+                    log.Info("Closing for update...");
                     Application.ApplicationExit += ApplicationOnApplicationExit;
                     MainForm.Instance.BeginInvoke(new Action(MainForm.Instance.Close));
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[Updater] Update error: " + ex.Message);
+                    log.Error("Update error: " + ex.Message);
                 }
             }
         }
 
         private static void CheckForUpdates()
         {
-            Log.Info("[Updater] Let's check for updates!");
+            log.Info("Let's check for updates!");
             string updateString;
             try
             {
@@ -190,28 +191,28 @@ namespace AxTools.Updater
                 {
                     Notify.TrayPopup("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact dev", NotifyUserType.Error, false);
                     _timer.Elapsed -= Timer_Elapsed;
-                    Log.Info($"[Updater] Your credentials are invalid. Updater is disabled. Please contact devs (status {webEx.Status}): {webEx.Message}");
-                    Log.Error($"[Updater] Your username: {Settings.Instance.UserID}; your HWID: {_hardwareID}");
+                    log.Info($"Your credentials are invalid. Updater is disabled. Please contact devs (status {webEx.Status}): {webEx.Message}");
+                    log.Error($"Your username: {Settings.Instance.UserID}; your HWID: {_hardwareID}");
                 }
                 else if (webEx.Status == WebExceptionStatus.TrustFailure)
                 {
                     Notify.TrayPopup("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, true);
                     _timer.Elapsed -= Timer_Elapsed;
-                    Log.Info($"[Updater] Cannot validate remote server. Your internet connection is compromised (status {webEx.Status}): {webEx.Message}");
-                    Log.Info($"[Updater] Inner exception: {webEx.InnerException?.Message}");
+                    log.Info($"Cannot validate remote server. Your internet connection is compromised (status {webEx.Status}): {webEx.Message}");
+                    log.Info($"Inner exception: {webEx.InnerException?.Message}");
                 }
                 else if (webEx.Status != WebExceptionStatus.NameResolutionFailure &&
                          webEx.Status != WebExceptionStatus.Timeout &&
                          webEx.Status != WebExceptionStatus.ConnectFailure &&
                          webEx.Status != WebExceptionStatus.SecureChannelFailure)
                 {
-                    Log.Error(string.Format("[Updater] Fetching info error (status {0}): {1}", webEx.Status, webEx.Message));
+                    log.Error(string.Format("Fetching info error (status {0}): {1}", webEx.Status, webEx.Message));
                 }
                 return;
             }
             catch (Exception ex)
             {
-                Log.Info($"[Updater] Fetching info error ({ex.GetType()}): {ex.Message}");
+                log.Info($"Fetching info error ({ex.GetType()}): {ex.Message}");
                 return;
             }
             if (!string.IsNullOrWhiteSpace(updateString))
@@ -223,28 +224,28 @@ namespace AxTools.Updater
                     {
                         if (Globals.AppVersion != updateInfo.Version)
                         {
-                            Log.Info($"[Updater] Server version: <{updateInfo.Version}>, local version: <{Globals.AppVersion}>; downloading new version...");
+                            log.Info($"Server version: <{updateInfo.Version}>, local version: <{Globals.AppVersion}>; downloading new version...");
                             _timer.Elapsed -= Timer_Elapsed;
                             DownloadExtractUpdate();
                         }
                         else
                         {
-                            Log.Info($"[Updater] Server version: <{updateInfo.Version}>, local version: <{Globals.AppVersion}>; no update is needed");
+                            log.Info($"Server version: <{updateInfo.Version}>, local version: <{Globals.AppVersion}>; no update is needed");
                         }
                     }
                     else
                     {
-                        Log.Error("[Updater] UpdateInfo has invalid format!");
+                        log.Error("UpdateInfo has invalid format!");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[Updater] Update file fetched, but it has invalid format: " + ex.Message);
+                    log.Error("Update file fetched, but it has invalid format: " + ex.Message);
                 }
             }
             else
             {
-                Log.Error("[Updater] Update file is fetched, but it's empty!");
+                log.Error("Update file is fetched, but it's empty!");
             }
         }
 

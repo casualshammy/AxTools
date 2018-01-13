@@ -23,6 +23,7 @@ using WindowsFormsAero.TaskDialog;
 using AxTools.WoW.PluginSystem.API;
 using Components.Forms;
 using Settings = AxTools.Helpers.Settings;
+using KeyboardWatcher;
 
 namespace AxTools.Forms
 {
@@ -33,10 +34,12 @@ namespace AxTools.Forms
         private readonly Settings settings = Settings.Instance;
         internal static event Action ClosingEx;
         internal static int UIThreadID;
+        internal static MultiLock ShutdownLock = new MultiLock();
+        private static readonly Log2 log = new Log2("MainWindow");
 
         internal MainForm()
         {
-            Log.Info("[AxTools] Initializing main window...");
+            log.Info("Initializing main window...");
             InitializeComponent();
             StyleManager.Style = Settings.Instance.StyleColor;
             Icon = Resources.AppIcon;
@@ -54,8 +57,8 @@ namespace AxTools.Forms
 
             UIThreadID = Thread.CurrentThread.ManagedThreadId;
             PostInvoke(AfterInitializing);
-            Log.Info(string.Format("[AxTools] Registered for: {0}", Settings.Instance.UserID));
-            Log.Info("[AxTools] Initial loading is finished");
+            log.Info(string.Format("Registered for: {0}", Settings.Instance.UserID));
+            log.Info("Initial loading is finished");
         }
 
         protected override void WndProc(ref Message m)
@@ -81,6 +84,7 @@ namespace AxTools.Forms
         private void MainFormClosing(object sender, CancelEventArgs e)
         {
             isClosing = true;
+            ShutdownLock.WaitForLocks();
             ClosingEx?.Invoke();
             // Close all children forms
             Form[] forms = Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof (MainForm) && i.GetType() != typeof (MetroFlatDropShadow)).ToArray();
@@ -106,7 +110,7 @@ namespace AxTools.Forms
             Pinger.Enabled = false;
             //stop watching process trace
             WoWProcessManager.StopWatcher();
-            Log.Info("WoW processes trace watching is stopped");
+            log.Info("WoW processes trace watching is stopped");
             // release hook 
             if (WoWManager.Hooked)
             {
@@ -116,11 +120,11 @@ namespace AxTools.Forms
             {
                 string name = i.ProcessName;
                 i.Dispose();
-                Log.Info(string.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, i.ProcessID));
+                log.Info(string.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, i.ProcessID));
             }
             HotkeyManager.KeyPressed -= KeyboardHookKeyDown;
             HotkeyManager.RemoveKeys(typeof(PluginManagerEx).ToString());
-            Log.Info("AxTools closed");
+            log.Info("AxTools closed");
             SendLogToDeveloper();
         }
 
@@ -128,11 +132,11 @@ namespace AxTools.Forms
         {
             TaskDialogButton yesNo = TaskDialogButton.Yes + (int) TaskDialogButton.No;
             TaskDialog taskDialog = new TaskDialog("There were errors during runtime", "AxTools", "Do you want to send log file to developer?", yesNo, TaskDialogIcon.Warning);
-            if (Log.HaveErrors && Utils.InternetAvailable && taskDialog.Show(this).CommonButton == Result.Yes && File.Exists(Globals.LogFileName))
+            if (log.HaveErrors && Utils.InternetAvailable && taskDialog.Show(this).CommonButton == Result.Yes && File.Exists(Globals.LogFileName))
             {
                 try
                 {
-                    Log.UploadLog(null);
+                    Log2.UploadLog(null);
                 }
                 catch (Exception ex)
                 {
@@ -197,7 +201,7 @@ namespace AxTools.Forms
             startupOverlay.Close();                                     // close startup overkay
             Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
             UpdaterService.Start();                                     // start updater service
-            Log.Info("[AxTools] All start-up routines are finished");   // situation normal :)
+            log.Info("All start-up routines are finished");   // situation normal :)
         }
 
         private void LinkSettings_Click(object sender, EventArgs e)
@@ -287,7 +291,7 @@ namespace AxTools.Forms
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(string.Format("Error occured while building tray icon for plugin <{0}>: {1}", plugin.Name, ex.Message));
+                            log.Error(string.Format("Error occured while building tray icon for plugin <{0}>: {1}", plugin.Name, ex.Message));
                         }
                     }
                 }
@@ -546,7 +550,7 @@ namespace AxTools.Forms
                         counter--;
                     }
                 });
-                Log.Info("[VoIP] Ventrilo process started");
+                log.Info("Ventrilo process started");
             }
             else
             {
@@ -576,7 +580,7 @@ namespace AxTools.Forms
                 FileName = ts3Executable,
                 Arguments = "-nosingleinstance"
             }).WaitForInputIdle(10*1000);
-            Log.Info("[VoIP] TS3 process started");
+            log.Info("TS3 process started");
         }
 
         private void StartRaidcall()
@@ -588,7 +592,7 @@ namespace AxTools.Forms
                     WorkingDirectory = settings.RaidcallDirectory,
                     FileName = settings.RaidcallDirectory + "\\raidcall.exe"
                 });
-                Log.Info("[VoIP] Raidcall process started");
+                log.Info("Raidcall process started");
             }
             else
             {
@@ -605,7 +609,7 @@ namespace AxTools.Forms
                     WorkingDirectory = settings.MumbleDirectory,
                     FileName = settings.MumbleDirectory + "\\mumble.exe"
                 });
-                Log.Info("[VoIP] Mumble process started");
+                log.Info("Mumble process started");
             }
             else
             {
@@ -684,7 +688,7 @@ namespace AxTools.Forms
                     FileName = discordInfo.ExecutablePath,
                     Arguments = discordInfo.ExecutableArguments
                 });
-                Log.Info("[VoIP] Discord process started");
+                log.Info("Discord process started");
             }
             else
             {
@@ -692,7 +696,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void tileExtTwitch_Click(object sender, EventArgs e)
+        private void TileExtTwitch_Click(object sender, EventArgs e)
         {
             if (VoIP.AvailableVoipClients.TryGetValue("Twitch", out VoipInfo twitchInfo))
             {
@@ -702,7 +706,7 @@ namespace AxTools.Forms
                     FileName = twitchInfo.ExecutablePath,
                     Arguments = twitchInfo.ExecutableArguments
                 });
-                Log.Info("[VoIP] Twitch process started");
+                log.Info("Twitch process started");
             }
             else
             {
@@ -736,6 +740,7 @@ namespace AxTools.Forms
 
         private void StartWoWModule<T>() where T : Form, IWoWModule, new()
         {
+            return;
             if (!WoWManager.Hooked)
             {
                 if (WoWManager.HookWoWAndNotifyUserIfError())
@@ -780,7 +785,7 @@ namespace AxTools.Forms
                 {
                     if (WoWManager.Hooked || WoWManager.HookWoWAndNotifyUserIfError())
                     {
-                        if (GameFunctions.IsInGame)
+                        if (Info.IsInGame)
                         {
                             PluginManagerEx.StartPlugins();
                         }
@@ -803,7 +808,7 @@ namespace AxTools.Forms
                 }
                 catch
                 {
-                    Log.Error("Plugin task failed to cancel");
+                    log.Error("Plugin task failed to cancel");
                     Notify.SmartNotify("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
                 }
             }
@@ -965,7 +970,7 @@ namespace AxTools.Forms
             PluginManagerEx.PluginsLoaded -= PluginManagerExOnPluginsLoaded;
         }
 
-        private void WoWPluginHotkeyChanged(Keys key)
+        private void WoWPluginHotkeyChanged(KeyExt key)
         {
             BeginInvoke(new MethodInvoker(() =>
             {
@@ -1032,7 +1037,7 @@ namespace AxTools.Forms
             });
         }
 
-        private void KeyboardHookKeyDown(Keys key)
+        private void KeyboardHookKeyDown(KeyExt key)
         {
             if (key == settings.WoWPluginHotkey)
             {

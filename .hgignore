@@ -6,6 +6,7 @@ packages/.*
 .*desktop.ini
 _webservice/upd/.+\.zip
 _webservice/plugins/.+?\.zip
+.vs/AxTools/.+
 syntax: glob
 AxTools.opensdf
 AxTools.sdf

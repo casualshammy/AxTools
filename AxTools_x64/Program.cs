@@ -149,6 +149,44 @@ namespace AxTools
                 MessageBox.Show(ex.Message);
             }
 
+            // 12.01.2018
+            try
+            {
+                foreach (string hotkeyName in new string[] { "ClickerHotkey", "WoWPluginHotkey" })
+                {
+                    string cfg = File.ReadAllText(AppFolders.ConfigDir + "\\settings.json", Encoding.UTF8);
+                    Regex regex = new Regex($"\"{hotkeyName}\": (\\d+)");
+                    Match match = regex.Match(cfg);
+                    if (match.Success)
+                    {
+                        Keys oldKey = JsonConvert.DeserializeObject<Keys>(match.Groups[1].Value);
+                        bool alt = false;
+                        bool ctrl = false;
+                        bool shift = false;
+                        if ((oldKey & Keys.Alt) == Keys.Alt)
+                        {
+                            alt = true;
+                        }
+                        if ((oldKey & Keys.Control) == Keys.Control)
+                        {
+                            ctrl = true;
+                        }
+                        if ((oldKey & Keys.Shift) == Keys.Shift)
+                        {
+                            shift = true;
+                        }
+                        oldKey = oldKey & ~Keys.Control & ~Keys.Shift & ~Keys.Alt;
+                        string newCfg = cfg.Replace(match.Value, $"\"{hotkeyName}\": " + JsonConvert.SerializeObject(new KeyboardWatcher.KeyExt(oldKey, alt, shift, ctrl)));
+                        File.WriteAllText(AppFolders.ConfigDir + "\\settings.json", newCfg, Encoding.UTF8);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
             // 17.04.2017
             try
             {

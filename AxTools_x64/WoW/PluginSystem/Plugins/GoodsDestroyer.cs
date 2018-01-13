@@ -62,15 +62,15 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 herbs.Add(124106); // Felwort item id
             }
             lastNotifiedAboutCompletion = DateTime.MinValue;
-            if (GameFunctions.IsSpellKnown(51005)) // mill
+            if (Info.IsSpellKnown(51005)) // mill
             {
                 this.LogPrint("Milling: OK");
             }
-            if (GameFunctions.IsSpellKnown(31252)) // prospect
+            if (Info.IsSpellKnown(31252)) // prospect
             {
                 this.LogPrint("Prospecting: OK");
             }
-            if (GameFunctions.IsSpellKnown(13262)) // disenchant
+            if (Info.IsSpellKnown(13262)) // disenchant
             {
                 this.LogPrint("Disenchanting: OK");
             }
@@ -82,11 +82,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
             WoWPlayerMe me = ObjectMgr.Pulse();
             if (me != null)
             {
-                if (!GameFunctions.IsLooting)
+                if (!Info.IsLooting)
                 {
                     if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
                     {
-                        if (GameFunctions.IsSpellKnown(51005)) // mill
+                        if (Info.IsSpellKnown(51005)) // mill
                         {
                             if (SettingsInstance.UseFastDraenorMill && me.ItemsInBags.Any(l => fastMillHerbs.Contains(l.EntryID) && l.StackSize >= 20))
                             {
@@ -117,11 +117,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
                                 Utilities.AddPluginToRunning("InkCrafter");
                             }
                         }
-                        if (GameFunctions.IsSpellKnown(31252)) // prospect
+                        if (Info.IsSpellKnown(31252)) // prospect
                         {
                             DoProspect();
                         }
-                        if (GameFunctions.IsSpellKnown(13262)) // disenchant
+                        if (Info.IsSpellKnown(13262)) // disenchant
                         {
                             Thread.Sleep(1000); // pause to prevent disenchanting nonexistent item 
                             DoDisenchant();

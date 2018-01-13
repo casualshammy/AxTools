@@ -131,7 +131,7 @@ namespace AxTools.Forms
             while (isRunning)
             {
                 stopwatch.Restart();
-                if (!WoWManager.Hooked || !GameFunctions.IsInGame || GameFunctions.IsLoadingScreen)
+                if (!WoWManager.Hooked || !Info.IsInGame || Info.IsLoadingScreen)
                 {
                     try
                     {
@@ -194,7 +194,7 @@ namespace AxTools.Forms
 
         private void Redraw_Interact()
         {
-            if (!GameFunctions.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && localPlayer.Alive)
+            if (!Info.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && localPlayer.Alive)
             {
                 WoWGUID interactGUID = WoWGUID.Zero;
                 double interactDistance = 11;
@@ -923,7 +923,7 @@ namespace AxTools.Forms
         {
             Task.Run(() =>
             {
-                GameFunctions.Move2D(point, 3f, 5000, false, false);
+                MoveMgr.Move2D(point, 3f, 5000, false, false);
             });
         }
 
