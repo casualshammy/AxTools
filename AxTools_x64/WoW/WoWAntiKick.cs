@@ -47,8 +47,20 @@ namespace AxTools.WoW
                             {
                                 maxTime = Utils.Rnd.Next(150000, 280000);
                                 wowProcess.Memory.Write(wowProcess.Memory.ImageBase + WowBuildInfoX64.LastHardwareAction, tickCount);
-                                ActionEmulated?.Invoke(wowProcess.MainWindowHandle);
                                 logger.Info(string.Format("{0} Action emulated, next MaxTime: {1}", wowProcess, maxTime));
+                                if (settings.WoW_AntiKick_SetAfkState)
+                                {
+                                    if (!wowProcess.IsMinimized)
+                                    {
+                                        GameFunctions.SetAfkStatus(wowProcess);
+                                        logger.Info($"{wowProcess} /afk status is set");
+                                    }
+                                    else
+                                    {
+                                        logger.Info($"{wowProcess} Can't set /afk status because WoW client is minimized");
+                                    }
+                                }
+                                ActionEmulated?.Invoke(wowProcess.MainWindowHandle);
                             }
                         }
                         catch (Exception ex)

@@ -12,7 +12,7 @@ namespace AxTools.WoW.PluginSystem.API
         
         public static void Move2D(WowPoint point, float precision, int timeoutInMs, bool continueMovingIfFailed, bool continueMovingIfSuccessful)
         {
-            GameFunctions.WaitWhileWoWIsMinimized();
+            WoWManager.WoWProcess.WaitWhileWoWIsMinimized();
             if (Info.IsInGame && !Info.IsLoadingScreen)
             {
                 WoWPlayerMe me = ObjMgr.Pulse();
@@ -47,7 +47,7 @@ namespace AxTools.WoW.PluginSystem.API
         
         public static void Move3D(WowPoint point, float precision2D, float precisionZ, int timeoutInMs, bool continueMoving)
         {
-            GameFunctions.WaitWhileWoWIsMinimized();
+            WoWManager.WoWProcess.WaitWhileWoWIsMinimized();
             if (Info.IsInGame && !Info.IsLoadingScreen)
             {
                 WoWPlayerMe me = ObjMgr.Pulse();

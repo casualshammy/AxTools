@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using AxTools.Helpers;
+using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Internals
 {
@@ -12,10 +13,18 @@ namespace AxTools.WoW.Internals
         private readonly IntPtr address;
         private string cachedName;
         private string cachedEditboxText;
+        private WowProcess process;
 
         internal WoWUIFrame(IntPtr address)
         {
             this.address = address;
+            process = WoWManager.WoWProcess;
+        }
+
+        internal WoWUIFrame(IntPtr address, WowProcess proc)
+        {
+            this.address = address;
+            process = proc;
         }
 
         public string GetName
@@ -24,7 +33,7 @@ namespace AxTools.WoW.Internals
             {
                 if (cachedName == null)
                 {
-                    byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(WoWManager.WoWProcess.Memory.Read<IntPtr>(address + WowBuildInfoX64.UIFrameName), 132 * 2);
+                    byte[] bytes = process.Memory.ReadBytes(process.Memory.Read<IntPtr>(address + WowBuildInfoX64.UIFrameName), 132 * 2);
                     cachedName = Encoding.UTF8.GetString(bytes.TakeWhile(l => l != 0).ToArray());
                 }
                 return cachedName;
@@ -39,7 +48,7 @@ namespace AxTools.WoW.Internals
                 {
                     try
                     {
-                        byte[] bytes = WoWManager.WoWProcess.Memory.ReadBytes(WoWManager.WoWProcess.Memory.Read<IntPtr>(address + WowBuildInfoX64.UIEditBoxText), 255 * 2); // 255 - max string length; 2 - utf8 char length
+                        byte[] bytes = process.Memory.ReadBytes(process.Memory.Read<IntPtr>(address + WowBuildInfoX64.UIEditBoxText), 255 * 2); // 255 - max string length; 2 - utf8 char length
                         cachedEditboxText = Encoding.UTF8.GetString(bytes.TakeWhile(l => l != 0).ToArray());
                     }
                     catch
@@ -53,7 +62,7 @@ namespace AxTools.WoW.Internals
 
         public bool IsVisible
         {
-            get { return ((WoWManager.WoWProcess.Memory.Read<int>(address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) == 1; }
+            get { return ((process.Memory.Read<int>(address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) == 1; }
         }
 
         /// <summary>
@@ -63,8 +72,13 @@ namespace AxTools.WoW.Internals
         /// <returns></returns>
         public static WoWUIFrame GetFrameByName(string name)
         {
+            return GetFrameByName(WoWManager.WoWProcess, name);
+        }
+
+        internal static WoWUIFrame GetFrameByName(WowProcess process, string name)
+        {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            WoWUIFrame frame = GetAllFrames().FirstOrDefault(l => l.GetName == name);
+            WoWUIFrame frame = GetAllFrames(process).FirstOrDefault(l => l.GetName == name);
             if (stopwatch.ElapsedMilliseconds > 500)
             {
                 Log.Error(string.Format("WoWUIFrame.GetFrameByName exec time: {0}ms", stopwatch.ElapsedMilliseconds));
@@ -74,51 +88,58 @@ namespace AxTools.WoW.Internals
 
         public static IEnumerable<WoWUIFrame> GetAllFrames()
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            IntPtr @base = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.UIFrameBase);
-            IntPtr currentFrame = WoWManager.WoWProcess.Memory.Read<IntPtr>(@base + WowBuildInfoX64.UIFirstFrame);
-            while (currentFrame != IntPtr.Zero)
+            return GetAllFrames(WoWManager.WoWProcess);
+        }
+
+        internal static IEnumerable<WoWUIFrame> GetAllFrames(WowProcess process)
+        {
+            if (process.IsValidBuild && Info.IsProcessInGame(process))
             {
-                WoWUIFrame f = null;
-                bool shouldExit = false;
-                try
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                IntPtr @base = process.Memory.Read<IntPtr>(process.Memory.ImageBase + WowBuildInfoX64.UIFrameBase);
+                IntPtr currentFrame = process.Memory.Read<IntPtr>(@base + WowBuildInfoX64.UIFirstFrame);
+                while (currentFrame != IntPtr.Zero)
                 {
-                    WoWUIFrame temp = new WoWUIFrame(currentFrame);
-                    //File.AppendAllText(Application.StartupPath + "\\frames.txt", string.Format("New frame: {0}; Visible: {1}\r\n", f.GetName, f.IsVisible));
-                    if (!string.IsNullOrWhiteSpace(temp.GetName))
-                    {
-                        f = temp;
-                    }
-                }
-                catch
-                {
-                    //
-                }
-                finally
-                {
+                    WoWUIFrame f = null;
+                    bool shouldExit = false;
                     try
                     {
-                        currentFrame = WoWManager.WoWProcess.Memory.Read<IntPtr>(currentFrame + WoWManager.WoWProcess.Memory.Read<int>(@base + WowBuildInfoX64.UINextFrame) + 8);
+                        WoWUIFrame temp = new WoWUIFrame(currentFrame, process);
+                        if (!string.IsNullOrWhiteSpace(temp.GetName))
+                        {
+                            f = temp;
+                        }
                     }
                     catch
                     {
-                        shouldExit = true;
+                        //
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            currentFrame = process.Memory.Read<IntPtr>(currentFrame + process.Memory.Read<int>(@base + WowBuildInfoX64.UINextFrame) + 8);
+                        }
+                        catch
+                        {
+                            shouldExit = true;
+                        }
+                    }
+                    if (f != null)
+                    {
+                        yield return f;
+                    }
+                    if (shouldExit)
+                    {
+                        break;
                     }
                 }
-                if (f != null)
+                if (stopwatch.ElapsedMilliseconds > 500)
                 {
-                    yield return f;
+                    Log.Error(string.Format("WoWUIFrame.GetAllFrames exec time: {0}ms", stopwatch.ElapsedMilliseconds));
                 }
-                if (shouldExit)
-                {
-                    break;
-                }
-            }
-            if (stopwatch.ElapsedMilliseconds > 500)
-            {
-                Log.Error(string.Format("WoWUIFrame.GetAllFrames exec time: {0}ms", stopwatch.ElapsedMilliseconds));
             }
         }
-
+        
     }
 }

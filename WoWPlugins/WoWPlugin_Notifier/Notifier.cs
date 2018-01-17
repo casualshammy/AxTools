@@ -59,8 +59,8 @@ namespace WoWPlugin_Notifier
             this.LogPrint("LibSMS is OK");
             if (settingsInstance.OnWhisper || settingsInstance.OnBNetWhisper)
             {
-                GameFunctions.ReadChat();
-                GameFunctions.NewChatMessage += GameFunctionsOnNewChatMessage;
+                ChatMessages.ReadChat();
+                ChatMessages.NewChatMessage += GameFunctionsOnNewChatMessage;
                 (timerChat = this.CreateTimer(1000, TimerChat_OnElapsed)).Start();
                 this.LogPrint("Whisper notification enabled");
             }
@@ -84,7 +84,7 @@ namespace WoWPlugin_Notifier
         {
             if ((settingsInstance.OnWhisper || settingsInstance.OnBNetWhisper) && timerChat != null)
             {
-                GameFunctions.NewChatMessage -= GameFunctionsOnNewChatMessage;
+                ChatMessages.NewChatMessage -= GameFunctionsOnNewChatMessage;
                 timerChat.Dispose();
             }
             if (settingsInstance.OnStaticPopup && timerStaticPopup != null)
@@ -131,12 +131,12 @@ namespace WoWPlugin_Notifier
 
         private void TimerChat_OnElapsed()
         {
-            GameFunctions.ReadChat();
+            ChatMessages.ReadChat();
         }
 
         private void TimerDisconnect_OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            if (!GameFunctions.IsInGame && (DateTime.UtcNow - lastTimeNotifiedAboutDisconnect).TotalSeconds > 60)
+            if (!Info.IsInGame && (DateTime.UtcNow - lastTimeNotifiedAboutDisconnect).TotalSeconds > 60)
             {
                 lastTimeNotifiedAboutDisconnect = DateTime.UtcNow;
                 this.LogPrint("Player is not in game!");

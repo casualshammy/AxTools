@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.2.75.1766</AssemblyVersion>
+    <AssemblyVersion>12.3.2.1812</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -203,6 +203,7 @@
     <Compile Include="WinAPI\Win32Error.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
     <Compile Include="WoW\Internals\WoWChatMsgType.cs" />
+    <Compile Include="WoW\Internals\WoWObjectBase.cs" />
     <Compile Include="WoW\Internals\WoWUIFrame.cs" />
     <Compile Include="WoW\IWoWModule.cs" />
     <Compile Include="WoW\Internals\WoWPlayerItems.cs" />
@@ -215,8 +216,10 @@
     <Compile Include="WoW\Helpers\ChatMsg.cs" />
     <Compile Include="WoW\Helpers\MoveHelper.cs" />
     <Compile Include="WoW\Helpers\SafeTimer.cs" />
+    <Compile Include="WoW\PluginSystem\API\ChatMessages.cs" />
     <Compile Include="WoW\PluginSystem\API\Info.cs" />
-    <Compile Include="WoW\PluginSystem\API\Move.cs" />
+    <Compile Include="WoW\PluginSystem\API\Lua.cs" />
+    <Compile Include="WoW\PluginSystem\API\MoveMgr.cs" />
     <Compile Include="WoW\PluginSystem\IPlugin2.cs" />
     <Compile Include="WoW\PluginSystem\PluginContainer.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.cs">

@@ -20,6 +20,7 @@ namespace AxTools.Helpers
 {
     internal static class Utils
     {
+        private static readonly Log2 log = new Log2("Utils");
         private static string _hardwareID;
         internal static readonly Random Rnd = new Random();
 
@@ -221,7 +222,7 @@ namespace AxTools.Helpers
             {
                 StackTrace stackTrace = new StackTrace();
                 StackFrame[] stackFrames = stackTrace.GetFrames();
-                Log.Error("Trying to call from UI thread; call stack: " + string.Join(" -->> ", stackFrames != null ? stackFrames.Select(l => l.GetMethod().Name).Reverse() : new[] {"Stack is null"}));
+                log.Error("Trying to call from UI thread; call stack: " + string.Join(" -->> ", stackFrames != null ? stackFrames.Select(l => l.GetMethod().Name).Reverse() : new[] {"Stack is null"}));
             }
         }
 

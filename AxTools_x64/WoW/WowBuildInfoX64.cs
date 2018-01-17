@@ -46,70 +46,11 @@ namespace AxTools.WoW
 		// KnownSpells: lookfor "if ( (signed int)sub_750490(v2, v3) >= 0 )" in Script_IsSpellKnown
 		// PlayerSpeed: normal speed: 100% = 7f, 110% = 7.7f
 
-		/* NameCache
-		 * internal const int NameCacheBase = 0x1316E98;
-		 * base address = 13FEA0000
+		// HOW TO FIND "PlayerGUID"
+		// Search for "REALM_SEPARATORS" string after "FriendList.cpp" string. Call before "FriendList.cpp" is GetLocalPlayerGUID()
 
-
-			14057CED0 - 49 89 00  - mov [r8],rax
-			14057CED3 - 49 89 40 08  - mov [r8+08],rax
-			14057CED7 - 49 8B 49 08  - mov rcx,[r9+08] <<
-			14057CEDB - 49 89 08  - mov [r8],rcx
-			14057CEDE - 48 8B 41 08  - mov rax,[rcx+08]
-
-			RAX=000000003F90F8E0
-			RBX=000000003F90F8E0
-			RCX=00000000526FDBA0
-			RDX=000000003F90F8E0
-			RSI=000000000000001B
-			RDI=00000001411B6E88
-			RSP=000000000013C1E8
-			RBP=0000000000000000
-			RIP=000000014057CEDB
-			R8=000000003F90F8F0
-			R9=00000001411B6E90
-			R10=000000003F90F8E0
-			R11=0000000049AF9658
-			R12=0000000000000000
-			R13=0000000001D942F0
-			R14=000000013FEA0000
-			R15=0000000000000000
-
-
-
-
-
-			14057CEE2 - 49 89 40 08  - mov [r8+08],rax
-			14057CEE6 - 48 89 51 08  - mov [rcx+08],rdx
-			14057CEEA - 4D 89 41 08  - mov [r9+08],r8 <<
-			14057CEEE - C3 - ret 
-			14057CEEF - CC - int 3 
-
-			RAX=00000001411B6E99
-			RBX=000000003F90F8E0
-			RCX=00000000526FDBA0
-			RDX=000000003F90F8E0
-			RSI=000000000000001B
-			RDI=00000001411B6E88
-			RSP=000000000013C1E8
-			RBP=0000000000000000
-			RIP=000000014057CEEE
-			R8=000000003F90F8F0
-			R9=00000001411B6E90
-			R10=000000003F90F8E0
-			R11=0000000049AF9658
-			R12=0000000000000000
-			R13=0000000001D942F0
-			R14=000000013FEA0000
-			R15=0000000000000000
-
-
-
-
-			14057CED7 - 49 8B 49 08  - mov rcx,[r9+08]
-			14057CEEA - 4D 89 41 08  - mov [r9+08],r8
-		 * 
-		*/
+		// HOW TO FIND "ObjectManager"
+		// Search for "object manager" string
 
 		#endregion
 
@@ -117,33 +58,34 @@ namespace AxTools.WoW
 
 		internal static readonly byte[] WoWHash =
 		{
-            0xC6, 0x8C, 0x57, 0xB8, 0x4D, 0x6D, 0x24, 0x95, 0x53, 0x5C, 0x67, 0xE9, 0x62, 0x97, 0xBA, 0x74, 0xB2, 0x84, 0x19, 0xF4, 0xF4, 0x92, 0x6F, 0x0F, 0x8B, 0xFB, 0x05, 0xE0, 0x99, 0x6A, 0x56, 0x98
-        };
+			0xC4, 0x3A, 0xA4, 0xCD, 0x11, 0x33, 0x0F, 0x7D, 0xDC, 0x24, 0xB2, 0x8E, 0x19, 0xFC, 0x5F, 0x89, 0x2F, 0xEE, 0x78, 0x13, 0x49, 0x3D, 0xE0, 0xA3, 0x40, 0x84, 0x46, 0xB2, 0x25, 0xF5, 0x83, 0xD1
+		};
 
-        #endregion
+		#endregion
 
-        #region Static infos
+		#region Static infos
 
-        internal const int NotLoadingScreen = 0x16D5634;
-        internal const int KnownSpells = 0x1CAE098;
-        internal const int LastHardwareAction = 0x19918D0;
-        internal const int GlueState = 0x1A22874;
-        internal const int ChatBuffer = 0x1C4F450;
-        internal const int GameState = 0x1CACE18;
-        internal const int MouseoverGUID = 0x1CACE20;
-        internal const int UIFrameBase = 0x19918C8;
-        internal const int PlayerName = 0x1D3D750;
-        internal const int ChatIsOpened = 0x19A6AA4;
-        internal const int BlackMarketNumItems = 0x1D03100;
-        internal const int TickCount = 0x1984A3C;
-        internal const int PlayerZoneID = 0x1CC1A78;
-        internal const int FocusedWidget = 0x1985380;
-        internal const int KnownSpellsCount = 0x1CAE090;
-        internal const int BlackMarketItems = 0x1D03108;
-        internal const int ObjectManager = 0x1A3C1C0;
+		internal const int PlayerZoneID = 0x1BEC764;
+		internal const int NotLoadingScreen = 0x15F1624;
+		internal const int GameState = 0x1BD72BF;
+		internal const int GlueState = 0x1946049;
+		internal const int KnownSpells = 0x1BD8858;
+		internal const int LastHardwareAction = 0x18ABE00;
+		internal const int MouseoverGUID = 0x1BD7310;
+		internal const int BlackMarketNumItems = 0x1C2E870;
+		internal const int PlayerGUID = 0x1C68CF0;
+		internal const int TickCount = 0x18AAE4C;
+		internal const int ChatIsOpened = 0x18C3554;
+		internal const int BlackMarketItems = 0x1C2E878;
+		internal const int ChatBuffer = 0x1B79950;
+		internal const int UIFrameBase = 0x18ABDF8;
+		internal const int KnownSpellsCount = 0x1BD8850;
+		internal const int ObjectManager = 0x1961190;
+		internal const int FocusedWidget = 0x18ABDB0;
+		internal const int PlayerName = 0x1C68D00;
 
-        internal const int PlayerIsLooting = 0x197BB41;
-		internal const int PlayerPtr = 0x1860698;
+
+		internal const int PlayerIsLooting = 0x197BB41;
 		internal const int NameCacheBase = 0x166A918;
 
 		#endregion
@@ -186,7 +128,7 @@ namespace AxTools.WoW
 		internal static readonly int UnitDescriptors = 0x10;
 		internal static readonly int UnitCastingID = 0x1C6C;
 		internal static readonly int UnitChannelingID = 0x1CA0;
-		internal static readonly int UnitLocation = 0x1560;
+		internal static readonly int UnitLocation = 0x1588;
 		internal static readonly int UnitRotation = UnitLocation + 0x10;
 
 		internal const int UnitTargetGUID = 0xA0;

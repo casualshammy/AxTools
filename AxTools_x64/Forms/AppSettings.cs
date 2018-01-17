@@ -89,6 +89,9 @@ namespace AxTools.Forms
             toolTip.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
             checkBoxMakeBackupNotWhilePlaying.Checked = settings.WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning;
             toolTip.SetToolTip(checkBoxMakeBackupNotWhilePlaying, "Backup creation is CPU-intensive operation and can cause lag.\r\nThis option will prevent AxTools from making backups while WoW client is running.");
+            checkBoxSetAfkStatus.Checked = settings.WoW_AntiKick_SetAfkState;
+            checkBoxSetAfkStatus.Enabled = checkBox_AntiAFK.Checked;
+            toolTip.SetToolTip(checkBoxSetAfkStatus, "This feature will not work if WoW client is minimized");
         }
 
         private void SetupEvents()
@@ -127,6 +130,12 @@ namespace AxTools.Forms
             buttonPluginsHotkey.Click += ButtonPluginsHotkey_Click;
             buttonIngameKeyBinds.Click += ButtonIngameKeyBinds_Click;
             checkBoxMakeBackupNotWhilePlaying.CheckedChanged += CheckBoxMakeBackupNotWhilePlaying_CheckedChanged;
+            checkBoxSetAfkStatus.CheckedChanged += CheckBoxSetAfkStatus_CheckedChanged;
+        }
+
+        private void CheckBoxSetAfkStatus_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.WoW_AntiKick_SetAfkState = checkBoxSetAfkStatus.Checked;
         }
 
         private void CheckBoxMakeBackupNotWhilePlaying_CheckedChanged(object sender, EventArgs e)
@@ -333,6 +342,7 @@ namespace AxTools.Forms
         private void CheckBox1CheckedChanged(object sender, EventArgs e)
         {
             settings.WoWAntiKick = checkBox_AntiAFK.Checked;
+            checkBoxSetAfkStatus.Enabled = checkBox_AntiAFK.Checked;
         }
 
         private void CheckBoxAddonsBackupCheckedChanged(object sender, EventArgs e)

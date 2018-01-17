@@ -19,6 +19,7 @@ namespace AxTools.WoW.Helpers
         private static readonly string _locale;
         private static readonly ConcurrentDictionary<uint, WowheadItemInfo> ItemInfos = new ConcurrentDictionary<uint, WowheadItemInfo>();
         private static readonly ConcurrentDictionary<int, WowheadSpellInfo> SpellInfos = new ConcurrentDictionary<int, WowheadSpellInfo>();
+        private static readonly ConcurrentDictionary<uint, WowheadNpcInfo> NpcInfos = new ConcurrentDictionary<uint, WowheadNpcInfo>();
         private static readonly ConcurrentDictionary<uint, string> ZoneInfos = new ConcurrentDictionary<uint, string>();
         private const string UNKNOWN = "UNKNOWN";
         private static readonly object DBLock = new object();
@@ -107,6 +108,35 @@ namespace AxTools.WoW.Helpers
                     }
                 }
                 SpellInfos.TryAdd(spellID, info);
+            }
+            return info;
+        }
+
+        internal static WowheadNpcInfo GetNpcInfo(uint entryID)
+        {
+            if (!NpcInfos.TryGetValue(entryID, out WowheadNpcInfo info))
+            {
+                if ((info = NpcInfo_GetCachedValue(entryID)) == null)
+                {
+                    using (WebClient webClient = new WebClient())
+                    {
+                        webClient.Encoding = Encoding.UTF8;
+                        string xml = webClient.DownloadString("https://" + _locale + ".wowhead.com/npc=" + entryID + "&power");
+                        Regex regex = new Regex("\\s+name_.+:\\s*'(.+)'");
+                        Match match = regex.Match(xml);
+                        if (match.Success)
+                        {
+                            info = new WowheadNpcInfo(match.Groups[1].Value);
+                            NpcInfo_SaveToCache(entryID, info);
+                        }
+                        else
+                        {
+                            info = new WowheadNpcInfo(UNKNOWN);
+                            Log.Info("[Wowhead] Regex isn't match: " + JsonConvert.SerializeObject(xml));
+                        }
+                    }
+                }
+                NpcInfos.TryAdd(entryID, info);
             }
             return info;
         }
@@ -223,7 +253,7 @@ namespace AxTools.WoW.Helpers
                 }
             }
         }
-
+        
         private static void SpellInfo_SaveToCache(int spellID, WowheadSpellInfo info)
         {
             lock (DBLock)
@@ -278,7 +308,49 @@ namespace AxTools.WoW.Helpers
                 }
             }
         }
-    
+
+        private static WowheadNpcInfo NpcInfo_GetCachedValue(uint entryID)
+        {
+            lock (DBLock)
+            {
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                try
+                {
+                    using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
+                    {
+                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-npcs");
+                        collection.EnsureIndex(x => x.ID);
+                        NDBEntry entry = collection.FindOne(l => l.ID == entryID);
+                        return entry != null ? JsonConvert.DeserializeObject<WowheadNpcInfo>(entry.JSONData) : null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("[Wowhead.NpcInfo_GetCachedValue] Error: " + ex.Message);
+                    return null;
+                }
+                finally
+                {
+                    _sumDBAccessTicks += stopwatch.ElapsedTicks;
+                    _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
+                    _numDBAccesses++;
+                }
+            }
+        }
+
+        private static void NpcInfo_SaveToCache(uint entryID, WowheadNpcInfo info)
+        {
+            lock (DBLock)
+            {
+                using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
+                {
+                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-npcs");
+                    collection.Insert(new NDBEntry((int)entryID, JsonConvert.SerializeObject(info)));
+                    collection.EnsureIndex(x => x.ID);
+                }
+            }
+        }
+
     }
 
     public class NDBEntry
@@ -414,6 +486,25 @@ namespace AxTools.WoW.Helpers
         }
 
         internal Image Image;
+
+    }
+
+    [JsonObject(MemberSerialization.OptIn)]
+    internal class WowheadNpcInfo
+    {
+        [JsonConstructor]
+        internal WowheadNpcInfo()
+        {
+
+        }
+
+        internal WowheadNpcInfo(string name)
+        {
+            Name = name.Replace(@"\'", "'");
+        }
+
+        [JsonProperty(PropertyName = "Name")]
+        internal string Name;
 
     }
 

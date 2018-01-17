@@ -196,18 +196,16 @@ namespace AxTools.Forms
         {
             if (!Info.IsLooting && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && localPlayer.Alive)
             {
-                WoWGUID interactGUID = WoWGUID.Zero;
+                WoWObjectBase whatToInteract = null;
                 double interactDistance = 11;
-                string interactName = string.Empty;
                 // ReSharper disable once ImpureMethodCallOnReadonlyValueField
                 foreach (WowObject i in objects.Where(i => RadarKOSFindInteract.Contains(i.Name)))
                 {
                     double distance = i.Location.Distance(localPlayer.Location);
                     if (distance < interactDistance)
                     {
-                        interactGUID = i.GUID;
                         interactDistance = distance;
-                        interactName = i.Name;
+                        whatToInteract = i;
                     }
                 }
                 foreach (WowNpc i in npcs.Where(i => RadarKOSFindInteract.Contains(i.Name)))
@@ -215,15 +213,14 @@ namespace AxTools.Forms
                     double distance = i.Location.Distance(localPlayer.Location);
                     if (distance < interactDistance)
                     {
-                        interactGUID = i.GUID;
                         interactDistance = distance;
-                        interactName = i.Name;
+                        whatToInteract = i;
                     }
                 }
-                if (interactGUID != WoWGUID.Zero)
+                if (whatToInteract != null)
                 {
-                    GameFunctions.Interact(interactGUID);
-                    Log.Info(string.Format("{0} [Radar] Interacted with {1} {2}", WoWManager.WoWProcess, interactName, interactGUID));
+                    whatToInteract.Interact();
+                    Log.Info(string.Format("{0} [Radar] Interacted with {1} {2}", WoWManager.WoWProcess, whatToInteract.Name, whatToInteract.GUID));
                 }
             }
         }

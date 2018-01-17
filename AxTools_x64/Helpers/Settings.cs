@@ -160,21 +160,24 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 12, PropertyName = "WoWAntiKick")]
         internal bool WoWAntiKick = true;
 
-        [JsonProperty(Order = 13, PropertyName = "WoWInteractMouseover")]
+        [JsonProperty(Order = 13, PropertyName = "WoW_AntiKick_SetAfkState")]
+        internal bool WoW_AntiKick_SetAfkState = false;
+
+        [JsonProperty(Order = 14, PropertyName = "WoWInteractMouseover")]
         internal Keys WoWInteractMouseover = Keys.None;
 
-        [JsonProperty(Order = 14, PropertyName = "WoWTargetMouseover")]
+        [JsonProperty(Order = 15, PropertyName = "WoWTargetMouseover")]
         internal Keys WoWTargetMouseover = Keys.None;
 
-        [JsonProperty(Order = 15, PropertyName = "WoWCustomizeWindow")]
+        [JsonProperty(Order = 16, PropertyName = "WoWCustomizeWindow")]
         internal bool WoWCustomizeWindow = false;
 
-        [JsonProperty(Order = 16, PropertyName = "WoWCustomWindowRectangle")]
+        [JsonProperty(Order = 17, PropertyName = "WoWCustomWindowRectangle")]
         internal Rectangle WoWCustomWindowRectangle = new Rectangle(0, 0, 1366, 733);
 
-        [JsonProperty(Order = 17, PropertyName = "WoWCustomWindowNoBorder")]
+        [JsonProperty(Order = 18, PropertyName = "WoWCustomWindowNoBorder")]
         internal bool WoWCustomWindowNoBorder = false;
-
+        
         #endregion
 
         #region Clicker

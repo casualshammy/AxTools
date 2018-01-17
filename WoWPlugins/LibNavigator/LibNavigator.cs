@@ -245,7 +245,7 @@ namespace LibNavigator
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.WaitWhile:
-                        if (!GameFunctions.Lua.IsTrue(actionsList[counter].Data))
+                        if (!Lua.IsTrue(actionsList[counter].Data))
                         {
                             IncreaseCounterAndDoAction();
                         }
@@ -254,7 +254,7 @@ namespace LibNavigator
                         string[] p = actionsList[counter].Data.Split(new string[] { "##@##" }, StringSplitOptions.RemoveEmptyEntries);
                         string action = p[0];
                         string condition = p[1];
-                        if (GameFunctions.Lua.IsTrue(condition))
+                        if (Lua.IsTrue(condition))
                         {
                             GameFunctions.SendToChat(action);
                         }
@@ -264,7 +264,7 @@ namespace LibNavigator
                         }
                         break;
                     case DoActionType.StopProfileIf:
-                        if (GameFunctions.Lua.IsTrue(actionsList[counter].Data))
+                        if (Lua.IsTrue(actionsList[counter].Data))
                         {
                             counter = actionsList.Count - 1;
                         }
@@ -275,7 +275,7 @@ namespace LibNavigator
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.NotifyUserIf:
-                        if (GameFunctions.Lua.IsTrue(actionsList[counter].AdditionalData))
+                        if (Lua.IsTrue(actionsList[counter].AdditionalData))
                         {
                             this.ShowNotify(actionsList[counter].Data, false, false);
                         }
@@ -285,6 +285,10 @@ namespace LibNavigator
                         IncreaseCounterAndDoAction();
                         break;
                 }
+            }
+            else
+            {
+                this.LogPrint("Local player is null");
             }
         }
 

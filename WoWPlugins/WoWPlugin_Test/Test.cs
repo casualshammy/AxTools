@@ -40,8 +40,8 @@ namespace WoWPlugin_Test
         public void OnStart()
         {
             (frm = new MainForm()).Show();
-            GameFunctions.ReadChat();
-            GameFunctions.NewChatMessage += GameFunctionsOnNewChatMessage;
+            ChatMessages.ReadChat();
+            ChatMessages.NewChatMessage += GameFunctionsOnNewChatMessage;
             t.Start();
             t.Elapsed += OnPulse;
             using (RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Wow6432Node\\\\Blizzard Entertainment\\\\World of Warcraft"))
@@ -64,7 +64,7 @@ namespace WoWPlugin_Test
 
         private void OnPulse(object sender, ElapsedEventArgs e)
         {
-            GameFunctions.ReadChat();
+            ChatMessages.ReadChat();
         }
 
         private void GameFunctionsOnNewChatMessage(ChatMsg chatMsg)
@@ -80,7 +80,7 @@ namespace WoWPlugin_Test
         {
             t.Elapsed -= OnPulse;
             t.Stop();
-            GameFunctions.NewChatMessage -= GameFunctionsOnNewChatMessage;
+            ChatMessages.NewChatMessage -= GameFunctionsOnNewChatMessage;
             frm.Dispose();
         }
 

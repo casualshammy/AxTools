@@ -74,9 +74,11 @@ namespace AxTools.Forms
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
+            this.checkBoxSetAfkStatus = new MetroFramework.Controls.MetroCheckBox();
             this.buttonIngameKeyBinds = new MetroFramework.Controls.MetroButton();
             this.checkBoxPluginsShowIngameNotifications = new MetroFramework.Controls.MetroCheckBox();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
+            this.checkBoxMakeBackupNotWhilePlaying = new MetroFramework.Controls.MetroCheckBox();
             this.metroComboBoxBackupCompressionLevel = new MetroFramework.Controls.MetroComboBox();
             this.metroLabel9 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel6 = new MetroFramework.Controls.MetroLabel();
@@ -102,7 +104,6 @@ namespace AxTools.Forms
             this.Label3 = new MetroFramework.Controls.MetroLabel();
             this.toolTip = new MetroFramework.Components.MetroToolTip();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
-            this.checkBoxMakeBackupNotWhilePlaying = new MetroFramework.Controls.MetroCheckBox();
             this.GroupBox2.SuspendLayout();
             this.GroupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupTimer)).BeginInit();
@@ -548,7 +549,7 @@ namespace AxTools.Forms
             this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 3;
+            this.tabControl.SelectedIndex = 2;
             this.tabControl.Size = new System.Drawing.Size(565, 234);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 65;
@@ -944,6 +945,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage3
             // 
+            this.metroTabPage3.Controls.Add(this.checkBoxSetAfkStatus);
             this.metroTabPage3.Controls.Add(this.buttonIngameKeyBinds);
             this.metroTabPage3.Controls.Add(this.checkBoxPluginsShowIngameNotifications);
             this.metroTabPage3.Controls.Add(this.GroupBox2);
@@ -968,6 +970,24 @@ namespace AxTools.Forms
             this.metroTabPage3.VerticalScrollbarBarColor = true;
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
+            // 
+            // checkBoxSetAfkStatus
+            // 
+            this.checkBoxSetAfkStatus.AutoSize = true;
+            this.checkBoxSetAfkStatus.CustomBackground = false;
+            this.checkBoxSetAfkStatus.CustomForeColor = false;
+            this.checkBoxSetAfkStatus.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.checkBoxSetAfkStatus.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.checkBoxSetAfkStatus.Location = new System.Drawing.Point(83, 15);
+            this.checkBoxSetAfkStatus.Name = "checkBoxSetAfkStatus";
+            this.checkBoxSetAfkStatus.Size = new System.Drawing.Size(253, 19);
+            this.checkBoxSetAfkStatus.Style = MetroFramework.MetroColorStyle.Blue;
+            this.checkBoxSetAfkStatus.StyleManager = null;
+            this.checkBoxSetAfkStatus.TabIndex = 57;
+            this.checkBoxSetAfkStatus.Text = "Set in-game /afk status when you afk";
+            this.checkBoxSetAfkStatus.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.checkBoxSetAfkStatus.UseStyleColors = true;
+            this.checkBoxSetAfkStatus.UseVisualStyleBackColor = true;
             // 
             // buttonIngameKeyBinds
             // 
@@ -1030,6 +1050,24 @@ namespace AxTools.Forms
             this.metroTabPage4.VerticalScrollbarBarColor = true;
             this.metroTabPage4.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage4.VerticalScrollbarSize = 10;
+            // 
+            // checkBoxMakeBackupNotWhilePlaying
+            // 
+            this.checkBoxMakeBackupNotWhilePlaying.AutoSize = true;
+            this.checkBoxMakeBackupNotWhilePlaying.CustomBackground = false;
+            this.checkBoxMakeBackupNotWhilePlaying.CustomForeColor = false;
+            this.checkBoxMakeBackupNotWhilePlaying.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.checkBoxMakeBackupNotWhilePlaying.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.checkBoxMakeBackupNotWhilePlaying.Location = new System.Drawing.Point(3, 40);
+            this.checkBoxMakeBackupNotWhilePlaying.Name = "checkBoxMakeBackupNotWhilePlaying";
+            this.checkBoxMakeBackupNotWhilePlaying.Size = new System.Drawing.Size(342, 19);
+            this.checkBoxMakeBackupNotWhilePlaying.Style = MetroFramework.MetroColorStyle.Blue;
+            this.checkBoxMakeBackupNotWhilePlaying.StyleManager = null;
+            this.checkBoxMakeBackupNotWhilePlaying.TabIndex = 56;
+            this.checkBoxMakeBackupNotWhilePlaying.Text = "Do not create a backup while WoW client is running";
+            this.checkBoxMakeBackupNotWhilePlaying.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.checkBoxMakeBackupNotWhilePlaying.UseStyleColors = true;
+            this.checkBoxMakeBackupNotWhilePlaying.UseVisualStyleBackColor = true;
             // 
             // metroComboBoxBackupCompressionLevel
             // 
@@ -1493,24 +1531,6 @@ namespace AxTools.Forms
             this.linkTitle.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkTitle.UseStyleColors = true;
             // 
-            // checkBoxMakeBackupNotWhilePlaying
-            // 
-            this.checkBoxMakeBackupNotWhilePlaying.AutoSize = true;
-            this.checkBoxMakeBackupNotWhilePlaying.CustomBackground = false;
-            this.checkBoxMakeBackupNotWhilePlaying.CustomForeColor = false;
-            this.checkBoxMakeBackupNotWhilePlaying.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.checkBoxMakeBackupNotWhilePlaying.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxMakeBackupNotWhilePlaying.Location = new System.Drawing.Point(3, 40);
-            this.checkBoxMakeBackupNotWhilePlaying.Name = "checkBoxMakeBackupNotWhilePlaying";
-            this.checkBoxMakeBackupNotWhilePlaying.Size = new System.Drawing.Size(342, 19);
-            this.checkBoxMakeBackupNotWhilePlaying.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxMakeBackupNotWhilePlaying.StyleManager = null;
-            this.checkBoxMakeBackupNotWhilePlaying.TabIndex = 56;
-            this.checkBoxMakeBackupNotWhilePlaying.Text = "Do not create a backup while WoW client is running";
-            this.checkBoxMakeBackupNotWhilePlaying.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.checkBoxMakeBackupNotWhilePlaying.UseStyleColors = true;
-            this.checkBoxMakeBackupNotWhilePlaying.UseVisualStyleBackColor = true;
-            // 
             // AppSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1626,5 +1646,6 @@ namespace AxTools.Forms
         private MetroLabel metroLabel7;
         private MetroButton buttonIngameKeyBinds;
         private MetroCheckBox checkBoxMakeBackupNotWhilePlaying;
+        private MetroCheckBox checkBoxSetAfkStatus;
     }
 }

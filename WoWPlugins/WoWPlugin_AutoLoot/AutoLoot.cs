@@ -50,7 +50,7 @@ namespace AutoLoot
         public void OnPulse()
         {
             WoWPlayerMe localPlayer = ObjMgr.Pulse(null, null, wowNpcs);
-            if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && !GameFunctions.IsLooting)
+            if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && !Info.IsLooting)
             {
                 WowNpc[] npcs = wowNpcs.Where(l => l.Lootable && l.Health == 0 && l.Location.Distance2D(localPlayer.Location) < 40).ToArray();
                 if (npcs.Any())
@@ -58,7 +58,7 @@ namespace AutoLoot
                     WowNpc npc = npcs.Aggregate((current, next) => next.Location.Distance2D(localPlayer.Location) < current.Location.Distance2D(localPlayer.Location) ? next : current);
                     if (npc.Location.Distance2D(localPlayer.Location) > 3f)
                     {
-                        GameFunctions.Move2D(npc.Location, 3f, 1000, true, false);
+                        MoveMgr.Move2D(npc.Location, 3f, 1000, true, false);
                     }
                     else
                     {

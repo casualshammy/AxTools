@@ -12,7 +12,7 @@ namespace AxTools.Forms
         internal Changes(string imagePath)
         {
             InitializeComponent();
-           StyleManager.Style = Settings.Instance.StyleColor;
+            StyleManager.Style = Settings.Instance.StyleColor;
             Icon = Resources.AppIcon;
             using (Image objImage = Image.FromFile(imagePath))
             {

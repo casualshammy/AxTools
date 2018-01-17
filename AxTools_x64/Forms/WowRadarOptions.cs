@@ -191,14 +191,21 @@ namespace AxTools.Forms
             {
                 List<WowNpc> npcList = new List<WowNpc>();
                 WoWPlayerMe localPlayer = ObjectMgr.Pulse(null, null, npcList);
-                List<WowNpc> npcsWithUniqueNames = npcList.DistinctBy(i => i.Name).ToList();
-                npcsWithUniqueNames.Sort(delegate(WowNpc o1, WowNpc o2)
+                if (localPlayer != null)
                 {
-                    double distance1 = o1.Location.Distance(localPlayer.Location);
-                    double distance2 = o2.Location.Distance(localPlayer.Location);
-                    return distance1.CompareTo(distance2);
-                });
-                comboboxNPCs.Items.AddRange(npcsWithUniqueNames.Select(i => i.Name).Cast<object>().ToArray());
+                    List<WowNpc> npcsWithUniqueNames = npcList.DistinctBy(i => i.Name).ToList();
+                    npcsWithUniqueNames.Sort(delegate (WowNpc o1, WowNpc o2)
+                    {
+                        double distance1 = o1.Location.Distance(localPlayer.Location);
+                        double distance2 = o2.Location.Distance(localPlayer.Location);
+                        return distance1.CompareTo(distance2);
+                    });
+                    comboboxNPCs.Items.AddRange(npcsWithUniqueNames.Select(i => i.Name).Cast<object>().ToArray());
+                }
+                else
+                {
+                    Log.Info("WowRadarOptions.ComboboxNPCs_Click: local player is null");
+                }
             }
             catch (Exception ex)
             {

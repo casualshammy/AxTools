@@ -31,6 +31,10 @@
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.buttonDumpobjects = new System.Windows.Forms.Button();
+            this.buttonUIFrames = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.buttonDumpInventory = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // buttonRefresh
@@ -60,17 +64,61 @@
             this.buttonDumpobjects.UseVisualStyleBackColor = true;
             this.buttonDumpobjects.Click += new System.EventHandler(this.buttonDumpobjects_Click);
             // 
+            // buttonUIFrames
+            // 
+            this.buttonUIFrames.Location = new System.Drawing.Point(12, 119);
+            this.buttonUIFrames.Name = "buttonUIFrames";
+            this.buttonUIFrames.Size = new System.Drawing.Size(225, 31);
+            this.buttonUIFrames.TabIndex = 4;
+            this.buttonUIFrames.Text = "Dump UIFrames";
+            this.buttonUIFrames.UseVisualStyleBackColor = true;
+            this.buttonUIFrames.Click += new System.EventHandler(this.buttonUIFrames_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(12, 156);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(225, 31);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "Dump ChatMessages";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            // 
+            // buttonDumpInventory
+            // 
+            this.buttonDumpInventory.Location = new System.Drawing.Point(12, 193);
+            this.buttonDumpInventory.Name = "buttonDumpInventory";
+            this.buttonDumpInventory.Size = new System.Drawing.Size(225, 31);
+            this.buttonDumpInventory.TabIndex = 6;
+            this.buttonDumpInventory.Text = "Dump inventory";
+            this.buttonDumpInventory.UseVisualStyleBackColor = true;
+            this.buttonDumpInventory.Click += new System.EventHandler(this.ButtonDumpInventory_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(243, 12);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(842, 212);
+            this.textBox1.TabIndex = 7;
+            // 
             // DumperForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(249, 128);
+            this.ClientSize = new System.Drawing.Size(1097, 245);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.buttonDumpInventory);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonUIFrames);
             this.Controls.Add(this.buttonDumpobjects);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.buttonRefresh);
             this.Name = "DumperForm";
             this.Text = "DumperForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DumperForm_FormClosing);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -79,5 +127,9 @@
         private System.Windows.Forms.Button buttonRefresh;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button buttonDumpobjects;
+        private System.Windows.Forms.Button buttonUIFrames;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonDumpInventory;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }

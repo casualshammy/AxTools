@@ -10,6 +10,7 @@ namespace AxTools.WoW
 {
     internal class AutoLogin
     {
+        private static readonly Log2 log = new Log2("AutoLogin");
         private readonly WoWAccount wowAccount;
         private readonly Process process;
 
@@ -68,7 +69,7 @@ namespace AxTools.WoW
                                 IntPtr enterCode = new IntPtr(0x0D);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, enterCode, IntPtr.Zero);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, enterCode, IntPtr.Zero);
-                                Log.Info(string.Format("{0} [Account manager] Credendials have been entered [{1}]", wowProcess, Utils.SecureString(wowAccount.Login)));
+                                log.Info(string.Format("{0} Credendials have been entered [{1}]", wowProcess, Utils.SecureString(wowAccount.Login)));
                                 break;
                             }
                         }
@@ -78,7 +79,7 @@ namespace AxTools.WoW
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(string.Format("{0}:{1} :: [Account manager] Internal error: {2}", process.ProcessName, process.Id, ex.Message));
+                    log.Error(string.Format("[{0}:{1}] Internal error: {2}", process.ProcessName, process.Id, ex.Message));
                 }
             }
         }

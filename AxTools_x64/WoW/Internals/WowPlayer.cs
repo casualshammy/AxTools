@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AxTools.Helpers;
 using AxTools.WoW.PluginSystem.API;
+using LiteDB;
 
 namespace AxTools.WoW.Internals
 {
     /// <summary>
     ///     World of Warcraft player
     /// </summary>
-    public class WowPlayer
+    public class WowPlayer : WoWObjectBase
     {
         internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
+        private static readonly Log2 log = new Log2("WowPlayer");
 
         internal WowPlayer(IntPtr pAddress, WoWGUID guid) : this(pAddress)
         {
@@ -120,7 +123,7 @@ namespace AxTools.WoW.Internals
         }
 
         protected WoWGUID MGUID;
-        public WoWGUID GUID
+        public override WoWGUID GUID
         {
             get
             {
@@ -132,18 +135,25 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        public string Name
+        public byte[] GetGUIDBytes()
+        {
+            unsafe
+            {
+                return WoWManager.WoWProcess.Memory.ReadBytes(Address + WowBuildInfoX64.ObjectGUID, sizeof(WoWGUID));
+            }
+        }
+
+        public override string Name
         {
             get
             {
                 //return "NOT_IMPLEMENTED_YET";
-                string temp;
-                if (!Names.TryGetValue(GUID, out temp))
+                if (!Names.TryGetValue(GUID, out string temp))
                 {
                     temp = GetNameFromMemorySafe();
                     if (string.IsNullOrWhiteSpace(temp))
                     {
-                        temp = Task.Factory.StartNew<string>(GetNameFromLuaSafe).Result;
+                        temp = Task.Factory.StartNew(GetNameFromLuaSafe).Result;
                     }
                     if (!string.IsNullOrWhiteSpace(temp))
                     {
@@ -186,7 +196,7 @@ namespace AxTools.WoW.Internals
             {
                 ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
                 // ReSharper disable ImpureMethodCallOnReadonlyValueField
-                return GameFunctions.Lua.GetValue("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
+                return Lua.GetValue("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
                 // ReSharper restore ImpureMethodCallOnReadonlyValueField
             }
             catch
@@ -194,7 +204,7 @@ namespace AxTools.WoW.Internals
                 return null;
             }
         }
-
+        
         public bool IsFlying
         {
             get
@@ -256,7 +266,7 @@ namespace AxTools.WoW.Internals
                 return auras;
             }
         }
-
+                
     }
 
     public enum Faction

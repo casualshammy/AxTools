@@ -21,6 +21,7 @@ namespace AxTools
     internal static class Program
     {
         internal static event Action Exit;
+        private static readonly Log2 log = new Log2("Program");
 
         [STAThread]
         private static void Main(string[] args)
@@ -49,9 +50,9 @@ namespace AxTools
                             DeleteTempFolder();
                             Legacy();
                             InstallRootCertificate();
-                            Log.Info(string.Format("[AxTools] Starting application... ({0})", Globals.AppVersion));
+                            log.Info(string.Format("Starting application... ({0})", Globals.AppVersion));
                             Application.Run(MainForm.Instance = new MainForm());
-                            Log.Info("[AxTools] Application is closed");
+                            log.Info("Application is closed");
                             Exit?.Invoke();
                         }
                         else
@@ -88,6 +89,7 @@ namespace AxTools
 
         private static void Legacy()
         {
+            Log2 log = new Log2("Legacy");
             // 08.10.2015
             try
             {
@@ -196,6 +198,31 @@ namespace AxTools
                     if (File.Exists(fileName))
                     {
                         File.Delete(fileName);
+                        log.Info("Old db file is deleted");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            // 17.01.2018
+            try
+            {
+                if (Helpers.Settings.Instance.LastUsedVersion < new VersionExt(12, 3, 2))
+                {
+                    string fileName = AppFolders.DataDir + "\\wowhead.ldb";
+                    if (File.Exists(fileName))
+                    {
+                        File.Delete(fileName);
+                        log.Info($"Old db file is deleted ({fileName})");
+                    }
+                    fileName = AppFolders.DataDir + "\\players.ldb";
+                    if (File.Exists(fileName))
+                    {
+                        File.Delete(fileName);
+                        log.Info($"Old db file is deleted ({fileName})");
                     }
                 }
             }
@@ -213,7 +240,7 @@ namespace AxTools
             store.Open(OpenFlags.ReadWrite);
             if (x509.SerialNumber != null && store.Certificates.Find(X509FindType.FindBySerialNumber, x509.SerialNumber, true).Count == 0)
             {
-                Log.Info("[AxTools] Certificate isn't found, installing...");
+                log.Info("[AxTools] Certificate isn't found, installing...");
                 store.Add(x509);
             }
             store.Close();
@@ -222,12 +249,12 @@ namespace AxTools
         private static void ProcessArgs(string[] args)
         {
             string arguments = Environment.CommandLine;
-            Log.Info("CMD arguments: " + arguments);
+            log.Info("CMD arguments: " + arguments);
             Match updatedir = new Regex("-update-dir \"(.+?)\"").Match(arguments);
             Match axtoolsdir = new Regex("-axtools-dir \"(.+?)\"").Match(arguments);
             if (updatedir.Success && axtoolsdir.Success)
             {
-                Log.Info("Parsed update info, processing...");
+                log.Info("Parsed update info, processing...");
                 Update(updatedir.Groups[1].Value, axtoolsdir.Groups[1].Value);
             }
             else
@@ -241,7 +268,7 @@ namespace AxTools
         {
             while (Process.GetProcessesByName("AxTools").Length > 1)
             {
-                Log.Info("Waiting for parent AxTools process...");
+                log.Info("Waiting for parent AxTools process...");
                 Thread.Sleep(500);
             }
             UpdaterService.ApplyUpdate(updateDir, axtoolsDir);

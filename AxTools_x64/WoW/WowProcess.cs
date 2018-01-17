@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading;
 using AxTools.Helpers;
 using AxTools.Helpers.MemoryManagement;
 using AxTools.WinAPI;
@@ -111,6 +112,20 @@ namespace AxTools.WoW
         public override string ToString()
         {
             return string.Concat("[", ProcessName, ":", ProcessID, "]");
+        }
+
+        internal void WaitWhileWoWIsMinimized()
+        {
+            Utils.LogIfCalledFromUIThread();
+            if (IsMinimized)
+            {
+                Notify.TrayPopup("Attention!", "AxTools is stuck because it can't interact with minimized WoW client. Click to activate WoW window", NotifyUserType.Warn, true, null, 10,
+                    (sender, args) => NativeMethods.ShowWindow(MainWindowHandle, 9));
+                while (IsMinimized)
+                {
+                    Thread.Sleep(100);
+                }
+            }
         }
 
     }

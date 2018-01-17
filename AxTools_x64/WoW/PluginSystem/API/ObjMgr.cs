@@ -23,6 +23,6 @@ namespace AxTools.WoW.PluginSystem.API
         {
             return Info.IsInGame ? ObjectMgr.Pulse() : null;
         }
-
+        
     }
 }

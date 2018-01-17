@@ -28,8 +28,8 @@ namespace AxTools.WoW.Internals
             wowObjects?.Clear();
             wowUnits?.Clear();
             wowNpcs?.Clear();
-            WoWPlayerMe localPlayer = Pulse();
-            WoWGUID playerGUID = localPlayer.GUID;
+            WoWPlayerMe me = null;
+            WoWGUID playerGUID = _memory.Read<WoWGUID>(_memory.ImageBase + WowBuildInfoX64.PlayerGUID);
             IntPtr manager = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = _memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
             for (int i = GetObjectType(currObject); (i < 10) && (i > 0); i = GetObjectType(currObject))
@@ -40,13 +40,14 @@ namespace AxTools.WoW.Internals
                         wowNpcs?.Add(new WowNpc(currObject));
                         break;
                     case 4:
-                        if (wowUnits != null)
+                        WoWGUID objectGUID = _memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID);
+                        if (objectGUID == playerGUID)
                         {
-                            WoWGUID objectGUID = _memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID);
-                            if (objectGUID != playerGUID)
-                            {
-                                wowUnits.Add(new WowPlayer(currObject, objectGUID));
-                            }
+                            me = new WoWPlayerMe(currObject);
+                        }
+                        else if (wowUnits != null)
+                        {
+                            wowUnits.Add(new WowPlayer(currObject, objectGUID));
                         }
                         break;
                     case 5:
@@ -55,15 +56,9 @@ namespace AxTools.WoW.Internals
                 }
                 currObject = _memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
             }
-            return localPlayer;
+            return me;
         }
-        
-        internal static WoWPlayerMe Pulse()
-        {
-            IntPtr localPlayerPtr = _memory.Read<IntPtr>(_memory.ImageBase + WowBuildInfoX64.PlayerPtr);
-            return new WoWPlayerMe(localPlayerPtr);
-        }
-
+            
         internal static WoWItem[] GetItemsInBags(PlayerInventoryAndContainers inventoryAndContainers)
         {
             Dictionary<WoWGUID, List<WoWGUID>> itemCountPerContainer = new Dictionary<WoWGUID, List<WoWGUID>>();

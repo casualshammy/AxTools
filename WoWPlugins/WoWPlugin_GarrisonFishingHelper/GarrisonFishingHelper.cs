@@ -74,7 +74,7 @@ namespace WoWPlugin_GarrisonFishingHelper
                     WowNpc lootableCorpse = wowNpcs.FirstOrDefault(k => (k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер") && k.Lootable && !k.Alive);
                     if (lootableCorpse != null)
                     {
-                        if (!GameFunctions.IsLooting)
+                        if (!Info.IsLooting)
                         {
                             lootableCorpse.Interact();
                             this.LogPrint("Looting --> " + lootableCorpse.GUID);
@@ -127,11 +127,11 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         private void CombatRotation()
         {
-            if (GameFunctions.Lua.GetValue("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
+            if (Lua.GetValue("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
             {
                 GameFunctions.CastSpellByName("Огненный шок");
             }
-            else if (float.Parse(GameFunctions.Lua.GetValue("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
+            else if (float.Parse(Lua.GetValue("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
             {
                 GameFunctions.CastSpellByName("Выброс лавы");
             }

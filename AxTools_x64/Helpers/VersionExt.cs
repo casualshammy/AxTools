@@ -50,7 +50,27 @@ namespace AxTools.Helpers
 
         public static bool operator >(VersionExt a, VersionExt b)
         {
-            if (a.Major > b.Major || a.Minor > b.Minor || a.Build > b.Build)
+            if (a.Major < b.Major)
+            {
+                return false;
+            }
+            if (a.Major > b.Major)
+            {
+                return true;
+            }
+            if (a.Minor < b.Minor)
+            {
+                return false;
+            }
+            if (a.Minor > b.Minor)
+            {
+                return true;
+            }
+            if (a.Build < b.Build)
+            {
+                return false;
+            }
+            if (a.Build > b.Build)
             {
                 return true;
             }
@@ -59,9 +79,29 @@ namespace AxTools.Helpers
 
         public static bool operator <(VersionExt a, VersionExt b)
         {
-            if (a.Major < b.Major || a.Minor < b.Minor || a.Build < b.Build)
+            if (a.Major < b.Major)
             {
                 return true;
+            }
+            if (a.Major > b.Major)
+            {
+                return false;
+            }
+            if (a.Minor < b.Minor)
+            {
+                return true;
+            }
+            if (a.Minor > b.Minor)
+            {
+                return false;
+            }
+            if (a.Build < b.Build)
+            {
+                return true;
+            }
+            if (a.Build > b.Build)
+            {
+                return false;
             }
             return false;
         }

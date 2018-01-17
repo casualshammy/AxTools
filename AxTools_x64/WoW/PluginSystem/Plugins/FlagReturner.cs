@@ -85,7 +85,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 {
                     foreach (WowObject i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(localPlayer.Location) <= 10))
                     {
-                        GameFunctions.Interact(i.GUID);
+                        i.Interact();
                         this.LogPrint($"Interacting with {i.Name} ({i.GUID})");
                     }
                 }

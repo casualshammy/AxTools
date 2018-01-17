@@ -52,7 +52,7 @@ namespace AxTools.WoW.PluginSystem
 
         internal static void StartPlugins()
         {
-            return;
+            //return;
             if (!_isRunning)
             {
                 _managerRunning = true;

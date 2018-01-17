@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 using AxTools.Helpers;
+using AxTools.WinAPI;
+using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Internals
 {
     /// <summary>
     ///     World of Warcraft game object
     /// </summary>
-    public class WowObject
+    public class WowObject : WoWObjectBase
     {
         internal WowObject(IntPtr pAddress)
         {
@@ -25,9 +29,7 @@ namespace AxTools.WoW.Internals
         internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
 
         public readonly IntPtr Address;
-
-        public readonly WoWGUID GUID;
-
+        
         public readonly WowPoint Location;
 
         internal readonly bool Bobbing;
@@ -46,7 +48,7 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        public string Name
+        public override string Name
         {
             get
             {
@@ -89,6 +91,11 @@ namespace AxTools.WoW.Internals
                 }
                 return mEntryID;
             }
+        }
+
+        public override void Target()
+        {
+            throw new InvalidOperationException("You cannot target object!");
         }
 
     }
