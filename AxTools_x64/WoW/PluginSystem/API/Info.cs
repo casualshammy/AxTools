@@ -30,7 +30,12 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get
             {
-                return WoWManager.WoWProcess.Memory.Read<byte>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting) != 0;
+                uint lootNum = WoWManager.WoWProcess.Memory.Read<uint>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting + WowBuildInfoX64.PlayerIsLootingOffset0);
+                if (lootNum == 0xFFFFFFF)
+                {
+                    lootNum = WoWManager.WoWProcess.Memory.Read<uint>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting + WowBuildInfoX64.PlayerIsLootingOffset1);
+                }
+                return lootNum != 0;
             }
         }
 
@@ -45,7 +50,15 @@ namespace AxTools.WoW.PluginSystem.API
         internal static bool IsProcessInGame(WowProcess process)
         {
             if (process.Memory == null) return false;
-            return process.Memory.Read<byte>(process.Memory.ImageBase + WowBuildInfoX64.GameState) == 2;
+            try
+            {
+                return process.Memory.Read<byte>(process.Memory.ImageBase + WowBuildInfoX64.GameState) == 2;
+            }
+            catch
+            {
+                return false;
+            }
+            
         }
 
         public static bool IsLoadingScreen

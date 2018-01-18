@@ -35,6 +35,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.buttonDumpInventory = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.buttonDumpPlayer = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonRefresh
@@ -96,17 +97,31 @@
             // 
             // textBox1
             // 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox1.Location = new System.Drawing.Point(243, 12);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(842, 212);
+            this.textBox1.Size = new System.Drawing.Size(858, 262);
             this.textBox1.TabIndex = 7;
+            // 
+            // buttonDumpPlayer
+            // 
+            this.buttonDumpPlayer.Location = new System.Drawing.Point(12, 230);
+            this.buttonDumpPlayer.Name = "buttonDumpPlayer";
+            this.buttonDumpPlayer.Size = new System.Drawing.Size(225, 31);
+            this.buttonDumpPlayer.TabIndex = 8;
+            this.buttonDumpPlayer.Text = "Dump player";
+            this.buttonDumpPlayer.UseVisualStyleBackColor = true;
+            this.buttonDumpPlayer.Click += new System.EventHandler(this.buttonDumpPlayer_Click);
             // 
             // DumperForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1097, 245);
+            this.ClientSize = new System.Drawing.Size(1113, 286);
+            this.Controls.Add(this.buttonDumpPlayer);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.buttonDumpInventory);
             this.Controls.Add(this.button1);
@@ -131,5 +146,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button buttonDumpInventory;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button buttonDumpPlayer;
     }
 }

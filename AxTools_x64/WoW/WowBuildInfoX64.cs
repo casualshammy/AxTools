@@ -52,6 +52,12 @@ namespace AxTools.WoW
 		// HOW TO FIND "ObjectManager"
 		// Search for "object manager" string
 
+		// HOW TO FIND Auras info
+		// Look into functions in "Script_UnitAura"
+
+		// HOW TO FIND PlayerIsLooting
+		// Look into functions in "Script_GetNumLootItems"
+
 		#endregion
 
 		#region Build info
@@ -82,10 +88,8 @@ namespace AxTools.WoW
 		internal const int KnownSpellsCount = 0x1BD8850;
 		internal const int ObjectManager = 0x1961190;
 		internal const int FocusedWidget = 0x18ABDB0;
-		internal const int PlayerName = 0x1C68D00;
+		internal const int PlayerIsLooting = 0x1BF81C8;
 
-
-		internal const int PlayerIsLooting = 0x197BB41;
 		internal const int NameCacheBase = 0x166A918;
 
 		#endregion
@@ -138,14 +142,14 @@ namespace AxTools.WoW
 		internal const int UnitHealthMax = 0x100;
 		internal const int UnitPowerMax = 0x108;
 		internal const int UnitLevel = 0x150;
-		internal const int UnitRace = 0x164;
-		internal const int UnitFlags = 0x180;
-		internal const int UnitMountDisplayID = 0x1AC;
+		internal const int UnitRace = 0x168;
+		internal const int UnitFlags = 0x184;
+		internal const int UnitMountDisplayID = 0x1B0;
 
-		internal const int AuraCount1 = 0x26C0;
-		internal const int AuraCount2 = 0x1DC0;
-		internal const int AuraTable1 = 0x1DC4;
-		internal const int AuraTable2 = 0x1DC8;
+		internal const int AuraCount1 = 0x27E8;
+		internal const int AuraCount2 = 0x1DE8;
+		internal const int AuraTable1 = 0x1DEC;
+		internal const int AuraTable2 = 0x1DF0;
 
 		internal const int NameCacheNext = 0x00;
 		internal const int NameCacheGuid = 0x20;
@@ -155,6 +159,9 @@ namespace AxTools.WoW
 
 		internal const int PlayerSpeedBase = 0x210;
 		internal const int PlayerSpeedOffset = 0xA4;
+
+		internal const int PlayerIsLootingOffset0 = 0x1588;
+		internal const int PlayerIsLootingOffset1 = 0xA08;
 
 		#endregion
 

@@ -15,6 +15,7 @@ using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Updater;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace AxTools
 {
@@ -210,20 +211,17 @@ namespace AxTools
             // 17.01.2018
             try
             {
-                if (Helpers.Settings.Instance.LastUsedVersion < new VersionExt(12, 3, 2))
+                string fileName = AppFolders.DataDir + "\\wowhead.ldb";
+                if (File.Exists(fileName))
                 {
-                    string fileName = AppFolders.DataDir + "\\wowhead.ldb";
-                    if (File.Exists(fileName))
-                    {
-                        File.Delete(fileName);
-                        log.Info($"Old db file is deleted ({fileName})");
-                    }
-                    fileName = AppFolders.DataDir + "\\players.ldb";
-                    if (File.Exists(fileName))
-                    {
-                        File.Delete(fileName);
-                        log.Info($"Old db file is deleted ({fileName})");
-                    }
+                    File.Delete(fileName);
+                    log.Info($"Old db file is deleted ({fileName})");
+                }
+                fileName = AppFolders.DataDir + "\\players.ldb";
+                if (File.Exists(fileName))
+                {
+                    File.Delete(fileName);
+                    log.Info($"Old db file is deleted ({fileName})");
                 }
             }
             catch (Exception ex)

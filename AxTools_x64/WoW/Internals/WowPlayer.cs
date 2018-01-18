@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AxTools.Helpers;
 using AxTools.WoW.PluginSystem.API;
-using LiteDB;
 
 namespace AxTools.WoW.Internals
 {
@@ -153,7 +153,15 @@ namespace AxTools.WoW.Internals
                     temp = GetNameFromMemorySafe();
                     if (string.IsNullOrWhiteSpace(temp))
                     {
-                        temp = Task.Factory.StartNew(GetNameFromLuaSafe).Result;
+                        temp = GetNameFromDB();
+                        if (string.IsNullOrWhiteSpace(temp))
+                        {
+                            temp = Task.Factory.StartNew(GetNameFromLuaSafe).Result;
+                            if (!string.IsNullOrWhiteSpace(temp))
+                            {
+                                SaveToDB(temp);
+                            }
+                        }
                     }
                     if (!string.IsNullOrWhiteSpace(temp))
                     {
@@ -266,7 +274,68 @@ namespace AxTools.WoW.Internals
                 return auras;
             }
         }
-                
+
+        private static object dbLock = new object();
+        private static SQLiteConnection dbConnection;
+
+        private void SaveToDB(string name)
+        {
+            lock (dbLock)
+            {
+                if (dbConnection == null)
+                    dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\players.sqlite;Version=3;").OpenAndReturn();
+                using (SQLiteCommand command = new SQLiteCommand(dbConnection))
+                {
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS players ( guid TEXT NOT NULL, name TEXT NOT NULL );" +
+                        $"INSERT INTO players (guid, name) values ('{GUID}', '{name.Replace("'", "''")}')";
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("[WowPlayer.SaveToDB] Error-0: " + ex.Message +
+                            $"\r\nINSERT INTO players (guid, name) values ('{GUID}', '{name.Replace("'", "''")}')");
+                    }
+
+                }
+            }
+        }
+
+        private string GetNameFromDB()
+        {
+            lock (dbLock)
+            {
+                try
+                {
+                    if (dbConnection == null)
+                        dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\players.sqlite;Version=3;").OpenAndReturn();
+                    using (SQLiteCommand command = new SQLiteCommand(dbConnection))
+                    {
+                        command.CommandText =
+                            "CREATE TABLE IF NOT EXISTS players ( guid TEXT NOT NULL, name TEXT NOT NULL );" +
+                            $"SELECT * FROM players WHERE guid = '{GUID}';";
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return reader["name"].ToString();
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("[WowPlayer.GetNameFromDB] Error: " + ex.Message);
+                    return null;
+                }
+            }
+        }
+
     }
 
     public enum Faction

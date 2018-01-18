@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -9,7 +10,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using AxTools.Forms;
 using AxTools.Helpers;
-using LiteDB;
 using Newtonsoft.Json;
 
 namespace AxTools.WoW.Helpers
@@ -26,6 +26,7 @@ namespace AxTools.WoW.Helpers
         private static long _sumDBAccessTicks;
         private static long _sumDBAccessTime;
         private static int _numDBAccesses;
+        private static SQLiteConnection dbConnection;
 
         static Wowhead()
         {
@@ -89,15 +90,23 @@ namespace AxTools.WoW.Helpers
                     {
                         webClient.Encoding = Encoding.UTF8;
                         string xml = webClient.DownloadString("https://" + _locale + ".wowhead.com/spell=" + spellID + "&power");
-                        Regex regex = new Regex("\\s+name_.+:\\s*'(.+)',\\s+icon: '(.+)',");
+                        Regex regex = new Regex("\\s+name_.+:\\s*'(.+)',\\s+icon: '(.*)',");
                         Match match = regex.Match(xml);
                         if (match.Success)
                         {
                             info = new WowheadSpellInfo(match.Groups[1].Value);
-                            using (MemoryStream ms = new MemoryStream(webClient.DownloadData("https://wow.zamimg.com/images/wow/icons/small/" + match.Groups[2].Value + ".jpg")))
+                            if (!string.IsNullOrWhiteSpace(match.Groups[2].Value))
                             {
-                                info.ImageBytes = ms.ToArray();
+                                using (MemoryStream ms = new MemoryStream(webClient.DownloadData("https://wow.zamimg.com/images/wow/icons/small/" + match.Groups[2].Value + ".jpg")))
+                                {
+                                    info.ImageBytes = ms.ToArray();
+                                }
                             }
+                            else
+                            {
+                                info.Image = AxTools.Properties.Resources.dialog_error;
+                            }
+                            
                             SpellInfo_SaveToCache(spellID, info);
                         }
                         else
@@ -190,12 +199,25 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
+                    if (dbConnection == null)
+                        dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                    using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                     {
-                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
-                        collection.EnsureIndex(x => x.ID);
-                        NDBEntry entry = collection.FindOne(l => l.ID == (int) itemID); // cast to int is neccessary
-                        return entry != null ? JsonConvert.DeserializeObject<WowheadItemInfo>(entry.JSONData) : null;
+                        command.CommandText =
+                            "CREATE TABLE IF NOT EXISTS items ( itemID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, class INTEGER NOT NULL, level INTEGER NOT NULL, quality INTEGER NOT NULL, image TEXT NOT NULL );" +
+                            $"SELECT * FROM items WHERE itemID = {itemID};";
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return new WowheadItemInfo(reader["name"].ToString(), uint.Parse(reader["class"].ToString()), uint.Parse(reader["level"].ToString()), uint.Parse(reader["quality"].ToString()))
+                                { ImageBytes = JsonConvert.DeserializeObject<byte[]>(reader["image"].ToString()) };
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -216,11 +238,22 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
+                if (dbConnection == null)
+                    dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
-                    collection.Insert(new NDBEntry((int)itemID, JsonConvert.SerializeObject(info)));
-                    collection.EnsureIndex(x => x.ID);
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS items ( itemID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, class INTEGER NOT NULL, level INTEGER NOT NULL, quality INTEGER NOT NULL, image TEXT NOT NULL );" +
+                        $"INSERT INTO items (itemID, name, class, level, quality, image) values ({itemID}, '{info.Name.Replace("'", "''")}', {info.Class}, {info.Level}, {info.Quality}, '{JsonConvert.SerializeObject(info.ImageBytes)}')";
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("[Wowhead.ItemInfo_SaveToCache] Error-0: " + ex.Message +
+                             $"\r\nINSERT INTO items (itemID, name, class, level, quality, image) values ({itemID}, '{info.Name.Replace("'", "''")}', {info.Class}, {info.Level}, {info.Quality}, '{JsonConvert.SerializeObject(info.ImageBytes)}')");
+                    }
+
                 }
             }
         }
@@ -232,12 +265,24 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
+                    if (dbConnection == null)
+                        dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                    using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                     {
-                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
-                        collection.EnsureIndex(x => x.ID);
-                        NDBEntry entry = collection.FindOne(l => l.ID == spellID);
-                        return entry != null ? JsonConvert.DeserializeObject<WowheadSpellInfo>(entry.JSONData) : null;
+                        command.CommandText =
+                            "CREATE TABLE IF NOT EXISTS spells ( spellID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, image TEXT NOT NULL );" +
+                            $"SELECT * FROM spells WHERE spellID = {spellID};";
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return new WowheadSpellInfo(reader["name"].ToString()) { ImageBytes = JsonConvert.DeserializeObject<byte[]>(reader["image"].ToString()) };
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        } 
                     }
                 }
                 catch (Exception ex)
@@ -258,11 +303,22 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
+                if (dbConnection == null)
+                    dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-spells");
-                    collection.Insert(new NDBEntry(spellID, JsonConvert.SerializeObject(info)));
-                    collection.EnsureIndex(x => x.ID);
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS spells ( spellID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, image TEXT NOT NULL );" +
+                        $"INSERT INTO spells (spellID, name, image) values ({spellID}, '{info.Name.Replace("'", "''")}', '{JsonConvert.SerializeObject(info.ImageBytes)}')";
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("[Wowhead.SpellInfo_SaveToCache] Error-0: " + ex.Message +
+                            $"\r\nINSERT INTO spells (spellID, name, image) values ({spellID}, '{info.Name.Replace("'", "''")}', '{JsonConvert.SerializeObject(info.ImageBytes)}')");
+                    }
+
                 }
             }
         }
@@ -274,12 +330,24 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
+                    if (dbConnection == null)
+                        dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                    using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                     {
-                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-zones");
-                        collection.EnsureIndex(x => x.ID);
-                        NDBEntry entry = collection.FindOne(l => l.ID == (int)zoneID);
-                        return entry != null ? JsonConvert.DeserializeObject<string>(entry.JSONData) : null;
+                        command.CommandText =
+                            "CREATE TABLE IF NOT EXISTS zones ( zoneID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );" +
+                            $"SELECT * FROM zones WHERE zoneID = {zoneID};";
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return reader["name"].ToString();
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }  
                     }
                 }
                 catch (Exception ex)
@@ -300,11 +368,21 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
+                if (dbConnection == null)
+                    dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-zones");
-                    collection.Insert(new NDBEntry((int) zoneID, JsonConvert.SerializeObject(zoneText)));
-                    collection.EnsureIndex(x => x.ID);
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS zones ( zoneID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );" +
+                        $"INSERT INTO zones (zoneID, name) values ({zoneID}, '{zoneText.Replace("'", "''")}');";
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("[Wowhead.ZoneInfo_SaveToCache] Error-0: " + ex.Message + $"\r\nINSERT INTO zones (zoneID, name) values ({zoneID}, '{zoneText.Replace("'", "''")}')");
+                    }
+
                 }
             }
         }
@@ -316,12 +394,24 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
+                    if (dbConnection == null)
+                        dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                    using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                     {
-                        LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-npcs");
-                        collection.EnsureIndex(x => x.ID);
-                        NDBEntry entry = collection.FindOne(l => l.ID == entryID);
-                        return entry != null ? JsonConvert.DeserializeObject<WowheadNpcInfo>(entry.JSONData) : null;
+                        command.CommandText =
+                            "CREATE TABLE IF NOT EXISTS npcs ( entryID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );" +
+                            $"SELECT * FROM npcs WHERE entryID = {entryID};";
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return new WowheadNpcInfo(reader["name"].ToString());
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        } 
                     }
                 }
                 catch (Exception ex)
@@ -342,43 +432,29 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                using (LiteDatabase db = new LiteDatabase(AppFolders.DataDir + "\\wowhead.ldb"))
+                if (dbConnection == null)
+                    dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-npcs");
-                    collection.Insert(new NDBEntry((int)entryID, JsonConvert.SerializeObject(info)));
-                    collection.EnsureIndex(x => x.ID);
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS npcs ( entryID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );" +
+                        $"INSERT INTO npcs (entryID, name) values ({entryID}, '{info.Name.Replace("'", "''")}');";
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("[Wowhead.NpcInfo_SaveToCache] Error-0: " + ex.Message + $"\r\nINSERT INTO npcs (entryID, name) values ({entryID}, '{info.Name}')");
+                    }
+
                 }
             }
         }
-
+        
     }
-
-    public class NDBEntry
-    {
-        [BsonId]
-        public int BsonId { get; set; }
-
-        public int ID { get; set; }
-
-        public string JSONData { get; set; }
-
-        public NDBEntry()
-        {
-            
-        }
-
-        public NDBEntry(int id, string jsonData)
-        {
-            ID = id;
-            JSONData = jsonData;
-        }
-
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
+    
     internal class WowheadItemInfo
     {
-        [JsonConstructor]
         public WowheadItemInfo()
         {
 
@@ -391,20 +467,15 @@ namespace AxTools.WoW.Helpers
             Level = level;
             Quality = quality;
         }
-
-        [JsonProperty(PropertyName = "Name")]
+        
         internal string Name;
-
-        [JsonProperty(PropertyName = "Class")]
+        
         internal uint Class;
-
-        [JsonProperty(PropertyName = "Level")]
+        
         internal uint Level;
-
-        [JsonProperty(PropertyName = "Quality")]
+        
         internal uint Quality;
-
-        [JsonProperty(PropertyName = "ImageBytes")]
+        
         internal byte[] ImageBytes
         {
             get
@@ -438,10 +509,8 @@ namespace AxTools.WoW.Helpers
 
     }
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class WowheadSpellInfo
     {
-        [JsonConstructor]
         internal WowheadSpellInfo()
         {
 
@@ -451,11 +520,9 @@ namespace AxTools.WoW.Helpers
         {
             Name = name;
         }
-
-        [JsonProperty(PropertyName = "Name")]
+        
         internal string Name;
-
-        [JsonProperty(PropertyName = "ImageBytes")]
+        
         internal byte[] ImageBytes
         {
             get
@@ -488,11 +555,9 @@ namespace AxTools.WoW.Helpers
         internal Image Image;
 
     }
-
-    [JsonObject(MemberSerialization.OptIn)]
+    
     internal class WowheadNpcInfo
     {
-        [JsonConstructor]
         internal WowheadNpcInfo()
         {
 
@@ -502,8 +567,7 @@ namespace AxTools.WoW.Helpers
         {
             Name = name.Replace(@"\'", "'");
         }
-
-        [JsonProperty(PropertyName = "Name")]
+        
         internal string Name;
 
     }

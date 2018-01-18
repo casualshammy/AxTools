@@ -305,5 +305,72 @@ namespace WoWPlugin_Dumper
             ChatMessages.NewChatMessage -= Chat_NewMessage;
             chatTimer?.Dispose();
         }
+
+        private void buttonDumpPlayer_Click(object sender, EventArgs e)
+        {
+            WoWPlayerMe lp;
+            try
+            {
+                lp = ObjMgr.Pulse();
+                if (lp != null)
+                {
+                    Log("Dump OK");
+                }
+                else
+                {
+                    Log("ERROR: localPlayer is null!");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("ERROR(0): " + ex.Message);
+                return;
+            }
+            try
+            {
+                Log("Info---------------------------------------");
+                Log($"\tZoneID: {Info.ZoneID}");
+                Log($"\tZoneText: {Info.ZoneText}");
+                Log($"\tIsLooting: {Info.IsLooting}");
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
+            }
+            try
+            {
+                Log("Local player---------------------------------------");
+                Log($"\tGUID: {lp.GUID}; Address: 0x{lp.Address.ToInt64().ToString("X")}; Location: {lp.Location}; "+
+                    $"Name: {lp.Name}; TargetGUID: {lp.TargetGUID}; Class: {lp.Class}; Health/MaxHealth: {lp.Health}/{lp.HealthMax}, Level: {lp.Level}; Faction: {lp.Faction}; IsMounted: {lp.IsMounted}");
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
+            }
+            try
+            {
+                Log("----Local player buffs----");
+                foreach (string info in lp.Auras.Select(l => string.Format("ID: {0}; Name: {1}; Stack: {2}; TimeLeft: {3}; OwnerGUID: {4}", l.SpellId, l.Name, l.Stack, l.TimeLeftInMs, l.OwnerGUID)))
+                {
+                    Log("\t" + info);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
+            }
+            try
+            {
+                Log("----Mouseover----");
+                Log(string.Format("\tGUID: {0}", Info.MouseoverGUID));
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
+            }
+            MessageBox.Show("Completed");
+        }
+
     }
 }
