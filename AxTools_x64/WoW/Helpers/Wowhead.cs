@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
@@ -8,6 +9,8 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using AxTools.Forms;
 using AxTools.Helpers;
 using Newtonsoft.Json;
@@ -27,19 +30,74 @@ namespace AxTools.WoW.Helpers
         private static long _sumDBAccessTime;
         private static int _numDBAccesses;
         private static SQLiteConnection dbConnection;
+        private static Log2 log = new Log2("Wowhead");
+        private static Timer updateDBEntriesTimer;
 
         static Wowhead()
         {
             _locale = GetLocale();
+            updateDBEntriesTimer = new Timer(UpdateDBEntriesTimer_Elapsed, null, 60 * 60 * 1000, 60 * 60 * 1000); // 1 hour
             MainForm.ClosingEx +=
                 delegate
                 {
                     if (_numDBAccesses > 100)
                     {
-                        Log.Error(string.Format("[Wowhead] DB usage stats: numDBAccesses: {0}; average access time: {1} ms/call; average access time: {2} ticks/call",
+                        log.Error(string.Format("DB usage stats: numDBAccesses: {0}; average access time: {1} ms/call; average access time: {2} ticks/call",
                             _numDBAccesses, _sumDBAccessTime/(_numDBAccesses == 0 ? -1 : _numDBAccesses), _sumDBAccessTicks/(_numDBAccesses == 0 ? -1 : _numDBAccesses)));
                     }
                 };
+        }
+
+        private static void UpdateDBEntriesTimer_Elapsed(object state)
+        {
+            log.Info("Updating Wowhead db...");
+            Dictionary<uint, string> npcs2 = new Dictionary<uint, string>();
+            lock (DBLock)
+            {
+                try
+                {
+                    LoadAndUpdateDBFile();
+                    using (SQLiteCommand command = new SQLiteCommand(dbConnection))
+                    {
+                        command.CommandText = $"SELECT entryID, name FROM npcs2 ORDER BY RANDOM() LIMIT 1000;";
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                npcs2.Add((uint)reader.GetInt32(0), reader.GetString(1));
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error("UpdateDBEntriesTimer_Elapsed() error-0: " + ex.Message);
+                    return;
+                }
+            }
+            foreach (var i in npcs2)
+            {
+                try
+                {
+                    if (TryGetNpcInfoFromWeb(i.Key, out WowheadNpcInfo info) && info.Name != i.Value)
+                    {
+                        log.Error($"NPC with id:{i.Key} has changed it's name from {i.Value} to {info.Name}");
+                        lock (DBLock)
+                        {
+                            using (SQLiteCommand command = new SQLiteCommand(dbConnection))
+                            {
+                                command.CommandText = $"UPDATE npcs2 SET name='{info.Name}' WHERE entryID={i.Key};";
+                                command.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error("UpdateDBEntriesTimer_Elapsed() error-1: " + ex.Message);
+                }
+            }
+            log.Info("Wowhead db is updated");
         }
 
         internal static WowheadItemInfo GetItemInfo(uint itemID)
@@ -71,7 +129,7 @@ namespace AxTools.WoW.Helpers
                         else
                         {
                             info = new WowheadItemInfo(UNKNOWN, 0, 0, 0);
-                            Log.Info("[Wowhead] Regex isn't match: " + JsonConvert.SerializeObject(xml));
+                            log.Info("GetItemInfo(): regex isn't match: " + JsonConvert.SerializeObject(xml));
                         }
                     }
                 }
@@ -112,7 +170,7 @@ namespace AxTools.WoW.Helpers
                         else
                         {
                             info = new WowheadSpellInfo(UNKNOWN);
-                            Log.Info("[Wowhead] Regex isn't match: " + JsonConvert.SerializeObject(xml));
+                            log.Info("GetSpellInfo(): regex isn't match: " + JsonConvert.SerializeObject(xml));
                         }
                     }
                 }
@@ -127,22 +185,13 @@ namespace AxTools.WoW.Helpers
             {
                 if ((info = NpcInfo_GetCachedValue(entryID)) == null)
                 {
-                    using (WebClient webClient = new WebClient())
+                    if (TryGetNpcInfoFromWeb(entryID, out info))
                     {
-                        webClient.Encoding = Encoding.UTF8;
-                        string xml = webClient.DownloadString("https://" + _locale + ".wowhead.com/npc=" + entryID + "&power");
-                        Regex regex = new Regex("\\s+name_.+:\\s*'(.+)'");
-                        Match match = regex.Match(xml);
-                        if (match.Success)
-                        {
-                            info = new WowheadNpcInfo(match.Groups[1].Value);
-                            NpcInfo_SaveToCache(entryID, info);
-                        }
-                        else
-                        {
-                            info = new WowheadNpcInfo(UNKNOWN);
-                            Log.Info("[Wowhead] Regex isn't match: " + JsonConvert.SerializeObject(xml));
-                        }
+                        NpcInfo_SaveToCache(entryID, info);
+                    }
+                    else
+                    {
+                        info = new WowheadNpcInfo(UNKNOWN);
                     }
                 }
                 NpcInfos.TryAdd(entryID, info);
@@ -150,6 +199,28 @@ namespace AxTools.WoW.Helpers
             return info;
         }
 
+        private static bool TryGetNpcInfoFromWeb(uint entryID, out WowheadNpcInfo info)
+        {
+            using (WebClient webClient = new WebClient())
+            {
+                webClient.Encoding = Encoding.UTF8;
+                string xml = webClient.DownloadString("https://" + _locale + ".wowhead.com/npc=" + entryID + "&power");
+                Regex regex = new Regex("\\s+name_.+:\\s*'(.+)'");
+                Match match = regex.Match(xml);
+                if (match.Success)
+                {
+                    info = new WowheadNpcInfo(match.Groups[1].Value);
+                    return true;
+                }
+                else
+                {
+                    log.Info("GetNpcInfo_Web(): regex isn't match: " + JsonConvert.SerializeObject(xml));
+                    info = null;
+                    return false;
+                }
+            }
+        }
+        
         internal static string GetZoneText(uint zoneID)
         {
             if (!ZoneInfos.TryGetValue(zoneID, out string info))
@@ -170,7 +241,7 @@ namespace AxTools.WoW.Helpers
                         else
                         {
                             info = UNKNOWN;
-                            Log.Info("[Wowhead] Regex isn't match: " + JsonConvert.SerializeObject(xml));
+                            log.Info("GetZoneText(): regex isn't match: " + JsonConvert.SerializeObject(xml));
                         }
                     }
                 }
@@ -199,19 +270,16 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    if (dbConnection == null)
-                        dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                    LoadAndUpdateDBFile();
                     using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                     {
-                        command.CommandText =
-                            "CREATE TABLE IF NOT EXISTS items ( itemID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, class INTEGER NOT NULL, level INTEGER NOT NULL, quality INTEGER NOT NULL, image TEXT NOT NULL );" +
-                            $"SELECT * FROM items WHERE itemID = {itemID};";
+                        command.CommandText = $"SELECT name,class,level,quality,image FROM items2 WHERE itemID={itemID} LIMIT 1;";
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                return new WowheadItemInfo(reader["name"].ToString(), uint.Parse(reader["class"].ToString()), uint.Parse(reader["level"].ToString()), uint.Parse(reader["quality"].ToString()))
-                                { ImageBytes = JsonConvert.DeserializeObject<byte[]>(reader["image"].ToString()) };
+                                return new WowheadItemInfo(reader.GetString(0), (uint)reader.GetInt32(1), (uint)reader.GetInt32(2), (uint)reader.GetInt32(3))
+                                { ImageBytes = JsonConvert.DeserializeObject<byte[]>(reader.GetString(4)) };
                             }
                             else
                             {
@@ -222,7 +290,7 @@ namespace AxTools.WoW.Helpers
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[Wowhead.ItemInfo_GetCachedValue] Error: " + ex.Message);
+                    log.Error("ItemInfo_GetCachedValue() error: " + ex.Message);
                     return null;
                 }
                 finally
@@ -238,22 +306,20 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                if (dbConnection == null)
-                    dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                LoadAndUpdateDBFile();
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    command.CommandText = "CREATE TABLE IF NOT EXISTS items ( itemID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, class INTEGER NOT NULL, level INTEGER NOT NULL, quality INTEGER NOT NULL, image TEXT NOT NULL );" +
-                        $"INSERT INTO items (itemID, name, class, level, quality, image) values ({itemID}, '{info.Name.Replace("'", "''")}', {info.Class}, {info.Level}, {info.Quality}, '{JsonConvert.SerializeObject(info.ImageBytes)}')";
+                    command.CommandText = 
+                        $"INSERT INTO items2 (itemID, name, class, level, quality, image, datetime_updated) " +
+                        $"VALUES ({itemID}, '{info.Name.Replace("'", "''")}', {info.Class}, {info.Level}, {info.Quality}, '{JsonConvert.SerializeObject(info.ImageBytes)}', '{DateTime.UtcNow.ToString("s")}')";
                     try
                     {
                         command.ExecuteNonQuery();
                     }
                     catch (Exception ex)
                     {
-                        Log.Error("[Wowhead.ItemInfo_SaveToCache] Error-0: " + ex.Message +
-                             $"\r\nINSERT INTO items (itemID, name, class, level, quality, image) values ({itemID}, '{info.Name.Replace("'", "''")}', {info.Class}, {info.Level}, {info.Quality}, '{JsonConvert.SerializeObject(info.ImageBytes)}')");
+                        log.Error($"ItemInfo_SaveToCache() error: {ex.Message}\r\n{command.CommandText}");
                     }
-
                 }
             }
         }
@@ -265,18 +331,15 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    if (dbConnection == null)
-                        dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                    LoadAndUpdateDBFile();
                     using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                     {
-                        command.CommandText =
-                            "CREATE TABLE IF NOT EXISTS spells ( spellID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, image TEXT NOT NULL );" +
-                            $"SELECT * FROM spells WHERE spellID = {spellID};";
+                        command.CommandText = $"SELECT name,image FROM spells2 WHERE spellID = {spellID} LIMIT 1;";
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                return new WowheadSpellInfo(reader["name"].ToString()) { ImageBytes = JsonConvert.DeserializeObject<byte[]>(reader["image"].ToString()) };
+                                return new WowheadSpellInfo(reader.GetString(0)) { ImageBytes = JsonConvert.DeserializeObject<byte[]>(reader.GetString(1)) };
                             }
                             else
                             {
@@ -287,7 +350,7 @@ namespace AxTools.WoW.Helpers
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[Wowhead.SpellInfo_GetCachedValue] Error: " + ex.Message);
+                    log.Error("SpellInfo_GetCachedValue() error: " + ex.Message);
                     return null;
                 }
                 finally
@@ -303,20 +366,19 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                if (dbConnection == null)
-                    dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                LoadAndUpdateDBFile();
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    command.CommandText = "CREATE TABLE IF NOT EXISTS spells ( spellID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, image TEXT NOT NULL );" +
-                        $"INSERT INTO spells (spellID, name, image) values ({spellID}, '{info.Name.Replace("'", "''")}', '{JsonConvert.SerializeObject(info.ImageBytes)}')";
+                    command.CommandText = 
+                        $"INSERT INTO spells2 (spellID, name, image, datetime_updated) " +
+                        $"VALUES ({spellID}, '{info.Name.Replace("'", "''")}', '{JsonConvert.SerializeObject(info.ImageBytes)}', '{DateTime.UtcNow.ToString("s")}')";
                     try
                     {
                         command.ExecuteNonQuery();
                     }
                     catch (Exception ex)
                     {
-                        Log.Error("[Wowhead.SpellInfo_SaveToCache] Error-0: " + ex.Message +
-                            $"\r\nINSERT INTO spells (spellID, name, image) values ({spellID}, '{info.Name.Replace("'", "''")}', '{JsonConvert.SerializeObject(info.ImageBytes)}')");
+                        log.Error($"SpellInfo_SaveToCache() error: {ex.Message}\r\n{command.CommandText}");
                     }
 
                 }
@@ -330,18 +392,15 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    if (dbConnection == null)
-                        dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                    LoadAndUpdateDBFile();
                     using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                     {
-                        command.CommandText =
-                            "CREATE TABLE IF NOT EXISTS zones ( zoneID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );" +
-                            $"SELECT * FROM zones WHERE zoneID = {zoneID};";
+                        command.CommandText = $"SELECT name FROM zones2 WHERE zoneID = {zoneID} LIMIT 1;";
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                return reader["name"].ToString();
+                                return reader.GetString(0);
                             }
                             else
                             {
@@ -352,7 +411,7 @@ namespace AxTools.WoW.Helpers
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[Wowhead.ZoneInfo_GetCachedValue] Error: " + ex.Message);
+                    log.Error("ZoneInfo_GetCachedValue() error: " + ex.Message);
                     return null;
                 }
                 finally
@@ -368,19 +427,17 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                if (dbConnection == null)
-                    dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                LoadAndUpdateDBFile();
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    command.CommandText = "CREATE TABLE IF NOT EXISTS zones ( zoneID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );" +
-                        $"INSERT INTO zones (zoneID, name) values ({zoneID}, '{zoneText.Replace("'", "''")}');";
+                    command.CommandText = $"INSERT INTO zones2 (zoneID, name, datetime_updated) values ({zoneID}, '{zoneText.Replace("'", "''")}', '{DateTime.UtcNow.ToString("s")}');";
                     try
                     {
                         command.ExecuteNonQuery();
                     }
                     catch (Exception ex)
                     {
-                        Log.Error("[Wowhead.ZoneInfo_SaveToCache] Error-0: " + ex.Message + $"\r\nINSERT INTO zones (zoneID, name) values ({zoneID}, '{zoneText.Replace("'", "''")}')");
+                        log.Error($"ZoneInfo_SaveToCache() error: {ex.Message}\r\n{command.CommandText}");
                     }
 
                 }
@@ -394,18 +451,15 @@ namespace AxTools.WoW.Helpers
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
-                    if (dbConnection == null)
-                        dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                    LoadAndUpdateDBFile();
                     using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                     {
-                        command.CommandText =
-                            "CREATE TABLE IF NOT EXISTS npcs ( entryID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );" +
-                            $"SELECT * FROM npcs WHERE entryID = {entryID};";
+                        command.CommandText = $"SELECT name FROM npcs2 WHERE entryID = {entryID} LIMIT 1;";
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                return new WowheadNpcInfo(reader["name"].ToString());
+                                return new WowheadNpcInfo(reader.GetString(0));
                             }
                             else
                             {
@@ -416,7 +470,7 @@ namespace AxTools.WoW.Helpers
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[Wowhead.NpcInfo_GetCachedValue] Error: " + ex.Message);
+                    log.Error("NpcInfo_GetCachedValue() error: " + ex.Message);
                     return null;
                 }
                 finally
@@ -432,25 +486,65 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                if (dbConnection == null)
-                    dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                LoadAndUpdateDBFile();
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    command.CommandText = "CREATE TABLE IF NOT EXISTS npcs ( entryID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );" +
-                        $"INSERT INTO npcs (entryID, name) values ({entryID}, '{info.Name.Replace("'", "''")}');";
+                    command.CommandText = $"INSERT INTO npcs2 (entryID, name, datetime_updated) values ({entryID}, '{info.Name.Replace("'", "''")}', '{DateTime.UtcNow.ToString("s")}');";
                     try
                     {
                         command.ExecuteNonQuery();
                     }
                     catch (Exception ex)
                     {
-                        Log.Error("[Wowhead.NpcInfo_SaveToCache] Error-0: " + ex.Message + $"\r\nINSERT INTO npcs (entryID, name) values ({entryID}, '{info.Name}')");
+                        log.Error($"NpcInfo_SaveToCache() error: {ex.Message}\r\n{command.CommandText}");
                     }
 
                 }
             }
         }
         
+        private static void LoadAndUpdateDBFile()
+        {
+            if (dbConnection == null)
+            {
+                dbConnection = new SQLiteConnection($"Data Source={AppFolders.DataDir}\\wowhead.sqlite;Version=3;").OpenAndReturn();
+                using (SQLiteCommand command = new SQLiteCommand(dbConnection))
+                {
+                    // creating tables
+                    command.CommandText =
+                        "CREATE TABLE IF NOT EXISTS items2 ( itemID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, class INTEGER NOT NULL, level INTEGER NOT NULL, quality INTEGER NOT NULL, image TEXT NOT NULL );" +
+                        "CREATE TABLE IF NOT EXISTS spells2 ( spellID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, image TEXT NOT NULL );" +
+                        "CREATE TABLE IF NOT EXISTS zones2 ( zoneID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );" +
+                        "CREATE TABLE IF NOT EXISTS npcs2 ( entryID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );";
+                    command.ExecuteNonQuery();
+                    // checking if old databaseses exist
+                    Dictionary<string, string[]> oldTables = new Dictionary<string, string[]>()
+                    {
+                        { "items", new string[] { "itemID", "name", "class", "level", "quality", "image" } },
+                        { "spells", new string[] { "spellID", "name", "image" } },
+                        { "zones", new string[] { "zoneID", "name" } },
+                        { "npcs", new string[] { "entryID", "name" } },
+                    };
+                    string migrationCommand = "BEGIN TRANSACTION;";
+                    foreach (var s in oldTables)
+                    {
+                        command.CommandText = $"SELECT * FROM sqlite_master WHERE name ='{s.Key}' and type='table';";
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                log.Info($"Old table {s.Key} is found, migrating...");
+                                migrationCommand += $"INSERT INTO {s.Key}2 ({string.Join(",", s.Value)}) SELECT {string.Join(",", s.Value)} FROM {s.Key};";
+                                migrationCommand += $"DROP TABLE {s.Key};";
+                            }
+                        }
+                    }
+                    command.CommandText = migrationCommand + "COMMIT;";
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
     }
     
     internal class WowheadItemInfo
@@ -571,5 +665,5 @@ namespace AxTools.WoW.Helpers
         internal string Name;
 
     }
-
+    
 }
