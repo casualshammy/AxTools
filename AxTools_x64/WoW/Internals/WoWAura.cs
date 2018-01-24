@@ -25,15 +25,7 @@ namespace AxTools.WoW.Internals
         {
             get
             {
-                try
-                {
-                    return Wowhead.GetSpellInfo(SpellId).Name;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(string.Format("[Wowhead] Can't get aura name, id: {0}, error: {1}", SpellId, ex.Message));
-                    return "";
-                }
+                return Wowhead.GetSpellInfo(SpellId).Name;
             }
         }
     }

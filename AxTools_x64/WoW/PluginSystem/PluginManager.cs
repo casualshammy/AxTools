@@ -135,7 +135,6 @@ namespace AxTools.WoW.PluginSystem
 
         internal static void AddPluginToRunning(IPlugin plugin)
         {
-            return;
             lock (AddRemoveLock)
             {
                 if (_managerRunning && !RunningPlugins.Contains(plugin))
@@ -325,11 +324,14 @@ namespace AxTools.WoW.PluginSystem
             {
                 if (_pluginContainers[i].Plugin is IPlugin2 plugin2)
                 {
-                    foreach (string dep in plugin2.Dependencies)
+                    if (plugin2.Dependencies != null)
                     {
-                        if (!_pluginContainers.Select(l => l.Plugin.Name).Contains(dep))
+                        foreach (string dep in plugin2.Dependencies)
                         {
-                            indexesOfPluginsWithUnresolvedDeps.Add(i);
+                            if (!_pluginContainers.Select(l => l.Plugin.Name).Contains(dep))
+                            {
+                                indexesOfPluginsWithUnresolvedDeps.Add(i);
+                            }
                         }
                     }
                 }
@@ -358,7 +360,7 @@ namespace AxTools.WoW.PluginSystem
                 }
             }
         }
-
+        
         private static Assembly CompilePlugin(string directory)
         {
             CodeCompiler cc = new CodeCompiler(directory);

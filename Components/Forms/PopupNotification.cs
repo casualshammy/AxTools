@@ -15,6 +15,7 @@ namespace Components.Forms
         private readonly System.Timers.Timer timer;
         private static readonly System.Timers.Timer arrangementTimer = new System.Timers.Timer(250);
         private DateTime loadTime;
+        private const float FadeOutStep = 1f / 5000f * 33.3f;
 
         static PopupNotification()
         {
@@ -30,7 +31,7 @@ namespace Components.Forms
             Title = title;
             Message = message;
             Icon = image;
-            timer = new System.Timers.Timer(50);
+            timer = new System.Timers.Timer(33.3); // 30fps
             timer.Elapsed += timer_Tick;
             BeginInvoke((MethodInvoker) delegate
             {
@@ -107,11 +108,11 @@ namespace Components.Forms
 
         private void timer_Tick(object sender, ElapsedEventArgs e)
         {
-            if (Opacity > 0.01f)
+            if (Opacity > FadeOutStep)
             {
                 if (DateTime.UtcNow - loadTime > TimeSpan.FromSeconds(Timeout))
                 {
-                    PostInvoke(() => { Opacity = Opacity - 0.01f; });
+                    PostInvoke(() => { Opacity = Opacity - FadeOutStep; });
                 }
             }
             else

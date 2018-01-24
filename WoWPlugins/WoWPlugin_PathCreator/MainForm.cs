@@ -85,6 +85,11 @@ namespace WoWPlugin_PathCreator
             WriteJSON();
         }
 
+        private void buttonWaitWhile_Click(object sender, EventArgs e)
+        {
+            list.Add(new DoAction { ActionType = DoActionType.WaitWhile, Data = textBoxWaitWhileLua.Text, AdditionalData = textBoxWaitWhileLag.Text });
+            WriteJSON();
+        }
     }
 
     [DataContract]
@@ -93,10 +98,13 @@ namespace WoWPlugin_PathCreator
         [DataMember(Name = "ActionType")]
         internal DoActionType ActionType;
 
-        [DataMember(Name = "Data")]
+        [DataMember(Name = "Data", EmitDefaultValue = false)]
         internal string Data;
 
-        [DataMember(Name = "WowPoint")]
+        [DataMember(Name = "AdditionalData", EmitDefaultValue = false)]
+        internal string AdditionalData;
+
+        [DataMember(Name = "WowPoint", EmitDefaultValue = false)]
         internal WowPoint WowPoint;
     }
 
@@ -104,13 +112,19 @@ namespace WoWPlugin_PathCreator
     {
         Move,
         Interact,
-        DisableCTM,
         SelectGossipOption,
-        RunMacro,
         RunLua,
         SendChat,
+        SendToChatWhile,
         StopProfile,
+        StopProfileIf,
+        WaitWhile,
         Wait,
-        SetPrecision2D
+        SetPrecision2D,
+        SetPrecision3D,
+        SetLoopPath,
+        SetStartFromNearestPoint,
+        NotifyUser,
+        NotifyUserIf,
     }
 }

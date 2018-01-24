@@ -33,12 +33,13 @@
             this.checkBoxBNetPM = new System.Windows.Forms.CheckBox();
             this.checkBoxStaticPopup = new System.Windows.Forms.CheckBox();
             this.checkBoxDisconnect = new System.Windows.Forms.CheckBox();
+            this.checkBoxEnableWhenAfk = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // checkBoxPM
             // 
             this.checkBoxPM.AutoSize = true;
-            this.checkBoxPM.Location = new System.Drawing.Point(35, 25);
+            this.checkBoxPM.Location = new System.Drawing.Point(35, 68);
             this.checkBoxPM.Name = "checkBoxPM";
             this.checkBoxPM.Size = new System.Drawing.Size(62, 17);
             this.checkBoxPM.TabIndex = 0;
@@ -49,7 +50,7 @@
             // linkLabelNote
             // 
             this.linkLabelNote.AutoSize = true;
-            this.linkLabelNote.Location = new System.Drawing.Point(12, 9);
+            this.linkLabelNote.Location = new System.Drawing.Point(12, 52);
             this.linkLabelNote.Name = "linkLabelNote";
             this.linkLabelNote.Size = new System.Drawing.Size(82, 13);
             this.linkLabelNote.TabIndex = 1;
@@ -59,7 +60,7 @@
             // checkBoxBNetPM
             // 
             this.checkBoxBNetPM.AutoSize = true;
-            this.checkBoxBNetPM.Location = new System.Drawing.Point(35, 48);
+            this.checkBoxBNetPM.Location = new System.Drawing.Point(35, 91);
             this.checkBoxBNetPM.Name = "checkBoxBNetPM";
             this.checkBoxBNetPM.Size = new System.Drawing.Size(92, 17);
             this.checkBoxBNetPM.TabIndex = 2;
@@ -70,7 +71,7 @@
             // checkBoxStaticPopup
             // 
             this.checkBoxStaticPopup.AutoSize = true;
-            this.checkBoxStaticPopup.Location = new System.Drawing.Point(35, 71);
+            this.checkBoxStaticPopup.Location = new System.Drawing.Point(35, 114);
             this.checkBoxStaticPopup.Name = "checkBoxStaticPopup";
             this.checkBoxStaticPopup.Size = new System.Drawing.Size(181, 17);
             this.checkBoxStaticPopup.TabIndex = 3;
@@ -81,7 +82,7 @@
             // checkBoxDisconnect
             // 
             this.checkBoxDisconnect.AutoSize = true;
-            this.checkBoxDisconnect.Location = new System.Drawing.Point(35, 94);
+            this.checkBoxDisconnect.Location = new System.Drawing.Point(35, 137);
             this.checkBoxDisconnect.Name = "checkBoxDisconnect";
             this.checkBoxDisconnect.Size = new System.Drawing.Size(78, 17);
             this.checkBoxDisconnect.TabIndex = 4;
@@ -89,11 +90,23 @@
             this.checkBoxDisconnect.UseVisualStyleBackColor = true;
             this.checkBoxDisconnect.CheckedChanged += new System.EventHandler(this.checkBoxDisconnect_CheckedChanged);
             // 
+            // checkBoxEnableWhenAfk
+            // 
+            this.checkBoxEnableWhenAfk.AutoSize = true;
+            this.checkBoxEnableWhenAfk.Location = new System.Drawing.Point(12, 12);
+            this.checkBoxEnableWhenAfk.Name = "checkBoxEnableWhenAfk";
+            this.checkBoxEnableWhenAfk.Size = new System.Drawing.Size(174, 17);
+            this.checkBoxEnableWhenAfk.TabIndex = 5;
+            this.checkBoxEnableWhenAfk.Text = "Auto-start Notifier when you afk";
+            this.checkBoxEnableWhenAfk.UseVisualStyleBackColor = true;
+            this.checkBoxEnableWhenAfk.CheckedChanged += new System.EventHandler(this.checkBoxEnableWhenAfk_CheckedChanged);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(223, 123);
+            this.ClientSize = new System.Drawing.Size(223, 166);
+            this.Controls.Add(this.checkBoxEnableWhenAfk);
             this.Controls.Add(this.checkBoxDisconnect);
             this.Controls.Add(this.checkBoxStaticPopup);
             this.Controls.Add(this.checkBoxBNetPM);
@@ -113,5 +126,6 @@
         private System.Windows.Forms.CheckBox checkBoxBNetPM;
         private System.Windows.Forms.CheckBox checkBoxStaticPopup;
         private System.Windows.Forms.CheckBox checkBoxDisconnect;
+        private System.Windows.Forms.CheckBox checkBoxEnableWhenAfk;
     }
 }

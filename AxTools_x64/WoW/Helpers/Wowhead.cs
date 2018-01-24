@@ -9,8 +9,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using AxTools.Forms;
 using AxTools.Helpers;
 using Newtonsoft.Json;
@@ -22,7 +20,6 @@ namespace AxTools.WoW.Helpers
         private static readonly string _locale;
         private static readonly ConcurrentDictionary<uint, WowheadItemInfo> ItemInfos = new ConcurrentDictionary<uint, WowheadItemInfo>();
         private static readonly ConcurrentDictionary<int, WowheadSpellInfo> SpellInfos = new ConcurrentDictionary<int, WowheadSpellInfo>();
-        private static readonly ConcurrentDictionary<uint, WowheadNpcInfo> NpcInfos = new ConcurrentDictionary<uint, WowheadNpcInfo>();
         private static readonly ConcurrentDictionary<uint, string> ZoneInfos = new ConcurrentDictionary<uint, string>();
         private const string UNKNOWN = "UNKNOWN";
         private static readonly object DBLock = new object();
@@ -31,12 +28,10 @@ namespace AxTools.WoW.Helpers
         private static int _numDBAccesses;
         private static SQLiteConnection dbConnection;
         private static Log2 log = new Log2("Wowhead");
-        private static Timer updateDBEntriesTimer;
 
         static Wowhead()
         {
             _locale = GetLocale();
-            updateDBEntriesTimer = new Timer(UpdateDBEntriesTimer_Elapsed, null, 60 * 60 * 1000, 60 * 60 * 1000); // 1 hour
             MainForm.ClosingEx +=
                 delegate
                 {
@@ -47,59 +42,7 @@ namespace AxTools.WoW.Helpers
                     }
                 };
         }
-
-        private static void UpdateDBEntriesTimer_Elapsed(object state)
-        {
-            log.Info("Updating Wowhead db...");
-            Dictionary<uint, string> npcs2 = new Dictionary<uint, string>();
-            lock (DBLock)
-            {
-                try
-                {
-                    LoadAndUpdateDBFile();
-                    using (SQLiteCommand command = new SQLiteCommand(dbConnection))
-                    {
-                        command.CommandText = $"SELECT entryID, name FROM npcs2 ORDER BY RANDOM() LIMIT 1000;";
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                npcs2.Add((uint)reader.GetInt32(0), reader.GetString(1));
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.Error("UpdateDBEntriesTimer_Elapsed() error-0: " + ex.Message);
-                    return;
-                }
-            }
-            foreach (var i in npcs2)
-            {
-                try
-                {
-                    if (TryGetNpcInfoFromWeb(i.Key, out WowheadNpcInfo info) && info.Name != i.Value)
-                    {
-                        log.Error($"NPC with id:{i.Key} has changed it's name from {i.Value} to {info.Name}");
-                        lock (DBLock)
-                        {
-                            using (SQLiteCommand command = new SQLiteCommand(dbConnection))
-                            {
-                                command.CommandText = $"UPDATE npcs2 SET name='{info.Name}' WHERE entryID={i.Key};";
-                                command.ExecuteNonQuery();
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.Error("UpdateDBEntriesTimer_Elapsed() error-1: " + ex.Message);
-                }
-            }
-            log.Info("Wowhead db is updated");
-        }
-
+        
         internal static WowheadItemInfo GetItemInfo(uint itemID)
         {
             // <name><![CDATA[Iceblade Arrow]]></name>
@@ -177,48 +120,6 @@ namespace AxTools.WoW.Helpers
                 SpellInfos.TryAdd(spellID, info);
             }
             return info;
-        }
-
-        internal static WowheadNpcInfo GetNpcInfo(uint entryID)
-        {
-            if (!NpcInfos.TryGetValue(entryID, out WowheadNpcInfo info))
-            {
-                if ((info = NpcInfo_GetCachedValue(entryID)) == null)
-                {
-                    if (TryGetNpcInfoFromWeb(entryID, out info))
-                    {
-                        NpcInfo_SaveToCache(entryID, info);
-                    }
-                    else
-                    {
-                        info = new WowheadNpcInfo(UNKNOWN);
-                    }
-                }
-                NpcInfos.TryAdd(entryID, info);
-            }
-            return info;
-        }
-
-        private static bool TryGetNpcInfoFromWeb(uint entryID, out WowheadNpcInfo info)
-        {
-            using (WebClient webClient = new WebClient())
-            {
-                webClient.Encoding = Encoding.UTF8;
-                string xml = webClient.DownloadString("https://" + _locale + ".wowhead.com/npc=" + entryID + "&power");
-                Regex regex = new Regex("\\s+name_.+:\\s*'(.+)'");
-                Match match = regex.Match(xml);
-                if (match.Success)
-                {
-                    info = new WowheadNpcInfo(match.Groups[1].Value);
-                    return true;
-                }
-                else
-                {
-                    log.Info("GetNpcInfo_Web(): regex isn't match: " + JsonConvert.SerializeObject(xml));
-                    info = null;
-                    return false;
-                }
-            }
         }
         
         internal static string GetZoneText(uint zoneID)
@@ -310,8 +211,8 @@ namespace AxTools.WoW.Helpers
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
                     command.CommandText = 
-                        $"INSERT INTO items2 (itemID, name, class, level, quality, image, datetime_updated) " +
-                        $"VALUES ({itemID}, '{info.Name.Replace("'", "''")}', {info.Class}, {info.Level}, {info.Quality}, '{JsonConvert.SerializeObject(info.ImageBytes)}', '{DateTime.UtcNow.ToString("s")}')";
+                        $"INSERT INTO items2 (itemID, name, class, level, quality, image) " +
+                        $"VALUES ({itemID}, '{info.Name.Replace("'", "''")}', {info.Class}, {info.Level}, {info.Quality}, '{JsonConvert.SerializeObject(info.ImageBytes)}')";
                     try
                     {
                         command.ExecuteNonQuery();
@@ -370,8 +271,8 @@ namespace AxTools.WoW.Helpers
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
                     command.CommandText = 
-                        $"INSERT INTO spells2 (spellID, name, image, datetime_updated) " +
-                        $"VALUES ({spellID}, '{info.Name.Replace("'", "''")}', '{JsonConvert.SerializeObject(info.ImageBytes)}', '{DateTime.UtcNow.ToString("s")}')";
+                        $"INSERT INTO spells2 (spellID, name, image) " +
+                        $"VALUES ({spellID}, '{info.Name.Replace("'", "''")}', '{JsonConvert.SerializeObject(info.ImageBytes)}')";
                     try
                     {
                         command.ExecuteNonQuery();
@@ -430,7 +331,7 @@ namespace AxTools.WoW.Helpers
                 LoadAndUpdateDBFile();
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    command.CommandText = $"INSERT INTO zones2 (zoneID, name, datetime_updated) values ({zoneID}, '{zoneText.Replace("'", "''")}', '{DateTime.UtcNow.ToString("s")}');";
+                    command.CommandText = $"INSERT INTO zones2 (zoneID, name) values ({zoneID}, '{zoneText.Replace("'", "''")}');";
                     try
                     {
                         command.ExecuteNonQuery();
@@ -438,65 +339,6 @@ namespace AxTools.WoW.Helpers
                     catch (Exception ex)
                     {
                         log.Error($"ZoneInfo_SaveToCache() error: {ex.Message}\r\n{command.CommandText}");
-                    }
-
-                }
-            }
-        }
-
-        private static WowheadNpcInfo NpcInfo_GetCachedValue(uint entryID)
-        {
-            lock (DBLock)
-            {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                try
-                {
-                    LoadAndUpdateDBFile();
-                    using (SQLiteCommand command = new SQLiteCommand(dbConnection))
-                    {
-                        command.CommandText = $"SELECT name FROM npcs2 WHERE entryID = {entryID} LIMIT 1;";
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                return new WowheadNpcInfo(reader.GetString(0));
-                            }
-                            else
-                            {
-                                return null;
-                            }
-                        } 
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.Error("NpcInfo_GetCachedValue() error: " + ex.Message);
-                    return null;
-                }
-                finally
-                {
-                    _sumDBAccessTicks += stopwatch.ElapsedTicks;
-                    _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
-                    _numDBAccesses++;
-                }
-            }
-        }
-
-        private static void NpcInfo_SaveToCache(uint entryID, WowheadNpcInfo info)
-        {
-            lock (DBLock)
-            {
-                LoadAndUpdateDBFile();
-                using (SQLiteCommand command = new SQLiteCommand(dbConnection))
-                {
-                    command.CommandText = $"INSERT INTO npcs2 (entryID, name, datetime_updated) values ({entryID}, '{info.Name.Replace("'", "''")}', '{DateTime.UtcNow.ToString("s")}');";
-                    try
-                    {
-                        command.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        log.Error($"NpcInfo_SaveToCache() error: {ex.Message}\r\n{command.CommandText}");
                     }
 
                 }
@@ -514,8 +356,7 @@ namespace AxTools.WoW.Helpers
                     command.CommandText =
                         "CREATE TABLE IF NOT EXISTS items2 ( itemID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, class INTEGER NOT NULL, level INTEGER NOT NULL, quality INTEGER NOT NULL, image TEXT NOT NULL );" +
                         "CREATE TABLE IF NOT EXISTS spells2 ( spellID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, image TEXT NOT NULL );" +
-                        "CREATE TABLE IF NOT EXISTS zones2 ( zoneID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );" +
-                        "CREATE TABLE IF NOT EXISTS npcs2 ( entryID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );";
+                        "CREATE TABLE IF NOT EXISTS zones2 ( zoneID INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL );";
                     command.ExecuteNonQuery();
                     // checking if old databaseses exist
                     Dictionary<string, string[]> oldTables = new Dictionary<string, string[]>()
@@ -523,7 +364,6 @@ namespace AxTools.WoW.Helpers
                         { "items", new string[] { "itemID", "name", "class", "level", "quality", "image" } },
                         { "spells", new string[] { "spellID", "name", "image" } },
                         { "zones", new string[] { "zoneID", "name" } },
-                        { "npcs", new string[] { "entryID", "name" } },
                     };
                     string migrationCommand = "BEGIN TRANSACTION;";
                     foreach (var s in oldTables)
@@ -541,6 +381,25 @@ namespace AxTools.WoW.Helpers
                     }
                     command.CommandText = migrationCommand + "COMMIT;";
                     command.ExecuteNonQuery();
+                    // delete npcs2 table
+                    foreach (var tableName in new string[] { "npcs2", "npcs" })
+                    {
+                        command.CommandText = $"SELECT * FROM sqlite_master WHERE name ='{tableName}' and type='table';";
+                        migrationCommand = "";
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                log.Info($"Old table '{tableName}' is found, let's drop it...");
+                                migrationCommand = $"DROP TABLE {tableName};";
+                            }
+                        }
+                        if (migrationCommand != "")
+                        {
+                            command.CommandText = migrationCommand;
+                            command.ExecuteNonQuery();
+                        }
+                    }
                 }
             }
         }
@@ -647,22 +506,6 @@ namespace AxTools.WoW.Helpers
         }
 
         internal Image Image;
-
-    }
-    
-    internal class WowheadNpcInfo
-    {
-        internal WowheadNpcInfo()
-        {
-
-        }
-
-        internal WowheadNpcInfo(string name)
-        {
-            Name = name.Replace(@"\'", "'");
-        }
-        
-        internal string Name;
 
     }
     

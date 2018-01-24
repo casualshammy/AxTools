@@ -16,6 +16,8 @@ namespace AxTools.WoW.PluginSystem.API
 {
     public static class Utilities
     {
+        private static readonly Log2 log = new Log2("WoWAPI.Utilities");
+
         static Utilities()
         {
             WoWAntiKick.ActionEmulated += ptr =>
@@ -23,7 +25,7 @@ namespace AxTools.WoW.PluginSystem.API
                 AntiAfkActionEmulated?.Invoke(ptr);
             };
         }
-
+        
         /// <summary>
         /// Makes a record to the log. WoW process name, process id and plugin name are included
         /// </summary>
@@ -31,7 +33,7 @@ namespace AxTools.WoW.PluginSystem.API
         /// <param name="text"></param>
         public static void LogPrint(this IPlugin plugin, object text)
         {
-            Log.Info(string.Format("{0} [Plugin: {1}] {2}", WoWManager.WoWProcess, plugin.Name, text));
+            log.Info(string.Format("{0} [Plugin: {1}] {2}", WoWManager.WoWProcess, plugin.Name, text));
         }
 
         /// <summary>
@@ -142,7 +144,7 @@ namespace AxTools.WoW.PluginSystem.API
         }
 
         /// <summary>
-        /// DO NOT USE INSIDE <see cref="IPlugin.OnStop"/> or <see cref="IPlugin.OnStart"/> METHODS!
+        /// DO NOT USE INSIDE <see cref="IPlugin2.OnStop"/> or <see cref="IPlugin2.OnStart"/> METHODS!
         /// </summary>
         /// <param name="name"></param>
         public static void RemovePluginFromRunning(string name)
@@ -158,7 +160,7 @@ namespace AxTools.WoW.PluginSystem.API
         {
             return PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pluginName);
         }
-
+        
         /// <summary>
         /// 
         /// </summary>

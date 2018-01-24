@@ -8,7 +8,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_PathCreator
 {
-    public class PathCreator : IPlugin
+    public class PathCreator : IPlugin2
     {
 
         #region Info
@@ -25,6 +25,8 @@ namespace WoWPlugin_PathCreator
         public string WowIcon { get { return string.Empty; } }
 
         public bool ConfigAvailable { get { return false; } }
+
+        public string[] Dependencies => new string[] { "LibNavigator" };
 
         #endregion
 

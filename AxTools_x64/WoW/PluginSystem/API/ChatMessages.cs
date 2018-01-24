@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 
 namespace AxTools.WoW.PluginSystem.API
 {
-    public class ChatMessages
+    public static class ChatMessages
     {
 
         private static readonly object _chatLock = new object();
         private static readonly List<string> ChatMessagesLast = new List<string>(Enumerable.Repeat("", 60));
         public static event Action<ChatMsg> NewChatMessage;
+        private static readonly Log2 log = new Log2("ChatMessages");
 
         /// <summary>
         ///     Invokes <see cref="NewChatMessage"/> if new messages appears
@@ -50,7 +51,7 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 if (!Enum.IsDefined(typeof(WoWChatMsgType), int.Parse(match.Groups[1].Value)))
                 {
-                    Log.Error(string.Format("Type: {0}; Channel: {1}; Player Name: {2}; Sender GUID: {3}; Text: {4}",
+                    log.Error(string.Format("Type: {0}; Channel: {1}; Player Name: {2}; Sender GUID: {3}; Text: {4}",
                         int.Parse(match.Groups[1].Value), match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value));
                 }
                 return new ChatMsg
@@ -62,7 +63,7 @@ namespace AxTools.WoW.PluginSystem.API
                     Text = match.Groups[5].Value
                 };
             }
-            Log.Error("ParseChatMsg: unknown signature: " + s);
+            log.Error("ParseChatMsg: unknown signature: " + s);
             return new ChatMsg();
         }
 

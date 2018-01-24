@@ -7,9 +7,11 @@ using System.Windows.Forms;
 
 namespace AxTools.WoW.PluginSystem.API
 {
-    public class MoveMgr
+    public static class MoveMgr
     {
-        
+
+        private static readonly Log2 log = new Log2($"MoveMgr");
+
         public static void Move2D(WowPoint point, float precision, int timeoutInMs, bool continueMovingIfFailed, bool continueMovingIfSuccessful)
         {
             WoWManager.WoWProcess.WaitWhileWoWIsMinimized();
@@ -26,22 +28,22 @@ namespace AxTools.WoW.PluginSystem.API
                     if (me.Location.Distance2D(oldPos) > 1f)
                     {
                         oldPos = me.Location;
-                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] Okay, we're moving; current position: [{1}]; distance to dest: [{2}]", WoWManager.WoWProcess, me.Location, me.Location.Distance2D(point))); // todo: remove
+                        log.Info(string.Format("[Move2D] Okay, we're moving; current position: [{0}]; distance to dest: [{1}]", me.Location, me.Location.Distance2D(point))); // todo: remove
                     }
                     else if (!me.IsMoving)
                     {
                         NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
-                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                        log.Info(string.Format("[Move2D] W is released: {0}", point)); // todo: remove
                         NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.W, IntPtr.Zero);
-                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is pressed: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                        log.Info(string.Format("[Move2D] W is pressed: {0}", point)); // todo: remove
                     }
                 }
                 if ((!continueMovingIfFailed || timeoutInMs > 0) && (!continueMovingIfSuccessful || timeoutInMs <= 0))
                 {
                     NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
-                    Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released2: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                    log.Info(string.Format("[Move2D] W is released2: {0}", point)); // todo: remove
                 }
-                Log.Info(string.Format("{0} [GameFunctions.MoveTo] return; distance to dest: [{1}]", WoWManager.WoWProcess, me.Location.Distance2D(point))); // todo: remove
+                log.Info(string.Format("[Move2D] return; distance to dest: [{0}]", me.Location.Distance2D(point))); // todo: remove
             }
         }
         
@@ -66,14 +68,14 @@ namespace AxTools.WoW.PluginSystem.API
                         if (me.Location.Distance2D(oldPos) > 1f)
                         {
                             oldPos = me.Location;
-                            Log.Info(string.Format("{0} [GameFunctions.MoveTo] Okay, we're moving XY; current position: [{1}]; distance2D to dest: [{2}]", WoWManager.WoWProcess, me.Location, me.Location.Distance2D(point))); // todo: remove
+                            log.Info(string.Format("[Move3D] Okay, we're moving XY; current position: [{0}]; distance2D to dest: [{1}]", me.Location, me.Location.Distance2D(point))); // todo: remove
                         }
                         else if (!me.IsMoving)
                         {
                             NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
-                            Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                            log.Info(string.Format("[Move3D] W is released: {0}", point)); // todo: remove
                             NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.W, IntPtr.Zero);
-                            Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is pressed: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                            log.Info(string.Format("[Move3D] W is pressed: {0}", point)); // todo: remove
                         }
                     }
                     else
@@ -81,14 +83,14 @@ namespace AxTools.WoW.PluginSystem.API
                         if (zDiff > precisionZ || !continueMoving)
                         {
                             NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
-                            Log.Info(string.Format("{0} [GameFunctions.MoveTo] W is released3: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                            log.Info(string.Format("[Move3D] W is released3: {0}", point)); // todo: remove
                         }
                     }
                     if (me.IsFlying && me.IsMounted && zDiff > precisionZ)
                     {
                         if (zDiff < oldZDiff)
                         {
-                            Log.Info(string.Format("{0} [GameFunctions.MoveTo] Okay, we're moving Z; current position: [{1}]; distance to dest: [{2}]; zDiff: {3}; oldZDiff: {4}", WoWManager.WoWProcess, me.Location,
+                            log.Info(string.Format("[Move3D] Okay, we're moving Z; current position: [{0}]; distance to dest: [{1}]; zDiff: {2}; oldZDiff: {3}", me.Location,
                                 me.Location.Distance(point), zDiff, oldZDiff)); // todo: remove
                         }
                         else
@@ -97,13 +99,13 @@ namespace AxTools.WoW.PluginSystem.API
                             {
                                 NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.Space, IntPtr.Zero);
                                 NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.X, IntPtr.Zero);
-                                Log.Info(string.Format("{0} [GameFunctions.MoveTo] X is pressed: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                                log.Info(string.Format("[Move3D] X is pressed: {0}", point)); // todo: remove
                             }
                             else if (point.Z - me.Location.Z > precisionZ)
                             {
                                 NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.X, IntPtr.Zero);
                                 NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.Space, IntPtr.Zero);
-                                Log.Info(string.Format("{0} [GameFunctions.MoveTo] Space is pressed: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                                log.Info(string.Format("[Move3D] Space is pressed: {0}", point)); // todo: remove
                             }
                         }
                     }
@@ -111,11 +113,11 @@ namespace AxTools.WoW.PluginSystem.API
                     {
                         NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.X, IntPtr.Zero);
                         NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.Space, IntPtr.Zero);
-                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] X is released: {1}", WoWManager.WoWProcess, point)); // todo: remove
-                        Log.Info(string.Format("{0} [GameFunctions.MoveTo] Space is released: {1}", WoWManager.WoWProcess, point)); // todo: remove
+                        log.Info(string.Format("[Move3D] X is released: {0}", point)); // todo: remove
+                        log.Info(string.Format("[Move3D] Space is released: {0}", point)); // todo: remove
                     }
                 }
-                Log.Info(string.Format("{0} [GameFunctions.Move3D] Return, timeout: {1}, diffXY: {2}, diffZ: {3}", WoWManager.WoWProcess, timeoutInMs, me.Location.Distance2D(point), zDiff)); // todo: remove
+                log.Info(string.Format("[GameFunctions.Move3D] Return, timeout: {0}, diffXY: {1}, diffZ: {2}", timeoutInMs, me.Location.Distance2D(point), zDiff)); // todo: remove
             }
         }
         

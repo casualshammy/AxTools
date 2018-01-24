@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AxTools.Helpers;
+using AxTools.WoW.Helpers;
 using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Internals
@@ -15,7 +16,7 @@ namespace AxTools.WoW.Internals
     public class WowPlayer : WoWObjectBase
     {
         internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
-        private static readonly Log2 log = new Log2("WowPlayer");
+        private static readonly Log2 log = new Log2($"WowPlayer");
 
         internal WowPlayer(IntPtr pAddress, WoWGUID guid) : this(pAddress)
         {
@@ -108,6 +109,13 @@ namespace AxTools.WoW.Internals
                 return castingSpellID;
             }
         }
+        public string CastingSpellName
+        {
+            get
+            {
+                return Wowhead.GetSpellInfo((int)CastingSpellID).Name;
+            }
+        }
 
         private uint channelSpellID = uint.MaxValue;
         public uint ChannelSpellID
@@ -119,6 +127,13 @@ namespace AxTools.WoW.Internals
                     channelSpellID = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID);
                 }
                 return channelSpellID;
+            }
+        }
+        public string ChannelSpellName
+        {
+            get
+            {
+                return Wowhead.GetSpellInfo((int)ChannelSpellID).Name;
             }
         }
 
@@ -294,7 +309,7 @@ namespace AxTools.WoW.Internals
                     }
                     catch (Exception ex)
                     {
-                        Log.Error("[WowPlayer.SaveToDB] Error-0: " + ex.Message +
+                        log.Error("[SaveToDB] Error-0: " + ex.Message +
                             $"\r\nINSERT INTO players (guid, name) values ('{GUID}', '{name.Replace("'", "''")}')");
                     }
 
@@ -330,7 +345,7 @@ namespace AxTools.WoW.Internals
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[WowPlayer.GetNameFromDB] Error: " + ex.Message);
+                    log.Error("[GetNameFromDB] Error: " + ex.Message);
                     return null;
                 }
             }

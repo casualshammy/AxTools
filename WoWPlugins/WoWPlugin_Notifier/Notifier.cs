@@ -10,7 +10,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_Notifier
 {
-    public class Notifier : IPlugin
+    public class Notifier : IPlugin2
     {
 
         #region Info
@@ -25,6 +25,8 @@ namespace WoWPlugin_Notifier
         public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\Mobile-Sms-icon.png", Application.StartupPath, Name))); } }
 
         public bool ConfigAvailable { get { return true; } }
+
+        public string[] Dependencies => new string[] { "LibSMS" };
 
         #endregion
 
@@ -67,6 +69,10 @@ namespace WoWPlugin_Notifier
             if (settingsInstance.OnStaticPopup)
             {
                 (timerStaticPopup = this.CreateTimer(15000, TimerStaticPopup_OnElapsed)).Start();
+                foreach (var i in PopupFrames)
+                {
+                    this.LogPrint($"{i.Item1} --> {i.Item2}");
+                }
                 this.LogPrint("StaticPopup notification enabled");
             }
             if (settingsInstance.OnDisconnect)
@@ -104,8 +110,7 @@ namespace WoWPlugin_Notifier
 
         private void TimerStaticPopup_OnElapsed()
         {
-            Tuple<string, string>[] frameNames = { new Tuple<string, string>("General popup", "StaticPopup1") }; // , new Tuple<string, string>("PvP invite dialog", "PVPReadyDialogEnterBattleButton")
-            foreach (Tuple<string, string> tuple in frameNames)
+            foreach (Tuple<string, string> tuple in PopupFrames)
             {
                 WoWUIFrame frame = WoWUIFrame.GetFrameByName(tuple.Item2);
                 if (frame != null && frame.IsVisible)
@@ -165,6 +170,11 @@ namespace WoWPlugin_Notifier
         private System.Timers.Timer timerDisconnect;
         private DateTime lastTimeNotifiedAboutDisconnect = DateTime.MinValue;
         private bool running = false;
+        private static Tuple<string, string>[] PopupFrames = {
+            new Tuple<string, string>("General popup", "StaticPopup1"),
+            new Tuple<string, string>("PvE dungeon invite", "LFGDungeonReadyDialog"),
+            // new Tuple<string, string>("PvP invite dialog", "PVPReadyDialogEnterBattleButton")
+        };
 
     }
 }

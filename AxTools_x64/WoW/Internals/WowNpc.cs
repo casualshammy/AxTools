@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using AxTools.Helpers;
-using AxTools.WoW.Helpers;
 
 namespace AxTools.WoW.Internals
 {
@@ -18,9 +17,10 @@ namespace AxTools.WoW.Internals
             Address = pAddress;
         }
 
-        internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
+        internal static readonly Dictionary<uint, string> Names = new Dictionary<uint, string>();
 
         private static int _maxNameLength = 80;
+        private static Log2 log = new Log2("WowNpc");
 
         public IntPtr Address;
 
@@ -50,33 +50,30 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        // todo: make it without wowhead
         public override string Name
         {
             get
             {
-                if (!Names.TryGetValue(GUID, out string temp))
+                if (!Names.TryGetValue(EntryID, out string temp))
                 {
-                    temp = Wowhead.GetNpcInfo(EntryID).Name;
-                    Names.Add(GUID, temp);
-                    //try
-                    //{
-                    //    IntPtr nameBase = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.NpcNameBase);
-                    //    IntPtr nameAddress = WoWManager.WoWProcess.Memory.Read<IntPtr>(nameBase + WowBuildInfoX64.NpcNameOffset);
-                    //    byte[] nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
-                    //    while (!nameBytes.Contains((byte)0))
-                    //    {
-                    //        _maxNameLength += 1;
-                    //        Log.Info("Max length for NPC names is increased to " + _maxNameLength);
-                    //        nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
-                    //    }
-                    //    temp = Encoding.UTF8.GetString(nameBytes.TakeWhile(l => l != 0).ToArray());
-                    //    Names.Add(GUID, temp);
-                    //}
-                    //catch
-                    //{
-                    //    return string.Empty;
-                    //}
+                    try
+                    {
+                        IntPtr nameBase = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.NpcNameBase);
+                        IntPtr nameAddress = WoWManager.WoWProcess.Memory.Read<IntPtr>(nameBase + WowBuildInfoX64.NpcNameOffset);
+                        byte[] nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
+                        while (!nameBytes.Contains((byte)0))
+                        {
+                            _maxNameLength += 1;
+                            log.Info("Max length for NPC names is increased to " + _maxNameLength);
+                            nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
+                        }
+                        temp = Encoding.UTF8.GetString(nameBytes.TakeWhile(l => l != 0).ToArray());
+                        Names.Add(EntryID, temp);
+                    }
+                    catch
+                    {
+                        return string.Empty;
+                    }
                 }
                 return temp;
             }

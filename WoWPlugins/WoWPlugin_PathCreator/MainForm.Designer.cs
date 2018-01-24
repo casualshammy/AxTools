@@ -41,12 +41,16 @@
             this.textBoxWait = new System.Windows.Forms.TextBox();
             this.buttonPrecision2D = new System.Windows.Forms.Button();
             this.numericPrecision2D = new System.Windows.Forms.NumericUpDown();
+            this.textBoxWaitWhileLua = new System.Windows.Forms.TextBox();
+            this.buttonWaitWhile = new System.Windows.Forms.Button();
+            this.textBoxWaitWhileLag = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericPrecision2D)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonCreateWaypoint
             // 
-            this.buttonCreateWaypoint.Location = new System.Drawing.Point(176, 12);
+            this.buttonCreateWaypoint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCreateWaypoint.Location = new System.Drawing.Point(335, 12);
             this.buttonCreateWaypoint.Name = "buttonCreateWaypoint";
             this.buttonCreateWaypoint.Size = new System.Drawing.Size(96, 23);
             this.buttonCreateWaypoint.TabIndex = 0;
@@ -65,14 +69,16 @@
             // 
             // textBoxInteract
             // 
+            this.textBoxInteract.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxInteract.Location = new System.Drawing.Point(15, 42);
             this.textBoxInteract.Name = "textBoxInteract";
-            this.textBoxInteract.Size = new System.Drawing.Size(155, 20);
+            this.textBoxInteract.Size = new System.Drawing.Size(314, 20);
             this.textBoxInteract.TabIndex = 2;
             // 
             // buttonInteract
             // 
-            this.buttonInteract.Location = new System.Drawing.Point(176, 41);
+            this.buttonInteract.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonInteract.Location = new System.Drawing.Point(335, 40);
             this.buttonInteract.Name = "buttonInteract";
             this.buttonInteract.Size = new System.Drawing.Size(96, 22);
             this.buttonInteract.TabIndex = 3;
@@ -82,7 +88,8 @@
             // 
             // buttonDialogOption
             // 
-            this.buttonDialogOption.Location = new System.Drawing.Point(176, 69);
+            this.buttonDialogOption.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDialogOption.Location = new System.Drawing.Point(335, 68);
             this.buttonDialogOption.Name = "buttonDialogOption";
             this.buttonDialogOption.Size = new System.Drawing.Size(96, 22);
             this.buttonDialogOption.TabIndex = 5;
@@ -92,14 +99,16 @@
             // 
             // textBoxDialogOption
             // 
+            this.textBoxDialogOption.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxDialogOption.Location = new System.Drawing.Point(15, 70);
             this.textBoxDialogOption.Name = "textBoxDialogOption";
-            this.textBoxDialogOption.Size = new System.Drawing.Size(155, 20);
+            this.textBoxDialogOption.Size = new System.Drawing.Size(314, 20);
             this.textBoxDialogOption.TabIndex = 4;
             // 
             // buttonSendChat
             // 
-            this.buttonSendChat.Location = new System.Drawing.Point(176, 97);
+            this.buttonSendChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSendChat.Location = new System.Drawing.Point(335, 96);
             this.buttonSendChat.Name = "buttonSendChat";
             this.buttonSendChat.Size = new System.Drawing.Size(96, 22);
             this.buttonSendChat.TabIndex = 7;
@@ -109,14 +118,16 @@
             // 
             // textBoxSendChat
             // 
+            this.textBoxSendChat.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxSendChat.Location = new System.Drawing.Point(15, 98);
             this.textBoxSendChat.Name = "textBoxSendChat";
-            this.textBoxSendChat.Size = new System.Drawing.Size(155, 20);
+            this.textBoxSendChat.Size = new System.Drawing.Size(314, 20);
             this.textBoxSendChat.TabIndex = 6;
             // 
             // buttonStopProfile
             // 
-            this.buttonStopProfile.Location = new System.Drawing.Point(176, 191);
+            this.buttonStopProfile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonStopProfile.Location = new System.Drawing.Point(335, 344);
             this.buttonStopProfile.Name = "buttonStopProfile";
             this.buttonStopProfile.Size = new System.Drawing.Size(96, 22);
             this.buttonStopProfile.TabIndex = 9;
@@ -126,7 +137,8 @@
             // 
             // buttonWait
             // 
-            this.buttonWait.Location = new System.Drawing.Point(176, 125);
+            this.buttonWait.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonWait.Location = new System.Drawing.Point(335, 126);
             this.buttonWait.Name = "buttonWait";
             this.buttonWait.Size = new System.Drawing.Size(96, 22);
             this.buttonWait.TabIndex = 11;
@@ -136,14 +148,16 @@
             // 
             // textBoxWait
             // 
+            this.textBoxWait.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxWait.Location = new System.Drawing.Point(15, 126);
             this.textBoxWait.Name = "textBoxWait";
-            this.textBoxWait.Size = new System.Drawing.Size(155, 20);
+            this.textBoxWait.Size = new System.Drawing.Size(314, 20);
             this.textBoxWait.TabIndex = 10;
             // 
             // buttonPrecision2D
             // 
-            this.buttonPrecision2D.Location = new System.Drawing.Point(176, 153);
+            this.buttonPrecision2D.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPrecision2D.Location = new System.Drawing.Point(335, 154);
             this.buttonPrecision2D.Name = "buttonPrecision2D";
             this.buttonPrecision2D.Size = new System.Drawing.Size(96, 22);
             this.buttonPrecision2D.TabIndex = 12;
@@ -153,6 +167,7 @@
             // 
             // numericPrecision2D
             // 
+            this.numericPrecision2D.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericPrecision2D.Increment = new decimal(new int[] {
             1,
             0,
@@ -160,7 +175,7 @@
             65536});
             this.numericPrecision2D.Location = new System.Drawing.Point(15, 154);
             this.numericPrecision2D.Name = "numericPrecision2D";
-            this.numericPrecision2D.Size = new System.Drawing.Size(155, 20);
+            this.numericPrecision2D.Size = new System.Drawing.Size(314, 20);
             this.numericPrecision2D.TabIndex = 13;
             this.numericPrecision2D.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numericPrecision2D.Value = new decimal(new int[] {
@@ -169,11 +184,41 @@
             0,
             0});
             // 
+            // textBoxWaitWhileLua
+            // 
+            this.textBoxWaitWhileLua.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxWaitWhileLua.Location = new System.Drawing.Point(15, 180);
+            this.textBoxWaitWhileLua.Name = "textBoxWaitWhileLua";
+            this.textBoxWaitWhileLua.Size = new System.Drawing.Size(314, 20);
+            this.textBoxWaitWhileLua.TabIndex = 14;
+            // 
+            // buttonWaitWhile
+            // 
+            this.buttonWaitWhile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonWaitWhile.Location = new System.Drawing.Point(335, 180);
+            this.buttonWaitWhile.Name = "buttonWaitWhile";
+            this.buttonWaitWhile.Size = new System.Drawing.Size(96, 57);
+            this.buttonWaitWhile.TabIndex = 15;
+            this.buttonWaitWhile.Text = "WaitWhile\r\nLua expr\r\nInterval in msec";
+            this.buttonWaitWhile.UseVisualStyleBackColor = true;
+            this.buttonWaitWhile.Click += new System.EventHandler(this.buttonWaitWhile_Click);
+            // 
+            // textBoxWaitWhileLag
+            // 
+            this.textBoxWaitWhileLag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxWaitWhileLag.Location = new System.Drawing.Point(15, 217);
+            this.textBoxWaitWhileLag.Name = "textBoxWaitWhileLag";
+            this.textBoxWaitWhileLag.Size = new System.Drawing.Size(314, 20);
+            this.textBoxWaitWhileLag.TabIndex = 16;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 225);
+            this.ClientSize = new System.Drawing.Size(443, 378);
+            this.Controls.Add(this.textBoxWaitWhileLag);
+            this.Controls.Add(this.buttonWaitWhile);
+            this.Controls.Add(this.textBoxWaitWhileLua);
             this.Controls.Add(this.numericPrecision2D);
             this.Controls.Add(this.buttonPrecision2D);
             this.Controls.Add(this.buttonWait);
@@ -211,5 +256,8 @@
         private System.Windows.Forms.TextBox textBoxWait;
         private System.Windows.Forms.Button buttonPrecision2D;
         private System.Windows.Forms.NumericUpDown numericPrecision2D;
+        private System.Windows.Forms.TextBox textBoxWaitWhileLua;
+        private System.Windows.Forms.Button buttonWaitWhile;
+        private System.Windows.Forms.TextBox textBoxWaitWhileLag;
     }
 }

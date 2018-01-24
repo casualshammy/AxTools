@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Windows.Forms;
 using AxTools.Helpers;
-using AxTools.WinAPI;
-using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Internals
 {
@@ -15,6 +11,8 @@ namespace AxTools.WoW.Internals
     /// </summary>
     public class WowObject : WoWObjectBase
     {
+        private static readonly Log2 log = new Log2($"WowObject");
+
         internal WowObject(IntPtr pAddress)
         {
             Address = pAddress;
@@ -26,7 +24,7 @@ namespace AxTools.WoW.Internals
 
         private static int _maxNameLength = 80;
 
-        internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
+        internal static readonly Dictionary<uint, string> Names = new Dictionary<uint, string>();
 
         public readonly IntPtr Address;
         
@@ -53,7 +51,7 @@ namespace AxTools.WoW.Internals
             get
             {
                 string temp;
-                if (!Names.TryGetValue(GUID, out temp))
+                if (!Names.TryGetValue(EntryID, out temp))
                 {
                     try
                     {
@@ -63,11 +61,11 @@ namespace AxTools.WoW.Internals
                         while (!nameBytes.Contains((byte)0))
                         {
                             _maxNameLength += 1;
-                            Log.Info("Max length for object names is increased to " + _maxNameLength);
+                            log.Info("Max length for object names is increased to " + _maxNameLength);
                             nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
                         }
                         temp = Encoding.UTF8.GetString(nameBytes.TakeWhile(l => l != 0).ToArray());
-                        Names.Add(GUID, temp);
+                        Names.Add(EntryID, temp);
                     }
                     catch
                     {

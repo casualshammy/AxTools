@@ -249,6 +249,10 @@ namespace LibNavigator
                         {
                             IncreaseCounterAndDoAction();
                         }
+                        else if (!string.IsNullOrWhiteSpace(actionsList[counter].AdditionalData) && int.TryParse(actionsList[counter].AdditionalData, out int lag))
+                        {
+                            Thread.Sleep(lag);
+                        }
                         break;
                     case DoActionType.SendToChatWhile:
                         string[] p = actionsList[counter].Data.Split(new string[] { "##@##" }, StringSplitOptions.RemoveEmptyEntries);

@@ -19,6 +19,7 @@ namespace AxTools.Forms
     internal partial class WowRadarOptions : BorderedMetroForm
     {
         private readonly Settings settings = Settings.Instance;
+        private readonly Log2 log = new Log2($"WowRadarOptions - {WoWManager.WoWProcess.ProcessID}");
 
         internal WowRadarOptions()
         {
@@ -204,12 +205,12 @@ namespace AxTools.Forms
                 }
                 else
                 {
-                    Log.Info("WowRadarOptions.ComboboxNPCs_Click: local player is null");
+                    log.Info("ComboboxNPCs_Click: local player is null");
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(string.Format("{0}:{1} :: [WoWRadarOptions] Error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                log.Error(string.Format("Error: {0}", ex.Message));
             }
         }
 
@@ -233,7 +234,7 @@ namespace AxTools.Forms
             }
             catch (Exception ex)
             {
-                Log.Error(string.Format("{0}:{1} :: [WoWRadarOptions] Error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                log.Error(string.Format("Error: {0}", ex.Message));
             }
         }
 

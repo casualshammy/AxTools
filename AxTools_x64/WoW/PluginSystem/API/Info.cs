@@ -7,9 +7,11 @@ using System.Linq;
 
 namespace AxTools.WoW.PluginSystem.API
 {
-    public class Info
+    public static class Info
     {
-        
+
+        private static readonly Log2 log = new Log2("WoWAPI.Info");
+
         public static string ZoneText
         {
             get
@@ -80,7 +82,7 @@ namespace AxTools.WoW.PluginSystem.API
                 StackTrace stackTrace = new StackTrace();
                 StackFrame[] stackFrames = stackTrace.GetFrames();
                 string stack = stackFrames != null ? string.Join(" -->> ", stackFrames.Select(l => string.Format("{0}::{1}", l.GetFileName(), l.GetMethod().Name)).Reverse()) : "Stack is null";
-                Log.Error(string.Format("IsLoadingScreen: stack trace: {0}; error message: {1}", stack, ex.Message));
+                log.Error(string.Format("IsLoadingScreen: stack trace: {0}; error message: {1}", stack, ex.Message));
                 return false;
             }
         }

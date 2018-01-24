@@ -333,6 +333,8 @@ namespace WoWPlugin_Dumper
                 Log($"\tZoneID: {Info.ZoneID}");
                 Log($"\tZoneText: {Info.ZoneText}");
                 Log($"\tIsLooting: {Info.IsLooting}");
+                Log($"\tCastingSpellID: {lp.CastingSpellID}");
+                Log($"\tChannelSpellID: {lp.ChannelSpellID}");
             }
             catch (Exception ex)
             {

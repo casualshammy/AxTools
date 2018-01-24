@@ -29,7 +29,7 @@ namespace AxTools.WoW.Internals
 
         public override bool Equals(object obj)
         {
-            return obj != null && GetType() == obj.GetType() && Equals((WoWGUID)obj);
+            return obj is WoWGUID && Equals((WoWGUID)obj);
         }
 
         public bool Equals(WoWGUID other)

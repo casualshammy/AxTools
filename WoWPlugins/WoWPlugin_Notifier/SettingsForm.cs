@@ -15,6 +15,7 @@ namespace WoWPlugin_Notifier
             checkBoxBNetPM.Checked = settings.OnBNetWhisper;
             checkBoxStaticPopup.Checked = settings.OnStaticPopup;
             checkBoxDisconnect.Checked = settings.OnDisconnect;
+            checkBoxEnableWhenAfk.Checked = settings.EnableOnAfk;
         }
 
         private void checkBoxPM_CheckedChanged(object sender, EventArgs e)
@@ -37,5 +38,9 @@ namespace WoWPlugin_Notifier
             settings.OnDisconnect = checkBoxDisconnect.Checked;
         }
 
+        private void checkBoxEnableWhenAfk_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.EnableOnAfk = checkBoxEnableWhenAfk.Checked;
+        }
     }
 }

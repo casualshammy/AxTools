@@ -55,6 +55,7 @@ namespace AxTools.Forms
         private readonly List<WowPlayer> wowPlayers = new List<WowPlayer>();
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
         private readonly Dictionary<WoWGUID, Point> objectsPointsInRadarCoords = new Dictionary<WoWGUID, Point>();
+        private readonly Log2 log = new Log2($"WoWRadar - {WoWManager.WoWProcess.ProcessID}");
 
         private readonly Dictionary<WowPlayerClass, Color> wowClassColors = new Dictionary<WowPlayerClass, Color>
         {
@@ -120,7 +121,7 @@ namespace AxTools.Forms
                 BeginInvoke((MethodInvoker) (() => { labelHint.Visible = false; }));
             });
 
-            Log.Info(string.Format("{0} [Radar] Loaded", WoWManager.WoWProcess));
+            log.Info(string.Format("Loaded"));
         }
 
         private void Redraw()
@@ -140,7 +141,7 @@ namespace AxTools.Forms
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(string.Format("{0} [Radar] OOG drawing error: {1}", WoWManager.WoWProcess, ex.Message));
+                        log.Error(string.Format("OOG drawing error: {0}", ex.Message));
                     }
                     Thread.Sleep(100);
                     continue;
@@ -153,11 +154,11 @@ namespace AxTools.Forms
                 {
                     if (ex is Win32Exception win32ex && win32ex.NativeErrorCode == (int)Win32Error.ERROR_PARTIAL_COPY) // it's rarely happening, dunno why
                     {
-                        Log.Info(string.Format("{0} [Radar] Pulsing error: {1}", WoWManager.WoWProcess, ex.Message));
+                        log.Info(string.Format("Pulsing error: {0}", ex.Message));
                     }
                     else
                     {
-                        Log.Error(string.Format("{0} [Radar] Pulsing error: {1}", WoWManager.WoWProcess, ex.Message));
+                        log.Error(string.Format("Pulsing error: {0}", ex.Message));
                     }
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
@@ -177,7 +178,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(string.Format("{0} [Radar] Prepainting error: {1}", WoWManager.WoWProcess, ex.Message));
+                    log.Error(string.Format("Prepainting error: {0}", ex.Message));
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
                     Thread.Sleep(100);
@@ -189,7 +190,7 @@ namespace AxTools.Forms
                     Thread.Sleep(counter);
                 }
             }
-            Log.Info(string.Format("{0} [Radar] Redraw task is finishing...", WoWManager.WoWProcess));
+            log.Info("Redraw task is finishing...");
         }
 
         private void Redraw_Interact()
@@ -220,7 +221,7 @@ namespace AxTools.Forms
                 if (whatToInteract != null)
                 {
                     whatToInteract.Interact();
-                    Log.Info(string.Format("{0} [Radar] Interacted with {1} {2}", WoWManager.WoWProcess, whatToInteract.Name, whatToInteract.GUID));
+                    log.Info(string.Format("Interacted with {0} {1}", whatToInteract.Name, whatToInteract.GUID));
                 }
             }
         }
@@ -569,7 +570,7 @@ namespace AxTools.Forms
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(string.Format("{0}:{1} :: Radar: Drawing error: {2}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, ex.Message));
+                    log.Error(string.Format("Drawing error: {0}", ex.Message));
                 }
             }
             else
@@ -669,13 +670,13 @@ namespace AxTools.Forms
             isRunning = false;
             if (!thread.Join(5000))
             {
-                Log.Error(string.Format("{0} [Radar] Redraw task termination error, status: {1}", WoWManager.WoWProcess, thread.ThreadState));
+                log.Error(string.Format("Redraw task termination error, status: {0}", thread.ThreadState));
             }
             else
             {
-                Log.Info(string.Format("{0} [Radar] Redraw task has been successfully ended", WoWManager.WoWProcess));
+                log.Info("Redraw task has been successfully ended");
             }
-            Log.Info(string.Format("{0} [Radar] Closed", WoWManager.WoWProcess));
+            log.Info("Closed");
         }
 
         private void RadarLoad(object sender, EventArgs e)

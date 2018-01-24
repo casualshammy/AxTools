@@ -740,7 +740,6 @@ namespace AxTools.Forms
 
         private void StartWoWModule<T>() where T : Form, IWoWModule, new()
         {
-            //return;
             if (!WoWManager.Hooked)
             {
                 if (WoWManager.HookWoWAndNotifyUserIfError())

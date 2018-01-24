@@ -66,7 +66,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
             catch (Exception ex)
             {
-                Log.Error(string.Format("{0}:{1} :: [{2}] TODO error0: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
+                this.LogPrint($"TODO error0: {ex.Message}");
             }
             WoWPlayerMe localPlayer = null;
             if (searchingObjects.Length > 0)
@@ -77,7 +77,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 }
                 catch (Exception ex)
                 {
-                    Log.Error($"{WoWManager.WoWProcess} [{Name}] <ObjectMgr.Pulse> error: {ex.Message}");
+                    this.LogPrint($"<ObjectMgr.Pulse> error: {ex.Message}");
                     return;
                 }
                 // todo: delete try..catch
@@ -91,7 +91,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(string.Format("{0}:{1} :: [{2}] TODO error2: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, Name, ex.Message));
+                    this.LogPrint($"TODO error2: {ex.Message}");
                 }
             }
         }

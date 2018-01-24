@@ -14,6 +14,7 @@ namespace AxTools.WoW.Internals
         private string cachedName;
         private string cachedEditboxText;
         private WowProcess process;
+        private static readonly Log2 log = new Log2("WoWUIFrame");
 
         internal WoWUIFrame(IntPtr address)
         {
@@ -81,7 +82,7 @@ namespace AxTools.WoW.Internals
             WoWUIFrame frame = GetAllFrames(process).FirstOrDefault(l => l.GetName == name);
             if (stopwatch.ElapsedMilliseconds > 500)
             {
-                Log.Error(string.Format("WoWUIFrame.GetFrameByName exec time: {0}ms", stopwatch.ElapsedMilliseconds));
+                log.Error(string.Format("GetFrameByName exec time: {0}ms", stopwatch.ElapsedMilliseconds));
             }
             return frame;
         }
@@ -136,7 +137,7 @@ namespace AxTools.WoW.Internals
                 }
                 if (stopwatch.ElapsedMilliseconds > 500)
                 {
-                    Log.Error(string.Format("WoWUIFrame.GetAllFrames exec time: {0}ms", stopwatch.ElapsedMilliseconds));
+                    log.Error(string.Format("GetAllFrames exec time: {0}ms", stopwatch.ElapsedMilliseconds));
                 }
             }
         }
