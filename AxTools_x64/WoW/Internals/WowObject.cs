@@ -22,7 +22,7 @@ namespace AxTools.WoW.Internals
             Location = info.Location;
         }
 
-        private static int _maxNameLength = 80;
+        private static int _maxNameLength = 200;
 
         internal static readonly Dictionary<uint, string> Names = new Dictionary<uint, string>();
 
@@ -61,7 +61,7 @@ namespace AxTools.WoW.Internals
                         while (!nameBytes.Contains((byte)0))
                         {
                             _maxNameLength += 1;
-                            log.Info("Max length for object names is increased to " + _maxNameLength);
+                            log.Error("Max length for object names is increased to " + _maxNameLength);
                             nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
                         }
                         temp = Encoding.UTF8.GetString(nameBytes.TakeWhile(l => l != 0).ToArray());

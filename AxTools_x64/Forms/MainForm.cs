@@ -124,7 +124,7 @@ namespace AxTools.Forms
             }
             HotkeyManager.KeyPressed -= KeyboardHookKeyDown;
             HotkeyManager.RemoveKeys(typeof(PluginManagerEx).ToString());
-            log.Info("AxTools closed");
+            log.Info("Closed");
             SendLogToDeveloper();
         }
 
