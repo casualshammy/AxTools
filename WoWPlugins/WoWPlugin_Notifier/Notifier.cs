@@ -173,7 +173,7 @@ namespace WoWPlugin_Notifier
         private static Tuple<string, string>[] PopupFrames = {
             new Tuple<string, string>("General popup", "StaticPopup1"),
             new Tuple<string, string>("PvE dungeon invite", "LFGDungeonReadyDialog"),
-            // new Tuple<string, string>("PvP invite dialog", "PVPReadyDialogEnterBattleButton")
+            new Tuple<string, string>("PvP dungeon invite", "PVPReadyDialog")
         };
 
     }
