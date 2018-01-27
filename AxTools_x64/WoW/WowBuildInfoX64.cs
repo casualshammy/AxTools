@@ -155,7 +155,7 @@ namespace AxTools.WoW
 		internal const int NameCacheGuid = 0x20;
 		internal const int NameCacheName = 0x31;
 
-		internal const int PlayerInvSlots = 0x10F4;
+		internal const int PlayerInvSlots = 0x10F8; //  0x10F4
 
 		internal const int PlayerSpeedBase = 0x210;
 		internal const int PlayerSpeedOffset = 0xA4;

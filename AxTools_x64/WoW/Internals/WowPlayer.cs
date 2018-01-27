@@ -113,7 +113,7 @@ namespace AxTools.WoW.Internals
         {
             get
             {
-                return Wowhead.GetSpellInfo((int)CastingSpellID).Name;
+                return CastingSpellID != 0 ? Wowhead.GetSpellInfo((int)CastingSpellID).Name : null;
             }
         }
 
@@ -122,18 +122,14 @@ namespace AxTools.WoW.Internals
         {
             get
             {
-                if (channelSpellID == uint.MaxValue)
-                {
-                    channelSpellID = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID);
-                }
-                return channelSpellID;
+                return channelSpellID == uint.MaxValue ? (channelSpellID = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID)) : channelSpellID;
             }
         }
         public string ChannelSpellName
         {
             get
             {
-                return Wowhead.GetSpellInfo((int)ChannelSpellID).Name;
+                return ChannelSpellID != 0 ? Wowhead.GetSpellInfo((int)ChannelSpellID).Name : null;
             }
         }
 
