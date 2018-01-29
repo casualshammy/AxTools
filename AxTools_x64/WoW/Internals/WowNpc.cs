@@ -19,7 +19,7 @@ namespace AxTools.WoW.Internals
 
         internal static readonly Dictionary<uint, string> Names = new Dictionary<uint, string>();
 
-        private static int _maxNameLength = 120;
+        private static int _maxNameLength = 125;
         private static Log2 log = new Log2("WowNpc");
 
         public IntPtr Address;
