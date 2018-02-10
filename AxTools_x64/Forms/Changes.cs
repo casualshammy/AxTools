@@ -3,7 +3,7 @@ using System.IO;
 using AxTools.Helpers;
 using AxTools.Properties;
 using Components.Forms;
-using Settings = AxTools.Helpers.Settings;
+using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
 {
@@ -12,7 +12,7 @@ namespace AxTools.Forms
         internal Changes(string imagePath)
         {
             InitializeComponent();
-            StyleManager.Style = Settings.Instance.StyleColor;
+            StyleManager.Style = Settings2.Instance.StyleColor;
             Icon = Resources.AppIcon;
             using (Image objImage = Image.FromFile(imagePath))
             {
@@ -28,7 +28,7 @@ namespace AxTools.Forms
         /// </summary>
         internal static void ShowChangesIfNeeded()
         {
-            if (Globals.AppVersion.Major != Settings.Instance.LastUsedVersion.Major || Globals.AppVersion.Minor != Settings.Instance.LastUsedVersion.Minor)
+            if (Globals.AppVersion.Major != Settings2.Instance.LastUsedVersion.Major || Globals.AppVersion.Minor != Settings2.Instance.LastUsedVersion.Minor)
             {
                 string file = AppFolders.ResourcesDir + "\\changes.jpg";
                 if (File.Exists(file))
@@ -36,7 +36,7 @@ namespace AxTools.Forms
                     new Changes(file).ShowDialog();
                 }
             }
-            Settings.Instance.LastUsedVersion = Globals.AppVersion;
+            Settings2.Instance.LastUsedVersion = Globals.AppVersion;
         }
 
     }

@@ -12,7 +12,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace Talon_s_Vengeance_Farmer
 {
-    public class TalonsVengeanceFarmer : IPlugin
+    public class TalonsVengeanceFarmer : IPlugin2
     {
 
         #region Info
@@ -39,6 +39,8 @@ namespace Talon_s_Vengeance_Farmer
             get { return false; }
         }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Events
@@ -61,7 +63,7 @@ namespace Talon_s_Vengeance_Farmer
 
         private void OnPulse()
         {
-            WoWPlayerMe me = ObjMgr.Pulse(null, players);
+            WoWPlayerMe me = game.GetGameObjects(null, players);
             if (me != null)
             {
                 WowPlayer targetPlayer = players.FirstOrDefault(l => l.GUID == me.TargetGUID);
@@ -73,6 +75,11 @@ namespace Talon_s_Vengeance_Farmer
                     }
                 }
             }
+        }
+
+        public void OnStart(GameInterface game)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

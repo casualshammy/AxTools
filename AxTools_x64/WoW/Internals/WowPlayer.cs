@@ -17,17 +17,15 @@ namespace AxTools.WoW.Internals
     {
         internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
         private static readonly Log2 log = new Log2($"WowPlayer");
+        private float? rotation;
+        private float? pitch;
 
-        internal WowPlayer(IntPtr pAddress, WoWGUID guid) : this(pAddress)
-        {
-            MGUID = guid;
-        }
-
-        internal WowPlayer(IntPtr pAddress)
+        internal WowPlayer(IntPtr pAddress, WoWGUID guid, WowProcess wow) : base(wow)
         {
             Address = pAddress;
-            IntPtr desc = WoWManager.WoWProcess.Memory.Read<IntPtr>(pAddress + WowBuildInfoX64.UnitDescriptors);
-            WowPlayerInfo info = WoWManager.WoWProcess.Memory.Read<WowPlayerInfo>(desc);
+            MGUID = guid;
+            IntPtr desc = memory.Read<IntPtr>(pAddress + WowBuildInfoX64.UnitDescriptors);
+            WowPlayerInfo info = memory.Read<WowPlayerInfo>(desc);
             TargetGUID = info.TargetGUID;
             Health = info.Health;
             HealthMax = info.HealthMax;
@@ -36,24 +34,25 @@ namespace AxTools.WoW.Internals
             InCombat = ((info.UnitFlags >> 19) & 1) == 1; // Script_UnitAffectingCombat
             Class = info.Class;
             IsMounted = info.MountDisplayID != 0;
-            switch (info.Race)
+            Race = info.Race;
+            switch (Race)
             {
-                case 0x2: // Orc
-                case 0x5: // Undead
-                case 0x6: // Tauren
-                case 0x74: // Troll
-                case 0x64A: // BloodElf
-                case 0x89C: // Goblin
-                case 0x962: // Pandaren
+                case Race.Orc:
+                case Race.Undead:
+                case Race.Tauren:
+                case Race.Troll:
+                case Race.BloodElf:
+                case Race.Goblin:
+                case Race.PandarenHorde:
                     Faction = Faction.Horde;
                     break;
-                case 0x1: // Human
-                case 0x3: // Dwarf
-                case 0x4: // NightElf
-                case 0x73: // Gnome
-                case 0x65d: // Draenei
-                case 0x89b: // Worgen
-                case 2401: // Pandaren
+                case Race.Human:
+                case Race.Dwarf:
+                case Race.NightElf:
+                case Race.Gnome:
+                case Race.Draenei:
+                case Race.Worgen:
+                case Race.PandarenAlliance:
                     Faction = Faction.Alliance;
                     break;
                 default:
@@ -61,13 +60,15 @@ namespace AxTools.WoW.Internals
                     break;
             }
         }
-
+        
         public readonly IntPtr Address;
 
         /// <summary>
         ///     The GUID of the object this unit is targeting.
         /// </summary>
         public readonly WoWGUID TargetGUID;
+
+        public readonly Race Race;
 
         public readonly Faction Faction;
 
@@ -104,7 +105,7 @@ namespace AxTools.WoW.Internals
             {
                 if (castingSpellID == uint.MaxValue)
                 {
-                    castingSpellID = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitCastingID);
+                    castingSpellID = memory.Read<uint>(Address + WowBuildInfoX64.UnitCastingID);
                 }
                 return castingSpellID;
             }
@@ -122,7 +123,7 @@ namespace AxTools.WoW.Internals
         {
             get
             {
-                return channelSpellID == uint.MaxValue ? (channelSpellID = WoWManager.WoWProcess.Memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID)) : channelSpellID;
+                return channelSpellID == uint.MaxValue ? (channelSpellID = memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID)) : channelSpellID;
             }
         }
         public string ChannelSpellName
@@ -140,7 +141,7 @@ namespace AxTools.WoW.Internals
             {
                 if (MGUID == WoWGUID.Zero)
                 {
-                    MGUID = WoWManager.WoWProcess.Memory.Read<WoWGUID>(Address + WowBuildInfoX64.ObjectGUID);
+                    MGUID = memory.Read<WoWGUID>(Address + WowBuildInfoX64.ObjectGUID);
                 }
                 return MGUID;
             }
@@ -150,7 +151,7 @@ namespace AxTools.WoW.Internals
         {
             unsafe
             {
-                return WoWManager.WoWProcess.Memory.ReadBytes(Address + WowBuildInfoX64.ObjectGUID, sizeof(WoWGUID));
+                return memory.ReadBytes(Address + WowBuildInfoX64.ObjectGUID, sizeof(WoWGUID));
             }
         }
 
@@ -188,17 +189,17 @@ namespace AxTools.WoW.Internals
             try
             {
                 string name = null;
-                IntPtr firstEntry = WoWManager.WoWProcess.Memory.Read<IntPtr>(WoWManager.WoWProcess.Memory.ImageBase + WowBuildInfoX64.NameCacheBase + WowBuildInfoX64.NameCacheNext);
+                IntPtr firstEntry = memory.Read<IntPtr>(memory.ImageBase + WowBuildInfoX64.NameCacheBase + WowBuildInfoX64.NameCacheNext);
                 IntPtr nextEntry = firstEntry;
                 while (true)
                 {
-                    if (WoWManager.WoWProcess.Memory.Read<WoWGUID>(nextEntry + WowBuildInfoX64.NameCacheGuid) == GUID)
+                    if (memory.Read<WoWGUID>(nextEntry + WowBuildInfoX64.NameCacheGuid) == GUID)
                     {
-                        byte[] nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nextEntry + WowBuildInfoX64.NameCacheName, 48).TakeWhile(l => l != 0).ToArray();
+                        byte[] nameBytes = memory.ReadBytes(nextEntry + WowBuildInfoX64.NameCacheName, 48).TakeWhile(l => l != 0).ToArray();
                         name = Encoding.UTF8.GetString(nameBytes);
                         break;
                     }
-                    nextEntry = WoWManager.WoWProcess.Memory.Read<IntPtr>(nextEntry);
+                    nextEntry = memory.Read<IntPtr>(nextEntry);
                     if (nextEntry == firstEntry) break;
                 }
                 return name;
@@ -214,9 +215,8 @@ namespace AxTools.WoW.Internals
             try
             {
                 ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
-                // ReSharper disable ImpureMethodCallOnReadonlyValueField
-                return Lua.GetValue("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
-                // ReSharper restore ImpureMethodCallOnReadonlyValueField
+                info = info ?? new GameInterface(wowProcess);
+                return info.LuaGetValue("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
             }
             catch
             {
@@ -231,8 +231,8 @@ namespace AxTools.WoW.Internals
                 int isFlyingPointer = 0x210;
                 int isFlyingOffset = 0x58;
                 uint isFlyingMask = 0x1000000;
-                IntPtr p1 = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + isFlyingPointer);
-                uint p2 = WoWManager.WoWProcess.Memory.Read<uint>(p1 + isFlyingOffset);
+                IntPtr p1 = memory.Read<IntPtr>(Address + isFlyingPointer);
+                uint p2 = memory.Read<uint>(p1 + isFlyingOffset);
                 return (p2 & isFlyingMask) != 0;
             }
         }
@@ -245,46 +245,45 @@ namespace AxTools.WoW.Internals
             {
                 if (!mLocationRead)
                 {
-                    mLocation = WoWManager.WoWProcess.Memory.Read<WowPoint>(Address + WowBuildInfoX64.UnitLocation);
+                    mLocation = memory.Read<WowPoint>(Address + WowBuildInfoX64.UnitLocation);
                     mLocationRead = true;
                 }
                 return mLocation;
             }
         }
 
-        private List<WoWAura> auras;
-        public List<WoWAura> Auras
+
+        public float Rotation
         {
             get
             {
-                if (auras == null)
+                if (!rotation.HasValue)
                 {
-                    int auraStructSize;
-                    unsafe
-                    {
-                        auraStructSize = sizeof (WoWAura);
-                    }
-                    auras = new List<WoWAura>();
-                    IntPtr table = Address + WowBuildInfoX64.AuraTable1;
-                    int auraCount = WoWManager.WoWProcess.Memory.Read<int>(Address + WowBuildInfoX64.AuraCount1);
-                    if (auraCount == -1)
-                    {
-                        table = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.AuraTable2);
-                        auraCount = WoWManager.WoWProcess.Memory.Read<int>(Address + WowBuildInfoX64.AuraCount2);
-                    }
-                    for (int i = 0; i < auraCount; i++)
-                    {
-                        WoWAura rawAura = WoWManager.WoWProcess.Memory.Read<WoWAura>(table + i * auraStructSize);
-                        if (rawAura.SpellId != 0)
-                        {
-                            WoWAura aura = new WoWAura(rawAura.OwnerGUID, rawAura.SpellId, rawAura.Stack, (uint) (rawAura.TimeLeftInMs - Environment.TickCount));
-                            auras.Add(aura);
-                        }
-                    }
+                    rotation = memory.Read<float>(Address + WowBuildInfoX64.UnitRotation);
                 }
-                return auras;
+                return rotation.Value;
             }
         }
+
+        public float Pitch
+        {
+            get
+            {
+                if (!pitch.HasValue)
+                {
+                    pitch = memory.Read<float>(Address + WowBuildInfoX64.UnitPitch);
+                }
+                return pitch.Value;
+            }
+            set
+            {
+                memory.Write(Address + WowBuildInfoX64.UnitPitch, value);
+                pitch = null;
+            }
+        }
+
+        private List<WoWAura> auras;
+        public List<WoWAura> Auras => auras ?? (auras = WoWAura.GetAurasForMemoryAddress(memory, Address));
 
         private static object dbLock = new object();
         private static SQLiteConnection dbConnection;
@@ -346,7 +345,7 @@ namespace AxTools.WoW.Internals
                 }
             }
         }
-
+        
     }
 
     public enum Faction
@@ -354,6 +353,24 @@ namespace AxTools.WoW.Internals
         Unknown,
         Alliance,
         Horde
+    }
+
+    public enum Race : uint
+    {
+        Human = 0x1,
+        Orc = 0x2,
+        Dwarf = 0x3,
+        NightElf = 0x4,
+        Undead = 0x5,
+        Tauren = 0x6,
+        Gnome = 0x73,
+        Troll = 0x74,
+        BloodElf = 0x64A,
+        Draenei = 0x65d,
+        Worgen = 0x89B,
+        Goblin = 0x89C,
+        PandarenAlliance = 0x961,
+        PandarenHorde = 0x962,
     }
 
 }

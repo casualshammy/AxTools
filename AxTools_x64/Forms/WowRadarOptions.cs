@@ -16,21 +16,27 @@ using Components.Forms;
 
 namespace AxTools.Forms
 {
-    internal partial class WowRadarOptions : BorderedMetroForm
+    internal partial class WowRadarOptions : BorderedMetroForm, IWoWModule
     {
-        private readonly Settings settings = Settings.Instance;
-        private readonly Log2 log = new Log2($"WowRadarOptions - {WoWManager.WoWProcess.ProcessID}");
+        private readonly WoWRadarSettings settings = WoWRadarSettings.Instance;
+        private readonly Log2 log;
+        private readonly WowProcess wowProcess;
 
-        internal WowRadarOptions()
+        public int ProcessID { get; set; }
+
+        internal WowRadarOptions(WowProcess wow)
         {
             InitializeComponent();
+            wowProcess = wow;
+            ProcessID = wow.ProcessID;
+            log = new Log2($"WowRadarOptions - {wowProcess.ProcessID}");
             ShowInTaskbar = false;
-            StyleManager.Style = Settings.Instance.StyleColor;
-            metroCheckBoxShowPlayersClasses.Checked = settings.WoWRadarShowPlayersClasses;
-            metroCheckBoxShowNpcsNames.Checked = settings.WoWRadarShowNPCsNames;
-            metroCheckBoxShowObjectsNames.Checked = settings.WoWRadarShowObjectsNames;
-            checkBoxPlayerArrowOnTop.Checked = settings.WoWRadarShowLocalPlayerRotationArrowOnTop;
-            textboxAlarmSound.Text = settings.WoWRadarAlarmSoundFile;
+            StyleManager.Style = Settings2.Instance.StyleColor;
+            metroCheckBoxShowPlayersClasses.Checked = settings.ShowPlayersClasses;
+            metroCheckBoxShowNpcsNames.Checked = settings.ShowNPCsNames;
+            metroCheckBoxShowObjectsNames.Checked = settings.ShowObjectsNames;
+            checkBoxPlayerArrowOnTop.Checked = settings.ShowLocalPlayerRotationArrowOnTop;
+            textboxAlarmSound.Text = settings.AlarmSoundFile;
             textboxAlarmSound.TextChanged += TextboxAlarmSound_TextChanged;
             metroTabControl1.SelectedIndex = 0;
             BeginInvoke((MethodInvoker) delegate
@@ -46,8 +52,8 @@ namespace AxTools.Forms
                 OnActivated(EventArgs.Empty);
             });
 
-            oListView.SetObjects(settings.WoWRadarList);
-            oListView.CheckObjects(settings.WoWRadarList.Where(l => l.Enabled));
+            oListView.SetObjects(settings.List);
+            oListView.CheckObjects(settings.List.Where(l => l.Enabled));
             oListView.BooleanCheckStateGetter = OListView_BooleanCheckStateGetter;
             oListView.BooleanCheckStatePutter = OListView_BooleanCheckStatePutter;
             oListView.KeyUp += OListView_OnKeyUp;
@@ -76,7 +82,7 @@ namespace AxTools.Forms
 
         private void TextboxAlarmSound_TextChanged(object sender, EventArgs e)
         {
-            settings.WoWRadarAlarmSoundFile = textboxAlarmSound.Text;
+            settings.AlarmSoundFile = textboxAlarmSound.Text;
         }
 
         private bool OListView_BooleanCheckStateGetter(object rowObject)
@@ -89,10 +95,10 @@ namespace AxTools.Forms
         {
             if (rowObject is RadarObject radarObject)
             {
-                int indexOf = settings.WoWRadarList.IndexOf(radarObject);
-                settings.WoWRadarList.RemoveAt(indexOf);
+                int indexOf = settings.List.IndexOf(radarObject);
+                settings.List.RemoveAt(indexOf);
                 radarObject.Enabled = value;
-                settings.WoWRadarList.Insert(indexOf, radarObject);
+                settings.List.Insert(indexOf, radarObject);
             }
             return value;
         }
@@ -103,7 +109,7 @@ namespace AxTools.Forms
             {
                 if (oListView.SelectedObject is RadarObject radarObject)
                 {
-                    settings.WoWRadarList.Remove(radarObject);
+                    settings.List.Remove(radarObject);
                     oListView.RemoveObject(radarObject);
                 }
             }
@@ -111,24 +117,24 @@ namespace AxTools.Forms
 
         private void MetroCheckBoxShowPlayersClassesCheckedChanged(object sender, EventArgs e)
         {
-            settings.WoWRadarShowPlayersClasses = metroCheckBoxShowPlayersClasses.Checked;
+            settings.ShowPlayersClasses = metroCheckBoxShowPlayersClasses.Checked;
         }
 
         private void MetroCheckBoxShowNpcsNamesCheckedChanged(object sender, EventArgs e)
         {
-            settings.WoWRadarShowNPCsNames = metroCheckBoxShowNpcsNames.Checked;
+            settings.ShowNPCsNames = metroCheckBoxShowNpcsNames.Checked;
         }
 
         private void MetroCheckBoxShowObjectsNamesCheckedChanged(object sender, EventArgs e)
         {
-            settings.WoWRadarShowObjectsNames = metroCheckBoxShowObjectsNames.Checked;
+            settings.ShowObjectsNames = metroCheckBoxShowObjectsNames.Checked;
         }
 
         private void ButtonAddUnknown_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(metroTextBoxAddNew.Text))
             {
-                if (!settings.WoWRadarList.Any(l => l.Name == metroTextBoxAddNew.Text))
+                if (!settings.List.Any(l => l.Name == metroTextBoxAddNew.Text))
                 {
                     AddRadarObject(new RadarObject(true, metroTextBoxAddNew.Text, true, true));
                 }
@@ -147,7 +153,7 @@ namespace AxTools.Forms
         {
             if (comboboxNPCs.SelectedIndex != -1 && comboboxNPCs.SelectedItem != null && !string.IsNullOrWhiteSpace(comboboxNPCs.SelectedItem.ToString()))
             {
-                if (!settings.WoWRadarList.Any(l => l.Name == comboboxNPCs.SelectedItem.ToString()))
+                if (!settings.List.Any(l => l.Name == comboboxNPCs.SelectedItem.ToString()))
                 {
                     AddRadarObject(new RadarObject(true, comboboxNPCs.SelectedItem.ToString(), false, true));
                 }
@@ -168,7 +174,7 @@ namespace AxTools.Forms
         {
             if (comboboxObjects.SelectedIndex != -1 && comboboxObjects.SelectedItem != null && !string.IsNullOrWhiteSpace(comboboxObjects.SelectedItem.ToString()))
             {
-                if (!settings.WoWRadarList.Any(l => l.Name == comboboxObjects.SelectedItem.ToString()))
+                if (!settings.List.Any(l => l.Name == comboboxObjects.SelectedItem.ToString()))
                 {
                     AddRadarObject(new RadarObject(true, comboboxObjects.SelectedItem.ToString(), true, true));
                 }
@@ -191,7 +197,7 @@ namespace AxTools.Forms
             try
             {
                 List<WowNpc> npcList = new List<WowNpc>();
-                WoWPlayerMe localPlayer = ObjectMgr.Pulse(null, null, npcList);
+                WoWPlayerMe localPlayer = ObjectMgr.Pulse(wowProcess, null, null, npcList);
                 if (localPlayer != null)
                 {
                     List<WowNpc> npcsWithUniqueNames = npcList.DistinctBy(i => i.Name).ToList();
@@ -220,7 +226,7 @@ namespace AxTools.Forms
             try
             {
                 List<WowObject> objectList = new List<WowObject>();
-                WoWPlayerMe localPlayer = ObjectMgr.Pulse(objectList);
+                WoWPlayerMe localPlayer = ObjectMgr.Pulse(wowProcess, objectList);
                 List<WowObject> objectsWithUniqueNames = objectList.DistinctBy(i => i.Name).ToList();
                 objectsWithUniqueNames.Sort(delegate(WowObject wo1, WowObject wo2)
                 {
@@ -248,12 +254,12 @@ namespace AxTools.Forms
                 {
                     string rawText = File.ReadAllText(openFileDialog.FileName, Encoding.UTF8);
                     ObservableCollection<RadarObject> o = JsonConvert.DeserializeObject<ObservableCollection<RadarObject>>(rawText);
-                    settings.WoWRadarList.Clear();
+                    settings.List.Clear();
                     foreach (RadarObject radarObject in o)
                     {
-                        settings.WoWRadarList.Add(radarObject);
+                        settings.List.Add(radarObject);
                     }
-                    oListView.SetObjects(settings.WoWRadarList);
+                    oListView.SetObjects(settings.List);
                 }
                 oListView.Items[oListView.Items.Count - 1].EnsureVisible();
             }
@@ -277,7 +283,7 @@ namespace AxTools.Forms
                             jsonWriter.Formatting = Formatting.Indented;
                             jsonWriter.IndentChar = ' ';
                             jsonWriter.Indentation = 4;
-                            js.Serialize(jsonWriter, settings.WoWRadarList);
+                            js.Serialize(jsonWriter, settings.List);
                         }
                     }
                     string json = sb.ToString();
@@ -288,24 +294,25 @@ namespace AxTools.Forms
 
         private void AddRadarObject(RadarObject radarObject)
         {
-            settings.WoWRadarList.Add(radarObject);
+            settings.List.Add(radarObject);
             oListView.AddObject(radarObject);
             oListView.Items[oListView.Items.Count - 1].EnsureVisible();
         }
 
         private void RefreshRadarObject(RadarObject radarObject, string name, bool interact, bool soundAlarm)
         {
-            int indexOf = settings.WoWRadarList.IndexOf(radarObject);
-            settings.WoWRadarList.RemoveAt(indexOf);
+            int indexOf = settings.List.IndexOf(radarObject);
+            settings.List.RemoveAt(indexOf);
             radarObject.Name = name;
             radarObject.Interact = interact;
             radarObject.SoundAlarm = soundAlarm;
-            settings.WoWRadarList.Insert(indexOf, radarObject);
+            settings.List.Insert(indexOf, radarObject);
         }
 
         private void CheckBoxPlayerArrowOnTop_CheckedChanged(object sender, EventArgs e)
         {
-            settings.WoWRadarShowLocalPlayerRotationArrowOnTop = checkBoxPlayerArrowOnTop.Checked;
+            settings.ShowLocalPlayerRotationArrowOnTop = checkBoxPlayerArrowOnTop.Checked;
         }
+
     }
 }

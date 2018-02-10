@@ -10,9 +10,9 @@ namespace AxTools.Forms
         public AppSettingsWoWBinds()
         {
             InitializeComponent();
-           StyleManager.Style = Settings.Instance.StyleColor;
-            textBoxTarget.Text = new KeysConverter().ConvertToInvariantString(Settings.Instance.WoWTargetMouseover);
-            textBoxInteract.Text = new KeysConverter().ConvertToInvariantString(Settings.Instance.WoWInteractMouseover);
+           StyleManager.Style = Settings2.Instance.StyleColor;
+            textBoxTarget.Text = new KeysConverter().ConvertToInvariantString(Settings2.Instance.WoWTargetMouseover);
+            textBoxInteract.Text = new KeysConverter().ConvertToInvariantString(Settings2.Instance.WoWInteractMouseover);
             textBoxTarget.KeyDown += textBoxTarget_KeyDown;
             textBoxInteract.KeyDown += textBoxInteract_KeyDown;
             buttonTarget.Click += buttonTarget_Click;
@@ -35,7 +35,7 @@ namespace AxTools.Forms
             {
                 Keys keys = LetOnlyOneKeyModifier(e);
                 textBoxInteract.Text = new KeysConverter().ConvertToInvariantString(keys);
-                Settings.Instance.WoWInteractMouseover = keys;
+                Settings2.Instance.WoWInteractMouseover = keys;
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
@@ -47,7 +47,7 @@ namespace AxTools.Forms
             {
                 Keys keys = LetOnlyOneKeyModifier(e);
                 textBoxTarget.Text = new KeysConverter().ConvertToInvariantString(keys);
-                Settings.Instance.WoWTargetMouseover = keys;
+                Settings2.Instance.WoWTargetMouseover = keys;
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }

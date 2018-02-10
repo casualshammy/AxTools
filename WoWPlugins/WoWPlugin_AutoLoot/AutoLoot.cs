@@ -10,7 +10,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace AutoLoot
 {
-    internal class AutoLoot : IPlugin
+    internal class AutoLoot : IPlugin2
     {
 
         #region Info
@@ -28,10 +28,10 @@ namespace AutoLoot
         {
             get { return trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\AutoLoot\\inv_misc_coin_01.jpg")); }
         }
-
-        public string WowIcon { get { return "Interface\\\\Icons\\\\inv_misc_coin_01"; } }
-
+        
         public bool ConfigAvailable { get { return false; } }
+
+        public string[] Dependencies => null;
 
         #endregion
 
@@ -42,15 +42,16 @@ namespace AutoLoot
 
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
-            (timer = this.CreateTimer(250, OnPulse)).Start();
+            this.game = game;
+            (timer = this.CreateTimer(250,game, OnPulse)).Start();
         }
 
         public void OnPulse()
         {
-            WoWPlayerMe localPlayer = ObjMgr.Pulse(null, null, wowNpcs);
-            if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && !Info.IsLooting)
+            WoWPlayerMe localPlayer = game.GetGameObjects(null, null, wowNpcs);
+            if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && !game.IsLooting)
             {
                 WowNpc[] npcs = wowNpcs.Where(l => l.Lootable && l.Health == 0 && l.Location.Distance2D(localPlayer.Location) < 40).ToArray();
                 if (npcs.Any())
@@ -58,7 +59,7 @@ namespace AutoLoot
                     WowNpc npc = npcs.Aggregate((current, next) => next.Location.Distance2D(localPlayer.Location) < current.Location.Distance2D(localPlayer.Location) ? next : current);
                     if (npc.Location.Distance2D(localPlayer.Location) > 3f)
                     {
-                        MoveMgr.Move2D(npc.Location, 3f, 1000, true, false);
+                        game.Move2D(npc.Location, 3f, 1000, true, false);
                     }
                     else
                     {
@@ -77,6 +78,7 @@ namespace AutoLoot
 
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
         private SafeTimer timer;
+        private GameInterface game;
 
     }
 }

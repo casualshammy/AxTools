@@ -27,7 +27,7 @@ namespace AxTools.WoW.Internals
         internal readonly uint Level;
 
         [FieldOffset(WowBuildInfoX64.UnitRace)]
-        internal readonly uint Race;
+        internal readonly Race Race;
 
         [FieldOffset(WowBuildInfoX64.UnitFlags)]
         internal readonly uint UnitFlags;

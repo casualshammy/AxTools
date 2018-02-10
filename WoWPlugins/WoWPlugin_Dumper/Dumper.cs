@@ -7,7 +7,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_Dumper
 {
-    public class Dumper : IPlugin
+    public class Dumper : IPlugin2
     {
 
         #region Info
@@ -22,7 +22,9 @@ namespace WoWPlugin_Dumper
         public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\icon.png", Application.StartupPath, Name))); } }
 
         public bool ConfigAvailable { get { return false; } }
-        
+
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Methods
@@ -32,11 +34,12 @@ namespace WoWPlugin_Dumper
             
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
-            (form = new DumperForm(this)).Show();
+            this.game = game;
+            (form = new DumperForm(this, game)).Show();
             form.Activate();
-            (timer = this.CreateTimer(100, OnElapsed)).Start();
+            (timer = this.CreateTimer(100, game, OnElapsed)).Start();
         }
 
         public void OnStop()
@@ -54,6 +57,7 @@ namespace WoWPlugin_Dumper
 
         private SafeTimer timer;
         private DumperForm form;
+        private GameInterface game;
 
     }
 }

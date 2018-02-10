@@ -12,7 +12,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_GarrisonFishingHelper
 {
-    public class GarrisonFishingHelper : IPlugin
+    public class GarrisonFishingHelper : IPlugin2
     {
 
         #region Properties
@@ -45,6 +45,8 @@ namespace WoWPlugin_GarrisonFishingHelper
             get { return false; }
         }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Methods
@@ -54,9 +56,10 @@ namespace WoWPlugin_GarrisonFishingHelper
             
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
-            (timer = this.CreateTimer(1000, OnElapsed)).Start();
+            this.game = game;
+            (timer = this.CreateTimer(1000, game, OnElapsed)).Start();
         }
 
         public void OnStop()
@@ -66,7 +69,7 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         private void OnElapsed()
         {
-            WoWPlayerMe me = ObjMgr.Pulse(null, null, wowNpcs);
+            WoWPlayerMe me = game.GetGameObjects(null, null, wowNpcs);
             if (me != null)
             {
                 if (!me.InCombat)
@@ -74,7 +77,7 @@ namespace WoWPlugin_GarrisonFishingHelper
                     WowNpc lootableCorpse = wowNpcs.FirstOrDefault(k => (k.Name == "Обитатель пещер Зашедшей Луны" || k.Name == "Обитатель ледяных пещер") && k.Lootable && !k.Alive);
                     if (lootableCorpse != null)
                     {
-                        if (!Info.IsLooting)
+                        if (!game.IsLooting)
                         {
                             lootableCorpse.Interact();
                             this.LogPrint("Looting --> " + lootableCorpse.GUID);
@@ -87,7 +90,7 @@ namespace WoWPlugin_GarrisonFishingHelper
                             Utilities.RemovePluginFromRunning("Fishing");
                             this.LogPrint("Fishing is paused");
                             Thread.Sleep(rnd.Next(2000, 3000));
-                            GameFunctions.UseItemByID(116158);
+                            game.UseItemByID(116158);
                             this.LogPrint("Green fish is throwed");
                             Thread.Sleep(rnd.Next(1000, 2000));
                             _isworking = true;
@@ -96,7 +99,7 @@ namespace WoWPlugin_GarrisonFishingHelper
                     else
                     {
                         Thread.Sleep(rnd.Next(500, 1500));
-                        Utilities.AddPluginToRunning("Fishing");
+                        Utilities.AddPluginToRunning(this, "Fishing");
                         if (_isworking)
                         {
                             this.LogPrint("Fishing is resumed");
@@ -116,7 +119,7 @@ namespace WoWPlugin_GarrisonFishingHelper
                         }
                         else
                         {
-                            //GameFunctions.CastSpellByName(killingSpellName);
+                            //game.CastSpellByName(killingSpellName);
                             CombatRotation();
                             this.LogPrint("Killing enemy --> " + enemy.GUID);
                         }
@@ -127,17 +130,17 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         private void CombatRotation()
         {
-            if (Lua.GetValue("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
+            if (game.LuaGetValue("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
             {
-                GameFunctions.CastSpellByName("Огненный шок");
+                game.CastSpellByName("Огненный шок");
             }
-            else if (float.Parse(Lua.GetValue("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
+            else if (float.Parse(game.LuaGetValue("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
             {
-                GameFunctions.CastSpellByName("Выброс лавы");
+                game.CastSpellByName("Выброс лавы");
             }
             else
             {
-                GameFunctions.CastSpellByName("Молния");
+                game.CastSpellByName("Молния");
             }
         }
 
@@ -150,8 +153,9 @@ namespace WoWPlugin_GarrisonFishingHelper
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
         private readonly Random rnd = new Random();
         private static bool _isworking;
+        private GameInterface game;
 
         #endregion
-    
+
     }
 }

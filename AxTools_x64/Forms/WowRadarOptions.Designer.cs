@@ -370,7 +370,7 @@ namespace AxTools.Forms
             this.tabPageAppearance.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabPageAppearance.StyleManager = null;
             this.tabPageAppearance.TabIndex = 1;
-            this.tabPageAppearance.Text = "                  Settings               ";
+            this.tabPageAppearance.Text = "                  Settings2               ";
             this.tabPageAppearance.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tabPageAppearance.VerticalScrollbar = false;
             this.tabPageAppearance.VerticalScrollbarBarColor = true;

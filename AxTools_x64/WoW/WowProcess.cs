@@ -4,12 +4,12 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using AxTools.Helpers;
-using AxTools.Helpers.MemoryManagement;
+using FMemory;
 using AxTools.WinAPI;
 
 namespace AxTools.WoW
 {
-    internal class WowProcess : IDisposable
+    public class WowProcess : IDisposable
     {
         private static readonly Log2 log = new Log2("WowProcess");
 
@@ -19,19 +19,16 @@ namespace AxTools.WoW
             mProcess = Process.GetProcessById(processID);
             mProcessName = Process.ProcessName;
             isValidBuild = -1;
-            woWAntiKick = new WoWAntiKick(this);
         }
 
         public void Dispose()
         {
-            woWAntiKick.Dispose();
             if (Memory != null) Memory.Dispose();
             Process.Dispose();
         }
 
         internal int ProcessID;
         internal MemoryManager Memory;
-        private readonly WoWAntiKick woWAntiKick;
         private string mProcessName;
         private readonly Process mProcess;
         private readonly object isValidBuildLocker = new object();

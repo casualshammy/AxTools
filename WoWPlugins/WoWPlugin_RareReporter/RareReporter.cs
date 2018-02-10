@@ -9,7 +9,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_RareReporter
 {
-    public class RareReporter : IPlugin
+    public class RareReporter : IPlugin2
     {
         #region Info
 
@@ -26,6 +26,8 @@ namespace WoWPlugin_RareReporter
 
         public bool ConfigAvailable { get { return false; } }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Methods
@@ -35,8 +37,9 @@ namespace WoWPlugin_RareReporter
             
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
+            this.game = game;
             dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
             if (libSMS == null)
             {
@@ -52,7 +55,7 @@ namespace WoWPlugin_RareReporter
             }
             this.LogPrint("LibSMS is OK");
             lastTimeSmsSent = DateTime.MinValue;
-            (timer = this.CreateTimer(50, TimerElapsed)).Start();
+            (timer = this.CreateTimer(50, game, TimerElapsed)).Start();
         }
 
         public void OnStop()
@@ -62,7 +65,7 @@ namespace WoWPlugin_RareReporter
 
         public void TimerElapsed()
         {
-            WoWPlayerMe me = ObjMgr.Pulse(objects, null, npcs);
+            WoWPlayerMe me = game.GetGameObjects(objects, null, npcs);
             if (me != null)
             {
                 WowNpc npc = npcs.FirstOrDefault(l => l.Alive && POI.Contains(l.Name));
@@ -97,6 +100,7 @@ namespace WoWPlugin_RareReporter
         private readonly List<WowObject> objects = new List<WowObject>();
         private readonly string[] POI = new[] { "Скалгулот" };
         private const int timeout = 120;
+        private GameInterface game;
 
         #endregion
 

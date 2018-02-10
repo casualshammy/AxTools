@@ -11,7 +11,7 @@ using AxTools.Properties;
 using MetroFramework;
 using MetroFramework.Components;
 using MetroFramework.Controls;
-using Settings = AxTools.Helpers.Settings;
+using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
 {
@@ -49,9 +49,6 @@ namespace AxTools.Forms
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.woWRadarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.blackMarketTrackerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.stopActivePluginorPresshotkeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.launchWoWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.woWPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl = new MetroFramework.Controls.MetroTabControl();
@@ -62,6 +59,7 @@ namespace AxTools.Forms
             this.linkBackup = new MetroFramework.Controls.MetroLink();
             this.cmbboxAccSelect = new Components.MetroComboboxExt(this.components);
             this.tabPageModules = new MetroFramework.Controls.MetroTabPage();
+            this.metroTileExt1 = new Components.MetroTileExt(this.components);
             this.tileBMTracker = new Components.MetroTileExt(this.components);
             this.tileRadar = new Components.MetroTileExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
@@ -93,6 +91,7 @@ namespace AxTools.Forms
             this.toolStripMenuItemOpenWoWLogsFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.contextMenuStripMain.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -117,11 +116,9 @@ namespace AxTools.Forms
             this.woWRadarToolStripMenuItem,
             this.blackMarketTrackerToolStripMenuItem,
             this.toolStripSeparator2,
-            this.stopActivePluginorPresshotkeyToolStripMenuItem,
-            this.toolStripSeparator1,
             this.launchWoWToolStripMenuItem});
             this.contextMenuStripMain.Name = "contextMenuStripMain";
-            this.contextMenuStripMain.Size = new System.Drawing.Size(182, 104);
+            this.contextMenuStripMain.Size = new System.Drawing.Size(182, 98);
             // 
             // woWRadarToolStripMenuItem
             // 
@@ -138,25 +135,6 @@ namespace AxTools.Forms
             this.blackMarketTrackerToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.blackMarketTrackerToolStripMenuItem.Text = "Black Market tracker";
             this.blackMarketTrackerToolStripMenuItem.Click += new System.EventHandler(this.BlackMarketTrackerToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
-            // 
-            // stopActivePluginorPresshotkeyToolStripMenuItem
-            // 
-            this.stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = false;
-            this.stopActivePluginorPresshotkeyToolStripMenuItem.Name = "stopActivePluginorPresshotkeyToolStripMenuItem";
-            this.stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = "";
-            this.stopActivePluginorPresshotkeyToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.stopActivePluginorPresshotkeyToolStripMenuItem.Text = "Stop active plug-in";
-            this.stopActivePluginorPresshotkeyToolStripMenuItem.Click += new System.EventHandler(this.StopActivePluginorPresshotkeyToolStripMenuItem_Click_1);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
             // 
             // launchWoWToolStripMenuItem
             // 
@@ -185,7 +163,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 3;
+            this.tabControl.SelectedIndex = 2;
             this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 59;
@@ -311,6 +289,7 @@ namespace AxTools.Forms
             // 
             // tabPageModules
             // 
+            this.tabPageModules.Controls.Add(this.metroTileExt1);
             this.tabPageModules.Controls.Add(this.tileBMTracker);
             this.tabPageModules.Controls.Add(this.tileRadar);
             this.tabPageModules.CustomBackground = false;
@@ -330,6 +309,23 @@ namespace AxTools.Forms
             this.tabPageModules.VerticalScrollbarBarColor = true;
             this.tabPageModules.VerticalScrollbarHighlightOnWheel = false;
             this.tabPageModules.VerticalScrollbarSize = 10;
+            // 
+            // metroTileExt1
+            // 
+            this.metroTileExt1.ActiveControl = null;
+            this.metroTileExt1.CenterText = "Lua";
+            this.metroTileExt1.CustomBackground = false;
+            this.metroTileExt1.CustomForeColor = false;
+            this.metroTileExt1.Location = new System.Drawing.Point(359, 15);
+            this.metroTileExt1.Name = "metroTileExt1";
+            this.metroTileExt1.PaintTileCount = true;
+            this.metroTileExt1.Size = new System.Drawing.Size(59, 80);
+            this.metroTileExt1.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroTileExt1.StyleManager = null;
+            this.metroTileExt1.TabIndex = 9;
+            this.metroTileExt1.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroTileExt1.TileCount = 0;
+            this.metroTileExt1.Click += new System.EventHandler(this.metroTileExt1_Click);
             // 
             // tileBMTracker
             // 
@@ -357,7 +353,7 @@ namespace AxTools.Forms
             this.tileRadar.Location = new System.Drawing.Point(3, 15);
             this.tileRadar.Name = "tileRadar";
             this.tileRadar.PaintTileCount = true;
-            this.tileRadar.Size = new System.Drawing.Size(415, 80);
+            this.tileRadar.Size = new System.Drawing.Size(350, 80);
             this.tileRadar.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileRadar.StyleManager = null;
             this.tileRadar.TabIndex = 7;
@@ -464,7 +460,7 @@ namespace AxTools.Forms
             this.olvColumn2.AspectName = "ConfigAvailable";
             this.olvColumn2.MaximumWidth = 55;
             this.olvColumn2.MinimumWidth = 55;
-            this.olvColumn2.Text = "Settings";
+            this.olvColumn2.Text = "Settings2";
             this.olvColumn2.Width = 55;
             // 
             // buttonStartStopPlugin
@@ -476,7 +472,7 @@ namespace AxTools.Forms
             this.buttonStartStopPlugin.Style = MetroFramework.MetroColorStyle.Blue;
             this.buttonStartStopPlugin.StyleManager = null;
             this.buttonStartStopPlugin.TabIndex = 74;
-            this.buttonStartStopPlugin.Text = "Start [Insert]";
+            this.buttonStartStopPlugin.Text = "Hotkeys";
             this.buttonStartStopPlugin.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroToolTip1.SetToolTip(this.buttonStartStopPlugin, "Start/stop plugin");
             this.buttonStartStopPlugin.Click += new System.EventHandler(this.ButtonStartStopPlugin_Click);
@@ -814,6 +810,11 @@ namespace AxTools.Forms
             this.linkTitle.UseStyleColors = true;
             this.linkTitle.Click += new System.EventHandler(this.LinkTitle_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(469, 234);
@@ -861,14 +862,11 @@ namespace AxTools.Forms
         private ContextMenuStrip contextMenuStripMain;
         private ToolStripMenuItem woWRadarToolStripMenuItem;
         private ToolStripMenuItem woWPluginsToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem launchWoWToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator2;
         private MetroCheckBox checkBoxStartVenriloWithWow;
         private MetroCheckBox checkBoxStartRaidcallWithWow;
         private MetroCheckBox checkBoxStartTeamspeak3WithWow;
         private MetroCheckBox checkBoxStartMumbleWithWow;
-        private ToolStripMenuItem stopActivePluginorPresshotkeyToolStripMenuItem;
         private ToolStripMenuItem blackMarketTrackerToolStripMenuItem;
         private MetroLink linkBackup;
         private MetroLink linkClickerSettings;
@@ -895,6 +893,8 @@ namespace AxTools.Forms
         private ToolStripMenuItem toolStripMenuItem1;
         private MetroTileExt tileExtDiscord;
         private MetroTileExt tileExtTwitch;
+        private MetroTileExt metroTileExt1;
+        private ToolStripSeparator toolStripSeparator2;
     }
 }
 

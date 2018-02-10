@@ -22,7 +22,7 @@ using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using AxTools.WoW.PluginSystem.API;
 using Components.Forms;
-using Settings = AxTools.Helpers.Settings;
+using Settings2 = AxTools.Helpers.Settings2;
 using KeyboardWatcher;
 
 namespace AxTools.Forms
@@ -31,7 +31,7 @@ namespace AxTools.Forms
     {
         internal static MainForm Instance;
         private bool isClosing;
-        private readonly Settings settings = Settings.Instance;
+        private readonly Settings2 settings = Settings2.Instance;
         internal static event Action ClosingEx;
         internal static int UIThreadID;
         internal static MultiLock ShutdownLock = new MultiLock();
@@ -41,7 +41,7 @@ namespace AxTools.Forms
         {
             log.Info("Initializing main window...");
             InitializeComponent();
-            StyleManager.Style = Settings.Instance.StyleColor;
+            StyleManager.Style = Settings2.Instance.StyleColor;
             Icon = Resources.AppIcon;
             Closing += MainFormClosing;
             notifyIconMain.Icon = Resources.AppIcon;
@@ -57,7 +57,7 @@ namespace AxTools.Forms
 
             UIThreadID = Thread.CurrentThread.ManagedThreadId;
             PostInvoke(AfterInitializing);
-            log.Info(string.Format("Registered for: {0}", Settings.Instance.UserID));
+            log.Info(string.Format("Registered for: {0}", Settings2.Instance.UserID));
             log.Info("Initial loading is finished");
         }
 
@@ -93,7 +93,7 @@ namespace AxTools.Forms
                 i.Close();
             }
             //
-            settings.WoWPluginHotkeyChanged -= WoWPluginHotkeyChanged;
+            settings.PluginHotkeysChanged -= WoWPluginHotkeyChanged;
             PluginManagerEx.PluginStateChanged -= PluginManagerOnPluginStateChanged;
             Pinger.StatChanged -= Pinger_DataChanged;
             Pinger.IsEnabledChanged -= PingerOnStateChanged;
@@ -111,11 +111,6 @@ namespace AxTools.Forms
             //stop watching process trace
             WoWProcessManager.StopWatcher();
             log.Info("WoW processes trace watching is stopped");
-            // release hook 
-            if (WoWManager.Hooked)
-            {
-                WoWManager.Unhook();
-            }
             foreach (WowProcess i in WoWProcessManager.List)
             {
                 string name = i.ProcessName;
@@ -178,8 +173,7 @@ namespace AxTools.Forms
             checkBoxStartTeamspeak3WithWow.Checked = settings.TS3StartWithWoW;
             checkBoxStartRaidcallWithWow.Checked = settings.RaidcallStartWithWoW;
             checkBoxStartMumbleWithWow.Checked = settings.MumbleStartWithWoW;
-            buttonStartStopPlugin.Text = string.Format("{0} [{1}]", "Start", settings.WoWPluginHotkey);
-            settings.WoWPluginHotkeyChanged += WoWPluginHotkeyChanged;
+            settings.PluginHotkeysChanged += WoWPluginHotkeyChanged;
             Pinger.StatChanged += Pinger_DataChanged;
             Pinger.IsEnabledChanged += PingerOnStateChanged;
             AddonsBackup.IsRunningChanged += AddonsBackup_IsRunningChanged;
@@ -193,9 +187,13 @@ namespace AxTools.Forms
             Pinger.Enabled = settings.PingerServerID != 0;              // set pinger
             startupOverlay.Label = "Starting WoW process manager...";
             WoWProcessManager.StartWatcher();                           // start WoW spy
+            startupOverlay.Label = "Setting tray animation...";
             TrayIconAnimation.Initialize(notifyIconMain);               // initialize tray animation
             HotkeyManager.KeyPressed += KeyboardHookKeyDown;            // start keyboard listener
-            HotkeyManager.AddKeys(typeof(PluginManagerEx).ToString(), settings.WoWPluginHotkey);
+            foreach (var i in settings.PluginHotkeys)
+            {
+                HotkeyManager.AddKeys("Plugin_" + i.Key, i.Value);
+            }
             startupOverlay.Label = "Waiting for plug-ins...";
             await pluginsLoader;                                        // waiting for plugins to be loaded
             startupOverlay.Close();                                     // close startup overkay
@@ -255,11 +253,11 @@ namespace AxTools.Forms
                 blackMarketTrackerToolStripMenuItem,
                 toolStripSeparator2
             });
-            IPlugin[] sortedPlugins = PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray();
-            IPlugin[] topUsedPlugins = sortedPlugins.Take(3).ToArray();
-            foreach (IPlugin i in topUsedPlugins)
+            IPlugin2[] sortedPlugins = PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray();
+            IPlugin2[] topUsedPlugins = sortedPlugins.Take(3).ToArray();
+            foreach (IPlugin2 i in topUsedPlugins)
             {
-                IPlugin plugin = i;
+                IPlugin2 plugin = i;
                 ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) {Tag = plugin};
                 toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
                 {
@@ -274,9 +272,9 @@ namespace AxTools.Forms
             {
                 if (contextMenuStripMain.Items.Add("Other plugins") is ToolStripMenuItem customPlugins)
                 {
-                    foreach (IPlugin i in sortedPlugins.Where(i => !topUsedPlugins.Select(l => l.Name).Contains(i.Name)))
+                    foreach (IPlugin2 i in sortedPlugins.Where(i => !topUsedPlugins.Select(l => l.Name).Contains(i.Name)))
                     {
-                        IPlugin plugin = i;
+                        IPlugin2 plugin = i;
                         try
                         {
                             ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
@@ -309,23 +307,8 @@ namespace AxTools.Forms
                     StartWoW(account);
                 }));
             }
-            ToolStripMenuItem unloadInject = new ToolStripMenuItem("Detach from current WoW process", null, delegate
-            {
-                contextMenuStripMain.Hide();
-                if (WoWManager.Hooked)
-                {
-                    WoWManager.Unhook();
-                }
-                else
-                {
-                    Notify.TrayPopup("Warning", "AxTools isn't attached to any WoW process", NotifyUserType.Warn, true);
-                }
-            }, "Detach from current WoW process");
             contextMenuStripMain.Items.AddRange(new ToolStripItem[]
             {
-                stopActivePluginorPresshotkeyToolStripMenuItem,
-                toolStripSeparator1,
-                unloadInject,
                 new ToolStripSeparator(),
                 launchWoW,
                 new ToolStripSeparator(),
@@ -335,27 +318,33 @@ namespace AxTools.Forms
 
         private void UpdateTrayContextMenu()
         {
-            foreach (IPlugin plugin in PluginManagerEx.LoadedPlugins)
+            foreach (IPlugin2 plugin in PluginManagerEx.LoadedPlugins)
             {
-                if (contextMenuStripMain.Items.GetAllToolStripItems().FirstOrDefault(l => (IPlugin)l.Tag != null && ((IPlugin)l.Tag).Name == plugin.Name) is ToolStripMenuItem item)
+                if (contextMenuStripMain.Items.GetAllToolStripItems().FirstOrDefault(l => (IPlugin2)l.Tag != null && ((IPlugin2)l.Tag).Name == plugin.Name) is ToolStripMenuItem item)
                 {
-                    item.ShortcutKeyDisplayString = olvPlugins.CheckedObjects.Cast<IPlugin>().Any(i => i.Name == item.Text) ? settings.WoWPluginHotkey.ToString() : null;
-                    item.Enabled = !PluginManagerEx.RunningPlugins.Any();
+                    item.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name].ToString() + "]" : null;
+                    item.Enabled = !PluginManagerEx.RunningPlugins.Any(l => l.Name == item.Text);
                 }
-                stopActivePluginorPresshotkeyToolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.Any();
-                stopActivePluginorPresshotkeyToolStripMenuItem.ShortcutKeyDisplayString = settings.WoWPluginHotkey.ToString();
             }
             
         }
 
         private void WoWRadarToolStripMenuItemClick(object sender, EventArgs e)
         {
-            StartWoWModule<WowRadar>();
+            WowProcess process = WoWManager.GetProcess();
+            if (process != null)
+            {
+                new WowRadar(process).Show();
+            }
         }
 
         private void BlackMarketTrackerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            StartWoWModule<BlackMarket>();
+            WowProcess process = WoWManager.GetProcess();
+            if (process != null)
+            {
+                new BlackMarket(process).Show();
+            }
         }
 
         private void ExitAxToolsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -367,23 +356,17 @@ namespace AxTools.Forms
             }
         }
 
-        private void StopActivePluginorPresshotkeyToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            if (PluginManagerEx.RunningPlugins.Any())
-            {
-                SwitchWoWPlugin();
-            }
-        }
+        //private void StopActivePluginorPresshotkeyToolStripMenuItem_Click_1(object sender, EventArgs e)
+        //{
+        //    if (PluginManagerEx.RunningPlugins.Any())
+        //    {
+        //        SwitchWoWPlugin();
+        //    }
+        //}
 
-        private void TrayContextMenu_PluginClicked(IPlugin plugin)
+        private void TrayContextMenu_PluginClicked(IPlugin2 plugin)
         {
-            olvPlugins.UncheckAll();
             olvPlugins.CheckObject(plugin);
-            if (!WoWManager.Hooked && WoWProcessManager.List.Count != 1)
-            {
-                Activate();
-            }
-            SwitchWoWPlugin();
         }
 
         #endregion
@@ -737,82 +720,67 @@ namespace AxTools.Forms
         #endregion
 
         #region Tab: Modules
-
-        private void StartWoWModule<T>() where T : Form, IWoWModule, new()
-        {
-            if (!WoWManager.Hooked)
-            {
-                if (WoWManager.HookWoWAndNotifyUserIfError())
-                {
-                    new T().Show();
-                }
-            }
-            else
-            {
-                T form = Utils.FindForm<T>();
-                if (form != null)
-                {
-                    form.Activate();
-                }
-                else
-                {
-                    new T().Show();
-                }
-            }
-        }
-
+        
         private void TileRadar_Click(object sender, EventArgs e)
         {
-            StartWoWModule<WowRadar>();
+            WowProcess process = WoWManager.GetProcess();
+            if (process != null)
+            {
+                new WowRadar(process).Show();
+            }
         }
 
         private void TileBMTracker_Click(object sender, EventArgs e)
         {
-            StartWoWModule<BlackMarket>();
+            WowProcess process = WoWManager.GetProcess();
+            if (process != null)
+            {
+                new BlackMarket(process).Show();
+            }
         }
 
         #endregion
 
         #region Tab: Plug-ins
 
-        private void SwitchWoWPlugin()
-        {
-            buttonStartStopPlugin.Enabled = false;
-            if (!PluginManagerEx.RunningPlugins.Any())
-            {
-                if (olvPlugins.CheckedObjects.Count != 0)
-                {
-                    if (WoWManager.Hooked || WoWManager.HookWoWAndNotifyUserIfError())
-                    {
-                        if (Info.IsInGame)
-                        {
-                            PluginManagerEx.StartPlugins();
-                        }
-                        else
-                        {
-                            Notify.SmartNotify("Plugin error", "Player isn't logged in", NotifyUserType.Error, true);
-                        }
-                    }
-                }
-                else
-                {
-                    Notify.SmartNotify("Plugin error", "You didn't select valid plugin", NotifyUserType.Error, true);
-                }
-            }
-            else
-            {
-                try
-                {
-                    PluginManagerEx.StopPlugins();
-                }
-                catch
-                {
-                    log.Error("Plugin task failed to cancel");
-                    Notify.SmartNotify("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
-                }
-            }
-            buttonStartStopPlugin.Enabled = true;
-        }
+        //private void SwitchWoWPlugin()
+        //{
+        //    buttonStartStopPlugin.Enabled = false;
+        //    if (!PluginManagerEx.RunningPlugins.Any())
+        //    {
+        //        if (olvPlugins.CheckedObjects.Count != 0)
+        //        {
+        //            if (WoWManager.Hooked || WoWManager.HookWoWAndNotifyUserIfError())
+        //            {
+        //                if (Info.IsInGame)
+        //                {
+        //                    PluginManagerEx.StartPlugins();
+        //                }
+        //                else
+        //                {
+        //                    Notify.SmartNotify("Plugin error", "Player isn't logged in", NotifyUserType.Error, true);
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            Notify.SmartNotify("Plugin error", "You didn't select valid plugin", NotifyUserType.Error, true);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        try
+        //        {
+        //            PluginManagerEx.StopPlugins();
+        //        }
+        //        catch
+        //        {
+        //            log.Error("Plugin task failed to cancel");
+        //            Notify.SmartNotify("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
+        //        }
+        //    }
+        //    buttonStartStopPlugin.Enabled = true;
+        //}
 
         private void SetupOLVPlugins()
         {
@@ -820,24 +788,26 @@ namespace AxTools.Forms
             olvColumn2.AspectToStringConverter = value => (bool)value ? checkMark : "";
             olvColumn2.TextAlign = HorizontalAlignment.Center;
             olvPlugins.SetObjects(PluginManagerEx.GetSortedByUsageListOfPlugins());
-            foreach (IPlugin i in PluginManagerEx.EnabledPlugins)
-            {
-                olvPlugins.CheckObject(i);
-            }
-            PluginManagerEx.PluginDisabled += plugin => olvPlugins.BuildList();
-            PluginManagerEx.PluginEnabled += plugin => olvPlugins.BuildList();
             olvPlugins.BooleanCheckStateGetter = OlvPlugins_BooleanCheckStateGetter;
             olvPlugins.BooleanCheckStatePutter = OlvPlugins_BooleanCheckStatePutter;
         }
 
         private void ButtonStartStopPlugin_Click(object sender, EventArgs e)
         {
-            SwitchWoWPlugin();
+            MainForm_PluginHotkeys form = Utils.FindForm<MainForm_PluginHotkeys>();
+            if (form == null)
+            {
+                new MainForm_PluginHotkeys(PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray()).Show();
+            }
+            else
+            {
+                form.Activate();
+            }
         }
 
         private void ObjectListView1_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
         {
-            if (e.Model is IPlugin plugin)
+            if (e.Model is IPlugin2 plugin)
             {
                 e.IsBalloon = true;
                 e.StandardIcon = ToolTipControl.StandardIcons.InfoLarge;
@@ -848,7 +818,7 @@ namespace AxTools.Forms
 
         private void OlvPluginsOnDoubleClick(object sender, EventArgs eventArgs)
         {
-            if (olvPlugins.SelectedObject is IPlugin plugin)
+            if (olvPlugins.SelectedObject is IPlugin2 plugin)
             {
                 if (PluginManagerEx.RunningPlugins.All(l => l.Name != plugin.Name))
                 {
@@ -870,38 +840,60 @@ namespace AxTools.Forms
 
         private bool OlvPlugins_BooleanCheckStateGetter(object rowObject)
         {
-            if (rowObject is IPlugin plugin)
+            if (rowObject is IPlugin2 plugin)
             {
-                return PluginManagerEx.EnabledPlugins.Contains(plugin) || PluginManagerEx.RunningPlugins.Contains(plugin);
+                return PluginManagerEx.RunningPlugins.Contains(plugin);
             }
             return false;
         }
 
         private bool OlvPlugins_BooleanCheckStatePutter(object rowObject, bool newValue)
         {
-            if (rowObject is IPlugin plugin)
+            olvPlugins.Enabled = false;
+            try
             {
-                PluginManagerEx.SetPluginEnabled(plugin, newValue);
-                if (newValue)
+                if (rowObject is IPlugin2 plugin)
                 {
-                    if (PluginManagerEx.RunningPlugins.Any())
+                    if (newValue)
                     {
-                        PluginManagerEx.AddPluginToRunning(plugin);
+                        WowProcess process = WoWManager.GetProcess();
+                        if (process != null)
+                        {
+                            if (!PluginManagerEx.RunningPlugins.Contains(plugin))
+                            {
+                                PluginManagerEx.AddPluginToRunning(plugin, process);
+                            }
+                            else
+                            {
+                                this.TaskDialog("Plugin Manager", "You can't launch multiple instances of the same plug-in", NotifyUserType.Error);
+                                return !newValue;
+                            }
+                        }
                     }
-                    settings.EnabledPluginsList.Add(plugin.Name);
-                }
-                else
-                {
-                    if (PluginManagerEx.RunningPlugins.Any())
+                    else
                     {
-                        PluginManagerEx.RemovePluginFromRunning(plugin);
+                        WowProcess process = WoWManager.GetProcess();
+                        if (process != null)
+                        {
+                            if (PluginManagerEx.RunningPlugins.Contains(plugin))
+                            {
+                                PluginManagerEx.RemovePluginFromRunning(plugin);
+                            }
+                            else
+                            {
+                                return !newValue;
+                            }
+                        }
                     }
-                    settings.EnabledPluginsList.Remove(plugin.Name);
+                    PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plugins running: " + PluginManagerEx.RunningPlugins.Count; });
+                    BeginInvoke(new MethodInvoker(UpdateTrayContextMenu));
                 }
-                PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plugins enabled: " + PluginManagerEx.EnabledPlugins.Count; });
-                BeginInvoke(new MethodInvoker(UpdateTrayContextMenu));
+                return newValue;
             }
-            return newValue;
+            finally
+            {
+                olvPlugins.Enabled = true;
+            }
         }
 
         private void LinkDownloadPlugins_Click(object sender, EventArgs e)
@@ -951,8 +943,6 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker) delegate
             {
-                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", !PluginManagerEx.RunningPlugins.Any() ? "Start" : "Stop", settings.WoWPluginHotkey);
-                //olvPlugins.Enabled = !PluginManagerEx.RunningPlugins.Any();
                 UpdateTrayContextMenu();
             });
         }
@@ -964,16 +954,15 @@ namespace AxTools.Forms
                 SetupOLVPlugins();
                 CreateTrayContextMenu();
                 UpdateTrayContextMenu();
-                labelTotalPluginsEnabled.Text = "Plugins enabled: " + PluginManagerEx.EnabledPlugins.Count();
+                labelTotalPluginsEnabled.Text = "Plugins running: 0";
             });
             PluginManagerEx.PluginsLoaded -= PluginManagerExOnPluginsLoaded;
         }
 
-        private void WoWPluginHotkeyChanged(KeyExt key)
+        private void WoWPluginHotkeyChanged()
         {
             BeginInvoke(new MethodInvoker(() =>
             {
-                buttonStartStopPlugin.Text = string.Format("{0} [{1}]", !PluginManagerEx.RunningPlugins.Any() ? "Start" : "Stop", key);
                 UpdateTrayContextMenu();
             }));
         }
@@ -1038,19 +1027,37 @@ namespace AxTools.Forms
 
         private void KeyboardHookKeyDown(KeyExt key)
         {
-            if (key == settings.WoWPluginHotkey)
+            foreach (var pair in settings.PluginHotkeys)
             {
-                BeginInvoke((MethodInvoker)delegate
+                if (pair.Value == key)
                 {
-                    if (WoWProcessManager.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+                    IPlugin2 plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pair.Key);
+                    bool pluginRunning = PluginManagerEx.RunningPlugins.Any(l => l.Name == pair.Key);
+                    if (plugin != null)
                     {
-                        SwitchWoWPlugin();
+                        if (pluginRunning)
+                        {
+                            olvPlugins.UncheckObject(plugin);
+                        }
+                        else
+                        {
+                            olvPlugins.CheckObject(plugin);
+                        }
                     }
-                });
+                }
             }
         }
 
         #endregion
-        
+
+        private void metroTileExt1_Click(object sender, EventArgs e)
+        {
+            WowProcess process = WoWManager.GetProcess();
+            if (process != null)
+            {
+                new LuaConsole(process).Show();
+            }
+        }
+
     }
 }

@@ -12,10 +12,12 @@ namespace WoWPlugin_PathCreator
     {
         private readonly PathCreator pathCreator;
         private readonly string profileFilepath;
-        private readonly List<DoAction> list = new List<DoAction>(); 
+        private readonly List<DoAction> list = new List<DoAction>();
+        private readonly GameInterface game;
 
-        public MainForm(PathCreator pathCreatorInstance)
+        public MainForm(PathCreator pathCreatorInstance, GameInterface game)
         {
+            this.game = game;
             InitializeComponent();
             pathCreator = pathCreatorInstance;
             profileFilepath = $"{pathCreator.GetPluginSettingsDir()}\\{DateTime.UtcNow.ToString("yyyyMMdd_HHmmss")}.json";
@@ -28,7 +30,7 @@ namespace WoWPlugin_PathCreator
 
         private void buttonCreateWaypoint_Click(object sender, EventArgs e)
         {
-            WoWPlayerMe me = ObjMgr.Pulse();
+            WoWPlayerMe me = game.GetGameObjects();
             if (me != null)
             {
                 list.Add(new DoAction {ActionType = DoActionType.Move, WowPoint = me.Location});
@@ -90,6 +92,19 @@ namespace WoWPlugin_PathCreator
             list.Add(new DoAction { ActionType = DoActionType.WaitWhile, Data = textBoxWaitWhileLua.Text, AdditionalData = textBoxWaitWhileLag.Text });
             WriteJSON();
         }
+
+        private void btnEnableLoopPath_Click(object sender, EventArgs e)
+        {
+            list.Add(new DoAction { ActionType = DoActionType.SetLoopPath, Data = true.ToString() });
+            WriteJSON();
+        }
+
+        private void btnStartFromNearestPoint_Click(object sender, EventArgs e)
+        {
+            list.Add(new DoAction { ActionType = DoActionType.SetStartFromNearestPoint, Data = true.ToString() });
+            WriteJSON();
+        }
+
     }
 
     [DataContract]

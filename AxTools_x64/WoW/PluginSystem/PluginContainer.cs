@@ -2,14 +2,12 @@
 {
     internal class PluginContainer
     {
-        internal IPlugin Plugin;
-        internal bool EnabledByUser;
+        internal IPlugin2 Plugin;
         internal bool IsRunning;
 
-        internal PluginContainer(IPlugin plugin, bool enabled)
+        internal PluginContainer(IPlugin2 plugin)
         {
             Plugin = plugin;
-            EnabledByUser = enabled;
             IsRunning = false;
         }
 

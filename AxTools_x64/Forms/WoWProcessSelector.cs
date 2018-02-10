@@ -16,10 +16,10 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             ShowInTaskbar = false;
-           StyleManager.Style = Settings.Instance.StyleColor;
+           StyleManager.Style = Settings2.Instance.StyleColor;
             foreach (WowProcess i in WoWProcessManager.List)
             {
-                comboBox1.Items.Add(i.IsValidBuild && Info.IsProcessInGame(i) ?
+                comboBox1.Items.Add(i.IsValidBuild && new GameInterface(i).IsInGame ?
                     string.Format("pID: {0}", i.ProcessID) :
                     string.Format("pID: {0} (ERROR DETECTED)", i.ProcessID));
             }

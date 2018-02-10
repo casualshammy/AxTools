@@ -11,7 +11,7 @@ using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
-    internal class Fishing : IPlugin
+    internal class Fishing : IPlugin2
     {
 
         #region Info
@@ -38,6 +38,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
             get { return true; }
         }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Events
@@ -52,13 +54,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
             this.SaveSettingsJSON(fishingSettings);
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface info)
         {
+            this.info = info;
             fishingSettings = this.LoadSettingsJSON<FishingSettings>();
             pluginIsActive = true;
             fishingSpellName = Wowhead.GetSpellInfo(7620).Name;
             this.LogPrint("Fishing spell name: " + fishingSpellName);
-            timer = this.CreateTimer(100, OnPulse);
+            timer = this.CreateTimer(100, info, OnPulse);
             timer.Start();
         }
 
@@ -71,8 +74,17 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private void OnPulse()
         {
             List<WowObject> wowObjects = new List<WowObject>();
-            WoWPlayerMe me = ObjectMgr.Pulse(wowObjects);
-            if (!Info.IsLooting && !me.InCombat)
+            WoWPlayerMe me = info.GetGameObjects(wowObjects);
+            WowObject bobberThatBobbing = wowObjects.FirstOrDefault(i => i.OwnerGUID == me.GUID && i.Bobbing);
+            if (bobberThatBobbing != null)
+            {
+                this.LogPrint("Got bit!");
+                Thread.Sleep(Utils.Rnd.Next(500, 1000));
+                this.LogPrint("Interacting with bobber --> " + bobberThatBobbing.GUID);
+                bobberThatBobbing.Interact();
+                Thread.Sleep(Utils.Rnd.Next(500, 1000));
+            }
+            if (!info.IsLooting && !me.InCombat)
             {
                 if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
                 {
@@ -90,35 +102,34 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     else if (fishingSettings.UseBestBait && (baitItemID = GetBestBaitID(me)) != 0)
                     {
                         this.LogPrint(string.Format("Applying lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
-                        GameFunctions.UseItemByID(baitItemID);
+                        info.UseItemByID(baitItemID);
                         lastTimeLureApplied = DateTime.UtcNow;
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
                     else if (fishingSettings.UseSpecialBait && (baitItemID = GetSpecialBaitID(me)) != 0)
                     {
                         this.LogPrint(string.Format("Applying special lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
-                        GameFunctions.UseItemByID(baitItemID);
+                        info.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
                     else if (fishingSettings.UseArcaneLure && (baitItemID = GetArcaneLure(me)) != 0)
                     {
                         this.LogPrint(string.Format("Applying arcane lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
-                        GameFunctions.UseItemByID(baitItemID);
+                        info.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
                     else if (fishingSettings.LegionUseSpecialLure && (baitItemID = GetLegionSpecialLure(me)) != 0)
                     {
                         this.LogPrint(string.Format("Applying Legion special lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
-                        GameFunctions.UseItemByID(baitItemID);
+                        info.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
                     else if (fishingSettings.DalaranAchievement && (baitItemID = DalaranAchievement(me)) != 0)
                     {
                         this.LogPrint(string.Format("Applying lure for Dalaran achievement --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
-                        GameFunctions.UseItemByID(baitItemID);
+                        info.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
-                    // ReSharper disable once RedundantAssignment
                     else if (fishingSettings.LegionMargossSupport && (baitItemID = GetMargossLure(me)) != 0)
                     {
                         Thread.Sleep(Utils.Rnd.Next(1000, 2000));
@@ -127,22 +138,22 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     {
                         Thread.Sleep(Utils.Rnd.Next(500, 1000));
                         this.LogPrint(string.Format("Cast fishing --> ({0})", fishingSpellName));
-                        GameFunctions.CastSpellByName(fishingSpellName);
+                        info.CastSpellByName(fishingSpellName);
                         Thread.Sleep(1500);
                     }
                 }
-                else
-                {
-                    WowObject bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == me.GUID);
-                    if (bobber != null && bobber.Bobbing)
-                    {
-                        this.LogPrint("Got bit!");
-                        Thread.Sleep(Utils.Rnd.Next(500, 1000));
-                        this.LogPrint("Interacting with bobber --> " + bobber.GUID);
-                        bobber.Interact();
-                        Thread.Sleep(Utils.Rnd.Next(500, 1000));
-                    }
-                }
+                //else
+                //{
+                //    WowObject bobber = wowObjects.FirstOrDefault(i => i.OwnerGUID == me.GUID);
+                //    if (bobber != null && bobber.Bobbing)
+                //    {
+                //        this.LogPrint("Got bit!");
+                //        Thread.Sleep(Utils.Rnd.Next(500, 1000));
+                //        this.LogPrint("Interacting with bobber --> " + bobber.GUID);
+                //        bobber.Interact();
+                //        Thread.Sleep(Utils.Rnd.Next(500, 1000));
+                //    }
+                //}
             }
         }
 
@@ -183,34 +194,34 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             this.LogPrint("Searching for Nat Pagle, id:85984");
             List<WowNpc> npcs = new List<WowNpc>();
-            ObjMgr.Pulse(null, null, npcs);
+            info.GetGameObjects(null, null, npcs);
             WowNpc natPagle = npcs.FirstOrDefault(npc => npc.EntryID == 85984);
             if (natPagle != null)
             {
                 this.LogPrint(string.Format("Nat Pagle is found, guid: {0}, moving to him...", natPagle.GUID));
-                MoveMgr.Move2D(natPagle.Location, 4f, 2000, false, false);
+                info.Move2D(natPagle.Location, 4f, 2000, false, false);
                 Thread.Sleep(500);
                 this.LogPrint("Opening dialog window with Nat...");
                 natPagle.Interact();
                 Thread.Sleep(2000);
-                GameFunctions.SelectDialogOption("Обычная приманка для рыбы?"); // todo: is it possible to localize it?
+                info.SelectDialogOption("Обычная приманка для рыбы?"); // todo: is it possible to localize it?
                 Thread.Sleep(1500);
                 string gossipText = Wowhead.GetItemInfo(specialBaits.First(baitFish => Wowhead.GetItemInfo(baitFish.Key).Name == fishingSettings.SpecialBait).Value).Name;
-                GameFunctions.SelectDialogOption(gossipText);
+                info.SelectDialogOption(gossipText);
                 Thread.Sleep(1500);
                 WowPoint goodFishingPoint = new WowPoint(2024.49f, 191.33f, 83.86f);
                 this.LogPrint(string.Format("Moving to fishing point [{0}]", goodFishingPoint));
-                MoveMgr.Move2D(goodFishingPoint, 2f, 2000, false, false);
+                info.Move2D(goodFishingPoint, 2f, 2000, false, false);
                 WowPoint water = new WowPoint((float) (Utils.Rnd.NextDouble()*5 + 2032.5f), (float) (Utils.Rnd.NextDouble()*5 + 208.5f), 82f);
                 this.LogPrint(string.Format("Facing water [{0}]", water));
-                water.Face();
+                info.Face(water);
             }
         }
 
         private uint GetBestBaitID(WoWPlayerMe me)
         {
             //this.LogPrint((me.Inventory.Length > 15) + "::" + me.Inventory[15].EntryID + "::" + fishingRods.Contains(me.Inventory[15].EntryID) + "::" + ((DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10));
-            if (me.Inventory.Length > 15 && me.Inventory.Any(l => fishingRods.Contains(l.EntryID)) && (DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10) //  && GameFunctions.LuaGetFunctionReturn("tostring(GetWeaponEnchantInfo())") == "false"
+            if (me.Inventory.Length > 15 && me.Inventory.Any(l => fishingRods.Contains(l.EntryID)) && (DateTime.UtcNow - lastTimeLureApplied).TotalMinutes > 10) //  && info.LuaGetFunctionReturn("tostring(GetWeaponEnchantInfo())") == "false"
             {
                 return baits.FirstOrDefault(l => me.ItemsInBags.Any(k => k.EntryID == l));
             }
@@ -242,7 +253,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 }
                 this.LogPrint("Searching for Marcia Chase, id:95844");
                 List<WowNpc> npcs = new List<WowNpc>();
-                ObjMgr.Pulse(null, null, npcs);
+                info.GetGameObjects(null, null, npcs);
                 WowNpc marciaChase = npcs.FirstOrDefault(npc => npc.EntryID == 95844);
                 if (marciaChase != null)
                 {
@@ -250,14 +261,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     marciaChase.Interact();
                     Thread.Sleep(Utils.Rnd.Next(750, 1250));
                     this.LogPrint("I: I wish to buy something...");
-                    GameFunctions.SelectDialogOption("Мне бы хотелось купить что-нибудь у вас."); // todo: is it possible to localize it?
+                    info.SelectDialogOption("Мне бы хотелось купить что-нибудь у вас."); // todo: is it possible to localize it?
                     Thread.Sleep(Utils.Rnd.Next(750, 1250));
                     DalaranTradeItems newLure = dalaranTradeItems[Utils.Rnd.Next(0, dalaranTradeItems.Count)];
                     this.LogPrint("Buying lure " + Wowhead.GetItemInfo(newLure.ItemID).Name + "...");
-                    GameFunctions.BuyMerchantItem(newLure.ItemID, 1);
+                    info.BuyMerchantItem(newLure.ItemID, 1);
                     Thread.Sleep(Utils.Rnd.Next(750, 1250));
                     this.LogPrint("Closing dialog window...");
-                    GameFunctions.SendToChat("/run CloseMerchant()");
+                    info.SendToChat("/run CloseMerchant()");
                     return newLure.ItemID;
                 }
                 return 0;
@@ -269,7 +280,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             try
             {
-                uint zone = Info.ZoneID;
+                uint zone = info.ZoneID;
                 string[] allBuffNames = legionSpecialLuresByZone.SelectMany(l => l.Lures).Select(l => Wowhead.GetItemInfo(l).Name).ToArray();
                 if (me.Auras.All(k => !allBuffNames.Contains(k.Name)))
                 {
@@ -294,17 +305,39 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         private uint GetMargossLure(WoWPlayerMe me)
         {
-            if (me.ItemsInBags.Any(l => l.EntryID == 141975)) // Mark of Aquaos
+            LegionRepFarmerStandAtPoint();
+            foreach (var itemID in LegionRepSummonItems)
             {
-                this.ShowNotify("You can and should summon Aquaos", false, true);
-                return 1;
+                if (me.ItemsInBags.Any(l => l.EntryID == itemID))
+                {
+                    this.ShowNotify($"Click this message to use your {Wowhead.GetItemInfo(itemID).Name}", false, false, 2, (obj, args) => { info.UseItemByID(itemID); });
+                    break;
+                }
             }
-            if (me.ItemsInBags.Where(l => l.EntryID == 138777).Sum(l => l.StackSize) >= 100) // Утопленная мана
+            foreach (var itemID in LegionRepCurrencyItems)
             {
-                this.ShowNotify("You cannot get more Drowned Mana", false, true);
-                return 1;
+                if (me.ItemsInBags.Where(l => l.EntryID == itemID).Sum(l => l.StackSize) >= 100)
+                {
+                    this.ShowNotify($"You cannot get more {Wowhead.GetItemInfo(itemID).Name}", false, true);
+                    return 1;
+                }
             }
             return 0;
+        }
+
+        private void LegionRepFarmerStandAtPoint()
+        {
+            if (LegionRepZones.TryGetValue(info.ZoneID, out LegionRepPoint value))
+            {
+                WoWPlayerMe me = info.GetGameObjects();
+                int timeout = 5000;
+                while (timeout > 0 && me.Location.Distance2D(value.StartingPlayerPoint) > 3)
+                {
+                    info.Move2D(value.StartingPlayerPoint, 3f, 1000, true, false);
+                    timeout -= 1000;
+                }
+                info.Face(value.StartingFacingPoint);
+            }
         }
 
         #endregion
@@ -316,6 +349,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private bool pluginIsActive;
         private string fishingSpellName;
         private DateTime lastTimeLureApplied = DateTime.MinValue;
+        private GameInterface info;
 
         private readonly uint[] fishingRods =
         {
@@ -377,6 +411,31 @@ namespace AxTools.WoW.PluginSystem.Plugins
             new SpecialLuresForZone {ZoneID = 7503, Lures = new uint[] {133710, 133711, 133712}}    // Крутогорье
         };
 
+        private readonly uint[] LegionRepSummonItems = {
+            141975, // Mark of Aquaos
+            146966, // Фигурка тотема воды
+            146967, // Белая сверкающая безделушка
+            146969, // Слабо пульсирующий камень Скверны
+            146964, // Наконечник копья клана Колец Ненависти
+            146965, // Отвратительный слизнюк
+        };
+
+        private readonly uint[] LegionRepCurrencyItems = {
+            138777, // Утопленная мана
+            146960, // Фрагмент древнего тотема
+            146961, // Блестящая побрякушка
+            146848, // Расколотые чары
+            146963, // Нечистая водоросль
+            146962, // Золотистая рыбешка
+            146959, // Оскверненная капля
+        };
+
+        private readonly Dictionary<uint, LegionRepPoint> LegionRepZones = new Dictionary<uint, LegionRepPoint> {
+            { 7543, new LegionRepPoint { StartingPlayerPoint = new WowPoint(-1286.44f, 3622.32f, 0.26f), StartingFacingPoint = new WowPoint(-1299.87f, 3619.78f, -2.54f)} }, // Расколотый берег
+            { 7334, new LegionRepPoint { StartingPlayerPoint = new WowPoint(29.59f, 6975.71f, 21.33f), StartingFacingPoint = new WowPoint(36.61f, 6987.4f, 20.66f) } }, // Азсуна
+            { 7558, new LegionRepPoint { StartingPlayerPoint = new WowPoint(2314.55f, 6668.39f, 133.63f), StartingFacingPoint = new WowPoint(2301.23f, 6671.69f, 129.85f)} }, // Вальшара
+        };
+
         #endregion
 
         #region Classes
@@ -391,6 +450,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             internal uint ItemID;
             internal int AuraID;
+        }
+
+        private class LegionRepPoint
+        {
+            internal WowPoint StartingPlayerPoint;
+            internal WowPoint StartingFacingPoint;
         }
 
         #endregion

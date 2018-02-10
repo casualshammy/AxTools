@@ -69,7 +69,7 @@ namespace AxTools.Helpers
             }
             using (WebClient webClient = new WebClient())
             {
-                webClient.Credentials = new NetworkCredential(Settings.Instance.UserID, Utils.GetComputerHID());
+                webClient.Credentials = new NetworkCredential(Settings2.Instance.UserID, Utils.GetComputerHID());
                 webClient.Encoding = Encoding.UTF8;
                 string postMessage = string.Format("ERRORS:\r\n{0}\r\n\r\n\r\n{1}",
                     string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN))), File.ReadAllText(Globals.LogFileName, Encoding.UTF8));

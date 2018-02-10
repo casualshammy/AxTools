@@ -11,7 +11,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_AttackFirst
 {
-    public class AttackFirst : IPlugin
+    public class AttackFirst : IPlugin2
     {
 
         #region Info
@@ -38,6 +38,8 @@ namespace WoWPlugin_AttackFirst
             get { return false; }
         }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Events
@@ -47,9 +49,10 @@ namespace WoWPlugin_AttackFirst
             
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
-            timer = this.CreateTimer(50, OnPulse);
+            this.game = game;
+            timer = this.CreateTimer(50, game, OnPulse);
             timer.Start();
         }
 
@@ -60,7 +63,7 @@ namespace WoWPlugin_AttackFirst
 
         private void OnPulse()
         {
-            WoWPlayerMe me = ObjMgr.Pulse(null, null, npcs);
+            WoWPlayerMe me = game.GetGameObjects(null, null, npcs);
             if (me != null)
             {
                 WowNpc npc = npcs.FirstOrDefault(l => l.Name == mobName && l.Location.Distance(me.Location) < 40);
@@ -70,7 +73,7 @@ namespace WoWPlugin_AttackFirst
                     stopwatch.Restart();
                     //npc.Location.Face();
                     npc.Target();
-                    GameFunctions.CastSpellByName(spell);
+                    game.CastSpellByName(spell);
                     this.LogPrint("It took " + stopwatch.ElapsedMilliseconds + "ms to hit mob");
                     //SendMessage(Utilities.WoWWindowHandle, WM_KEYDOWN, (IntPtr)keyCode, IntPtr.Zero);
                     //SendMessage(Utilities.WoWWindowHandle, WM_KEYUP, (IntPtr)keyCode, IntPtr.Zero);
@@ -88,6 +91,7 @@ namespace WoWPlugin_AttackFirst
         private readonly string mobName = "Тренировочный манекен рейдера";
         private readonly string spell = "Огненный шок";
         private readonly int keyCode = 0x73; // F4
+        private GameInterface game;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);

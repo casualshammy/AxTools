@@ -2,8 +2,7 @@
 using System.Linq;
 using AxTools.Forms;
 using AxTools.Helpers;
-using AxTools.Helpers.MemoryManagement;
-using AxTools.WoW.Internals;
+using FMemory;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
 
@@ -12,76 +11,78 @@ namespace AxTools.WoW
     internal static class WoWManager
     {
         private static readonly Log2 log = new Log2("WoWManager");
-        internal static WowProcess WoWProcess;
-        internal static bool Hooked { private set; get; }
+        //internal static WowProcess WoWProcess;
+        //internal static bool Hooked { private set; get; }
+
+        static WoWManager()
+        {
+            WoWProcessManager.WoWProcessClosed += WoWProcessManager_WoWProcessClosed;
+        }
+
+        private static void WoWProcessManager_WoWProcessClosed(int processID)
+        {
+            Unhook(processID);
+        }
+
+
 
         /// <summary>
         ///     Selects <see cref="WowProcess"/> from all available processes (via <see cref="WoWProcessSelector"/>).
-        ///     Checks selected process for IncorrectDirectXVersion, InvalidWoWBuild and NotInGame states.
+        ///     Checks selected process for <see cref="WowProcess.IsValidBuild"/> and <see cref="Info.IsInGame"/> states.
         ///     If something went wrong, informs user via Utils.NotifyUser().
         /// </summary>
         /// <returns>
-        ///     True if hook was successful, false otherwise
+        ///     Instance of <see cref="WowProcess"/> if successful, null otherwise
         /// </returns>
-        internal static bool HookWoWAndNotifyUserIfError()
+        internal static WowProcess GetProcess()
         {
             WowProcess wowProcess = WoWProcessSelector.GetWoWProcess();
             if (wowProcess != null)
             {
-                if (!Hooked)
+                if (wowProcess.IsValidBuild)
                 {
-                    if (wowProcess.IsValidBuild)
+                    if (new GameInterface(wowProcess).IsInGame)
                     {
-                        if (Info.IsProcessInGame(wowProcess))
+                        if (wowProcess.Memory == null)
                         {
-                            WoWProcess = wowProcess;
-                            if (WoWProcess.Memory == null)
-                            {
-                                WoWProcess.Memory = new MemoryManager(Process.GetProcessById(WoWProcess.ProcessID));
-                            }
-                            ObjectMgr.Initialize(WoWProcess);
-                            Hooked = true;
-                            return true;
+                            wowProcess.Memory = new MemoryManager(Process.GetProcessById(wowProcess.ProcessID));
                         }
-                        log.Info(string.Format("{0} Player isn't logged in", wowProcess));
-                        Notify.SmartNotify("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
-                        return false;
+                        return wowProcess;
                     }
-                    log.Error(string.Format("{0} Incorrect WoW build", wowProcess));
-                    Notify.SmartNotify("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
-                    return false;
+                    log.Info(string.Format("{0} Player isn't logged in", wowProcess));
+                    Notify.SmartNotify("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
+                    return null;
                 }
-                return true;
+                log.Error(string.Format("{0} Incorrect WoW build", wowProcess));
+                Notify.SmartNotify("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
+                return null;
             }
             Notify.SmartNotify("Module error", "No WoW process found", NotifyUserType.Error, true);
-            return false;
+            return null;
         }
-
+        
         /// <summary>
         ///     Closes //WowRadarOptions, WoWRadar//
         ///     Stops WoW plugin
         ///     Releases DX hook
         /// </summary>
-        internal static void Unhook()
+        internal static void Unhook(int processID)
         {
-            WowRadarOptions pWowRadarOptions = Utils.FindForm<WowRadarOptions>();
-            if (pWowRadarOptions != null) pWowRadarOptions.Close();
-            WowRadar pWowRadar = Utils.FindForm<WowRadar>();
-            if (pWowRadar != null) pWowRadar.Close();
-
-            if (PluginManagerEx.RunningPlugins.Any())
+            foreach (var form in Utils.FindForms<WowRadarOptions>().Where(l => l.ProcessID == processID))
             {
-                PluginManagerEx.StopPlugins();
+                form.Close();
             }
-
-            log.Info(string.Format("{0} Total objects cached: {1}", WoWProcess, WowObject.Names.Count));
-            WowObject.Names.Clear();
-            log.Info(string.Format("{0} Total players cached: {1}", WoWProcess, WowPlayer.Names.Count));
-            WowPlayer.Names.Clear();
-            log.Info(string.Format("{0} Total NPC cached: {1}", WoWProcess, WowNpc.Names.Count));
-            WowNpc.Names.Clear();
-            Hooked = false;
-            log.Info(string.Format("{0} Detached", WoWProcess));
+            foreach (var form in Utils.FindForms<WowRadar>().Where(l => l.ProcessID == processID))
+            {
+                form.Close();
+            }
+            foreach (var plugin in PluginManagerEx.RunningPlugins)
+            {
+                if (PluginManagerEx.PluginWoW[plugin.Name] == processID)
+                {
+                    PluginManagerEx.RemovePluginFromRunning(plugin);
+                }
+            }
         }
 
     }

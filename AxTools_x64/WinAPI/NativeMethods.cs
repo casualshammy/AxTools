@@ -1,4 +1,4 @@
-﻿using AxTools.Helpers.MemoryManagement;
+﻿using FMemory;
 using System;
 using System.Runtime.InteropServices;
 using System.Security;

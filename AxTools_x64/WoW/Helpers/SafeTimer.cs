@@ -10,19 +10,21 @@ namespace AxTools.WoW.Helpers
     {
         private Stopwatch balancingStopwatch;
         private readonly object _lock = new object();
-        private readonly int interval;
+        private int interval;
         private readonly Action action;
         private volatile bool flag;
         private Thread thread;
+        private readonly GameInterface info;
         private static readonly Log2 log = new Log2("SafeTimer");
 
         // optional variable
         public string PluginName;
 
-        public SafeTimer(int interval, Action action)
+        internal SafeTimer(int interval, GameInterface game, Action action)
         {
             this.interval = interval;
             this.action = action;
+            this.info = game;
         }
 
         public void Start()
@@ -48,7 +50,7 @@ namespace AxTools.WoW.Helpers
                     flag = false;
                     if (!thread.Join(60*1000))
                     {
-                        throw new Exception(string.Format("{0}:{1} :: [{2}] SafeTimer: Can't stop!", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? ""));
+                        throw new Exception(string.Format("[{0}] SafeTimer: Can't stop!", PluginName ?? "Unknown plug-in"));
                     }
                     thread = null;
                 }
@@ -60,7 +62,7 @@ namespace AxTools.WoW.Helpers
             while (flag)
             {
                 balancingStopwatch.Restart();
-                if (Info.IsInGame)
+                if (info.IsInGame)
                 {
                     try
                     {
@@ -68,7 +70,7 @@ namespace AxTools.WoW.Helpers
                     }
                     catch (Exception ex)
                     {
-                        log.Error(string.Format("{0}:{1} :: [{2}] SafeTimer error: {3}", WoWManager.WoWProcess.ProcessName, WoWManager.WoWProcess.ProcessID, PluginName ?? "", ex.Message));
+                        log.Error(string.Format("[{0}] SafeTimer error: {1}", PluginName ?? "", ex.Message));
                     }
                 }
                 int shouldWait = (int) (interval - balancingStopwatch.ElapsedMilliseconds);
@@ -78,6 +80,11 @@ namespace AxTools.WoW.Helpers
                     shouldWait = (int)(interval - balancingStopwatch.ElapsedMilliseconds);
                 }
             }
+        }
+
+        public void ChangeInterval(int interval)
+        {
+            this.interval = interval;
         }
 
         public void Dispose()

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace PathPlayer
 {
-	internal class PathPlayer : IPlugin
+	internal class PathPlayer : IPlugin2
 	{
 
 		#region Info
@@ -20,7 +20,9 @@ namespace PathPlayer
 
 		private Image trayIcon;
 		public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\plainicon.com-50064-256px-4c1.png", Application.StartupPath, Name))); } }
-		
+
+		public string[] Dependencies => null;
+
 		#endregion
 
 		#region Methods
@@ -35,7 +37,7 @@ namespace PathPlayer
 			this.SaveSettingsJSON(SettingsInstance);
 		}
 
-		public void OnStart()
+		public void OnStart(GameInterface game)
 		{
 			SettingsInstance = this.LoadSettingsJSON<Settings>();
 			libNavigator = Utilities.GetReferenceOfPlugin("LibNavigator");
@@ -48,7 +50,7 @@ namespace PathPlayer
 			{
 				if (libNavigator.LoadScriptData(File.ReadAllText(SettingsInstance.Path, Encoding.UTF8)))
 				{
-					libNavigator.StartLoadedScript();
+					libNavigator.StartLoadedScript(game);
 				}
 				else
 				{
@@ -61,13 +63,12 @@ namespace PathPlayer
 		public void OnStop()
 		{
 			libNavigator.StopLoadedScript();
-
 		}
-		
+
 		#endregion
-		
+
 		internal Settings SettingsInstance;
 		private dynamic libNavigator;
-		
+
 	}
 }

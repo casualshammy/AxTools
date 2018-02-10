@@ -10,7 +10,7 @@ using Microsoft.Win32;
 
 namespace WoWPlugin_Test
 {
-    public class Test : IPlugin
+    public class Test : IPlugin2
     {
 
         #region Info
@@ -28,6 +28,8 @@ namespace WoWPlugin_Test
 
         public bool ConfigAvailable { get { return false; } }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Methods
@@ -37,11 +39,12 @@ namespace WoWPlugin_Test
 
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
+            this.game = game;
             (frm = new MainForm()).Show();
-            ChatMessages.ReadChat();
-            ChatMessages.NewChatMessage += GameFunctionsOnNewChatMessage;
+            game.ReadChat();
+            game.NewChatMessage += GameFunctionsOnNewChatMessage;
             t.Start();
             t.Elapsed += OnPulse;
             using (RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Wow6432Node\\\\Blizzard Entertainment\\\\World of Warcraft"))
@@ -64,7 +67,7 @@ namespace WoWPlugin_Test
 
         private void OnPulse(object sender, ElapsedEventArgs e)
         {
-            ChatMessages.ReadChat();
+            game.ReadChat();
         }
 
         private void GameFunctionsOnNewChatMessage(ChatMsg chatMsg)
@@ -80,7 +83,7 @@ namespace WoWPlugin_Test
         {
             t.Elapsed -= OnPulse;
             t.Stop();
-            ChatMessages.NewChatMessage -= GameFunctionsOnNewChatMessage;
+            game.NewChatMessage -= GameFunctionsOnNewChatMessage;
             frm.Dispose();
         }
 
@@ -89,5 +92,6 @@ namespace WoWPlugin_Test
         //private SafeTimer timer;
         private readonly System.Timers.Timer t = new System.Timers.Timer(50);
         private MainForm frm;
+        private GameInterface game;
     }
 }

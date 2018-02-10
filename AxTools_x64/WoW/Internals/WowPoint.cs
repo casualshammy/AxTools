@@ -2,16 +2,13 @@
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using AxTools.WinAPI;
-using AxTools.WoW.Helpers;
 
 namespace AxTools.WoW.Internals
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct WowPoint : IEquatable<WowPoint>
     {
-
+        
         public float X;
         public float Y;
         public float Z;
@@ -64,37 +61,7 @@ namespace AxTools.WoW.Internals
         {
             return new WowPoint(wowPoint.X*v, wowPoint.Y*v, wowPoint.Z*v);
         }
-
-        public void Face()
-        {
-            float face;
-            WoWPlayerMe me = ObjectMgr.Pulse();
-            if (MoveHelper.NegativeAngle(MoveHelper.AngleHorizontal(this) - me.Rotation) < Math.PI)
-            {
-                face = MoveHelper.NegativeAngle(MoveHelper.AngleHorizontal(this) - me.Rotation);
-                bool moving = me.IsMoving;
-                if (face > 1)
-                {
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.S, IntPtr.Zero);
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.S, IntPtr.Zero);
-                    moving = false;
-                }
-                MoveHelper.FaceHorizontalWithTimer(face, Keys.A, moving);
-            }
-            else
-            {
-                face = MoveHelper.NegativeAngle(me.Rotation - MoveHelper.AngleHorizontal(this));
-                bool moving = me.IsMoving;
-                if (face > 1)
-                {
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.S, IntPtr.Zero);
-                    NativeMethods.SendMessage(WoWManager.WoWProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.S, IntPtr.Zero);
-                    moving = false;
-                }
-                MoveHelper.FaceHorizontalWithTimer(face, Keys.D, moving);
-            }
-        }
-
+        
         public bool IsEmpty
         {
             get

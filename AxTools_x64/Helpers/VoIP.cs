@@ -13,35 +13,35 @@ namespace AxTools.Helpers
         {
             get
             {
-                Settings settings = Settings.Instance;
+                Settings2 settings = Settings2.Instance;
                 Dictionary<string, VoipInfo> list = new Dictionary<string, VoipInfo>();
-                if (string.IsNullOrWhiteSpace(Settings.Instance.VentriloDirectory))
+                if (string.IsNullOrWhiteSpace(Settings2.Instance.VentriloDirectory))
                 {
-                    Settings.Instance.VentriloDirectory = GetVentriloPath();
+                    Settings2.Instance.VentriloDirectory = GetVentriloPath();
                 }
-                if (string.IsNullOrWhiteSpace(Settings.Instance.MumbleDirectory))
+                if (string.IsNullOrWhiteSpace(Settings2.Instance.MumbleDirectory))
                 {
-                    Settings.Instance.MumbleDirectory = GetMumblePath();
+                    Settings2.Instance.MumbleDirectory = GetMumblePath();
                 }
-                if (string.IsNullOrWhiteSpace(Settings.Instance.RaidcallDirectory))
+                if (string.IsNullOrWhiteSpace(Settings2.Instance.RaidcallDirectory))
                 {
-                    Settings.Instance.RaidcallDirectory = GetRaidcallPath();
+                    Settings2.Instance.RaidcallDirectory = GetRaidcallPath();
                 }
-                if (string.IsNullOrWhiteSpace(Settings.Instance.TS3Directory))
+                if (string.IsNullOrWhiteSpace(Settings2.Instance.TS3Directory))
                 {
-                    Settings.Instance.TS3Directory = GetTeamspeakPath();
+                    Settings2.Instance.TS3Directory = GetTeamspeakPath();
                 }
-                if (File.Exists(Settings.Instance.TS3Directory + "\\ts3client_win64.exe"))
+                if (File.Exists(Settings2.Instance.TS3Directory + "\\ts3client_win64.exe"))
                 {
-                    list["Teamspeak 3"] = new VoipInfo(Settings.Instance.TS3Directory + "\\ts3client_win64.exe", "-nosingleinstance", Settings.Instance.TS3Directory);
+                    list["Teamspeak 3"] = new VoipInfo(Settings2.Instance.TS3Directory + "\\ts3client_win64.exe", "-nosingleinstance", Settings2.Instance.TS3Directory);
                 }
-                else if (File.Exists(Settings.Instance.TS3Directory + "\\ts3client_win32.exe"))
+                else if (File.Exists(Settings2.Instance.TS3Directory + "\\ts3client_win32.exe"))
                 {
-                    list["Teamspeak 3"] = new VoipInfo(Settings.Instance.TS3Directory + "\\ts3client_win32.exe", "-nosingleinstance", Settings.Instance.TS3Directory);
+                    list["Teamspeak 3"] = new VoipInfo(Settings2.Instance.TS3Directory + "\\ts3client_win32.exe", "-nosingleinstance", Settings2.Instance.TS3Directory);
                 }
-                if (File.Exists(Settings.Instance.VentriloDirectory + "\\Ventrilo.exe"))
+                if (File.Exists(Settings2.Instance.VentriloDirectory + "\\Ventrilo.exe"))
                 {
-                    list["Ventrilo"] = new VoipInfo(Settings.Instance.VentriloDirectory + "\\Ventrilo.exe", "-m", Settings.Instance.VentriloDirectory);
+                    list["Ventrilo"] = new VoipInfo(Settings2.Instance.VentriloDirectory + "\\Ventrilo.exe", "-m", Settings2.Instance.VentriloDirectory);
                 }
                 if (File.Exists(settings.RaidcallDirectory + "\\raidcall.exe"))
                 {
@@ -156,7 +156,7 @@ namespace AxTools.Helpers
         //private static string GetDiscordPath()
         //{
         //    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord");
-        //    Log.Info($"[Settings] Looking for Discord client in {path}");
+        //    Log.Info($"[Settings2] Looking for Discord client in {path}");
         //    return Directory.Exists(path) ? path : string.Empty;
         //}
 
@@ -183,7 +183,7 @@ namespace AxTools.Helpers
         //private static string GetTwitchPath()
         //{
         //    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Curse Client\\Bin");
-        //    Log.Info($"[Settings] Looking for Twitch client in {path}");
+        //    Log.Info($"[Settings2] Looking for Twitch client in {path}");
         //    return Directory.Exists(path) ? path : string.Empty;
         //}
 

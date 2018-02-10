@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace LibNavigator
 {
-    public class LibNavigator : IPlugin
+    public class LibNavigator : IPlugin2
     {
 
         #region Info
@@ -23,17 +23,18 @@ namespace LibNavigator
         public string Description => "Follows routes";
         public Image TrayIcon => null;
         public bool ConfigAvailable => false;
+        public string[] Dependencies => null;
 
         #endregion
 
-        #region IPlugin methods
+        #region IPlugin2 methods
 
         public void OnConfig()
         {
             throw new NotImplementedException();
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
             throw new InvalidOperationException("You should not explicitly start this library");
         }
@@ -47,7 +48,7 @@ namespace LibNavigator
 
         #region Methods
 
-        public void Go(WowPoint dest, float precision)
+        public void Go(WowPoint dest, float precision, GameInterface game)
         {
             if (isRunning)
             {
@@ -56,19 +57,40 @@ namespace LibNavigator
             else
             {
                 //unstuckDictionary = new Dictionary<DateTime, WowPoint>();
+                this.game = game;
                 isRunning = true;
                 precision2D = precision;
+                precision3D = precision * 3;
                 loopPath = false;
                 startFromNearestPoint = false;
                 counter = 0;
                 actionsList = new List<DoAction> { new DoAction() { ActionType = DoActionType.Move, WowPoint = dest } };
+                this.LogPrint($"Go(): destination: {dest}; precision2D: {precision2D}; precision3D: {precision3D}");
                 DoAction();
                 isRunning = false;
             }
         }
 
+        public void GoWait(WowPoint dest, float precision, GameInterface game, int timeoutMs = 30000)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            WoWPlayerMe me = game.GetGameObjects();
+            while (me != null && me.Location.Distance(dest) > precision && timeoutMs > 0)
+            {
+                stopwatch.Restart();
+                Go(dest, precision, game);
+                timeoutMs -= (int)stopwatch.ElapsedMilliseconds;
+            }
+        }
+
+        public bool IsRunning => isRunning;
+        
         public bool LoadScriptData(string data)
         {
+            if (isRunning)
+            {
+                throw new InvalidOperationException("Cannot set script data if another script is running");
+            }
             Stopwatch stopwatch = Stopwatch.StartNew();
             try
             {
@@ -98,7 +120,7 @@ namespace LibNavigator
             }
         }
 
-        public void StartLoadedScript()
+        public void StartLoadedScript(GameInterface game)
         {
             if (isRunning)
             {
@@ -106,6 +128,7 @@ namespace LibNavigator
             }
             else
             {
+                this.game = game;
                 unstuckDictionary = new Dictionary<DateTime, WowPoint>();
                 isRunning = true;
                 precision2D = 3f;
@@ -130,7 +153,7 @@ namespace LibNavigator
                 this.LogPrint($"<StartFromNearestPoint> is set to {startFromNearestPoint}");
                 if (startFromNearestPoint)
                 {
-                    WoWPlayerMe localPlayer = ObjMgr.Pulse();
+                    WoWPlayerMe localPlayer = game.GetGameObjects();
                     if (localPlayer != null)
                     {
                         DoAction nearestPoint = actionsList.Aggregate((minItem, nextItem) => localPlayer.Location.Distance(minItem.WowPoint) < localPlayer.Location.Distance(nextItem.WowPoint) ? minItem : nextItem);
@@ -145,7 +168,7 @@ namespace LibNavigator
                 {
                     counter = 0;
                 }
-                (timer = this.CreateTimer(RESOLUTION_INTERVAL, DoAction)).Start();
+                (timer = this.CreateTimer(RESOLUTION_INTERVAL, game, DoAction)).Start();
             }
         }
 
@@ -159,24 +182,25 @@ namespace LibNavigator
         {
             List<WowObject> wowObjects = new List<WowObject>();
             List<WowNpc> wowNpcs = new List<WowNpc>();
-            WoWPlayerMe me = ObjMgr.Pulse(wowObjects, null, wowNpcs);
+            WoWPlayerMe me = game.GetGameObjects(wowObjects, null, wowNpcs);
             if (me != null)
             {
-                UnstuckIfNeeded(me.Location, actionsList[counter].ActionType);
                 switch (actionsList[counter].ActionType)
                 {
                     case DoActionType.Move:
                         double distance2D = me.Location.Distance2D(actionsList[counter].WowPoint);
                         double distance3D = me.Location.Distance(actionsList[counter].WowPoint);
-                        if (me.IsFlying && (distance3D > 10f || (distance3D <= 10f && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
+                        if (me.IsFlying && (distance3D > precision3D || (distance3D <= precision3D && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
                         {
+                            UnstuckIfNeeded(me.Location, actionsList[counter].ActionType);
                             this.LogPrint(string.Format("Flying to point --> [{0}]; distance: {1}", actionsList[counter].WowPoint, distance3D));
-                            MoveMgr.Move3D(actionsList[counter].WowPoint, 8f, 3f, 1000, true);
+                            game.Move3D(actionsList[counter].WowPoint, precision3D, precision3D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
                         }
                         else if (!me.IsFlying && (distance2D > precision2D || (distance2D <= precision2D && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
                         {
+                            UnstuckIfNeeded(me.Location, actionsList[counter].ActionType);
                             this.LogPrint(string.Format("Moving to point --> [{0}]; my loc: [{3}]; distance2D: {1}; speed: {2}", actionsList[counter].WowPoint, distance2D, me.Speed, me.Location));
-                            MoveMgr.Move2D(actionsList[counter].WowPoint, precision2D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
+                            game.Move2D(actionsList[counter].WowPoint, precision2D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
                         }
                         else
                         {
@@ -191,17 +215,17 @@ namespace LibNavigator
                         break;
                     case DoActionType.RunLua:
                         Thread.Sleep(500); // player should be stopped before interact
-                        GameFunctions.SendToChat("/run " + string.Concat(actionsList[counter].Data.TakeWhile(l => l != '\r' && l != '\n')));
+                        game.SendToChat("/run " + string.Concat(actionsList[counter].Data.TakeWhile(l => l != '\r' && l != '\n')));
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.SendChat:
                         Thread.Sleep(500); // player should be stopped before interact
-                        GameFunctions.SendToChat(actionsList[counter].Data);
+                        game.SendToChat(actionsList[counter].Data);
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.SelectGossipOption:
                         Thread.Sleep(1000); // player should be stopped before interact
-                        GameFunctions.SelectDialogOption(actionsList[counter].Data);
+                        game.SelectDialogOption(actionsList[counter].Data);
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.Interact:
@@ -245,7 +269,7 @@ namespace LibNavigator
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.WaitWhile:
-                        if (!Lua.IsTrue(actionsList[counter].Data))
+                        if (!game.LuaIsTrue(actionsList[counter].Data))
                         {
                             IncreaseCounterAndDoAction();
                         }
@@ -258,9 +282,9 @@ namespace LibNavigator
                         string[] p = actionsList[counter].Data.Split(new string[] { "##@##" }, StringSplitOptions.RemoveEmptyEntries);
                         string action = p[0];
                         string condition = p[1];
-                        if (Lua.IsTrue(condition))
+                        if (game.LuaIsTrue(condition))
                         {
-                            GameFunctions.SendToChat(action);
+                            game.SendToChat(action);
                         }
                         else
                         {
@@ -268,7 +292,7 @@ namespace LibNavigator
                         }
                         break;
                     case DoActionType.StopProfileIf:
-                        if (Lua.IsTrue(actionsList[counter].Data))
+                        if (game.LuaIsTrue(actionsList[counter].Data))
                         {
                             counter = actionsList.Count - 1;
                         }
@@ -279,7 +303,7 @@ namespace LibNavigator
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.NotifyUserIf:
-                        if (Lua.IsTrue(actionsList[counter].AdditionalData))
+                        if (game.LuaIsTrue(actionsList[counter].AdditionalData))
                         {
                             this.ShowNotify(actionsList[counter].Data, false, false);
                         }
@@ -298,7 +322,7 @@ namespace LibNavigator
 
         private void IncreaseCounterAndDoAction()
         {
-            if (timer.IsRunning)
+            if (timer != null && timer.IsRunning)
             {
                 if (counter >= actionsList.Count - 1)
                 {
@@ -343,7 +367,7 @@ namespace LibNavigator
                         if (last.Value.Distance(first.Value) < 1f)
                         {
                             this.LogPrint($"We are stuck at {playerLoc}. Trying to unstuck...");
-                            MoveMgr.Jump();
+                            game.Jump();
                         }
                     }
                 }
@@ -369,6 +393,7 @@ namespace LibNavigator
         private volatile bool isRunning = false;
         private const int RESOLUTION_INTERVAL = 50;
         private Dictionary<DateTime, WowPoint> unstuckDictionary = new Dictionary<DateTime, WowPoint>();
+        private GameInterface game;
 
         #endregion
 

@@ -9,7 +9,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_SpellGroundClicker
 {
-    public class SpellGroundClicker : IPlugin
+    public class SpellGroundClicker : IPlugin2
     {
 
         #region Info
@@ -27,6 +27,8 @@ namespace WoWPlugin_SpellGroundClicker
 
         public bool ConfigAvailable { get { return false; } }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Methods
@@ -36,10 +38,11 @@ namespace WoWPlugin_SpellGroundClicker
             
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
+            this.game = game;
             clickPoint = WinAPI.GetCursorPosition();
-            (timer = this.CreateTimer(1000, OnElapsed)).Start();
+            (timer = this.CreateTimer(1000, game, OnElapsed)).Start();
         }
 
         public void OnStop()
@@ -49,11 +52,11 @@ namespace WoWPlugin_SpellGroundClicker
 
         private void OnElapsed()
         {
-            WoWPlayerMe localPlayer = ObjMgr.Pulse();
+            WoWPlayerMe localPlayer = game.GetGameObjects();
             if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && DateTime.UtcNow - spellLastUsed > cooldown)
             {
                 spellLastUsed = DateTime.UtcNow;
-                GameFunctions.CastSpellByName(spellName);
+                game.CastSpellByName(spellName);
                 Thread.Sleep(250);
                 WinAPI.SetCursorPosition(clickPoint);
                 WinAPI.MouseEvent(WinAPI.MouseEventFlags.LeftDown | WinAPI.MouseEventFlags.LeftUp);
@@ -70,6 +73,7 @@ namespace WoWPlugin_SpellGroundClicker
         private readonly TimeSpan cooldown = TimeSpan.FromSeconds(10);
         private DateTime spellLastUsed = DateTime.MinValue;
         private Point clickPoint;
+        private GameInterface game;
 
         #endregion
 

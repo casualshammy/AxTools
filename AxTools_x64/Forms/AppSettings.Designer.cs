@@ -46,7 +46,6 @@ namespace AxTools.Forms
             this.Label8 = new MetroFramework.Controls.MetroLabel();
             this.CheckBox6 = new MetroFramework.Controls.MetroCheckBox();
             this.labelClickerHotkey = new MetroFramework.Controls.MetroLabel();
-            this.labelWExecModule = new MetroFramework.Controls.MetroLabel();
             this.numericUpDownBackupTimer = new System.Windows.Forms.NumericUpDown();
             this.Hours = new MetroFramework.Controls.MetroLabel();
             this.numericUpDownBackupCopiesToKeep = new System.Windows.Forms.NumericUpDown();
@@ -85,9 +84,7 @@ namespace AxTools.Forms
             this.buttonBackupPath = new MetroFramework.Controls.MetroButton();
             this.textBoxBackupPath = new Components.MetroTextboxExt();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
-            this.buttonPluginsHotkey = new MetroFramework.Controls.MetroButton();
             this.buttonClickerHotkey = new MetroFramework.Controls.MetroButton();
-            this.textBoxPluginsHotkey = new MetroFramework.Controls.MetroTextBox();
             this.textBoxClickerHotkey = new MetroFramework.Controls.MetroTextBox();
             this.metroTabPage7 = new MetroFramework.Controls.MetroTabPage();
             this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
@@ -417,25 +414,6 @@ namespace AxTools.Forms
             this.toolTip.SetToolTip(this.labelClickerHotkey, "Key to switch clicker on/off. Works only if WoW window is active");
             this.labelClickerHotkey.UseStyleColors = true;
             // 
-            // labelWExecModule
-            // 
-            this.labelWExecModule.AutoSize = true;
-            this.labelWExecModule.CustomBackground = false;
-            this.labelWExecModule.CustomForeColor = false;
-            this.labelWExecModule.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.labelWExecModule.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.labelWExecModule.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelWExecModule.Location = new System.Drawing.Point(3, 49);
-            this.labelWExecModule.Name = "labelWExecModule";
-            this.labelWExecModule.Size = new System.Drawing.Size(187, 19);
-            this.labelWExecModule.Style = MetroFramework.MetroColorStyle.Blue;
-            this.labelWExecModule.StyleManager = null;
-            this.labelWExecModule.TabIndex = 50;
-            this.labelWExecModule.Text = "WoW plugin start/stop hotkey:";
-            this.labelWExecModule.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.labelWExecModule, "Key to switch active WoW plugin on/off. Works only if WoW window is active");
-            this.labelWExecModule.UseStyleColors = true;
-            // 
             // numericUpDownBackupTimer
             // 
             this.numericUpDownBackupTimer.Location = new System.Drawing.Point(128, 129);
@@ -549,7 +527,7 @@ namespace AxTools.Forms
             this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 2;
+            this.tabControl.SelectedIndex = 4;
             this.tabControl.Size = new System.Drawing.Size(565, 234);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 65;
@@ -1166,11 +1144,8 @@ namespace AxTools.Forms
             // 
             // metroTabPage2
             // 
-            this.metroTabPage2.Controls.Add(this.buttonPluginsHotkey);
             this.metroTabPage2.Controls.Add(this.buttonClickerHotkey);
-            this.metroTabPage2.Controls.Add(this.textBoxPluginsHotkey);
             this.metroTabPage2.Controls.Add(this.textBoxClickerHotkey);
-            this.metroTabPage2.Controls.Add(this.labelWExecModule);
             this.metroTabPage2.Controls.Add(this.labelClickerHotkey);
             this.metroTabPage2.CustomBackground = false;
             this.metroTabPage2.HorizontalScrollbar = false;
@@ -1190,18 +1165,6 @@ namespace AxTools.Forms
             this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.VerticalScrollbarSize = 10;
             // 
-            // buttonPluginsHotkey
-            // 
-            this.buttonPluginsHotkey.Highlight = true;
-            this.buttonPluginsHotkey.Location = new System.Drawing.Point(336, 48);
-            this.buttonPluginsHotkey.Name = "buttonPluginsHotkey";
-            this.buttonPluginsHotkey.Size = new System.Drawing.Size(61, 23);
-            this.buttonPluginsHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonPluginsHotkey.StyleManager = null;
-            this.buttonPluginsHotkey.TabIndex = 57;
-            this.buttonPluginsHotkey.Text = "Clear";
-            this.buttonPluginsHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
             // buttonClickerHotkey
             // 
             this.buttonClickerHotkey.Highlight = true;
@@ -1213,24 +1176,6 @@ namespace AxTools.Forms
             this.buttonClickerHotkey.TabIndex = 55;
             this.buttonClickerHotkey.Text = "Clear";
             this.buttonClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // textBoxPluginsHotkey
-            // 
-            this.textBoxPluginsHotkey.CustomBackground = false;
-            this.textBoxPluginsHotkey.CustomForeColor = false;
-            this.textBoxPluginsHotkey.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxPluginsHotkey.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxPluginsHotkey.Location = new System.Drawing.Point(233, 48);
-            this.textBoxPluginsHotkey.Multiline = false;
-            this.textBoxPluginsHotkey.Name = "textBoxPluginsHotkey";
-            this.textBoxPluginsHotkey.SelectedText = "";
-            this.textBoxPluginsHotkey.Size = new System.Drawing.Size(97, 23);
-            this.textBoxPluginsHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxPluginsHotkey.StyleManager = null;
-            this.textBoxPluginsHotkey.TabIndex = 54;
-            this.textBoxPluginsHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.textBoxPluginsHotkey, "Key to switch active WoW plugin on/off. Works only if WoW window is active");
-            this.textBoxPluginsHotkey.UseStyleColors = true;
             // 
             // textBoxClickerHotkey
             // 
@@ -1527,7 +1472,7 @@ namespace AxTools.Forms
             this.linkTitle.Size = new System.Drawing.Size(55, 23);
             this.linkTitle.Style = MetroFramework.MetroColorStyle.Blue;
             this.linkTitle.TabIndex = 70;
-            this.linkTitle.Text = "Settings";
+            this.linkTitle.Text = "Settings2";
             this.linkTitle.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkTitle.UseStyleColors = true;
             // 
@@ -1544,7 +1489,7 @@ namespace AxTools.Forms
             this.Name = "AppSettings";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 10);
             this.Resizable = false;
-            this.Text = "Settings";
+            this.Text = "Settings2";
             this.GroupBox2.ResumeLayout(false);
             this.GroupBox2.PerformLayout();
             this.GroupBox1.ResumeLayout(false);
@@ -1589,7 +1534,6 @@ namespace AxTools.Forms
         #endregion
 
         private MetroLabel labelClickerHotkey;
-        private MetroLabel labelWExecModule;
         private System.Windows.Forms.NumericUpDown numericUpDownBackupCopiesToKeep;
         private MetroLabel label9;
         private MetroCheckBox checkBoxAddonsBackup;
@@ -1633,9 +1577,7 @@ namespace AxTools.Forms
         private MetroCheckBox checkBoxMinimizeToTray;
         private MetroLink linkTitle;
         private MetroCheckBox checkBoxPluginsShowIngameNotifications;
-        private MetroTextBox textBoxPluginsHotkey;
         private MetroTextBox textBoxClickerHotkey;
-        private MetroButton buttonPluginsHotkey;
         private MetroButton buttonClickerHotkey;
         private MetroTextboxExt textBoxVeryBadNetworkStatusPing;
         private MetroTextboxExt textBoxVeryBadNetworkStatusProcent;

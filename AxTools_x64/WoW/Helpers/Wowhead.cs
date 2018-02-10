@@ -153,7 +153,7 @@ namespace AxTools.WoW.Helpers
 
         private static string GetLocale()
         {
-            string configWtfPath = Settings.Instance.WoWDirectory + "\\WTF\\Config.wtf";
+            string configWtfPath = Settings2.Instance.WoWDirectory + "\\WTF\\Config.wtf";
             if (File.Exists(configWtfPath))
             {
                 string configWtf = File.ReadAllText(configWtfPath, Encoding.UTF8);

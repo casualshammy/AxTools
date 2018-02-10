@@ -42,8 +42,9 @@ namespace WoWPlugin_Notifier
             this.SaveSettingsJSON(settingsInstance);
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
+            this.game = game;
             settingsInstance = this.LoadSettingsJSON<Settings>();
             dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
             if (libSMS == null)
@@ -61,14 +62,14 @@ namespace WoWPlugin_Notifier
             this.LogPrint("LibSMS is OK");
             if (settingsInstance.OnWhisper || settingsInstance.OnBNetWhisper)
             {
-                ChatMessages.ReadChat();
-                ChatMessages.NewChatMessage += GameFunctionsOnNewChatMessage;
-                (timerChat = this.CreateTimer(1000, TimerChat_OnElapsed)).Start();
+                game.ReadChat();
+                game.NewChatMessage += GameFunctionsOnNewChatMessage;
+                (timerChat = this.CreateTimer(1000, game, TimerChat_OnElapsed)).Start();
                 this.LogPrint("Whisper notification enabled");
             }
             if (settingsInstance.OnStaticPopup)
             {
-                (timerStaticPopup = this.CreateTimer(15000, TimerStaticPopup_OnElapsed)).Start();
+                (timerStaticPopup = this.CreateTimer(15000,game, TimerStaticPopup_OnElapsed)).Start();
                 foreach (var i in PopupFrames)
                 {
                     this.LogPrint($"{i.Item1} --> {i.Item2}");
@@ -90,7 +91,7 @@ namespace WoWPlugin_Notifier
         {
             if ((settingsInstance.OnWhisper || settingsInstance.OnBNetWhisper) && timerChat != null)
             {
-                ChatMessages.NewChatMessage -= GameFunctionsOnNewChatMessage;
+                game.NewChatMessage -= GameFunctionsOnNewChatMessage;
                 timerChat.Dispose();
             }
             if (settingsInstance.OnStaticPopup && timerStaticPopup != null)
@@ -112,7 +113,7 @@ namespace WoWPlugin_Notifier
         {
             foreach (Tuple<string, string> tuple in PopupFrames)
             {
-                WoWUIFrame frame = WoWUIFrame.GetFrameByName(tuple.Item2);
+                WoWUIFrame frame = WoWUIFrame.GetFrameByName(game, tuple.Item2);
                 if (frame != null && frame.IsVisible)
                 {
                     this.LogPrint(tuple.Item1 + " is visible!");
@@ -136,12 +137,12 @@ namespace WoWPlugin_Notifier
 
         private void TimerChat_OnElapsed()
         {
-            ChatMessages.ReadChat();
+            game.ReadChat();
         }
 
         private void TimerDisconnect_OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            if (!Info.IsInGame && (DateTime.UtcNow - lastTimeNotifiedAboutDisconnect).TotalSeconds > 60)
+            if (!game.IsInGame && (DateTime.UtcNow - lastTimeNotifiedAboutDisconnect).TotalSeconds > 60)
             {
                 lastTimeNotifiedAboutDisconnect = DateTime.UtcNow;
                 this.LogPrint("Player is not in game!");
@@ -165,6 +166,7 @@ namespace WoWPlugin_Notifier
         #endregion
 
         private Settings settingsInstance;
+        private GameInterface game;
         private SafeTimer timerChat;
         private SafeTimer timerStaticPopup;
         private System.Timers.Timer timerDisconnect;
@@ -173,7 +175,7 @@ namespace WoWPlugin_Notifier
         private static Tuple<string, string>[] PopupFrames = {
             new Tuple<string, string>("General popup", "StaticPopup1"),
             new Tuple<string, string>("PvE dungeon invite", "LFGDungeonReadyDialog"),
-            new Tuple<string, string>("PvP dungeon invite", "PVPReadyDialog")
+            //new Tuple<string, string>("PvP dungeon invite", "PVPReadyDialog")
         };
 
     }

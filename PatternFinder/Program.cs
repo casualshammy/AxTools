@@ -30,7 +30,6 @@ namespace PatternFinder
                 Pattern.FromTextstyle("LastHardwareAction", "48 83 EC 28 2B 0D ?? ?? ?? ?? 8D 81 20 6C FB FF 85 C0 78 ?? 8D 81 C0 88 E4 FF 85 C0 78 ?? E8", new AddModifier(6), new LeaModifier(LeaType.E8)),
                 Pattern.FromTextstyle("TickCount", "0F 57 C0 8B C1 89 0D ?? ?? ?? ?? C7 05 ?? ?? ?? ?? 00 00 00 00 F3 48 0F 2A C0 F3 0F 59 05 ?? ?? ?? ??", new AddModifier(7), new LeaModifier(LeaType.CmpMinusOne)),
                 Pattern.FromTextstyle("ObjectManager", "57 41 56 41 57 48 83 EC 30 4C 8B 05 ?? ?? ?? ?? 45 33 F6 33 ED 49 8B 88 A0 01 00 00", new AddModifier(12), new LeaModifier(LeaType.CmpMinusOne)),
-                ////Pattern.FromTextstyle("PlayerName", "E8 ?? ?? ?? ?? 85 C0 75 6C 48 83 C7 21 E8 ?? ?? ?? ?? 41 B8 FF FF FF 7F 48 8B C8 48 8B D7 E8", new AddModifier(14), new LeaModifier(LeaType.E8), new AddModifier(5), new LeaModifier(LeaType.E8)),
                 Pattern.FromTextstyle("NotLoadingScreen", "48 83 EC 38 80 3D ?? ?? ?? ?? 00 0F 84 ?? ?? ?? ?? 83 3D ?? ?? ?? ?? 00 48 89 5C 24 48 74 ?? E8", new AddModifier(6), new LeaModifier(LeaType.Cmp)),
                 Pattern.FromTextstyle("MouseoverGUID", "45 33 C0 48 89 7C 24 70 41 8D 50 01 E8 ?? ?? ?? ?? 48 8D 15 ?? ?? ?? ?? 48 8B C8 48 8B F8 E8 ?? ?? ?? ?? 85 C0 75 ?? 0F 10 05 ?? ?? ?? ?? EB", new AddModifier(42), new LeaModifier(LeaType.CmpMinusOne)),
                 Pattern.FromTextstyle("ChatIsOpened", "83 3D ?? ?? ?? ?? 00 48 8B CB 7E ?? 48 8B D0 EB ?? 33 D2 E8 ?? ?? ?? ?? E8", new AddModifier(2), new LeaModifier(LeaType.Cmp)),
@@ -42,6 +41,7 @@ namespace PatternFinder
                 Pattern.FromTextstyle("PlayerZoneID", "0F B7 47 xx 66 85 C0 74 xx 0F B7 C8 3B 0D ?? ?? ?? ?? 74 xx 3B 0D xx xx xx xx 0F 85", new AddModifier(14), new LeaModifier(LeaType.CmpMinusOne)),
                 Pattern.FromTextstyle("PlayerIsLooting", "41 56 48 81 EC 50 01 00 00 45 33 C0 33 D2 48 8B F9 E8 xx xx xx xx 48 8D 0D ?? ?? ?? ?? E8", new AddModifier(25), new LeaModifier(LeaType.CmpMinusOne)),
                 Pattern.FromTextstyle("PlayerGUID", "48 8D 05 ?? ?? ?? ?? 41 B8 03 00 00 00 0F 1F 00 0F 10 01", new AddModifier(3), new LeaModifier(LeaType.CmpMinusOne)),
+                Pattern.FromTextstyle("IsChatAFK", "48 8B 83 D8 2B 00 00 8B 48 30 83 E1 02 89 0D ?? ?? ?? ?? F7 C7 00 03 04 00 74", new AddModifier(15), new LeaModifier(LeaType.CmpMinusOne)),
             };
             string reportFilePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\result.txt";
             File.Delete(reportFilePath);

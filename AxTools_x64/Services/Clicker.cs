@@ -17,7 +17,7 @@ namespace AxTools.Services
         private static IntPtr _key;
         private static readonly object Lock = new object();
         internal static IntPtr Handle { get; private set; }
-        private static readonly Settings _settings = Settings.Instance;
+        private static readonly Settings2 _settings = Settings2.Instance;
         private static readonly Log2 logger = new Log2("Clicker");
 
         static Clicker()

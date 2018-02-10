@@ -16,6 +16,8 @@ using AxTools.Properties;
 using AxTools.Updater;
 using Newtonsoft.Json;
 using System.Linq;
+using AxTools.WoW;
+using AxTools.WoW.PluginSystem;
 
 namespace AxTools
 {
@@ -51,6 +53,8 @@ namespace AxTools
                             DeleteTempFolder();
                             Legacy();
                             InstallRootCertificate();
+                            log.Info($"{typeof(WoWAntiKick).ToString()} is subscribing for {typeof(WoWProcessManager).ToString()}'s events");
+                            WoWAntiKick.StartWaitForWoWProcesses();
                             log.Info(string.Format("Starting application... ({0})", Globals.AppVersion));
                             Application.Run(MainForm.Instance = new MainForm());
                             log.Info("Application is closed");
@@ -193,7 +197,7 @@ namespace AxTools
             // 17.04.2017
             try
             {
-                if (Helpers.Settings.Instance.LastUsedVersion <= new VersionExt(12, 2, 46))
+                if (Settings2.Instance.LastUsedVersion <= new VersionExt(12, 2, 46))
                 {
                     string fileName = AppFolders.DataDir + "\\wowhead.ldb";
                     if (File.Exists(fileName))
@@ -222,6 +226,44 @@ namespace AxTools
                 {
                     File.Delete(fileName);
                     log.Info($"Old db file is deleted ({fileName})");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            // 09.02.2018
+            try
+            {
+                string cfg = File.ReadAllText(AppFolders.ConfigDir + "\\settings.json", Encoding.UTF8);
+                if (cfg.Contains("\"WoWRadarList\": ["))
+                {
+                    Helpers.Settings oldSettings = JsonConvert.DeserializeObject<Helpers.Settings>(cfg);
+                    WoWRadarSettings.Instance.AlarmSoundFile = oldSettings.WoWRadarAlarmSoundFile;
+                    WoWRadarSettings.Instance.DisplayCorpses = oldSettings.WoWRadarShowMode.Corpses;
+                    WoWRadarSettings.Instance.DisplayEnemies = oldSettings.WoWRadarShowMode.Enemies;
+                    WoWRadarSettings.Instance.DisplayFriends = oldSettings.WoWRadarShowMode.Friends;
+                    WoWRadarSettings.Instance.DisplayNpcs = oldSettings.WoWRadarShowMode.Npcs;
+                    WoWRadarSettings.Instance.DisplayObjects = oldSettings.WoWRadarShowMode.Objects;
+                    WoWRadarSettings.Instance.EnemyColor = oldSettings.WoWRadarEnemyColor;
+                    WoWRadarSettings.Instance.FriendColor = oldSettings.WoWRadarFriendColor;
+                    WoWRadarSettings.Instance.List = oldSettings.WoWRadarList;
+                    WoWRadarSettings.Instance.Location = oldSettings.WoWRadarLocation;
+                    WoWRadarSettings.Instance.NPCColor = oldSettings.WoWRadarNPCColor;
+                    WoWRadarSettings.Instance.ObjectColor = oldSettings.WoWRadarObjectColor;
+                    WoWRadarSettings.Instance.ShowLocalPlayerRotationArrowOnTop = oldSettings.WoWRadarShowLocalPlayerRotationArrowOnTop;
+                    WoWRadarSettings.Instance.ShowNPCsNames = oldSettings.WoWRadarShowNPCsNames;
+                    WoWRadarSettings.Instance.ShowObjectsNames = oldSettings.WoWRadarShowObjectsNames;
+                    WoWRadarSettings.Instance.ShowPlayersClasses = oldSettings.WoWRadarShowPlayersClasses;
+                    WoWRadarSettings.Instance.Zoom = oldSettings.WoWRadarShowMode.Zoom;
+                    WoWRadarSettings.Instance.SaveJSON();
+                }
+                if (cfg.Contains("\"PluginsUsageStat2\": {"))
+                {
+                    Helpers.Settings oldSettings = JsonConvert.DeserializeObject<Helpers.Settings>(cfg);
+                    PluginManagerEx._pluginsUsageStats = oldSettings.PluginsUsageStat2;
+                    PluginManagerEx.SavePluginUsageStats();
                 }
             }
             catch (Exception ex)

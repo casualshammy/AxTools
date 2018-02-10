@@ -13,9 +13,11 @@ namespace WoWPlugin_Dumper
     {
         private readonly Dumper dumper;
         private SafeTimer chatTimer;
+        private GameInterface game;
 
-        public DumperForm(Dumper dumperInstance)
+        public DumperForm(Dumper dumperInstance, GameInterface game)
         {
+            this.game = game;
             InitializeComponent();
             dumper = dumperInstance;
         }
@@ -45,7 +47,7 @@ namespace WoWPlugin_Dumper
             WoWPlayerMe localPlayer;
             try
             {
-                localPlayer = ObjMgr.Pulse(wowObjects, wowUnits, wowNpcs);
+                localPlayer = game.GetGameObjects(wowObjects, wowUnits, wowNpcs);
                 if (localPlayer != null)
                 {
                     Log("Dump OK");
@@ -65,7 +67,7 @@ namespace WoWPlugin_Dumper
             {
                 Log("Local player---------------------------------------");
                 Log(string.Format("\tGUID: 0x{0}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; IsLooting: {5}; Name: {6}; TargetGUID: {7}; Class: {8}; Health/MaxHealth: {9}/{10}, Level: {11}; Faction: {12}; IsMounted: {13}",
-                    localPlayer.GUID, localPlayer.Address.ToInt64(), localPlayer.Location, Info.ZoneID, Info.ZoneText, Info.IsLooting, localPlayer.Name, localPlayer.TargetGUID, localPlayer.Class,
+                    localPlayer.GUID, localPlayer.Address.ToInt64(), localPlayer.Location, game.ZoneID, game.ZoneText, game.IsLooting, localPlayer.Name, localPlayer.TargetGUID, localPlayer.Class,
                     localPlayer.Health, localPlayer.HealthMax,localPlayer.Level, localPlayer.Faction, localPlayer.IsMounted));
             }
             catch (Exception ex)
@@ -87,7 +89,7 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("----Mouseover----");
-                Log(string.Format("\tGUID: {0}", Info.MouseoverGUID));
+                Log(string.Format("\tGUID: {0}", game.MouseoverGUID));
             }
             catch (Exception ex)
             {
@@ -161,7 +163,7 @@ namespace WoWPlugin_Dumper
             List<WowNpc> wowNpcs = new List<WowNpc>();
             try
             {
-                ObjMgr.Pulse(wowObjects, wowUnits, wowNpcs);
+                game.GetGameObjects(wowObjects, wowUnits, wowNpcs);
                 Log("Dump OK");
             }
             catch (Exception ex)
@@ -190,6 +192,10 @@ namespace WoWPlugin_Dumper
                 foreach (WowNpc i in wowNpcs)
                 {
                     Log($"\t{i.Name}; Location: {i.Location}; Distance: {"n/a"}; Address: 0x{i.Address.ToInt64().ToString("X")} HP:{i.Health}; MaxHP:{i.HealthMax}; GUID:0x{i.GUID}; EntryID: {i.EntryID}");
+                    foreach (var aura in i.Auras)
+                    {
+                        Log($"\t\t\t{aura.Name}; {aura.OwnerGUID}");
+                    }
                 }
             }
             catch (Exception ex)
@@ -203,7 +209,11 @@ namespace WoWPlugin_Dumper
                 foreach (WowPlayer i in wowUnits)
                 {
                     Log($"\t{i.Name} - GUID: 0x{i.GUID}; Location: {i.Location}; Distance: {"n/a"}; Address:0x{i.Address.ToInt64().ToString("X")}; Class:{i.Class}; Level:{i.Level}; HP:{i.Health}; MaxHP:{i.HealthMax}; " +
-                        $"TargetGUID: 0x{i.TargetGUID}; IsAlliance:{i.Faction}; Auras: {{ {""} }}; GUIDBytes: {BitConverter.ToString(i.GetGUIDBytes())}"); // string.Join(",", i.Auras.Select(l => l.Name + "::" + l.Stack + "::" + l.TimeLeftInMs + "::" + l.OwnerGUID.ToString()))
+                        $"TargetGUID: 0x{i.TargetGUID}; Faction:{i.Faction}; Race: {i.Race}; Auras: {{ {""} }}; GUIDBytes: {BitConverter.ToString(i.GetGUIDBytes())}");
+                    foreach (var aura in i.Auras)
+                    {
+                        Log($"\t\t\tName: {aura.Name}; OwnerGUID: {aura.OwnerGUID}; Stack: {aura.Stack}; TimeLeftInMs: {aura.TimeLeftInMs}");
+                    }
                 }
             }
             catch (Exception ex)
@@ -218,12 +228,12 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("UIFrames-----------------------------------------");
-                foreach (WoWUIFrame frame in WoWUIFrame.GetAllFrames())
+                foreach (WoWUIFrame frame in WoWUIFrame.GetAllFrames(game))
                 {
                     Log(string.Format("\tName: {0}; Visible: {1}; EditboxText: {2}", frame.GetName, frame.IsVisible, frame.EditboxText));
                 }
-                await Task.Run(() => Log(Lua.GetValue("UnitHealth(\"player\")")));
-                if (await Task.Run(() => Lua.IsTrue("1==1")))
+                await Task.Run(() => Log(game.LuaGetValue("UnitHealth(\"player\")")));
+                if (await Task.Run(() => game.LuaIsTrue("1==1")))
                 {
                     MessageBox.Show("Completed, lua is working properly");
                 }
@@ -246,8 +256,8 @@ namespace WoWPlugin_Dumper
                 Log("Chat messages-----------------------------------------");
                 if (chatTimer == null)
                 {
-                    ChatMessages.NewChatMessage += Chat_NewMessage;
-                    (chatTimer = dumper.CreateTimer(1000, ChatMessages.ReadChat)).Start();
+                    game.NewChatMessage += Chat_NewMessage;
+                    (chatTimer = dumper.CreateTimer(1000, game, game.ReadChat)).Start();
                 }
             }
             catch (Exception ex)
@@ -262,7 +272,7 @@ namespace WoWPlugin_Dumper
             WoWPlayerMe me = null;
             try
             {
-                me = ObjMgr.Pulse();
+                me = game.GetGameObjects();
                 Log("Dump OK");
             }
             catch (Exception ex)
@@ -302,7 +312,7 @@ namespace WoWPlugin_Dumper
 
         private void DumperForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ChatMessages.NewChatMessage -= Chat_NewMessage;
+            game.NewChatMessage -= Chat_NewMessage;
             chatTimer?.Dispose();
         }
 
@@ -311,7 +321,7 @@ namespace WoWPlugin_Dumper
             WoWPlayerMe lp;
             try
             {
-                lp = ObjMgr.Pulse();
+                lp = game.GetGameObjects();
                 if (lp != null)
                 {
                     Log("Dump OK");
@@ -330,9 +340,9 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("Info---------------------------------------");
-                Log($"\tZoneID: {Info.ZoneID}");
-                Log($"\tZoneText: {Info.ZoneText}");
-                Log($"\tIsLooting: {Info.IsLooting}");
+                Log($"\tZoneID: {game.ZoneID}");
+                Log($"\tZoneText: {game.ZoneText}");
+                Log($"\tIsLooting: {game.IsLooting}");
                 Log($"\tCastingSpellID: {lp.CastingSpellID}");
                 Log($"\tChannelSpellID: {lp.ChannelSpellID}");
             }
@@ -343,8 +353,9 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("Local player---------------------------------------");
-                Log($"\tGUID: {lp.GUID}; Address: 0x{lp.Address.ToInt64().ToString("X")}; Location: {lp.Location}; "+
-                    $"Name: {lp.Name}; TargetGUID: {lp.TargetGUID}; Class: {lp.Class}; Health/MaxHealth: {lp.Health}/{lp.HealthMax}, Level: {lp.Level}; Faction: {lp.Faction}; IsMounted: {lp.IsMounted}");
+                Log($"\tGUID: {lp.GUID}; Address: 0x{lp.Address.ToInt64().ToString("X")}; Location: {lp.Location}; Pitch: {lp.Pitch}");
+                Log($"\tName: {lp.Name}; TargetGUID: {lp.TargetGUID}; Class: {lp.Class}; Health/MaxHealth: {lp.Health}/{lp.HealthMax}");
+                Log($"\tLevel: {lp.Level}; Faction: {lp.Faction}; Race: {lp.Race}; IsMounted: {lp.IsMounted}; IsFlying: {lp.IsFlying}");
             }
             catch (Exception ex)
             {
@@ -365,7 +376,7 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("----Mouseover----");
-                Log(string.Format("\tGUID: {0}", Info.MouseoverGUID));
+                Log(string.Format("\tGUID: {0}", game.MouseoverGUID));
             }
             catch (Exception ex)
             {
@@ -374,5 +385,57 @@ namespace WoWPlugin_Dumper
             MessageBox.Show("Completed");
         }
 
+        private void btnSetPitch_Click(object sender, EventArgs e)
+        {
+            WoWPlayerMe lp;
+            try
+            {
+                lp = game.GetGameObjects();
+                if (lp != null)
+                {
+                    Log("Dump OK");
+                }
+                else
+                {
+                    Log("ERROR: localPlayer is null!");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("ERROR(0): " + ex.Message);
+                return;
+            }
+            lp.Pitch = (float)((new Random().NextDouble())/10);
+        }
+
+        private void btnTestVertAngle_Click(object sender, EventArgs e)
+        {
+            WoWPlayerMe lp;
+            List<WowNpc> npcs = new List<WowNpc>();
+            try
+            {
+                lp = game.GetGameObjects(null, null, npcs);
+                if (lp != null)
+                {
+                    Log("Dump OK");
+                }
+                else
+                {
+                    Log("ERROR: localPlayer is null!");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("ERROR(0): " + ex.Message);
+                return;
+            }
+            WowNpc target = npcs.FirstOrDefault(l => l.GUID == lp.TargetGUID);
+            float angle = -(float)Math.Round(Math.Atan2(lp.Location.Distance2D(target.Location), target.Location.Z - lp.Location.Z) - Math.PI / 2, 2);
+            //if (angle < 0)
+            //    angle += (float)(Math.PI * 2);
+            MessageBox.Show(angle.ToString());
+        }
     }
 }

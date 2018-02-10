@@ -19,7 +19,7 @@ namespace AxTools.Services
     internal static class AddonsBackup
     {
         private static readonly Log2 log = new Log2("AddonsBackup");
-        private static readonly Settings _settings = Settings.Instance;
+        private static readonly Settings2 _settings = Settings2.Instance;
         private static int _prevProcent = -1;
         private static bool _isBackingUp;
         private static Timer _timer;

@@ -16,7 +16,7 @@ namespace AxTools.Forms
         public AddonsBackupDeploy()
         {
             InitializeComponent();
-            StyleManager.Style = Settings.Instance.StyleColor;
+            StyleManager.Style = Settings2.Instance.StyleColor;
             pathsToArchives = AddonsBackup.GetArchives();
             foreach (string archive in pathsToArchives)
             {

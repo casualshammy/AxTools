@@ -4,18 +4,18 @@ using System.Windows.Forms;
 using AxTools.Helpers;
 using AxTools.Properties;
 using Components.Forms;
-using Settings = AxTools.Helpers.Settings;
+using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
 {
     internal partial class ClickerSettings : BorderedMetroForm
     {
-        private readonly Settings settings = Settings.Instance;
+        private readonly Settings2 settings = Settings2.Instance;
 
         internal ClickerSettings()
         {
             InitializeComponent();
-           StyleManager.Style = Settings.Instance.StyleColor;
+           StyleManager.Style = Settings2.Instance.StyleColor;
             Icon = Resources.AppIcon;
             Keys[] keys =
             {

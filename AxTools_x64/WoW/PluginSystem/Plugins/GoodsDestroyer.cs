@@ -10,7 +10,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
-    internal class GoodsDestroyer : IPlugin
+    internal class GoodsDestroyer : IPlugin2
     {
 
         #region Info
@@ -40,6 +40,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
             get { return true; }
         }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Events
@@ -54,74 +56,75 @@ namespace AxTools.WoW.PluginSystem.Plugins
             this.SaveSettingsJSON(SettingsInstance);
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface info)
         {
+            this.info = info;
             SettingsInstance = this.LoadSettingsJSON<GoodsDestroyerSettings>();
             if (SettingsInstance.MillFelwort)
             {
                 herbs.Add(124106); // Felwort item id
             }
             lastNotifiedAboutCompletion = DateTime.MinValue;
-            if (Info.IsSpellKnown(51005)) // mill
+            if (info.IsSpellKnown(51005)) // mill
             {
                 this.LogPrint("Milling: OK");
             }
-            if (Info.IsSpellKnown(31252)) // prospect
+            if (info.IsSpellKnown(31252)) // prospect
             {
                 this.LogPrint("Prospecting: OK");
             }
-            if (Info.IsSpellKnown(13262)) // disenchant
+            if (info.IsSpellKnown(13262)) // disenchant
             {
                 this.LogPrint("Disenchanting: OK");
             }
-            (timer = this.CreateTimer(50, OnPulse)).Start();
+            (timer = this.CreateTimer(50, info, OnPulse)).Start();
         }
 
         public void OnPulse()
         {
-            WoWPlayerMe me = ObjectMgr.Pulse();
+            WoWPlayerMe me = info.GetGameObjects();
             if (me != null)
             {
-                if (!Info.IsLooting)
+                if (!info.IsLooting)
                 {
                     if (me.CastingSpellID == 0 && me.ChannelSpellID == 0)
                     {
-                        if (Info.IsSpellKnown(51005)) // mill
+                        if (info.IsSpellKnown(51005)) // mill
                         {
                             if (SettingsInstance.UseFastDraenorMill && me.ItemsInBags.Any(l => fastMillHerbs.Contains(l.EntryID) && l.StackSize >= 20))
                             {
-                                GameFunctions.SendToChat(string.Format("/run {0}={{}}", someRandomString));
+                                info.SendToChat(string.Format("/run {0}={{}}", someRandomString));
                                 string prepare = string.Format("/run local s=C_TradeSkillUI.GetFilteredRecipeIDs();local t={{}};if(#s>0) then for i=1,#s do C_TradeSkillUI.GetRecipeInfo(s[i], t);{0}[t.name]={{t.recipeID,t.numAvailable}}; end end", someRandomString);
-                                GameFunctions.SendToChat(prepare);
+                                info.SendToChat(prepare);
                                 string s = string.Format("/run for n,i in pairs({0}) do if(strfind(n,\"Массовое измельчение\") and i[2]>0) then C_TradeSkillUI.CraftRecipe(i[1],i[2]);return; end end", someRandomString);
-                                GameFunctions.SendToChat(s);
+                                info.SendToChat(s);
                                 Thread.Sleep(2000);
                                 return;
                             }
                             if (me.ItemsInBags.Any(l => l.EntryID == 136926)) // Кошмарный стручок
                             {
-                                GameFunctions.UseItemByID(136926);
+                                info.UseItemByID(136926);
                                 Thread.Sleep(500);
                                 return;
                             }
                             WoWItem herb = me.ItemsInBags.FirstOrDefault(l => herbs.Contains(l.EntryID) && l.StackSize >= 5);
                             if (herb != null)
                             {
-                                GameFunctions.CastSpellByName(Wowhead.GetSpellInfo(51005).Name);
-                                GameFunctions.UseItem(herb.BagID, herb.SlotID);
+                                info.CastSpellByName(Wowhead.GetSpellInfo(51005).Name);
+                                info.UseItem(herb.BagID, herb.SlotID);
                                 Thread.Sleep(500);
                                 return;
                             }
                             if (SettingsInstance.LaunchInkCrafter)
                             {
-                                Utilities.AddPluginToRunning("InkCrafter");
+                                Utilities.AddPluginToRunning(this, "InkCrafter");
                             }
                         }
-                        if (Info.IsSpellKnown(31252)) // prospect
+                        if (info.IsSpellKnown(31252)) // prospect
                         {
                             DoProspect();
                         }
-                        if (Info.IsSpellKnown(13262)) // disenchant
+                        if (info.IsSpellKnown(13262)) // disenchant
                         {
                             Thread.Sleep(1000); // pause to prevent disenchanting nonexistent item 
                             DoDisenchant();
@@ -147,23 +150,23 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         private void DoDisenchant()
         {
-            WoWPlayerMe me = ObjectMgr.Pulse();
+            WoWPlayerMe me = info.GetGameObjects();
             WoWItem itemToDesenchant = me.ItemsInBags.FirstOrDefault(l => (l.Class == 2 || l.Class == 4) && l.Quality == 2 && l.Level > 1);
             if (itemToDesenchant != null)
             {
-                GameFunctions.CastSpellByName(Wowhead.GetSpellInfo(13262).Name);
-                GameFunctions.UseItem(itemToDesenchant.BagID, itemToDesenchant.SlotID);
+                info.CastSpellByName(Wowhead.GetSpellInfo(13262).Name);
+                info.UseItem(itemToDesenchant.BagID, itemToDesenchant.SlotID);
             }
         }
 
         private void DoProspect()
         {
-            WoWPlayerMe me = ObjectMgr.Pulse();
+            WoWPlayerMe me = info.GetGameObjects();
             WoWItem ore = me.ItemsInBags.FirstOrDefault(l => ores.Contains(l.EntryID) && l.StackSize >= 5);
             if (ore != null)
             {
-                GameFunctions.CastSpellByName(Wowhead.GetSpellInfo(31252).Name);
-                GameFunctions.UseItem(ore.BagID, ore.SlotID);
+                info.CastSpellByName(Wowhead.GetSpellInfo(31252).Name);
+                info.UseItem(ore.BagID, ore.SlotID);
             }
         }
 
@@ -172,8 +175,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         #region Variables
 
         private SafeTimer timer;
-
         internal GoodsDestroyerSettings SettingsInstance;
+        private GameInterface info;
 
         private readonly List<uint> herbs = new List<uint>
         {

@@ -146,9 +146,9 @@
             this.checkBoxLegionMargoss.AutoSize = true;
             this.checkBoxLegionMargoss.Location = new System.Drawing.Point(6, 88);
             this.checkBoxLegionMargoss.Name = "checkBoxLegionMargoss";
-            this.checkBoxLegionMargoss.Size = new System.Drawing.Size(110, 17);
+            this.checkBoxLegionMargoss.Size = new System.Drawing.Size(102, 17);
             this.checkBoxLegionMargoss.TabIndex = 3;
-            this.checkBoxLegionMargoss.Text = "Farm Margoss rep";
+            this.checkBoxLegionMargoss.Text = "Farm Legion rep";
             this.checkBoxLegionMargoss.UseVisualStyleBackColor = true;
             this.checkBoxLegionMargoss.CheckedChanged += new System.EventHandler(this.checkBoxLegionMargoss_CheckedChanged);
             // 

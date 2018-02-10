@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace LibSMS
 {
-    public class LibSMS : IPlugin
+    public class LibSMS : IPlugin2
     {
 
         #region Info
@@ -26,6 +26,8 @@ namespace LibSMS
 
         public bool ConfigAvailable { get { return true; } }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Methods
@@ -40,7 +42,7 @@ namespace LibSMS
             this.SaveSettingsJSON(settingsInstance);
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
             settingsInstance = this.LoadSettingsJSON<Settings>();
             this.LogPrint("Successfully started");
@@ -51,7 +53,7 @@ namespace LibSMS
             
         }
 
-        public void SendSMS(string text)
+        public void SendSMS(string text, GameInterface game)
         {
             if (settingsInstance == null) settingsInstance = this.LoadSettingsJSON<Settings>();
             string smsURL = settingsInstance.SMSAPI;

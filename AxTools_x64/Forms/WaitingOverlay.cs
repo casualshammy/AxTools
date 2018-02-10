@@ -64,14 +64,14 @@ namespace AxTools.Forms
             {
                 InitializeComponent();
                 parentForm = form;
-                metroProgressSpinner1.Style = Settings.Instance.StyleColor;
-                metroLabel1.Style = Settings.Instance.StyleColor;
+                metroProgressSpinner1.Style = Settings2.Instance.StyleColor;
+                metroLabel1.Style = Settings2.Instance.StyleColor;
             }
 
             protected override void OnPaint(PaintEventArgs e)
             {
                 base.OnPaint(e);
-                using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(Settings.Instance.StyleColor))
+                using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(Settings2.Instance.StyleColor))
                 {
                     e.Graphics.FillRectangles(styleBrush, new[]
                     {
@@ -84,7 +84,7 @@ namespace AxTools.Forms
             }
 
             private readonly Form parentForm;
-            //private readonly MetroColorStyle parentStyle = Settings.Instance.StyleColor;
+            //private readonly MetroColorStyle parentStyle = Settings2.Instance.StyleColor;
 
             private void WaitingOverlaySub_Load(object sender, EventArgs e)
             {

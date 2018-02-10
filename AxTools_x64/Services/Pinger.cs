@@ -15,7 +15,7 @@ namespace AxTools.Services
     internal static class Pinger
     {
         private static readonly Log2 log = new Log2("Pinger");
-        private static readonly Settings _settings = Settings.Instance;
+        private static readonly Settings2 _settings = Settings2.Instance;
         private static Timer _timer;
         private static readonly object Lock = new object();
         private static Stopwatch _stopwatch;

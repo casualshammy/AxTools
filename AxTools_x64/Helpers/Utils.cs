@@ -221,8 +221,7 @@ namespace AxTools.Helpers
             if (Thread.CurrentThread.ManagedThreadId == MainForm.UIThreadID)
             {
                 StackTrace stackTrace = new StackTrace();
-                StackFrame[] stackFrames = stackTrace.GetFrames();
-                log.Error("Trying to call from UI thread; call stack: " + string.Join(" -->> ", stackFrames != null ? stackFrames.Select(l => l.GetMethod().Name).Reverse() : new[] {"Stack is null"}));
+                log.Error($"Trying to call from UI thread; call stack:\r\n{stackTrace.ToString()}");
             }
         }
 

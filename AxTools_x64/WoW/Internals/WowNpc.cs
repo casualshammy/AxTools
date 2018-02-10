@@ -12,7 +12,8 @@ namespace AxTools.WoW.Internals
     /// </summary>
     public sealed class WowNpc : WoWObjectBase
     {
-        internal WowNpc(IntPtr pAddress)
+        
+        internal WowNpc(IntPtr pAddress, WowProcess wow) : base(wow)
         {
             Address = pAddress;
         }
@@ -31,7 +32,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mDescriptors == IntPtr.Zero)
                 {
-                    mDescriptors = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.UnitDescriptors);
+                    mDescriptors = memory.Read<IntPtr>(Address + WowBuildInfoX64.UnitDescriptors);
                 }
                 return mDescriptors;
             }
@@ -44,7 +45,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mGUID == WoWGUID.Zero)
                 {
-                    mGUID = WoWManager.WoWProcess.Memory.Read<WoWGUID>(Address + WowBuildInfoX64.ObjectGUID);
+                    mGUID = memory.Read<WoWGUID>(Address + WowBuildInfoX64.ObjectGUID);
                 }
                 return mGUID;
             }
@@ -58,14 +59,14 @@ namespace AxTools.WoW.Internals
                 {
                     try
                     {
-                        IntPtr nameBase = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.NpcNameBase);
-                        IntPtr nameAddress = WoWManager.WoWProcess.Memory.Read<IntPtr>(nameBase + WowBuildInfoX64.NpcNameOffset);
-                        byte[] nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
+                        IntPtr nameBase = memory.Read<IntPtr>(Address + WowBuildInfoX64.NpcNameBase);
+                        IntPtr nameAddress = memory.Read<IntPtr>(nameBase + WowBuildInfoX64.NpcNameOffset);
+                        byte[] nameBytes = memory.ReadBytes(nameAddress, _maxNameLength);
                         while (!nameBytes.Contains((byte)0))
                         {
                             _maxNameLength += 1;
                             log.Error("Max length for NPC names is increased to " + _maxNameLength);
-                            nameBytes = WoWManager.WoWProcess.Memory.ReadBytes(nameAddress, _maxNameLength);
+                            nameBytes = memory.ReadBytes(nameAddress, _maxNameLength);
                         }
                         temp = Encoding.UTF8.GetString(nameBytes.TakeWhile(l => l != 0).ToArray());
                         Names.Add(EntryID, temp);
@@ -88,7 +89,7 @@ namespace AxTools.WoW.Internals
             {
                 if (!mLocationRead)
                 {
-                    mLocation = WoWManager.WoWProcess.Memory.Read<WowPoint>(Address + WowBuildInfoX64.UnitLocation);
+                    mLocation = memory.Read<WowPoint>(Address + WowBuildInfoX64.UnitLocation);
                     mLocationRead = true;
                 }
                 return mLocation;
@@ -102,7 +103,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mHealth == uint.MaxValue)
                 {
-                    mHealth = WoWManager.WoWProcess.Memory.Read<uint>(Descriptors + WowBuildInfoX64.UnitHealth);
+                    mHealth = memory.Read<uint>(Descriptors + WowBuildInfoX64.UnitHealth);
                 }
                 return mHealth;
             }
@@ -115,7 +116,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mHealthMax == uint.MaxValue)
                 {
-                    mHealthMax = WoWManager.WoWProcess.Memory.Read<uint>(Descriptors + WowBuildInfoX64.UnitHealthMax);
+                    mHealthMax = memory.Read<uint>(Descriptors + WowBuildInfoX64.UnitHealthMax);
                 }
                 return mHealthMax;
             }
@@ -133,7 +134,7 @@ namespace AxTools.WoW.Internals
             {
                 if (lootable == -1)
                 {
-                    BitVector32 dynamicFlags = WoWManager.WoWProcess.Memory.Read<BitVector32>(Descriptors + WowBuildInfoX64.NpcDynamicFlags);
+                    BitVector32 dynamicFlags = memory.Read<BitVector32>(Descriptors + WowBuildInfoX64.NpcDynamicFlags);
                     lootable = dynamicFlags[0x2] ? 1 : 0;
                 }
                 return lootable != 0;
@@ -147,12 +148,15 @@ namespace AxTools.WoW.Internals
             {
                 if (mEntryID == 0)
                 {
-                    IntPtr descriptors = WoWManager.WoWProcess.Memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
-                    mEntryID = WoWManager.WoWProcess.Memory.Read<uint>(descriptors + WowBuildInfoX64.GameObjectEntryID);
+                    IntPtr descriptors = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
+                    mEntryID = memory.Read<uint>(descriptors + WowBuildInfoX64.GameObjectEntryID);
                 }
                 return mEntryID;
             }
         }
 
+        private List<WoWAura> auras;
+        public List<WoWAura> Auras => auras ?? (auras = WoWAura.GetAurasForMemoryAddress(memory, Address));
+        
     }
 }

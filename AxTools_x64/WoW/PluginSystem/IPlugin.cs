@@ -1,21 +1,17 @@
-﻿using System;
+﻿using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Drawing;
 
 namespace AxTools.WoW.PluginSystem
 {
-    public interface IPlugin2 : IPlugin
+    public interface IPlugin2
     {
 
         /// <summary>
-        /// Array of plugins names required for this plugin to work
+        /// Array of plugin names required for this plugin to work
         /// </summary>
         string[] Dependencies { get; }
 
-    }
-
-    [Obsolete("Use IPlugin2 instead")]
-    public interface IPlugin
-    {
         /// <summary>
         ///     The name of the plugin
         /// </summary>
@@ -49,7 +45,7 @@ namespace AxTools.WoW.PluginSystem
         /// <summary>
         ///     Work to be done when the plugin is loaded by the bot on startup
         /// </summary>
-        void OnStart();
+        void OnStart(GameInterface game);
 
         /// <summary>
         ///     Work to be done when the bot is shutdown/closed
@@ -57,4 +53,5 @@ namespace AxTools.WoW.PluginSystem
         void OnStop();
 
     }
+    
 }

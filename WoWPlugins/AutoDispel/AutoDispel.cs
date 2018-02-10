@@ -10,7 +10,7 @@ namespace AutoDispel
 {
     public class AutoDispel : IPlugin2
     {
-        public string[] Dependencies => new string[] { };
+        public string[] Dependencies => null;
 
         public string Name => "AutoDispel";
 
@@ -30,6 +30,11 @@ namespace AutoDispel
         public void OnStart()
         {
             this.ShowNotify("This plugin is not completed", true, true);
+        }
+
+        public void OnStart(GameInterface game)
+        {
+            throw new NotImplementedException();
         }
 
         public void OnStop()

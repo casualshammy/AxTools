@@ -13,7 +13,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_CombatRoutine
 {
-    public class CombatRoutine : IPlugin
+    public class CombatRoutine : IPlugin2
     {
 
         #region Info
@@ -40,6 +40,8 @@ namespace WoWPlugin_CombatRoutine
             get { return false; }
         }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Events
@@ -49,9 +51,10 @@ namespace WoWPlugin_CombatRoutine
 
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
-            timer = this.CreateTimer(100, OnPulse);
+            this.game = game;
+            timer = this.CreateTimer(100, game, OnPulse);
             timer.Start();
         }
 
@@ -62,13 +65,13 @@ namespace WoWPlugin_CombatRoutine
 
         private void OnPulse()
         {
-            WoWPlayerMe me = ObjMgr.Pulse(null, null, npcs);
+            WoWPlayerMe me = game.GetGameObjects(null, null, npcs);
             if (me != null && me.InCombat)
             {
                 WowNpc nearestNpc = npcs.FirstOrDefault(l => l.GUID == me.TargetGUID);
                 if (nearestNpc == null)
                 {
-                    GameFunctions.SendToChat("/targetenemy");
+                    game.SendToChat("/targetenemy");
                 }
                 if (me.Class == WowPlayerClass.Sha)
                 {
@@ -79,17 +82,17 @@ namespace WoWPlugin_CombatRoutine
 
         private void ShamanRoutine(WoWPlayerMe me)
         {
-            if (Lua.GetValue("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
+            if (game.LuaGetValue("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
             {
-                GameFunctions.CastSpellByName("Огненный шок");
+                game.CastSpellByName("Огненный шок");
             }
-            else if (float.Parse(Lua.GetValue("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
+            else if (float.Parse(game.LuaGetValue("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
             {
-                GameFunctions.CastSpellByName("Выброс лавы");
+                game.CastSpellByName("Выброс лавы");
             }
             else
             {
-                GameFunctions.CastSpellByName("Молния");
+                game.CastSpellByName("Молния");
             }
         }
 
@@ -99,7 +102,8 @@ namespace WoWPlugin_CombatRoutine
 
         private readonly List<WowNpc> npcs = new List<WowNpc>();
         private SafeTimer timer;
-        
+        private GameInterface game;
+
         #endregion
 
     }

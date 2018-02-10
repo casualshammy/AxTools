@@ -92,7 +92,7 @@ namespace AxTools.Updater
                 if (_hardwareID == null)
                 {
                     _hardwareID = Utils.GetComputerHID();
-                    log.Info(string.Format("Your credentials for updates: login: {0} password: {1}{2}", Settings.Instance.UserID, new string('*', _hardwareID.Length - 4), _hardwareID.Substring(_hardwareID.Length - 4)));
+                    log.Info(string.Format("Your credentials for updates: login: {0} password: {1}{2}", Settings2.Instance.UserID, new string('*', _hardwareID.Length - 4), _hardwareID.Substring(_hardwareID.Length - 4)));
                 }
                 if (_updateFileURL == null)
                 {
@@ -119,7 +119,7 @@ namespace AxTools.Updater
             {
                 try
                 {
-                    webClient.ForceBasicAuth(Settings.Instance.UserID, _hardwareID);
+                    webClient.ForceBasicAuth(Settings2.Instance.UserID, _hardwareID);
                     byte[] distrFile = webClient.UploadData(_updateFileURL, "POST", Encoding.UTF8.GetBytes("get-update-package"));
                     File.WriteAllBytes(distrZipFile, distrFile);
                     log.Info("Packages are downloaded!");
@@ -181,7 +181,7 @@ namespace AxTools.Updater
             {
                 using (WebClient webClient = new WebClient())
                 {
-                    webClient.ForceBasicAuth(Settings.Instance.UserID, _hardwareID);
+                    webClient.ForceBasicAuth(Settings2.Instance.UserID, _hardwareID);
                     updateString = webClient.UploadString(_updateFileURL, "POST", "get-update-info");
                 }
             }
@@ -192,7 +192,7 @@ namespace AxTools.Updater
                     Notify.TrayPopup("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact dev", NotifyUserType.Error, false);
                     _timer.Elapsed -= Timer_Elapsed;
                     log.Info($"Your credentials are invalid. Updater is disabled. Please contact devs (status {webEx.Status}): {webEx.Message}");
-                    log.Error($"Your username: {Settings.Instance.UserID}; your HWID: {_hardwareID}");
+                    log.Error($"Your username: {Settings2.Instance.UserID}; your HWID: {_hardwareID}");
                 }
                 else if (webEx.Status == WebExceptionStatus.TrustFailure)
                 {

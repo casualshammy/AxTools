@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.3.10.1906</AssemblyVersion>
+    <AssemblyVersion>12.3.19.2059</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -121,9 +121,18 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FMemory">
+      <HintPath>..\..\FMemory\FMemory\bin\Release\FMemory.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.TextEditor">
+      <HintPath>..\..\.NET libs\ICSharpCode.TextEditor.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\.NET libs\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="KeraLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=04d04586786c6f34, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLua.1.3.2.1\lib\net45\KeraLua.dll</HintPath>
     </Reference>
     <Reference Include="KeyboardWatcher">
       <HintPath>..\..\KeyboardHook\KeyboardHook\bin\Release\KeyboardWatcher.dll</HintPath>
@@ -139,6 +148,9 @@
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=8df2ab518030ea95, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLua.1.3.2.1\lib\net45\NLua.dll</HintPath>
+    </Reference>
     <Reference Include="ObjectListView">
       <HintPath>..\..\.NET libs\ObjectListView.dll</HintPath>
     </Reference>
@@ -153,6 +165,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsFormsAero">
       <HintPath>..\..\.NET libs\WindowsFormsAero.dll</HintPath>
     </Reference>
@@ -170,14 +183,24 @@
     <Compile Include="Forms\AppSettingsWoWBinds.Designer.cs">
       <DependentUpon>AppSettingsWoWBinds.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Helpers\LuaConsoleSettings.cs" />
     <Compile Include="Forms\Helpers\RadarObject.cs" />
     <Compile Include="Forms\Helpers\RadarShowMode.cs" />
+    <Compile Include="Forms\Helpers\WoWRadarSettings.cs" />
+    <Compile Include="Forms\LuaConsole.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LuaConsole.Designer.cs">
+      <DependentUpon>LuaConsole.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainForm_PluginHotkeys.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainForm_PluginHotkeys.Designer.cs">
+      <DependentUpon>MainForm_PluginHotkeys.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\AppFolders.cs" />
     <Compile Include="Helpers\ErrorProviderExt.cs" />
-    <Compile Include="Helpers\MemoryManagement\Imports.cs" />
-    <Compile Include="Helpers\MemoryManagement\MarshalCache.cs" />
-    <Compile Include="Helpers\MemoryManagement\MemoryManager.cs" />
-    <Compile Include="Helpers\MemoryManagement\SafeHandle.cs" />
     <Compile Include="Helpers\MultiLock.cs" />
     <Compile Include="Helpers\Notify.cs" />
     <Compile Include="Helpers\ProcessWatcherWMI.cs" />
@@ -217,10 +240,7 @@
     <Compile Include="WoW\Helpers\ChatMsg.cs" />
     <Compile Include="WoW\Helpers\MoveHelper.cs" />
     <Compile Include="WoW\Helpers\SafeTimer.cs" />
-    <Compile Include="WoW\PluginSystem\API\ChatMessages.cs" />
-    <Compile Include="WoW\PluginSystem\API\Info.cs" />
-    <Compile Include="WoW\PluginSystem\API\Lua.cs" />
-    <Compile Include="WoW\PluginSystem\API\MoveMgr.cs" />
+    <Compile Include="WoW\PluginSystem\API\GameInterface.cs" />
     <Compile Include="WoW\PluginSystem\PluginContainer.cs" />
     <Compile Include="WoW\PluginSystem\Plugins\FishingConfig.cs">
       <SubType>Form</SubType>
@@ -242,8 +262,6 @@
     <Compile Include="WoW\Internals\WoWPlayerMe.cs" />
     <Compile Include="WoW\Internals\ObjectMgr.cs" />
     <Compile Include="WoW\WoWManager.cs" />
-    <Compile Include="WoW\PluginSystem\API\ObjMgr.cs" />
-    <Compile Include="WoW\PluginSystem\API\GameFunctions.cs" />
     <Compile Include="WoW\PluginSystem\API\Utilities.cs" />
     <Compile Include="WoW\PluginSystem\CodeCompiler.cs" />
     <Compile Include="WoW\PluginSystem\IPlugin.cs" />
@@ -363,9 +381,15 @@
       <DependentUpon>ClickerSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LuaConsole.resx">
+      <DependentUpon>LuaConsole.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainForm_PluginHotkeys.resx">
+      <DependentUpon>MainForm_PluginHotkeys.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WaitingOverlay.resx">
       <DependentUpon>WaitingOverlay.cs</DependentUpon>
@@ -551,6 +575,10 @@
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>
+xcopy /s /y "F:\sync\private\Projects\AxTools\packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -36,6 +36,8 @@
             this.buttonDumpInventory = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.buttonDumpPlayer = new System.Windows.Forms.Button();
+            this.btnSetPitch = new System.Windows.Forms.Button();
+            this.btnTestVertAngle = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonRefresh
@@ -103,7 +105,7 @@
             this.textBox1.Location = new System.Drawing.Point(243, 12);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(858, 262);
+            this.textBox1.Size = new System.Drawing.Size(858, 378);
             this.textBox1.TabIndex = 7;
             // 
             // buttonDumpPlayer
@@ -116,11 +118,33 @@
             this.buttonDumpPlayer.UseVisualStyleBackColor = true;
             this.buttonDumpPlayer.Click += new System.EventHandler(this.buttonDumpPlayer_Click);
             // 
+            // btnSetPitch
+            // 
+            this.btnSetPitch.Location = new System.Drawing.Point(12, 267);
+            this.btnSetPitch.Name = "btnSetPitch";
+            this.btnSetPitch.Size = new System.Drawing.Size(225, 31);
+            this.btnSetPitch.TabIndex = 9;
+            this.btnSetPitch.Text = "Set me.Pitch = -0.1...0.1";
+            this.btnSetPitch.UseVisualStyleBackColor = true;
+            this.btnSetPitch.Click += new System.EventHandler(this.btnSetPitch_Click);
+            // 
+            // btnTestVertAngle
+            // 
+            this.btnTestVertAngle.Location = new System.Drawing.Point(12, 304);
+            this.btnTestVertAngle.Name = "btnTestVertAngle";
+            this.btnTestVertAngle.Size = new System.Drawing.Size(225, 31);
+            this.btnTestVertAngle.TabIndex = 10;
+            this.btnTestVertAngle.Text = "Test vertical angle";
+            this.btnTestVertAngle.UseVisualStyleBackColor = true;
+            this.btnTestVertAngle.Click += new System.EventHandler(this.btnTestVertAngle_Click);
+            // 
             // DumperForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1113, 286);
+            this.ClientSize = new System.Drawing.Size(1113, 402);
+            this.Controls.Add(this.btnTestVertAngle);
+            this.Controls.Add(this.btnSetPitch);
             this.Controls.Add(this.buttonDumpPlayer);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.buttonDumpInventory);
@@ -147,5 +171,7 @@
         private System.Windows.Forms.Button buttonDumpInventory;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button buttonDumpPlayer;
+        private System.Windows.Forms.Button btnSetPitch;
+        private System.Windows.Forms.Button btnTestVertAngle;
     }
 }

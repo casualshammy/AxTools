@@ -10,7 +10,7 @@ using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
-    internal class FlagReturner : IPlugin
+    internal class FlagReturner : IPlugin2
     {
 
         #region Info
@@ -37,6 +37,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
             get { return false; }
         }
 
+        public string[] Dependencies => null;
+
         #endregion
 
         #region Events
@@ -46,10 +48,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
             
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface info)
         {
+            this.info = info;
             currentZone = 0;
-            (timer = this.CreateTimer(50, OnPulse)).Start();
+            (timer = this.CreateTimer(50, info, OnPulse)).Start();
         }
 
         public void OnPulse()
@@ -57,7 +60,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             // todo: delete try..catch
             try
             {
-                uint zone = Info.ZoneID;
+                uint zone = info.ZoneID;
                 if (zone != currentZone)
                 {
                     OnZoneChanged(zone);
@@ -73,7 +76,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             {
                 try
                 {
-                    localPlayer = ObjectMgr.Pulse(wowObjects);
+                    localPlayer = info.GetGameObjects(wowObjects);
                 }
                 catch (Exception ex)
                 {
@@ -125,14 +128,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
             if (searchingObjects.Length > 0)
             {
-                string zoneText = Info.ZoneText;
+                string zoneText = info.ZoneText;
                 this.LogPrint(string.Format("We're in {0}, searching for {{{1}}}", zoneText, string.Join(", ", searchingObjects)));
                 this.ShowNotify(string.Format("{0}: {{{1}}}", zoneText, string.Join(", ", searchingObjects)), false, true);
             }
             else
             {
-                this.LogPrint("Unknown battlefield, ID: " + zone + "; zoneText: " + Info.ZoneText);
-                this.ShowNotify("Unknown battlefield (" + Info.ZoneText + "). I don't know what to do in this zone...", true, true);
+                this.LogPrint("Unknown battlefield, ID: " + zone + "; zoneText: " + info.ZoneText);
+                this.ShowNotify("Unknown battlefield (" + info.ZoneText + "). I don't know what to do in this zone...", true, true);
             }
         }
 
@@ -144,6 +147,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private string[] searchingObjects;
         private readonly List<WowObject> wowObjects = new List<WowObject>();
         private SafeTimer timer;
+        private GameInterface info;
 
         #endregion
 

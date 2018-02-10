@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using AxTools.Properties;
 using AxTools.WoW;
 using Components.Forms;
-using Settings = AxTools.Helpers.Settings;
+using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
 {
@@ -13,7 +13,7 @@ namespace AxTools.Forms
         internal WowAccountsManager()
         {
             InitializeComponent();
-           StyleManager.Style = Settings.Instance.StyleColor;
+           StyleManager.Style = Settings2.Instance.StyleColor;
             Icon = Resources.AppIcon;
             UpdateControls();
         }

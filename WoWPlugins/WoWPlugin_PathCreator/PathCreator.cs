@@ -37,15 +37,16 @@ namespace WoWPlugin_PathCreator
 
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
-            (mainForm = new MainForm(this)).Show();
-            (timer = this.CreateTimer(250, OnPulse)).Start();
+            this.game = game;
+            (mainForm = new MainForm(this, game)).Show();
+            (timer = this.CreateTimer(250, game, OnPulse)).Start();
         }
 
         private void OnPulse()
         {
-            WoWPlayerMe me = ObjMgr.Pulse();
+            WoWPlayerMe me = game.GetGameObjects();
             if (me != null)
             {
                 mainForm.labelLocation.Text = "[" + me.Location + "]";
@@ -63,6 +64,7 @@ namespace WoWPlugin_PathCreator
 
         private SafeTimer timer;
         private MainForm mainForm;
+        private GameInterface game;
 
     }
 }

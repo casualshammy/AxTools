@@ -82,7 +82,7 @@ namespace AxTools.Helpers
         {
             MainForm.Instance.BeginInvoke((MethodInvoker) delegate
             {
-                PopupNotification trayPopup = new PopupNotification(title, message, image, Settings.Instance.StyleColor);
+                PopupNotification trayPopup = new PopupNotification(title, message, image, Settings2.Instance.StyleColor);
                 if (image == null)
                 {
                     if (type == NotifyUserType.Error)

@@ -15,19 +15,19 @@ using KeyboardWatcher;
 using MetroFramework;
 using MetroFramework.Forms;
 using Microsoft.Win32;
-using Settings = AxTools.Helpers.Settings;
+using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
 {
     internal partial class AppSettings : BorderedMetroForm
     {
         private static readonly Log2 log = new Log2("AppSettings");
-        private readonly Settings settings = Settings.Instance;
+        private readonly Settings2 settings = Settings2.Instance;
 
         internal AppSettings()
         {
             InitializeComponent();
-            StyleManager.Style = Settings.Instance.StyleColor;
+            StyleManager.Style = Settings2.Instance.StyleColor;
             Icon = Resources.AppIcon;
             tabControl.SelectedIndex = 0;
             SetupData();
@@ -42,7 +42,6 @@ namespace AxTools.Forms
         private void SetupData()
         {
             textBoxClickerHotkey.Text = settings.ClickerHotkey.ToString();
-            textBoxPluginsHotkey.Text = settings.WoWPluginHotkey.ToString();
             textBoxBadNetworkStatusProcent.Text = settings.PingerBadPacketLoss.ToString();
             textBoxVeryBadNetworkStatusProcent.Text = settings.PingerVeryBadPacketLoss.ToString();
             textBoxBadNetworkStatusPing.Text = settings.PingerBadPing.ToString();
@@ -125,9 +124,7 @@ namespace AxTools.Forms
             buttonVentriloPath.Click += Button9Click;
             checkBox_AntiAFK.CheckedChanged += CheckBox1CheckedChanged;
             textBoxClickerHotkey.KeyDown += TextBoxClickerHotkey_KeyDown;
-            textBoxPluginsHotkey.KeyDown += TextBoxPluginsHotkey_KeyDown;
             buttonClickerHotkey.Click += ButtonClickerHotkey_Click;
-            buttonPluginsHotkey.Click += ButtonPluginsHotkey_Click;
             buttonIngameKeyBinds.Click += ButtonIngameKeyBinds_Click;
             checkBoxMakeBackupNotWhilePlaying.CheckedChanged += CheckBoxMakeBackupNotWhilePlaying_CheckedChanged;
             checkBoxSetAfkStatus.CheckedChanged += CheckBoxSetAfkStatus_CheckedChanged;
@@ -208,12 +205,7 @@ namespace AxTools.Forms
                 ErrorProviderExt.SetError(textBoxVeryBadNetworkStatusProcent, "Value must be a number", Color.Red);
             }
         }
-
-        private void ButtonPluginsHotkey_Click(object sender, EventArgs e)
-        {
-            TextBoxPluginsHotkey_KeyDown(null, new KeyEventArgs(Keys.None));
-        }
-
+        
         private void ButtonClickerHotkey_Click(object sender, EventArgs e)
         {
             TextBoxClickerHotkey_KeyDown(null, new KeyEventArgs(Keys.None));
@@ -549,37 +541,6 @@ namespace AxTools.Forms
                 e.SuppressKeyPress = true;
             }
         }
-
-        private void TextBoxPluginsHotkey_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
-            {
-                KeyExt key = new KeyExt(e.KeyCode, e.Alt, e.Shift, e.Control);
-                textBoxPluginsHotkey.Text = key.ToString();
-                HotkeyManager.RemoveKeys(typeof(PluginManagerEx).ToString());
-                HotkeyManager.AddKeys(typeof(PluginManagerEx).ToString(), key);
-                settings.WoWPluginHotkey = key;
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }
-        }
-
-        //private Keys LetOnlyOneKeyModifier(KeyEventArgs args)
-        //{
-        //    switch (args.Modifiers)
-        //    {
-        //        case Keys.Shift | Keys.Control | Keys.Alt:
-        //            return args.KeyData & ~Keys.Control & ~Keys.Alt;
-        //        case Keys.Shift | Keys.Control:
-        //            return args.KeyData & ~Keys.Control;
-        //        case Keys.Shift | Keys.Alt:
-        //            return args.KeyData & ~Keys.Alt;
-        //        case Keys.Control | Keys.Alt:
-        //            return args.KeyData & ~Keys.Alt;
-        //        default:
-        //            return args.KeyData;
-        //    }
-        //}
-    
+        
     }
 }

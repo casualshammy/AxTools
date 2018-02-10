@@ -6,24 +6,53 @@ using AxTools.WinAPI;
 using System.Windows.Forms;
 using KeyboardWatcher;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace AxTools.WoW
 {
     internal class WoWAntiKick : IDisposable
     {
         private static readonly Log2 logger = new Log2("WoW anti-kick");
-        private readonly Settings settings = Settings.Instance;
+        private readonly Settings2 settings = Settings2.Instance;
         private readonly WowProcess wowProcess;
         private readonly System.Timers.Timer timer;
         private int maxTime;
         private int fallback_lastTimeActionEmulated;
         private bool fallback_keyboardWatcherInitialized = false;
+        private GameInterface info;
         internal static event Action<IntPtr> ActionEmulated;
         private static KeyExt[] moveKeys = new KeyExt[] { new KeyExt(Keys.W), new KeyExt(Keys.A), new KeyExt(Keys.S), new KeyExt(Keys.D), new KeyExt(Keys.Space) };
+        private static Dictionary<int, WoWAntiKick> instanses = new Dictionary<int, WoWAntiKick>();
+
+        internal static void StartWaitForWoWProcesses()
+        {
+            WoWProcessManager.WoWProcessReadyForInteraction += WoWProcessManager_WoWProcessReadyForInteraction;
+            WoWProcessManager.WoWProcessClosed += WoWProcessManager_WoWProcessClosed;
+        }
+
+        private static void WoWProcessManager_WoWProcessClosed(int obj)
+        {
+            if (instanses.ContainsKey(obj))
+            {
+                WoWAntiKick wak = instanses[obj];
+                instanses.Remove(obj);
+                wak.Dispose();
+            }
+            else
+            {
+                logger.Error($"Cannot find instance for process with id:{obj}");
+            }
+        }
+
+        private static void WoWProcessManager_WoWProcessReadyForInteraction(WowProcess obj)
+        {
+            instanses.Add(obj.ProcessID, new WoWAntiKick(obj));
+        }
 
         internal WoWAntiKick(WowProcess wowProcess)
         {
             this.wowProcess = wowProcess;
+            info = new GameInterface(wowProcess);
             maxTime = Utils.Rnd.Next(150000, 290000);
             fallback_lastTimeActionEmulated = Environment.TickCount;
             timer = new System.Timers.Timer(2000);
@@ -37,7 +66,7 @@ namespace AxTools.WoW
             {
                 if (wowProcess.IsValidBuild)
                 {
-                    if (Info.IsProcessInGame(wowProcess))
+                    if (info.IsInGame)
                     {
                         try
                         {
@@ -52,8 +81,15 @@ namespace AxTools.WoW
                                 {
                                     if (!wowProcess.IsMinimized)
                                     {
-                                        GameFunctions.SetAfkStatus(wowProcess);
-                                        logger.Info($"{wowProcess} /afk status is set");
+                                        if (!info.IsAfk)
+                                        {
+                                            info.IsAfk = true;
+                                            logger.Info($"{wowProcess} /afk status is set");
+                                        }
+                                        else
+                                        {
+                                            logger.Info($"{wowProcess} /afk status is already set");
+                                        }
                                     }
                                     else
                                     {

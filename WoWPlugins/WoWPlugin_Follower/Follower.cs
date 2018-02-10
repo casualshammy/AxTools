@@ -10,7 +10,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace Follower
 {
-    internal class Follower : IPlugin
+    internal class Follower : IPlugin2
     {
 
         #region Info
@@ -54,6 +54,8 @@ namespace Follower
             get { return true; }
         }
 
+        public string[] Dependencies => new string[] { "LibNavigator" };
+
         #endregion
 
         #region Events
@@ -68,10 +70,11 @@ namespace Follower
             this.SaveSettingsJSON(SettingsInstance);
         }
 
-        public void OnStart()
+        public void OnStart(GameInterface game)
         {
+            this.game = game;
             SettingsInstance = this.LoadSettingsJSON<Settings>();
-            WoWPlayerMe locaPlayer = ObjMgr.Pulse(null, players, npcs);
+            WoWPlayerMe locaPlayer = game.GetGameObjects(null, players, npcs);
             WowPlayer myTargetPlayer = players.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
             WowNpc myTargetNpc = npcs.FirstOrDefault(i => i.Health > 0 && i.GUID == locaPlayer.TargetGUID);
             if (myTargetPlayer != null)
@@ -93,12 +96,12 @@ namespace Follower
                 this.LogPrint("LibNavigator isn't found! Plugin will not work.");
                 return;
             }
-            (timer = this.CreateTimer(500, OnPulse)).Start();
+            (timer = this.CreateTimer(500, game, OnPulse)).Start();
         }
 
         public void OnPulse()
         {
-            WoWPlayerMe locaPlayer = ObjMgr.Pulse(null, players, npcs);
+            WoWPlayerMe locaPlayer = game.GetGameObjects(null, players, npcs);
             if (locaPlayer.Alive)
             {
                 WowPlayer unitPlayer = players.FirstOrDefault(i => i.Alive && i.GUID == guid);
@@ -106,8 +109,8 @@ namespace Follower
                 WowPoint? POILocation = unitPlayer != null ? unitPlayer.Location : unitNpc?.Location;
                 if (POILocation.HasValue && POILocation.Value.Distance(locaPlayer.Location) > SettingsInstance.MaxDistance)
                 {
-                    // GameFunctions.Move2D(WowPoint.GetNearestPoint(locaPlayer.Location, POILocation.Value, 1f), SettingsInstance.Precision, 1000, true, false);
-                    libNavigator.Go(WowPoint.GetNearestPoint(locaPlayer.Location, POILocation.Value, 1f), (float)SettingsInstance.Precision);
+                    // game.Move2D(WowPoint.GetNearestPoint(locaPlayer.Location, POILocation.Value, 1f), SettingsInstance.Precision, 1000, true, false);
+                    libNavigator.Go(WowPoint.GetNearestPoint(locaPlayer.Location, POILocation.Value, 1f), (float)SettingsInstance.Precision, game);
                 }
             }
         }
@@ -125,6 +128,7 @@ namespace Follower
         private SafeTimer timer;
         private Settings SettingsInstance;
         private dynamic libNavigator;
+        private GameInterface game;
 
     }
 }

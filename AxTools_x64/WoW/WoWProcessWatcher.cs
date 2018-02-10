@@ -1,5 +1,5 @@
 ﻿using AxTools.Helpers;
-using AxTools.Helpers.MemoryManagement;
+using FMemory;
 using AxTools.WinAPI;
 using System;
 using System.Collections.Generic;
@@ -27,6 +27,8 @@ namespace AxTools.WoW
         }
 
         internal static event Action WoWProcessStartedOrClosed;
+        internal static event Action<int> WoWProcessClosed;
+        internal static event Action<WowProcess> WoWProcessReadyForInteraction;
 
         private static readonly object _listLock = new object();
         private static readonly List<WowProcess> _sharedList = new List<WowProcess>();
@@ -52,16 +54,13 @@ namespace AxTools.WoW
                     WowProcess pWowProcess = List.FirstOrDefault(x => x.ProcessID == obj.ProcessID);
                     if (pWowProcess != null)
                     {
-                        if (WoWManager.Hooked && WoWManager.WoWProcess.ProcessID == pWowProcess.ProcessID)
-                        {
-                            WoWManager.Unhook();
-                        }
                         pWowProcess.Dispose();
                         log.Info(string.Format("{0} Memory manager disposed", pWowProcess));
                         if (List.Remove(pWowProcess))
                         {
                             log.Info(string.Format("{0} Process closed, {1} total", pWowProcess, List.Count));
                             WoWProcessStartedOrClosed?.Invoke();
+                            WoWProcessClosed?.Invoke(obj.ProcessID);
                         }
                         else
                         {
@@ -145,19 +144,19 @@ namespace AxTools.WoW
                     Thread.Sleep(100);
                     if (process.MainWindowHandle != IntPtr.Zero)
                     {
-                        if (Settings.Instance.WoWCustomizeWindow)
+                        if (Settings2.Instance.WoWCustomizeWindow)
                         {
                             Task.Run(() => {
                                 Thread.Sleep(1000); // because sometimes pause is needed
                                 try
                                 {
-                                    if (Settings.Instance.WoWCustomWindowNoBorder)
+                                    if (Settings2.Instance.WoWCustomWindowNoBorder)
                                     {
                                         long styleWow = NativeMethods.GetWindowLong64(process.MainWindowHandle, Win32Consts.GWL_STYLE) & ~(Win32Consts.WS_CAPTION | Win32Consts.WS_THICKFRAME);
                                         NativeMethods.SetWindowLong64(process.MainWindowHandle, Win32Consts.GWL_STYLE, styleWow);
                                     }
-                                    NativeMethods.MoveWindow(process.MainWindowHandle, Settings.Instance.WoWCustomWindowRectangle.X, Settings.Instance.WoWCustomWindowRectangle.Y,
-                                        Settings.Instance.WoWCustomWindowRectangle.Width, Settings.Instance.WoWCustomWindowRectangle.Height, false);
+                                    NativeMethods.MoveWindow(process.MainWindowHandle, Settings2.Instance.WoWCustomWindowRectangle.X, Settings2.Instance.WoWCustomWindowRectangle.Y,
+                                        Settings2.Instance.WoWCustomWindowRectangle.Width, Settings2.Instance.WoWCustomWindowRectangle.Height, false);
                                     log.Info(string.Format("{0} Window style is changed", process));
                                 }
                                 catch (Exception ex)
@@ -176,6 +175,7 @@ namespace AxTools.WoW
                                 Notify.TrayPopup("Incorrect WoW version", "Injector is locked, please wait for update", NotifyUserType.Warn, true);
                                 Utils.PlaySystemNotificationAsync();
                             }
+                            WoWProcessReadyForInteraction?.Invoke(process);
                         }
                         catch (Exception ex)
                         {
