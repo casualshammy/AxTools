@@ -23,24 +23,12 @@ namespace AxTools.WoW.Helpers
         private static readonly ConcurrentDictionary<uint, string> ZoneInfos = new ConcurrentDictionary<uint, string>();
         private const string UNKNOWN = "UNKNOWN";
         private static readonly object DBLock = new object();
-        private static long _sumDBAccessTicks;
-        private static long _sumDBAccessTime;
-        private static int _numDBAccesses;
         private static SQLiteConnection dbConnection;
         private static Log2 log = new Log2("Wowhead");
 
         static Wowhead()
         {
             _locale = GetLocale();
-            MainForm.ClosingEx +=
-                delegate
-                {
-                    if (_numDBAccesses > 100)
-                    {
-                        log.Error(string.Format("DB usage stats: numDBAccesses: {0}; average access time: {1} ms/call; average access time: {2} ticks/call",
-                            _numDBAccesses, _sumDBAccessTime/(_numDBAccesses == 0 ? -1 : _numDBAccesses), _sumDBAccessTicks/(_numDBAccesses == 0 ? -1 : _numDBAccesses)));
-                    }
-                };
         }
         
         internal static WowheadItemInfo GetItemInfo(uint itemID)
@@ -194,12 +182,6 @@ namespace AxTools.WoW.Helpers
                     log.Error("ItemInfo_GetCachedValue() error: " + ex.Message);
                     return null;
                 }
-                finally
-                {
-                    _sumDBAccessTicks += stopwatch.ElapsedTicks;
-                    _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
-                    _numDBAccesses++;
-                }
             }
         }
 
@@ -253,12 +235,6 @@ namespace AxTools.WoW.Helpers
                 {
                     log.Error("SpellInfo_GetCachedValue() error: " + ex.Message);
                     return null;
-                }
-                finally
-                {
-                    _sumDBAccessTicks += stopwatch.ElapsedTicks;
-                    _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
-                    _numDBAccesses++;
                 }
             }
         }
@@ -314,12 +290,6 @@ namespace AxTools.WoW.Helpers
                 {
                     log.Error("ZoneInfo_GetCachedValue() error: " + ex.Message);
                     return null;
-                }
-                finally
-                {
-                    _sumDBAccessTicks += stopwatch.ElapsedTicks;
-                    _sumDBAccessTime += stopwatch.ElapsedMilliseconds;
-                    _numDBAccesses++;
                 }
             }
         }

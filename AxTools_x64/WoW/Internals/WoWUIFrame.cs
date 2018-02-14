@@ -73,19 +73,18 @@ namespace AxTools.WoW.Internals
         
         public static IEnumerable<WoWUIFrame> GetAllFrames(GameInterface game)
         {
-            WowProcess process;
-            if (game.IsInGame && (process = WoWProcessManager.List.First(l => l.ProcessID == game.wowProcess.ProcessID)).IsValidBuild)
+            if (game.IsInGame && game.wowProcess.IsValidBuild)
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
-                IntPtr @base = process.Memory.Read<IntPtr>(process.Memory.ImageBase + WowBuildInfoX64.UIFrameBase);
-                IntPtr currentFrame = process.Memory.Read<IntPtr>(@base + WowBuildInfoX64.UIFirstFrame);
+                IntPtr @base = game.wowProcess.Memory.Read<IntPtr>(game.wowProcess.Memory.ImageBase + WowBuildInfoX64.UIFrameBase);
+                IntPtr currentFrame = game.wowProcess.Memory.Read<IntPtr>(@base + WowBuildInfoX64.UIFirstFrame);
                 while (currentFrame != IntPtr.Zero)
                 {
                     WoWUIFrame f = null;
                     bool shouldExit = false;
                     try
                     {
-                        WoWUIFrame temp = new WoWUIFrame(currentFrame, process);
+                        WoWUIFrame temp = new WoWUIFrame(currentFrame, game.wowProcess);
                         if (!string.IsNullOrWhiteSpace(temp.GetName))
                         {
                             f = temp;
@@ -99,7 +98,7 @@ namespace AxTools.WoW.Internals
                     {
                         try
                         {
-                            currentFrame = process.Memory.Read<IntPtr>(currentFrame + process.Memory.Read<int>(@base + WowBuildInfoX64.UINextFrame) + 8);
+                            currentFrame = game.wowProcess.Memory.Read<IntPtr>(currentFrame + game.wowProcess.Memory.Read<int>(@base + WowBuildInfoX64.UINextFrame) + 8);
                         }
                         catch
                         {

@@ -51,6 +51,11 @@ namespace AxTools.WoW.Internals
             }
         }
 
+        public unsafe byte[] GetGUIDBytes()
+        {
+            return memory.ReadBytes(Address + WowBuildInfoX64.ObjectGUID, sizeof(WoWGUID));
+        }
+
         public override string Name
         {
             get
@@ -158,5 +163,15 @@ namespace AxTools.WoW.Internals
         private List<WoWAura> auras;
         public List<WoWAura> Auras => auras ?? (auras = WoWAura.GetAurasForMemoryAddress(memory, Address));
         
+        public string GetGameGUID()
+        {
+            ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
+            ushort instanceID = (ushort)((GUID.Low >> 29) & 0x1FFF);
+            var guidBytes = GetGUIDBytes();
+            string spawnID = BitConverter.ToString(new byte[] { guidBytes[4], guidBytes[3], guidBytes[2], guidBytes[1], guidBytes[0] }).Replace("-", "");
+            ushort zoneID = BitConverter.ToUInt16(new byte[] { guidBytes[5], guidBytes[6] }, 0);
+            return $"Creature-0-{serverID}-{instanceID}-{zoneID}-{EntryID}-{spawnID}";
+        }
+
     }
 }

@@ -191,7 +191,7 @@ namespace WoWPlugin_Dumper
                 Log("NPC count: " + wowNpcs.Count);
                 foreach (WowNpc i in wowNpcs)
                 {
-                    Log($"\t{i.Name}; Location: {i.Location}; Distance: {"n/a"}; Address: 0x{i.Address.ToInt64().ToString("X")} HP:{i.Health}; MaxHP:{i.HealthMax}; GUID:0x{i.GUID}; EntryID: {i.EntryID}");
+                    Log($"\t{i.Name}; Location: {i.Location}; Distance: {"n/a"}; Address: 0x{i.Address.ToInt64().ToString("X")} HP:{i.Health}; MaxHP:{i.HealthMax}; GUID:0x{i.GUID}; GameGUID: {i.GetGameGUID()} EntryID: {i.EntryID}");
                     foreach (var aura in i.Auras)
                     {
                         Log($"\t\t\t{aura.Name}; {aura.OwnerGUID}");

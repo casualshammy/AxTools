@@ -58,6 +58,9 @@ namespace AxTools.Forms.Helpers
             }
         }
 
+        private KeyExt timerHotkey = new KeyExt(Keys.None);
+        internal Action<KeyExt> TimerHotkeyChanged;
+
         private LuaConsoleSettings() { }
         
         internal void SaveJSON()
@@ -79,10 +82,7 @@ namespace AxTools.Forms.Helpers
             File.WriteAllText(settingsFile, json, Encoding.UTF8);
             logger.Info("Settings2 file has been updated, time: " + stopwatch.ElapsedMilliseconds + "ms");
         }
-
-        [JsonProperty(Order = 0, PropertyName = "Code")]
-        internal string[] Code = new string[] { };
-
+        
         [JsonProperty(Order = 1, PropertyName = "WindowSize")]
         internal Size WindowSize = new Size(650, 354);
 
@@ -109,8 +109,8 @@ namespace AxTools.Forms.Helpers
             }
         }
 
-        private KeyExt timerHotkey = new KeyExt(Keys.None);
-        internal Action<KeyExt> TimerHotkeyChanged;
+        [JsonProperty(Order = 6, PropertyName = "Code")]
+        internal string[] Code = new string[] { };
 
     }
 }

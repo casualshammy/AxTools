@@ -53,17 +53,23 @@ namespace AutoLoot
             WoWPlayerMe localPlayer = game.GetGameObjects(null, null, wowNpcs);
             if (localPlayer != null && localPlayer.CastingSpellID == 0 && localPlayer.ChannelSpellID == 0 && !game.IsLooting)
             {
-                WowNpc[] npcs = wowNpcs.Where(l => l.Lootable && l.Health == 0 && l.Location.Distance2D(localPlayer.Location) < 40).ToArray();
-                if (npcs.Any())
+                foreach (WowNpc npc in wowNpcs.Where(l => l.Health == 0 && l.Location.Distance2D(localPlayer.Location) < 40 && !unlootableNpcs.Contains(l.GUID)).OrderBy(l => l.Location.Distance(localPlayer.Location)))
                 {
-                    WowNpc npc = npcs.Aggregate((current, next) => next.Location.Distance2D(localPlayer.Location) < current.Location.Distance2D(localPlayer.Location) ? next : current);
-                    if (npc.Location.Distance2D(localPlayer.Location) > 3f)
+                    if (game.LuaIsTrue($"CanLootUnit('{npc.GetGameGUID()}')==true")) // game.LuaIsTrue($"select(2,CanLootUnit('{npc.GetGameGUID()}'))==true") && 
                     {
-                        game.Move2D(npc.Location, 3f, 1000, true, false);
+                        if (npc.Location.Distance(localPlayer.Location) > 3f)
+                        {
+                            game.Move2D(npc.Location, 2.5f, 1000, true, false);
+                        }
+                        else
+                        {
+                            npc.Interact();
+                        }
+                        break;
                     }
                     else
                     {
-                        npc.Interact();
+                        unlootableNpcs.Add(npc.GUID);
                     }
                 }
             }
@@ -77,6 +83,7 @@ namespace AutoLoot
         #endregion
 
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
+        private readonly List<WoWGUID> unlootableNpcs = new List<WoWGUID>();
         private SafeTimer timer;
         private GameInterface game;
 

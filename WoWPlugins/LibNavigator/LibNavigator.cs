@@ -185,22 +185,27 @@ namespace LibNavigator
             WoWPlayerMe me = game.GetGameObjects(wowObjects, null, wowNpcs);
             if (me != null)
             {
-                switch (actionsList[counter].ActionType)
+                DoAction action = actionsList[counter];
+                if (action.ActionType != DoActionType.Move)
+                {
+                    unstuckDictionary.Clear();
+                }
+                switch (action.ActionType)
                 {
                     case DoActionType.Move:
-                        double distance2D = me.Location.Distance2D(actionsList[counter].WowPoint);
-                        double distance3D = me.Location.Distance(actionsList[counter].WowPoint);
+                        double distance2D = me.Location.Distance2D(action.WowPoint);
+                        double distance3D = me.Location.Distance(action.WowPoint);
                         if (me.IsFlying && (distance3D > precision3D || (distance3D <= precision3D && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
                         {
-                            UnstuckIfNeeded(me.Location, actionsList[counter].ActionType);
-                            this.LogPrint(string.Format("Flying to point --> [{0}]; distance: {1}", actionsList[counter].WowPoint, distance3D));
-                            game.Move3D(actionsList[counter].WowPoint, precision3D, precision3D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
+                            UnstuckIfNeeded(me.Location, action.ActionType);
+                            this.LogPrint(string.Format("Flying to point --> [{0}]; distance: {1}", action.WowPoint, distance3D));
+                            game.Move3D(action.WowPoint, precision3D, precision3D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
                         }
                         else if (!me.IsFlying && (distance2D > precision2D || (distance2D <= precision2D && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
                         {
-                            UnstuckIfNeeded(me.Location, actionsList[counter].ActionType);
-                            this.LogPrint(string.Format("Moving to point --> [{0}]; my loc: [{3}]; distance2D: {1}; speed: {2}", actionsList[counter].WowPoint, distance2D, me.Speed, me.Location));
-                            game.Move2D(actionsList[counter].WowPoint, precision2D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
+                            UnstuckIfNeeded(me.Location, action.ActionType);
+                            this.LogPrint(string.Format("Moving to point --> [{0}]; my loc: [{3}]; distance2D: {1}; speed: {2}", action.WowPoint, distance2D, me.Speed, me.Location));
+                            game.Move2D(action.WowPoint, precision2D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
                         }
                         else
                         {
@@ -215,28 +220,28 @@ namespace LibNavigator
                         break;
                     case DoActionType.RunLua:
                         Thread.Sleep(500); // player should be stopped before interact
-                        game.SendToChat("/run " + string.Concat(actionsList[counter].Data.TakeWhile(l => l != '\r' && l != '\n')));
+                        game.SendToChat("/run " + string.Concat(action.Data.TakeWhile(l => l != '\r' && l != '\n')));
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.SendChat:
                         Thread.Sleep(500); // player should be stopped before interact
-                        game.SendToChat(actionsList[counter].Data);
+                        game.SendToChat(action.Data);
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.SelectGossipOption:
                         Thread.Sleep(1000); // player should be stopped before interact
-                        game.SelectDialogOption(actionsList[counter].Data);
+                        game.SelectDialogOption(action.Data);
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.Interact:
-                        WowObject[] objectsWithCorrectName = wowObjects.Where(l => l.Name == actionsList[counter].Data).ToArray();
+                        WowObject[] objectsWithCorrectName = wowObjects.Where(l => l.Name == action.Data).ToArray();
                         if (objectsWithCorrectName.Length > 0)
                         {
                             WowObject nearestObject = objectsWithCorrectName.Aggregate((minItem, nextItem) => me.Location.Distance(minItem.Location) < me.Location.Distance(nextItem.Location) ? minItem : nextItem);
                             Thread.Sleep(500); // player should be stopped before interact
                             nearestObject.Interact();
                         }
-                        WowNpc[] npcsWithCorrectName = wowNpcs.Where(l => l.Name == actionsList[counter].Data).ToArray();
+                        WowNpc[] npcsWithCorrectName = wowNpcs.Where(l => l.Name == action.Data).ToArray();
                         if (npcsWithCorrectName.Length > 0)
                         {
                             WowNpc nearestNpc = npcsWithCorrectName.Aggregate((minItem, nextItem) => me.Location.Distance(minItem.Location) < me.Location.Distance(nextItem.Location) ? minItem : nextItem);
@@ -246,7 +251,7 @@ namespace LibNavigator
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.Wait:
-                        int timeToWait = int.Parse(actionsList[counter].Data);
+                        int timeToWait = int.Parse(action.Data);
                         while (timeToWait > 0 && timer.IsRunning)
                         {
                             Thread.Sleep(100);
@@ -255,36 +260,36 @@ namespace LibNavigator
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.SetPrecision2D:
-                        if (!float.TryParse(actionsList[counter].Data, out precision2D))
+                        if (!float.TryParse(action.Data, out precision2D))
                         {
                             precision2D = 3f;
                         }
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.SetPrecision3D:
-                        if (!float.TryParse(actionsList[counter].Data, out precision3D))
+                        if (!float.TryParse(action.Data, out precision3D))
                         {
                             precision3D = 8f;
                         }
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.WaitWhile:
-                        if (!game.LuaIsTrue(actionsList[counter].Data))
+                        if (!game.LuaIsTrue(action.Data))
                         {
                             IncreaseCounterAndDoAction();
                         }
-                        else if (!string.IsNullOrWhiteSpace(actionsList[counter].AdditionalData) && int.TryParse(actionsList[counter].AdditionalData, out int lag))
+                        else if (!string.IsNullOrWhiteSpace(action.AdditionalData) && int.TryParse(action.AdditionalData, out int lag))
                         {
                             Thread.Sleep(lag);
                         }
                         break;
                     case DoActionType.SendToChatWhile:
-                        string[] p = actionsList[counter].Data.Split(new string[] { "##@##" }, StringSplitOptions.RemoveEmptyEntries);
-                        string action = p[0];
+                        string[] p = action.Data.Split(new string[] { "##@##" }, StringSplitOptions.RemoveEmptyEntries);
+                        string _action = p[0];
                         string condition = p[1];
                         if (game.LuaIsTrue(condition))
                         {
-                            game.SendToChat(action);
+                            game.SendToChat(_action);
                         }
                         else
                         {
@@ -292,20 +297,20 @@ namespace LibNavigator
                         }
                         break;
                     case DoActionType.StopProfileIf:
-                        if (game.LuaIsTrue(actionsList[counter].Data))
+                        if (game.LuaIsTrue(action.Data))
                         {
                             counter = actionsList.Count - 1;
                         }
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.NotifyUser:
-                        this.ShowNotify(actionsList[counter].Data, false, false);
+                        this.ShowNotify(action.Data, false, false);
                         IncreaseCounterAndDoAction();
                         break;
                     case DoActionType.NotifyUserIf:
-                        if (game.LuaIsTrue(actionsList[counter].AdditionalData))
+                        if (game.LuaIsTrue(action.AdditionalData))
                         {
-                            this.ShowNotify(actionsList[counter].Data, false, false);
+                            this.ShowNotify(action.Data, false, false);
                         }
                         IncreaseCounterAndDoAction();
                         break;
