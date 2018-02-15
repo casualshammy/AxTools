@@ -522,12 +522,7 @@ namespace AxTools.WoW.PluginSystem.API
                 MoveHelper.FaceHorizontalWithTimer(wowProcess, face, Keys.D, moving);
             }
         }
-
-        public void SetPitch(WowPoint point)
-        {
-            WoWPlayerMe me = ObjectMgr.Pulse(wowProcess);
-        }
-
+        
         #endregion
 
         #region ObjMgr

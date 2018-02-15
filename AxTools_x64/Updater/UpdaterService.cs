@@ -156,10 +156,7 @@ namespace AxTools.Updater
                 log.Error("Can't find updater executable! Files: " + string.Join(", ", new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().Select(l => l.Name)));
                 return;
             }
-            TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton) ((int) TaskDialogButton.Yes + (int) TaskDialogButton.No), TaskDialogIcon.Information);
-            Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 10, (sender, args) => MainForm.Instance.ActivateBrutal());
-            if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
-            {
+            Action closeAndUpdate = delegate {
                 try
                 {
                     log.Info("Closing for update...");
@@ -170,6 +167,18 @@ namespace AxTools.Updater
                 {
                     log.Error("Update error: " + ex.Message);
                 }
+            };
+            if (WinAPI.NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
+            {
+                TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton)((int)TaskDialogButton.Yes + (int)TaskDialogButton.No), TaskDialogIcon.Information);
+                if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
+                {
+                    closeAndUpdate();
+                }
+            }
+            else
+            {
+                Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 10, (sender, args) => closeAndUpdate());
             }
         }
 

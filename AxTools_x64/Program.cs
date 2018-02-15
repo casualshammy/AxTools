@@ -23,7 +23,7 @@ namespace AxTools
 {
     internal static class Program
     {
-        internal static event Action Exit;
+        internal static event Action Exit; 
         private static readonly Log2 log = new Log2("Program");
 
         [STAThread]
@@ -31,8 +31,7 @@ namespace AxTools
         {
             if (args.Length == 0)
             {
-                bool newInstance;
-                using (new Mutex(true, "AxToolsMainExecutable", out newInstance))
+                using (new Mutex(true, "AxToolsMainExecutable", out bool newInstance))
                 {
                     if (newInstance)
                     {

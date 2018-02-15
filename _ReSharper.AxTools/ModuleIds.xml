@@ -1,8 +1,0 @@
-<Modules>
-  <Module PersistentId="3B13B631-EB14-47F8-BEC2-13AF48235C4F" ModuleId="AxTools_CSharp" />
-  <Module PersistentId="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" ModuleId="mscorlib" />
-  <Module PersistentId="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" ModuleId="System.Windows.Forms" />
-  <Module PersistentId="D9B693FC-6772-4AB3-940B-CFE7D73167A7" ModuleId="AxLink" />
-  <Module PersistentId="MouseKeyboardActivityMonitor, Version=3.0.1.9579, Culture=neutral, PublicKeyToken=null" ModuleId="MouseKeyboardActivityMonitor" />
-  <Module PersistentId="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" ModuleId="mscorlib_1" />
-</Modules>
