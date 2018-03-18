@@ -13,6 +13,7 @@ using AxTools.WoW.PluginSystem.API;
 using System.Text;
 using Newtonsoft.Json;
 using System.Globalization;
+using KeyboardWatcher;
 
 namespace AxTools.WoW.PluginSystem
 {
@@ -24,6 +25,8 @@ namespace AxTools.WoW.PluginSystem
         internal static readonly Dictionary<string, int> PluginWoW = new Dictionary<string, int>();
         internal static event Action PluginStateChanged;
         internal static event Action PluginsLoaded;
+        internal static event Action<IPlugin2> PluginLoaded;
+        internal static event Action<IPlugin2> PluginUnloaded;
 
         internal static Dictionary<string, List<DateTime>> _pluginsUsageStats;
         private static Dictionary<string, List<DateTime>> pluginsUsageStats
@@ -90,91 +93,7 @@ namespace AxTools.WoW.PluginSystem
                 return new ReadOnlyCollection<IPlugin2>(_pluginContainers.Select(l => l.Plugin).ToList());
             }
         }
-
-        //internal static void StartPlugins(WowProcess process)
-        //{
-        //    //return;
-        //    if (!_isRunning)
-        //    {
-        //        _managerRunning = true;
-        //        foreach (PluginContainer pluginContainer in _pluginContainers.Where(l => l.EnabledByUser))
-        //        {
-        //            pluginContainer.IsRunning = true;
-        //            try
-        //            {
-        //                pluginContainer.Plugin.OnStart(new Info(process), new ChatMessages(process), new game(process), new Lua(process), new MoveMgr(process), new ObjMgr(process));
-        //                if (PluginsPerWoWClient[process.ProcessID] == null) { PluginsPerWoWClient[process.ProcessID] = new List<IPlugin2>(); }
-        //                PluginsPerWoWClient[process.ProcessID].Add(pluginContainer.Plugin);
-        //                Settings2.Instance.PluginsUsageStat2[pluginContainer.Plugin.Name].Add(DateTime.UtcNow);
-        //                log.Info(string.Format("{0} [{1}] Plugin is started", process, pluginContainer.Plugin.Name));
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                log.Error(string.Format("Plugin OnStart error [{0}]: {1}", pluginContainer.Plugin.Name, ex.Message));
-        //            }
-        //        }
-        //        if (Settings2.Instance.WoWPluginShowIngameNotifications)
-        //        {
-        //            if (RunningPlugins.Count() == 1)
-        //            {
-        //                Notify.TrayPopup("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is started", NotifyUserType.Info, false, RunningPlugins.First().TrayIcon);
-        //            }
-        //            else
-        //            {
-        //                Notify.TrayPopup("AxTools", string.Format("Plugins are started ({0})", string.Join(", ", RunningPlugins.Select(l => l.Name))), NotifyUserType.Info, false);
-        //            }
-        //        }
-        //        PluginStateChanged?.Invoke();
-        //        _isRunning = true;
-        //    }
-        //    else
-        //    {
-        //        throw new Exception("Plugin are already running!");
-        //    }
-        //}
-
-        //internal static void StopPlugins(WowProcess process)
-        //{
-        //    if (_isRunning)
-        //    {
-        //        _managerRunning = false;
-        //        foreach (PluginContainer pluginContainer in _pluginContainers.Where(l => l.IsRunning))
-        //        {
-        //            try
-        //            {
-        //                pluginContainer.Plugin.OnStop();
-        //                PluginsPerWoWClient[process.ProcessID].Remove(pluginContainer.Plugin);
-        //                log.Info($"[{pluginContainer.Plugin.Name}] Plugin is stopped");
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                log.Error(string.Format("Can't shutdown plugin [{0}]: {1}", pluginContainer.Plugin.Name, ex.Message));
-        //            }
-        //        }
-        //        if (Settings2.Instance.WoWPluginShowIngameNotifications)
-        //        {
-        //            if (RunningPlugins.Count() == 1)
-        //            {
-        //                Notify.TrayPopup("AxTools", "Plugin <" + RunningPlugins.First().Name + "> is stopped", NotifyUserType.Info, false, RunningPlugins.First().TrayIcon);
-        //            }
-        //            else
-        //            {
-        //                Notify.TrayPopup("AxTools", string.Format("Plugins are stopped ({0})", string.Join(", ", RunningPlugins.Select(l => l.Name))), NotifyUserType.Info, false);
-        //            }
-        //        }
-        //        foreach (PluginContainer pluginContainer in _pluginContainers.Where(l => l.IsRunning))
-        //        {
-        //            pluginContainer.IsRunning = false;
-        //        }
-        //        PluginStateChanged?.Invoke();
-        //        _isRunning = false;
-        //    }
-        //    else
-        //    {
-        //        throw new Exception("No plugins are running!");
-        //    }
-        //}
-
+        
         internal static void AddPluginToRunning(IPlugin2 plugin, WowProcess process)
         {
             lock (AddRemoveLock)
@@ -231,7 +150,25 @@ namespace AxTools.WoW.PluginSystem
         
         internal static Task LoadPluginsAsync()
         {
-            return Task.Run((Action) LoadPlugins);
+            return Task.Run(delegate {
+                LoadPlugins();
+                LoadPluginsFromDisk();
+                CheckDependencies();
+                ClearOldAssemblies();
+                foreach (IPlugin2 plugin in LoadedPlugins)
+                {
+                    if (!pluginsUsageStats.ContainsKey(plugin.Name))
+                    {
+                        pluginsUsageStats[plugin.Name] = new List<DateTime>();
+                        SavePluginUsageStats();
+                    }
+                }
+                foreach (var i in Settings.Instance.PluginHotkeys.Where(l => LoadedPlugins.Select(k => k.Name).Contains(l.Key)))
+                {
+                    HotkeyManager.AddKeys("Plugin_" + i.Key, i.Value);
+                }
+                PluginsLoaded?.Invoke();
+            });
         }
 
         internal static List<IPlugin2> GetSortedByUsageListOfPlugins()
@@ -261,22 +198,15 @@ namespace AxTools.WoW.PluginSystem
             IPlugin2 fishing = new Fishing();
             _pluginContainers.Add(new PluginContainer(fishing));
             log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
+            PluginLoaded?.Invoke(fishing);
             IPlugin2 flagReturner = new FlagReturner();
             _pluginContainers.Add(new PluginContainer(flagReturner));
             log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
+            PluginLoaded?.Invoke(flagReturner);
             IPlugin2 goodsDestroyer = new GoodsDestroyer();
             _pluginContainers.Add(new PluginContainer(goodsDestroyer));
             log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
-            LoadPluginsFromDisk();
-            foreach (IPlugin2 plugin in LoadedPlugins)
-            {
-                if (!pluginsUsageStats.ContainsKey(plugin.Name))
-                {
-                    pluginsUsageStats[plugin.Name] = new List<DateTime>();
-                    SavePluginUsageStats();
-                }
-            }
-            PluginsLoaded?.Invoke();
+            PluginLoaded?.Invoke(goodsDestroyer);
         }
 
         private static void LoadPluginsFromDisk()
@@ -312,6 +242,7 @@ namespace AxTools.WoW.PluginSystem
                                 {
                                     _pluginContainers.Add(new PluginContainer(temp));
                                     log.Info(string.Format("Plugin loaded: {0} {1}", temp.Name, temp.Version));
+                                    PluginLoaded?.Invoke(temp);
                                 }
                                 else
                                 {
@@ -336,13 +267,10 @@ namespace AxTools.WoW.PluginSystem
                 catch (Exception ex)
                 {
                     log.Info(string.Format("Can't load plugin <{0}>: {1}", directory, ex.Message));
-                    Notify.TaskDialog("[PluginManager] Plugin error",
-                        string.Format("Error has occured during compiling plugins. Some plugins could not be loaded and are disabled\r\n\r\nVisit <a href=\"{0}\">this website</a> to download the latest versions of plugins",
-                            Globals.PluginsURL), NotifyUserType.Warn, (sender, args) => Process.Start(Globals.PluginsURL));
+                    Notify.TrayPopup("[PluginManager] Plugin error", $"Plugin from folder '{directory}' cannot be loaded.\r\nClick here to open the website with updated versions of plugins",
+                        NotifyUserType.Warn, true, null, 10, (sender, args) => Process.Start(Globals.PluginsURL));
                 }
             }
-            CheckDependencies();
-            ClearOldAssemblies();
         }
 
         private static void CheckDependencies()
@@ -368,6 +296,7 @@ namespace AxTools.WoW.PluginSystem
             {
                 IPlugin2 plugin2 = _pluginContainers[indexOfPluginWithUnresolvedDeps].Plugin as IPlugin2;
                 _pluginContainers.RemoveAt(indexOfPluginWithUnresolvedDeps);
+                PluginUnloaded?.Invoke(plugin2);
                 Notify.SmartNotify("Plugin error", $"Plugin {plugin2.Name} requires {string.Join(", ", plugin2.Dependencies)}", NotifyUserType.Error, true);
             }
         }
@@ -382,10 +311,7 @@ namespace AxTools.WoW.PluginSystem
                     File.Delete(assembly);
                     log.Info("Old assembly is deleted: " + assembly);
                 }
-                catch
-                {
-                    //
-                }
+                catch { /* don't care why */ }
             }
         }
         

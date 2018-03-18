@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -48,12 +49,21 @@ namespace AxTools.Helpers
             }
         }
 
+        internal void Info(object text)
+        {
+            lock (_lock)
+            {
+                _stringBuilder.AppendLine($"{DateTime.UtcNow.ToString(DATETIME_PREFIX_PATTERN)} [INFO] [{_className}] {text}");
+            }
+        }
+
         internal void Error(string text)
         {
             _haveErrors = true;
             lock (_lock)
             {
-                _stringBuilder.AppendLine($"{DateTime.UtcNow.ToString(DATETIME_PREFIX_PATTERN)} {ERROR_PREFIX_PATTERN} [{_className}] {text}");
+                StackTrace stackTrace = new StackTrace(1);
+                _stringBuilder.AppendLine($"{DateTime.UtcNow.ToString(DATETIME_PREFIX_PATTERN)} {ERROR_PREFIX_PATTERN} [{_className}] {text}\r\n{stackTrace.ToString()}");
             }
         }
 

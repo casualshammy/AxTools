@@ -106,6 +106,12 @@ namespace AxTools.WoW
             }
         }
 
+        internal int GetExecutableRevision()
+        {
+            var versionInfo = FileVersionInfo.GetVersionInfo(Process.MainModule.FileName);
+            return versionInfo.FilePrivatePart;
+        }
+
         public override string ToString()
         {
             return string.Concat("[", ProcessName, ":", ProcessID, "]");

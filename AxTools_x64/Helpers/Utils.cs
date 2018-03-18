@@ -24,14 +24,16 @@ namespace AxTools.Helpers
         private static string _hardwareID;
         internal static readonly Random Rnd = new Random();
 
-        internal static T FindForm<T>() where T : Form
-        {
-            return (from object i in Application.OpenForms where i.GetType() == typeof (T) select i as T).FirstOrDefault();
-        }
+        //internal static T FindForm<T>() where T : Form
+        //{
+        //    return Application.OpenForms.OfType<T>().FirstOrDefault();
+        //    //return (from object i in Application.OpenForms where i.GetType() == typeof (T) select i as T).FirstOrDefault();
+        //}
 
-        internal static T[] FindForms<T>() where T : Form
+        internal static IEnumerable<T> FindForms<T>() where T : Form
         {
-            return (from object i in Application.OpenForms where i.GetType() == typeof (T) select i as T).ToArray();
+            return Application.OpenForms.OfType<T>();
+            //return (from object i in Application.OpenForms where i.GetType() == typeof (T) select i as T).ToArray();
         }
 
         internal static long CalcDirectorySize(string path)
@@ -50,6 +52,38 @@ namespace AxTools.Helpers
                 }
             }
             return num2;
+        }
+
+        internal static IEnumerable<string> FindFiles(string path, string fileName, int depth = Int32.MaxValue)
+        {
+            if (depth == 0)
+            {
+                yield break;
+            }
+            FileSystemInfo[] infos = null;
+            try
+            {
+                infos = new DirectoryInfo(path).GetFileSystemInfos();
+            }
+            catch { }
+            if (infos != null)
+            {
+                foreach (FileSystemInfo info2 in infos)
+                {
+                    if (info2 is FileInfo file)
+                    {
+                        if (file.Name == fileName)
+                        {
+                            yield return file.FullName;
+                        }
+                    }
+                    else if (info2 is DirectoryInfo directory)
+                    {
+                        foreach (var p in FindFiles(directory.FullName, fileName, depth - 1))
+                            yield return p;
+                    }
+                }
+            }
         }
 
         internal static string GetRandomString(int size, bool onlyLetters)
@@ -218,7 +252,7 @@ namespace AxTools.Helpers
 
         internal static void LogIfCalledFromUIThread()
         {
-            if (Thread.CurrentThread.ManagedThreadId == MainForm.UIThreadID)
+            if (Thread.CurrentThread.ManagedThreadId == Program.UIThread)
             {
                 StackTrace stackTrace = new StackTrace();
                 log.Error($"Trying to call from UI thread; call stack:\r\n{stackTrace.ToString()}");
@@ -255,13 +289,14 @@ namespace AxTools.Helpers
 
         internal static string SecureString(string input)
         {
+            Random rnd = new Random(input.Length);
             int[] indexesToHide = new int[input.Length/2];
             for (int i = 0; i < indexesToHide.Length; i++)
             {
-                int newValue = Rnd.Next(0, input.Length);
+                int newValue = rnd.Next(0, input.Length);
                 while (indexesToHide.Contains(newValue))
                 {
-                    newValue = Rnd.Next(0, input.Length);
+                    newValue = rnd.Next(0, input.Length);
                 }
                 indexesToHide[i] = newValue;
             }

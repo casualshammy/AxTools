@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace AxTools.WoW.Internals
         private string cachedEditboxText;
         private WowProcess process;
         private static readonly Log2 log = new Log2("WoWUIFrame");
+        private static readonly Dictionary<int, ConcurrentDictionary<string, IntPtr>> cachedFrames = new Dictionary<int, ConcurrentDictionary<string, IntPtr>>();
         
         internal WoWUIFrame(IntPtr address, WowProcess proc)
         {
@@ -63,19 +65,31 @@ namespace AxTools.WoW.Internals
         public static WoWUIFrame GetFrameByName(GameInterface game, string name)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            WoWUIFrame frame = GetAllFrames(game).FirstOrDefault(l => l.GetName == name);
-            if (stopwatch.ElapsedMilliseconds > 500)
+            if (!cachedFrames.TryGetValue(game.wowProcess.ProcessID, out ConcurrentDictionary<string, IntPtr> dict))
+                dict = (cachedFrames[game.wowProcess.ProcessID] = new ConcurrentDictionary<string, IntPtr>());
+            WoWUIFrame frame = null;
+            if (dict.TryGetValue(name, out IntPtr address))
             {
-                log.Error(string.Format("GetFrameByName exec time: {0}ms", stopwatch.ElapsedMilliseconds));
+                try
+                {
+                    frame = new WoWUIFrame(address, game.wowProcess);
+                    if (frame.GetName == name)
+                        return frame;
+                }
+                catch { /* frame is moved in memory, ignore this exception and just rebuild the cache */ }
             }
+            frame = GetAllFrames(game).FirstOrDefault(l => l.GetName == name);
+            if (stopwatch.ElapsedMilliseconds > 500)
+                log.Error(string.Format("GetFrameByName exec time: {0}ms", stopwatch.ElapsedMilliseconds));
             return frame;
         }
         
-        public static IEnumerable<WoWUIFrame> GetAllFrames(GameInterface game)
+        private static IEnumerable<WoWUIFrame> GetAllFrames(GameInterface game)
         {
             if (game.IsInGame && game.wowProcess.IsValidBuild)
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
+                var dict = cachedFrames[game.wowProcess.ProcessID];
                 IntPtr @base = game.wowProcess.Memory.Read<IntPtr>(game.wowProcess.Memory.ImageBase + WowBuildInfoX64.UIFrameBase);
                 IntPtr currentFrame = game.wowProcess.Memory.Read<IntPtr>(@base + WowBuildInfoX64.UIFirstFrame);
                 while (currentFrame != IntPtr.Zero)
@@ -87,13 +101,11 @@ namespace AxTools.WoW.Internals
                         WoWUIFrame temp = new WoWUIFrame(currentFrame, game.wowProcess);
                         if (!string.IsNullOrWhiteSpace(temp.GetName))
                         {
+                            dict.AddOrUpdate(temp.GetName, currentFrame, (key, oldValue) => currentFrame);
                             f = temp;
                         }
                     }
-                    catch
-                    {
-                        //
-                    }
+                    catch { }
                     finally
                     {
                         try
@@ -106,20 +118,15 @@ namespace AxTools.WoW.Internals
                         }
                     }
                     if (f != null)
-                    {
                         yield return f;
-                    }
                     if (shouldExit)
-                    {
                         break;
-                    }
                 }
                 if (stopwatch.ElapsedMilliseconds > 500)
-                {
                     log.Error(string.Format("GetAllFrames exec time: {0}ms", stopwatch.ElapsedMilliseconds));
-                }
             }
         }
         
     }
+    
 }

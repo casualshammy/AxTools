@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace AxTools.WoW.Internals
     /// </summary>
     public class WowPlayer : WoWObjectBase
     {
-        internal static readonly Dictionary<WoWGUID, string> Names = new Dictionary<WoWGUID, string>();
+        internal static readonly ConcurrentDictionary<WoWGUID, string> Names = new ConcurrentDictionary<WoWGUID, string>();
         private static readonly Log2 log = new Log2($"WowPlayer");
         private float? rotation;
         private float? pitch;
@@ -159,7 +160,6 @@ namespace AxTools.WoW.Internals
         {
             get
             {
-                //return "NOT_IMPLEMENTED_YET";
                 if (!Names.TryGetValue(GUID, out string temp))
                 {
                     temp = GetNameFromMemorySafe();
@@ -177,7 +177,7 @@ namespace AxTools.WoW.Internals
                     }
                     if (!string.IsNullOrWhiteSpace(temp))
                     {
-                        Names.Add(GUID, temp);
+                        Names.TryAdd(GUID, temp);
                     }
                 }
                 return temp ?? "UNKNOWN";

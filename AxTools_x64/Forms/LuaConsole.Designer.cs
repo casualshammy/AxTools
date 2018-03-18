@@ -39,6 +39,8 @@ namespace AxTools.Forms
             this.metroCheckBoxIgnoreGameState = new MetroFramework.Controls.MetroCheckBox();
             this.metroCheckBoxRandomize = new MetroFramework.Controls.MetroCheckBox();
             this.metroPanelTimerOptions = new MetroFramework.Controls.MetroPanel();
+            this.labelTimerHotkey = new MetroFramework.Controls.MetroLabel();
+            this.textBoxTimerHotkey = new MetroFramework.Controls.MetroTextBox();
             this.metroTextBoxTimerInterval = new MetroFramework.Controls.MetroTextBox();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.pictureBoxOpenLuaFile = new Components.PictureBoxExt(this.components);
@@ -49,8 +51,7 @@ namespace AxTools.Forms
             this.metroLinkEnableCyclicExecution = new MetroFramework.Controls.MetroLink();
             this.metroLinkSettings = new MetroFramework.Controls.MetroLink();
             this.hotItemStyle1 = new BrightIdeasSoftware.HotItemStyle();
-            this.textBoxTimerHotkey = new MetroFramework.Controls.MetroTextBox();
-            this.labelTimerHotkey = new MetroFramework.Controls.MetroLabel();
+            this.linkInfo = new MetroFramework.Controls.MetroLink();
             this.metroPanelTimerOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOpenLuaFile)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSaveLuaFile)).BeginInit();
@@ -144,6 +145,39 @@ namespace AxTools.Forms
             this.metroPanelTimerOptions.VerticalScrollbarBarColor = true;
             this.metroPanelTimerOptions.VerticalScrollbarHighlightOnWheel = false;
             this.metroPanelTimerOptions.VerticalScrollbarSize = 10;
+            // 
+            // labelTimerHotkey
+            // 
+            this.labelTimerHotkey.AutoSize = true;
+            this.labelTimerHotkey.CustomBackground = false;
+            this.labelTimerHotkey.CustomForeColor = false;
+            this.labelTimerHotkey.FontSize = MetroFramework.MetroLabelSize.Small;
+            this.labelTimerHotkey.FontWeight = MetroFramework.MetroLabelWeight.Regular;
+            this.labelTimerHotkey.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.labelTimerHotkey.Location = new System.Drawing.Point(3, 77);
+            this.labelTimerHotkey.Name = "labelTimerHotkey";
+            this.labelTimerHotkey.Size = new System.Drawing.Size(80, 15);
+            this.labelTimerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.labelTimerHotkey.TabIndex = 66;
+            this.labelTimerHotkey.Text = "Timer hotkey:";
+            this.labelTimerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.labelTimerHotkey.UseStyleColors = true;
+            // 
+            // textBoxTimerHotkey
+            // 
+            this.textBoxTimerHotkey.CustomBackground = false;
+            this.textBoxTimerHotkey.CustomForeColor = false;
+            this.textBoxTimerHotkey.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxTimerHotkey.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
+            this.textBoxTimerHotkey.Location = new System.Drawing.Point(119, 74);
+            this.textBoxTimerHotkey.Multiline = false;
+            this.textBoxTimerHotkey.Name = "textBoxTimerHotkey";
+            this.textBoxTimerHotkey.SelectedText = "";
+            this.textBoxTimerHotkey.Size = new System.Drawing.Size(89, 23);
+            this.textBoxTimerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxTimerHotkey.TabIndex = 65;
+            this.textBoxTimerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxTimerHotkey.UseStyleColors = true;
             // 
             // metroTextBoxTimerInterval
             // 
@@ -271,7 +305,7 @@ namespace AxTools.Forms
             this.metroLinkSettings.Size = new System.Drawing.Size(69, 23);
             this.metroLinkSettings.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroLinkSettings.TabIndex = 64;
-            this.metroLinkSettings.Text = "<Settings2>";
+            this.metroLinkSettings.Text = "<Settings>";
             this.metroLinkSettings.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLinkSettings.UseStyleColors = true;
             this.metroLinkSettings.Click += new System.EventHandler(this.metroLinkSettings_Click);
@@ -281,45 +315,30 @@ namespace AxTools.Forms
             this.hotItemStyle1.BackColor = System.Drawing.Color.PeachPuff;
             this.hotItemStyle1.ForeColor = System.Drawing.Color.MediumBlue;
             // 
-            // textBoxTimerHotkey
+            // linkInfo
             // 
-            this.textBoxTimerHotkey.CustomBackground = false;
-            this.textBoxTimerHotkey.CustomForeColor = false;
-            this.textBoxTimerHotkey.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxTimerHotkey.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxTimerHotkey.Location = new System.Drawing.Point(119, 74);
-            this.textBoxTimerHotkey.Multiline = false;
-            this.textBoxTimerHotkey.Name = "textBoxTimerHotkey";
-            this.textBoxTimerHotkey.SelectedText = "";
-            this.textBoxTimerHotkey.Size = new System.Drawing.Size(89, 23);
-            this.textBoxTimerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxTimerHotkey.TabIndex = 65;
-            this.textBoxTimerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxTimerHotkey.UseStyleColors = true;
-            // 
-            // labelTimerHotkey
-            // 
-            this.labelTimerHotkey.AutoSize = true;
-            this.labelTimerHotkey.CustomBackground = false;
-            this.labelTimerHotkey.CustomForeColor = false;
-            this.labelTimerHotkey.FontSize = MetroFramework.MetroLabelSize.Small;
-            this.labelTimerHotkey.FontWeight = MetroFramework.MetroLabelWeight.Regular;
-            this.labelTimerHotkey.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelTimerHotkey.Location = new System.Drawing.Point(3, 77);
-            this.labelTimerHotkey.Name = "labelTimerHotkey";
-            this.labelTimerHotkey.Size = new System.Drawing.Size(80, 15);
-            this.labelTimerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.labelTimerHotkey.StyleManager = null;
-            this.labelTimerHotkey.TabIndex = 66;
-            this.labelTimerHotkey.Text = "Timer hotkey:";
-            this.labelTimerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.labelTimerHotkey.UseStyleColors = true;
+            this.linkInfo.AutoSize = true;
+            this.linkInfo.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.linkInfo.CustomBackground = false;
+            this.linkInfo.CustomForeColor = false;
+            this.linkInfo.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkInfo.FontWeight = MetroFramework.MetroLinkWeight.Bold;
+            this.linkInfo.Location = new System.Drawing.Point(390, 15);
+            this.linkInfo.Name = "linkInfo";
+            this.linkInfo.Size = new System.Drawing.Size(47, 23);
+            this.linkInfo.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkInfo.TabIndex = 65;
+            this.linkInfo.Text = "<Info>";
+            this.linkInfo.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkInfo.UseStyleColors = true;
+            this.linkInfo.Click += new System.EventHandler(this.LinkInfo_Click);
             // 
             // LuaConsole
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(650, 354);
+            this.Controls.Add(this.linkInfo);
             this.Controls.Add(this.metroLinkSettings);
             this.Controls.Add(this.metroLinkEnableCyclicExecution);
             this.Controls.Add(this.metroLinkRunScriptOnce);
@@ -342,6 +361,7 @@ namespace AxTools.Forms
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOpenLuaFile)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSaveLuaFile)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -364,6 +384,7 @@ namespace AxTools.Forms
         private BrightIdeasSoftware.HotItemStyle hotItemStyle1;
         private MetroFramework.Controls.MetroLabel labelTimerHotkey;
         private MetroFramework.Controls.MetroTextBox textBoxTimerHotkey;
+        private MetroFramework.Controls.MetroLink linkInfo;
     }
 }
 

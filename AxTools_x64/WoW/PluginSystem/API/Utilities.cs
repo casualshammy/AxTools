@@ -131,9 +131,8 @@ namespace AxTools.WoW.PluginSystem.API
             if (plugin != null)
             {
                 IPlugin2 activePlugin = PluginManagerEx.RunningPlugins.FirstOrDefault(l => l.Name == name);
-                if (activePlugin == null)
+                if (activePlugin == null && WoWProcessManager.Processes.TryGetValue(PluginManagerEx.PluginWoW[callerPlugin.Name], out WowProcess wow))
                 {
-                    WowProcess wow = WoWProcessManager.List.First(l => l.ProcessID == PluginManagerEx.PluginWoW[callerPlugin.Name]);
                     PluginManagerEx.AddPluginToRunning(plugin, wow);
                 }
             }

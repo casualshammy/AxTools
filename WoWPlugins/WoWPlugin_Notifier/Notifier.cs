@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
@@ -62,8 +63,8 @@ namespace WoWPlugin_Notifier
             this.LogPrint("LibSMS is OK");
             if (settingsInstance.OnWhisper || settingsInstance.OnBNetWhisper)
             {
-                game.ReadChat();
-                game.NewChatMessage += GameFunctionsOnNewChatMessage;
+                // we don't want to read old messages
+                game.ReadChat().ToArray();
                 (timerChat = this.CreateTimer(1000, game, TimerChat_OnElapsed)).Start();
                 this.LogPrint("Whisper notification enabled");
             }
@@ -91,7 +92,6 @@ namespace WoWPlugin_Notifier
         {
             if ((settingsInstance.OnWhisper || settingsInstance.OnBNetWhisper) && timerChat != null)
             {
-                game.NewChatMessage -= GameFunctionsOnNewChatMessage;
                 timerChat.Dispose();
             }
             if (settingsInstance.OnStaticPopup && timerStaticPopup != null)
@@ -119,7 +119,7 @@ namespace WoWPlugin_Notifier
                     this.LogPrint(tuple.Item1 + " is visible!");
                     string message = tuple.Item1 + " is visible!";
                     dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
-                    libSMS.SendSMS(message);
+                    libSMS.SendSMS(message, game);
                     this.ShowNotify(message, false, false);
                     this.LogPrint("Message is sent: " + message);
                     for (int i = 0; i < 60; i++)
@@ -137,7 +137,16 @@ namespace WoWPlugin_Notifier
 
         private void TimerChat_OnElapsed()
         {
-            game.ReadChat();
+            foreach (var msg in game.ReadChat())
+            {
+                if ((settingsInstance.OnWhisper && msg.Type == WoWChatMsgType.Whisper) || (settingsInstance.OnBNetWhisper && msg.Type == WoWChatMsgType.BNetWisper))
+                {
+                    this.LogPrint(string.Format("New PM from {0}: {1}", msg.Sender, msg.Text));
+                    dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
+                    libSMS.SendSMS(string.Format("New PM from {0}: {1}", msg.Sender, msg.Text), game);
+                    this.ShowNotify(string.Format("New PM from {0}: {1}", msg.Sender, msg.Text), false, false);
+                }
+            }
         }
 
         private void TimerDisconnect_OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
@@ -148,21 +157,10 @@ namespace WoWPlugin_Notifier
                 this.LogPrint("Player is not in game!");
                 this.ShowNotify("Player is not in game!", false, false);
                 dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
-                libSMS.SendSMS("Player is not in game!");
+                libSMS.SendSMS("Player is not in game!", game);
             }
         }
-
-        private void GameFunctionsOnNewChatMessage(ChatMsg obj)
-        {
-            if ((settingsInstance.OnWhisper && obj.Type == WoWChatMsgType.Whisper) || (settingsInstance.OnBNetWhisper && obj.Type == WoWChatMsgType.BNetWisper))
-            {
-                this.LogPrint(string.Format("New PM from {0}: {1}", obj.Sender, obj.Text));
-                dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
-                libSMS.SendSMS(string.Format("New PM from {0}: {1}", obj.Sender, obj.Text));
-                this.ShowNotify(string.Format("New PM from {0}: {1}", obj.Sender, obj.Text), false, false);
-            }
-        }
-
+        
         #endregion
 
         private Settings settingsInstance;

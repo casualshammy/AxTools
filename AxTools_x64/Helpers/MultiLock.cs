@@ -10,6 +10,12 @@ namespace AxTools.Helpers
         private object internalLock = new object();
         private Dictionary<Guid, object> lockObjects = new Dictionary<Guid, object>();
 
+        /// <summary>
+        /// Get lock. This instance of <see cref="MultiLock"/> will be in signaled state.
+        /// You can get multiple locks on one instance of <see cref="MultiLock"/>.
+        /// To release lock, use <see cref="ReleaseLock"/> method.
+        /// </summary>
+        /// <returns></returns>
         internal Guid GetLock()
         {
             lock (internalLock)
@@ -20,6 +26,10 @@ namespace AxTools.Helpers
             }
         }
 
+        /// <summary>
+        /// Release lock. If <paramref name="guid"/> is not found, <see cref="KeyNotFoundException"/> will be raised
+        /// </summary>
+        /// <param name="guid"></param>
         internal void ReleaseLock(Guid guid)
         {
             lock (internalLock)
@@ -43,6 +53,10 @@ namespace AxTools.Helpers
             }
         }
 
+        /// <summary>
+        /// Wait for all locks to be released
+        /// </summary>
+        /// <param name="timeoutMs"></param>
         internal void WaitForLocks(long timeoutMs = Int64.MaxValue)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();

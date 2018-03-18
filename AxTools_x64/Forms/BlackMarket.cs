@@ -54,7 +54,7 @@ namespace AxTools.Forms
                 uint numItems = wowProcess.Memory.Read<uint>(wowProcess.Memory.ImageBase + WowBuildInfoX64.BlackMarketNumItems);
                 if (numItems != 0)
                 {
-                    WaitingOverlay waitingOverlay = WaitingOverlay.Show(this);
+                    WaitingOverlay waitingOverlay = new WaitingOverlay(this, "Please wait...").Show();
                     IntPtr baseAddr = wowProcess.Memory.Read<IntPtr>(wowProcess.Memory.ImageBase + WowBuildInfoX64.BlackMarketItems);
                     Task.Factory.StartNew(() =>
                     {

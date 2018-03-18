@@ -61,6 +61,7 @@ namespace AxTools.Forms
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
         private readonly Dictionary<WoWGUID, Point> objectsPointsInRadarCoords = new Dictionary<WoWGUID, Point>();
         private readonly Log2 log;
+        private Task<string> getPlayerNameTask;
 
         private readonly Dictionary<WowPlayerClass, Color> wowClassColors = new Dictionary<WowPlayerClass, Color>
         {
@@ -710,7 +711,7 @@ namespace AxTools.Forms
             radarSettings.Zoom = zoomR;
         }
 
-        private void MeasureTooltip(Point mousePosition)
+        private async void MeasureTooltip(Point mousePosition)
         {
             foreach (KeyValuePair<WoWGUID, Point> pair in objectsPointsInRadarCoords)
             {
@@ -720,7 +721,7 @@ namespace AxTools.Forms
                     WowPlayer unit = wowPlayers.FirstOrDefault(i => i.GUID == pair.Key);
                     if (unit != null)
                     {
-                        DrawTooltip(mousePosition, string.Format("   {0}  \r\n   ({1}*{2}) {3}%", unit.Name, unit.Class, unit.Level, (uint) (unit.Health/(float) unit.HealthMax*100)), unit.Class);
+                        DrawTooltip(mousePosition, $"   {await GetPlayerNameAsync(unit)}  \r\n   ({unit.Class}*{unit.Level}) {(uint)(unit.Health / (float)unit.HealthMax * 100)}%", unit.Class);
                         return;
                     }
                     WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
@@ -758,6 +759,22 @@ namespace AxTools.Forms
             }
             textBoxDetailedInfo.BackColor = wowClassColors[_class];
             textBoxDetailedInfo.Visible = true;
+        }
+
+        private Task<string> GetPlayerNameAsync(WowPlayer unit)
+        {
+            if (getPlayerNameTask == null)
+            {
+                return (getPlayerNameTask = Task.Run(() => unit.Name));
+            }
+            else if (getPlayerNameTask.Status == TaskStatus.Canceled || getPlayerNameTask.Status == TaskStatus.Faulted || getPlayerNameTask.Status == TaskStatus.RanToCompletion)
+            {
+                return (getPlayerNameTask = Task.Run(() => unit.Name));
+            }
+            else
+            {
+                return Task.Run(() => "Please wait...");
+            }
         }
 
         private void PictureBoxMainMouseLeave(object sender, EventArgs e)

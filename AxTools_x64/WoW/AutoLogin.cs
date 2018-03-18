@@ -11,10 +11,10 @@ namespace AxTools.WoW
     internal class AutoLogin
     {
         private static readonly Log2 log = new Log2("AutoLogin");
-        private readonly WoWAccount wowAccount;
+        private readonly WoWAccount2 wowAccount;
         private readonly Process process;
 
-        internal AutoLogin(WoWAccount wowAccount, Process process)
+        internal AutoLogin(WoWAccount2 wowAccount, Process process)
         {
             this.wowAccount = wowAccount;
             this.process = process;
@@ -35,8 +35,7 @@ namespace AxTools.WoW
                     process.Refresh();
                     if (process.MainWindowHandle != (IntPtr)0)
                     {
-                        WowProcess wowProcess = WoWProcessManager.List.FirstOrDefault(i => i.ProcessID == process.Id);
-                        if (wowProcess != null && wowProcess.Memory != null)
+                        if (WoWProcessManager.Processes.TryGetValue(process.Id, out WowProcess wowProcess) && wowProcess.Memory != null)
                         {
                             bool okay = false;
                             if (wowProcess.IsValidBuild)
@@ -52,7 +51,7 @@ namespace AxTools.WoW
                             }
                             if (okay)
                             {
-                                foreach (char ch in wowAccount.Login)
+                                foreach (char ch in wowAccount.GetLogin())
                                 {
                                     NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
                                     Thread.Sleep(5);
@@ -61,7 +60,7 @@ namespace AxTools.WoW
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, tabCode, IntPtr.Zero);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, tabCode, IntPtr.Zero);
                                 Thread.Sleep(5);
-                                foreach (char ch in wowAccount.Password)
+                                foreach (char ch in wowAccount.GetPassword())
                                 {
                                     NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
                                     Thread.Sleep(5);
@@ -69,7 +68,7 @@ namespace AxTools.WoW
                                 IntPtr enterCode = new IntPtr(0x0D);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, enterCode, IntPtr.Zero);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, enterCode, IntPtr.Zero);
-                                log.Info(string.Format("{0} Credendials have been entered [{1}]", wowProcess, Utils.SecureString(wowAccount.Login)));
+                                log.Info(string.Format("{0} Credendials have been entered [{1}]", wowProcess, Utils.SecureString(wowAccount.GetLogin())));
                                 break;
                             }
                         }

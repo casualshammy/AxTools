@@ -47,10 +47,6 @@ namespace AxTools.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.notifyIconMain = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.woWRadarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.blackMarketTrackerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.launchWoWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.woWPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
             this.progressBarAddonsBackup = new MetroFramework.Controls.MetroProgressBar();
@@ -109,45 +105,6 @@ namespace AxTools.Forms
             this.notifyIconMain.Text = "AxTools";
             this.notifyIconMain.Visible = true;
             this.notifyIconMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconMainMouseClick);
-            // 
-            // contextMenuStripMain
-            // 
-            this.contextMenuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.woWRadarToolStripMenuItem,
-            this.blackMarketTrackerToolStripMenuItem,
-            this.toolStripSeparator2,
-            this.launchWoWToolStripMenuItem});
-            this.contextMenuStripMain.Name = "contextMenuStripMain";
-            this.contextMenuStripMain.Size = new System.Drawing.Size(182, 98);
-            // 
-            // woWRadarToolStripMenuItem
-            // 
-            this.woWRadarToolStripMenuItem.Image = global::AxTools.Properties.Resources.radar;
-            this.woWRadarToolStripMenuItem.Name = "woWRadarToolStripMenuItem";
-            this.woWRadarToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.woWRadarToolStripMenuItem.Text = "WoW Radar";
-            this.woWRadarToolStripMenuItem.Click += new System.EventHandler(this.WoWRadarToolStripMenuItemClick);
-            // 
-            // blackMarketTrackerToolStripMenuItem
-            // 
-            this.blackMarketTrackerToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("blackMarketTrackerToolStripMenuItem.Image")));
-            this.blackMarketTrackerToolStripMenuItem.Name = "blackMarketTrackerToolStripMenuItem";
-            this.blackMarketTrackerToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.blackMarketTrackerToolStripMenuItem.Text = "Black Market tracker";
-            this.blackMarketTrackerToolStripMenuItem.Click += new System.EventHandler(this.BlackMarketTrackerToolStripMenuItem_Click);
-            // 
-            // launchWoWToolStripMenuItem
-            // 
-            this.launchWoWToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("launchWoWToolStripMenuItem.Image")));
-            this.launchWoWToolStripMenuItem.Name = "launchWoWToolStripMenuItem";
-            this.launchWoWToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.launchWoWToolStripMenuItem.Text = "Exit";
-            this.launchWoWToolStripMenuItem.Click += new System.EventHandler(this.ExitAxToolsToolStripMenuItem_Click);
-            // 
-            // woWPluginsToolStripMenuItem
-            // 
-            this.woWPluginsToolStripMenuItem.Name = "woWPluginsToolStripMenuItem";
-            this.woWPluginsToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
             // 
             // tabControl
             // 
@@ -325,7 +282,7 @@ namespace AxTools.Forms
             this.metroTileExt1.TabIndex = 9;
             this.metroTileExt1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTileExt1.TileCount = 0;
-            this.metroTileExt1.Click += new System.EventHandler(this.metroTileExt1_Click);
+            this.metroTileExt1.Click += new System.EventHandler(this.TileLua_Click);
             // 
             // tileBMTracker
             // 
@@ -860,14 +817,10 @@ namespace AxTools.Forms
         private MetroComboboxExt cmbboxAccSelect;
         private MetroToolTip metroToolTip1;
         private ContextMenuStrip contextMenuStripMain;
-        private ToolStripMenuItem woWRadarToolStripMenuItem;
-        private ToolStripMenuItem woWPluginsToolStripMenuItem;
-        private ToolStripMenuItem launchWoWToolStripMenuItem;
         private MetroCheckBox checkBoxStartVenriloWithWow;
         private MetroCheckBox checkBoxStartRaidcallWithWow;
         private MetroCheckBox checkBoxStartTeamspeak3WithWow;
         private MetroCheckBox checkBoxStartMumbleWithWow;
-        private ToolStripMenuItem blackMarketTrackerToolStripMenuItem;
         private MetroLink linkBackup;
         private MetroLink linkClickerSettings;
         private MetroButton buttonStartStopPlugin;

@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.3.21.2071</AssemblyVersion>
+    <AssemblyVersion>12.3.29.2132</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -163,6 +163,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -256,6 +257,7 @@
       <DependentUpon>GoodsDestroyerConfig.cs</DependentUpon>
     </Compile>
     <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyerSettings.cs" />
+    <Compile Include="WoW\WoWAccount2.cs" />
     <Compile Include="WoW\WoWAntiKick.cs" />
     <Compile Include="WoW\Helpers\Wowhead.cs" />
     <Compile Include="WoW\WoWProcessWatcher.cs" />

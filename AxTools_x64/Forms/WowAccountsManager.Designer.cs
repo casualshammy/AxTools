@@ -31,7 +31,6 @@ namespace AxTools.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.metroButtonWowAccountDelete = new MetroFramework.Controls.MetroButton();
             this.metroButtonWowAccountSaveUpdate = new MetroFramework.Controls.MetroButton();
             this.textBoxWowAccountPassword = new MetroFramework.Controls.MetroTextBox();
@@ -39,6 +38,7 @@ namespace AxTools.Forms
             this.comboBoxWowAccounts = new MetroFramework.Controls.MetroComboBox();
             this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
+            this.labelStorageInfo = new MetroFramework.Controls.MetroLabel();
             this.SuspendLayout();
             // 
             // metroButtonWowAccountDelete
@@ -52,7 +52,7 @@ namespace AxTools.Forms
             this.metroButtonWowAccountDelete.TabIndex = 43;
             this.metroButtonWowAccountDelete.Text = "Delete";
             this.metroButtonWowAccountDelete.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroButtonWowAccountDelete.Click += new System.EventHandler(this.metroButtonWowAccountDelete_Click);
+            this.metroButtonWowAccountDelete.Click += new System.EventHandler(this.MetroButtonWowAccountDelete_Click);
             // 
             // metroButtonWowAccountSaveUpdate
             // 
@@ -65,7 +65,7 @@ namespace AxTools.Forms
             this.metroButtonWowAccountSaveUpdate.TabIndex = 42;
             this.metroButtonWowAccountSaveUpdate.Text = "Add";
             this.metroButtonWowAccountSaveUpdate.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroButtonWowAccountSaveUpdate.Click += new System.EventHandler(this.metroButtonWowAccountSaveUpdate_Click);
+            this.metroButtonWowAccountSaveUpdate.Click += new System.EventHandler(this.MetroButtonWowAccountSaveUpdate_Click);
             // 
             // textBoxWowAccountPassword
             // 
@@ -99,7 +99,7 @@ namespace AxTools.Forms
             this.textBoxWowAccountLogin.Text = "Login";
             this.textBoxWowAccountLogin.Theme = MetroFramework.MetroThemeStyle.Light;
             this.textBoxWowAccountLogin.UseStyleColors = true;
-            this.textBoxWowAccountLogin.TextChanged += new System.EventHandler(this.textBoxWowAccountLogin_TextChanged);
+            this.textBoxWowAccountLogin.TextChanged += new System.EventHandler(this.TextBoxWowAccountLogin_TextChanged);
             // 
             // comboBoxWowAccounts
             // 
@@ -115,7 +115,7 @@ namespace AxTools.Forms
             this.comboBoxWowAccounts.Style = MetroFramework.MetroColorStyle.Blue;
             this.comboBoxWowAccounts.TabIndex = 39;
             this.comboBoxWowAccounts.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboBoxWowAccounts.SelectedIndexChanged += new System.EventHandler(this.comboBoxWowAccounts_SelectedIndexChanged);
+            this.comboBoxWowAccounts.SelectedIndexChanged += new System.EventHandler(this.ComboBoxWowAccounts_SelectedIndexChanged);
             // 
             // metroLabel3
             // 
@@ -151,11 +151,29 @@ namespace AxTools.Forms
             this.metroLabel4.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLabel4.UseStyleColors = true;
             // 
+            // labelStorageInfo
+            // 
+            this.labelStorageInfo.CustomBackground = false;
+            this.labelStorageInfo.CustomForeColor = false;
+            this.labelStorageInfo.FontSize = MetroFramework.MetroLabelSize.Small;
+            this.labelStorageInfo.FontWeight = MetroFramework.MetroLabelWeight.Regular;
+            this.labelStorageInfo.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.labelStorageInfo.Location = new System.Drawing.Point(21, 159);
+            this.labelStorageInfo.Name = "labelStorageInfo";
+            this.labelStorageInfo.Size = new System.Drawing.Size(423, 33);
+            this.labelStorageInfo.Style = MetroFramework.MetroColorStyle.Blue;
+            this.labelStorageInfo.TabIndex = 44;
+            this.labelStorageInfo.Text = "Credentials are saved in Windows secure storage. If you\'ll forget your Windows\r\na" +
+    "ccount password or reinstall Windows, your WoW credentials will be lost\r\n";
+            this.labelStorageInfo.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.labelStorageInfo.UseStyleColors = true;
+            // 
             // WowAccountsManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(461, 175);
+            this.ClientSize = new System.Drawing.Size(461, 200);
+            this.Controls.Add(this.labelStorageInfo);
             this.Controls.Add(this.metroButtonWowAccountDelete);
             this.Controls.Add(this.metroButtonWowAccountSaveUpdate);
             this.Controls.Add(this.textBoxWowAccountPassword);
@@ -184,5 +202,6 @@ namespace AxTools.Forms
         private MetroFramework.Controls.MetroComboBox comboBoxWowAccounts;
         private MetroFramework.Controls.MetroLabel metroLabel3;
         private MetroFramework.Controls.MetroLabel metroLabel4;
+        private MetroLabel labelStorageInfo;
     }
 }

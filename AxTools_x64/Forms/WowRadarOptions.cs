@@ -42,7 +42,7 @@ namespace AxTools.Forms
             BeginInvoke((MethodInvoker) delegate
             {
                 int maxWidth = Screen.PrimaryScreen.WorkingArea.Width;
-                WowRadar pRadar = Utils.FindForm<WowRadar>();
+                WowRadar pRadar = Utils.FindForms<WowRadar>().FirstOrDefault();
                 if (pRadar != null)
                 {
                     Location = maxWidth - pRadar.Location.X - pRadar.Size.Width - 20 > Size.Width

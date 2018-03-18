@@ -148,13 +148,7 @@ namespace WoWPlugin_Dumper
             progressBar1.Value++;
             progressBar1.Value++;
         }
-
-        private void Chat_NewMessage(ChatMsg msg)
-        {
-            //Log(string.Format("\tType: {0}; Channel: {1}; Sender: {2}; SenderGUID: {3}; Text: {4}", msg.Type, msg.Channel, msg.Sender, msg.SenderGUID, msg.Text));
-            textBox1.AppendText(string.Format("\tType: {0}; Channel: {1}; Sender: {2}; SenderGUID: {3}; Text: {4}\r\n", msg.Type, msg.Channel, msg.Sender, msg.SenderGUID, msg.Text));
-        }
-
+        
         private void buttonDumpobjects_Click(object sender, EventArgs e)
         {
             Log("Dump START");
@@ -223,16 +217,12 @@ namespace WoWPlugin_Dumper
             MessageBox.Show("Completed");
         }
 
-        private async void buttonUIFrames_Click(object sender, EventArgs e)
+        private async void ButtonUIFrames_Click(object sender, EventArgs e)
         {
             try
             {
                 Log("UIFrames-----------------------------------------");
-                foreach (WoWUIFrame frame in WoWUIFrame.GetAllFrames(game))
-                {
-                    Log(string.Format("\tName: {0}; Visible: {1}; EditboxText: {2}", frame.GetName, frame.IsVisible, frame.EditboxText));
-                }
-                await Task.Run(() => Log(game.LuaGetValue("UnitHealth(\"player\")")));
+                await Task.Run(() => Log("Player's health: " + game.LuaGetValue("UnitHealth(\"player\")")));
                 if (await Task.Run(() => game.LuaIsTrue("1==1")))
                 {
                     MessageBox.Show("Completed, lua is working properly");
@@ -249,15 +239,20 @@ namespace WoWPlugin_Dumper
             }
         }
 
-        private void Button1_Click(object sender, EventArgs e)
+        private void ButtonChat_Click(object sender, EventArgs e)
         {
             try
             {
                 Log("Chat messages-----------------------------------------");
                 if (chatTimer == null)
                 {
-                    game.NewChatMessage += Chat_NewMessage;
-                    (chatTimer = dumper.CreateTimer(1000, game, game.ReadChat)).Start();
+                    (chatTimer = dumper.CreateTimer(1000, game, delegate {
+                        foreach (var msg in game.ReadChat())
+                        {
+                            //Log(string.Format("\tType: {0}; Channel: {1}; Sender: {2}; SenderGUID: {3}; Text: {4}", msg.Type, msg.Channel, msg.Sender, msg.SenderGUID, msg.Text));
+                            textBox1.AppendText(string.Format("\tType: {0}; Channel: {1}; Sender: {2}; SenderGUID: {3}; Text: {4}\r\n", msg.Type, msg.Channel, msg.Sender, msg.SenderGUID, msg.Text));
+                        }
+                    })).Start();
                 }
             }
             catch (Exception ex)
@@ -312,7 +307,6 @@ namespace WoWPlugin_Dumper
 
         private void DumperForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            game.NewChatMessage -= Chat_NewMessage;
             chatTimer?.Dispose();
         }
 

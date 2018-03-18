@@ -35,6 +35,7 @@ namespace AxTools.Forms
         private readonly Log2 log;
         private readonly object luaExecutionLock = new object();
         private WoW.Helpers.SafeTimer safeTimer;
+        private string helpInfo = "";
 
 
         private readonly Settings2 settings = Settings2.Instance;
@@ -105,43 +106,72 @@ namespace AxTools.Forms
             try
             {
                 luaEngine.LoadCLRPackage();
-                // Moving
-                luaEngine.RegisterFunction("Move2D", info, typeof(GameInterface).GetMethod("Move2D"));
-                // game
-                luaEngine.RegisterFunction("UseItemByID", info, typeof(GameInterface).GetMethod("UseItemByID"));
-                luaEngine.RegisterFunction("UseItem", info, typeof(GameInterface).GetMethod("UseItem"));
-                luaEngine.RegisterFunction("CastSpellByName", info, typeof(GameInterface).GetMethod("CastSpellByName"));
-                luaEngine.RegisterFunction("SelectDialogOption", info, typeof(GameInterface).GetMethod("SelectDialogOption"));
-                luaEngine.RegisterFunction("BuyMerchantItem", info, typeof(GameInterface).GetMethod("BuyMerchantItem"));
-                luaEngine.RegisterFunction("SendToChat", info, typeof(GameInterface).GetMethod("SendToChat"));
-                // Info
-                luaEngine.RegisterFunction("IsInGame", this, GetType().GetMethod("IsInGame"));
-                luaEngine.RegisterFunction("IsLoadingScreenVisible", this, GetType().GetMethod("IsLoadingScreenVisible"));
-                luaEngine.RegisterFunction("MouseoverGUID", this, GetType().GetMethod("MouseoverGUID"));
-                luaEngine.RegisterFunction("IsSpellKnown", this, GetType().GetMethod("IsSpellKnown"));
-                luaEngine.RegisterFunction("IsLooting", this, GetType().GetMethod("IsLooting"));
-                luaEngine.RegisterFunction("ZoneID", this, GetType().GetMethod("ZoneID"));
-                luaEngine.RegisterFunction("ZoneText", this, GetType().GetMethod("ZoneText"));
-                luaEngine.RegisterFunction("Lua_GetValue", this, GetType().GetMethod("Lua_GetValue"));
-                luaEngine.RegisterFunction("Lua_IsTrue", this, GetType().GetMethod("Lua_IsTrue"));
-                // Objects
-                luaEngine.RegisterFunction("GetLocalPlayer", this, GetType().GetMethod("GetLocalPlayer"));
-                luaEngine.RegisterFunction("GetNpcs", this, GetType().GetMethod("GetNpcs"));
-                luaEngine.RegisterFunction("GetPlayers", this, GetType().GetMethod("GetPlayers"));
-                luaEngine.RegisterFunction("GetObjects", this, GetType().GetMethod("GetObjects"));
-                luaEngine.RegisterFunction("GetTargetObject", this, GetType().GetMethod("GetTargetObject"));
-                // utils
-                luaEngine.RegisterFunction("MsgBox", this, GetType().GetMethod("MsgBox"));
-                luaEngine.RegisterFunction("PressKey", this, GetType().GetMethod("PressKey"));
-                luaEngine.RegisterFunction("Log", this, GetType().GetMethod("Log"));
-                // lua lib
-                luaEngine.DoString("format=string.format;");
+                helpInfo += "CLR package is loaded, using:\r\nimport ('System.Web');\r\nlocal client = WebClient()\r\n\r\n";
                 // Keys
                 luaEngine.DoString("Keys={};");
                 foreach (Keys key in Enum.GetValues(typeof(Keys)))
                 {
                     luaEngine.DoString($"Keys[\"{key.ToString()}\"]={(int)key};");
                 }
+                helpInfo += "Keys[] is a table containing .Net Windows.Forms.Keys enum values\r\n\r\n";
+                // Moving
+                luaEngine.RegisterFunction("Move2D", this, GetType().GetMethod("Move2D"));
+                helpInfo += "void Move2D(double x, double y, double z)\r\n";
+                // game
+                luaEngine.RegisterFunction("UseItemByID", info, typeof(GameInterface).GetMethod("UseItemByID"));
+                helpInfo += "void UseItemByID(uint id)\r\n";
+                luaEngine.RegisterFunction("UseItem", info, typeof(GameInterface).GetMethod("UseItem"));
+                helpInfo += "void UseItem(int bagID, int slotID)\r\n";
+                luaEngine.RegisterFunction("CastSpellByName", info, typeof(GameInterface).GetMethod("CastSpellByName"));
+                helpInfo += "void CastSpellByName(string spellName)\r\n";
+                luaEngine.RegisterFunction("SelectDialogOption", info, typeof(GameInterface).GetMethod("SelectDialogOption"));
+                helpInfo += "void SelectDialogOption(string gossipText)\r\n";
+                luaEngine.RegisterFunction("BuyMerchantItem", info, typeof(GameInterface).GetMethod("BuyMerchantItem"));
+                helpInfo += "void BuyMerchantItem(uint itemID, int count)\r\n";
+                luaEngine.RegisterFunction("SendToChat", info, typeof(GameInterface).GetMethod("SendToChat"));
+                helpInfo += "void SendToChat(string command)\r\n";
+                // Info
+                luaEngine.RegisterFunction("IsInGame", this, GetType().GetMethod("IsInGame"));
+                helpInfo += "bool IsInGame()\r\n";
+                luaEngine.RegisterFunction("IsLoadingScreenVisible", this, GetType().GetMethod("IsLoadingScreenVisible"));
+                helpInfo += "bool IsLoadingScreenVisible()\r\n";
+                luaEngine.RegisterFunction("MouseoverGUID", this, GetType().GetMethod("MouseoverGUID"));
+                helpInfo += "string MouseoverGUID()\r\n";
+                luaEngine.RegisterFunction("IsSpellKnown", this, GetType().GetMethod("IsSpellKnown"));
+                helpInfo += "bool IsSpellKnown(double spellID)\r\n";
+                luaEngine.RegisterFunction("IsLooting", this, GetType().GetMethod("IsLooting"));
+                helpInfo += "bool IsLooting()\r\n";
+                luaEngine.RegisterFunction("ZoneID", this, GetType().GetMethod("ZoneID"));
+                helpInfo += "double ZoneID()\r\n";
+                luaEngine.RegisterFunction("ZoneText", this, GetType().GetMethod("ZoneText"));
+                helpInfo += "string ZoneText()\r\n";
+                luaEngine.RegisterFunction("Lua_GetValue", this, GetType().GetMethod("Lua_GetValue"));
+                helpInfo += "string Lua_GetValue(string func)\r\n";
+                luaEngine.RegisterFunction("Lua_IsTrue", this, GetType().GetMethod("Lua_IsTrue"));
+                helpInfo += "bool Lua_IsTrue(string condition)\r\n";
+                // Objects
+                luaEngine.RegisterFunction("GetLocalPlayer", this, GetType().GetMethod("GetLocalPlayer"));
+                helpInfo += "uservalue WoWPlayerMe GetLocalPlayer()\r\n";
+                luaEngine.RegisterFunction("GetNpcs", this, GetType().GetMethod("GetNpcs"));
+                helpInfo += "double, uservalue List<WowNpc> GetNpcs()\r\n";
+                luaEngine.RegisterFunction("GetPlayers", this, GetType().GetMethod("GetPlayers"));
+                helpInfo += "double, uservalue List<WowPlayer> GetPlayers()\r\n";
+                luaEngine.RegisterFunction("GetObjects", this, GetType().GetMethod("GetObjects"));
+                helpInfo += "double, uservalue List<WowObject> GetObjects()\r\n";
+                luaEngine.RegisterFunction("GetTargetObject", this, GetType().GetMethod("GetTargetObject"));
+                helpInfo += "uservalue dynamic GetTargetObject()\r\n";
+                // utils
+                luaEngine.RegisterFunction("MsgBox", this, GetType().GetMethod("MsgBox"));
+                helpInfo += "viod MsgBox(object text)\r\n";
+                luaEngine.RegisterFunction("PressKey", this, GetType().GetMethod("PressKey"));
+                helpInfo += "void PressKey(int key)\r\n";
+                luaEngine.RegisterFunction("Log", this, GetType().GetMethod("Log"));
+                helpInfo += "void Log(object text)\r\n";
+                // lua lib
+                luaEngine.DoString("format=string.format;");
+                luaEngine.DoString("if (not table.count) then table.count = function(tbl) local count = 0; for index in pairs(tbl) do count = count+1; end return count; end end");
+                luaEngine.DoString("if (not table.first) then table.first = function(tbl) for _, value in pairs(tbl) do return value; end end end");
+                helpInfo += "real table.count(tbl)\r\nvalue table.first(tbl)\r\n";
             }
             catch (Exception ex)
             {
@@ -489,7 +519,7 @@ namespace AxTools.Forms
             {
                 BeginInvoke((MethodInvoker)delegate
                 {
-                   if (WoWProcessManager.List.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
+                   if (WoWProcessManager.Processes.Values.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
                    {
                        SwitchTimer();
                    }
@@ -519,6 +549,11 @@ namespace AxTools.Forms
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
+        }
+
+        private void LinkInfo_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(helpInfo);
         }
 
     }

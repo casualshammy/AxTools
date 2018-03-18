@@ -50,12 +50,21 @@ namespace AxTools.WoW
                         return wowProcess;
                     }
                     log.Info(string.Format("{0} Player isn't logged in", wowProcess));
-                    Notify.SmartNotify("Injecting error", "Player isn't logged in", NotifyUserType.Error, true);
+                    Notify.SmartNotify("Cannot attach to WoW client", "Player isn't logged in", NotifyUserType.Error, true);
                     return null;
                 }
-                log.Error(string.Format("{0} Incorrect WoW build", wowProcess));
-                Notify.SmartNotify("Injecting error", "Incorrect WoW build", NotifyUserType.Error, true);
-                return null;
+                else if (wowProcess.GetExecutableRevision() < WowBuildInfoX64.WoWRevision)
+                {
+                    log.Error($"{wowProcess} WoW client is outdated: {wowProcess.GetExecutableRevision()}");
+                    Notify.SmartNotify("Cannot attach to WoW client", "WoW client is outdated. Please update it with Battle.Net client", NotifyUserType.Error, true);
+                    return null;
+                }
+                else
+                {
+                    log.Error($"{wowProcess} WoW client is outdated: {wowProcess.GetExecutableRevision()}");
+                    Notify.SmartNotify("Cannot attach to WoW client", "AxTools is outdated. Please standby", NotifyUserType.Error, true);
+                    return null;
+                }
             }
             Notify.SmartNotify("Module error", "No WoW process found", NotifyUserType.Error, true);
             return null;
@@ -76,7 +85,8 @@ namespace AxTools.WoW
             {
                 form.Close();
             }
-            foreach (var plugin in PluginManagerEx.RunningPlugins)
+            // cast 'PluginManagerEx.RunningPlugins' to array because we will get 'collection changed' exception otherwise
+            foreach (var plugin in PluginManagerEx.RunningPlugins.ToArray())
             {
                 if (PluginManagerEx.PluginWoW[plugin.Name] == processID)
                 {

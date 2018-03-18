@@ -104,7 +104,7 @@ namespace AxTools.Services
             TimeSpan pTimeSpan = DateTime.UtcNow - _settings.WoWAddonsBackupLastDate;
             if (pTimeSpan.TotalHours >= _settings.WoWAddonsBackupMinimumTimeBetweenBackup && !_isBackingUp)
             {
-                if (_settings.WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning && WoWProcessManager.List.Any())
+                if (_settings.WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning && WoWProcessManager.Processes.Any())
                 {
                     _timer.Stop();
                     WoWProcessManager.WoWProcessStartedOrClosed += WoWProcessManager_WoWProcessStartedOrClosed;
@@ -119,7 +119,7 @@ namespace AxTools.Services
 
         private static void WoWProcessManager_WoWProcessStartedOrClosed()
         {
-            if (WoWProcessManager.List.Count == 0)
+            if (WoWProcessManager.Processes.Count == 0)
             {
                 WoWProcessManager.WoWProcessStartedOrClosed -= WoWProcessManager_WoWProcessStartedOrClosed;
                 StartBackupOnSchedule();
@@ -136,7 +136,8 @@ namespace AxTools.Services
 
         private static void MakeNewArchive()
         {
-            Guid _lock = MainForm.ShutdownLock.GetLock();
+            Guid _lock = Program.ShutdownLock.GetLock();
+            Guid _wowLock = MainForm.Instance.WoWLaunchLock.GetLock();
             try
             {
                 _isBackingUp = true;
@@ -160,6 +161,10 @@ namespace AxTools.Services
                             log.Error("Backup error: " + ex.Message);
                             Notify.TrayPopup("Backup error", ex.Message, NotifyUserType.Error, true);
                         }
+                        finally
+                        {
+                            DeleteBrokenFiles();
+                        }
                     }
                     else
                     {
@@ -177,7 +182,8 @@ namespace AxTools.Services
             }
             finally
             {
-                MainForm.ShutdownLock.ReleaseLock(_lock);
+                Program.ShutdownLock.ReleaseLock(_lock);
+                MainForm.Instance.WoWLaunchLock.ReleaseLock(_wowLock);
             }
         }
 
@@ -216,6 +222,23 @@ namespace AxTools.Services
                     {
                         log.Error("Can't delete old file: " + ex.Message);
                     }
+                }
+            }
+        }
+
+        private static void DeleteBrokenFiles()
+        {
+            DirectoryInfo backupDirectory = new DirectoryInfo(_settings.WoWAddonsBackupPath);
+            foreach (var file in backupDirectory.GetFileSystemInfos().Where(i => i.Name.StartsWith("DotNetZip-") && i is FileInfo).Cast<FileInfo>())
+            {
+                try
+                {
+                    file.Delete();
+                    log.Info($"Broken file {file.FullName} is deleted");
+                }
+                catch (Exception ex)
+                {
+                    log.Error($"Can't delete file {file.FullName}: {ex.Message}");
                 }
             }
         }

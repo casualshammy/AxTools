@@ -48,6 +48,8 @@ namespace PatternFinder
             Stopwatch stopwatch = Stopwatch.StartNew();
             Console.WriteLine("Calculating hash...");
             File.AppendAllLines(reportFilePath, new[] {"internal static readonly byte[] WoWHash =", "{", "\t" + CalcucateHash(wowProcess[0].MainModule.FileName), "};"});
+            var versionInfo = FileVersionInfo.GetVersionInfo(wowProcess[0].MainModule.FileName);
+            File.AppendAllLines(reportFilePath, new[] { $"internal const int WoWRevision = {versionInfo.FilePrivatePart}" });
             Console.WriteLine("Hash is calculated");
             Console.WriteLine("------------------");
             Console.WriteLine("------------------");

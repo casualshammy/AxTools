@@ -28,12 +28,7 @@ namespace AxTools.WoW.PluginSystem.API
         private static readonly Dictionary<int, object> chatLocks = new Dictionary<int, object>();
         private static readonly Dictionary<int, object> readChatLocks = new Dictionary<int, object>();
         private static readonly Dictionary<int, object> luaLocks = new Dictionary<int, object>();
-
-        /// <summary>
-        /// Call <see cref="ReadChat"/> to get new messages via this event
-        /// </summary>
-        public event Action<ChatMsg> NewChatMessage;
-        
+  
         internal GameInterface(WowProcess wow)
         {
             wowProcess = wow ?? throw new ArgumentNullException("wow");
@@ -172,7 +167,7 @@ namespace AxTools.WoW.PluginSystem.API
         /// <summary>
         ///     Invokes <see cref="NewChatMessage"/> if new messages appears
         /// </summary>
-        public void ReadChat()
+        public IEnumerable<ChatMsg> ReadChat()
         {
             lock (readChatLocks[wowProcess.ProcessID])
             {
@@ -186,7 +181,7 @@ namespace AxTools.WoW.PluginSystem.API
                         if (ChatMessages[i] != s)
                         {
                             ChatMessages[i] = s;
-                            NewChatMessage?.Invoke(ParseChatMsg(s));
+                            yield return ParseChatMsg(s);
                         }
                     }
                 }

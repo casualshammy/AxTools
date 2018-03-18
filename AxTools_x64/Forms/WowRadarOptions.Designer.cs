@@ -53,9 +53,9 @@ namespace AxTools.Forms
             this.buttonSaveFile = new MetroFramework.Controls.MetroButton();
             this.buttonOpenFile = new MetroFramework.Controls.MetroButton();
             this.tabPageAppearance = new MetroFramework.Controls.MetroTabPage();
+            this.checkBoxPlayerArrowOnTop = new MetroFramework.Controls.MetroCheckBox();
             this.textboxAlarmSound = new Components.MetroTextboxExt();
             this.labelAlarmSound = new MetroFramework.Controls.MetroLabel();
-            this.checkBoxPlayerArrowOnTop = new MetroFramework.Controls.MetroCheckBox();
             this.metroTabControl1.SuspendLayout();
             this.tabPageTrackingUnits.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.oListView)).BeginInit();
@@ -229,7 +229,7 @@ namespace AxTools.Forms
             this.metroTabControl1.Location = new System.Drawing.Point(15, 30);
             this.metroTabControl1.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
+            this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Size = new System.Drawing.Size(402, 368);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabControl1.TabIndex = 62;
@@ -370,12 +370,31 @@ namespace AxTools.Forms
             this.tabPageAppearance.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabPageAppearance.StyleManager = null;
             this.tabPageAppearance.TabIndex = 1;
-            this.tabPageAppearance.Text = "                  Settings2               ";
+            this.tabPageAppearance.Text = "                  Settings               ";
             this.tabPageAppearance.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tabPageAppearance.VerticalScrollbar = false;
             this.tabPageAppearance.VerticalScrollbarBarColor = true;
             this.tabPageAppearance.VerticalScrollbarHighlightOnWheel = false;
             this.tabPageAppearance.VerticalScrollbarSize = 10;
+            // 
+            // checkBoxPlayerArrowOnTop
+            // 
+            this.checkBoxPlayerArrowOnTop.AutoSize = true;
+            this.checkBoxPlayerArrowOnTop.CustomBackground = false;
+            this.checkBoxPlayerArrowOnTop.CustomForeColor = false;
+            this.checkBoxPlayerArrowOnTop.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.checkBoxPlayerArrowOnTop.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.checkBoxPlayerArrowOnTop.Location = new System.Drawing.Point(3, 60);
+            this.checkBoxPlayerArrowOnTop.Name = "checkBoxPlayerArrowOnTop";
+            this.checkBoxPlayerArrowOnTop.Size = new System.Drawing.Size(267, 19);
+            this.checkBoxPlayerArrowOnTop.Style = MetroFramework.MetroColorStyle.Blue;
+            this.checkBoxPlayerArrowOnTop.StyleManager = null;
+            this.checkBoxPlayerArrowOnTop.TabIndex = 53;
+            this.checkBoxPlayerArrowOnTop.Text = "Show local player rotation arrow on top";
+            this.checkBoxPlayerArrowOnTop.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.checkBoxPlayerArrowOnTop.UseStyleColors = true;
+            this.checkBoxPlayerArrowOnTop.UseVisualStyleBackColor = true;
+            this.checkBoxPlayerArrowOnTop.CheckedChanged += new System.EventHandler(this.CheckBoxPlayerArrowOnTop_CheckedChanged);
             // 
             // textboxAlarmSound
             // 
@@ -414,25 +433,6 @@ namespace AxTools.Forms
             this.labelAlarmSound.Text = "Alarm sound file:";
             this.labelAlarmSound.Theme = MetroFramework.MetroThemeStyle.Light;
             this.labelAlarmSound.UseStyleColors = true;
-            // 
-            // checkBoxPlayerArrowOnTop
-            // 
-            this.checkBoxPlayerArrowOnTop.AutoSize = true;
-            this.checkBoxPlayerArrowOnTop.CustomBackground = false;
-            this.checkBoxPlayerArrowOnTop.CustomForeColor = false;
-            this.checkBoxPlayerArrowOnTop.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.checkBoxPlayerArrowOnTop.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxPlayerArrowOnTop.Location = new System.Drawing.Point(3, 60);
-            this.checkBoxPlayerArrowOnTop.Name = "checkBoxPlayerArrowOnTop";
-            this.checkBoxPlayerArrowOnTop.Size = new System.Drawing.Size(267, 19);
-            this.checkBoxPlayerArrowOnTop.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxPlayerArrowOnTop.StyleManager = null;
-            this.checkBoxPlayerArrowOnTop.TabIndex = 53;
-            this.checkBoxPlayerArrowOnTop.Text = "Show local player rotation arrow on top";
-            this.checkBoxPlayerArrowOnTop.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.checkBoxPlayerArrowOnTop.UseStyleColors = true;
-            this.checkBoxPlayerArrowOnTop.UseVisualStyleBackColor = true;
-            this.checkBoxPlayerArrowOnTop.CheckedChanged += new System.EventHandler(this.CheckBoxPlayerArrowOnTop_CheckedChanged);
             // 
             // WowRadarOptions
             // 

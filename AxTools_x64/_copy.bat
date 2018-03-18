@@ -4,5 +4,5 @@
 copy /b "F:\sync\private\Projects\AxTools\AxTools_x64\bin\x64\Release\distr2\AxTools.exe" "C:\Program Files (x86)\AxTools\"
 del "C:\Program Files (x86)\AxTools\*.dll"
 copy /b "bin\x64\Release\*.dll" "C:\Program Files (x86)\AxTools\"
-"C:\Program Files (x86)\AxTools\AxTools.exe"
+start "" "C:\Program Files (x86)\AxTools\AxTools.exe"
 pause

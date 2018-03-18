@@ -1472,7 +1472,7 @@ namespace AxTools.Forms
             this.linkTitle.Size = new System.Drawing.Size(55, 23);
             this.linkTitle.Style = MetroFramework.MetroColorStyle.Blue;
             this.linkTitle.TabIndex = 70;
-            this.linkTitle.Text = "Settings2";
+            this.linkTitle.Text = "Settings";
             this.linkTitle.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkTitle.UseStyleColors = true;
             // 

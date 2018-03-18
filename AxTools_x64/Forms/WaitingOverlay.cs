@@ -14,6 +14,21 @@ namespace AxTools.Forms
     {
         private readonly MetroForm parentForm;
         private WaitingOverlaySub panel;
+        private int waitInMs;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="label"></param>
+        /// <param name="waitInMs"></param>
+        public WaitingOverlay(MetroForm parent, string label, int waitInMs = 0)
+        {
+            InitializeComponent();
+            parentForm = parent;
+            this.waitInMs = waitInMs;
+            Load += WaitingOverlay_Load;
+        }
 
         public string Label
         {
@@ -27,22 +42,14 @@ namespace AxTools.Forms
             }
         }
 
-        private WaitingOverlay(MetroForm form)
+        public new WaitingOverlay Show()
         {
-            InitializeComponent();
-            parentForm = form;
-            Load += WaitingOverlay_Load;
-        }
-
-        public static WaitingOverlay Show(MetroForm parent, int periodInMs = 0)
-        {
-            WaitingOverlay waitingOverlay = new WaitingOverlay(parent);
-            waitingOverlay.Show((IWin32Window) waitingOverlay.parentForm);
-            if (periodInMs != 0)
+            Show(parentForm);
+            if (waitInMs != 0)
             {
-                Task.Factory.StartNew(() => Thread.Sleep(periodInMs)).ContinueWith(l => { waitingOverlay.Close(); }, TaskScheduler.FromCurrentSynchronizationContext());
+                Task.Factory.StartNew(() => Thread.Sleep(waitInMs)).ContinueWith(l => Close(), TaskScheduler.FromCurrentSynchronizationContext());
             }
-            return waitingOverlay;
+            return this;
         }
 
         private void WaitingOverlay_Load(object sender, EventArgs e)

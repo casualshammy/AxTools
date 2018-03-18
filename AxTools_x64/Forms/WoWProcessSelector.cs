@@ -7,21 +7,47 @@ using System.Windows.Forms;
 using AxTools.Helpers;
 using AxTools.WoW.PluginSystem.API;
 using Components.Forms;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AxTools.Forms
 {
     internal partial class WoWProcessSelector : BorderedMetroForm
     {
+
+        private WowProcess process;
+        private Dictionary<int, WowProcess> processPerComboboxIndex = new Dictionary<int, WowProcess>();
+
+        /// <summary>
+        ///     
+        /// </summary>
+        /// <returns></returns>
+        internal static WowProcess GetWoWProcess()
+        {
+            if (WoWProcessManager.Processes.Count == 0)
+            {
+                return null;
+            }
+            if (WoWProcessManager.Processes.Count == 1)
+            {
+                return WoWProcessManager.Processes.First().Value;
+            }
+            WoWProcessSelector bform = new WoWProcessSelector();
+            bform.ShowDialog();
+            return bform.process;
+        }
+
         private WoWProcessSelector()
         {
             InitializeComponent();
             ShowInTaskbar = false;
-           StyleManager.Style = Settings2.Instance.StyleColor;
-            foreach (WowProcess i in WoWProcessManager.List)
+            StyleManager.Style = Settings2.Instance.StyleColor;
+            foreach (var i in WoWProcessManager.Processes)
             {
-                comboBox1.Items.Add(i.IsValidBuild && new GameInterface(i).IsInGame ?
-                    string.Format("pID: {0}", i.ProcessID) :
-                    string.Format("pID: {0} (ERROR DETECTED)", i.ProcessID));
+                int index = comboBox1.Items.Add(i.Value.IsValidBuild && new GameInterface(i.Value).IsInGame ?
+                    string.Format("pID: {0}", i.Key) :
+                    string.Format("pID: {0} (ERROR DETECTED)", i.Key));
+                processPerComboboxIndex.Add(index, i.Value);
             }
             button1.Enabled = false;
             button2.Enabled = false;
@@ -32,33 +58,12 @@ namespace AxTools.Forms
                 OnActivated(EventArgs.Empty);
             });
         }
-
-        /// <summary>
-        ///     
-        /// </summary>
-        /// <returns></returns>
-        internal static WowProcess GetWoWProcess()
-        {
-            if (WoWProcessManager.List.Count == 0)
-            {
-                return null;
-            }
-            if (WoWProcessManager.List.Count == 1)
-            {
-                return WoWProcessManager.List[0];
-            }
-            WoWProcessSelector bform = new WoWProcessSelector();
-            bform.ShowDialog();
-            return WoWProcessManager.List[bform.wIndex];
-        }
-
-        private int wIndex = -1;
-
+        
         private void Button2Click(object sender, EventArgs e)
         {
             FLASHWINFO fi = new FLASHWINFO {
                 cbSize = (uint) Marshal.SizeOf(typeof (FLASHWINFO)),
-                hwnd = WoWProcessManager.List[comboBox1.SelectedIndex].MainWindowHandle,
+                hwnd = processPerComboboxIndex[comboBox1.SelectedIndex].MainWindowHandle,
                 dwFlags = FlashWindowFlags.FLASHW_TRAY | FlashWindowFlags.FLASHW_TIMERNOFG
             };
             NativeMethods.FlashWindowEx(ref fi);
@@ -66,7 +71,7 @@ namespace AxTools.Forms
 
         private void Button1Click(object sender, EventArgs e)
         {
-            wIndex = comboBox1.SelectedIndex;
+            process = processPerComboboxIndex[comboBox1.SelectedIndex];
             Close();
         }
 

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -80,7 +81,7 @@ namespace AxTools.Helpers
             {
                 WoWAddonsBackupCompressionLevel = 9;
             }
-            if (string.IsNullOrWhiteSpace(WoWDirectory))
+            if (string.IsNullOrWhiteSpace(WoWDirectory) || !File.Exists(Path.Combine(WoWDirectory, "Wow-64.exe")) || !File.Exists(Path.Combine(WoWDirectory, "Scan-64.dll")))
             {
                 WoWDirectory = GetWowPath();
             }
@@ -154,28 +155,28 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 10, PropertyName = "WoWDirectory")]
         internal string WoWDirectory = string.Empty;
 
-        [JsonProperty(Order = 11, PropertyName = "WoWAccounts")]
-        internal byte[] WoWAccounts = new byte[0];
+        [JsonProperty(Order = 11, PropertyName = "WoWAccounts2")]
+        internal byte[] WoWAccounts2 = new byte[0];
 
-        [JsonProperty(Order = 12, PropertyName = "WoWAntiKick")]
+        [JsonProperty(Order = 13, PropertyName = "WoWAntiKick")]
         internal bool WoWAntiKick = true;
 
-        [JsonProperty(Order = 13, PropertyName = "WoW_AntiKick_SetAfkState")]
+        [JsonProperty(Order = 14, PropertyName = "WoW_AntiKick_SetAfkState")]
         internal bool WoW_AntiKick_SetAfkState = false;
 
-        [JsonProperty(Order = 14, PropertyName = "WoWInteractMouseover")]
+        [JsonProperty(Order = 15, PropertyName = "WoWInteractMouseover")]
         internal Keys WoWInteractMouseover = Keys.None;
 
-        [JsonProperty(Order = 15, PropertyName = "WoWTargetMouseover")]
+        [JsonProperty(Order = 16, PropertyName = "WoWTargetMouseover")]
         internal Keys WoWTargetMouseover = Keys.None;
 
-        [JsonProperty(Order = 16, PropertyName = "WoWCustomizeWindow")]
+        [JsonProperty(Order = 17, PropertyName = "WoWCustomizeWindow")]
         internal bool WoWCustomizeWindow = false;
 
-        [JsonProperty(Order = 17, PropertyName = "WoWCustomWindowRectangle")]
+        [JsonProperty(Order = 18, PropertyName = "WoWCustomWindowRectangle")]
         internal Rectangle WoWCustomWindowRectangle = new Rectangle(0, 0, 1366, 733);
 
-        [JsonProperty(Order = 18, PropertyName = "WoWCustomWindowNoBorder")]
+        [JsonProperty(Order = 19, PropertyName = "WoWCustomWindowNoBorder")]
         internal bool WoWCustomWindowNoBorder = false;
         
         #endregion
@@ -390,24 +391,15 @@ namespace AxTools.Helpers
 
         private static string GetWowPath()
         {
-            using (RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Wow6432Node\\\\Blizzard Entertainment\\\\World of Warcraft"))
+            foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
             {
-                try
-                {
-                    if (regVersion != null && regVersion.GetValue("InstallPath") != null)
-                    {
-                        string raw = regVersion.GetValue("InstallPath").ToString();
-                        return raw.Remove(raw.Length - 1);
-                    }
-                    return string.Empty;
-                }
-                catch
-                {
-                    return string.Empty;
-                }
+                var path = Utils.FindFiles(drive.Name, "Wow-64.exe", 5).Select(l => Path.GetDirectoryName(l)).Intersect(Utils.FindFiles(drive.Name, "Scan-64.dll", 5).Select(l => Path.GetDirectoryName(l))).FirstOrDefault();
+                if (path != null)
+                    return path;
             }
+            return null;
         }
-    
+        
         #endregion
 
     }

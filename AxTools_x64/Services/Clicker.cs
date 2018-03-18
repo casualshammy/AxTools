@@ -75,9 +75,9 @@ namespace AxTools.Services
             {
                 if (_settings.ClickerKey == Keys.None)
                 {
-                    Notify.TrayPopup("Incorrect input!", "Clicker don't know what key it should press. Click here to setup clicker", NotifyUserType.Error, true, null, 10, (sender, args) =>
+                    Notify.TrayPopup("Incorrect parameter!", "Clicker don't know what key it should press. Click here to setup clicker", NotifyUserType.Error, true, null, 10, (sender, args) =>
                     {
-                        ClickerSettings clickerSettings = Utils.FindForm<ClickerSettings>();
+                        ClickerSettings clickerSettings = Utils.FindForms<ClickerSettings>().FirstOrDefault();
                         if (clickerSettings == null)
                         {
                             new ClickerSettings().Show(MainForm.Instance);
@@ -92,14 +92,14 @@ namespace AxTools.Services
                 if (Enabled)
                 {
                     Stop();
-                    WowProcess cProcess = WoWProcessManager.List.FirstOrDefault(i => i.MainWindowHandle == Handle);
+                    WowProcess cProcess = WoWProcessManager.Processes.Values.FirstOrDefault(i => i.MainWindowHandle == Handle);
                     logger.Info(cProcess != null
                         ? string.Format("{0} Disabled", cProcess)
                         : "UNKNOWN:null :: Disabled");
                 }
                 else
                 {
-                    WowProcess cProcess = WoWProcessManager.List.FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
+                    WowProcess cProcess = WoWProcessManager.Processes.Values.FirstOrDefault(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow());
                     if (cProcess != null)
                     {
                         Start(_settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr)_settings.ClickerKey);

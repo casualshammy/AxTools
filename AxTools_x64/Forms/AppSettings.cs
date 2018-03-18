@@ -142,7 +142,7 @@ namespace AxTools.Forms
 
         private void ButtonIngameKeyBinds_Click(object sender, EventArgs e)
         {
-            AppSettingsWoWBinds form = Utils.FindForm<AppSettingsWoWBinds>();
+            AppSettingsWoWBinds form = Utils.FindForms<AppSettingsWoWBinds>().FirstOrDefault(); ;
             if (form != null)
             {
                 form.Show();
@@ -464,7 +464,7 @@ namespace AxTools.Forms
                 string subject = InputBox.Input("Any comment? (optional)", settings.StyleColor);
                 if (subject != null)
                 {
-                    WaitingOverlay waitingOverlay = WaitingOverlay.Show(this);
+                    WaitingOverlay waitingOverlay = new WaitingOverlay(this, "Please wait...").Show();
                     Task.Factory.StartNew(() =>
                     {
                         try

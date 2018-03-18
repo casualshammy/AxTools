@@ -13,39 +13,39 @@ namespace AxTools.Forms
         internal WowAccountsManager()
         {
             InitializeComponent();
-           StyleManager.Style = Settings2.Instance.StyleColor;
+            StyleManager.Style = Settings2.Instance.StyleColor;
             Icon = Resources.AppIcon;
             UpdateControls();
         }
 
-        private void metroButtonWowAccountSaveUpdate_Click(object sender, EventArgs e)
+        private void MetroButtonWowAccountSaveUpdate_Click(object sender, EventArgs e)
         {
-            WoWAccount wowAccount = WoWAccount.AllAccounts.FirstOrDefault(i => i.Login == textBoxWowAccountLogin.Text);
+            WoWAccount2 wowAccount = WoWAccount2.AllAccounts.FirstOrDefault(i => i.GetLogin() == textBoxWowAccountLogin.Text);
             if (wowAccount != null)
             {
-                int index = WoWAccount.AllAccounts.IndexOf(wowAccount);
-                WoWAccount.AllAccounts[index] = new WoWAccount(textBoxWowAccountLogin.Text, textBoxWowAccountPassword.Text);
+                int index = WoWAccount2.AllAccounts.IndexOf(wowAccount);
+                WoWAccount2.AllAccounts[index] = new WoWAccount2() { EncryptedLogin = WoWAccount2.GetEncryptedArray(textBoxWowAccountLogin.Text), EncryptedPassword = WoWAccount2.GetEncryptedArray(textBoxWowAccountPassword.Text) };
             }
             else
             {
-                WoWAccount.AllAccounts.Add(new WoWAccount(textBoxWowAccountLogin.Text, textBoxWowAccountPassword.Text));
+                WoWAccount2.AllAccounts.Add(new WoWAccount2() { EncryptedLogin = WoWAccount2.GetEncryptedArray(textBoxWowAccountLogin.Text), EncryptedPassword = WoWAccount2.GetEncryptedArray(textBoxWowAccountPassword.Text) });
             }
             UpdateControls();
         }
 
-        private void metroButtonWowAccountDelete_Click(object sender, EventArgs e)
+        private void MetroButtonWowAccountDelete_Click(object sender, EventArgs e)
         {
-            WoWAccount wowAccount = WoWAccount.AllAccounts.FirstOrDefault(i => i.Login == textBoxWowAccountLogin.Text);
+            WoWAccount2 wowAccount = WoWAccount2.AllAccounts.FirstOrDefault(i => i.GetLogin() == textBoxWowAccountLogin.Text);
             if (wowAccount != null)
             {
-                WoWAccount.AllAccounts.Remove(wowAccount);
+                WoWAccount2.AllAccounts.Remove(wowAccount);
             }
             UpdateControls();
         }
 
-        private void textBoxWowAccountLogin_TextChanged(object sender, EventArgs e)
+        private void TextBoxWowAccountLogin_TextChanged(object sender, EventArgs e)
         {
-            if (WoWAccount.AllAccounts.Any(i => i.Login == textBoxWowAccountLogin.Text))
+            if (WoWAccount2.AllAccounts.Any(i => i.GetLogin() == textBoxWowAccountLogin.Text))
             {
                 metroButtonWowAccountSaveUpdate.Text = "Update";
                 metroButtonWowAccountDelete.Enabled = true;
@@ -58,12 +58,12 @@ namespace AxTools.Forms
             metroButtonWowAccountSaveUpdate.Enabled = textBoxWowAccountPassword.Text.Trim().Length != 0 && Regex.IsMatch(textBoxWowAccountLogin.Text, "\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b", RegexOptions.IgnoreCase);
         }
 
-        private void comboBoxWowAccounts_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxWowAccounts_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBoxWowAccounts.SelectedIndex != -1)
             {
-                textBoxWowAccountLogin.Text = WoWAccount.AllAccounts[comboBoxWowAccounts.SelectedIndex].Login;
-                textBoxWowAccountPassword.Text = new string('*', WoWAccount.AllAccounts[comboBoxWowAccounts.SelectedIndex].Password.Length);
+                textBoxWowAccountLogin.Text = WoWAccount2.AllAccounts[comboBoxWowAccounts.SelectedIndex].GetLogin();
+                textBoxWowAccountPassword.Text = "********";
             }
             
         }
@@ -71,9 +71,9 @@ namespace AxTools.Forms
         private void UpdateControls()
         {
             comboBoxWowAccounts.Items.Clear();
-            foreach (WoWAccount i in WoWAccount.AllAccounts)
+            foreach (WoWAccount2 i in WoWAccount2.AllAccounts)
             {
-                comboBoxWowAccounts.Items.Add(i.Login);
+                comboBoxWowAccounts.Items.Add(i.GetLogin());
             }
             textBoxWowAccountLogin.Text = "Login";
             textBoxWowAccountPassword.Text = "Password";

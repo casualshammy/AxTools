@@ -18,17 +18,22 @@ using Newtonsoft.Json;
 using System.Linq;
 using AxTools.WoW;
 using AxTools.WoW.PluginSystem;
+using System.Security.Cryptography;
+using System.Collections.ObjectModel;
 
 namespace AxTools
 {
     internal static class Program
     {
-        internal static event Action Exit; 
+        internal static event Action Exit;
+        internal static int UIThread;
+        internal static MultiLock ShutdownLock = new MultiLock();
         private static readonly Log2 log = new Log2("Program");
 
         [STAThread]
         private static void Main(string[] args)
         {
+            UIThread = Thread.CurrentThread.ManagedThreadId;
             if (args.Length == 0)
             {
                 using (new Mutex(true, "AxToolsMainExecutable", out bool newInstance))
@@ -54,10 +59,15 @@ namespace AxTools
                             InstallRootCertificate();
                             log.Info($"{typeof(WoWAntiKick).ToString()} is subscribing for {typeof(WoWProcessManager).ToString()}'s events");
                             WoWAntiKick.StartWaitForWoWProcesses();
-                            log.Info(string.Format("Starting application... ({0})", Globals.AppVersion));
+                            log.Info(string.Format("Registered for: {0}", Settings2.Instance.UserID));
+                            log.Info($"Constructing MainWindow, app version: {Globals.AppVersion}");
                             Application.Run(MainForm.Instance = new MainForm());
-                            log.Info("Application is closed");
+                            log.Info("MainWindow is closed, waiting for ShutdownLock...");
+                            ShutdownLock.WaitForLocks();
+                            log.Info($"Invoking 'Exit' handlers ({Exit?.GetInvocationList().Length})...");
                             Exit?.Invoke();
+                            log.Info("Application is closed");
+                            SendLogToDeveloper();
                         }
                         else
                         {
@@ -193,6 +203,34 @@ namespace AxTools
                 MessageBox.Show(ex.Message);
             }
 
+            // 14.03.2018
+            try
+            {
+                string cfg = File.ReadAllText(AppFolders.ConfigDir + "\\settings.json", Encoding.UTF8);
+                Regex regex = new Regex("\"WoWAccounts\": (\".*\")");
+                Match match = regex.Match(cfg);
+                if (match.Success && match.Groups[1].Value.Length > 0)
+                {
+                    log.Info("Found old WoWAccounts db, migrating...");
+                    byte[] oldEncryptedPasswordData = JsonConvert.DeserializeObject<byte[]>(match.Groups[1].Value);
+                    var oldAccounts = WoWAccount.Load(oldEncryptedPasswordData);
+                    var newAccounts = new ObservableCollection<WoWAccount2>();
+                    foreach (var entry in oldAccounts)
+                    {
+                        var encryptedLogin = ProtectedData.Protect(Encoding.UTF8.GetBytes(entry.Login), null, DataProtectionScope.CurrentUser);
+                        var encryptedPassword = ProtectedData.Protect(Encoding.UTF8.GetBytes(entry.Password), null, DataProtectionScope.CurrentUser);
+                        newAccounts.Add(new WoWAccount2() { EncryptedLogin = encryptedLogin, EncryptedPassword = encryptedPassword });
+                    }
+                    log.Info("Total accounts: " + newAccounts.Count);
+                    string newCfg = cfg.Replace(match.Value, $"\"WoWAccounts2\": {JsonConvert.SerializeObject(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(newAccounts)))}");
+                    File.WriteAllText(AppFolders.ConfigDir + "\\settings.json", newCfg, Encoding.UTF8);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
             // 17.04.2017
             try
             {
@@ -311,6 +349,23 @@ namespace AxTools
                 Thread.Sleep(500);
             }
             UpdaterService.ApplyUpdate(updateDir, axtoolsDir);
+        }
+
+        private static void SendLogToDeveloper()
+        {
+            TaskDialogButton yesNo = TaskDialogButton.Yes + (int)TaskDialogButton.No;
+            TaskDialog taskDialog = new TaskDialog("There were errors during runtime", "AxTools", "Do you want to send log file to developer?", yesNo, TaskDialogIcon.Warning);
+            if (log.HaveErrors && Utils.InternetAvailable && taskDialog.Show().CommonButton == Result.Yes && File.Exists(Globals.LogFileName))
+            {
+                try
+                {
+                    Log2.UploadLog(null);
+                }
+                catch (Exception ex)
+                {
+                    TaskDialog.Show("Log file sending error", ex.Message);
+                }
+            }
         }
 
     }
