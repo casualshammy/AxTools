@@ -255,7 +255,10 @@ namespace AxTools.Services
                     zip.AddDirectory(_settings.WoWDirectory + "\\" + dirName, "\\" + dirName);
                 }
                 zip.SaveProgress += AddonsBackup_SaveProgress;
+                var processPriority = Process.GetCurrentProcess().PriorityClass;
+                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
                 zip.Save();
+                Process.GetCurrentProcess().PriorityClass = processPriority;
                 zip.SaveProgress -= AddonsBackup_SaveProgress;
             }
             GC.Collect();

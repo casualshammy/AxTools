@@ -7,6 +7,7 @@ using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 using Components.Forms;
 using KeyboardWatcher;
+using NLua.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,11 +18,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
 using Settings2 = AxTools.Helpers.Settings2;
-using Timer = System.Timers.Timer;
 
 namespace AxTools.Forms
 {
@@ -36,15 +35,11 @@ namespace AxTools.Forms
         private readonly object luaExecutionLock = new object();
         private WoW.Helpers.SafeTimer safeTimer;
         private string helpInfo = "";
-
-
         private readonly Settings2 settings = Settings2.Instance;
-        internal static bool TimerEnabled { get; private set; }
         public int ProcessID { get => process.ProcessID; }
         
         private const string MetroLinkEnableCyclicExecutionTextEnable = "<Enable cyclic execution>";
         private const string MetroLinkEnableCyclicExecutionTextDisable = "<Disable cyclic execution>";
-        private static readonly object HookLock = new object();
 
         #region Images
 
@@ -98,6 +93,7 @@ namespace AxTools.Forms
             LuaTimerHotkeyChanged(luaConsoleSettings.TimerHotkey);
             HotkeyManager.AddKeys(typeof(LuaConsole).ToString(), luaConsoleSettings.TimerHotkey);
             HotkeyManager.KeyPressed += KeyboardListener2_KeyPressed;
+            textBoxLuaCode.TextChanged += TextBoxLuaCode_TextChanged;
             log.Info("Loaded");
         }
 
@@ -289,7 +285,7 @@ namespace AxTools.Forms
         #endregion
 
         #region Wrappers - Utils
-
+        
         public void PressKey(int key)
         {
             NativeMethods.SendMessage(process.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)key, IntPtr.Zero);
@@ -336,9 +332,24 @@ namespace AxTools.Forms
                 lock (luaExecutionLock)
                     luaEngine.DoString(Encoding.UTF8.GetBytes(textBoxLuaCode.Text));
             }
-            catch (NLua.Exceptions.LuaException ex)
+            catch (LuaException ex)
             {
+                Notify.TrayPopup("Lua exception is thrown", ex.Message, NotifyUserType.Error, true);
                 log.Info("LuaException in Timer.Elapsed: " + ex.Message);
+                Thread.Sleep(1000);
+            }
+        }
+        
+        private void TextBoxLuaCode_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                luaEngine.LoadString(Encoding.UTF8.GetBytes(textBoxLuaCode.Text), "textbox");
+                labelLuaError.Text = "";
+            }
+            catch (LuaScriptException ex)
+            {
+                labelLuaError.Text = ex.Message;
             }
         }
         
@@ -479,12 +490,11 @@ namespace AxTools.Forms
 
         private void metroLinkEnableCyclicExecution_Click(object sender, EventArgs e)
         {
-            if (TimerEnabled)
+            if (safeTimer != null && safeTimer.IsRunning)
             {
                 safeTimer?.Dispose();
                 log.Info("Timer disabled");
                 Notify.SmartNotify("LuaConsole", "Timer is stopped", NotifyUserType.Info, false);
-                TimerEnabled = false;
                 SetupTimerControls(false);
             }
             else
@@ -505,7 +515,6 @@ namespace AxTools.Forms
                     new TaskDialog("Error!", "AxTools", "Script is empty", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                     return;
                 }
-                TimerEnabled = true;
                 SetupTimerControls(true);
                 (safeTimer = new WoW.Helpers.SafeTimer(luaConsoleSettings.TimerInterval, info, TimerLuaElapsed)).Start();
                 Notify.SmartNotify("LuaConsole", "Timer is started", NotifyUserType.Info, false);

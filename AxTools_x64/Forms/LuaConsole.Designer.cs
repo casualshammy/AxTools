@@ -52,6 +52,7 @@ namespace AxTools.Forms
             this.metroLinkSettings = new MetroFramework.Controls.MetroLink();
             this.hotItemStyle1 = new BrightIdeasSoftware.HotItemStyle();
             this.linkInfo = new MetroFramework.Controls.MetroLink();
+            this.labelLuaError = new MetroFramework.Controls.MetroLabel();
             this.metroPanelTimerOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOpenLuaFile)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSaveLuaFile)).BeginInit();
@@ -68,7 +69,7 @@ namespace AxTools.Forms
             this.textBoxLuaCode.Location = new System.Drawing.Point(39, 44);
             this.textBoxLuaCode.Name = "textBoxLuaCode";
             this.textBoxLuaCode.ShowVRuler = false;
-            this.textBoxLuaCode.Size = new System.Drawing.Size(591, 290);
+            this.textBoxLuaCode.Size = new System.Drawing.Size(591, 273);
             this.textBoxLuaCode.TabIndex = 4;
             // 
             // buttonDump
@@ -333,11 +334,29 @@ namespace AxTools.Forms
             this.linkInfo.UseStyleColors = true;
             this.linkInfo.Click += new System.EventHandler(this.LinkInfo_Click);
             // 
+            // labelLuaError
+            // 
+            this.labelLuaError.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelLuaError.CustomBackground = false;
+            this.labelLuaError.CustomForeColor = false;
+            this.labelLuaError.FontSize = MetroFramework.MetroLabelSize.Small;
+            this.labelLuaError.FontWeight = MetroFramework.MetroLabelWeight.Regular;
+            this.labelLuaError.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.labelLuaError.Location = new System.Drawing.Point(39, 320);
+            this.labelLuaError.Name = "labelLuaError";
+            this.labelLuaError.Size = new System.Drawing.Size(591, 30);
+            this.labelLuaError.Style = MetroFramework.MetroColorStyle.Blue;
+            this.labelLuaError.TabIndex = 66;
+            this.labelLuaError.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.labelLuaError.UseStyleColors = true;
+            // 
             // LuaConsole
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(650, 354);
+            this.Controls.Add(this.labelLuaError);
             this.Controls.Add(this.linkInfo);
             this.Controls.Add(this.metroLinkSettings);
             this.Controls.Add(this.metroLinkEnableCyclicExecution);
@@ -385,6 +404,7 @@ namespace AxTools.Forms
         private MetroFramework.Controls.MetroLabel labelTimerHotkey;
         private MetroFramework.Controls.MetroTextBox textBoxTimerHotkey;
         private MetroFramework.Controls.MetroLink linkInfo;
+        private MetroFramework.Controls.MetroLabel labelLuaError;
     }
 }
 

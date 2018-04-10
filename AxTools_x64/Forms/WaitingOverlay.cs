@@ -27,7 +27,13 @@ namespace AxTools.Forms
             InitializeComponent();
             parentForm = parent;
             this.waitInMs = waitInMs;
-            Load += WaitingOverlay_Load;
+            Load += delegate {
+                Size = parentForm.Size;
+                Location = parentForm.Location;
+                panel = new WaitingOverlaySub(this);
+                panel.Show(this);
+                Label = label;
+            };
         }
 
         public string Label
@@ -51,15 +57,7 @@ namespace AxTools.Forms
             }
             return this;
         }
-
-        private void WaitingOverlay_Load(object sender, EventArgs e)
-        {
-            Size = parentForm.Size;
-            Location = parentForm.Location;
-            panel = new WaitingOverlaySub(this);
-            panel.Show(this);
-        }
-
+        
         private void WaitingOverlay_FormClosing(object sender, FormClosingEventArgs e)
         {
             panel.Close();

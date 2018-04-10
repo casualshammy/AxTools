@@ -297,6 +297,7 @@ namespace AxTools.WoW.PluginSystem.API
             set
             {
                 SendToChat("/afk");
+                SendToChat("/sit");
             }
         }
 

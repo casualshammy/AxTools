@@ -85,25 +85,9 @@ namespace AxTools.Helpers
             {
                 WoWDirectory = GetWowPath();
             }
-            if (string.IsNullOrWhiteSpace(VentriloDirectory))
-            {
-                VentriloDirectory = GetVentriloPath();
-            }
-            if (string.IsNullOrWhiteSpace(MumbleDirectory))
-            {
-                MumbleDirectory = GetMumblePath();
-            }
-            if (string.IsNullOrWhiteSpace(RaidcallDirectory))
-            {
-                RaidcallDirectory = GetRaidcallPath();
-            }
-            if (string.IsNullOrWhiteSpace(TS3Directory))
-            {
-                TS3Directory = GetTeamspeakPath();
-            }
             if (string.IsNullOrWhiteSpace(UserID))
             {
-                UserID = Environment.MachineName + "___" + Utils.GetRandomString(10, false).ToUpper();
+                UserID = Environment.MachineName + "-" + Utils.GetRandomString(10, false).ToUpper();
             }
             if (PingerServerID > GameServers.Entries.Length - 1)
             {
@@ -220,10 +204,13 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 37, PropertyName = "VentriloStartWithWoW")]
         internal bool VentriloStartWithWoW = false;
 
+        [JsonProperty(Order = 38, PropertyName = "StartTwitchWithWoW")]
+        internal bool StartTwitchWithWoW = false;
+
         #endregion
-        
+
         #region WoWPlugins
-        
+
         [JsonProperty(Order = 71, PropertyName = "WoWPluginShowIngameNotifications")]
         internal bool WoWPluginShowIngameNotifications = true;
         
@@ -285,110 +272,7 @@ namespace AxTools.Helpers
         #endregion
 
         #region Methods - Paths
-
-        private static string GetTeamspeakPath()
-        {
-            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("ts3server\\\\shell\\\\open\\\\command"))
-            {
-                try
-                {
-                    if (regVersion != null && regVersion.GetValue("") != null)
-                    {
-                        Regex regex = new Regex("\"(.+)\" .*");
-                        Match match = regex.Match(regVersion.GetValue("").ToString());
-                        if (match.Success)
-                        {
-                            return match.Groups[1].Value;
-                        }
-                    }
-                    return string.Empty;
-                }
-                catch
-                {
-                    return string.Empty;
-                }
-            }
-        }
-
-        private static string GetRaidcallPath()
-        {
-            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("raidcall\\\\shell\\\\open\\\\command"))
-            {
-                try
-                {
-                    if (regVersion != null && regVersion.GetValue("") != null)
-                    {
-                        Regex regex = new Regex("\"(.+)\" .*");
-                        Match match = regex.Match(regVersion.GetValue("").ToString());
-                        if (match.Success)
-                        {
-                            return match.Groups[1].Value;
-                        }
-                    }
-                    return string.Empty;
-                }
-                catch
-                {
-                    return string.Empty;
-                }
-            }
-        }
-
-        private static string GetVentriloPath()
-        {
-            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("Ventrilo\\\\shell\\\\open\\\\command"))
-            {
-                try
-                {
-                    if (regVersion != null && regVersion.GetValue("") != null)
-                    {
-                        Regex regex = new Regex("(.+) .*");
-                        Match match = regex.Match(regVersion.GetValue("").ToString());
-                        if (match.Success)
-                        {
-                            return match.Groups[1].Value;
-                        }
-                    }
-                    return string.Empty;
-                }
-                catch
-                {
-                    return string.Empty;
-                }
-            }
-        }
-
-        private static string GetMumblePath()
-        {
-            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("mumble\\\\shell\\\\open\\\\command"))
-            {
-                try
-                {
-                    if (regVersion != null && regVersion.GetValue("") != null)
-                    {
-                        Regex regex = new Regex("\"(.+)\" .*");
-                        Match match = regex.Match(regVersion.GetValue("").ToString());
-                        if (match.Success)
-                        {
-                            return match.Groups[1].Value;
-                        }
-                    }
-                    return string.Empty;
-                }
-                catch
-                {
-                    return string.Empty;
-                }
-            }
-        }
-
-        private static string GetDiscordPath()
-        {
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord\\Update.exe");
-            logger.Info($"Looking for Discord client in {path}");
-            return File.Exists(path) ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord") : string.Empty;
-        }
-
+                
         private static string GetWowPath()
         {
             foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))

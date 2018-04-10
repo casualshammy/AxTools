@@ -59,12 +59,12 @@ namespace AxTools.Helpers
             _wowWatcherStop.EventArrived += WowProcessStopped;
             _wowWatcherStart.Start();
             _wowWatcherStop.Start();
-            MainForm.ClosingEx += MainForm_ClosingEx;
+            Program.Exit += Program_Exit;
         }
 
-        private static void MainForm_ClosingEx()
+        private static void Program_Exit()
         {
-            MainForm.ClosingEx -= MainForm_ClosingEx;
+            Program.Exit -= Program_Exit;
             if (_wowWatcherStart != null && _wowWatcherStop != null)
             {
                 _wowWatcherStart.EventArrived -= WowProcessStarted;
@@ -75,6 +75,7 @@ namespace AxTools.Helpers
                 _wowWatcherStart.Dispose();
             }
         }
+        
 
         private static void WowProcessStopped(object sender, EventArrivedEventArgs e)
         {

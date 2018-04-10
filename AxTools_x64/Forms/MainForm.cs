@@ -34,8 +34,8 @@ namespace AxTools.Forms
         internal MultiLock WoWLaunchLock = new MultiLock();
         private bool isClosing;
         private readonly Settings2 settings = Settings2.Instance;
-        internal static event Action ClosingEx;
         private static readonly Log2 log = new Log2("MainWindow");
+        private System.Threading.Timer nextBackupTimer;
 
         internal MainForm()
         {
@@ -85,7 +85,15 @@ namespace AxTools.Forms
 
         private void SetupControls()
         {
-
+            checkBoxTwitch.Checked = settings.StartTwitchWithWoW;
+            nextBackupTimer = new System.Threading.Timer(delegate
+            {
+                TimeSpan duration = new TimeSpan(settings.WoWAddonsBackupMinimumTimeBetweenBackup, 0, 0) - (DateTime.UtcNow - settings.WoWAddonsBackupLastDate);
+                if (duration.Ticks <= 0)
+                    menuItemNextBackupTime.Text = "Backup is running or deferred";
+                else
+                    menuItemNextBackupTime.Text = string.Format("Next backup in {0:%d} day(s), {0:hh\\:mm\\:ss}", duration);
+            }, null, 0, 1000);
         }
 
         private void SetupEvents()
@@ -108,7 +116,6 @@ namespace AxTools.Forms
         private void MainFormClosing(object sender, CancelEventArgs e)
         {
             isClosing = true;
-            ClosingEx?.Invoke();
             // Close all children forms
             Form[] forms = Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof (MainForm) && i.GetType() != typeof (MetroFlatDropShadow)).ToArray();
             foreach (Form i in forms)
@@ -338,10 +345,11 @@ namespace AxTools.Forms
             }
         }
 
-        private void CmbboxAccSelectSelectedIndexChanged(object sender, EventArgs e)
+        private async void CmbboxAccSelectSelectedIndexChanged(object sender, EventArgs e)
         {
             WaitingOverlay overlay = new WaitingOverlay(this, "Waiting for background tasks (60 sec)").Show();
-            WoWLaunchLock.WaitForLocks(1000 * 60);
+            // wait 60 sec
+            await WoWLaunchLock.WaitForLocksAsync(1000 * 60);
             overlay.Close();
             if (WoWLaunchLock.HasLocks)
             {
@@ -351,19 +359,23 @@ namespace AxTools.Forms
             {
                 if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
                 {
-                    StartVentrilo();
+                    InvokeOnClick(tileVentrilo, null);
                 }
                 if (settings.TS3StartWithWoW && !Process.GetProcessesByName("ts3client_win64").Any() && !Process.GetProcessesByName("ts3client_win32").Any())
                 {
-                    StartTS3Wait();
+                    InvokeOnClick(tileTeamspeak3, null);
                 }
                 if (settings.RaidcallStartWithWoW && !Process.GetProcessesByName("raidcall").Any())
                 {
-                    StartRaidcall();
+                    InvokeOnClick(tileRaidcall, null);
                 }
                 if (settings.MumbleStartWithWoW && !Process.GetProcessesByName("mumble").Any())
                 {
-                    StartMumble();
+                    InvokeOnClick(tileMumble, null);
+                }
+                if (settings.StartTwitchWithWoW && !Process.GetProcessesByName("Twitch").Any())
+                {
+                    InvokeOnClick(tileExtTwitch, null);
                 }
                 StartWoW(WoWAccount2.AllAccounts[cmbboxAccSelect.SelectedIndex]);
                 cmbboxAccSelect.SelectedIndex = -1;
@@ -447,204 +459,76 @@ namespace AxTools.Forms
         #endregion
 
         #region Tab: VoIP
-
-        private void StartVentrilo()
-        {
-            if (File.Exists(settings.VentriloDirectory + "\\Ventrilo.exe"))
-            {
-                Process process = Process.Start(new ProcessStartInfo
-                {
-                    WorkingDirectory = settings.VentriloDirectory,
-                    FileName = settings.VentriloDirectory + "\\Ventrilo.exe",
-                    Arguments = "-m"
-                });
-                Task.Factory.StartNew(() =>
-                {
-                    int counter = 300;
-                    while (counter > 0)
-                    {
-                        if (process != null)
-                        {
-                            process.Refresh();
-                            if (process.MainWindowHandle != (IntPtr)0)
-                            {
-                                IntPtr windowHandle = NativeMethods.FindWindow(null, "Ventrilo");
-                                if (windowHandle != IntPtr.Zero)
-                                {
-                                    IntPtr connectButtonHandle = NativeMethods.FindWindowEx(windowHandle, IntPtr.Zero, "Button", "C&onnect");
-                                    if (connectButtonHandle != IntPtr.Zero)
-                                    {
-                                        NativeMethods.PostMessage(connectButtonHandle, Win32Consts.WM_BM_CLICK, IntPtr.Zero, IntPtr.Zero);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        Thread.Sleep(100);
-                        counter--;
-                    }
-                });
-                log.Info("Ventrilo process started");
-            }
-            else
-            {
-                this.TaskDialog("Executable not found", "Can't locate \"Ventrilo.exe\". Check paths in settings window", NotifyUserType.Error);
-            }
-        }
-
-        private void StartTS3Wait()
-        {
-            string ts3Executable;
-            if (File.Exists(settings.TS3Directory + "\\ts3client_win64.exe"))
-            {
-                ts3Executable = settings.TS3Directory + "\\ts3client_win64.exe";
-            }
-            else if (File.Exists(settings.TS3Directory + "\\ts3client_win32.exe"))
-            {
-                ts3Executable = settings.TS3Directory + "\\ts3client_win32.exe";
-            }
-            else
-            {
-                this.TaskDialog("Executable not found", "Can't locate \"ts3client_win32.exe\"/\"ts3client_win64.exe\". Check paths in settings dialog", NotifyUserType.Error);
-                return;
-            }
-            Process.Start(new ProcessStartInfo
-            {
-                WorkingDirectory = settings.TS3Directory,
-                FileName = ts3Executable,
-                Arguments = "-nosingleinstance"
-            }).WaitForInputIdle(10*1000);
-            log.Info("TS3 process started");
-        }
-
-        private void StartRaidcall()
-        {
-            if (File.Exists(settings.RaidcallDirectory + "\\raidcall.exe"))
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    WorkingDirectory = settings.RaidcallDirectory,
-                    FileName = settings.RaidcallDirectory + "\\raidcall.exe"
-                });
-                log.Info("Raidcall process started");
-            }
-            else
-            {
-                Notify.SmartNotify("Executable not found", "Can't locate \"raidcall.exe\". Check paths in settings window", NotifyUserType.Error, false);
-            }
-        }
-
-        private void StartMumble()
-        {
-            if (File.Exists(settings.MumbleDirectory + "\\mumble.exe"))
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    WorkingDirectory = settings.MumbleDirectory,
-                    FileName = settings.MumbleDirectory + "\\mumble.exe"
-                });
-                log.Info("Mumble process started");
-            }
-            else
-            {
-                Notify.SmartNotify("Executable not found", "Can't locate \"mumble.exe\". Check paths in settings window", NotifyUserType.Error, false);
-            }
-        }
-
+        
         private void TileVentriloClick(object sender, EventArgs e)
         {
-            StartVentrilo();
+            try
+            {
+                VoIP.StartVoIPClient("Ventrilo");
+            }
+            catch
+            {
+                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
+            }
         }
 
         private void TileRaidcallClick(object sender, EventArgs e)
         {
-            StartRaidcall();
+            try
+            {
+                VoIP.StartVoIPClient("Raidcall");
+            }
+            catch
+            {
+                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
+            }
         }
 
         private void TileTeamspeak3Click(object sender, EventArgs e)
         {
-            StartTS3Wait();
+            try
+            {
+                VoIP.StartVoIPClient("Teamspeak 3");
+            }
+            catch
+            {
+                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
+            }
         }
 
         private void TileMumbleClick(object sender, EventArgs e)
         {
-            StartMumble();
-
-
-
-            //using (IOdb db = OdbFactory.Open("wowhead-items.ndb"))
-            //{
-            //    for (uint i = 0; i < 5000; i++)
-            //    {
-            //        db.Store(new NDBEntry((int)i, JsonConvert.SerializeObject(new WowheadItemInfo("n" + i, i + 1, i + 2, i + 3) { Image = Resources.AppIcon1 })));
-            //    }
-            //}
-            //Stopwatch stopwatch = Stopwatch.StartNew();
-            //using (IOdb db = OdbFactory.Open("wowhead-items.ndb"))
-            //{
-            //    NDBEntry cc = db.QueryAndExecute<NDBEntry>().First(l => l.ID == 4950);
-            //    WowheadItemInfo c = JsonConvert.DeserializeObject<WowheadItemInfo>(cc.JSONData);
-            //    MessageBox.Show(c.Name + "::" + c.Quality + "\r\nElapsed: " + stopwatch.ElapsedMilliseconds);
-            //}
-
-
-            //using (LiteDatabase db = new LiteDatabase("wowhead-items.ldb"))
-            //{
-            //    db.BeginTrans();
-            //    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
-            //    for (uint i = 0; i < 5000; i++)
-            //    {
-            //        collection.Insert(new NDBEntry((int)i, JsonConvert.SerializeObject(new WowheadItemInfo("n" + i, i + 1, i + 2, i + 3) { Image = Resources.AppIcon1 })));
-            //    }
-            //    collection.EnsureIndex(x => x.ID);
-            //    db.Commit();
-            //}
-            //stopwatch.Restart();
-            //using (LiteDatabase db = new LiteDatabase("wowhead-items.ldb"))
-            //{
-            //    LiteCollection<NDBEntry> collection = db.GetCollection<NDBEntry>("wowhead-items");
-            //    collection.EnsureIndex(x => x.ID);
-            //    NDBEntry entry = collection.FindOne(l => l.ID == 4950);
-            //    WowheadItemInfo c = JsonConvert.DeserializeObject<WowheadItemInfo>(entry.JSONData);
-            //    MessageBox.Show(c.Name + "::" + c.Quality + "\r\nElapsed: " + stopwatch.ElapsedMilliseconds);
-            //    MessageBox.Show("Entries count: " + collection.Find(l => l.ID == 4950).Count() + "; Total: " + collection.Count());
-            //}
-
+            try
+            {
+                VoIP.StartVoIPClient("Mumble");
+            }
+            catch
+            {
+                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
+            }
         }
 
         private void TileExtDiscord_Click(object sender, EventArgs e)
         {
-            if (VoIP.AvailableVoipClients.TryGetValue("Discord", out VoipInfo discordInfo))
+            try
             {
-                Process.Start(new ProcessStartInfo
-                {
-                    WorkingDirectory = discordInfo.DirectoryPath,
-                    FileName = discordInfo.ExecutablePath,
-                    Arguments = discordInfo.ExecutableArguments
-                });
-                log.Info("Discord process started");
+                VoIP.StartVoIPClient("Discord");
             }
-            else
+            catch
             {
-                Notify.SmartNotify("Executable not found", "Can't locate \"Update.exe\". Check paths in settings window", NotifyUserType.Error, false);
+                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
             }
         }
 
         private void TileExtTwitch_Click(object sender, EventArgs e)
         {
-            if (VoIP.AvailableVoipClients.TryGetValue("Twitch", out VoipInfo twitchInfo))
+            try
             {
-                Process.Start(new ProcessStartInfo
-                {
-                    WorkingDirectory = twitchInfo.DirectoryPath,
-                    FileName = twitchInfo.ExecutablePath,
-                    Arguments = twitchInfo.ExecutableArguments
-                });
-                log.Info("Twitch process started");
+                VoIP.StartVoIPClient("Twitch");
             }
-            else
+            catch
             {
-                Notify.SmartNotify("Executable not found", "Can't locate \"Twitch.exe\". Check paths in settings window", NotifyUserType.Error, false);
+                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
             }
         }
 
@@ -668,10 +552,15 @@ namespace AxTools.Forms
             settings.TS3StartWithWoW = checkBoxStartTeamspeak3WithWow.Checked;
         }
 
+        private void CheckBoxTwitch_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.StartTwitchWithWoW = checkBoxTwitch.Checked;
+        }
+
         #endregion
 
         #region Tab: Modules
-        
+
         private void TileRadar_Click(object sender, EventArgs e)
         {
             WowProcess process = WoWManager.GetProcess();
@@ -833,7 +722,7 @@ namespace AxTools.Forms
                             }
                         }
                     }
-                    PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plugins running: " + PluginManagerEx.RunningPlugins.Count; });
+                    PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plugins running: " + PluginManagerEx.RunningPlugins.Count(); });
                     BeginInvoke(new MethodInvoker(RebuildTrayContextMenu));
                 }
                 return newValue;
@@ -1000,6 +889,7 @@ namespace AxTools.Forms
         }
 
         #endregion
+
         
     }
 }

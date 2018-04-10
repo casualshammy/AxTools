@@ -32,6 +32,9 @@
             this.comboBoxClickerKey = new MetroFramework.Controls.MetroComboBox();
             this.metroLabel7 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel8 = new MetroFramework.Controls.MetroLabel();
+            this.buttonClickerHotkey = new MetroFramework.Controls.MetroButton();
+            this.textBoxClickerHotkey = new MetroFramework.Controls.MetroTextBox();
+            this.labelClickerHotkey = new MetroFramework.Controls.MetroLabel();
             ((System.ComponentModel.ISupportInitialize)(this.num_clicker_interval)).BeginInit();
             this.SuspendLayout();
             // 
@@ -110,11 +113,58 @@
             this.metroLabel8.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLabel8.UseStyleColors = true;
             // 
+            // buttonClickerHotkey
+            // 
+            this.buttonClickerHotkey.Highlight = true;
+            this.buttonClickerHotkey.Location = new System.Drawing.Point(216, 85);
+            this.buttonClickerHotkey.Name = "buttonClickerHotkey";
+            this.buttonClickerHotkey.Size = new System.Drawing.Size(49, 23);
+            this.buttonClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.buttonClickerHotkey.TabIndex = 62;
+            this.buttonClickerHotkey.Text = "Clear";
+            this.buttonClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // textBoxClickerHotkey
+            // 
+            this.textBoxClickerHotkey.CustomBackground = false;
+            this.textBoxClickerHotkey.CustomForeColor = false;
+            this.textBoxClickerHotkey.FontSize = MetroFramework.MetroTextBoxSize.Small;
+            this.textBoxClickerHotkey.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
+            this.textBoxClickerHotkey.Location = new System.Drawing.Point(113, 85);
+            this.textBoxClickerHotkey.Multiline = false;
+            this.textBoxClickerHotkey.Name = "textBoxClickerHotkey";
+            this.textBoxClickerHotkey.SelectedText = "";
+            this.textBoxClickerHotkey.Size = new System.Drawing.Size(97, 23);
+            this.textBoxClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxClickerHotkey.TabIndex = 61;
+            this.textBoxClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxClickerHotkey.UseStyleColors = true;
+            // 
+            // labelClickerHotkey
+            // 
+            this.labelClickerHotkey.AutoSize = true;
+            this.labelClickerHotkey.CustomBackground = false;
+            this.labelClickerHotkey.CustomForeColor = false;
+            this.labelClickerHotkey.FontSize = MetroFramework.MetroLabelSize.Medium;
+            this.labelClickerHotkey.FontWeight = MetroFramework.MetroLabelWeight.Light;
+            this.labelClickerHotkey.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
+            this.labelClickerHotkey.Location = new System.Drawing.Point(23, 87);
+            this.labelClickerHotkey.Name = "labelClickerHotkey";
+            this.labelClickerHotkey.Size = new System.Drawing.Size(52, 19);
+            this.labelClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
+            this.labelClickerHotkey.TabIndex = 60;
+            this.labelClickerHotkey.Text = "Hotkey:";
+            this.labelClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.labelClickerHotkey.UseStyleColors = true;
+            // 
             // ClickerSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(293, 92);
+            this.ClientSize = new System.Drawing.Size(293, 124);
+            this.Controls.Add(this.buttonClickerHotkey);
+            this.Controls.Add(this.textBoxClickerHotkey);
+            this.Controls.Add(this.labelClickerHotkey);
             this.Controls.Add(this.num_clicker_interval);
             this.Controls.Add(this.comboBoxClickerKey);
             this.Controls.Add(this.metroLabel7);
@@ -139,5 +189,8 @@
         private MetroFramework.Controls.MetroLabel metroLabel7;
         private MetroFramework.Controls.MetroLabel metroLabel8;
         private System.Windows.Forms.NumericUpDown num_clicker_interval;
+        private MetroFramework.Controls.MetroButton buttonClickerHotkey;
+        private MetroFramework.Controls.MetroTextBox textBoxClickerHotkey;
+        private MetroFramework.Controls.MetroLabel labelClickerHotkey;
     }
 }

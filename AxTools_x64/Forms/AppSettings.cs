@@ -41,7 +41,6 @@ namespace AxTools.Forms
 
         private void SetupData()
         {
-            textBoxClickerHotkey.Text = settings.ClickerHotkey.ToString();
             textBoxBadNetworkStatusProcent.Text = settings.PingerBadPacketLoss.ToString();
             textBoxVeryBadNetworkStatusProcent.Text = settings.PingerVeryBadPacketLoss.ToString();
             textBoxBadNetworkStatusPing.Text = settings.PingerBadPing.ToString();
@@ -54,12 +53,7 @@ namespace AxTools.Forms
             numericUpDownBackupTimer.Value = settings.WoWAddonsBackupMinimumTimeBetweenBackup;
             metroComboBoxBackupCompressionLevel.SelectedIndex = settings.WoWAddonsBackupCompressionLevel;
             textBoxBackupPath.Text = settings.WoWAddonsBackupPath;
-            textBoxMumblePath.Text = settings.MumbleDirectory;
-            textBoxRaidcallPath.Text = settings.RaidcallDirectory;
-            textBoxTeamspeak3Path.Text = settings.TS3Directory;
-            textBoxVentriloPath.Text = settings.VentriloDirectory;
-            textBoxWowPath.Text = settings.WoWDirectory;
-            metroComboBoxStyle.SelectedIndex = (int)settings.StyleColor == 0 ? 0 : (int)settings.StyleColor - 1;
+            metroComboBoxStyle.SelectedIndex = settings.StyleColor == 0 ? 0 : (int)settings.StyleColor - 1;
             checkBoxMinimizeToTray.Checked = settings.MinimizeToTray;
             checkBoxPluginsShowIngameNotifications.Checked = settings.WoWPluginShowIngameNotifications;
             checkBox_AntiAFK.Checked = settings.WoWAntiKick;
@@ -110,10 +104,6 @@ namespace AxTools.Forms
             buttonBackupPath.Click += ButtonBackupPathClick;
             metroComboBoxBackupCompressionLevel.SelectedIndexChanged += MetroComboBoxBackupCompressionLevelSelectedIndexChanged;
             checkBoxPluginsShowIngameNotifications.CheckedChanged += MetroCheckBox1_CheckedChanged;
-            buttonTeamspeak3Path.Click += ButtonTeamspeak3PathClick;
-            buttonMumblePath.Click += ButtonMumblePathClick;
-            buttonRaidcallPath.Click += ButtonRaidcallPathClick;
-            buttonWowPath.Click += ButtonWowPath_Click;
             metroComboBoxStyle.SelectedIndexChanged += MetroComboBoxStyle_SelectedIndexChanged;
             linkShowLog.Click += LinkShowLog_Click;
             linkSendLogToDev.Click += LinkSendLogToDev_Click;
@@ -121,10 +111,7 @@ namespace AxTools.Forms
             checkBoxAddonsBackup.CheckedChanged += CheckBoxAddonsBackupCheckedChanged;
             numericUpDownBackupCopiesToKeep.ValueChanged += NumericUpDownBackupCopiesToKeepValueChanged;
             numericUpDownBackupTimer.ValueChanged += NumericUpDownBackupTimerValueChanged;
-            buttonVentriloPath.Click += Button9Click;
             checkBox_AntiAFK.CheckedChanged += CheckBox1CheckedChanged;
-            textBoxClickerHotkey.KeyDown += TextBoxClickerHotkey_KeyDown;
-            buttonClickerHotkey.Click += ButtonClickerHotkey_Click;
             buttonIngameKeyBinds.Click += ButtonIngameKeyBinds_Click;
             checkBoxMakeBackupNotWhilePlaying.CheckedChanged += CheckBoxMakeBackupNotWhilePlaying_CheckedChanged;
             checkBoxSetAfkStatus.CheckedChanged += CheckBoxSetAfkStatus_CheckedChanged;
@@ -206,11 +193,6 @@ namespace AxTools.Forms
             }
         }
         
-        private void ButtonClickerHotkey_Click(object sender, EventArgs e)
-        {
-            TextBoxClickerHotkey_KeyDown(null, new KeyEventArgs(Keys.None));
-        }
-
         private void CheckBox9CheckedChanged(object sender, EventArgs e)
         {
             if (CheckBoxStartAxToolsWithWindows.Checked)
@@ -317,20 +299,7 @@ namespace AxTools.Forms
                 ErrorProviderExt.SetError(TextBox4, "Incorrect value! It must be bigger than zero", Color.Red);
             }
         }
-
-        private void Button9Click(object sender, EventArgs e)
-        {
-            using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
-            {
-                p.Description = "Select Ventrilo directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
-                {
-                    textBoxVentriloPath.Text = p.SelectedPath;
-                    settings.VentriloDirectory = p.SelectedPath;
-                }
-            }
-        }
-
+        
         private void CheckBox1CheckedChanged(object sender, EventArgs e)
         {
             settings.WoWAntiKick = checkBox_AntiAFK.Checked;
@@ -351,46 +320,7 @@ namespace AxTools.Forms
         {
             settings.WoWAddonsBackupMinimumTimeBetweenBackup = (int) numericUpDownBackupTimer.Value;
         }
-
-        private void ButtonRaidcallPathClick(object sender, EventArgs e)
-        {
-            using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
-            {
-                p.Description = "Select RaidCall directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
-                {
-                    textBoxRaidcallPath.Text = p.SelectedPath;
-                    settings.RaidcallDirectory = p.SelectedPath;
-                }
-            }
-        }
-
-        private void ButtonMumblePathClick(object sender, EventArgs e)
-        {
-            using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
-            {
-                p.Description = "Select Mumble directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
-                {
-                    textBoxMumblePath.Text = p.SelectedPath;
-                    settings.MumbleDirectory = p.SelectedPath;
-                }
-            }
-        }
-
-        private void ButtonTeamspeak3PathClick(object sender, EventArgs e)
-        {
-            using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
-            {
-                p.Description = "Select Teamspeak directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
-                {
-                    textBoxTeamspeak3Path.Text = p.SelectedPath;
-                    settings.TS3Directory = p.SelectedPath;
-                }
-            }
-        }
-
+        
         private void ButtonBackupPathClick(object sender, EventArgs e)
         {
             using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
@@ -408,20 +338,7 @@ namespace AxTools.Forms
         {
             settings.WoWAddonsBackupCompressionLevel = metroComboBoxBackupCompressionLevel.SelectedIndex;
         }
-
-        private void ButtonWowPath_Click(object sender, EventArgs e)
-        {
-            using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
-            {
-                p.Description = "Select WoW directory:";
-                if (p.ShowDialog(this) == DialogResult.OK)
-                {
-                    textBoxWowPath.Text = p.SelectedPath;
-                    settings.WoWDirectory = p.SelectedPath;
-                }
-            }
-        }
-
+        
         private void MetroComboBoxStyle_SelectedIndexChanged(object sender, EventArgs e)
         {
             int style = metroComboBoxStyle.SelectedIndex == 0 ? 0 : metroComboBoxStyle.SelectedIndex + 1;
@@ -527,20 +444,7 @@ namespace AxTools.Forms
         {
             settings.WoWPluginShowIngameNotifications = checkBoxPluginsShowIngameNotifications.Checked;
         }
-
-        private void TextBoxClickerHotkey_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
-            {
-                KeyExt key = new KeyExt(e.KeyCode, e.Alt, e.Shift, e.Control);
-                textBoxClickerHotkey.Text = key.ToString();
-                HotkeyManager.RemoveKeys(typeof (Clicker).ToString());
-                HotkeyManager.AddKeys(typeof(Clicker).ToString(), key);
-                settings.ClickerHotkey = key;
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }
-        }
+        
         
     }
 }

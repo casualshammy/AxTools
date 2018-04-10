@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace AxTools.Helpers
 {
@@ -64,6 +65,11 @@ namespace AxTools.Helpers
             {
                 Thread.Sleep(5);
             }
+        }
+
+        internal Task WaitForLocksAsync(long timeoutMs = Int64.MaxValue)
+        {
+            return Task.Run(() => WaitForLocks(timeoutMs));
         }
 
     }

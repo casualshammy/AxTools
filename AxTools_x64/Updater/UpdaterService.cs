@@ -178,7 +178,8 @@ namespace AxTools.Updater
             }
             else
             {
-                Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 10, (sender, args) => closeAndUpdate());
+                // 1-hour notification!
+                Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 60*60, (sender, args) => closeAndUpdate());
             }
         }
 

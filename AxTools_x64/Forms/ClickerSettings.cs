@@ -3,7 +3,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using AxTools.Helpers;
 using AxTools.Properties;
+using AxTools.Services;
 using Components.Forms;
+using KeyboardWatcher;
 using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
@@ -15,7 +17,7 @@ namespace AxTools.Forms
         internal ClickerSettings()
         {
             InitializeComponent();
-           StyleManager.Style = Settings2.Instance.StyleColor;
+            StyleManager.Style = Settings2.Instance.StyleColor;
             Icon = Resources.AppIcon;
             Keys[] keys =
             {
@@ -30,12 +32,34 @@ namespace AxTools.Forms
             comboBoxClickerKey.Text = settings.ClickerKey.ToString();
             num_clicker_interval.Value = settings.ClickerInterval;
             num_clicker_interval.TextChanged += num_clicker_interval_TextChanged;
+            textBoxClickerHotkey.Text = settings.ClickerHotkey.ToString();
+            textBoxClickerHotkey.KeyDown += TextBoxClickerHotkey_KeyDown;
+            buttonClickerHotkey.Click += ButtonClickerHotkey_Click;
             BeginInvoke((MethodInvoker) delegate
             {
                 MainForm mainForm = MainForm.Instance;
                 Location = new Point(mainForm.Location.X + mainForm.Size.Width - Size.Width, mainForm.Location.Y + mainForm.Size.Height - Size.Height);
                 OnActivated(EventArgs.Empty);
             });
+        }
+
+        private void ButtonClickerHotkey_Click(object sender, EventArgs e)
+        {
+            TextBoxClickerHotkey_KeyDown(null, new KeyEventArgs(Keys.None));
+        }
+
+        private void TextBoxClickerHotkey_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
+            {
+                KeyExt key = new KeyExt(e.KeyCode, e.Alt, e.Shift, e.Control);
+                textBoxClickerHotkey.Text = key.ToString();
+                HotkeyManager.RemoveKeys(typeof(Clicker).ToString());
+                HotkeyManager.AddKeys(typeof(Clicker).ToString(), key);
+                settings.ClickerHotkey = key;
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
         }
 
         private void comboBoxClickerKey_SelectedIndexChanged(object sender, EventArgs e)

@@ -60,7 +60,6 @@ namespace AxTools.WoW.PluginSystem
         internal static void SavePluginUsageStats()
         {
             string settingsFile = AppFolders.ConfigDir + "\\plugins-usage-stats.json";
-            Stopwatch stopwatch = Stopwatch.StartNew();
             StringBuilder sb = new StringBuilder(1024);
             using (StringWriter sw = new StringWriter(sb, CultureInfo.InvariantCulture))
             {
@@ -75,22 +74,21 @@ namespace AxTools.WoW.PluginSystem
             }
             string json = sb.ToString();
             File.WriteAllText(settingsFile, json, Encoding.UTF8);
-            log.Info("PluginsUsageStats file has been updated, time: " + stopwatch.ElapsedMilliseconds + "ms");
         }
 
-        internal static ReadOnlyCollection<IPlugin2> RunningPlugins
+        internal static IEnumerable<IPlugin2> RunningPlugins
         {
             get
             {
-                return new ReadOnlyCollection<IPlugin2>(_pluginContainers.Where(l => l.IsRunning).Select(l => l.Plugin).ToList());
+                return _pluginContainers.Where(l => l.IsRunning).Select(l => l.Plugin);
             }
         }
 
-        internal static ReadOnlyCollection<IPlugin2> LoadedPlugins
+        internal static IEnumerable<IPlugin2> LoadedPlugins
         {
             get
             {
-                return new ReadOnlyCollection<IPlugin2>(_pluginContainers.Select(l => l.Plugin).ToList());
+                return _pluginContainers.Select(l => l.Plugin);
             }
         }
         
@@ -163,7 +161,7 @@ namespace AxTools.WoW.PluginSystem
                         SavePluginUsageStats();
                     }
                 }
-                foreach (var i in Settings.Instance.PluginHotkeys.Where(l => LoadedPlugins.Select(k => k.Name).Contains(l.Key)))
+                foreach (var i in Settings2.Instance.PluginHotkeys.Where(l => LoadedPlugins.Select(k => k.Name).Contains(l.Key)))
                 {
                     HotkeyManager.AddKeys("Plugin_" + i.Key, i.Value);
                 }

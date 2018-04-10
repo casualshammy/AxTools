@@ -44,7 +44,6 @@ namespace AxTools.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.notifyIconMain = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tabControl = new MetroFramework.Controls.MetroTabControl();
@@ -66,6 +65,7 @@ namespace AxTools.Forms
             this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.buttonStartStopPlugin = new MetroFramework.Controls.MetroButton();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
+            this.checkBoxTwitch = new MetroFramework.Controls.MetroCheckBox();
             this.tileExtTwitch = new Components.MetroTileExt(this.components);
             this.tileExtDiscord = new Components.MetroTileExt(this.components);
             this.checkBoxStartTeamspeak3WithWow = new MetroFramework.Controls.MetroCheckBox();
@@ -88,7 +88,7 @@ namespace AxTools.Forms
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.contextMenuStripMain.SuspendLayout();
+            this.menuItemNextBackupTime = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.tabPageModules.SuspendLayout();
@@ -106,6 +106,11 @@ namespace AxTools.Forms
             this.notifyIconMain.Visible = true;
             this.notifyIconMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconMainMouseClick);
             // 
+            // contextMenuStripMain
+            // 
+            this.contextMenuStripMain.Name = "contextMenuStripMain";
+            this.contextMenuStripMain.Size = new System.Drawing.Size(61, 4);
+            // 
             // tabControl
             // 
             this.tabControl.Controls.Add(this.metroTabPage1);
@@ -120,7 +125,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 2;
+            this.tabControl.SelectedIndex = 3;
             this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 59;
@@ -436,6 +441,7 @@ namespace AxTools.Forms
             // 
             // metroTabPage2
             // 
+            this.metroTabPage2.Controls.Add(this.checkBoxTwitch);
             this.metroTabPage2.Controls.Add(this.tileExtTwitch);
             this.metroTabPage2.Controls.Add(this.tileExtDiscord);
             this.metroTabPage2.Controls.Add(this.checkBoxStartTeamspeak3WithWow);
@@ -463,6 +469,26 @@ namespace AxTools.Forms
             this.metroTabPage2.VerticalScrollbarBarColor = true;
             this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.VerticalScrollbarSize = 10;
+            // 
+            // checkBoxTwitch
+            // 
+            this.checkBoxTwitch.AutoSize = true;
+            this.checkBoxTwitch.CustomBackground = false;
+            this.checkBoxTwitch.CustomForeColor = false;
+            this.checkBoxTwitch.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.checkBoxTwitch.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.checkBoxTwitch.Location = new System.Drawing.Point(241, 99);
+            this.checkBoxTwitch.Margin = new System.Windows.Forms.Padding(1);
+            this.checkBoxTwitch.Name = "checkBoxTwitch";
+            this.checkBoxTwitch.Size = new System.Drawing.Size(165, 19);
+            this.checkBoxTwitch.Style = MetroFramework.MetroColorStyle.Blue;
+            this.checkBoxTwitch.StyleManager = null;
+            this.checkBoxTwitch.TabIndex = 50;
+            this.checkBoxTwitch.Text = "Start Twitch with WoW";
+            this.checkBoxTwitch.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.checkBoxTwitch.UseStyleColors = true;
+            this.checkBoxTwitch.UseVisualStyleBackColor = true;
+            this.checkBoxTwitch.CheckedChanged += new System.EventHandler(this.CheckBoxTwitch_CheckedChanged);
             // 
             // tileExtTwitch
             // 
@@ -505,7 +531,8 @@ namespace AxTools.Forms
             this.checkBoxStartTeamspeak3WithWow.CustomForeColor = false;
             this.checkBoxStartTeamspeak3WithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxStartTeamspeak3WithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartTeamspeak3WithWow.Location = new System.Drawing.Point(241, 112);
+            this.checkBoxStartTeamspeak3WithWow.Location = new System.Drawing.Point(241, 78);
+            this.checkBoxStartTeamspeak3WithWow.Margin = new System.Windows.Forms.Padding(1);
             this.checkBoxStartTeamspeak3WithWow.Name = "checkBoxStartTeamspeak3WithWow";
             this.checkBoxStartTeamspeak3WithWow.Size = new System.Drawing.Size(148, 19);
             this.checkBoxStartTeamspeak3WithWow.Style = MetroFramework.MetroColorStyle.Blue;
@@ -524,7 +551,8 @@ namespace AxTools.Forms
             this.checkBoxStartMumbleWithWow.CustomForeColor = false;
             this.checkBoxStartMumbleWithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxStartMumbleWithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartMumbleWithWow.Location = new System.Drawing.Point(241, 87);
+            this.checkBoxStartMumbleWithWow.Location = new System.Drawing.Point(241, 57);
+            this.checkBoxStartMumbleWithWow.Margin = new System.Windows.Forms.Padding(1);
             this.checkBoxStartMumbleWithWow.Name = "checkBoxStartMumbleWithWow";
             this.checkBoxStartMumbleWithWow.Size = new System.Drawing.Size(177, 19);
             this.checkBoxStartMumbleWithWow.Style = MetroFramework.MetroColorStyle.Blue;
@@ -543,7 +571,8 @@ namespace AxTools.Forms
             this.checkBoxStartRaidcallWithWow.CustomForeColor = false;
             this.checkBoxStartRaidcallWithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxStartRaidcallWithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartRaidcallWithWow.Location = new System.Drawing.Point(241, 62);
+            this.checkBoxStartRaidcallWithWow.Location = new System.Drawing.Point(241, 36);
+            this.checkBoxStartRaidcallWithWow.Margin = new System.Windows.Forms.Padding(1);
             this.checkBoxStartRaidcallWithWow.Name = "checkBoxStartRaidcallWithWow";
             this.checkBoxStartRaidcallWithWow.Size = new System.Drawing.Size(171, 19);
             this.checkBoxStartRaidcallWithWow.Style = MetroFramework.MetroColorStyle.Blue;
@@ -562,7 +591,8 @@ namespace AxTools.Forms
             this.checkBoxStartVenriloWithWow.CustomForeColor = false;
             this.checkBoxStartVenriloWithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
             this.checkBoxStartVenriloWithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartVenriloWithWow.Location = new System.Drawing.Point(241, 37);
+            this.checkBoxStartVenriloWithWow.Location = new System.Drawing.Point(241, 15);
+            this.checkBoxStartVenriloWithWow.Margin = new System.Windows.Forms.Padding(1);
             this.checkBoxStartVenriloWithWow.Name = "checkBoxStartVenriloWithWow";
             this.checkBoxStartVenriloWithWow.Size = new System.Drawing.Size(174, 19);
             this.checkBoxStartVenriloWithWow.Style = MetroFramework.MetroColorStyle.Blue;
@@ -695,13 +725,14 @@ namespace AxTools.Forms
             // contextMenuStripBackupAndClean
             // 
             this.contextMenuStripBackupAndClean.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemNextBackupTime,
             this.toolStripMenuItemBackupWoWAddOns,
             this.toolStripMenuItemDeployArchive,
             this.toolStripSeparator3,
             this.toolStripMenuItem1,
             this.toolStripMenuItemOpenWoWLogsFolder});
             this.contextMenuStripBackupAndClean.Name = "contextMenuStripMain";
-            this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 98);
+            this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 142);
             // 
             // toolStripMenuItemBackupWoWAddOns
             // 
@@ -772,6 +803,13 @@ namespace AxTools.Forms
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
             // 
+            // menuItemNextBackupTime
+            // 
+            this.menuItemNextBackupTime.Enabled = false;
+            this.menuItemNextBackupTime.Name = "menuItemNextBackupTime";
+            this.menuItemNextBackupTime.Size = new System.Drawing.Size(194, 22);
+            this.menuItemNextBackupTime.Text = "Next backup:";
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(469, 234);
@@ -788,7 +826,6 @@ namespace AxTools.Forms
             this.Resizable = false;
             this.Text = "AxTools";
             this.Resize += new System.EventHandler(this.MainForm_Resize);
-            this.contextMenuStripMain.ResumeLayout(false);
             this.tabControl.ResumeLayout(false);
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage1.PerformLayout();
@@ -848,6 +885,8 @@ namespace AxTools.Forms
         private MetroTileExt tileExtTwitch;
         private MetroTileExt metroTileExt1;
         private ToolStripSeparator toolStripSeparator2;
+        private MetroCheckBox checkBoxTwitch;
+        private ToolStripMenuItem menuItemNextBackupTime;
     }
 }
 

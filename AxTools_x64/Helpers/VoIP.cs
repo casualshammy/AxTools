@@ -1,7 +1,9 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AxTools.Helpers
@@ -9,184 +11,165 @@ namespace AxTools.Helpers
     internal static class VoIP
     {
 
-        internal static Dictionary<string, VoipInfo> AvailableVoipClients
+        private static Log2 log = new Log2("VoIP");
+        
+        /// <summary>
+        /// Launches VoIP with specified name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <exception cref="ArgumentException"> if no VoIP client with specified <paramref name="name"/> found</exception>
+        internal static void StartVoIPClient(string name)
         {
-            get
+            VoipInfo info = GetVoIPInfo(name);
+            if (info != null)
             {
-                Settings2 settings = Settings2.Instance;
-                Dictionary<string, VoipInfo> list = new Dictionary<string, VoipInfo>();
-                if (string.IsNullOrWhiteSpace(Settings2.Instance.VentriloDirectory))
+                Process.Start(new ProcessStartInfo
                 {
-                    Settings2.Instance.VentriloDirectory = GetVentriloPath();
-                }
-                if (string.IsNullOrWhiteSpace(Settings2.Instance.MumbleDirectory))
-                {
-                    Settings2.Instance.MumbleDirectory = GetMumblePath();
-                }
-                if (string.IsNullOrWhiteSpace(Settings2.Instance.RaidcallDirectory))
-                {
-                    Settings2.Instance.RaidcallDirectory = GetRaidcallPath();
-                }
-                if (string.IsNullOrWhiteSpace(Settings2.Instance.TS3Directory))
-                {
-                    Settings2.Instance.TS3Directory = GetTeamspeakPath();
-                }
-                if (File.Exists(Settings2.Instance.TS3Directory + "\\ts3client_win64.exe"))
-                {
-                    list["Teamspeak 3"] = new VoipInfo(Settings2.Instance.TS3Directory + "\\ts3client_win64.exe", "-nosingleinstance", Settings2.Instance.TS3Directory);
-                }
-                else if (File.Exists(Settings2.Instance.TS3Directory + "\\ts3client_win32.exe"))
-                {
-                    list["Teamspeak 3"] = new VoipInfo(Settings2.Instance.TS3Directory + "\\ts3client_win32.exe", "-nosingleinstance", Settings2.Instance.TS3Directory);
-                }
-                if (File.Exists(Settings2.Instance.VentriloDirectory + "\\Ventrilo.exe"))
-                {
-                    list["Ventrilo"] = new VoipInfo(Settings2.Instance.VentriloDirectory + "\\Ventrilo.exe", "-m", Settings2.Instance.VentriloDirectory);
-                }
-                if (File.Exists(settings.RaidcallDirectory + "\\raidcall.exe"))
-                {
-                    list["Raidcall"] = new VoipInfo(settings.RaidcallDirectory + "\\raidcall.exe", "", settings.RaidcallDirectory);
-                }
-                if (File.Exists(settings.MumbleDirectory + "\\mumble.exe"))
-                {
-                    list["Mumble"] = new VoipInfo(settings.MumbleDirectory + "\\mumble.exe", "", settings.MumbleDirectory);
-                }
-                GetDiscord(list);
-                GetTwitch(list);
-                return list;
+                    WorkingDirectory = info.DirectoryPath,
+                    FileName = info.ExecutablePath,
+                    Arguments = info.ExecutableArguments
+                });
+                log.Info($"{name} is started");
             }
+            else
+            {
+                throw new ArgumentException("No VoIP client with specified name found", "name");
+            }
+        }
+
+        private static VoipInfo GetVoIPInfo(string voipName)
+        {
+            switch (voipName)
+            {
+                case "Teamspeak 3":
+                    if (string.IsNullOrWhiteSpace(Settings2.Instance.TS3Directory) || (!File.Exists(Settings2.Instance.TS3Directory + "\\ts3client_win64.exe") && !File.Exists(Settings2.Instance.TS3Directory + "\\ts3client_win32.exe")))
+                    {
+                        Settings2.Instance.TS3Directory = GetTeamspeakPath();
+                    }
+                    if (File.Exists(Settings2.Instance.TS3Directory + "\\ts3client_win64.exe"))
+                    {
+                        return new VoipInfo(Settings2.Instance.TS3Directory + "\\ts3client_win64.exe", "-nosingleinstance", Settings2.Instance.TS3Directory);
+                    }
+                    else if (File.Exists(Settings2.Instance.TS3Directory + "\\ts3client_win32.exe"))
+                    {
+                        return new VoipInfo(Settings2.Instance.TS3Directory + "\\ts3client_win32.exe", "-nosingleinstance", Settings2.Instance.TS3Directory);
+                    }
+                    break;
+                case "Ventrilo":
+                    if (string.IsNullOrWhiteSpace(Settings2.Instance.VentriloDirectory) || !File.Exists(Settings2.Instance.VentriloDirectory + "\\Ventrilo.exe"))
+                    {
+                        Settings2.Instance.VentriloDirectory = GetVentriloPath();
+                    }
+                    if (File.Exists(Settings2.Instance.VentriloDirectory + "\\Ventrilo.exe"))
+                    {
+                        return new VoipInfo(Settings2.Instance.VentriloDirectory + "\\Ventrilo.exe", "-m", Settings2.Instance.VentriloDirectory);
+                    }
+                    break;
+                case "Raidcall":
+                    if (string.IsNullOrWhiteSpace(Settings2.Instance.RaidcallDirectory) || !File.Exists(Settings2.Instance.RaidcallDirectory + "\\raidcall.exe"))
+                    {
+                        Settings2.Instance.RaidcallDirectory = GetRaidcallPath();
+                    }
+                    if (File.Exists(Settings2.Instance.RaidcallDirectory + "\\raidcall.exe"))
+                    {
+                        return new VoipInfo(Settings2.Instance.RaidcallDirectory + "\\raidcall.exe", "", Settings2.Instance.RaidcallDirectory);
+                    }
+                    break;
+                case "Mumble":
+                    if (string.IsNullOrWhiteSpace(Settings2.Instance.MumbleDirectory) || !File.Exists(Settings2.Instance.MumbleDirectory + "\\mumble.exe"))
+                    {
+                        Settings2.Instance.MumbleDirectory = GetMumblePath();
+                    }
+                    if (File.Exists(Settings2.Instance.MumbleDirectory + "\\mumble.exe"))
+                    {
+                        return new VoipInfo(Settings2.Instance.MumbleDirectory + "\\mumble.exe", "", Settings2.Instance.MumbleDirectory);
+                    }
+                    break;
+                case "Discord":
+                    string discordDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord");
+                    string discordExecutable = Path.Combine(discordDir, "Update.exe");
+                    if (Directory.Exists(discordDir) && File.Exists(discordExecutable))
+                    {
+                        return new VoipInfo(discordExecutable, "--processStart Discord.exe", discordDir);
+                    }
+                    break;
+                case "Twitch":
+                    string twitchDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Curse Client\\Bin");
+                    string twitchExecutable = Path.Combine(twitchDir, "Twitch.exe");
+                    if (Directory.Exists(twitchDir) && File.Exists(twitchExecutable))
+                    {
+                        return new VoipInfo(twitchExecutable, "", twitchDir);
+                    }
+                    break;
+            }
+            return null;
         }
 
         private static string GetTeamspeakPath()
         {
-            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("ts3server\\\\shell\\\\open\\\\command"))
+            log.Info("Looking for TS3 client...");
+            foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
             {
-                try
+                var path = Utils.FindFiles(drive.Name, "ts3client_win64.exe", 5).Select(l => Path.GetDirectoryName(l)).FirstOrDefault() ??
+                    Utils.FindFiles(drive.Name, "ts3client_win32.exe", 5).Select(l => Path.GetDirectoryName(l)).FirstOrDefault();
+                if (path != null)
                 {
-                    if (regVersion != null && regVersion.GetValue("") != null)
-                    {
-                        Regex regex = new Regex("\"(.+)\" .*");
-                        Match match = regex.Match(regVersion.GetValue("").ToString());
-                        if (match.Success)
-                        {
-                            return match.Groups[1].Value;
-                        }
-                    }
-                    return string.Empty;
-                }
-                catch
-                {
-                    return string.Empty;
+                    log.Info("TS3 client is found: " + path);
+                    return path;
                 }
             }
+            log.Info("TS3 client is not found!");
+            return null;
         }
 
         private static string GetRaidcallPath()
         {
-            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("raidcall\\\\shell\\\\open\\\\command"))
+            log.Info("Looking for Raidcall client...");
+            foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
             {
-                try
+                var path = Utils.FindFiles(drive.Name, "raidcall.exe", 5).Select(l => Path.GetDirectoryName(l)).FirstOrDefault();
+                if (path != null)
                 {
-                    if (regVersion != null && regVersion.GetValue("") != null)
-                    {
-                        Regex regex = new Regex("\"(.+)\" .*");
-                        Match match = regex.Match(regVersion.GetValue("").ToString());
-                        if (match.Success)
-                        {
-                            return match.Groups[1].Value;
-                        }
-                    }
-                    return string.Empty;
-                }
-                catch
-                {
-                    return string.Empty;
+                    log.Info("Raidcall client is found: " + path);
+                    return path;
                 }
             }
+            log.Info("Raidcall client is not found!");
+            return null;
         }
 
         private static string GetVentriloPath()
         {
-            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("Ventrilo\\\\shell\\\\open\\\\command"))
+            log.Info("Looking for Ventrilo client...");
+            foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
             {
-                try
+                var path = Utils.FindFiles(drive.Name, "Ventrilo.exe", 5).Select(l => Path.GetDirectoryName(l)).FirstOrDefault();
+                if (path != null)
                 {
-                    if (regVersion != null && regVersion.GetValue("") != null)
-                    {
-                        Regex regex = new Regex("(.+) .*");
-                        Match match = regex.Match(regVersion.GetValue("").ToString());
-                        if (match.Success)
-                        {
-                            return match.Groups[1].Value;
-                        }
-                    }
-                    return string.Empty;
-                }
-                catch
-                {
-                    return string.Empty;
+                    log.Info("Ventrilo client is found: " + path);
+                    return path;
                 }
             }
+            log.Info("Ventrilo client is not found!");
+            return null;
         }
 
         private static string GetMumblePath()
         {
-            using (RegistryKey regVersion = Registry.ClassesRoot.CreateSubKey("mumble\\\\shell\\\\open\\\\command"))
+            log.Info("Looking for Mumble client...");
+            foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
             {
-                try
+                var path = Utils.FindFiles(drive.Name, "mumble.exe", 5).Select(l => Path.GetDirectoryName(l)).FirstOrDefault();
+                if (path != null)
                 {
-                    if (regVersion != null && regVersion.GetValue("") != null)
-                    {
-                        Regex regex = new Regex("\"(.+)\" .*");
-                        Match match = regex.Match(regVersion.GetValue("").ToString());
-                        if (match.Success)
-                        {
-                            return match.Groups[1].Value;
-                        }
-                    }
-                    return string.Empty;
-                }
-                catch
-                {
-                    return string.Empty;
+                    log.Info("Mumble client is found: " + path);
+                    return path;
                 }
             }
+            log.Info("Mumble client is not found!");
+            return null;
         }
-
-        //private static string GetDiscordPath()
-        //{
-        //    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord");
-        //    Log.Info($"[Settings2] Looking for Discord client in {path}");
-        //    return Directory.Exists(path) ? path : string.Empty;
-        //}
-
-        private static void GetDiscord(Dictionary<string, VoipInfo> dic)
-        {
-            string discordDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord");
-            string discordExecutable = Path.Combine(discordDir, "Update.exe");
-            if (Directory.Exists(discordDir) && File.Exists(discordExecutable))
-            {
-                dic["Discord"] = new VoipInfo(discordExecutable, "--processStart Discord.exe", discordDir);
-            }
-        }
-
-        private static void GetTwitch(Dictionary<string, VoipInfo> dic)
-        {
-            string twitchDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Curse Client\\Bin");
-            string twitchExecutable = Path.Combine(twitchDir, "Twitch.exe");
-            if (Directory.Exists(twitchDir) && File.Exists(twitchExecutable))
-            {
-                dic["Twitch"] = new VoipInfo(twitchExecutable, "", twitchDir);
-            }
-        }
-
-        //private static string GetTwitchPath()
-        //{
-        //    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Curse Client\\Bin");
-        //    Log.Info($"[Settings2] Looking for Twitch client in {path}");
-        //    return Directory.Exists(path) ? path : string.Empty;
-        //}
-
+        
     }
 
     internal class VoipInfo

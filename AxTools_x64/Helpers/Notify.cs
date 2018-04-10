@@ -78,7 +78,7 @@ namespace AxTools.Helpers
             }
         }
 
-        internal static void TrayPopup(string title, string message, NotifyUserType type, bool sound, Image image = null, int timeout = 10, EventHandler onClick = null)
+        internal static void TrayPopup(string title, string message, NotifyUserType type, bool sound, Image image = null, int timeoutSec = 10, EventHandler onClick = null)
         {
             MainForm.Instance.BeginInvoke((MethodInvoker) delegate
             {
@@ -103,7 +103,7 @@ namespace AxTools.Helpers
                     trayPopup.Click += onClick;
                     trayPopup.Click += (sender, args) => trayPopup.Close();
                 }
-                trayPopup.Show(timeout);
+                trayPopup.Show(timeoutSec);
                 if (sound)
                 {
                     if (type == NotifyUserType.Error || type == NotifyUserType.Warn)

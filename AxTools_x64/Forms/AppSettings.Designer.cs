@@ -30,8 +30,6 @@ namespace AxTools.Forms
         private void InitializeComponent()
         {
             this.checkBox_AntiAFK = new MetroFramework.Controls.MetroCheckBox();
-            this.textBoxVentriloPath = new Components.MetroTextboxExt();
-            this.buttonVentriloPath = new MetroFramework.Controls.MetroButton();
             this.CheckBoxStartAxToolsWithWindows = new MetroFramework.Controls.MetroCheckBox();
             this.CheckBox7 = new MetroFramework.Controls.MetroCheckBox();
             this.GroupBox2 = new System.Windows.Forms.GroupBox();
@@ -45,7 +43,6 @@ namespace AxTools.Forms
             this.Label7 = new MetroFramework.Controls.MetroLabel();
             this.Label8 = new MetroFramework.Controls.MetroLabel();
             this.CheckBox6 = new MetroFramework.Controls.MetroCheckBox();
-            this.labelClickerHotkey = new MetroFramework.Controls.MetroLabel();
             this.numericUpDownBackupTimer = new System.Windows.Forms.NumericUpDown();
             this.Hours = new MetroFramework.Controls.MetroLabel();
             this.numericUpDownBackupCopiesToKeep = new System.Windows.Forms.NumericUpDown();
@@ -58,20 +55,6 @@ namespace AxTools.Forms
             this.linkShowLog = new MetroFramework.Controls.MetroLink();
             this.metroLabel10 = new MetroFramework.Controls.MetroLabel();
             this.metroComboBoxStyle = new MetroFramework.Controls.MetroComboBox();
-            this.metroTabPage5 = new MetroFramework.Controls.MetroTabPage();
-            this.metroLabel5 = new MetroFramework.Controls.MetroLabel();
-            this.buttonWowPath = new MetroFramework.Controls.MetroButton();
-            this.textBoxWowPath = new Components.MetroTextboxExt();
-            this.buttonRaidcallPath = new MetroFramework.Controls.MetroButton();
-            this.textBoxRaidcallPath = new Components.MetroTextboxExt();
-            this.buttonMumblePath = new MetroFramework.Controls.MetroButton();
-            this.textBoxMumblePath = new Components.MetroTextboxExt();
-            this.buttonTeamspeak3Path = new MetroFramework.Controls.MetroButton();
-            this.textBoxTeamspeak3Path = new Components.MetroTextboxExt();
-            this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
-            this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
-            this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
-            this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
             this.checkBoxSetAfkStatus = new MetroFramework.Controls.MetroCheckBox();
             this.buttonIngameKeyBinds = new MetroFramework.Controls.MetroButton();
@@ -83,9 +66,6 @@ namespace AxTools.Forms
             this.metroLabel6 = new MetroFramework.Controls.MetroLabel();
             this.buttonBackupPath = new MetroFramework.Controls.MetroButton();
             this.textBoxBackupPath = new Components.MetroTextboxExt();
-            this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
-            this.buttonClickerHotkey = new MetroFramework.Controls.MetroButton();
-            this.textBoxClickerHotkey = new MetroFramework.Controls.MetroTextBox();
             this.metroTabPage7 = new MetroFramework.Controls.MetroTabPage();
             this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel8 = new MetroFramework.Controls.MetroLabel();
@@ -107,10 +87,8 @@ namespace AxTools.Forms
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBackupCopiesToKeep)).BeginInit();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
-            this.metroTabPage5.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
             this.metroTabPage4.SuspendLayout();
-            this.metroTabPage2.SuspendLayout();
             this.metroTabPage7.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -131,39 +109,6 @@ namespace AxTools.Forms
             this.checkBox_AntiAFK.Theme = MetroFramework.MetroThemeStyle.Light;
             this.checkBox_AntiAFK.UseStyleColors = true;
             this.checkBox_AntiAFK.UseVisualStyleBackColor = true;
-            // 
-            // textBoxVentriloPath
-            // 
-            this.textBoxVentriloPath.CustomBackground = false;
-            this.textBoxVentriloPath.CustomForeColor = false;
-            this.textBoxVentriloPath.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxVentriloPath.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxVentriloPath.Location = new System.Drawing.Point(128, 67);
-            this.textBoxVentriloPath.Multiline = false;
-            this.textBoxVentriloPath.Name = "textBoxVentriloPath";
-            this.textBoxVentriloPath.ReadOnly = true;
-            this.textBoxVentriloPath.SelectedText = "";
-            this.textBoxVentriloPath.Size = new System.Drawing.Size(384, 20);
-            this.textBoxVentriloPath.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxVentriloPath.StyleManager = null;
-            this.textBoxVentriloPath.TabIndex = 27;
-            this.textBoxVentriloPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.textBoxVentriloPath.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxVentriloPath.UseStyleColors = true;
-            // 
-            // buttonVentriloPath
-            // 
-            this.buttonVentriloPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonVentriloPath.Highlight = true;
-            this.buttonVentriloPath.Location = new System.Drawing.Point(518, 67);
-            this.buttonVentriloPath.Name = "buttonVentriloPath";
-            this.buttonVentriloPath.Size = new System.Drawing.Size(36, 20);
-            this.buttonVentriloPath.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonVentriloPath.StyleManager = null;
-            this.buttonVentriloPath.TabIndex = 28;
-            this.buttonVentriloPath.Text = "...";
-            this.buttonVentriloPath.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.buttonVentriloPath, "Click to select path...");
             // 
             // CheckBoxStartAxToolsWithWindows
             // 
@@ -395,28 +340,9 @@ namespace AxTools.Forms
             this.CheckBox6.UseStyleColors = true;
             this.CheckBox6.UseVisualStyleBackColor = true;
             // 
-            // labelClickerHotkey
-            // 
-            this.labelClickerHotkey.AutoSize = true;
-            this.labelClickerHotkey.CustomBackground = false;
-            this.labelClickerHotkey.CustomForeColor = false;
-            this.labelClickerHotkey.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.labelClickerHotkey.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.labelClickerHotkey.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelClickerHotkey.Location = new System.Drawing.Point(3, 20);
-            this.labelClickerHotkey.Name = "labelClickerHotkey";
-            this.labelClickerHotkey.Size = new System.Drawing.Size(93, 19);
-            this.labelClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.labelClickerHotkey.StyleManager = null;
-            this.labelClickerHotkey.TabIndex = 44;
-            this.labelClickerHotkey.Text = "Clicker hotkey:";
-            this.labelClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.labelClickerHotkey, "Key to switch clicker on/off. Works only if WoW window is active");
-            this.labelClickerHotkey.UseStyleColors = true;
-            // 
             // numericUpDownBackupTimer
             // 
-            this.numericUpDownBackupTimer.Location = new System.Drawing.Point(128, 129);
+            this.numericUpDownBackupTimer.Location = new System.Drawing.Point(258, 129);
             this.numericUpDownBackupTimer.Maximum = new decimal(new int[] {
             720,
             0,
@@ -448,11 +374,11 @@ namespace AxTools.Forms
             this.Hours.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
             this.Hours.Location = new System.Drawing.Point(3, 128);
             this.Hours.Name = "Hours";
-            this.Hours.Size = new System.Drawing.Size(90, 19);
+            this.Hours.Size = new System.Drawing.Size(253, 19);
             this.Hours.Style = MetroFramework.MetroColorStyle.Blue;
             this.Hours.StyleManager = null;
             this.Hours.TabIndex = 46;
-            this.Hours.Text = "Timer (hours):";
+            this.Hours.Text = "Minimal interval between backups (hours):";
             this.Hours.Theme = MetroFramework.MetroThemeStyle.Light;
             this.toolTip.SetToolTip(this.Hours, "Interval between backup attempts");
             this.Hours.UseStyleColors = true;
@@ -516,10 +442,8 @@ namespace AxTools.Forms
             // tabControl
             // 
             this.tabControl.Controls.Add(this.metroTabPage1);
-            this.tabControl.Controls.Add(this.metroTabPage5);
             this.tabControl.Controls.Add(this.metroTabPage3);
             this.tabControl.Controls.Add(this.metroTabPage4);
-            this.tabControl.Controls.Add(this.metroTabPage2);
             this.tabControl.Controls.Add(this.metroTabPage7);
             this.tabControl.CustomBackground = false;
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -527,7 +451,7 @@ namespace AxTools.Forms
             this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 4;
+            this.tabControl.SelectedIndex = 2;
             this.tabControl.Size = new System.Drawing.Size(565, 234);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 65;
@@ -624,7 +548,7 @@ namespace AxTools.Forms
             this.metroLabel10.FontSize = MetroFramework.MetroLabelSize.Medium;
             this.metroLabel10.FontWeight = MetroFramework.MetroLabelWeight.Light;
             this.metroLabel10.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel10.Location = new System.Drawing.Point(3, 98);
+            this.metroLabel10.Location = new System.Drawing.Point(3, 172);
             this.metroLabel10.Name = "metroLabel10";
             this.metroLabel10.Size = new System.Drawing.Size(74, 19);
             this.metroLabel10.Style = MetroFramework.MetroColorStyle.Blue;
@@ -638,10 +562,10 @@ namespace AxTools.Forms
             // 
             this.metroComboBoxStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.metroComboBoxStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.metroComboBoxStyle.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.metroComboBoxStyle.FontSize = MetroFramework.MetroLinkSize.Small;
             this.metroComboBoxStyle.FontWeight = MetroFramework.MetroLinkWeight.Regular;
             this.metroComboBoxStyle.FormattingEnabled = true;
-            this.metroComboBoxStyle.ItemHeight = 23;
+            this.metroComboBoxStyle.ItemHeight = 19;
             this.metroComboBoxStyle.Items.AddRange(new object[] {
             "Black",
             "Silver",
@@ -656,270 +580,13 @@ namespace AxTools.Forms
             "Purple",
             "Red",
             "Yellow"});
-            this.metroComboBoxStyle.Location = new System.Drawing.Point(83, 94);
+            this.metroComboBoxStyle.Location = new System.Drawing.Point(83, 170);
             this.metroComboBoxStyle.Name = "metroComboBoxStyle";
-            this.metroComboBoxStyle.Size = new System.Drawing.Size(293, 29);
+            this.metroComboBoxStyle.Size = new System.Drawing.Size(145, 25);
             this.metroComboBoxStyle.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroComboBoxStyle.StyleManager = null;
             this.metroComboBoxStyle.TabIndex = 44;
             this.metroComboBoxStyle.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // metroTabPage5
-            // 
-            this.metroTabPage5.Controls.Add(this.metroLabel5);
-            this.metroTabPage5.Controls.Add(this.buttonWowPath);
-            this.metroTabPage5.Controls.Add(this.textBoxWowPath);
-            this.metroTabPage5.Controls.Add(this.buttonRaidcallPath);
-            this.metroTabPage5.Controls.Add(this.textBoxRaidcallPath);
-            this.metroTabPage5.Controls.Add(this.buttonMumblePath);
-            this.metroTabPage5.Controls.Add(this.textBoxMumblePath);
-            this.metroTabPage5.Controls.Add(this.buttonTeamspeak3Path);
-            this.metroTabPage5.Controls.Add(this.textBoxTeamspeak3Path);
-            this.metroTabPage5.Controls.Add(this.metroLabel4);
-            this.metroTabPage5.Controls.Add(this.metroLabel3);
-            this.metroTabPage5.Controls.Add(this.metroLabel2);
-            this.metroTabPage5.Controls.Add(this.metroLabel1);
-            this.metroTabPage5.Controls.Add(this.buttonVentriloPath);
-            this.metroTabPage5.Controls.Add(this.textBoxVentriloPath);
-            this.metroTabPage5.CustomBackground = false;
-            this.metroTabPage5.HorizontalScrollbar = false;
-            this.metroTabPage5.HorizontalScrollbarBarColor = true;
-            this.metroTabPage5.HorizontalScrollbarHighlightOnWheel = false;
-            this.metroTabPage5.HorizontalScrollbarSize = 10;
-            this.metroTabPage5.Location = new System.Drawing.Point(4, 35);
-            this.metroTabPage5.Name = "metroTabPage5";
-            this.metroTabPage5.Size = new System.Drawing.Size(557, 195);
-            this.metroTabPage5.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTabPage5.StyleManager = null;
-            this.metroTabPage5.TabIndex = 4;
-            this.metroTabPage5.Text = "     Paths  ";
-            this.metroTabPage5.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTabPage5.VerticalScrollbar = false;
-            this.metroTabPage5.VerticalScrollbarBarColor = true;
-            this.metroTabPage5.VerticalScrollbarHighlightOnWheel = false;
-            this.metroTabPage5.VerticalScrollbarSize = 10;
-            // 
-            // metroLabel5
-            // 
-            this.metroLabel5.AutoSize = true;
-            this.metroLabel5.CustomBackground = false;
-            this.metroLabel5.CustomForeColor = false;
-            this.metroLabel5.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel5.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel5.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel5.Location = new System.Drawing.Point(3, 20);
-            this.metroLabel5.Name = "metroLabel5";
-            this.metroLabel5.Size = new System.Drawing.Size(76, 19);
-            this.metroLabel5.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel5.StyleManager = null;
-            this.metroLabel5.TabIndex = 58;
-            this.metroLabel5.Text = "WoW path:";
-            this.metroLabel5.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel5.UseStyleColors = true;
-            // 
-            // buttonWowPath
-            // 
-            this.buttonWowPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonWowPath.Highlight = true;
-            this.buttonWowPath.Location = new System.Drawing.Point(518, 21);
-            this.buttonWowPath.Name = "buttonWowPath";
-            this.buttonWowPath.Size = new System.Drawing.Size(36, 20);
-            this.buttonWowPath.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonWowPath.StyleManager = null;
-            this.buttonWowPath.TabIndex = 57;
-            this.buttonWowPath.Text = "...";
-            this.buttonWowPath.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.buttonWowPath, "Click to select path...");
-            // 
-            // textBoxWowPath
-            // 
-            this.textBoxWowPath.CustomBackground = false;
-            this.textBoxWowPath.CustomForeColor = false;
-            this.textBoxWowPath.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxWowPath.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxWowPath.Location = new System.Drawing.Point(85, 21);
-            this.textBoxWowPath.Multiline = false;
-            this.textBoxWowPath.Name = "textBoxWowPath";
-            this.textBoxWowPath.ReadOnly = true;
-            this.textBoxWowPath.SelectedText = "";
-            this.textBoxWowPath.Size = new System.Drawing.Size(427, 20);
-            this.textBoxWowPath.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxWowPath.StyleManager = null;
-            this.textBoxWowPath.TabIndex = 56;
-            this.textBoxWowPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.textBoxWowPath.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxWowPath.UseStyleColors = true;
-            // 
-            // buttonRaidcallPath
-            // 
-            this.buttonRaidcallPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonRaidcallPath.Highlight = true;
-            this.buttonRaidcallPath.Location = new System.Drawing.Point(518, 93);
-            this.buttonRaidcallPath.Name = "buttonRaidcallPath";
-            this.buttonRaidcallPath.Size = new System.Drawing.Size(36, 20);
-            this.buttonRaidcallPath.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonRaidcallPath.StyleManager = null;
-            this.buttonRaidcallPath.TabIndex = 55;
-            this.buttonRaidcallPath.Text = "...";
-            this.buttonRaidcallPath.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.buttonRaidcallPath, "Click to select path...");
-            // 
-            // textBoxRaidcallPath
-            // 
-            this.textBoxRaidcallPath.CustomBackground = false;
-            this.textBoxRaidcallPath.CustomForeColor = false;
-            this.textBoxRaidcallPath.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxRaidcallPath.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxRaidcallPath.Location = new System.Drawing.Point(128, 93);
-            this.textBoxRaidcallPath.Multiline = false;
-            this.textBoxRaidcallPath.Name = "textBoxRaidcallPath";
-            this.textBoxRaidcallPath.ReadOnly = true;
-            this.textBoxRaidcallPath.SelectedText = "";
-            this.textBoxRaidcallPath.Size = new System.Drawing.Size(384, 20);
-            this.textBoxRaidcallPath.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxRaidcallPath.StyleManager = null;
-            this.textBoxRaidcallPath.TabIndex = 54;
-            this.textBoxRaidcallPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.textBoxRaidcallPath.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxRaidcallPath.UseStyleColors = true;
-            // 
-            // buttonMumblePath
-            // 
-            this.buttonMumblePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonMumblePath.Highlight = true;
-            this.buttonMumblePath.Location = new System.Drawing.Point(518, 120);
-            this.buttonMumblePath.Name = "buttonMumblePath";
-            this.buttonMumblePath.Size = new System.Drawing.Size(36, 20);
-            this.buttonMumblePath.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonMumblePath.StyleManager = null;
-            this.buttonMumblePath.TabIndex = 53;
-            this.buttonMumblePath.Text = "...";
-            this.buttonMumblePath.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.buttonMumblePath, "Click to select path...");
-            // 
-            // textBoxMumblePath
-            // 
-            this.textBoxMumblePath.CustomBackground = false;
-            this.textBoxMumblePath.CustomForeColor = false;
-            this.textBoxMumblePath.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxMumblePath.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxMumblePath.Location = new System.Drawing.Point(128, 120);
-            this.textBoxMumblePath.Multiline = false;
-            this.textBoxMumblePath.Name = "textBoxMumblePath";
-            this.textBoxMumblePath.ReadOnly = true;
-            this.textBoxMumblePath.SelectedText = "";
-            this.textBoxMumblePath.Size = new System.Drawing.Size(384, 20);
-            this.textBoxMumblePath.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxMumblePath.StyleManager = null;
-            this.textBoxMumblePath.TabIndex = 52;
-            this.textBoxMumblePath.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.textBoxMumblePath.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxMumblePath.UseStyleColors = true;
-            // 
-            // buttonTeamspeak3Path
-            // 
-            this.buttonTeamspeak3Path.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonTeamspeak3Path.Highlight = true;
-            this.buttonTeamspeak3Path.Location = new System.Drawing.Point(518, 146);
-            this.buttonTeamspeak3Path.Name = "buttonTeamspeak3Path";
-            this.buttonTeamspeak3Path.Size = new System.Drawing.Size(36, 20);
-            this.buttonTeamspeak3Path.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonTeamspeak3Path.StyleManager = null;
-            this.buttonTeamspeak3Path.TabIndex = 51;
-            this.buttonTeamspeak3Path.Text = "...";
-            this.buttonTeamspeak3Path.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.buttonTeamspeak3Path, "Click to select path...");
-            // 
-            // textBoxTeamspeak3Path
-            // 
-            this.textBoxTeamspeak3Path.CustomBackground = false;
-            this.textBoxTeamspeak3Path.CustomForeColor = false;
-            this.textBoxTeamspeak3Path.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxTeamspeak3Path.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxTeamspeak3Path.Location = new System.Drawing.Point(128, 146);
-            this.textBoxTeamspeak3Path.Multiline = false;
-            this.textBoxTeamspeak3Path.Name = "textBoxTeamspeak3Path";
-            this.textBoxTeamspeak3Path.ReadOnly = true;
-            this.textBoxTeamspeak3Path.SelectedText = "";
-            this.textBoxTeamspeak3Path.Size = new System.Drawing.Size(384, 20);
-            this.textBoxTeamspeak3Path.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxTeamspeak3Path.StyleManager = null;
-            this.textBoxTeamspeak3Path.TabIndex = 50;
-            this.textBoxTeamspeak3Path.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.textBoxTeamspeak3Path.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxTeamspeak3Path.UseStyleColors = true;
-            // 
-            // metroLabel4
-            // 
-            this.metroLabel4.AutoSize = true;
-            this.metroLabel4.CustomBackground = false;
-            this.metroLabel4.CustomForeColor = false;
-            this.metroLabel4.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel4.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel4.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel4.Location = new System.Drawing.Point(3, 145);
-            this.metroLabel4.Name = "metroLabel4";
-            this.metroLabel4.Size = new System.Drawing.Size(119, 19);
-            this.metroLabel4.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel4.StyleManager = null;
-            this.metroLabel4.TabIndex = 47;
-            this.metroLabel4.Text = "Teamspeak 3 path:";
-            this.metroLabel4.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel4.UseStyleColors = true;
-            // 
-            // metroLabel3
-            // 
-            this.metroLabel3.AutoSize = true;
-            this.metroLabel3.CustomBackground = false;
-            this.metroLabel3.CustomForeColor = false;
-            this.metroLabel3.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel3.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel3.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel3.Location = new System.Drawing.Point(3, 119);
-            this.metroLabel3.Name = "metroLabel3";
-            this.metroLabel3.Size = new System.Drawing.Size(91, 19);
-            this.metroLabel3.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel3.StyleManager = null;
-            this.metroLabel3.TabIndex = 46;
-            this.metroLabel3.Text = "Mumble path:";
-            this.metroLabel3.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel3.UseStyleColors = true;
-            // 
-            // metroLabel2
-            // 
-            this.metroLabel2.AutoSize = true;
-            this.metroLabel2.CustomBackground = false;
-            this.metroLabel2.CustomForeColor = false;
-            this.metroLabel2.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel2.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel2.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel2.Location = new System.Drawing.Point(3, 92);
-            this.metroLabel2.Name = "metroLabel2";
-            this.metroLabel2.Size = new System.Drawing.Size(87, 19);
-            this.metroLabel2.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel2.StyleManager = null;
-            this.metroLabel2.TabIndex = 45;
-            this.metroLabel2.Text = "Raidcall path:";
-            this.metroLabel2.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel2.UseStyleColors = true;
-            // 
-            // metroLabel1
-            // 
-            this.metroLabel1.AutoSize = true;
-            this.metroLabel1.CustomBackground = false;
-            this.metroLabel1.CustomForeColor = false;
-            this.metroLabel1.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel1.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel1.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel1.Location = new System.Drawing.Point(3, 66);
-            this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(87, 19);
-            this.metroLabel1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel1.StyleManager = null;
-            this.metroLabel1.TabIndex = 44;
-            this.metroLabel1.Text = "Ventrilo path:";
-            this.metroLabel1.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel1.UseStyleColors = true;
             // 
             // metroTabPage3
             // 
@@ -1141,59 +808,6 @@ namespace AxTools.Forms
             this.textBoxBackupPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.textBoxBackupPath.Theme = MetroFramework.MetroThemeStyle.Light;
             this.textBoxBackupPath.UseStyleColors = true;
-            // 
-            // metroTabPage2
-            // 
-            this.metroTabPage2.Controls.Add(this.buttonClickerHotkey);
-            this.metroTabPage2.Controls.Add(this.textBoxClickerHotkey);
-            this.metroTabPage2.Controls.Add(this.labelClickerHotkey);
-            this.metroTabPage2.CustomBackground = false;
-            this.metroTabPage2.HorizontalScrollbar = false;
-            this.metroTabPage2.HorizontalScrollbarBarColor = true;
-            this.metroTabPage2.HorizontalScrollbarHighlightOnWheel = false;
-            this.metroTabPage2.HorizontalScrollbarSize = 10;
-            this.metroTabPage2.Location = new System.Drawing.Point(4, 35);
-            this.metroTabPage2.Name = "metroTabPage2";
-            this.metroTabPage2.Size = new System.Drawing.Size(557, 195);
-            this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTabPage2.StyleManager = null;
-            this.metroTabPage2.TabIndex = 1;
-            this.metroTabPage2.Text = "     Hotkeys ";
-            this.metroTabPage2.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTabPage2.VerticalScrollbar = false;
-            this.metroTabPage2.VerticalScrollbarBarColor = true;
-            this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
-            this.metroTabPage2.VerticalScrollbarSize = 10;
-            // 
-            // buttonClickerHotkey
-            // 
-            this.buttonClickerHotkey.Highlight = true;
-            this.buttonClickerHotkey.Location = new System.Drawing.Point(336, 19);
-            this.buttonClickerHotkey.Name = "buttonClickerHotkey";
-            this.buttonClickerHotkey.Size = new System.Drawing.Size(61, 23);
-            this.buttonClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonClickerHotkey.StyleManager = null;
-            this.buttonClickerHotkey.TabIndex = 55;
-            this.buttonClickerHotkey.Text = "Clear";
-            this.buttonClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
-            // textBoxClickerHotkey
-            // 
-            this.textBoxClickerHotkey.CustomBackground = false;
-            this.textBoxClickerHotkey.CustomForeColor = false;
-            this.textBoxClickerHotkey.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxClickerHotkey.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxClickerHotkey.Location = new System.Drawing.Point(233, 19);
-            this.textBoxClickerHotkey.Multiline = false;
-            this.textBoxClickerHotkey.Name = "textBoxClickerHotkey";
-            this.textBoxClickerHotkey.SelectedText = "";
-            this.textBoxClickerHotkey.Size = new System.Drawing.Size(97, 23);
-            this.textBoxClickerHotkey.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxClickerHotkey.StyleManager = null;
-            this.textBoxClickerHotkey.TabIndex = 52;
-            this.textBoxClickerHotkey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.textBoxClickerHotkey, "Key to switch clicker on/off. Works only if WoW window is active");
-            this.textBoxClickerHotkey.UseStyleColors = true;
             // 
             // metroTabPage7
             // 
@@ -1489,7 +1103,7 @@ namespace AxTools.Forms
             this.Name = "AppSettings";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 10);
             this.Resizable = false;
-            this.Text = "Settings2";
+            this.Text = "Settings";
             this.GroupBox2.ResumeLayout(false);
             this.GroupBox2.PerformLayout();
             this.GroupBox1.ResumeLayout(false);
@@ -1499,14 +1113,10 @@ namespace AxTools.Forms
             this.tabControl.ResumeLayout(false);
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage1.PerformLayout();
-            this.metroTabPage5.ResumeLayout(false);
-            this.metroTabPage5.PerformLayout();
             this.metroTabPage3.ResumeLayout(false);
             this.metroTabPage3.PerformLayout();
             this.metroTabPage4.ResumeLayout(false);
             this.metroTabPage4.PerformLayout();
-            this.metroTabPage2.ResumeLayout(false);
-            this.metroTabPage2.PerformLayout();
             this.metroTabPage7.ResumeLayout(false);
             this.metroTabPage7.PerformLayout();
             this.ResumeLayout(false);
@@ -1514,8 +1124,6 @@ namespace AxTools.Forms
 
         }
         private MetroCheckBox checkBox_AntiAFK;
-        private MetroTextboxExt textBoxVentriloPath;
-        private MetroButton buttonVentriloPath;
         private MetroCheckBox CheckBoxStartAxToolsWithWindows;
         private MetroCheckBox CheckBox7;
         private System.Windows.Forms.GroupBox GroupBox2;
@@ -1532,8 +1140,6 @@ namespace AxTools.Forms
 
 
         #endregion
-
-        private MetroLabel labelClickerHotkey;
         private System.Windows.Forms.NumericUpDown numericUpDownBackupCopiesToKeep;
         private MetroLabel label9;
         private MetroCheckBox checkBoxAddonsBackup;
@@ -1541,29 +1147,14 @@ namespace AxTools.Forms
         private MetroLabel Hours;
         private MetroTabControl tabControl;
         private MetroTabPage metroTabPage1;
-        private MetroTabPage metroTabPage2;
         private MetroTabPage metroTabPage3;
         private MetroTabPage metroTabPage4;
-        private MetroTabPage metroTabPage5;
-        private MetroLabel metroLabel1;
         private MetroLabel metroLabel6;
         private MetroButton buttonBackupPath;
         private MetroTextboxExt textBoxBackupPath;
-        private MetroButton buttonRaidcallPath;
-        private MetroTextboxExt textBoxRaidcallPath;
-        private MetroButton buttonMumblePath;
-        private MetroTextboxExt textBoxMumblePath;
-        private MetroButton buttonTeamspeak3Path;
-        private MetroTextboxExt textBoxTeamspeak3Path;
-        private MetroLabel metroLabel4;
-        private MetroLabel metroLabel3;
-        private MetroLabel metroLabel2;
         private MetroToolTip toolTip;
         private MetroComboBox metroComboBoxBackupCompressionLevel;
         private MetroLabel metroLabel9;
-        private MetroLabel metroLabel5;
-        private MetroButton buttonWowPath;
-        private MetroTextboxExt textBoxWowPath;
         private MetroLabel metroLabel10;
         private MetroComboBox metroComboBoxStyle;
         private MetroLink linkShowLog;
@@ -1577,8 +1168,6 @@ namespace AxTools.Forms
         private MetroCheckBox checkBoxMinimizeToTray;
         private MetroLink linkTitle;
         private MetroCheckBox checkBoxPluginsShowIngameNotifications;
-        private MetroTextBox textBoxClickerHotkey;
-        private MetroButton buttonClickerHotkey;
         private MetroTextboxExt textBoxVeryBadNetworkStatusPing;
         private MetroTextboxExt textBoxVeryBadNetworkStatusProcent;
         private MetroTextboxExt textBoxBadNetworkStatusPing;
