@@ -52,6 +52,7 @@ namespace AxTools.Forms.Helpers
                                 _instance = new WoWRadarSettings();
                                 logger.Info("Settings2 file is not found!");
                             }
+                            Program.Exit += () => _instance.SaveJSON();
                         }
                     }
                 }
@@ -61,7 +62,7 @@ namespace AxTools.Forms.Helpers
 
         private WoWRadarSettings() { }
 
-        internal void SaveJSON()
+        private void SaveJSON()
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             StringBuilder sb = new StringBuilder(1024);

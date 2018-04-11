@@ -294,7 +294,6 @@ namespace AxTools
                     WoWRadarSettings.Instance.ShowObjectsNames = oldSettings.WoWRadarShowObjectsNames;
                     WoWRadarSettings.Instance.ShowPlayersClasses = oldSettings.WoWRadarShowPlayersClasses;
                     WoWRadarSettings.Instance.Zoom = oldSettings.WoWRadarShowMode.Zoom;
-                    WoWRadarSettings.Instance.SaveJSON();
                 }
                 if (cfg.Contains("\"PluginsUsageStat2\": {"))
                 {
