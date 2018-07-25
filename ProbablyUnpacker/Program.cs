@@ -28,8 +28,8 @@ namespace ProbablyUnpacker
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Enter ID of process to dump:");
-            if (int.TryParse(Console.ReadLine(), out int processID))
+            int processID = GetProcessID();
+            if (processID != 0)
             {
                 MemoryManager memoryManager = new MemoryManager(Process.GetProcessById(processID));
                 IntPtr startAddress = memoryManager.ImageBase + 0x1000;
@@ -37,8 +37,7 @@ namespace ProbablyUnpacker
                 if (int.TryParse(Console.ReadLine(), out int sizeOfTextSegment))
                 {
                     byte[] buffer = memoryManager.ReadBytes(startAddress, sizeOfTextSegment);
-                    Console.WriteLine("Enter path to original executable:");
-                    string pathToExecutable = Console.ReadLine();
+                    string pathToExecutable = GetPathToOriginalExecutable();
                     PeFile peFile = new PeFile(pathToExecutable);
                     PeNet.Structures.IMAGE_SECTION_HEADER text_section = GetSectionHeader(peFile, ".text");
                     System.IO.BinaryReader reader = new System.IO.BinaryReader(new System.IO.MemoryStream(buffer));
@@ -83,5 +82,46 @@ namespace ProbablyUnpacker
                 }
             }
         }
+
+        private static int GetProcessID()
+        {
+            Process defaultProcess = Process.GetProcessesByName("Wow").FirstOrDefault();
+            if (defaultProcess != default(Process))
+            {
+                int processID = defaultProcess.Id;
+                Console.WriteLine($"Enter ID of process to dump: ({defaultProcess.Id})");
+                string input = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(input) || int.TryParse(input, out processID))
+                {
+                    return processID;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Enter ID of process to dump: ");
+                string input = Console.ReadLine();
+                if (int.TryParse(input, out int processID))
+                {
+                    return processID;
+                }
+            }
+            return 0;
+        }
+
+        private static string GetPathToOriginalExecutable()
+        {
+            Console.WriteLine("Enter path to original executable: (G:\\games\\World of Warcraft\\Wow.exe)");
+            string input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return "G:\\games\\World of Warcraft\\Wow.exe";
+            }
+            else
+            {
+                return input;
+            }
+        }
+
+
     }
 }

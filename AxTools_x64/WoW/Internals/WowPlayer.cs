@@ -228,7 +228,7 @@ namespace AxTools.WoW.Internals
         {
             get
             {
-                int isFlyingPointer = 0x210;
+                int isFlyingPointer = 0x198;
                 int isFlyingOffset = 0x58;
                 uint isFlyingMask = 0x1000000;
                 IntPtr p1 = memory.Read<IntPtr>(Address + isFlyingPointer);

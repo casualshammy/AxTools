@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.3.34.2165</AssemblyVersion>
+    <AssemblyVersion>12.3.35.2217</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -227,6 +227,7 @@
     <Compile Include="WinAPI\Win32Consts.cs" />
     <Compile Include="WinAPI\Win32Error.cs" />
     <Compile Include="WoW\AutoLogin.cs" />
+    <Compile Include="WoW\Internals\ObjectType.cs" />
     <Compile Include="WoW\Internals\PlayerInventoryAndContainers.cs" />
     <Compile Include="WoW\Internals\WoWChatMsgType.cs" />
     <Compile Include="WoW\Internals\WoWObjectBase.cs" />

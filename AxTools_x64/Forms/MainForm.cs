@@ -128,6 +128,7 @@ namespace AxTools.Forms
             Pinger.StatChanged -= Pinger_DataChanged;
             Pinger.IsEnabledChanged -= PingerOnStateChanged;
             AddonsBackup.IsRunningChanged -= AddonsBackup_IsRunningChanged;
+            AddonsBackup.ProgressPercentageChanged -= AddonsBackup_ProgressPercentageChanged;
             //
             settings.MainWindowLocation = Location;
             //save settings
@@ -327,12 +328,12 @@ namespace AxTools.Forms
         private void StartWoW(WoWAccount2 wowAccount = null)
         {
             new WaitingOverlay(this, "Please wait...", 1000).Show();
-            if (File.Exists(settings.WoWDirectory + "\\Wow-64.exe"))
+            if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
             {
                 Process process = Process.Start(new ProcessStartInfo
                 {
                     WorkingDirectory = settings.WoWDirectory,
-                    FileName = settings.WoWDirectory + "\\Wow-64.exe",
+                    FileName = settings.WoWDirectory + "\\Wow.exe",
                 });
                 if (wowAccount != null)
                 {
@@ -341,7 +342,7 @@ namespace AxTools.Forms
             }
             else
             {
-                this.TaskDialog("WoW client not found or corrupted", "Can't locate \"Wow-64.exe\"", NotifyUserType.Error);
+                this.TaskDialog("WoW client not found or corrupted", "Can't locate \"Wow.exe\"", NotifyUserType.Error);
             }
         }
 
@@ -867,21 +868,24 @@ namespace AxTools.Forms
 
         private void KeyboardHookKeyDown(KeyExt key)
         {
-            foreach (var pair in settings.PluginHotkeys)
+            if (WoWProcessManager.Processes.Any(l => l.Value.MainWindowHandle == WinAPI.NativeMethods.GetForegroundWindow()))
             {
-                if (pair.Value == key)
+                foreach (var pair in settings.PluginHotkeys)
                 {
-                    IPlugin2 plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pair.Key);
-                    bool pluginRunning = PluginManagerEx.RunningPlugins.Any(l => l.Name == pair.Key);
-                    if (plugin != null)
+                    if (pair.Value == key)
                     {
-                        if (pluginRunning)
+                        IPlugin2 plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pair.Key);
+                        bool pluginRunning = PluginManagerEx.RunningPlugins.Any(l => l.Name == pair.Key);
+                        if (plugin != null)
                         {
-                            olvPlugins.UncheckObject(plugin);
-                        }
-                        else
-                        {
-                            olvPlugins.CheckObject(plugin);
+                            if (pluginRunning)
+                            {
+                                olvPlugins.UncheckObject(plugin);
+                            }
+                            else
+                            {
+                                olvPlugins.CheckObject(plugin);
+                            }
                         }
                     }
                 }

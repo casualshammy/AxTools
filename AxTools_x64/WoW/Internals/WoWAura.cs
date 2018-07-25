@@ -6,13 +6,13 @@ using AxTools.WoW.Helpers;
 
 namespace AxTools.WoW.Internals
 {
-    [StructLayout(LayoutKind.Explicit, Size = 0xA0)]
+    [StructLayout(LayoutKind.Explicit, Size = 0xA8)]
     public struct WoWAura
     {
-        [FieldOffset(0x50)] public WoWGUID OwnerGUID;
-        [FieldOffset(0x70)] public int SpellId;
-        [FieldOffset(0x79)] public byte Stack;
-        [FieldOffset(0x80)] public uint TimeLeftInMs;
+        [FieldOffset(0x68)] public WoWGUID OwnerGUID;
+        [FieldOffset(0x88)] public int SpellId;
+        [FieldOffset(0x91)] public byte Stack;
+        [FieldOffset(0x98)] public uint TimeLeftInMs;
         
         internal WoWAura(WoWGUID ownerGUID, int spellID, byte stack, uint timeLeft)
         {

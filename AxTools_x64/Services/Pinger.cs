@@ -133,7 +133,7 @@ namespace AxTools.Services
 
         private static string GetWoWRemoteIP()
         {
-            Process[] wowProcesses = Process.GetProcessesByName("Wow-64");
+            Process[] wowProcesses = Process.GetProcessesByName("Wow");
             TCPConnectionInfo connectionInfo = TCPConnectionInfo.GetAllRemoteTcpConnections().FirstOrDefault(l => l.EndPoint.Port == 3724 && wowProcesses.Any(k => k.Id == l.ProcessID));
             return connectionInfo?.EndPoint.Address.ToString();
         }

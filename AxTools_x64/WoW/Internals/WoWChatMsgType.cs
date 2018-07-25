@@ -1,6 +1,6 @@
 ﻿namespace AxTools.WoW.Internals
 {
-    public enum WoWChatMsgType
+    public enum WoWChatMsgType : byte
     {
         Addon = 0,
         Say = 1,

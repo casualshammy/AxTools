@@ -16,7 +16,6 @@ namespace AxTools.WoW.PluginSystem.API
 {
     public class GameInterface
     {
-
         internal readonly WowProcess wowProcess;
         private readonly MemoryManager memoryMgr;
         private readonly Log2 log;
@@ -24,7 +23,7 @@ namespace AxTools.WoW.PluginSystem.API
         private readonly string LuaReturnFrameName = Utilities.GetRandomString(5, true);
         private readonly string LuaReturnTokenName = Utilities.GetRandomString(5, true);
         private readonly string LuaReturnVarName = Utilities.GetRandomString(5, true);
-        private readonly List<string> ChatMessages = new List<string>(Enumerable.Repeat("", 60));
+        private readonly List<ChatMsg> ChatMessages = new List<ChatMsg>(Enumerable.Repeat(new ChatMsg(), 60));
         private static readonly Dictionary<int, object> chatLocks = new Dictionary<int, object>();
         private static readonly Dictionary<int, object> readChatLocks = new Dictionary<int, object>();
         private static readonly Dictionary<int, object> luaLocks = new Dictionary<int, object>();
@@ -177,41 +176,55 @@ namespace AxTools.WoW.PluginSystem.API
                     for (int i = 0; i < 60; i++)
                     {
                         IntPtr baseMsg = chatStart + i * WowBuildInfoX64.ChatNextMessage;
-                        string s = Encoding.UTF8.GetString(memoryMgr.ReadBytes(baseMsg + WowBuildInfoX64.ChatFullMessageOffset, 0x200).TakeWhile(l => l != 0).ToArray());
+                        ChatMsg s = new ChatMsg
+                        {
+                            Sender = Encoding.UTF8.GetString(memoryMgr.ReadBytes(baseMsg + WowBuildInfoX64.ChatSenderName, 100).TakeWhile(l => l != 0).ToArray()),
+                            Channel = memoryMgr.Read<byte>(baseMsg + WowBuildInfoX64.ChatChannelNum),
+                            SenderGUID = memoryMgr.Read<WoWGUID>(baseMsg + WowBuildInfoX64.ChatSenderGuid),
+                            Text = Encoding.UTF8.GetString(memoryMgr.ReadBytes(baseMsg + WowBuildInfoX64.ChatFullMessageOffset, 0x200).TakeWhile(l => l != 0).ToArray()),
+                            TimeStamp = memoryMgr.Read<int>(baseMsg + WowBuildInfoX64.ChatTimeStamp),
+                            Type = memoryMgr.Read<WoWChatMsgType>(baseMsg + WowBuildInfoX64.ChatType)
+                        };
+                        //log.Info("0");
+                        //log.Info(ChatMessages == null);
+                        //log.Info(s == null);
+                        //log.Info(ChatMessages[i].Type);
+                        //log.Info(ChatMessages[i] != s);
                         if (ChatMessages[i] != s)
                         {
                             ChatMessages[i] = s;
-                            yield return ParseChatMsg(s);
+                            //log.Info("1");
+                            yield return s;
                         }
                     }
                 }
             }
         }
 
-        private ChatMsg ParseChatMsg(string s)
-        {
-            // Type: [7], Channel: [], Player Name: [Тэлин-Гордунни], Sender GUID: [Player-1602-05E946D2], Active player: [Player-1929-0844D1FA], Text: [2]
-            Regex regex = new Regex("Type: \\[(\\d+)\\], Channel: \\[(.*)\\], Player Name: \\[(.*)\\], Sender GUID: \\[(.*)\\], Active player: \\[.*\\], Text: \\[(.*)\\]");
-            Match match = regex.Match(s);
-            if (match.Success)
-            {
-                if (!Enum.IsDefined(typeof(WoWChatMsgType), int.Parse(match.Groups[1].Value)))
-                {
-                    log.Error(string.Format("Type: {0}; Channel: {1}; Player Name: {2}; Sender GUID: {3}; Text: {4}",
-                        int.Parse(match.Groups[1].Value), match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value));
-                }
-                return new ChatMsg
-                {
-                    Type = (WoWChatMsgType)int.Parse(match.Groups[1].Value),
-                    Channel = match.Groups[2].Value,
-                    Sender = match.Groups[3].Value,
-                    SenderGUID = match.Groups[4].Value,
-                    Text = match.Groups[5].Value
-                };
-            }
-            log.Error("ParseChatMsg: unknown signature: " + s);
-            return new ChatMsg();
-        }
+        //private ChatMsg ParseChatMsg(string s, IntPtr baseMsg)
+        //{
+        //    // Type: [7], Channel: [], Player Name: [Тэлин-Гордунни], Sender GUID: [Player-1602-05E946D2], Active player: [Player-1929-0844D1FA], Text: [2]
+        //    Regex regex = new Regex("Type: \\[(\\d+)\\], Channel: \\[(.*)\\], Player Name: \\[(.*)\\], Sender GUID: \\[(.*)\\], Active player: \\[.*\\], Text: \\[(.*)\\]");
+        //    Match match = regex.Match(s);
+        //    if (match.Success)
+        //    {
+        //        if (!Enum.IsDefined(typeof(WoWChatMsgType), int.Parse(match.Groups[1].Value)))
+        //        {
+        //            log.Error(string.Format("Type: {0}; Channel: {1}; Player Name: {2}; Sender GUID: {3}; Text: {4}",
+        //                int.Parse(match.Groups[1].Value), match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value));
+        //        }
+        //        return new ChatMsg
+        //        {
+        //            Type = (WoWChatMsgType)int.Parse(match.Groups[1].Value),
+        //            Channel = match.Groups[2].Value,
+        //            Sender = match.Groups[3].Value,
+        //            SenderGUID = match.Groups[4].Value,
+        //            Text = match.Groups[5].Value
+        //        };
+        //    }
+        //    log.Error($"ParseChatMsg: unknown signature: 0x{baseMsg.ToInt64().ToString("X")} ({s})");
+        //    return new ChatMsg();
+        //}
 
 
 
@@ -259,7 +272,7 @@ namespace AxTools.WoW.PluginSystem.API
                 }
                 try
                 {
-                    return memoryMgr.Read<byte>(memoryMgr.ImageBase + WowBuildInfoX64.GameState) == 2;
+                    return memoryMgr.Read<byte>(memoryMgr.ImageBase + WowBuildInfoX64.GameState) == 4;
                 }
                 catch
                 {

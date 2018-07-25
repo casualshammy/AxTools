@@ -81,7 +81,7 @@ namespace AxTools.Helpers
             {
                 WoWAddonsBackupCompressionLevel = 9;
             }
-            if (string.IsNullOrWhiteSpace(WoWDirectory) || !File.Exists(Path.Combine(WoWDirectory, "Wow-64.exe")) || !File.Exists(Path.Combine(WoWDirectory, "Scan-64.dll")))
+            if (string.IsNullOrWhiteSpace(WoWDirectory) || !File.Exists(Path.Combine(WoWDirectory, "Wow.exe")) || !File.Exists(Path.Combine(WoWDirectory, "WoW.mfil")))
             {
                 WoWDirectory = GetWowPath();
             }
@@ -277,7 +277,7 @@ namespace AxTools.Helpers
         {
             foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
             {
-                var path = Utils.FindFiles(drive.Name, "Wow-64.exe", 5).Select(l => Path.GetDirectoryName(l)).Intersect(Utils.FindFiles(drive.Name, "Scan-64.dll", 5).Select(l => Path.GetDirectoryName(l))).FirstOrDefault();
+                var path = Utils.FindFiles(drive.Name, "Wow.exe", 5).Select(l => Path.GetDirectoryName(l)).Intersect(Utils.FindFiles(drive.Name, "WoW.mfil", 5).Select(l => Path.GetDirectoryName(l))).FirstOrDefault();
                 if (path != null)
                     return path;
             }

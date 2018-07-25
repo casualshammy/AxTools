@@ -68,5 +68,13 @@ namespace AxTools.WoW.Internals
             }
         }
 
+        public byte[] GetGUIDBytes()
+        {
+            unsafe
+            {
+                return memory.ReadBytes(Address + WowBuildInfoX64.ObjectGUID, sizeof(WoWGUID));
+            }
+        }
+
     }
 }

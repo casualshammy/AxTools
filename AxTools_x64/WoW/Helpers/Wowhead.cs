@@ -50,7 +50,7 @@ namespace AxTools.WoW.Helpers
                         Match match = regex.Match(xml);
                         if (match.Success)
                         {
-                            info = new WowheadItemInfo(match.Groups[1].Value, uint.Parse(match.Groups[4].Value), uint.Parse(match.Groups[2].Value), uint.Parse(match.Groups[3].Value));
+                            info = new WowheadItemInfo(Regex.Unescape(match.Groups[1].Value), uint.Parse(match.Groups[4].Value), uint.Parse(match.Groups[2].Value), uint.Parse(match.Groups[3].Value));
                             using (MemoryStream ms = new MemoryStream(webClient.DownloadData("https://wow.zamimg.com/images/wow/icons/small/" + match.Groups[5].Value + ".jpg")))
                             {
                                 info.ImageBytes = ms.ToArray();
@@ -79,11 +79,11 @@ namespace AxTools.WoW.Helpers
                     {
                         webClient.Encoding = Encoding.UTF8;
                         string xml = webClient.DownloadString("https://" + _locale + ".wowhead.com/spell=" + spellID + "&power");
-                        Regex regex = new Regex("\\s+name_.+:\\s*'(.+)',\\s+icon: '(.*)',");
+                        Regex regex = new Regex("\"name_.+\":\"(.+)\",\"icon\":\"(.+?)\",");
                         Match match = regex.Match(xml);
                         if (match.Success)
                         {
-                            info = new WowheadSpellInfo(match.Groups[1].Value);
+                            info = new WowheadSpellInfo(Regex.Unescape(match.Groups[1].Value));
                             if (!string.IsNullOrWhiteSpace(match.Groups[2].Value))
                             {
                                 using (MemoryStream ms = new MemoryStream(webClient.DownloadData("https://wow.zamimg.com/images/wow/icons/small/" + match.Groups[2].Value + ".jpg")))
@@ -124,7 +124,7 @@ namespace AxTools.WoW.Helpers
                         Match match = regex.Match(xml);
                         if (match.Success)
                         {
-                            info = match.Groups[1].Value;
+                            info = Regex.Unescape(match.Groups[1].Value);
                             ZoneInfo_SaveToCache(zoneID, info);
                         }
                         else

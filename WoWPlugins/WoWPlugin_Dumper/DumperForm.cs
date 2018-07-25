@@ -247,10 +247,10 @@ namespace WoWPlugin_Dumper
                 if (chatTimer == null)
                 {
                     (chatTimer = dumper.CreateTimer(1000, game, delegate {
-                        foreach (var msg in game.ReadChat())
+                        foreach (ChatMsg msg in game.ReadChat())
                         {
                             //Log(string.Format("\tType: {0}; Channel: {1}; Sender: {2}; SenderGUID: {3}; Text: {4}", msg.Type, msg.Channel, msg.Sender, msg.SenderGUID, msg.Text));
-                            textBox1.AppendText(string.Format("\tType: {0}; Channel: {1}; Sender: {2}; SenderGUID: {3}; Text: {4}\r\n", msg.Type, msg.Channel, msg.Sender, msg.SenderGUID, msg.Text));
+                            textBox1.AppendText($"\tTimestamp: {msg.GetTimestampAsDateTime()}; Type: {msg.Type}; Channel: {msg.Channel}; Sender: {msg.Sender}; SenderGUID: {msg.SenderGUID}; Text: {msg.Text}\r\n");
                         }
                     })).Start();
                 }
@@ -263,6 +263,24 @@ namespace WoWPlugin_Dumper
 
         private void ButtonDumpInventory_Click(object sender, EventArgs e)
         {
+            Log("GetAllAvailableItems() start");
+            try
+            {
+                foreach (WoWItem i in game.GetAllAvailableItems())
+                {
+                    Log($"ID: {i.EntryID}; GUID: {i.GUID}; GUID bytes:{BitConverter.ToString(i.GetGUIDBytes())}; Name: {i.Name}; StackCount: {i.StackSize}; Contained in: {i.ContainedIn}; Enchant: {i.Enchant}; " +
+                        $"BagID, SlotID: {i.BagID} {i.SlotID}; Address: 0x{i.Address.ToInt64().ToString("X")}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
+            }
+
+
+            Log("GetAllAvailableItems() stop");
+            MessageBox.Show("Completed");
+            //return;
             Log("Dump START (buttonDumpInventory_Click)");
             WoWPlayerMe me = null;
             try
@@ -323,6 +341,7 @@ namespace WoWPlugin_Dumper
                 else
                 {
                     Log("ERROR: localPlayer is null!");
+                    MessageBox.Show("ERROR: localPlayer is null!");
                     return;
                 }
             }
@@ -350,6 +369,7 @@ namespace WoWPlugin_Dumper
                 Log($"\tGUID: {lp.GUID}; Address: 0x{lp.Address.ToInt64().ToString("X")}; Location: {lp.Location}; Pitch: {lp.Pitch}");
                 Log($"\tName: {lp.Name}; TargetGUID: {lp.TargetGUID}; Class: {lp.Class}; Health/MaxHealth: {lp.Health}/{lp.HealthMax}");
                 Log($"\tLevel: {lp.Level}; Faction: {lp.Faction}; Race: {lp.Race}; IsMounted: {lp.IsMounted}; IsFlying: {lp.IsFlying}");
+                Log($"\tGUID bytes: {BitConverter.ToString(lp.GetGUIDBytes())}");
             }
             catch (Exception ex)
             {

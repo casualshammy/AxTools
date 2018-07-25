@@ -466,6 +466,7 @@ namespace AxTools.Forms
                     return;
                 }
                 Stopwatch stopwatch = Stopwatch.StartNew();
+                metroLinkRunScriptOnce.Enabled = false;
                 Task.Run(() => {
                     try
                     {
@@ -473,7 +474,7 @@ namespace AxTools.Forms
                         lock (luaExecutionLock)
                             luaEngine.DoString(Encoding.UTF8.GetBytes(textBoxLuaCode.Text));
                     }
-                    catch (NLua.Exceptions.LuaException ex)
+                    catch (LuaException ex)
                     {
                         MsgBox(ex.Message);
                     }
@@ -484,7 +485,7 @@ namespace AxTools.Forms
                             labelRequestTime.Visible = true;
                         });
                     }
-                });
+                }).ContinueWith(l => { metroLinkRunScriptOnce.Enabled = true; });
             }
         }
 

@@ -32,7 +32,6 @@ namespace AxTools.WoW
 		internal static readonly int LastHardwareAction = 0x1446208; // [int] CGGameUI::UpdatePlayerAFK / WRITE
 		internal static readonly int TickCount = 0x1439160; // [int]
 		internal static readonly int GameState = 0x16A179E; // CGGameUI::LeaveWorld (or Script_IsPlayerInWorld (2) or Script_PlaySound) (it's equal to 2 if in game, 1 if loading from login screen)
-		internal static readonly int Possible_NotLoadingScreen = 0x135474C;
 		//internal static readonly int PlayerName = 0x17EF7E0; // ClientServices::GetCharacterName (or Script_UnitName/GetPlayerName)
 		//internal static readonly int PlayerRealm = 0x17EF996; // Гордунни = D0 93 D0 BE D1 80 D0 B4 D1 83 D0 BD D0 BD D0 B8 // Черный Шрам = D0 A7 D0 B5 D1 80 D0 BD D1 8B D0 B9 20 D0 A8 D1 80 D0 B0 D0 BC
 		internal static readonly int PlayerZoneID = 0x16A1820; // CGGameUI::NewZoneFeedback (16) (or Script_GetRaidRosterInfo (101))
@@ -58,42 +57,49 @@ namespace AxTools.WoW
 		// HOW TO FIND PlayerIsLooting
 		// Look into functions in "Script_GetNumLootItems"
 
+		// HOW TO FIND PlayerZoneID
+		// CheatEngine :(
+
+		// GameState: 3 - loading from character screen, 2 - almost loaded, 4 - in game?
+
+		// Bags info: 
+
 		#endregion
 
 		#region Build info
 
 		internal static readonly byte[] WoWHash =
 		{
-            0xBE, 0x8C, 0xCE, 0x8C, 0xFF, 0x64, 0xEB, 0xE6, 0x92, 0x8C, 0x31, 0xE2, 0x6E, 0xD3, 0x7A, 0x31, 0x42, 0x62, 0x07, 0x99, 0x01, 0x3D, 0xBD, 0x62, 0xE3, 0xE7, 0x20, 0xA5, 0x5B, 0x40, 0x3B, 0x2F
-        };
+			0x75, 0x36, 0x01, 0xFE, 0xD9, 0x67, 0xB1, 0x7E, 0xFC, 0x43, 0x40, 0x6F, 0xDA, 0x27, 0xD3, 0x92, 0x21, 0x14, 0xAC, 0xC1, 0x04, 0x30, 0x8F, 0x44, 0xFE, 0xB2, 0x9F, 0x89, 0x16, 0xAA, 0x25, 0x11
+		};
 
-        internal const int WoWRevision = 26365;
+		internal const int WoWRevision = 27144;
 
-        #endregion
+		#endregion
 
-        #region Static infos
+		#region Static infos
 
-        internal const int LastHardwareAction = 0x18B9E78;
-        internal const int PlayerIsLooting = 0x1C06248;
-        internal const int GameState = 0x1BE5398;
-        internal const int TickCount = 0x18B8ECC;
-        internal const int PlayerGUID = 0x1C76D70;
-        internal const int BlackMarketNumItems = 0x1C3C8F0;
-        internal const int UIFrameBase = 0x18B9E70;
-        internal const int MouseoverGUID = 0x1BE53A0;
-        internal const int GlueState = 0x19540E9;
-        internal const int ObjectManager = 0x196F240;
-        internal const int IsChatAFK = 0x1B876F0;
-        internal const int BlackMarketItems = 0x1C3C8F8;
-        internal const int NotLoadingScreen = 0x15FF624;
-        internal const int PlayerZoneID = 0x1BFA7D4;
-        internal const int FocusedWidget = 0x18B9E28;
-        internal const int KnownSpells = 0x1BE68D8;
-        internal const int ChatIsOpened = 0x18D15E4;
-        internal const int ChatBuffer = 0x1B87700;
-        internal const int KnownSpellsCount = 0x1BE68D0;
+		internal const int GlueState = 0x26F9609;
+		internal const int UIFrameBase = 0x26F2ED0;
+		internal const int NotLoadingScreen = 0x23E039C;
+		internal const int MouseoverGUID = 0x2B27488;
+		internal const int BlackMarketNumItems = 0x2BB2F50;
+		internal const int BlackMarketItems = 0x2BB2F50;
+		internal const int GameState = 0x2B27461;
+		internal const int PlayerZoneID = 0x2B2675C;
+		internal const int ObjectManager = 0x27E07B8;
+		internal const int IsChatAFK = 0x2B28310;
+		internal const int ChatIsOpened = 0x2722014;
+		internal const int PlayerIsLooting = 0x2B8B0B8;
+		internal const int LastHardwareAction = 0x26F2ED8;
+		internal const int KnownSpellsCount = 0x2B5B7F0;
+		internal const int KnownSpells = 0x2B5B7F8;
+		internal const int PlayerGUID = 0x2C453F0;
+		internal const int FocusedWidget = 0x26F2FB8;
+		internal const int TickCount = 0x26F24CC;
 
-        internal const int NameCacheBase = 0x166A918;
+		internal const int ChatBuffer = 0x2B28320;
+		internal const int NameCacheBase = 0x166A918;
 
 		#endregion
 
@@ -122,46 +128,46 @@ namespace AxTools.WoW
 
 		internal static readonly int GameObjectOwnerGUIDBase = 0x10;
 		internal static readonly int GameObjectOwnerGUIDOffset = 0x30;
-		internal static readonly int GameObjectEntryID = 0x24;
+		internal static readonly int GameObjectEntryID = 0x10;
 		internal static readonly int GameObjectNameBase = 0x478;
-		internal static readonly int GameObjectNameOffset = 0xD8;
-		internal const int GameObjectIsBobbing = 0x1C4;
-		internal const int GameObjectLocation = 0x228;
+		internal static readonly int GameObjectNameOffset = 0xE0;
+		internal const int GameObjectIsBobbing = 0x14C;
+		internal const int GameObjectLocation = 0x1b0;
 
 		#endregion
 
 		#region Player unit
 
 		internal static readonly int UnitDescriptors = 0x10;
-		internal static readonly int UnitCastingID = 0x1C98;
-		internal static readonly int UnitChannelingID = 0x1CC8;
+		internal static readonly int UnitCastingID = 0x1920;
+		internal static readonly int UnitChannelingID = 0x1950;
 		internal static readonly int UnitLocation = 0x1588;
 		internal static readonly int UnitRotation = UnitLocation + 0x10;
 		internal static readonly int UnitPitch = UnitRotation + 0x4;
 
-		internal const int UnitTargetGUID = 0xA0;
-		internal const int UnitClass = 0xD5;
-		internal const int UnitHealth = 0xE0;
-		internal const int UnitPower = 0xE8;
-		internal const int UnitHealthMax = 0x100;
-		internal const int UnitPowerMax = 0x108;
-		internal const int UnitLevel = 0x150;
-		internal const int UnitRace = 0x168;
-		internal const int UnitFlags = 0x184;
-		internal const int UnitMountDisplayID = 0x1B0;
+		internal const int UnitTargetGUID = 0x9c;
+		internal const int UnitClass = 0xD1;
+		internal const int UnitHealth = 0xDC;
+		internal const int UnitPower = 0xE4;
+		internal const int UnitHealthMax = 0xfc;
+		internal const int UnitPowerMax = 0x104;
+		internal const int UnitLevel = 0x14C;
+		internal const int UnitRace = 0x170;
+		internal const int UnitFlags = 0x18C;
+		internal const int UnitMountDisplayID = 0x1B8;
 
-		internal const int AuraCount1 = 0x27E8;
-		internal const int AuraCount2 = 0x1DE8;
-		internal const int AuraTable1 = 0x1DEC;
-		internal const int AuraTable2 = 0x1DF0;
+		internal const int AuraCount1 = 0x24D8;
+		internal const int AuraCount2 = 0x1A58;
+		internal const int AuraTable1 = 0x1A58;
+		internal const int AuraTable2 = 0x1A60;
 
 		internal const int NameCacheNext = 0x00;
 		internal const int NameCacheGuid = 0x20;
 		internal const int NameCacheName = 0x31;
 
-		internal const int PlayerInvSlots = 0x10F8; //  0x10F4
+		internal const int PlayerInvSlots = 0x1D74; //  0x10F4
 
-		internal const int PlayerSpeedBase = 0x210;
+		internal const int PlayerSpeedBase = 0x198;
 		internal const int PlayerSpeedOffset = 0xA4;
 
 		internal const int PlayerIsLootingOffset0 = 0x1588;
@@ -172,7 +178,7 @@ namespace AxTools.WoW
 		#region NPC
 
 		internal static readonly int NpcNameBase = 0x1740;
-		internal static readonly int NpcNameOffset = 0xA0;
+		internal static readonly int NpcNameOffset = 0xE0;
 
 		internal const int NpcDynamicFlags = 10;
 
@@ -180,18 +186,23 @@ namespace AxTools.WoW
 
 		#region WoWItem
 
-		internal const int WoWItemContainedIn = 0x40;
-		internal const int WoWItemStackCount = 0x70;
+		internal const int WoWItemContainedIn = 0x2c;
+		internal const int WoWItemStackCount = 0x5c;
 		internal const int WoWItemEnchantment = 0x90;
 
-		internal const int WoWContainerItems = 0x154;
+		internal const int WoWContainerItems = 0x140;
 
 		#endregion
 
 		#region GameChat
 
-		internal const int ChatNextMessage = 0x17F0; // OK
-		internal const int ChatFullMessageOffset = 0x65; // OK
+		internal const int ChatNextMessage = 0xCB8; // OK
+		internal const int ChatFullMessageOffset = 0xE6; // OK
+		internal const int ChatSenderGuid = 0x00;
+		internal const int ChatSenderName = 0x034;
+		internal const int ChatType = 0xCA0;
+		internal const int ChatChannelNum = 0xCA4;
+		internal const int ChatTimeStamp = 0xCB0;
 
 		#endregion
 

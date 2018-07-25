@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using AxTools.Helpers;
 using FMemory;
 
 namespace AxTools.WoW.Internals
@@ -11,9 +12,9 @@ namespace AxTools.WoW.Internals
     internal class ObjectMgr
     {
 
-        private static ushort GetObjectType(MemoryManager memory, IntPtr address)
+        private static byte GetObjectType(MemoryManager memory, IntPtr address)
         {
-            return memory.Read<ushort>(address + WowBuildInfoX64.ObjectType);
+            return memory.Read<byte>(address + WowBuildInfoX64.ObjectType);
         }
         
         internal static WoWPlayerMe Pulse(WowProcess wow, List<WowObject> wowObjects = null, List<WowPlayer> wowUnits = null, List<WowNpc> wowNpcs = null)
@@ -25,42 +26,43 @@ namespace AxTools.WoW.Internals
             WoWGUID playerGUID = wow.Memory.Read<WoWGUID>(wow.Memory.ImageBase + WowBuildInfoX64.PlayerGUID);
             IntPtr manager = wow.Memory.Read<IntPtr>(wow.Memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = GetObjectType(wow.Memory, currObject); (i < 10) && (i > 0); i = GetObjectType(wow.Memory, currObject))
+            byte objType = GetObjectType(wow.Memory, currObject);
+            while (objType < 18 && objType >= 0)
             {
-                switch (i)
+                switch (objType)
                 {
-                    case 3:
+                    case (byte)ObjectType.Unit:
                         wowNpcs?.Add(new WowNpc(currObject, wow));
                         break;
-                    case 4:
-                        WoWGUID objectGUID = wow.Memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID);
-                        if (objectGUID == playerGUID)
+                    case (byte)ObjectType.Player:
+                        wowUnits?.Add(new WowPlayer(currObject, wow.Memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID), wow));
+                        break;
+                    case (byte)ObjectType.ActivePlayer:
+                        WoWGUID guid = wow.Memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID);
+                        if (guid == playerGUID)
                         {
                             me = new WoWPlayerMe(currObject, wow);
                         }
-                        else if (wowUnits != null)
-                        {
-                            wowUnits.Add(new WowPlayer(currObject, objectGUID, wow));
-                        }
                         break;
-                    case 5:
+                    case (byte)ObjectType.GameObject:
                         wowObjects?.Add(new WowObject(currObject, wow));
                         break;
                 }
                 currObject = wow.Memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
+                objType = GetObjectType(wow.Memory, currObject);
             }
             return me;
         }
-            
+        
         internal static WoWItem[] GetItemsInBags(WowProcess wow, PlayerInventoryAndContainers inventoryAndContainers)
         {
             Dictionary<WoWGUID, List<WoWGUID>> itemCountPerContainer = new Dictionary<WoWGUID, List<WoWGUID>>();
             List<WoWItem> items = new List<WoWItem>();
             IntPtr manager = wow.Memory.Read<IntPtr>(wow.Memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = GetObjectType(wow.Memory, currObject); (i < 10) && (i > 0); i = GetObjectType(wow.Memory, currObject))
+            for (byte i = GetObjectType(wow.Memory, currObject); (i < 18) && (i >= 0); i = GetObjectType(wow.Memory, currObject))
             {
-                if (i == 2)
+                if (i == (byte)ObjectType.Container)
                 {
                     WowObject p = new WowObject(currObject, wow);
                     if (inventoryAndContainers.Containers.Contains(p.GUID))
@@ -74,9 +76,9 @@ namespace AxTools.WoW.Internals
             }
             //
             currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = GetObjectType(wow.Memory, currObject); (i < 10) && (i > 0); i = GetObjectType(wow.Memory, currObject))
+            for (byte i = GetObjectType(wow.Memory, currObject); (i < 18) && (i >= 0); i = GetObjectType(wow.Memory, currObject))
             {
-                if (i == 1) // WoWItem
+                if (i == (byte)ObjectType.Item)
                 {
                     WoWItem item = new WoWItem(currObject, wow);
                     for (int j = 0; j < inventoryAndContainers.Containers.Length; j++)
@@ -108,9 +110,9 @@ namespace AxTools.WoW.Internals
             List<WoWItem> items = new List<WoWItem>();
             IntPtr manager = wow.Memory.Read<IntPtr>(wow.Memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (int i = GetObjectType(wow.Memory, currObject); (i < 10) && (i > 0); i = GetObjectType(wow.Memory, currObject))
+            for (byte i = GetObjectType(wow.Memory, currObject); (i < 18) && (i >= 0); i = GetObjectType(wow.Memory, currObject))
             {
-                if (i == 1) // WoWItem
+                if (i == (byte)ObjectType.Item) // WoWItem
                 {
                     WoWItem item = new WoWItem(currObject, wow);
                     if (inventory.Contains(item.GUID))

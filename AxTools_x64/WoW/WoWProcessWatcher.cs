@@ -53,7 +53,7 @@ namespace AxTools.WoW
         {
             try
             {
-                if (obj.ProcessName.ToLower() == "wow-64.exe")
+                if (obj.ProcessName.ToLower() == "wow.exe")
                 {
                     if (Processes.TryRemove(obj.ProcessID, out WowProcess pWowProcess))
                     {
@@ -81,11 +81,6 @@ namespace AxTools.WoW
             {
                 string processName = obj.ProcessName.ToLower();
                 if (processName == "wow.exe")
-                {
-                    Notify.TrayPopup("Unsupported WoW version", "AxTools doesn't support x86 versions of WoW client", NotifyUserType.Warn, true);
-                    log.Error(string.Format("[{0}:{1}] 32bit WoW processes aren't supported", processName, obj.ProcessID));
-                }
-                else if (processName == "wow-64.exe")
                 {
                     WowProcess wowProcess = new WowProcess(obj.ProcessID);
                     Processes.TryAdd(obj.ProcessID, wowProcess);
@@ -116,9 +111,6 @@ namespace AxTools.WoW
                 switch (i.ProcessName.ToLower())
                 {
                     case "wow":
-                        Notify.TrayPopup("Unsupported WoW version", "AxTools doesn't support x86 versions of WoW client", NotifyUserType.Warn, true);
-                        break;
-                    case "wow-64":
                         WowProcess process = new WowProcess(i.Id);
                         Processes.TryAdd(i.Id, process);
                         log.Info(string.Format("{0} Process added", process));
