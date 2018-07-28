@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using AxTools.WoW.Internals;
+using System.Reflection;
 
 namespace AxTools.WoW
 {
@@ -70,35 +71,35 @@ namespace AxTools.WoW
 
 		internal static readonly byte[] WoWHash =
 		{
-			0x75, 0x36, 0x01, 0xFE, 0xD9, 0x67, 0xB1, 0x7E, 0xFC, 0x43, 0x40, 0x6F, 0xDA, 0x27, 0xD3, 0x92, 0x21, 0x14, 0xAC, 0xC1, 0x04, 0x30, 0x8F, 0x44, 0xFE, 0xB2, 0x9F, 0x89, 0x16, 0xAA, 0x25, 0x11
+			0xC8, 0xAA, 0x6E, 0xCA, 0x18, 0x80, 0x11, 0xD9, 0xB5, 0x96, 0x79, 0xCE, 0x56, 0x7A, 0xA0, 0x85, 0x6C, 0x60, 0xB7, 0xBF, 0x9D, 0xCB, 0x48, 0x7F, 0xA4, 0xD8, 0x52, 0xBA, 0x53, 0x8C, 0xF3, 0xFF
 		};
 
-		internal const int WoWRevision = 27144;
+		internal const int WoWRevision = 27178;
 
 		#endregion
 
 		#region Static infos
 
-		internal const int GlueState = 0x26F9609;
-		internal const int UIFrameBase = 0x26F2ED0;
-		internal const int NotLoadingScreen = 0x23E039C;
-		internal const int MouseoverGUID = 0x2B27488;
-		internal const int BlackMarketNumItems = 0x2BB2F50;
-		internal const int BlackMarketItems = 0x2BB2F50;
-		internal const int GameState = 0x2B27461;
-		internal const int PlayerZoneID = 0x2B2675C;
-		internal const int ObjectManager = 0x27E07B8;
-		internal const int IsChatAFK = 0x2B28310;
-		internal const int ChatIsOpened = 0x2722014;
-		internal const int PlayerIsLooting = 0x2B8B0B8;
-		internal const int LastHardwareAction = 0x26F2ED8;
-		internal const int KnownSpellsCount = 0x2B5B7F0;
-		internal const int KnownSpells = 0x2B5B7F8;
-		internal const int PlayerGUID = 0x2C453F0;
-		internal const int FocusedWidget = 0x26F2FB8;
-		internal const int TickCount = 0x26F24CC;
+		internal const int GlueState = 0x26FD749;
+		internal const int UIFrameBase = 0x26F6FF0;
+		internal const int BlackMarketItems = 0x2BB70A8;
+		internal const int PlayerZoneID = 0x2B2A89C;
+		internal const int MouseoverGUID = 0x2B2B5C8;
+		internal const int LastHardwareAction = 0x26F6FF8;
+		internal const int BlackMarketNumItems = 0x2BB70A0;
+		internal const int NotLoadingScreen = 0x23E439C;
+		internal const int ChatIsOpened = 0x2726164;
+		internal const int GameState = 0x2B2B5A1;
+		internal const int TickCount = 0x26F65EC;
+		internal const int KnownSpells = 0x2B5F948;
+		internal const int PlayerIsLooting = 0x2B8F208;
+		internal const int KnownSpellsCount = 0x2B5F940;
+		internal const int FocusedWidget = 0x26F70D8;
+		internal const int PlayerGUID = 0x2C49500;
+		internal const int IsChatAFK = 0x2B2C460;
+		internal const int ObjectManager = 0x27E48F8;
 
-		internal const int ChatBuffer = 0x2B28320;
+		internal const int ChatBuffer = 0x2B2C470;
 		internal const int NameCacheBase = 0x166A918;
 
 		#endregion
@@ -154,7 +155,7 @@ namespace AxTools.WoW
 		internal const int UnitLevel = 0x14C;
 		internal const int UnitRace = 0x170;
 		internal const int UnitFlags = 0x18C;
-		internal const int UnitMountDisplayID = 0x1B8;
+		internal const int UnitMountDisplayID = 0x1C0;
 
 		internal const int AuraCount1 = 0x24D8;
 		internal const int AuraCount2 = 0x1A58;
@@ -165,7 +166,10 @@ namespace AxTools.WoW
 		internal const int NameCacheGuid = 0x20;
 		internal const int NameCacheName = 0x31;
 
-		internal const int PlayerInvSlots = 0x1D74; //  0x10F4
+		internal const int ActivePlayer_Inventory = 0x1D74;
+		internal const int ActivePlayer_Containers = ActivePlayer_Inventory + 19 * 16; // 19 WoWGUIDs of items in active player's inventory
+		internal const int ActivePlayer_Backpack = ActivePlayer_Containers + 4 * 16; // 4 active player's containers
+
 
 		internal const int PlayerSpeedBase = 0x198;
 		internal const int PlayerSpeedOffset = 0xA4;
@@ -188,7 +192,7 @@ namespace AxTools.WoW
 
 		internal const int WoWItemContainedIn = 0x2c;
 		internal const int WoWItemStackCount = 0x5c;
-		internal const int WoWItemEnchantment = 0x90;
+		internal const int WoWItem_WeaponEnchant = 0x88;
 
 		internal const int WoWContainerItems = 0x140;
 

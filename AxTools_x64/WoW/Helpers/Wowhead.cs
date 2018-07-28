@@ -79,12 +79,12 @@ namespace AxTools.WoW.Helpers
                     {
                         webClient.Encoding = Encoding.UTF8;
                         string xml = webClient.DownloadString("https://" + _locale + ".wowhead.com/spell=" + spellID + "&power");
-                        Regex regex = new Regex("\"name_.+\":\"(.+)\",\"icon\":\"(.+?)\",");
+                        Regex regex = new Regex("\"name_.+\":\"(.+)\",\"icon\":\"?(.+?)\"?,");
                         Match match = regex.Match(xml);
                         if (match.Success)
                         {
                             info = new WowheadSpellInfo(Regex.Unescape(match.Groups[1].Value));
-                            if (!string.IsNullOrWhiteSpace(match.Groups[2].Value))
+                            if (!string.IsNullOrWhiteSpace(match.Groups[2].Value) && match.Groups[2].Value != "null")
                             {
                                 using (MemoryStream ms = new MemoryStream(webClient.DownloadData("https://wow.zamimg.com/images/wow/icons/small/" + match.Groups[2].Value + ".jpg")))
                                 {
@@ -93,7 +93,7 @@ namespace AxTools.WoW.Helpers
                             }
                             else
                             {
-                                info.Image = AxTools.Properties.Resources.dialog_error;
+                                info.Image = Properties.Resources.dialog_error;
                             }
                             
                             SpellInfo_SaveToCache(spellID, info);

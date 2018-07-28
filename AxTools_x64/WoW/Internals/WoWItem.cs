@@ -10,12 +10,12 @@ namespace AxTools.WoW.Internals
             IntPtr descriptors = memory.Read<IntPtr>(pAddress + WowBuildInfoX64.GameObjectOwnerGUIDBase);
             ContainedIn = memory.Read<WoWGUID>(descriptors + WowBuildInfoX64.WoWItemContainedIn);
             StackSize = memory.Read<uint>(descriptors + WowBuildInfoX64.WoWItemStackCount);
-            Enchant = memory.Read<uint>(descriptors + WowBuildInfoX64.WoWItemEnchantment);
+            WeaponEnchant = memory.Read<uint>(descriptors + WowBuildInfoX64.WoWItem_WeaponEnchant);
         }
 
         public readonly WoWGUID ContainedIn;
         public readonly uint StackSize;
-        public readonly uint Enchant;
+        public readonly uint WeaponEnchant;
         public int BagID = 0;
         public int SlotID = 0;
         private WowheadItemInfo itemInfo;

@@ -10,6 +10,7 @@ namespace AxTools.WoW.Internals
         public readonly ulong Low;
 
         public static readonly WoWGUID Zero = new WoWGUID(0, 0);
+        public static unsafe readonly int Size = sizeof(WoWGUID);
 
         public WoWGUID(ulong high, ulong low)
         {

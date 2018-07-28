@@ -277,15 +277,18 @@ namespace AxTools.WoW.Internals
             }
             set
             {
+                return; // todo: 
+                #pragma warning disable CS0162 // Unreachable code detected
                 memory.Write(Address + WowBuildInfoX64.UnitPitch, value);
                 pitch = null;
+                #pragma warning restore CS0162 // Unreachable code detected
             }
         }
 
         private List<WoWAura> auras;
         public List<WoWAura> Auras => auras ?? (auras = WoWAura.GetAurasForMemoryAddress(memory, Address));
 
-        private static object dbLock = new object();
+        private static readonly object dbLock = new object();
         private static SQLiteConnection dbConnection;
 
         private void SaveToDB(string name)

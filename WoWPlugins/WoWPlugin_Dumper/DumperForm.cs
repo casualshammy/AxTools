@@ -263,24 +263,6 @@ namespace WoWPlugin_Dumper
 
         private void ButtonDumpInventory_Click(object sender, EventArgs e)
         {
-            Log("GetAllAvailableItems() start");
-            try
-            {
-                foreach (WoWItem i in game.GetAllAvailableItems())
-                {
-                    Log($"ID: {i.EntryID}; GUID: {i.GUID}; GUID bytes:{BitConverter.ToString(i.GetGUIDBytes())}; Name: {i.Name}; StackCount: {i.StackSize}; Contained in: {i.ContainedIn}; Enchant: {i.Enchant}; " +
-                        $"BagID, SlotID: {i.BagID} {i.SlotID}; Address: 0x{i.Address.ToInt64().ToString("X")}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Log(ex.Message);
-            }
-
-
-            Log("GetAllAvailableItems() stop");
-            MessageBox.Show("Completed");
-            //return;
             Log("Dump START (buttonDumpInventory_Click)");
             WoWPlayerMe me = null;
             try
@@ -299,7 +281,7 @@ namespace WoWPlugin_Dumper
                 int counter = 0;
                 foreach (WoWItem item in me.Inventory)
                 {
-                    Log(string.Format("\tSlot: {5}; ID: {0}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.Enchant, counter));
+                    Log(string.Format("\tSlot: {5}; ID: {0}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}; Address: 0x{6:X}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.Enchant, counter, item.Address.ToInt64()));
                     counter++;
                 }
             }
@@ -408,6 +390,7 @@ namespace WoWPlugin_Dumper
                 if (lp != null)
                 {
                     Log("Dump OK");
+                    Log($"Old pitch: {lp.Pitch}");
                 }
                 else
                 {
@@ -421,6 +404,7 @@ namespace WoWPlugin_Dumper
                 return;
             }
             lp.Pitch = (float)((new Random().NextDouble())/10);
+            Log($"New pitch: {lp.Pitch}");
         }
 
         private void btnTestVertAngle_Click(object sender, EventArgs e)

@@ -178,22 +178,16 @@ namespace AxTools.WoW.PluginSystem.API
                         IntPtr baseMsg = chatStart + i * WowBuildInfoX64.ChatNextMessage;
                         ChatMsg s = new ChatMsg
                         {
-                            Sender = Encoding.UTF8.GetString(memoryMgr.ReadBytes(baseMsg + WowBuildInfoX64.ChatSenderName, 100).TakeWhile(l => l != 0).ToArray()),
+                            Sender = Encoding.UTF8.GetString(memoryMgr.ReadBytes(baseMsg + WowBuildInfoX64.ChatSenderName, 0x100).TakeWhile(l => l != 0).ToArray()),
                             Channel = memoryMgr.Read<byte>(baseMsg + WowBuildInfoX64.ChatChannelNum),
                             SenderGUID = memoryMgr.Read<WoWGUID>(baseMsg + WowBuildInfoX64.ChatSenderGuid),
                             Text = Encoding.UTF8.GetString(memoryMgr.ReadBytes(baseMsg + WowBuildInfoX64.ChatFullMessageOffset, 0x200).TakeWhile(l => l != 0).ToArray()),
                             TimeStamp = memoryMgr.Read<int>(baseMsg + WowBuildInfoX64.ChatTimeStamp),
                             Type = memoryMgr.Read<WoWChatMsgType>(baseMsg + WowBuildInfoX64.ChatType)
                         };
-                        //log.Info("0");
-                        //log.Info(ChatMessages == null);
-                        //log.Info(s == null);
-                        //log.Info(ChatMessages[i].Type);
-                        //log.Info(ChatMessages[i] != s);
                         if (ChatMessages[i] != s)
                         {
                             ChatMessages[i] = s;
-                            //log.Info("1");
                             yield return s;
                         }
                     }

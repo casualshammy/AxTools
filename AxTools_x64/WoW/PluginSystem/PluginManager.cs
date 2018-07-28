@@ -29,7 +29,7 @@ namespace AxTools.WoW.PluginSystem
         internal static event Action<IPlugin2> PluginUnloaded;
 
         internal static Dictionary<string, List<DateTime>> _pluginsUsageStats;
-        private static Dictionary<string, List<DateTime>> pluginsUsageStats
+        private static Dictionary<string, List<DateTime>> PluginsUsageStats
         {
             get
             {
@@ -69,7 +69,7 @@ namespace AxTools.WoW.PluginSystem
                     jsonWriter.Formatting = Formatting.Indented;
                     jsonWriter.IndentChar = ' ';
                     jsonWriter.Indentation = 4;
-                    js.Serialize(jsonWriter, pluginsUsageStats);
+                    js.Serialize(jsonWriter, PluginsUsageStats);
                 }
             }
             string json = sb.ToString();
@@ -103,7 +103,7 @@ namespace AxTools.WoW.PluginSystem
                     {
                         plugin.OnStart(new GameInterface(process));
                         PluginWoW[plugin.Name] = process.ProcessID;
-                        pluginsUsageStats[plugin.Name].Add(DateTime.UtcNow);
+                        PluginsUsageStats[plugin.Name].Add(DateTime.UtcNow);
                         SavePluginUsageStats();
                         log.Info(string.Format("{0} [{1}] Plugin is started", process, plugin.Name));
                     }
@@ -153,14 +153,6 @@ namespace AxTools.WoW.PluginSystem
                 LoadPluginsFromDisk();
                 CheckDependencies();
                 ClearOldAssemblies();
-                foreach (IPlugin2 plugin in LoadedPlugins)
-                {
-                    if (!pluginsUsageStats.ContainsKey(plugin.Name))
-                    {
-                        pluginsUsageStats[plugin.Name] = new List<DateTime>();
-                        SavePluginUsageStats();
-                    }
-                }
                 foreach (var i in Settings2.Instance.PluginHotkeys.Where(l => LoadedPlugins.Select(k => k.Name).Contains(l.Key)))
                 {
                     HotkeyManager.AddKeys("Plugin_" + i.Key, i.Value);
@@ -175,9 +167,11 @@ namespace AxTools.WoW.PluginSystem
             list.Sort((first, second) =>
             {
                 // delete old timestamps
-                pluginsUsageStats[first.Name].RemoveAll(l => (DateTime.UtcNow - l).TotalDays > 30);
-                pluginsUsageStats[second.Name].RemoveAll(l => (DateTime.UtcNow - l).TotalDays > 30);
-                int cmp = pluginsUsageStats[first.Name].Count.CompareTo(pluginsUsageStats[second.Name].Count);
+                if (!PluginsUsageStats.ContainsKey(first.Name)) PluginsUsageStats.Add(first.Name, new List<DateTime>());
+                if (!PluginsUsageStats.ContainsKey(second.Name)) PluginsUsageStats.Add(second.Name, new List<DateTime>());
+                PluginsUsageStats[first.Name].RemoveAll(l => (DateTime.UtcNow - l).TotalDays > 30);
+                PluginsUsageStats[second.Name].RemoveAll(l => (DateTime.UtcNow - l).TotalDays > 30);
+                int cmp = PluginsUsageStats[first.Name].Count.CompareTo(PluginsUsageStats[second.Name].Count);
                 if (cmp == 0)
                 {
                     return first.Name.CompareTo(second.Name);

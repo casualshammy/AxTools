@@ -213,7 +213,9 @@ namespace AxTools
                 {
                     log.Info("Found old WoWAccounts db, migrating...");
                     byte[] oldEncryptedPasswordData = JsonConvert.DeserializeObject<byte[]>(match.Groups[1].Value);
+                    #pragma warning disable CS0618 // Type or member is obsolete
                     var oldAccounts = WoWAccount.Load(oldEncryptedPasswordData);
+                    #pragma warning restore CS0618 // Type or member is obsolete
                     var newAccounts = new ObservableCollection<WoWAccount2>();
                     foreach (var entry in oldAccounts)
                     {

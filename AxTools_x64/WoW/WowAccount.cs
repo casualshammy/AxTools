@@ -17,12 +17,14 @@ namespace AxTools.WoW
     {
         private static readonly Log2 log = new Log2("WoWAccount");
 
+        #pragma warning disable CS0649
         [DataMember(Name = "WowAccountLogin")]
         internal string Login;
 
         [DataMember(Name = "WowAccountPassword")]
         internal string Password;
-        
+        #pragma warning restore CS0649
+
         [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
         [Obfuscation(Exclude = false, Feature = "constants")]
         internal static ObservableCollection<WoWAccount> Load(byte[] array)

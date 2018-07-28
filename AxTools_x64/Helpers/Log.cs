@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Timers;
 
@@ -77,14 +80,14 @@ namespace AxTools.Helpers
                 char[] subjCharsCleared = Array.FindAll(subjChars, c => char.IsLetterOrDigit(c) || c == '.' || c == ',' || c == ' ' || c == '-' || c == '!' || c == '?');
                 subject = new string(subjCharsCleared);
             }
-            using (WebClient webClient = new WebClient())
+            var values = new Dictionary<string, string>
             {
-                webClient.Credentials = new NetworkCredential(Settings2.Instance.UserID, Utils.GetComputerHID());
-                webClient.Encoding = Encoding.UTF8;
-                string postMessage = string.Format("ERRORS:\r\n{0}\r\n\r\n\r\n{1}",
-                    string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN))), File.ReadAllText(Globals.LogFileName, Encoding.UTF8));
-                webClient.UploadString(string.Format("https://axio.name/axtools/log-reporter/make_log.php?comment={0}", subject ?? ""), "POST", postMessage);
-            }
+                { "user", Settings2.Instance.UserID },
+                { "comment", subject ?? "" },
+                { "log-file", $"ERRORS:\r\n{string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN)))}\r\n\r\n\r\n" +
+                    $"{File.ReadAllText(Globals.LogFileName, Encoding.UTF8)}" }
+            };
+            var response = Globals.HttpClient.PostAsync("https://axio.name/axtools/log-reporter/make_log.php", new FormUrlEncodedContent(values)).Result;
         }
 
         private static void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)

@@ -16,12 +16,26 @@ namespace AxTools.WoW.Internals
         {
             return memory.Read<byte>(address + WowBuildInfoX64.ObjectType);
         }
-        
-        internal static WoWPlayerMe Pulse(WowProcess wow, List<WowObject> wowObjects = null, List<WowPlayer> wowUnits = null, List<WowNpc> wowNpcs = null)
+
+        private static bool TryGetNextObject(WowProcess wow, IntPtr address, out IntPtr nextAddress)
+        {
+            nextAddress = wow.Memory.Read<IntPtr>(address + WowBuildInfoX64.ObjectManagerNextObject);
+            return (ulong)nextAddress < (ulong)UInt32.MaxValue * 2;
+        }
+
+        internal static WoWPlayerMe Pulse(
+            WowProcess wow, 
+            List<WowObject> wowObjects = null, 
+            List<WowPlayer> wowUnits = null, 
+            List<WowNpc> wowNpcs = null, 
+            List<WoWItem> items = null, 
+            List<WowObject> containers = null)
         {
             wowObjects?.Clear();
             wowUnits?.Clear();
             wowNpcs?.Clear();
+            items?.Clear();
+            containers?.Clear();
             WoWPlayerMe me = null;
             WoWGUID playerGUID = wow.Memory.Read<WoWGUID>(wow.Memory.ImageBase + WowBuildInfoX64.PlayerGUID);
             IntPtr manager = wow.Memory.Read<IntPtr>(wow.Memory.ImageBase + WowBuildInfoX64.ObjectManager);
@@ -47,89 +61,20 @@ namespace AxTools.WoW.Internals
                     case (byte)ObjectType.GameObject:
                         wowObjects?.Add(new WowObject(currObject, wow));
                         break;
+                    case (byte)ObjectType.Container:
+                        containers?.Add(new WowObject(currObject, wow));
+                        break;
+                    case (byte)ObjectType.Item:
+                        items?.Add(new WoWItem(currObject, wow));
+                        break;
                 }
-                currObject = wow.Memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
+                if (!TryGetNextObject(wow, currObject, out currObject))
+                {
+                    break;
+                }
                 objType = GetObjectType(wow.Memory, currObject);
             }
             return me;
-        }
-        
-        internal static WoWItem[] GetItemsInBags(WowProcess wow, PlayerInventoryAndContainers inventoryAndContainers)
-        {
-            Dictionary<WoWGUID, List<WoWGUID>> itemCountPerContainer = new Dictionary<WoWGUID, List<WoWGUID>>();
-            List<WoWItem> items = new List<WoWItem>();
-            IntPtr manager = wow.Memory.Read<IntPtr>(wow.Memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            IntPtr currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (byte i = GetObjectType(wow.Memory, currObject); (i < 18) && (i >= 0); i = GetObjectType(wow.Memory, currObject))
-            {
-                if (i == (byte)ObjectType.Container)
-                {
-                    WowObject p = new WowObject(currObject, wow);
-                    if (inventoryAndContainers.Containers.Contains(p.GUID))
-                    {
-                        IntPtr desc = wow.Memory.Read<IntPtr>(p.Address + WowBuildInfoX64.UnitDescriptors);
-                        ContainerStruct itemsInContainer = wow.Memory.Read<ContainerStruct>(desc + WowBuildInfoX64.WoWContainerItems);
-                        itemCountPerContainer.Add(p.GUID, new List<WoWGUID>(itemsInContainer.Slots));
-                    }
-                }
-                currObject = wow.Memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
-            }
-            //
-            currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (byte i = GetObjectType(wow.Memory, currObject); (i < 18) && (i >= 0); i = GetObjectType(wow.Memory, currObject))
-            {
-                if (i == (byte)ObjectType.Item)
-                {
-                    WoWItem item = new WoWItem(currObject, wow);
-                    for (int j = 0; j < inventoryAndContainers.Containers.Length; j++)
-                    {
-                        if (inventoryAndContainers.Containers[j] == item.ContainedIn)
-                        {
-                            item.BagID = j + 1;
-                            item.SlotID = itemCountPerContainer[item.ContainedIn].IndexOf(item.GUID) + 1;
-                            items.Add(item);
-                        }
-                    }
-                    for (int j = 0; j < inventoryAndContainers.Backpack.Length; j++)
-                    {
-                        if (inventoryAndContainers.Backpack[j] == item.GUID)
-                        {
-                            item.BagID = 0;
-                            item.SlotID = j + 1;
-                            items.Add(item);
-                        }
-                    }
-                }
-                currObject = wow.Memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
-            }
-            return items.ToArray();
-        }
-
-        internal static WoWItem[] GetInventory(WowProcess wow, WoWGUID[] inventory)
-        {
-            List<WoWItem> items = new List<WoWItem>();
-            IntPtr manager = wow.Memory.Read<IntPtr>(wow.Memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            IntPtr currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            for (byte i = GetObjectType(wow.Memory, currObject); (i < 18) && (i >= 0); i = GetObjectType(wow.Memory, currObject))
-            {
-                if (i == (byte)ObjectType.Item) // WoWItem
-                {
-                    WoWItem item = new WoWItem(currObject, wow);
-                    if (inventory.Contains(item.GUID))
-                    {
-                        items.Add(item);
-                    }
-                }
-                currObject = wow.Memory.Read<IntPtr>(currObject + WowBuildInfoX64.ObjectManagerNextObject);
-            }
-            return items.ToArray();
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct ContainerStruct
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 36)]
-            internal readonly WoWGUID[] Slots;
         }
 
     }
