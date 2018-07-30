@@ -80,14 +80,15 @@ namespace AxTools.Helpers
                 char[] subjCharsCleared = Array.FindAll(subjChars, c => char.IsLetterOrDigit(c) || c == '.' || c == ',' || c == ' ' || c == '-' || c == '!' || c == '?');
                 subject = new string(subjCharsCleared);
             }
-            var values = new Dictionary<string, string>
+            var values = new NameValueCollection();
+            values.Add("user", Settings2.Instance.UserID);
+            values.Add("comment", subject ?? "");
+            values.Add("log-file", $"ERRORS:\r\n{string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN)))}\r\n\r\n\r\n" +
+                    $"{File.ReadAllText(Globals.LogFileName, Encoding.UTF8)}");
+            using (WebClient wc = new WebClient())
             {
-                { "user", Settings2.Instance.UserID },
-                { "comment", subject ?? "" },
-                { "log-file", $"ERRORS:\r\n{string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN)))}\r\n\r\n\r\n" +
-                    $"{File.ReadAllText(Globals.LogFileName, Encoding.UTF8)}" }
-            };
-            var response = Globals.HttpClient.PostAsync("https://axio.name/axtools/log-reporter/make_log.php", new FormUrlEncodedContent(values)).Result;
+                wc.UploadValues("https://axio.name/axtools/log-reporter/make_log.php", "POST", values);
+            }
         }
 
         private static void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)

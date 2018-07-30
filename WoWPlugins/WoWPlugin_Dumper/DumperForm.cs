@@ -281,7 +281,7 @@ namespace WoWPlugin_Dumper
                 int counter = 0;
                 foreach (WoWItem item in me.Inventory)
                 {
-                    Log(string.Format("\tSlot: {5}; ID: {0}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}; Address: 0x{6:X}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.Enchant, counter, item.Address.ToInt64()));
+                    Log(string.Format("\tSlot: {5}; ID: {0}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}; Address: 0x{6:X}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.WeaponEnchant, counter, item.Address.ToInt64()));
                     counter++;
                 }
             }
@@ -294,7 +294,7 @@ namespace WoWPlugin_Dumper
                 Log("----Items in bags----");
                 foreach (WoWItem item in me.ItemsInBags)
                 {
-                    Log(string.Format("\tID: {0}; GUID: {7}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}; BagID, SlotID: {5} {6}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.Enchant,
+                    Log(string.Format("\tID: {0}; GUID: {7}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}; BagID, SlotID: {5} {6}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.WeaponEnchant,
                         item.BagID, item.SlotID, item.GUID));
                 }
             }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using AxTools.Helpers;
 using FMemory;
 
 namespace AxTools.WoW.Internals
@@ -20,7 +17,7 @@ namespace AxTools.WoW.Internals
         private static bool TryGetNextObject(WowProcess wow, IntPtr address, out IntPtr nextAddress)
         {
             nextAddress = wow.Memory.Read<IntPtr>(address + WowBuildInfoX64.ObjectManagerNextObject);
-            return (ulong)nextAddress < (ulong)UInt32.MaxValue * 2;
+            return nextAddress != IntPtr.Zero && (ulong)nextAddress < (ulong)UInt32.MaxValue * 2;
         }
 
         internal static WoWPlayerMe Pulse(
@@ -41,7 +38,7 @@ namespace AxTools.WoW.Internals
             IntPtr manager = wow.Memory.Read<IntPtr>(wow.Memory.ImageBase + WowBuildInfoX64.ObjectManager);
             IntPtr currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
             byte objType = GetObjectType(wow.Memory, currObject);
-            while (objType < 18 && objType >= 0)
+            while (objType < (byte)ObjectType.Invalid && objType >= 0)
             {
                 switch (objType)
                 {
