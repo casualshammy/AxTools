@@ -81,10 +81,6 @@ namespace AxTools.Helpers
             {
                 WoWAddonsBackupCompressionLevel = 9;
             }
-            if (string.IsNullOrWhiteSpace(WoWDirectory) || !File.Exists(Path.Combine(WoWDirectory, "Wow.exe")) || !File.Exists(Path.Combine(WoWDirectory, "WoW.mfil")))
-            {
-                WoWDirectory = GetWowPath();
-            }
             if (string.IsNullOrWhiteSpace(UserID))
             {
                 UserID = Environment.MachineName + "-" + Utils.GetRandomString(10, false).ToUpper();
@@ -270,22 +266,7 @@ namespace AxTools.Helpers
         internal bool WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning = true;
 
         #endregion
-
-        #region Methods - Paths
-                
-        private static string GetWowPath()
-        {
-            foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
-            {
-                var path = Utils.FindFiles(drive.Name, "Wow.exe", 5).Select(l => Path.GetDirectoryName(l)).Intersect(Utils.FindFiles(drive.Name, "WoW.mfil", 5).Select(l => Path.GetDirectoryName(l))).FirstOrDefault();
-                if (path != null)
-                    return path;
-            }
-            return null;
-        }
         
-        #endregion
-
     }
 
     [JsonObject(MemberSerialization.OptIn)]

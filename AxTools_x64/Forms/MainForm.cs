@@ -54,7 +54,7 @@ namespace AxTools.Forms
             SetupControls();
             SetupEvents();
             SetTooltips();
-            PostInvoke(AfterInitializing);
+            PostInvoke(AfterInitializingAsync);
             log.Info("MainWindow is constructed");
         }
 
@@ -112,7 +112,7 @@ namespace AxTools.Forms
             PluginManagerEx.PluginUnloaded += PluginManagerExOnPluginLoaded;
             HotkeyManager.KeyPressed += KeyboardHookKeyDown;
         }
-
+        
         private void MainFormClosing(object sender, CancelEventArgs e)
         {
             isClosing = true;
@@ -165,7 +165,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void AfterInitializing()
+        private async void AfterInitializingAsync()
         {
             Task pluginsLoader = PluginManagerEx.LoadPluginsAsync();    // start loading plugins
             Location = settings.MainWindowLocation;                     // should do it here...
@@ -173,6 +173,9 @@ namespace AxTools.Forms
             // form is visible, placing overlay
             WaitingOverlay startupOverlay = new WaitingOverlay(this, "Load WoW accounts...").Show();
             WoWAccounts_CollectionChanged(null, null);                  // initial load wowaccounts
+            // searching for wow client
+            startupOverlay.Label = "Looking for WoW client...";
+            await Task.Run((Action)CheckWoWDirectoryIsValid);
             // styling, events attaching...
             checkBoxStartVenriloWithWow.Checked = settings.VentriloStartWithWoW;
             checkBoxStartTeamspeak3WithWow.Checked = settings.TS3StartWithWoW;
@@ -230,6 +233,21 @@ namespace AxTools.Forms
                     int pingerTabPageIndex = 5;
                     new AppSettings(pingerTabPageIndex).ShowDialog(this);
                     break;
+            }
+        }
+
+        private void CheckWoWDirectoryIsValid()
+        {
+            if (string.IsNullOrWhiteSpace(settings.WoWDirectory) || !File.Exists(Path.Combine(settings.WoWDirectory, "Wow.exe")) || !File.Exists(Path.Combine(settings.WoWDirectory, "WoW.mfil")))
+            {
+                foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
+                {
+                    var path = Utils.FindFiles(drive.Name, "Wow.exe", 5).Select(l => Path.GetDirectoryName(l)).Intersect(Utils.FindFiles(drive.Name, "WoW.mfil", 5).Select(l => Path.GetDirectoryName(l))).FirstOrDefault();
+                    if (path != null)
+                    {
+                        settings.WoWDirectory = path;
+                    }
+                }
             }
         }
 
@@ -891,9 +909,9 @@ namespace AxTools.Forms
                 }
             }
         }
-
+        
         #endregion
 
-        
+
     }
 }

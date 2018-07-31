@@ -23,17 +23,10 @@ namespace AxTools.Helpers
         private static readonly Log2 log = new Log2("Utils");
         private static string _hardwareID;
         internal static readonly Random Rnd = new Random();
-
-        //internal static T FindForm<T>() where T : Form
-        //{
-        //    return Application.OpenForms.OfType<T>().FirstOrDefault();
-        //    //return (from object i in Application.OpenForms where i.GetType() == typeof (T) select i as T).FirstOrDefault();
-        //}
-
+        
         internal static IEnumerable<T> FindForms<T>() where T : Form
         {
             return Application.OpenForms.OfType<T>();
-            //return (from object i in Application.OpenForms where i.GetType() == typeof (T) select i as T).ToArray();
         }
 
         internal static long CalcDirectorySize(string path)
