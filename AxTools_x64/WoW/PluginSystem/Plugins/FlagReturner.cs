@@ -122,6 +122,9 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 case 6665: // Каньон Суровых Ветров
                     searchingObjects = new[] { Wowhead.GetSpellInfo(140876).Name, Wowhead.GetSpellInfo(141210).Name }; // Вагонетка Альянса, Вагонетка Орды
                     break;
+                case 9136: // Бурлящий берег
+                    searchingObjects = new[] { Wowhead.GetSpellInfo(273459).Name }; // Азерит
+                    break;
                 default:
                     searchingObjects = new string[] { };
                     break;
