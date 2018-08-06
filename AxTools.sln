@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProbablyUnpacker", "Probabl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoDispel", "WoWPlugins\AutoDispel\AutoDispel.csproj", "{B981B3A0-EAC5-4C11-8332-FCD3CF8EDFD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackMarketTracker", "WoWPlugins\BlackMarketTracker\BlackMarketTracker.csproj", "{623D23B1-8FE7-4C99-9592-B25C79F03740}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -563,6 +565,36 @@ Global
 		{B981B3A0-EAC5-4C11-8332-FCD3CF8EDFD3}.Template|x64.Build.0 = Release|Any CPU
 		{B981B3A0-EAC5-4C11-8332-FCD3CF8EDFD3}.Template|x86.ActiveCfg = Release|Any CPU
 		{B981B3A0-EAC5-4C11-8332-FCD3CF8EDFD3}.Template|x86.Build.0 = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Debug|Win32.Build.0 = Debug|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Debug|x64.Build.0 = Debug|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Debug|x86.Build.0 = Debug|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Release|Any CPU.Build.0 = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Release|Win32.ActiveCfg = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Release|Win32.Build.0 = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Release|x64.ActiveCfg = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Release|x64.Build.0 = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Release|x86.ActiveCfg = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Release|x86.Build.0 = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Template|Any CPU.ActiveCfg = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Template|Any CPU.Build.0 = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Template|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Template|Mixed Platforms.Build.0 = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Template|Win32.ActiveCfg = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Template|Win32.Build.0 = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Template|x64.ActiveCfg = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Template|x64.Build.0 = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Template|x86.ActiveCfg = Release|Any CPU
+		{623D23B1-8FE7-4C99-9592-B25C79F03740}.Template|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -584,6 +616,7 @@ Global
 		{9C36ABE3-3F1D-4F91-9843-BC770C351723} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 		{AF59DDC4-4DCD-4A2E-98AD-F95542A355FB} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 		{B981B3A0-EAC5-4C11-8332-FCD3CF8EDFD3} = {3D634715-DB81-45D6-8812-701A66BFF21E}
+		{623D23B1-8FE7-4C99-9592-B25C79F03740} = {3D634715-DB81-45D6-8812-701A66BFF21E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0CEE4B45-1007-4F70-8C15-C1A3C67F9001}

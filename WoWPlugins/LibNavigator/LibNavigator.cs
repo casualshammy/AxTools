@@ -47,7 +47,7 @@ namespace LibNavigator
         #endregion
 
         #region Methods
-
+        
         public void Go(WowPoint dest, float precision, GameInterface game)
         {
             if (isRunning)
@@ -80,6 +80,35 @@ namespace LibNavigator
                 stopwatch.Restart();
                 Go(dest, precision, game);
                 timeoutMs -= (int)stopwatch.ElapsedMilliseconds;
+            }
+        }
+
+        public void GoPath(WowPoint[] dest, float precision, GameInterface game)
+        {
+            if (isRunning)
+            {
+                throw new InvalidOperationException("Script is already running");
+            }
+            else
+            {
+                //counter = 0;
+                //this.game = game;
+                //isRunning = true;
+
+                precision2D = precision;
+                precision3D = precision * 3;
+                loopPath = false;
+                startFromNearestPoint = false;
+                EndOfActionsListIsReached = false;
+                actionsList = dest.Select(wowpoint => new DoAction() { ActionType = DoActionType.Move, WowPoint = wowpoint }).ToList();
+                this.LogPrint($"GoPath(): total points: {actionsList.Count}; final point: {actionsList.Last().WowPoint}; precision2D: {precision2D}; precision3D: {precision3D}");
+                StartLoadedScript(game);
+                while (!EndOfActionsListIsReached)
+                {
+                    Thread.Sleep(5);
+                }
+                StopLoadedScript();
+                //isRunning = false;
             }
         }
 
@@ -336,6 +365,10 @@ namespace LibNavigator
                         counter = 0;
                         DoAction();
                     }
+                    else
+                    {
+                        EndOfActionsListIsReached = true;
+                    }
                 }
                 else
                 {
@@ -399,6 +432,7 @@ namespace LibNavigator
         private const int RESOLUTION_INTERVAL = 50;
         private Dictionary<DateTime, WowPoint> unstuckDictionary = new Dictionary<DateTime, WowPoint>();
         private GameInterface game;
+        private bool EndOfActionsListIsReached = false;
 
         #endregion
 

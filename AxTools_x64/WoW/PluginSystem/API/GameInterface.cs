@@ -543,6 +543,12 @@ namespace AxTools.WoW.PluginSystem.API
         }
 
         #endregion
-        
+
+        #region Utils
+
+        public MemoryManager Memory => memoryMgr;
+
+        #endregion
+
     }
 }

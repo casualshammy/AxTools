@@ -33,11 +33,14 @@ namespace AxTools.WoW.Helpers
 
         public override int GetHashCode()
         {
-            var hashCode = 1363908689;
-            hashCode = hashCode * -1521134295 + Type.GetHashCode();
-            hashCode = hashCode * -1521134295 + SenderGUID.GetHashCode();
-            hashCode = hashCode * -1521134295 + TimeStamp.GetHashCode();
-            return hashCode;
+            unchecked
+            {
+                var hashCode = 1363908689;
+                hashCode = hashCode * -1521134295 + Type.GetHashCode();
+                hashCode = hashCode * -1521134295 + SenderGUID.GetHashCode();
+                hashCode = hashCode * -1521134295 + TimeStamp.GetHashCode();
+                return hashCode;
+            }
         }
 
         public static bool operator ==(ChatMsg a, ChatMsg b)

@@ -101,7 +101,7 @@ namespace AxTools.Forms
             this.metroCheckBoxIgnoreGameState.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroCheckBoxIgnoreGameState.UseStyleColors = true;
             this.metroCheckBoxIgnoreGameState.UseVisualStyleBackColor = true;
-            this.metroCheckBoxIgnoreGameState.CheckedChanged += new System.EventHandler(this.metroCheckBoxIgnoreGameState_CheckedChanged);
+            this.metroCheckBoxIgnoreGameState.CheckedChanged += new System.EventHandler(this.MetroCheckBoxIgnoreGameState_CheckedChanged);
             // 
             // metroCheckBoxRandomize
             // 
@@ -119,7 +119,7 @@ namespace AxTools.Forms
             this.metroCheckBoxRandomize.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroCheckBoxRandomize.UseStyleColors = true;
             this.metroCheckBoxRandomize.UseVisualStyleBackColor = true;
-            this.metroCheckBoxRandomize.CheckedChanged += new System.EventHandler(this.metroCheckBoxRandomize_CheckedChanged);
+            this.metroCheckBoxRandomize.CheckedChanged += new System.EventHandler(this.MetroCheckBoxRandomize_CheckedChanged);
             // 
             // metroPanelTimerOptions
             // 
@@ -196,7 +196,7 @@ namespace AxTools.Forms
             this.metroTextBoxTimerInterval.Text = "1000";
             this.metroTextBoxTimerInterval.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTextBoxTimerInterval.UseStyleColors = true;
-            this.metroTextBoxTimerInterval.TextChanged += new System.EventHandler(this.metroTextBoxTimerInterval_TextChanged);
+            this.metroTextBoxTimerInterval.TextChanged += new System.EventHandler(this.MetroTextBoxTimerInterval_TextChanged);
             // 
             // metroLabel1
             // 
@@ -277,7 +277,7 @@ namespace AxTools.Forms
             this.metroLinkRunScriptOnce.Text = "<Run script once>";
             this.metroLinkRunScriptOnce.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLinkRunScriptOnce.UseStyleColors = true;
-            this.metroLinkRunScriptOnce.Click += new System.EventHandler(this.metroLinkRunScriptOnce_Click);
+            this.metroLinkRunScriptOnce.Click += new System.EventHandler(this.MetroLinkRunScriptOnce_Click);
             // 
             // metroLinkEnableCyclicExecution
             // 
@@ -293,7 +293,7 @@ namespace AxTools.Forms
             this.metroLinkEnableCyclicExecution.Text = "<Enable cyclic execution>";
             this.metroLinkEnableCyclicExecution.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLinkEnableCyclicExecution.UseStyleColors = true;
-            this.metroLinkEnableCyclicExecution.Click += new System.EventHandler(this.metroLinkEnableCyclicExecution_Click);
+            this.metroLinkEnableCyclicExecution.Click += new System.EventHandler(this.MetroLinkEnableCyclicExecution_Click);
             // 
             // metroLinkSettings
             // 
@@ -309,7 +309,7 @@ namespace AxTools.Forms
             this.metroLinkSettings.Text = "<Settings>";
             this.metroLinkSettings.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroLinkSettings.UseStyleColors = true;
-            this.metroLinkSettings.Click += new System.EventHandler(this.metroLinkSettings_Click);
+            this.metroLinkSettings.Click += new System.EventHandler(this.MetroLinkSettings_Click);
             // 
             // hotItemStyle1
             // 

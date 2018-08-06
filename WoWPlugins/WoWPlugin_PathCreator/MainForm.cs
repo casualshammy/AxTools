@@ -123,6 +123,35 @@ namespace WoWPlugin_PathCreator
         internal WowPoint WowPoint;
     }
 
+    [DataContract]
+    internal class DoAction2
+    {
+        [DataMember(Name = "ActionType")]
+        internal DoActionType ActionType;
+        
+        [DataMember(Name = "Location", EmitDefaultValue = false)]
+        internal WowPoint Location;
+        
+        [DataMember(Name = "Name", EmitDefaultValue = false)]
+        internal string Name;
+        
+        [DataMember(Name = "Text", EmitDefaultValue = false)]
+        internal string Text;
+
+        [DataMember(Name = "LuaCode", EmitDefaultValue = false)]
+        internal string LuaCode;
+        
+        [DataMember(Name = "FloatValue", EmitDefaultValue = false)]
+        internal float FloatValue;
+        
+        [DataMember(Name = "BoolValue", EmitDefaultValue = false)]
+        internal bool BoolValue;
+        
+        [DataMember(Name = "TimeInMsBetweenEvaluations", EmitDefaultValue = false)]
+        internal int TimeInMsBetweenEvaluations;
+
+    }
+
     internal enum DoActionType
     {
         Move,

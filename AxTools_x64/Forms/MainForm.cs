@@ -187,11 +187,11 @@ namespace AxTools.Forms
             startupOverlay.Label = "Starting pinger...";
             Pinger.Enabled = settings.PingerServerID != 0;              // set pinger
             startupOverlay.Label = "Starting WoW process manager...";
-            WoWProcessManager.StartWatcher();                           // start WoW spy
+            await Task.Run((Action)WoWProcessManager.StartWatcher);     // start WoW spy
             startupOverlay.Label = "Setting tray animation...";
             TrayIconAnimation.Initialize(notifyIconMain);               // initialize tray animation
             //startupOverlay.Label = "Waiting for plug-ins...";
-            //await pluginsLoader;                                        // waiting for plugins to be loaded
+            //await pluginsLoader;                                      // waiting for plugins to be loaded
             startupOverlay.Close();                                     // close startup overkay
             Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
             UpdaterService.Start();                                     // start updater service

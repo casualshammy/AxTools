@@ -41,10 +41,16 @@ namespace PathPlayer
 		{
 			SettingsInstance = this.LoadSettingsJSON<Settings>();
 			libNavigator = Utilities.GetReferenceOfPlugin("LibNavigator");
+
 			if (libNavigator == null)
 			{
 				this.ShowNotify("LibNavigator isn't found! Plugin will not work.", true, true);
 				this.LogPrint("LibNavigator isn't found! Plugin will not work.");
+			}
+			else if (!File.Exists(SettingsInstance.Path))
+			{
+				this.ShowNotify($"'{SettingsInstance.Path}' isn't found! Plugin will not work.", true, true);
+				this.LogPrint($"'{SettingsInstance.Path}' isn't found! Plugin will not work.");
 			}
 			else
 			{

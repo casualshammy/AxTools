@@ -35,11 +35,19 @@ namespace AxTools.Forms
         private readonly object luaExecutionLock = new object();
         private WoW.Helpers.SafeTimer safeTimer;
         private string helpInfo = "";
+        private bool LuaCancellationRequested = false;
         private readonly Settings2 settings = Settings2.Instance;
         public int ProcessID { get => process.ProcessID; }
-        
+
+        #region Consts
+
         private const string MetroLinkEnableCyclicExecutionTextEnable = "<Enable cyclic execution>";
         private const string MetroLinkEnableCyclicExecutionTextDisable = "<Disable cyclic execution>";
+        private const string MetroLinkRunScriptOnceRun = "<Run script once>";
+        private const string MetroLinkRunScriptOnceStop = "<Stop script>";
+        private const string LUA_CANCELLATION_MSG = "LUA_CANCELLATION_MSG";
+
+        #endregion
 
         #region Images
 
@@ -112,7 +120,7 @@ namespace AxTools.Forms
                 helpInfo += "Keys[] is a table containing .Net Windows.Forms.Keys enum values\r\n\r\n";
                 // Moving
                 luaEngine.RegisterFunction("Move2D", this, GetType().GetMethod("Move2D"));
-                helpInfo += "void Move2D(double x, double y, double z)\r\n";
+                helpInfo += "void Move2D(table points) - something like { {[\"X\"] = 5673.50244, [\"Y\"] = 4510.01953, [\"Z\"] = 125.027237}, {[\"X\"] = 5680.97363, [\"Y\"] = 4487.585,   [\"Z\"] = 130.122177} }\r\n";
                 // game
                 luaEngine.RegisterFunction("UseItemByID", info, typeof(GameInterface).GetMethod("UseItemByID"));
                 helpInfo += "void UseItemByID(uint id)\r\n";
@@ -163,6 +171,12 @@ namespace AxTools.Forms
                 helpInfo += "void PressKey(int key)\r\n";
                 luaEngine.RegisterFunction("Log", this, GetType().GetMethod("Log"));
                 helpInfo += "void Log(object text)\r\n";
+                luaEngine.RegisterFunction("Wait", this, GetType().GetMethod("Wait"));
+                helpInfo += "void Wait(double ms) - this method contains call to StopExecutionIfCancellationRequested()\r\n";
+                luaEngine.RegisterFunction("NotifyUser", this, GetType().GetMethod("NotifyUser"));
+                helpInfo += "void NotifyUser(object text)\r\n";
+                luaEngine.RegisterFunction("StopExecutionIfCancellationRequested", this, GetType().GetMethod("StopExecutionIfCancellationRequested"));
+                helpInfo += "void StopExecutionIfCancellationRequested()\r\n";
                 // lua lib
                 luaEngine.DoString("format=string.format;");
                 luaEngine.DoString("if (not table.count) then table.count = function(tbl) local count = 0; for index in pairs(tbl) do count = count+1; end return count; end end");
@@ -177,10 +191,13 @@ namespace AxTools.Forms
         }
 
         #region Wrappers
-
-        public void Move2D(double x, double y, double z)
+        
+        public void Move2D(NLua.LuaTable points)
         {
-            info.Move2D(new WowPoint((float)x, (float)y, (float)z), 3f, 1000, true, false);
+            dynamic libNavigator = WoW.PluginSystem.API.Utilities.GetReferenceOfPlugin("LibNavigator");
+            // 'Convert.ToSingle' - okay, cast to 'float' - not okay
+            libNavigator.GoPath(points.Values.Cast<NLua.LuaTable>().Select(l => new WowPoint(Convert.ToSingle(l["X"]), Convert.ToSingle(l["Y"]), Convert.ToSingle(l["Z"]))).ToArray(),
+                3f, info);
         }
 
         public bool IsInGame()
@@ -302,6 +319,30 @@ namespace AxTools.Forms
             log.Info(text.ToString());
         }
 
+        public void Wait(double ms)
+        {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            int time = (int)ms;
+            while (time > 0)
+            {
+                Thread.Sleep(Math.Min(time, 100));
+                time -= (int)stopwatch.ElapsedMilliseconds;
+                stopwatch.Restart();
+                StopExecutionIfCancellationRequested();
+            }
+        }
+
+        public void NotifyUser(object text)
+        {
+            Notify.TrayPopup("Lua console", text.ToString(), NotifyUserType.Info, false);
+        }
+
+        public void StopExecutionIfCancellationRequested()
+        {
+            if (LuaCancellationRequested)
+                throw new Exception(LUA_CANCELLATION_MSG);
+        }
+
         #endregion
 
         private void SwitchTimer()
@@ -414,17 +455,17 @@ namespace AxTools.Forms
             luaConsoleSettings.WindowSize = Size;
         }
 
-        private void metroCheckBoxRandomize_CheckedChanged(object sender, EventArgs e)
+        private void MetroCheckBoxRandomize_CheckedChanged(object sender, EventArgs e)
         {
             luaConsoleSettings.TimerRnd = metroCheckBoxRandomize.Checked;
         }
 
-        private void metroCheckBoxIgnoreGameState_CheckedChanged(object sender, EventArgs e)
+        private void MetroCheckBoxIgnoreGameState_CheckedChanged(object sender, EventArgs e)
         {
             luaConsoleSettings.IgnoreGameState = metroCheckBoxIgnoreGameState.Checked;
         }
         
-        private void metroTextBoxTimerInterval_TextChanged(object sender, EventArgs e)
+        private void MetroTextBoxTimerInterval_TextChanged(object sender, EventArgs e)
         {
             int.TryParse(metroTextBoxTimerInterval.Text, out luaConsoleSettings.TimerInterval);
         }
@@ -451,45 +492,56 @@ namespace AxTools.Forms
             }
         }
 
-        private void metroLinkSettings_Click(object sender, EventArgs e)
+        private void MetroLinkSettings_Click(object sender, EventArgs e)
         {
             metroPanelTimerOptions.Visible = !metroPanelTimerOptions.Visible;
         }
 
-        private void metroLinkRunScriptOnce_Click(object sender, EventArgs e)
+        private void MetroLinkRunScriptOnce_Click(object sender, EventArgs e)
         {
-            if (textBoxLuaCode.Text.Trim().Length != 0)
+            if (metroLinkRunScriptOnce.Text == MetroLinkRunScriptOnceStop)
             {
-                if (!info.IsInGame)
-                {
-                    new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
-                    return;
-                }
-                Stopwatch stopwatch = Stopwatch.StartNew();
                 metroLinkRunScriptOnce.Enabled = false;
-                Task.Run(() => {
-                    try
+                LuaCancellationRequested = true;
+            }
+            else
+            {
+                if (textBoxLuaCode.Text.Trim().Length != 0)
+                {
+                    if (!info.IsInGame)
                     {
-                        // We should send commands as byte array because encoding is broken
-                        lock (luaExecutionLock)
-                            luaEngine.DoString(Encoding.UTF8.GetBytes(textBoxLuaCode.Text));
+                        new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
+                        return;
                     }
-                    catch (LuaException ex)
-                    {
-                        MsgBox(ex.Message);
-                    }
-                    finally
-                    {
-                        PostInvoke(() => {
+                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    metroLinkRunScriptOnce.Text = MetroLinkRunScriptOnceStop;
+                    //metroLinkRunScriptOnce.Enabled = false;
+                    Task.Run(() => {
+                        try
+                        {
+                            LuaCancellationRequested = false;
+                            // We should send commands as byte array because encoding is broken
+                            lock (luaExecutionLock)
+                                luaEngine.DoString(Encoding.UTF8.GetBytes(textBoxLuaCode.Text));
+                        }
+                        catch (LuaException ex)
+                        {
+                            if (ex.InnerException.Message != LUA_CANCELLATION_MSG)
+                                MsgBox($"{ex.Message}\r\n{ex.InnerException.Message}");
+                        }
+                    }).ContinueWith(l => {
+                        PostInvoke(delegate {
                             labelRequestTime.Text = string.Format("{0}ms", stopwatch.ElapsedMilliseconds);
                             labelRequestTime.Visible = true;
+                            metroLinkRunScriptOnce.Text = MetroLinkRunScriptOnceRun;
+                            metroLinkRunScriptOnce.Enabled = true;
                         });
-                    }
-                }).ContinueWith(l => { metroLinkRunScriptOnce.Enabled = true; });
+                    });
+                }
             }
         }
 
-        private void metroLinkEnableCyclicExecution_Click(object sender, EventArgs e)
+        private void MetroLinkEnableCyclicExecution_Click(object sender, EventArgs e)
         {
             if (safeTimer != null && safeTimer.IsRunning)
             {
