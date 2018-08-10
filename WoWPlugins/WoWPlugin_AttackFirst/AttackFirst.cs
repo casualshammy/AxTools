@@ -11,7 +11,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_AttackFirst
 {
-    public class AttackFirst : IPlugin2
+    public class AttackFirst : IPlugin3
     {
 
         #region Info
@@ -39,6 +39,8 @@ namespace WoWPlugin_AttackFirst
         }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

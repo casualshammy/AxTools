@@ -8,7 +8,7 @@ using System.Text;
 
 namespace PathPlayer
 {
-	internal class PathPlayer : IPlugin2
+	internal class PathPlayer : IPlugin3
 	{
 
 		#region Info
@@ -23,11 +23,13 @@ namespace PathPlayer
 
 		public string[] Dependencies => null;
 
-		#endregion
+        public bool DontCloseOnWowShutdown => false;
 
-		#region Methods
+        #endregion
 
-		public void OnConfig()
+        #region Methods
+
+        public void OnConfig()
 		{
 			if (SettingsInstance == null)
 			{

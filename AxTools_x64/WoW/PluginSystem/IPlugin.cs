@@ -4,8 +4,13 @@ using System.Drawing;
 
 namespace AxTools.WoW.PluginSystem
 {
-    public interface IPlugin2
+    public interface IPlugin3
     {
+
+        /// <summary>
+        ///     
+        /// </summary>
+        bool ConfigAvailable { get; }
 
         /// <summary>
         /// Array of plugin names required for this plugin to work
@@ -13,29 +18,29 @@ namespace AxTools.WoW.PluginSystem
         string[] Dependencies { get; }
 
         /// <summary>
-        ///     The name of the plugin
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        ///     Current version of this plugin
-        /// </summary>
-        Version Version { get; }
-
-        /// <summary>
         ///     Description to display on the plugin interface
         /// </summary>
         string Description { get; }
 
         /// <summary>
-        ///     Icon for tray context menu
+        /// 
+        /// </summary>
+        bool DontCloseOnWowShutdown { get; }
+
+        /// <summary>
+        ///     The name of the plugin
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Icon for tray context menu
         /// </summary>
         Image TrayIcon { get; }
 
         /// <summary>
-        ///     
+        ///     Current version of this plugin
         /// </summary>
-        bool ConfigAvailable { get; }
+        Version Version { get; }
 
         /// <summary>
         ///     Work or configuration windows to display when the user presses the "config" button

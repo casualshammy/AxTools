@@ -10,7 +10,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace Follower
 {
-    internal class Follower : IPlugin2
+    internal class Follower : IPlugin3
     {
 
         #region Info
@@ -55,6 +55,8 @@ namespace Follower
         }
 
         public string[] Dependencies => new string[] { "LibNavigator" };
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

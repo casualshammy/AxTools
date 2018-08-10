@@ -10,7 +10,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
-    internal class GoodsDestroyer : IPlugin2
+    internal class GoodsDestroyer : IPlugin3
     {
 
         #region Info
@@ -41,6 +41,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         }
 
         public string[] Dependencies => null;
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

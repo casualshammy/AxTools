@@ -381,7 +381,7 @@ namespace AxTools.Forms
                 string subject = InputBox.Input("Any comment? (optional)", settings.StyleColor);
                 if (subject != null)
                 {
-                    WaitingOverlay waitingOverlay = new WaitingOverlay(this, "Please wait...").Show();
+                    WaitingOverlay waitingOverlay = new WaitingOverlay(this, "Please wait...", settings.StyleColor).Show();
                     Task.Factory.StartNew(() =>
                     {
                         try

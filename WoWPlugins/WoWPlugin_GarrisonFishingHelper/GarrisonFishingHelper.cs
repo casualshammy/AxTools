@@ -12,7 +12,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_GarrisonFishingHelper
 {
-    public class GarrisonFishingHelper : IPlugin2
+    public class GarrisonFishingHelper : IPlugin3
     {
 
         #region Properties
@@ -46,6 +46,8 @@ namespace WoWPlugin_GarrisonFishingHelper
         }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

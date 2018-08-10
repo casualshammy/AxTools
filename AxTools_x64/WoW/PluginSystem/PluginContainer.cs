@@ -2,10 +2,10 @@
 {
     internal class PluginContainer
     {
-        internal IPlugin2 Plugin;
+        internal IPlugin3 Plugin;
         internal bool IsRunning;
 
-        internal PluginContainer(IPlugin2 plugin)
+        internal PluginContainer(IPlugin3 plugin)
         {
             Plugin = plugin;
             IsRunning = false;

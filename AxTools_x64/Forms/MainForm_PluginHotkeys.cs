@@ -22,7 +22,7 @@ namespace AxTools.Forms
 
         private const int sizeBetweenRows = 26;
 
-        internal MainForm_PluginHotkeys(IPlugin2[] plugins)
+        internal MainForm_PluginHotkeys(IPlugin3[] plugins)
         {
             InitializeComponent();
             StyleManager.Style = AxTools.Helpers.Settings2.Instance.StyleColor;
@@ -91,15 +91,15 @@ namespace AxTools.Forms
             {
                 KeyExt key = new KeyExt(e.KeyCode, e.Alt, e.Shift, e.Control);
                 textBox.Text = key.ToString();
-                string name = "Plugin_" + ((IPlugin2)textBox.Tag).Name;
+                string name = "Plugin_" + ((IPlugin3)textBox.Tag).Name;
                 HotkeyManager.RemoveKeys(name);
                 if (e.KeyCode == Keys.None)
                 {
-                    AxTools.Helpers.Settings2.Instance.PluginHotkeys.Remove(((IPlugin2)textBox.Tag).Name);
+                    AxTools.Helpers.Settings2.Instance.PluginHotkeys.Remove(((IPlugin3)textBox.Tag).Name);
                 }
                 else
                 {
-                    AxTools.Helpers.Settings2.Instance.PluginHotkeys[((IPlugin2)textBox.Tag).Name] = key;
+                    AxTools.Helpers.Settings2.Instance.PluginHotkeys[((IPlugin3)textBox.Tag).Name] = key;
                     Task.Run(() => {
                         Thread.Sleep(1000);
                         HotkeyManager.AddKeys(name, key);

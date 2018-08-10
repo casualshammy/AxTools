@@ -1,4 +1,4 @@
-﻿namespace AxTools.Forms
+﻿namespace Components.Forms
 {
     partial class WaitingOverlay
     {

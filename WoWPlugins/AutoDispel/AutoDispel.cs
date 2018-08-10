@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AutoDispel
 {
-    public class AutoDispel : IPlugin2
+    public class AutoDispel : IPlugin3
     {
         public string[] Dependencies => null;
 
@@ -21,6 +21,8 @@ namespace AutoDispel
         public System.Drawing.Image TrayIcon => null;
 
         public bool ConfigAvailable => true;
+
+        public bool DontCloseOnWowShutdown => false;
 
         public void OnConfig()
         {

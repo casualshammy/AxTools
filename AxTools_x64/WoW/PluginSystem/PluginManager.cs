@@ -14,6 +14,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Globalization;
 using KeyboardWatcher;
+using System.Windows.Forms;
 
 namespace AxTools.WoW.PluginSystem
 {
@@ -25,8 +26,8 @@ namespace AxTools.WoW.PluginSystem
         internal static readonly Dictionary<string, int> PluginWoW = new Dictionary<string, int>();
         internal static event Action PluginStateChanged;
         internal static event Action PluginsLoaded;
-        internal static event Action<IPlugin2> PluginLoaded;
-        internal static event Action<IPlugin2> PluginUnloaded;
+        internal static event Action<IPlugin3> PluginLoaded;
+        internal static event Action<IPlugin3> PluginUnloaded;
 
         internal static Dictionary<string, List<DateTime>> _pluginsUsageStats;
         private static Dictionary<string, List<DateTime>> PluginsUsageStats
@@ -76,7 +77,7 @@ namespace AxTools.WoW.PluginSystem
             File.WriteAllText(settingsFile, json, Encoding.UTF8);
         }
 
-        internal static IEnumerable<IPlugin2> RunningPlugins
+        internal static IEnumerable<IPlugin3> RunningPlugins
         {
             get
             {
@@ -84,7 +85,7 @@ namespace AxTools.WoW.PluginSystem
             }
         }
 
-        internal static IEnumerable<IPlugin2> LoadedPlugins
+        internal static IEnumerable<IPlugin3> LoadedPlugins
         {
             get
             {
@@ -92,7 +93,7 @@ namespace AxTools.WoW.PluginSystem
             }
         }
         
-        internal static void AddPluginToRunning(IPlugin2 plugin, WowProcess process)
+        internal static void AddPluginToRunning(IPlugin3 plugin, WowProcess process)
         {
             lock (AddRemoveLock)
             {
@@ -120,7 +121,7 @@ namespace AxTools.WoW.PluginSystem
             }
         }
 
-        internal static void RemovePluginFromRunning(IPlugin2 plugin)
+        internal static void RemovePluginFromRunning(IPlugin3 plugin)
         {
             lock (AddRemoveLock)
             {
@@ -161,9 +162,9 @@ namespace AxTools.WoW.PluginSystem
             });
         }
 
-        internal static List<IPlugin2> GetSortedByUsageListOfPlugins()
+        internal static List<IPlugin3> GetSortedByUsageListOfPlugins()
         {
-            List<IPlugin2> list = LoadedPlugins.ToList();
+            List<IPlugin3> list = LoadedPlugins.ToList();
             list.Sort((first, second) =>
             {
                 // delete old timestamps
@@ -187,15 +188,15 @@ namespace AxTools.WoW.PluginSystem
 
         private static void LoadPlugins()
         {
-            IPlugin2 fishing = new Fishing();
+            IPlugin3 fishing = new Fishing();
             _pluginContainers.Add(new PluginContainer(fishing));
             log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
             PluginLoaded?.Invoke(fishing);
-            IPlugin2 flagReturner = new FlagReturner();
+            IPlugin3 flagReturner = new FlagReturner();
             _pluginContainers.Add(new PluginContainer(flagReturner));
             log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
             PluginLoaded?.Invoke(flagReturner);
-            IPlugin2 goodsDestroyer = new GoodsDestroyer();
+            IPlugin3 goodsDestroyer = new GoodsDestroyer();
             _pluginContainers.Add(new PluginContainer(goodsDestroyer));
             log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
             PluginLoaded?.Invoke(goodsDestroyer);
@@ -203,6 +204,9 @@ namespace AxTools.WoW.PluginSystem
 
         private static void LoadPluginsFromDisk()
         {
+            Assembly.LoadFile(Path.Combine(Application.StartupPath, "KeraLua.dll"));
+            Assembly.LoadFile(Path.Combine(Application.StartupPath, "NLua.dll"));
+            Assembly.LoadFile(Path.Combine(Application.StartupPath, "ICSharpCode.TextEditor.dll"));
             string[] directories = Directory.GetDirectories(AppFolders.PluginsDir);
             foreach (string directory in directories)
             {
@@ -224,10 +228,10 @@ namespace AxTools.WoW.PluginSystem
                     }
                     if (dll != null)
                     {
-                        Type type = dll.GetTypes().FirstOrDefault(k => k.IsClass && typeof (IPlugin2).IsAssignableFrom(k));
+                        Type type = dll.GetTypes().FirstOrDefault(k => k.IsClass && typeof (IPlugin3).IsAssignableFrom(k));
                         if (type != default(Type))
                         {
-                            IPlugin2 temp = (IPlugin2) Activator.CreateInstance(type);
+                            IPlugin3 temp = (IPlugin3) Activator.CreateInstance(type);
                             if (_pluginContainers.Select(l => l.Plugin).All(l => l.Name != temp.Name))
                             {
                                 if (!string.IsNullOrWhiteSpace(temp.Name))
@@ -270,7 +274,7 @@ namespace AxTools.WoW.PluginSystem
             HashSet<int> indexesOfPluginsWithUnresolvedDeps = new HashSet<int>();
             for (int i = 0; i < _pluginContainers.Count; i++)
             {
-                if (_pluginContainers[i].Plugin is IPlugin2 plugin2)
+                if (_pluginContainers[i].Plugin is IPlugin3 plugin2)
                 {
                     if (plugin2.Dependencies != null)
                     {
@@ -286,7 +290,7 @@ namespace AxTools.WoW.PluginSystem
             }
             foreach (int indexOfPluginWithUnresolvedDeps in indexesOfPluginsWithUnresolvedDeps)
             {
-                IPlugin2 plugin2 = _pluginContainers[indexOfPluginWithUnresolvedDeps].Plugin as IPlugin2;
+                IPlugin3 plugin2 = _pluginContainers[indexOfPluginWithUnresolvedDeps].Plugin as IPlugin3;
                 _pluginContainers.RemoveAt(indexOfPluginWithUnresolvedDeps);
                 PluginUnloaded?.Invoke(plugin2);
                 Notify.SmartNotify("Plugin error", $"Plugin {plugin2.Name} requires {string.Join(", ", plugin2.Dependencies)}", NotifyUserType.Error, true);

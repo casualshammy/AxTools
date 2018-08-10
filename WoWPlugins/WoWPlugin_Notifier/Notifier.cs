@@ -11,7 +11,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_Notifier
 {
-    public class Notifier : IPlugin2
+    public class Notifier : IPlugin3
     {
 
         #region Info
@@ -28,6 +28,8 @@ namespace WoWPlugin_Notifier
         public bool ConfigAvailable { get { return true; } }
 
         public string[] Dependencies => new string[] { "LibSMS" };
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace LibSMS
 {
-    public class LibSMS : IPlugin2
+    public class LibSMS : IPlugin3
     {
 
         #region Info
@@ -27,6 +27,8 @@ namespace LibSMS
         public bool ConfigAvailable { get { return true; } }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

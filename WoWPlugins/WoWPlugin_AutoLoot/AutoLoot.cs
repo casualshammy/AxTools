@@ -10,7 +10,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace AutoLoot
 {
-    internal class AutoLoot : IPlugin2
+    internal class AutoLoot : IPlugin3
     {
 
         #region Info
@@ -32,6 +32,8 @@ namespace AutoLoot
         public bool ConfigAvailable { get { return false; } }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

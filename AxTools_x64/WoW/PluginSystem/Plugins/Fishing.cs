@@ -11,7 +11,7 @@ using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
-    internal class Fishing : IPlugin2
+    internal class Fishing : IPlugin3
     {
 
         #region Info
@@ -39,6 +39,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

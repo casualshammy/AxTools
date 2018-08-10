@@ -89,6 +89,7 @@ namespace AxTools.WoW.PluginSystem
         {
             if (!Options.ReferencedAssemblies.Contains(assembly))
             {
+                log.Info($"Adding reference to {assembly}");
                 Options.ReferencedAssemblies.Add(assembly);
             }
         }
@@ -196,29 +197,29 @@ namespace AxTools.WoW.PluginSystem
 
         public void ParseFilesForCompilerOptions()
         {
-            foreach (string str in SourceFilePaths)
+            foreach (string filePath in SourceFilePaths)
             {
-                foreach (string str2 in File.ReadAllLines(str))
+                foreach (string line in File.ReadAllLines(filePath))
                 {
-                    string str3 = str2.Trim();
-                    if (str3.StartsWith("//!CompilerOption:"))
+                    string lineTrimmed = line.Trim();
+                    if (lineTrimmed.StartsWith("//!CompilerOption:"))
                     {
-                        string[] strArray2 = str3.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                        string str4 = strArray2[1];
-                        if (str4 != null)
+                        string[] compilerOptionArray = lineTrimmed.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                        string compilerOptionCommand = compilerOptionArray[1];
+                        if (compilerOptionCommand != null)
                         {
-                            if (str4 != "AddRef")
+                            if (compilerOptionCommand != "AddRef")
                             {
-                                if ((str4 == "Optimise") && (strArray2.Length == 3) && !string.IsNullOrEmpty(strArray2[2]) && (strArray2[2] == "On") && !Options.CompilerOptions.Contains("/optimise"))
+                                if ((compilerOptionCommand == "Optimise") && (compilerOptionArray.Length == 3) && !string.IsNullOrEmpty(compilerOptionArray[2]) && (compilerOptionArray[2] == "On") && !Options.CompilerOptions.Contains("/optimise"))
                                 {
                                     Options.IncludeDebugInformation = false;
                                     CompilerParameters options = Options;
                                     options.CompilerOptions = options.CompilerOptions + " /optimise";
                                 }
                             }
-                            else if ((strArray2.Length == 3) && !string.IsNullOrEmpty(strArray2[2]) && strArray2[2].EndsWith(".dll") && !Method_2(strArray2[2]))
+                            else if ((compilerOptionArray.Length == 3) && !string.IsNullOrEmpty(compilerOptionArray[2]) && compilerOptionArray[2].EndsWith(".dll") && !Method_2(compilerOptionArray[2]))
                             {
-                                AddReference(strArray2[2]);
+                                AddReference(compilerOptionArray[2]);
                             }
                         }
                     }

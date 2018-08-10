@@ -171,7 +171,7 @@ namespace AxTools.Forms
             Location = settings.MainWindowLocation;                     // should do it here...
             OnActivated(EventArgs.Empty);                               // ...and calling OnActivated is necessary
             // form is visible, placing overlay
-            WaitingOverlay startupOverlay = new WaitingOverlay(this, "Load WoW accounts...").Show();
+            WaitingOverlay startupOverlay = new WaitingOverlay(this, "Load WoW accounts...", settings.StyleColor).Show();
             WoWAccounts_CollectionChanged(null, null);                  // initial load wowaccounts
             // searching for wow client
             startupOverlay.Label = "Looking for WoW client...";
@@ -264,16 +264,12 @@ namespace AxTools.Forms
                 WowProcess process = WoWManager.GetProcess();
                 if (process != null) new WowRadar(process).Show();
             }));
-            contextMenuStripMain.Items.Add(new ToolStripMenuItem("Black Market Tracker", Resources.BlackMarket, (o, e) => {
-                WowProcess process = WoWManager.GetProcess();
-                if (process != null) new BlackMarket(process).Show();
-            }));
             contextMenuStripMain.Items.Add(new ToolStripSeparator());
-            IPlugin2[] sortedPlugins = PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray();
-            IPlugin2[] topUsedPlugins = sortedPlugins.Take(3).ToArray();
-            foreach (IPlugin2 i in topUsedPlugins)
+            IPlugin3[] sortedPlugins = PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray();
+            IPlugin3[] topUsedPlugins = sortedPlugins.Take(3).ToArray();
+            foreach (IPlugin3 i in topUsedPlugins)
             {
-                IPlugin2 plugin = i;
+                IPlugin3 plugin = i;
                 ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) {Tag = plugin};
                 toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
                 {
@@ -290,9 +286,9 @@ namespace AxTools.Forms
             {
                 if (contextMenuStripMain.Items.Add("Other plugins") is ToolStripMenuItem customPlugins)
                 {
-                    foreach (IPlugin2 i in sortedPlugins.Where(i => !topUsedPlugins.Select(l => l.Name).Contains(i.Name)))
+                    foreach (IPlugin3 i in sortedPlugins.Where(i => !topUsedPlugins.Select(l => l.Name).Contains(i.Name)))
                     {
-                        IPlugin2 plugin = i;
+                        IPlugin3 plugin = i;
                         try
                         {
                             ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
@@ -345,7 +341,7 @@ namespace AxTools.Forms
 
         private void StartWoW(WoWAccount2 wowAccount = null)
         {
-            new WaitingOverlay(this, "Please wait...", 1000).Show();
+            new WaitingOverlay(this, "Please wait...", settings.StyleColor, 1000).Show();
             if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
             {
                 Process process = Process.Start(new ProcessStartInfo
@@ -366,7 +362,7 @@ namespace AxTools.Forms
 
         private async void CmbboxAccSelectSelectedIndexChanged(object sender, EventArgs e)
         {
-            WaitingOverlay overlay = new WaitingOverlay(this, "Waiting for background tasks (60 sec)").Show();
+            WaitingOverlay overlay = new WaitingOverlay(this, "Waiting for background tasks (60 sec)", settings.StyleColor).Show();
             // wait 60 sec
             await WoWLaunchLock.WaitForLocksAsync(1000 * 60);
             overlay.Close();
@@ -588,16 +584,7 @@ namespace AxTools.Forms
                 new WowRadar(process).Show();
             }
         }
-
-        private void TileBMTracker_Click(object sender, EventArgs e)
-        {
-            WowProcess process = WoWManager.GetProcess();
-            if (process != null)
-            {
-                new BlackMarket(process).Show();
-            }
-        }
-
+        
         private void TileLua_Click(object sender, EventArgs e)
         {
             WowProcess process = WoWManager.GetProcess();
@@ -663,7 +650,7 @@ namespace AxTools.Forms
 
         private void ObjectListView1_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
         {
-            if (e.Model is IPlugin2 plugin)
+            if (e.Model is IPlugin3 plugin)
             {
                 e.IsBalloon = true;
                 e.StandardIcon = ToolTipControl.StandardIcons.InfoLarge;
@@ -674,7 +661,7 @@ namespace AxTools.Forms
 
         private void OlvPluginsOnDoubleClick(object sender, EventArgs eventArgs)
         {
-            if (olvPlugins.SelectedObject is IPlugin2 plugin)
+            if (olvPlugins.SelectedObject is IPlugin3 plugin)
             {
                 if (PluginManagerEx.RunningPlugins.All(l => l.Name != plugin.Name))
                 {
@@ -696,7 +683,7 @@ namespace AxTools.Forms
 
         private bool OlvPlugins_BooleanCheckStateGetter(object rowObject)
         {
-            if (rowObject is IPlugin2 plugin)
+            if (rowObject is IPlugin3 plugin)
             {
                 return PluginManagerEx.RunningPlugins.Contains(plugin);
             }
@@ -708,7 +695,7 @@ namespace AxTools.Forms
             olvPlugins.Enabled = false;
             try
             {
-                if (rowObject is IPlugin2 plugin)
+                if (rowObject is IPlugin3 plugin)
                 {
                     if (newValue)
                     {
@@ -803,7 +790,7 @@ namespace AxTools.Forms
             });
         }
 
-        private void PluginManagerExOnPluginLoaded(IPlugin2 plugin)
+        private void PluginManagerExOnPluginLoaded(IPlugin3 plugin)
         {
             BeginInvoke((MethodInvoker) delegate
             {
@@ -886,23 +873,23 @@ namespace AxTools.Forms
 
         private void KeyboardHookKeyDown(KeyExt key)
         {
-            if (WoWProcessManager.Processes.Any(l => l.Value.MainWindowHandle == WinAPI.NativeMethods.GetForegroundWindow()))
+            if (WoWProcessManager.Processes.Any(l => l.Value.MainWindowHandle == NativeMethods.GetForegroundWindow()))
             {
                 foreach (var pair in settings.PluginHotkeys)
                 {
                     if (pair.Value == key)
                     {
-                        IPlugin2 plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pair.Key);
+                        IPlugin3 plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pair.Key);
                         bool pluginRunning = PluginManagerEx.RunningPlugins.Any(l => l.Name == pair.Key);
                         if (plugin != null)
                         {
                             if (pluginRunning)
                             {
-                                olvPlugins.UncheckObject(plugin);
+                                PostInvoke(delegate { olvPlugins.UncheckObject(plugin); });
                             }
                             else
                             {
-                                olvPlugins.CheckObject(plugin);
+                                PostInvoke(delegate { olvPlugins.CheckObject(plugin); });
                             }
                         }
                     }

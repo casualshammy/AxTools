@@ -55,7 +55,6 @@ namespace AxTools.Forms
             this.cmbboxAccSelect = new Components.MetroComboboxExt(this.components);
             this.tabPageModules = new MetroFramework.Controls.MetroTabPage();
             this.metroTileExt1 = new Components.MetroTileExt(this.components);
-            this.tileBMTracker = new Components.MetroTileExt(this.components);
             this.tileRadar = new Components.MetroTileExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
             this.labelTotalPluginsEnabled = new MetroFramework.Controls.MetroLabel();
@@ -80,6 +79,7 @@ namespace AxTools.Forms
             this.linkPing = new MetroFramework.Controls.MetroLink();
             this.linkSettings = new MetroFramework.Controls.MetroLink();
             this.contextMenuStripBackupAndClean = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuItemNextBackupTime = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemBackupWoWAddOns = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemDeployArchive = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -88,7 +88,6 @@ namespace AxTools.Forms
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuItemNextBackupTime = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.tabPageModules.SuspendLayout();
@@ -125,7 +124,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 3;
+            this.tabControl.SelectedIndex = 1;
             this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 59;
@@ -252,7 +251,6 @@ namespace AxTools.Forms
             // tabPageModules
             // 
             this.tabPageModules.Controls.Add(this.metroTileExt1);
-            this.tabPageModules.Controls.Add(this.tileBMTracker);
             this.tabPageModules.Controls.Add(this.tileRadar);
             this.tabPageModules.CustomBackground = false;
             this.tabPageModules.HorizontalScrollbar = false;
@@ -281,30 +279,13 @@ namespace AxTools.Forms
             this.metroTileExt1.Location = new System.Drawing.Point(359, 15);
             this.metroTileExt1.Name = "metroTileExt1";
             this.metroTileExt1.PaintTileCount = true;
-            this.metroTileExt1.Size = new System.Drawing.Size(59, 80);
+            this.metroTileExt1.Size = new System.Drawing.Size(59, 142);
             this.metroTileExt1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTileExt1.StyleManager = null;
             this.metroTileExt1.TabIndex = 9;
             this.metroTileExt1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTileExt1.TileCount = 0;
             this.metroTileExt1.Click += new System.EventHandler(this.TileLua_Click);
-            // 
-            // tileBMTracker
-            // 
-            this.tileBMTracker.ActiveControl = null;
-            this.tileBMTracker.CenterText = "Black market tracker";
-            this.tileBMTracker.CustomBackground = false;
-            this.tileBMTracker.CustomForeColor = false;
-            this.tileBMTracker.Location = new System.Drawing.Point(3, 101);
-            this.tileBMTracker.Name = "tileBMTracker";
-            this.tileBMTracker.PaintTileCount = true;
-            this.tileBMTracker.Size = new System.Drawing.Size(415, 52);
-            this.tileBMTracker.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileBMTracker.StyleManager = null;
-            this.tileBMTracker.TabIndex = 8;
-            this.tileBMTracker.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileBMTracker.TileCount = 0;
-            this.tileBMTracker.Click += new System.EventHandler(this.TileBMTracker_Click);
             // 
             // tileRadar
             // 
@@ -315,7 +296,7 @@ namespace AxTools.Forms
             this.tileRadar.Location = new System.Drawing.Point(3, 15);
             this.tileRadar.Name = "tileRadar";
             this.tileRadar.PaintTileCount = true;
-            this.tileRadar.Size = new System.Drawing.Size(350, 80);
+            this.tileRadar.Size = new System.Drawing.Size(350, 142);
             this.tileRadar.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileRadar.StyleManager = null;
             this.tileRadar.TabIndex = 7;
@@ -732,7 +713,14 @@ namespace AxTools.Forms
             this.toolStripMenuItem1,
             this.toolStripMenuItemOpenWoWLogsFolder});
             this.contextMenuStripBackupAndClean.Name = "contextMenuStripMain";
-            this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 142);
+            this.contextMenuStripBackupAndClean.Size = new System.Drawing.Size(195, 120);
+            // 
+            // menuItemNextBackupTime
+            // 
+            this.menuItemNextBackupTime.Enabled = false;
+            this.menuItemNextBackupTime.Name = "menuItemNextBackupTime";
+            this.menuItemNextBackupTime.Size = new System.Drawing.Size(194, 22);
+            this.menuItemNextBackupTime.Text = "Next backup:";
             // 
             // toolStripMenuItemBackupWoWAddOns
             // 
@@ -803,13 +791,6 @@ namespace AxTools.Forms
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
             // 
-            // menuItemNextBackupTime
-            // 
-            this.menuItemNextBackupTime.Enabled = false;
-            this.menuItemNextBackupTime.Name = "menuItemNextBackupTime";
-            this.menuItemNextBackupTime.Size = new System.Drawing.Size(194, 22);
-            this.menuItemNextBackupTime.Text = "Next backup:";
-            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(469, 234);
@@ -875,7 +856,6 @@ namespace AxTools.Forms
         private BrightIdeasSoftware.OLVColumn olvColumn1;
         private BrightIdeasSoftware.OLVColumn olvColumn2;
         private MetroTabPage tabPageModules;
-        private MetroTileExt tileBMTracker;
         private MetroTileExt tileRadar;
         private ToolStripMenuItem toolStripMenuItemDeployArchive;
         private MetroLink linkDownloadPlugins;

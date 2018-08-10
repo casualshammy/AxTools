@@ -10,7 +10,7 @@ using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
-    internal class FlagReturner : IPlugin2
+    internal class FlagReturner : IPlugin3
     {
 
         #region Info
@@ -38,6 +38,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         }
 
         public string[] Dependencies => null;
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

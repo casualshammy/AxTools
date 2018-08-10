@@ -6,7 +6,7 @@ using AxTools.WinAPI.TCPTable;
 
 namespace AxTools.WinAPI
 {
-    internal static class NativeMethods
+    public static class NativeMethods
     {
         [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
         internal static extern long GetWindowLong64(IntPtr hWnd, int nIndex);
@@ -26,7 +26,7 @@ namespace AxTools.WinAPI
         internal static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32")]
-        internal static extern IntPtr GetForegroundWindow();
+        public static extern IntPtr GetForegroundWindow();
 
         [DllImport("user32")]
         [return: MarshalAs(UnmanagedType.Bool)]

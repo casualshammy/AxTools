@@ -10,7 +10,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace InkCrafter
 {
-    public class InkCrafter : IPlugin2
+    public class InkCrafter : IPlugin3
     {
 
         #region Info
@@ -55,6 +55,8 @@ namespace InkCrafter
         }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

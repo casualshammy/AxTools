@@ -9,7 +9,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_RareReporter
 {
-    public class RareReporter : IPlugin2
+    public class RareReporter : IPlugin3
     {
         #region Info
 
@@ -27,6 +27,8 @@ namespace WoWPlugin_RareReporter
         public bool ConfigAvailable { get { return false; } }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

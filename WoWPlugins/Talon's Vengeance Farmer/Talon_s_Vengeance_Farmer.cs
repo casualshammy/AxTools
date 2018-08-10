@@ -12,7 +12,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace Talon_s_Vengeance_Farmer
 {
-    public class TalonsVengeanceFarmer : IPlugin2
+    public class TalonsVengeanceFarmer : IPlugin3
     {
 
         #region Info
@@ -40,6 +40,8 @@ namespace Talon_s_Vengeance_Farmer
         }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

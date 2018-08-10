@@ -9,7 +9,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_SpellGroundClicker
 {
-    public class SpellGroundClicker : IPlugin2
+    public class SpellGroundClicker : IPlugin3
     {
 
         #region Info
@@ -28,6 +28,8 @@ namespace WoWPlugin_SpellGroundClicker
         public bool ConfigAvailable { get { return false; } }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

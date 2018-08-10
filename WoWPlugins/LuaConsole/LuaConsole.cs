@@ -1,9 +1,8 @@
-﻿using AxTools.Forms.Helpers;
-using AxTools.Helpers;
-using AxTools.Properties;
+﻿using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW;
 using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
 using Components.Forms;
 using KeyboardWatcher;
@@ -19,25 +18,39 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AxTools.WoW.Helpers;
 using WindowsFormsAero.TaskDialog;
-using Settings2 = AxTools.Helpers.Settings2;
 
-namespace AxTools.Forms
+namespace LuaConsole
 {
-    internal partial class LuaConsole : BorderedMetroForm, IWoWModule
+    internal partial class LuaConsole : BorderedMetroForm, IPlugin3
     {
-
+        private LuaConsole actualWindow;
         private NLua.Lua luaEngine;
-        private readonly WowProcess process;
         private readonly GameInterface info;
-        private readonly LuaConsoleSettings luaConsoleSettings = LuaConsoleSettings.Instance;
-        private readonly Log2 log;
+        private LuaConsoleSettings luaConsoleSettings;
         private readonly object luaExecutionLock = new object();
-        private WoW.Helpers.SafeTimer safeTimer;
+        private SafeTimer safeTimer;
         private string helpInfo = "";
         private bool LuaCancellationRequested = false;
-        private readonly Settings2 settings = Settings2.Instance;
-        public int ProcessID { get => process.ProcessID; }
+
+        #region IPlugin3 info
+
+        public new string Name => "LuaConsole";
+
+        public bool ConfigAvailable => false;
+
+        public string[] Dependencies => new string[] { "LibNavigator" };
+
+        public string Description => "Easy-to-use script platform for World of Warcraft";
+
+        public bool DontCloseOnWowShutdown => true;
+
+        public Image TrayIcon => null;
+
+        public Version Version => new Version(1, 0);
+
+        #endregion
 
         #region Consts
 
@@ -63,9 +76,12 @@ namespace AxTools.Forms
 
         #endregion
 
-        public LuaConsole(WowProcess proc)
+        public LuaConsole() { }
+
+        public LuaConsole(GameInterface info)
         {
             InitializeComponent();
+            luaConsoleSettings = this.LoadSettingsJSON<LuaConsoleSettings>();
             using (MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(OpenFile)))
             {
                 pictureBoxOpenLuaFile.Image = Image.FromStream(memoryStream);
@@ -74,11 +90,8 @@ namespace AxTools.Forms
             {
                 pictureBoxSaveLuaFile.Image = Image.FromStream(memoryStream);
             }
-            log = new Log2($"LuaConsole - {proc.ProcessID}");
-            StyleManager.Style = Settings2.Instance.StyleColor;
-            Icon = Resources.AppIcon;
-            process = proc;
-            info = new GameInterface(proc);
+            StyleManager.Style = Utilities.MetroColorStyle;
+            this.info = info;
             luaEngine = new NLua.Lua();
             SetLuaEnv();
             textBoxLuaCode.SetHighlighting("Lua");
@@ -102,7 +115,7 @@ namespace AxTools.Forms
             HotkeyManager.AddKeys(typeof(LuaConsole).ToString(), luaConsoleSettings.TimerHotkey);
             HotkeyManager.KeyPressed += KeyboardListener2_KeyPressed;
             textBoxLuaCode.TextChanged += TextBoxLuaCode_TextChanged;
-            log.Info("Loaded");
+            this.LogPrint("Loaded");
         }
 
         private void SetLuaEnv()
@@ -167,7 +180,7 @@ namespace AxTools.Forms
                 // utils
                 luaEngine.RegisterFunction("MsgBox", this, GetType().GetMethod("MsgBox"));
                 helpInfo += "viod MsgBox(object text)\r\n";
-                luaEngine.RegisterFunction("PressKey", this, GetType().GetMethod("PressKey"));
+                luaEngine.RegisterFunction("PressKey", info, info.GetType().GetMethod("PressKey"));
                 helpInfo += "void PressKey(int key)\r\n";
                 luaEngine.RegisterFunction("Log", this, GetType().GetMethod("Log"));
                 helpInfo += "void Log(object text)\r\n";
@@ -196,7 +209,7 @@ namespace AxTools.Forms
         
         public void Move2D(NLua.LuaTable points)
         {
-            dynamic libNavigator = WoW.PluginSystem.API.Utilities.GetReferenceOfPlugin("LibNavigator");
+            dynamic libNavigator = Utilities.GetReferenceOfPlugin("LibNavigator");
             // 'Convert.ToSingle' - okay, cast to 'float' - not okay
             libNavigator.GoPath(points.Values.Cast<NLua.LuaTable>().Select(l => new WowPoint(Convert.ToSingle(l["X"]), Convert.ToSingle(l["Y"]), Convert.ToSingle(l["Z"]))).ToArray(),
                 3f, info);
@@ -307,12 +320,6 @@ namespace AxTools.Forms
 
         #region Wrappers - Utils
         
-        public void PressKey(int key)
-        {
-            NativeMethods.SendMessage(process.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)key, IntPtr.Zero);
-            NativeMethods.SendMessage(process.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)key, IntPtr.Zero);
-        }
-
         public void MsgBox(object text)
         {
             MessageBox.Show(this, text.ToString());
@@ -320,7 +327,7 @@ namespace AxTools.Forms
 
         public void Log(object text)
         {
-            log.Info(text.ToString());
+            this.LogPrint(text.ToString());
         }
 
         public void Wait(double ms)
@@ -336,9 +343,9 @@ namespace AxTools.Forms
             }
         }
 
-        public void NotifyUser(object text)
+        public void NotifyUser(object text, bool warning, bool sound)
         {
-            Notify.TrayPopup("Lua console", text.ToString(), NotifyUserType.Info, false);
+            Utilities.ShowNotify(this, text.ToString(), warning, sound);
         }
 
         public bool StopExecutionIfCancellationRequested()
@@ -361,8 +368,8 @@ namespace AxTools.Forms
             {
                 if (!luaConsoleSettings.IgnoreGameState)
                 {
-                    log.Info("Lua console's timer is stopped: the player isn't active or not in the game");
-                    Notify.SmartNotify("Lua console's timer is stopped", "The player isn't active or not in the game", NotifyUserType.Warn, false);
+                    this.LogPrint("Lua console's timer is stopped: the player isn't active or not in the game");
+                    this.ShowNotify("Lua console's timer is stopped:\r\nThe player isn't active or not in the game", true, false);
                     Invoke(new Action(() => InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty)));
                     return;
                 }
@@ -370,7 +377,7 @@ namespace AxTools.Forms
             }
             if (luaConsoleSettings.TimerRnd)
             {
-                safeTimer.ChangeInterval(luaConsoleSettings.TimerInterval + Utils.Rnd.Next(-(luaConsoleSettings.TimerInterval / 5), luaConsoleSettings.TimerInterval / 5));
+                safeTimer.ChangeInterval(luaConsoleSettings.TimerInterval + Utilities.Rnd.Next(-(luaConsoleSettings.TimerInterval / 5), luaConsoleSettings.TimerInterval / 5));
             }
             try
             {
@@ -380,9 +387,12 @@ namespace AxTools.Forms
             }
             catch (LuaException ex)
             {
-                Notify.TrayPopup("Lua exception is thrown", ex.Message, NotifyUserType.Error, true);
-                log.Info("LuaException in Timer.Elapsed: " + ex.Message);
-                Thread.Sleep(1000);
+                if (ex.InnerException.Message != LUA_CANCELLATION_MSG)
+                {
+                    this.ShowNotify($"Lua exception is thrown:\r\n{ex.Message}\r\n{ex.InnerException.Message}", true, true);
+                    this.LogPrint($"LuaException in Timer.Elapsed: ({ex.Message}) ({ex.InnerException.Message})");
+                    Thread.Sleep(1000);
+                }
             }
         }
         
@@ -409,14 +419,14 @@ namespace AxTools.Forms
             luaConsoleSettings.TimerHotkeyChanged -= LuaTimerHotkeyChanged;
             HotkeyManager.RemoveKeys(typeof(LuaConsole).ToString());
             HotkeyManager.KeyPressed -= KeyboardListener2_KeyPressed;
-            luaConsoleSettings.SaveJSON();
-            log.Info("Closed");
+            this.SaveSettingsJSON(luaConsoleSettings);
+            this.LogPrint("Closed");
         }
 
         private void PictureBoxOpenLuaFileClick(object sender, EventArgs e)
         {
             Select();
-            using (OpenFileDialog p = new OpenFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = AppFolders.UserfilesDir })
+            using (OpenFileDialog p = new OpenFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = this.GetPluginSettingsDir() })
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
@@ -430,7 +440,7 @@ namespace AxTools.Forms
         private void PictureBoxSaveLuaFileClick(object sender, EventArgs e)
         {
             Select();
-            using (SaveFileDialog p = new SaveFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = AppFolders.UserfilesDir })
+            using (SaveFileDialog p = new SaveFileDialog { Filter = @"Lua file|*.lua", InitialDirectory = this.GetPluginSettingsDir() })
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
@@ -550,9 +560,10 @@ namespace AxTools.Forms
         {
             if (safeTimer != null && safeTimer.IsRunning)
             {
+                LuaCancellationRequested = true;
                 safeTimer?.Dispose();
-                log.Info("Timer disabled");
-                Notify.SmartNotify("LuaConsole", "Timer is stopped", NotifyUserType.Info, false);
+                this.LogPrint("Timer disabled");
+                NotifyUser("Timer is stopped", false, false);
                 SetupTimerControls(false);
             }
             else
@@ -574,9 +585,10 @@ namespace AxTools.Forms
                     return;
                 }
                 SetupTimerControls(true);
-                (safeTimer = new WoW.Helpers.SafeTimer(luaConsoleSettings.TimerInterval, info, TimerLuaElapsed)).Start();
-                Notify.SmartNotify("LuaConsole", "Timer is started", NotifyUserType.Info, false);
-                log.Info("Timer enabled");
+                LuaCancellationRequested = false;
+                (safeTimer = this.CreateTimer(luaConsoleSettings.TimerInterval, info, TimerLuaElapsed)).Start();
+                NotifyUser("Timer is started", false, false);
+                this.LogPrint("Timer enabled");
             }
         }
 
@@ -586,10 +598,10 @@ namespace AxTools.Forms
             {
                 BeginInvoke((MethodInvoker)delegate
                 {
-                   if (WoWProcessManager.Processes.Values.Any(i => i.MainWindowHandle == NativeMethods.GetForegroundWindow()))
-                   {
-                       SwitchTimer();
-                   }
+                    if (Utilities.WoWWindowHandle(info) == NativeMethods.GetForegroundWindow())
+                    {
+                        SwitchTimer();
+                    }
                 });
             }
         }
@@ -621,6 +633,25 @@ namespace AxTools.Forms
         private void LinkInfo_Click(object sender, EventArgs e)
         {
             MessageBox.Show(helpInfo);
+        }
+
+        public void OnConfig()
+        {
+            throw new InvalidOperationException();
+        }
+
+        public void OnStart(GameInterface game)
+        {
+            Utilities.InvokeInGUIThread(delegate {
+                (actualWindow = new LuaConsole(game)).Show();
+            });
+        }
+
+        public void OnStop()
+        {
+            Utilities.InvokeInGUIThread(delegate {
+                actualWindow?.Close();
+            });
         }
 
     }

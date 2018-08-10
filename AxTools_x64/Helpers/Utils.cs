@@ -18,7 +18,7 @@ using AxTools.Forms;
 
 namespace AxTools.Helpers
 {
-    internal static class Utils
+    public static class Utils
     {
         private static readonly Log2 log = new Log2("Utils");
         private static string _hardwareID;
@@ -110,7 +110,7 @@ namespace AxTools.Helpers
             }
         }
 
-        internal static bool FontIsInstalled(string fontName)
+        public static bool FontIsInstalled(string fontName)
         {
             using (InstalledFontCollection fontsCollection = new InstalledFontCollection())
             {
@@ -121,6 +121,11 @@ namespace AxTools.Helpers
         internal static void PlaySystemNotificationAsync()
         {
             Task.Factory.StartNew(() => NativeMethods.sndPlaySoundW("SystemNotification", Win32Consts.SND_ALIAS | Win32Consts.SND_NODEFAULT));
+        }
+
+        internal static void PlaySystemExclamationAsync()
+        {
+            Task.Factory.StartNew(() => NativeMethods.sndPlaySoundW("SystemExclamation", Win32Consts.SND_ALIAS | Win32Consts.SND_NODEFAULT));
         }
 
         internal static Image Base64ToImage(string base64)

@@ -7,7 +7,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_Dumper
 {
-    public class Dumper : IPlugin2
+    public class Dumper : IPlugin3
     {
 
         #region Info
@@ -24,6 +24,8 @@ namespace WoWPlugin_Dumper
         public bool ConfigAvailable { get { return false; } }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

@@ -13,7 +13,7 @@ using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_CombatRoutine
 {
-    public class CombatRoutine : IPlugin2
+    public class CombatRoutine : IPlugin3
     {
 
         #region Info
@@ -41,6 +41,8 @@ namespace WoWPlugin_CombatRoutine
         }
 
         public string[] Dependencies => null;
+
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

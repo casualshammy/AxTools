@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace LibNavigator
 {
-    public class LibNavigator : IPlugin2
+    public class LibNavigator : IPlugin3
     {
 
         #region Info
@@ -24,6 +24,7 @@ namespace LibNavigator
         public Image TrayIcon => null;
         public bool ConfigAvailable => false;
         public string[] Dependencies => null;
+        public bool DontCloseOnWowShutdown => false;
 
         #endregion
 

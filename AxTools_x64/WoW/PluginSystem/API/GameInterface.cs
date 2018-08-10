@@ -17,7 +17,6 @@ namespace AxTools.WoW.PluginSystem.API
     public class GameInterface
     {
         internal readonly WowProcess wowProcess;
-        private readonly MemoryManager memoryMgr;
         private readonly Log2 log;
         private readonly string gossipVariableName = Utils.GetRandomString(5, true);
         private readonly string LuaReturnFrameName = Utilities.GetRandomString(5, true);
@@ -31,7 +30,7 @@ namespace AxTools.WoW.PluginSystem.API
         internal GameInterface(WowProcess wow)
         {
             wowProcess = wow ?? throw new ArgumentNullException("wow");
-            memoryMgr = wow.Memory ?? throw new ArgumentNullException("wow.Memory"); ;
+            Memory = wow.Memory ?? throw new ArgumentNullException("wow.Memory"); ;
             log = new Log2($"GameInterface - {wow.ProcessID}");
             if (!chatLocks.ContainsKey(wowProcess.ProcessID)) chatLocks[wowProcess.ProcessID] = new object();
             if (!readChatLocks.ContainsKey(wowProcess.ProcessID)) readChatLocks[wowProcess.ProcessID] = new object();
@@ -172,18 +171,18 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 if (IsInGame && !IsLoadingScreen)
                 {
-                    IntPtr chatStart = memoryMgr.ImageBase + WowBuildInfoX64.ChatBuffer;
+                    IntPtr chatStart = Memory.ImageBase + WowBuildInfoX64.ChatBuffer;
                     for (int i = 0; i < 60; i++)
                     {
                         IntPtr baseMsg = chatStart + i * WowBuildInfoX64.ChatNextMessage;
                         ChatMsg s = new ChatMsg
                         {
-                            Sender = Encoding.UTF8.GetString(memoryMgr.ReadBytes(baseMsg + WowBuildInfoX64.ChatSenderName, 0x100).TakeWhile(l => l != 0).ToArray()),
-                            Channel = memoryMgr.Read<byte>(baseMsg + WowBuildInfoX64.ChatChannelNum),
-                            SenderGUID = memoryMgr.Read<WoWGUID>(baseMsg + WowBuildInfoX64.ChatSenderGuid),
-                            Text = Encoding.UTF8.GetString(memoryMgr.ReadBytes(baseMsg + WowBuildInfoX64.ChatFullMessageOffset, 0x200).TakeWhile(l => l != 0).ToArray()),
-                            TimeStamp = memoryMgr.Read<int>(baseMsg + WowBuildInfoX64.ChatTimeStamp),
-                            Type = memoryMgr.Read<WoWChatMsgType>(baseMsg + WowBuildInfoX64.ChatType)
+                            Sender = Encoding.UTF8.GetString(Memory.ReadBytes(baseMsg + WowBuildInfoX64.ChatSenderName, 0x100).TakeWhile(l => l != 0).ToArray()),
+                            Channel = Memory.Read<byte>(baseMsg + WowBuildInfoX64.ChatChannelNum),
+                            SenderGUID = Memory.Read<WoWGUID>(baseMsg + WowBuildInfoX64.ChatSenderGuid),
+                            Text = Encoding.UTF8.GetString(Memory.ReadBytes(baseMsg + WowBuildInfoX64.ChatFullMessageOffset, 0x200).TakeWhile(l => l != 0).ToArray()),
+                            TimeStamp = Memory.Read<int>(baseMsg + WowBuildInfoX64.ChatTimeStamp),
+                            Type = Memory.Read<WoWChatMsgType>(baseMsg + WowBuildInfoX64.ChatType)
                         };
                         if (ChatMessages[i] != s)
                         {
@@ -238,7 +237,7 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get
             {
-                return memoryMgr.Read<uint>(memoryMgr.ImageBase + WowBuildInfoX64.PlayerZoneID);
+                return Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.PlayerZoneID);
             }
         }
 
@@ -246,10 +245,10 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get
             {
-                uint lootNum = memoryMgr.Read<uint>(memoryMgr.ImageBase + WowBuildInfoX64.PlayerIsLooting + WowBuildInfoX64.PlayerIsLootingOffset0);
+                uint lootNum = Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting + WowBuildInfoX64.PlayerIsLootingOffset0);
                 if (lootNum == 0xFFFFFFF)
                 {
-                    lootNum = memoryMgr.Read<uint>(memoryMgr.ImageBase + WowBuildInfoX64.PlayerIsLooting + WowBuildInfoX64.PlayerIsLootingOffset1);
+                    lootNum = Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting + WowBuildInfoX64.PlayerIsLootingOffset1);
                 }
                 return lootNum != 0;
             }
@@ -259,14 +258,14 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get
             {
-                if (memoryMgr == null)
+                if (Memory == null)
                 {
                     log.Error("memoryMgr is null");
                     return false;
                 }
                 try
                 {
-                    return memoryMgr.Read<byte>(memoryMgr.ImageBase + WowBuildInfoX64.GameState) == 4;
+                    return Memory.Read<byte>(Memory.ImageBase + WowBuildInfoX64.GameState) == 4;
                 }
                 catch
                 {
@@ -282,7 +281,7 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 try
                 {
-                    return memoryMgr.Read<byte>(memoryMgr.ImageBase + WowBuildInfoX64.NotLoadingScreen) == 0;
+                    return Memory.Read<byte>(Memory.ImageBase + WowBuildInfoX64.NotLoadingScreen) == 0;
                 }
                 catch (Exception ex)
                 {
@@ -299,7 +298,7 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get
             {
-                return memoryMgr.Read<uint>(memoryMgr.ImageBase + WowBuildInfoX64.IsChatAFK) != 0;
+                return Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.IsChatAFK) != 0;
             }
             set
             {
@@ -310,13 +309,13 @@ namespace AxTools.WoW.PluginSystem.API
 
         public bool IsSpellKnown(uint spellID)
         {
-            uint totalKnownSpells = memoryMgr.Read<uint>(memoryMgr.ImageBase + WowBuildInfoX64.KnownSpellsCount);
-            IntPtr knownSpells = memoryMgr.Read<IntPtr>(memoryMgr.ImageBase + WowBuildInfoX64.KnownSpells);
+            uint totalKnownSpells = Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.KnownSpellsCount);
+            IntPtr knownSpells = Memory.Read<IntPtr>(Memory.ImageBase + WowBuildInfoX64.KnownSpells);
             for (int i = 0; i < totalKnownSpells; i++)
             {
-                IntPtr spellAddress = memoryMgr.Read<IntPtr>(knownSpells + 8 * i);
-                uint pSpellID = memoryMgr.Read<uint>(spellAddress + 4);
-                uint pSpellSuccess = memoryMgr.Read<uint>(spellAddress);
+                IntPtr spellAddress = Memory.Read<IntPtr>(knownSpells + 8 * i);
+                uint pSpellID = Memory.Read<uint>(spellAddress + 4);
+                uint pSpellSuccess = Memory.Read<uint>(spellAddress);
                 if (pSpellSuccess == 1 && pSpellID == spellID)
                 {
                     return true;
@@ -327,7 +326,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public WoWGUID MouseoverGUID
         {
-            get { return memoryMgr.Read<WoWGUID>(memoryMgr.ImageBase + WowBuildInfoX64.MouseoverGUID); }
+            get { return Memory.Read<WoWGUID>(Memory.ImageBase + WowBuildInfoX64.MouseoverGUID); }
         }
 
         #endregion
@@ -546,7 +545,13 @@ namespace AxTools.WoW.PluginSystem.API
 
         #region Utils
 
-        public MemoryManager Memory => memoryMgr;
+        public MemoryManager Memory { get; }
+
+        public void PressKey(int key)
+        {
+            NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)key, IntPtr.Zero);
+            NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)key, IntPtr.Zero);
+        }
 
         #endregion
 

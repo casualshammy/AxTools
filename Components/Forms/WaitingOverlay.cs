@@ -1,5 +1,4 @@
-﻿using AxTools.Helpers;
-using MetroFramework;
+﻿using MetroFramework;
 using MetroFramework.Drawing;
 using MetroFramework.Forms;
 using System;
@@ -8,9 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AxTools.Forms
+namespace Components.Forms
 {
-    internal partial class WaitingOverlay : Form
+    public partial class WaitingOverlay : Form
     {
         private readonly MetroForm parentForm;
         private WaitingOverlaySub panel;
@@ -22,7 +21,7 @@ namespace AxTools.Forms
         /// <param name="parent"></param>
         /// <param name="label"></param>
         /// <param name="waitInMs"></param>
-        public WaitingOverlay(MetroForm parent, string label, int waitInMs = 0)
+        public WaitingOverlay(MetroForm parent, string label, MetroColorStyle metroColorStyle, int waitInMs = 0)
         {
             InitializeComponent();
             parentForm = parent;
@@ -30,7 +29,7 @@ namespace AxTools.Forms
             Load += delegate {
                 Size = parentForm.Size;
                 Location = parentForm.Location;
-                panel = new WaitingOverlaySub(this);
+                panel = new WaitingOverlaySub(this, metroColorStyle);
                 panel.Show(this);
                 Label = label;
             };
@@ -65,18 +64,21 @@ namespace AxTools.Forms
 
         private class WaitingOverlaySub : Form
         {
-            internal WaitingOverlaySub(Form form)
+            private MetroColorStyle metroColorStyle;
+
+            internal WaitingOverlaySub(Form form, MetroColorStyle metroColorStyle)
             {
                 InitializeComponent();
                 parentForm = form;
-                metroProgressSpinner1.Style = Settings2.Instance.StyleColor;
-                metroLabel1.Style = Settings2.Instance.StyleColor;
+                this.metroColorStyle = metroColorStyle;
+                metroProgressSpinner1.Style = metroColorStyle;
+                metroLabel1.Style = metroColorStyle;
             }
 
             protected override void OnPaint(PaintEventArgs e)
             {
                 base.OnPaint(e);
-                using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(Settings2.Instance.StyleColor))
+                using (SolidBrush styleBrush = MetroPaint.GetStyleBrush(metroColorStyle))
                 {
                     e.Graphics.FillRectangles(styleBrush, new[]
                     {

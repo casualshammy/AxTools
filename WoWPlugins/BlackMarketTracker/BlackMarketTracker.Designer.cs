@@ -1,8 +1,8 @@
 ﻿using Components;
 
-namespace AxTools.Forms
+namespace BlackMarketTracker
 {
-    partial class BlackMarket
+    internal partial class BlackMarketTracker
     {
         /// <summary>
         /// Required designer variable.
@@ -113,7 +113,6 @@ namespace AxTools.Forms
             this.Controls.Add(this.metroLinkRefresh);
             this.Controls.Add(this.listView1);
             this.Location = new System.Drawing.Point(0, 0);
-            this.Name = "BlackMarket";
             this.Text = "BlackMarket tracker";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BlackMarketFormClosing);
             this.ResumeLayout(false);

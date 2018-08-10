@@ -108,7 +108,8 @@ namespace AxTools.Helpers
                 {
                     if (type == NotifyUserType.Error || type == NotifyUserType.Warn)
                     {
-                        SystemSounds.Hand.Play();
+                        //SystemSounds.Hand.Play();
+                        Utils.PlaySystemExclamationAsync();
                     }
                     else
                     {
