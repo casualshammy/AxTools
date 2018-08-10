@@ -1,6 +1,6 @@
 ﻿using AxTools.Helpers;
 using AxTools.WinAPI;
-using AxTools.WoW;
+using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
@@ -18,7 +18,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AxTools.WoW.Helpers;
 using WindowsFormsAero.TaskDialog;
 
 namespace LuaConsole
@@ -50,7 +49,7 @@ namespace LuaConsole
 
         public Version Version => new Version(1, 0);
 
-        #endregion
+        #endregion IPlugin3 info
 
         #region Consts
 
@@ -60,7 +59,7 @@ namespace LuaConsole
         private const string MetroLinkRunScriptOnceStop = "<Stop script>";
         private const string LUA_CANCELLATION_MSG = "LUA_CANCELLATION_MSG";
 
-        #endregion
+        #endregion Consts
 
         #region Images
 
@@ -73,10 +72,11 @@ namespace LuaConsole
             "IKBskdEBTPSWqwDnzD7hF0Cj3/Wx/F+zK0BnVb4gQBeIW5uTbjqtcxXLiEhi0gvANQ5ac05gvP4/hwB3UZQngH2IehTaapA8StM2OLMO8Ak5jpgWmKOkVdMHl5B+iBmx+mo17EfTFjg3UgeQBaFvfMqk4j7pYZG6wDdGNuME0dIq7FjA0GQOufK" +
             "vtUY2wCv99A0W2j5PsNmoceKyDI/AU0ZFh9Cve+CxWeqBPH0AnU/ldiBd9XLSpvvYQ+kdlnUSkfKeSl9HxC91zoHEkLPtxYjEmP+pfK8mI74Cjz+I6LM9CLKQDF0ynNHkRHTP0WlZOk0LK5graqzFfe2ZJZQ+e6PrQI7T+f1AevuDphXkKdbsEfAZhbMfflGqAAAAAASUVORK5CYII=";
 
+        #endregion Images
 
-        #endregion
-
-        public LuaConsole() { }
+        public LuaConsole()
+        {
+        }
 
         public LuaConsole(GameInterface info)
         {
@@ -202,11 +202,10 @@ namespace LuaConsole
             {
                 MsgBox(ex.Message);
             }
-            
         }
 
         #region Wrappers
-        
+
         public void Move2D(NLua.LuaTable points)
         {
             dynamic libNavigator = Utilities.GetReferenceOfPlugin("LibNavigator");
@@ -261,8 +260,8 @@ namespace LuaConsole
             StopExecutionIfCancellationRequested();
             return info.LuaIsTrue(condition);
         }
-        
-        #endregion
+
+        #endregion Wrappers
 
         #region Wrappers - Objects
 
@@ -316,10 +315,10 @@ namespace LuaConsole
             return null;
         }
 
-        #endregion
+        #endregion Wrappers - Objects
 
         #region Wrappers - Utils
-        
+
         public void MsgBox(object text)
         {
             MessageBox.Show(this, text.ToString());
@@ -355,7 +354,7 @@ namespace LuaConsole
             return true;
         }
 
-        #endregion
+        #endregion Wrappers - Utils
 
         private void SwitchTimer()
         {
@@ -395,7 +394,7 @@ namespace LuaConsole
                 }
             }
         }
-        
+
         private void TextBoxLuaCode_TextChanged(object sender, EventArgs e)
         {
             try
@@ -408,7 +407,7 @@ namespace LuaConsole
                 labelLuaError.Text = ex.Message;
             }
         }
-        
+
         private void WowModulesFormClosing(object sender, FormClosingEventArgs e)
         {
             if (safeTimer != null && safeTimer.IsRunning)
@@ -479,7 +478,7 @@ namespace LuaConsole
         {
             luaConsoleSettings.IgnoreGameState = metroCheckBoxIgnoreGameState.Checked;
         }
-        
+
         private void MetroTextBoxTimerInterval_TextChanged(object sender, EventArgs e)
         {
             int.TryParse(metroTextBoxTimerInterval.Text, out luaConsoleSettings.TimerInterval);
@@ -531,7 +530,8 @@ namespace LuaConsole
                     Stopwatch stopwatch = Stopwatch.StartNew();
                     metroLinkRunScriptOnce.Text = MetroLinkRunScriptOnceStop;
                     //metroLinkRunScriptOnce.Enabled = false;
-                    Task.Run(() => {
+                    Task.Run(() =>
+                    {
                         try
                         {
                             LuaCancellationRequested = false;
@@ -544,8 +544,10 @@ namespace LuaConsole
                             if (ex.InnerException.Message != LUA_CANCELLATION_MSG)
                                 MsgBox($"{ex.Message}\r\n{ex.InnerException.Message}");
                         }
-                    }).ContinueWith(l => {
-                        PostInvoke(delegate {
+                    }).ContinueWith(l =>
+                    {
+                        PostInvoke(delegate
+                        {
                             labelRequestTime.Text = string.Format("{0}ms", stopwatch.ElapsedMilliseconds);
                             labelRequestTime.Visible = true;
                             metroLinkRunScriptOnce.Text = MetroLinkRunScriptOnceRun;
@@ -620,7 +622,8 @@ namespace LuaConsole
                     textBoxTimerHotkey.Text = key.ToString();
                     HotkeyManager.RemoveKeys(typeof(LuaConsole).ToString());
                     luaConsoleSettings.TimerHotkey = key;
-                    Task.Run(() => {
+                    Task.Run(() =>
+                    {
                         Thread.Sleep(1000);
                         HotkeyManager.AddKeys(typeof(LuaConsole).ToString(), key);
                     });
@@ -642,17 +645,18 @@ namespace LuaConsole
 
         public void OnStart(GameInterface game)
         {
-            Utilities.InvokeInGUIThread(delegate {
+            Utilities.InvokeInGUIThread(delegate
+            {
                 (actualWindow = new LuaConsole(game)).Show();
             });
         }
 
         public void OnStop()
         {
-            Utilities.InvokeInGUIThread(delegate {
+            Utilities.InvokeInGUIThread(delegate
+            {
                 actualWindow?.Close();
             });
         }
-
     }
 }

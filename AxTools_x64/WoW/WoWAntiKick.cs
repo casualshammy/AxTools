@@ -1,12 +1,12 @@
-﻿using System;
-using System.Timers;
-using AxTools.Helpers;
-using AxTools.WoW.PluginSystem.API;
+﻿using AxTools.Helpers;
 using AxTools.WinAPI;
-using System.Windows.Forms;
+using AxTools.WoW.PluginSystem.API;
 using KeyboardWatcher;
-using System.Linq;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Timers;
+using System.Windows.Forms;
 
 namespace AxTools.WoW
 {
@@ -20,7 +20,9 @@ namespace AxTools.WoW
         private int fallback_lastTimeActionEmulated;
         private bool fallback_keyboardWatcherInitialized = false;
         private GameInterface info;
+
         internal static event Action<IntPtr> ActionEmulated;
+
         private static KeyExt[] moveKeys = new KeyExt[] { new KeyExt(Keys.W), new KeyExt(Keys.A), new KeyExt(Keys.S), new KeyExt(Keys.D), new KeyExt(Keys.Space) };
         private static Dictionary<int, WoWAntiKick> instanses = new Dictionary<int, WoWAntiKick>();
 
@@ -144,6 +146,5 @@ namespace AxTools.WoW
             KeyboardWatcher.HotkeyManager.KeyPressed -= HotkeyManager_KeyPressed;
             timer.Close();
         }
-    
     }
 }

@@ -1,16 +1,9 @@
-﻿using AxTools.Helpers;
-using AxTools.Properties;
+﻿using AxTools.Properties;
 using AxTools.WoW.PluginSystem;
 using Components.Forms;
 using KeyboardWatcher;
 using MetroFramework.Controls;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,7 +12,6 @@ namespace AxTools.Forms
 {
     internal partial class MainForm_PluginHotkeys : BorderedMetroForm
     {
-
         private const int sizeBetweenRows = 26;
 
         internal MainForm_PluginHotkeys(IPlugin3[] plugins)
@@ -81,7 +73,6 @@ namespace AxTools.Forms
                 panel1.Controls.Add(btn);
                 Invalidate(true);
             }
-
         }
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
@@ -100,7 +91,8 @@ namespace AxTools.Forms
                 else
                 {
                     AxTools.Helpers.Settings2.Instance.PluginHotkeys[((IPlugin3)textBox.Tag).Name] = key;
-                    Task.Run(() => {
+                    Task.Run(() =>
+                    {
                         Thread.Sleep(1000);
                         HotkeyManager.AddKeys(name, key);
                     });

@@ -10,9 +10,12 @@ namespace AxTools.Updater
         {
             return JsonConvert.DeserializeObject<UpdateInfo2>(s);
         }
+
 #pragma warning disable 0649
+
         [JsonProperty(Order = 0, PropertyName = "Version")]
         internal VersionExt Version;
+
 #pragma warning restore 0649
 
         //[JsonProperty(Order = 1, PropertyName = "PanicMode")]
@@ -23,6 +26,5 @@ namespace AxTools.Updater
 
         //[JsonProperty(Order = 3, PropertyName = "UpdaterZipURL")]
         //internal Uri UpdaterZipURL;
-
     }
 }

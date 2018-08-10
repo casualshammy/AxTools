@@ -54,7 +54,6 @@ namespace AxTools.Forms
             this.linkBackup = new MetroFramework.Controls.MetroLink();
             this.cmbboxAccSelect = new Components.MetroComboboxExt(this.components);
             this.tabPageModules = new MetroFramework.Controls.MetroTabPage();
-            this.metroTileExt1 = new Components.MetroTileExt(this.components);
             this.tileRadar = new Components.MetroTileExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
             this.labelTotalPluginsEnabled = new MetroFramework.Controls.MetroLabel();
@@ -250,7 +249,6 @@ namespace AxTools.Forms
             // 
             // tabPageModules
             // 
-            this.tabPageModules.Controls.Add(this.metroTileExt1);
             this.tabPageModules.Controls.Add(this.tileRadar);
             this.tabPageModules.CustomBackground = false;
             this.tabPageModules.HorizontalScrollbar = false;
@@ -270,23 +268,6 @@ namespace AxTools.Forms
             this.tabPageModules.VerticalScrollbarHighlightOnWheel = false;
             this.tabPageModules.VerticalScrollbarSize = 10;
             // 
-            // metroTileExt1
-            // 
-            this.metroTileExt1.ActiveControl = null;
-            this.metroTileExt1.CenterText = "Lua";
-            this.metroTileExt1.CustomBackground = false;
-            this.metroTileExt1.CustomForeColor = false;
-            this.metroTileExt1.Location = new System.Drawing.Point(359, 15);
-            this.metroTileExt1.Name = "metroTileExt1";
-            this.metroTileExt1.PaintTileCount = true;
-            this.metroTileExt1.Size = new System.Drawing.Size(59, 142);
-            this.metroTileExt1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTileExt1.StyleManager = null;
-            this.metroTileExt1.TabIndex = 9;
-            this.metroTileExt1.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTileExt1.TileCount = 0;
-            this.metroTileExt1.Click += new System.EventHandler(this.TileLua_Click);
-            // 
             // tileRadar
             // 
             this.tileRadar.ActiveControl = null;
@@ -296,7 +277,7 @@ namespace AxTools.Forms
             this.tileRadar.Location = new System.Drawing.Point(3, 15);
             this.tileRadar.Name = "tileRadar";
             this.tileRadar.PaintTileCount = true;
-            this.tileRadar.Size = new System.Drawing.Size(350, 142);
+            this.tileRadar.Size = new System.Drawing.Size(415, 142);
             this.tileRadar.Style = MetroFramework.MetroColorStyle.Blue;
             this.tileRadar.StyleManager = null;
             this.tileRadar.TabIndex = 7;
@@ -863,7 +844,6 @@ namespace AxTools.Forms
         private ToolStripMenuItem toolStripMenuItem1;
         private MetroTileExt tileExtDiscord;
         private MetroTileExt tileExtTwitch;
-        private MetroTileExt metroTileExt1;
         private ToolStripSeparator toolStripSeparator2;
         private MetroCheckBox checkBoxTwitch;
         private ToolStripMenuItem menuItemNextBackupTime;

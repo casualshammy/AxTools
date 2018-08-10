@@ -22,7 +22,7 @@ namespace AxTools.Updater
         private static readonly Log2 log = new Log2("UpdaterService");
         private static readonly System.Timers.Timer _timer = new System.Timers.Timer(600000);
         private static readonly string DistrDirectory = AppFolders.TempDir + "\\update";
-        private static readonly string[] JunkFiles = {};
+        private static readonly string[] JunkFiles = { };
         private static readonly string[] JunkFolders = { };
         private static string _updateFileURL;
         private const string UpdateFileDnsTxt = "axtools-update-file-2.axio.name";
@@ -156,7 +156,8 @@ namespace AxTools.Updater
                 log.Error("Can't find updater executable! Files: " + string.Join(", ", new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().Select(l => l.Name)));
                 return;
             }
-            Action closeAndUpdate = delegate {
+            Action closeAndUpdate = delegate
+            {
                 try
                 {
                     log.Info("Closing for update...");
@@ -179,7 +180,7 @@ namespace AxTools.Updater
             else
             {
                 // 1-hour notification!
-                Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 60*60, (sender, args) => closeAndUpdate());
+                Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 60 * 60, (sender, args) => closeAndUpdate());
             }
         }
 
@@ -301,6 +302,5 @@ namespace AxTools.Updater
                 return null;
             }
         }
-
     }
 }

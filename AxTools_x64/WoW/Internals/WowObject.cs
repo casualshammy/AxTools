@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AxTools.Helpers;
 
 namespace AxTools.WoW.Internals
 {
@@ -21,18 +21,19 @@ namespace AxTools.WoW.Internals
             Bobbing = info.Bobbing == 1;
             Location = info.Location;
         }
-        
+
         private static int _maxNameLength = 200;
 
         internal static readonly Dictionary<uint, string> Names = new Dictionary<uint, string>();
 
         public readonly IntPtr Address;
-        
+
         public readonly WowPoint Location;
 
         internal readonly bool Bobbing;
 
         private WoWGUID mOwnerGUID;
+
         public WoWGUID OwnerGUID
         {
             get
@@ -95,6 +96,5 @@ namespace AxTools.WoW.Internals
         {
             throw new InvalidOperationException("You cannot target object!");
         }
-
     }
 }

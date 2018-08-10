@@ -1,8 +1,17 @@
 ﻿using AxTools.Forms;
+using AxTools.Forms.Helpers;
+using AxTools.Helpers;
+using AxTools.Properties;
+using AxTools.Updater;
+using AxTools.WoW;
+using AxTools.WoW.PluginSystem;
+using Newtonsoft.Json;
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
@@ -10,22 +19,13 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using WindowsFormsAero.TaskDialog;
-using AxTools.Forms.Helpers;
-using AxTools.Helpers;
-using AxTools.Properties;
-using AxTools.Updater;
-using Newtonsoft.Json;
-using System.Linq;
-using AxTools.WoW;
-using AxTools.WoW.PluginSystem;
-using System.Security.Cryptography;
-using System.Collections.ObjectModel;
 
 namespace AxTools
 {
     internal static class Program
     {
         internal static event Action Exit;
+
         internal static int UIThread;
         internal static MultiLock ShutdownLock = new MultiLock();
         private static readonly Log2 log = new Log2("Program");
@@ -137,7 +137,7 @@ namespace AxTools
                         Npcs = p[2] == 1,
                         Objects = p[3] == 1,
                         Corpses = p[4] == 1,
-                        Zoom = p[5]*0.25F
+                        Zoom = p[5] * 0.25F
                     };
                     if (newRadarShowMode.Zoom > 2F || newRadarShowMode.Zoom < 0.25F)
                     {
@@ -196,7 +196,6 @@ namespace AxTools
                         File.WriteAllText(AppFolders.ConfigDir + "\\settings.json", newCfg, Encoding.UTF8);
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -213,9 +212,9 @@ namespace AxTools
                 {
                     log.Info("Found old WoWAccounts db, migrating...");
                     byte[] oldEncryptedPasswordData = JsonConvert.DeserializeObject<byte[]>(match.Groups[1].Value);
-                    #pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
                     var oldAccounts = WoWAccount.Load(oldEncryptedPasswordData);
-                    #pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete
                     var newAccounts = new ObservableCollection<WoWAccount2>();
                     foreach (var entry in oldAccounts)
                     {
@@ -338,7 +337,7 @@ namespace AxTools
             else
             {
                 TaskDialog.Show("Invalid command line arguments", "AxTools", "", TaskDialogButton.OK, TaskDialogIcon.Warning);
-                Main(new string[] {});
+                Main(new string[] { });
             }
         }
 
@@ -368,6 +367,5 @@ namespace AxTools
                 }
             }
         }
-
     }
 }

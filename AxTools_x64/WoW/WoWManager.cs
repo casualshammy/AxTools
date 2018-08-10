@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using AxTools.Forms;
+﻿using AxTools.Forms;
 using AxTools.Helpers;
-using FMemory;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
+using FMemory;
+using System.Diagnostics;
+using System.Linq;
 
 namespace AxTools.WoW
 {
@@ -23,8 +23,6 @@ namespace AxTools.WoW
         {
             Unhook(processID);
         }
-
-
 
         /// <summary>
         ///     Selects <see cref="WowProcess"/> from all available processes (via <see cref="WoWProcessSelector"/>).
@@ -69,7 +67,7 @@ namespace AxTools.WoW
             Notify.SmartNotify("Module error", "No WoW process found", NotifyUserType.Error, true);
             return null;
         }
-        
+
         /// <summary>
         ///     Closes //WowRadarOptions, WoWRadar//
         ///     Stops WoW plugin
@@ -94,6 +92,5 @@ namespace AxTools.WoW
                 }
             }
         }
-
     }
 }

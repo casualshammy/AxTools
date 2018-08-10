@@ -140,14 +140,16 @@ namespace BlackMarketTracker
 
         public void OnStart(GameInterface game)
         {
-            Utilities.InvokeInGUIThread(delegate {
+            Utilities.InvokeInGUIThread(delegate
+            {
                 (actualWindow = new BlackMarketTracker(game)).Show();
             });
         }
 
         public void OnStop()
         {
-            Utilities.InvokeInGUIThread(delegate {
+            Utilities.InvokeInGUIThread(delegate
+            {
                 actualWindow?.Close();
             });
         }

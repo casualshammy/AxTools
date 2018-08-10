@@ -73,6 +73,5 @@ namespace AxTools.Helpers
             Clearing,
             Actualizing,
         }
-
     }
 }

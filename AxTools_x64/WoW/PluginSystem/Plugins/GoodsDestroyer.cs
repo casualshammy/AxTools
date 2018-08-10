@@ -1,18 +1,17 @@
-﻿using System;
+﻿using AxTools.Properties;
+using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
-using AxTools.Properties;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals;
-using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
     internal class GoodsDestroyer : IPlugin3
     {
-
         #region Info
 
         public string Name
@@ -43,7 +42,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         public string[] Dependencies => null;
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Events
 
@@ -127,7 +126,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         }
                         if (info.IsSpellKnown(13262)) // disenchant
                         {
-                            Thread.Sleep(1000); // pause to prevent disenchanting nonexistent item 
+                            Thread.Sleep(1000); // pause to prevent disenchanting nonexistent item
                             DoDisenchant();
                         }
                         if ((DateTime.UtcNow - lastNotifiedAboutCompletion).TotalSeconds >= 60)
@@ -138,7 +137,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     }
                     else
                     {
-                        Thread.Sleep(500); // wait for cast 
+                        Thread.Sleep(500); // wait for cast
                     }
                 }
             }
@@ -171,7 +170,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
         }
 
-        #endregion
+        #endregion Events
 
         #region Variables
 
@@ -201,13 +200,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
             124104, // Фьярнскаггл
         };
 
-        private readonly uint[] ores = {2770, 2771, 2772, 10620, 3858, 23424, 23425, 36909, 36912, 36910, 52185, 53038, 52183, 72093, 72094, 72103, 72092};
+        private readonly uint[] ores = { 2770, 2771, 2772, 10620, 3858, 23424, 23425, 36909, 36912, 36910, 52185, 53038, 52183, 72093, 72094, 72103, 72092 };
 
         private readonly string someRandomString = Utilities.GetRandomString(6, true);
 
         private DateTime lastNotifiedAboutCompletion = DateTime.MinValue;
 
-        #endregion
-
+        #endregion Variables
     }
 }

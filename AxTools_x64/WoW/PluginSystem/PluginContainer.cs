@@ -10,6 +10,5 @@
             Plugin = plugin;
             IsRunning = false;
         }
-
     }
 }

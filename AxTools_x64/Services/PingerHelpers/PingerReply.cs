@@ -6,7 +6,7 @@
         internal bool Successful;
 
         internal PingerReply(int pingInMs, bool successful)
-        { 
+        {
             PingInMs = pingInMs;
             Successful = successful;
         }

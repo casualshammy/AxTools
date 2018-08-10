@@ -1,9 +1,14 @@
-﻿using AxTools.Helpers;
+﻿using AxTools.Forms.Helpers;
+using AxTools.Helpers;
 using AxTools.Properties;
+using AxTools.WinAPI;
 using AxTools.WoW;
+using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -13,18 +18,11 @@ using System.Media;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AxTools.Forms.Helpers;
-using AxTools.WoW.Internals;
-using AxTools.WoW.PluginSystem.API;
-using Settings2 = AxTools.Helpers.Settings2;
-using System.ComponentModel;
-using AxTools.WinAPI;
 
 namespace AxTools.Forms
 {
     internal partial class WowRadar : Form, IWoWModule
     {
-
         #region Fields
 
         public int ProcessID { get; set; }
@@ -90,7 +88,7 @@ namespace AxTools.Forms
         private bool flicker;
         private Point lastMouseLocation = Point.Empty;
 
-        #endregion
+        #endregion Fields
 
         public WowRadar(WowProcess wow)
         {
@@ -128,7 +126,7 @@ namespace AxTools.Forms
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(6000);
-                BeginInvoke((MethodInvoker) (() => { labelHint.Visible = false; }));
+                BeginInvoke((MethodInvoker)(() => { labelHint.Visible = false; }));
             });
 
             log.Info(string.Format("Loaded"));
@@ -194,7 +192,7 @@ namespace AxTools.Forms
                     Thread.Sleep(100);
                     continue;
                 }
-                int counter = 100 - (int) stopwatch.ElapsedMilliseconds;
+                int counter = 100 - (int)stopwatch.ElapsedMilliseconds;
                 if (counter > 0 && isRunning)
                 {
                     Thread.Sleep(counter);
@@ -309,8 +307,8 @@ namespace AxTools.Forms
                         graphics.DrawLine(whitePen, point, point2);
                         graphics.DrawEllipse(whitePen, point.X - 40 * zoomR, point.Y - 40 * zoomR, 80 * zoomR, 80 * zoomR);
                     }
-                    
-                    #endregion
+
+                    #endregion Draw local player
 
                     #region Draw friends
 
@@ -325,11 +323,11 @@ namespace AxTools.Forms
                                 num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
                                 var2X = localPlayerLocationX - var2X;
                                 var2Y = localPlayerLocationY - var2Y;
-                                var2X = (int) (zoomR*var2X);
-                                var2Y = (int) (zoomR*var2Y);
-                                double num3 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
-                                point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931));
-                                point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Sin(num2));
+                                var2X = (int)(zoomR * var2X);
+                                var2Y = (int)(zoomR * var2Y);
+                                double num3 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
+                                point.X = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num3) * Math.Cos(num2 + 3.1415926535897931));
+                                point.Y = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num3) * Math.Sin(num2));
                                 Pen pen;
                                 SolidBrush solidBrush;
                                 if (i.Alive)
@@ -346,15 +344,15 @@ namespace AxTools.Forms
                                 float zDiff = i.Location.Z - localPlayer.Location.Z;
                                 if (zDiff >= 10)
                                 {
-                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
+                                    pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
                                 }
                                 else if (zDiff <= -10)
                                 {
-                                    pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
+                                    pts = new[] { new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2) };
                                 }
                                 else
                                 {
-                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                                    pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y) };
                                 }
                                 graphics.FillPolygon(solidBrush, pts);
                                 if (!flicker || i.TargetGUID != localPlayer.GUID)
@@ -383,7 +381,7 @@ namespace AxTools.Forms
                         }
                     }
 
-                    #endregion
+                    #endregion Draw friends
 
                     #region Draw enemies
 
@@ -398,11 +396,11 @@ namespace AxTools.Forms
                                 num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
                                 var2X = localPlayerLocationX - var2X;
                                 var2Y = localPlayerLocationY - var2Y;
-                                var2X = (int) (zoomR*var2X);
-                                var2Y = (int) (zoomR*var2Y);
-                                double num3 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
-                                point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Cos(num2 + 3.1415926535897931));
-                                point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num3)*Math.Sin(num2));
+                                var2X = (int)(zoomR * var2X);
+                                var2Y = (int)(zoomR * var2Y);
+                                double num3 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
+                                point.X = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num3) * Math.Cos(num2 + 3.1415926535897931));
+                                point.Y = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num3) * Math.Sin(num2));
                                 Pen pen;
                                 SolidBrush solidBrush;
                                 if (i.Alive)
@@ -419,15 +417,15 @@ namespace AxTools.Forms
                                 float zDiff = i.Location.Z - localPlayer.Location.Z;
                                 if (zDiff >= 10)
                                 {
-                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
+                                    pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
                                 }
                                 else if (zDiff <= -10)
                                 {
-                                    pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
+                                    pts = new[] { new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2) };
                                 }
                                 else
                                 {
-                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                                    pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y) };
                                 }
                                 graphics.FillPolygon(solidBrush, pts);
                                 if (!flicker || i.TargetGUID != localPlayer.GUID)
@@ -456,7 +454,7 @@ namespace AxTools.Forms
                         }
                     }
 
-                    #endregion
+                    #endregion Draw enemies
 
                     #region Draw objects
 
@@ -469,24 +467,24 @@ namespace AxTools.Forms
                             num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
                             var2X = localPlayerLocationX - var2X;
                             var2Y = localPlayerLocationY - var2Y;
-                            var2X = (int) (zoomR*var2X);
-                            var2Y = (int) (zoomR*var2Y);
-                            double num4 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
-                            point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931));
-                            point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Sin(num2));
+                            var2X = (int)(zoomR * var2X);
+                            var2Y = (int)(zoomR * var2Y);
+                            double num4 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
+                            point.X = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num4) * Math.Cos(num2 + 3.1415926535897931));
+                            point.Y = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num4) * Math.Sin(num2));
                             Point[] pts;
                             float zDiff = i.Location.Z - localPlayer.Location.Z;
                             if (zDiff >= 10)
                             {
-                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
+                                pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
                             }
                             else if (zDiff <= -10)
                             {
-                                pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
+                                pts = new[] { new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2) };
                             }
                             else
                             {
-                                pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                                pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y) };
                             }
                             graphics.DrawPolygon(objectPen, pts);
                             graphics.FillPolygon(objectBrush, pts);
@@ -500,7 +498,7 @@ namespace AxTools.Forms
                         }
                     }
 
-                    #endregion
+                    #endregion Draw objects
 
                     #region Draw NPCs
 
@@ -515,24 +513,24 @@ namespace AxTools.Forms
                                 num2 = Math.Atan2(var2Y - localPlayerLocationY, var2X - localPlayerLocationX) + 3.1415926535897931 + 1.5707963267948966;
                                 var2X = localPlayerLocationX - var2X;
                                 var2Y = localPlayerLocationY - var2Y;
-                                var2X = (int) (zoomR*var2X);
-                                var2Y = (int) (zoomR*var2Y);
-                                double num4 = Math.Sqrt(var2X*var2X + var2Y*var2Y);
-                                point.X = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Cos(num2 + 3.1415926535897931));
-                                point.Y = (int) Math.Round(halfOfPictureboxSize + Math.Abs(num4)*Math.Sin(num2));
+                                var2X = (int)(zoomR * var2X);
+                                var2Y = (int)(zoomR * var2Y);
+                                double num4 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
+                                point.X = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num4) * Math.Cos(num2 + 3.1415926535897931));
+                                point.Y = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num4) * Math.Sin(num2));
                                 Point[] pts;
                                 float zDiff = i.Location.Z - localPlayer.Location.Z;
                                 if (zDiff >= 10)
                                 {
-                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2)};
+                                    pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
                                 }
                                 else if (zDiff <= -10)
                                 {
-                                    pts = new[] {new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2)};
+                                    pts = new[] { new Point(point.X - 2, point.Y - 2), new Point(point.X + 2, point.Y - 2), new Point(point.X, point.Y + 2) };
                                 }
                                 else
                                 {
-                                    pts = new[] {new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y)};
+                                    pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y), new Point(point.X, point.Y + 2), new Point(point.X - 2, point.Y) };
                                 }
                                 graphics.DrawPolygon(i.Alive ? npcPen : grayPen, pts);
                                 graphics.FillPolygon(i.Alive ? npcBrush : grayBrush, pts);
@@ -547,7 +545,7 @@ namespace AxTools.Forms
                         }
                     }
 
-                    #endregion
+                    #endregion Draw NPCs
 
                     #region Draw local player
 
@@ -563,7 +561,7 @@ namespace AxTools.Forms
                         graphics.DrawEllipse(whitePen, point.X - 40 * zoomR, point.Y - 40 * zoomR, 80 * zoomR, 80 * zoomR);
                     }
 
-                    #endregion
+                    #endregion Draw local player
 
                     point = MousePosition;
                     point.X -= Location.X;
@@ -727,7 +725,7 @@ namespace AxTools.Forms
                     WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
                     if (npc != null)
                     {
-                        DrawTooltip(mousePosition, string.Concat("   ", npc.Name, "  \r\n   ", ((uint) (npc.Health/(float) npc.HealthMax*100)).ToString(), "%"), WowPlayerClass.War);
+                        DrawTooltip(mousePosition, string.Concat("   ", npc.Name, "  \r\n   ", ((uint)(npc.Health / (float)npc.HealthMax * 100)).ToString(), "%"), WowPlayerClass.War);
                         return;
                     }
                     WowObject _object = wowObjects.FirstOrDefault(i => i.GUID == pair.Key);
@@ -743,6 +741,7 @@ namespace AxTools.Forms
                 textBoxDetailedInfo.Visible = false;
             }
         }
+
         private void DrawTooltip(Point e, string text, WowPlayerClass _class)
         {
             textBoxDetailedInfo.Text = text;
@@ -814,7 +813,7 @@ namespace AxTools.Forms
                         }
                         else if (e.Button == MouseButtons.Middle)
                         {
-                            Task.Run((Action) npc.Interact);
+                            Task.Run((Action)npc.Interact);
                         }
                         break;
                     }
@@ -856,6 +855,7 @@ namespace AxTools.Forms
                 }
             }
         }
+
         private void CheckBoxEnemiesMouseClickExtended(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -877,6 +877,7 @@ namespace AxTools.Forms
                 }
             }
         }
+
         private void CheckBoxNpcsMouseClickExtended(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -898,6 +899,7 @@ namespace AxTools.Forms
                 }
             }
         }
+
         private void CheckBoxObjectsMouseClickExtended(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -950,6 +952,5 @@ namespace AxTools.Forms
                 info.Move2D(point, 3f, 5000, false, false);
             });
         }
-
     }
 }

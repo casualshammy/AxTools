@@ -19,6 +19,5 @@ namespace WoWPlugin_Notifier
 
         [DataMember(Name = "EnableOnAfk")]
         internal bool EnableOnAfk;
-
     }
 }

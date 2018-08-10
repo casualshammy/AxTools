@@ -1,8 +1,8 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
-using MetroFramework;
+﻿using MetroFramework;
 using MetroFramework.Components;
 using MetroFramework.Drawing;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace Components
 {

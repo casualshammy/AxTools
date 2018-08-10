@@ -8,7 +8,6 @@ namespace AxTools.WoW.Internals
     [StructLayout(LayoutKind.Sequential)]
     public struct WowPoint : IEquatable<WowPoint>
     {
-        
         public float X;
         public float Y;
         public float Z;
@@ -23,7 +22,7 @@ namespace AxTools.WoW.Internals
         [Pure]
         public double Distance(WowPoint p)
         {
-            return Math.Sqrt((X - p.X)*(X - p.X) + (Y - p.Y)*(Y - p.Y) + (Z - p.Z)*(Z - p.Z));
+            return Math.Sqrt((X - p.X) * (X - p.X) + (Y - p.Y) * (Y - p.Y) + (Z - p.Z) * (Z - p.Z));
         }
 
         [Pure]
@@ -59,9 +58,9 @@ namespace AxTools.WoW.Internals
 
         public static WowPoint operator *(WowPoint wowPoint, float v)
         {
-            return new WowPoint(wowPoint.X*v, wowPoint.Y*v, wowPoint.Z*v);
+            return new WowPoint(wowPoint.X * v, wowPoint.Y * v, wowPoint.Z * v);
         }
-        
+
         public bool IsEmpty
         {
             get
@@ -94,6 +93,5 @@ namespace AxTools.WoW.Internals
         {
             return BitConverter.ToInt32(BitConverter.GetBytes(X), 0) ^ BitConverter.ToInt32(BitConverter.GetBytes(Y), 0) ^ BitConverter.ToInt32(BitConverter.GetBytes(Z), 0);
         }
-
     }
 }

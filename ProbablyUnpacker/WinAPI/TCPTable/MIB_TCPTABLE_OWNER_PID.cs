@@ -7,6 +7,7 @@ namespace AxTools.WinAPI.TCPTable
     {
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         public uint dwNumEntries;
+
         // ReSharper disable once MemberCanBePrivate.Local
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         public MIB_TCPROW_OWNER_PID table;

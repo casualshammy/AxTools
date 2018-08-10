@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using AxTools.WoW.Helpers;
+﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace Talon_s_Vengeance_Farmer
 {
     public class TalonsVengeanceFarmer : IPlugin3
     {
-
         #region Info
 
         public string Name
@@ -43,13 +39,12 @@ namespace Talon_s_Vengeance_Farmer
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Events
 
         public void OnConfig()
         {
-
         }
 
         public void OnStart()
@@ -73,7 +68,6 @@ namespace Talon_s_Vengeance_Farmer
                 {
                     if (targetPlayer.Auras.All(l => l.Name != "")) // todo
                     {
-                        
                     }
                 }
             }
@@ -84,7 +78,7 @@ namespace Talon_s_Vengeance_Farmer
             throw new NotImplementedException();
         }
 
-        #endregion
+        #endregion Events
 
         #region Fields, propeties
 
@@ -92,7 +86,6 @@ namespace Talon_s_Vengeance_Farmer
         private bool IsMaster = true;
         private SafeTimer timer;
 
-        #endregion
-
+        #endregion Fields, propeties
     }
 }

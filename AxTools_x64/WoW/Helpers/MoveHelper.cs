@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AxTools.WinAPI;
+using AxTools.WoW.Internals;
+using System;
 using System.Threading;
 using System.Windows.Forms;
-using AxTools.WinAPI;
-using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.Helpers
 {
@@ -15,7 +15,7 @@ namespace AxTools.WoW.Helpers
             angle = NegativeAngle(angle);
             return angle;
         }
-        
+
         internal static float NegativeAngle(float angle)
         {
             //if the turning angle is negative
@@ -39,6 +39,5 @@ namespace AxTools.WoW.Helpers
         {
             return -(float)Math.Round(Math.Atan2(me.Location.Distance2D(point), point.Z - me.Location.Z) - Math.PI / 2, 2);
         }
-
     }
 }

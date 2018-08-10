@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -9,9 +11,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using AxTools.Forms;
-using AxTools.Helpers;
-using Newtonsoft.Json;
 
 namespace AxTools.WoW.Helpers
 {
@@ -30,7 +29,7 @@ namespace AxTools.WoW.Helpers
         {
             _locale = GetLocale();
         }
-        
+
         internal static WowheadItemInfo GetItemInfo(uint itemID)
         {
             // <name><![CDATA[Iceblade Arrow]]></name>
@@ -95,7 +94,7 @@ namespace AxTools.WoW.Helpers
                             {
                                 info.Image = Properties.Resources.dialog_error;
                             }
-                            
+
                             SpellInfo_SaveToCache(spellID, info);
                         }
                         else
@@ -109,7 +108,7 @@ namespace AxTools.WoW.Helpers
             }
             return info;
         }
-        
+
         internal static string GetZoneText(uint zoneID)
         {
             if (!ZoneInfos.TryGetValue(zoneID, out string info))
@@ -192,7 +191,7 @@ namespace AxTools.WoW.Helpers
                 LoadAndUpdateDBFile();
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    command.CommandText = 
+                    command.CommandText =
                         $"INSERT INTO items2 (itemID, name, class, level, quality, image) " +
                         $"VALUES ({itemID}, '{info.Name.Replace("'", "''")}', {info.Class}, {info.Level}, {info.Quality}, '{JsonConvert.SerializeObject(info.ImageBytes)}')";
                     try
@@ -228,7 +227,7 @@ namespace AxTools.WoW.Helpers
                             {
                                 return null;
                             }
-                        } 
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -238,7 +237,7 @@ namespace AxTools.WoW.Helpers
                 }
             }
         }
-        
+
         private static void SpellInfo_SaveToCache(int spellID, WowheadSpellInfo info)
         {
             lock (DBLock)
@@ -246,7 +245,7 @@ namespace AxTools.WoW.Helpers
                 LoadAndUpdateDBFile();
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
-                    command.CommandText = 
+                    command.CommandText =
                         $"INSERT INTO spells2 (spellID, name, image) " +
                         $"VALUES ({spellID}, '{info.Name.Replace("'", "''")}', '{JsonConvert.SerializeObject(info.ImageBytes)}')";
                     try
@@ -257,7 +256,6 @@ namespace AxTools.WoW.Helpers
                     {
                         log.Error($"SpellInfo_SaveToCache() error: {ex.Message}\r\n{command.CommandText}");
                     }
-
                 }
             }
         }
@@ -283,7 +281,7 @@ namespace AxTools.WoW.Helpers
                             {
                                 return null;
                             }
-                        }  
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -310,11 +308,10 @@ namespace AxTools.WoW.Helpers
                     {
                         log.Error($"ZoneInfo_SaveToCache() error: {ex.Message}\r\n{command.CommandText}");
                     }
-
                 }
             }
         }
-        
+
         private static void LoadAndUpdateDBFile()
         {
             if (dbConnection == null)
@@ -373,14 +370,12 @@ namespace AxTools.WoW.Helpers
                 }
             }
         }
-
     }
-    
+
     internal class WowheadItemInfo
     {
         public WowheadItemInfo()
         {
-
         }
 
         internal WowheadItemInfo(string name, uint @class, uint level, uint quality)
@@ -390,15 +385,15 @@ namespace AxTools.WoW.Helpers
             Level = level;
             Quality = quality;
         }
-        
+
         internal string Name;
-        
+
         internal uint Class;
-        
+
         internal uint Level;
-        
+
         internal uint Quality;
-        
+
         internal byte[] ImageBytes
         {
             get
@@ -429,23 +424,21 @@ namespace AxTools.WoW.Helpers
         }
 
         internal Image Image;
-
     }
 
     internal class WowheadSpellInfo
     {
         internal WowheadSpellInfo()
         {
-
         }
 
         internal WowheadSpellInfo(string name)
         {
             Name = name;
         }
-        
+
         internal string Name;
-        
+
         internal byte[] ImageBytes
         {
             get
@@ -476,7 +469,5 @@ namespace AxTools.WoW.Helpers
         }
 
         internal Image Image;
-
     }
-    
 }

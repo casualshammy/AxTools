@@ -6,9 +6,8 @@ namespace AxTools.WoW.PluginSystem
 {
     public interface IPlugin3
     {
-
         /// <summary>
-        ///     
+        ///
         /// </summary>
         bool ConfigAvailable { get; }
 
@@ -23,7 +22,7 @@ namespace AxTools.WoW.PluginSystem
         string Description { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         bool DontCloseOnWowShutdown { get; }
 
@@ -56,7 +55,5 @@ namespace AxTools.WoW.PluginSystem
         ///     Work to be done when the bot is shutdown/closed
         /// </summary>
         void OnStop();
-
     }
-    
 }

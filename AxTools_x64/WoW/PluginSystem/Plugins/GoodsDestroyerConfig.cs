@@ -29,6 +29,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         // ReSharper disable once InconsistentNaming
         private const int CP_NOCLOSE_BUTTON = 0x200;
+
         protected override CreateParams CreateParams
         {
             get
@@ -43,6 +44,5 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             Close();
         }
-
     }
 }

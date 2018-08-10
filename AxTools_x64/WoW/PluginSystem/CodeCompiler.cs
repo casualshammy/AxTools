@@ -1,5 +1,4 @@
 ﻿using AxTools.Helpers;
-using Microsoft.CSharp;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
@@ -39,7 +38,7 @@ namespace AxTools.WoW.PluginSystem
                 hash = Utils.CreateMd5ForFolder(path);
             }
             SourcePath = path;
-            Options = new CompilerParameters {GenerateExecutable = false, GenerateInMemory = false, IncludeDebugInformation = false};
+            Options = new CompilerParameters { GenerateExecutable = false, GenerateInMemory = false, IncludeDebugInformation = false };
             string str = "BW_" + Assembly.GetEntryAssembly().GetName().Version.Revision;
             Options.CompilerOptions = string.Format("/d:BW;{0} /unsafe", str);
             Options.TempFiles = new TempFileCollection(Path.GetTempPath());
@@ -165,15 +164,12 @@ namespace AxTools.WoW.PluginSystem
             {
                 string[] strArray = Directory.GetFiles(SourcePath, "*.cs", SearchOption.AllDirectories);
 
-
                 foreach (string s in strArray)
                 {
                     SourceFilePaths.Add(s);
                 }
 
-
                 string[] strArray2 = Directory.GetFiles(SourcePath, "*.resx", SearchOption.AllDirectories);
-
 
                 foreach (string s in strArray2)
                 {
@@ -244,7 +240,7 @@ namespace AxTools.WoW.PluginSystem
             }
         }
 
-        #endregion
+        #endregion Nested type: Class153
 
         #region Nested type: FileStructureType
 
@@ -254,6 +250,6 @@ namespace AxTools.WoW.PluginSystem
             Folder
         }
 
-        #endregion
+        #endregion Nested type: FileStructureType
     }
 }

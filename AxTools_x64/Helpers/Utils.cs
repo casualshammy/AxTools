@@ -1,8 +1,8 @@
-﻿using System.Drawing;
-using AxTools.WinAPI;
+﻿using AxTools.WinAPI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
@@ -14,7 +14,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AxTools.Forms;
 
 namespace AxTools.Helpers
 {
@@ -23,7 +22,7 @@ namespace AxTools.Helpers
         private static readonly Log2 log = new Log2("Utils");
         private static string _hardwareID;
         internal static readonly Random Rnd = new Random();
-        
+
         internal static IEnumerable<T> FindForms<T>() where T : Form
         {
             return Application.OpenForms.OfType<T>();
@@ -90,7 +89,7 @@ namespace AxTools.Helpers
             }
             return builder.ToString();
         }
-        
+
         internal static bool InternetAvailable
         {
             get
@@ -288,7 +287,7 @@ namespace AxTools.Helpers
         internal static string SecureString(string input)
         {
             Random rnd = new Random(input.Length);
-            int[] indexesToHide = new int[input.Length/2];
+            int[] indexesToHide = new int[input.Length / 2];
             for (int i = 0; i < indexesToHide.Length; i++)
             {
                 int newValue = rnd.Next(0, input.Length);
@@ -307,6 +306,5 @@ namespace AxTools.Helpers
             }
             return builder.ToString();
         }
-
     }
 }

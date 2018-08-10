@@ -1,5 +1,5 @@
-﻿using System;
-using AxTools.WoW.Helpers;
+﻿using AxTools.WoW.Helpers;
+using System;
 
 namespace AxTools.WoW.Internals
 {
@@ -75,6 +75,5 @@ namespace AxTools.WoW.Internals
                 return memory.ReadBytes(Address + WowBuildInfoX64.ObjectGUID, sizeof(WoWGUID));
             }
         }
-
     }
 }

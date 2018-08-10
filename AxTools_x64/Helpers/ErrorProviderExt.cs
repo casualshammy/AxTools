@@ -1,8 +1,8 @@
-﻿using System;
+﻿using MetroFramework.Components;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using MetroFramework.Components;
 
 namespace AxTools.Helpers
 {
@@ -54,6 +54,5 @@ namespace AxTools.Helpers
                 control.Disposed -= ControlOnDisposed;
             }
         }
-
     }
 }

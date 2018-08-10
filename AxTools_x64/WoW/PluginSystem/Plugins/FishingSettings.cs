@@ -34,6 +34,5 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         [JsonProperty(PropertyName = "EnableBreaks")]
         internal bool EnableBreaks = true;
-
     }
 }

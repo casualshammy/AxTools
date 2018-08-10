@@ -1,11 +1,11 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using AxTools.WinAPI;
+using FMemory;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
-using AxTools.Helpers;
-using FMemory;
-using AxTools.WinAPI;
 
 namespace AxTools.WoW
 {
@@ -45,12 +45,12 @@ namespace AxTools.WoW
                 return mProcessName;
             }
         }
-        
+
         internal IntPtr MainWindowHandle
         {
             get => Process.MainWindowHandle;
         }
-        
+
         private Process Process
         {
             get
@@ -130,6 +130,5 @@ namespace AxTools.WoW
                 }
             }
         }
-
     }
 }

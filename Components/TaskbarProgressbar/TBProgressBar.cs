@@ -5,7 +5,7 @@ namespace Components.TaskbarProgressbar
     public class TBProgressBar
     {
         private static readonly object LockObject = new object();
-        
+
         private static ITaskbarList3 _taskbarList;
 
         private static ITaskbarList3 TaskbarList
@@ -19,7 +19,7 @@ namespace Components.TaskbarProgressbar
                         if (_taskbarList == null)
                         {
                             // ReSharper disable once SuspiciousTypeConversion.Global
-                            _taskbarList = (ITaskbarList3) new CTaskbarList();
+                            _taskbarList = (ITaskbarList3)new CTaskbarList();
                             _taskbarList.HrInit();
                         }
                     }
@@ -40,7 +40,7 @@ namespace Components.TaskbarProgressbar
 
         public static void SetProgressValue(IntPtr hwnd, int current, int maximum)
         {
-            TaskbarList.SetProgressValue(hwnd, (ulong) current, (ulong) maximum);
+            TaskbarList.SetProgressValue(hwnd, (ulong)current, (ulong)maximum);
         }
     }
 }

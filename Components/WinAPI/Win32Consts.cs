@@ -2,7 +2,6 @@
 {
     internal static class Win32Consts
     {
-
         internal const uint WM_NULL = 0x0;
         internal const uint WM_QUERYENDSESSION = 0x11;
         internal const uint WM_KEYDOWN = 0x100;
@@ -26,6 +25,5 @@
         internal const int SW_SHOWNOACTIVATE = 4;
         internal const int HWND_TOPMOST = -1;
         internal const uint SWP_NOACTIVATE = 0x0010;
-
     }
 }

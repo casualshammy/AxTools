@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
-using Microsoft.Win32.SafeHandles;
 
 namespace PatternFinder.MemoryManagement
 {
@@ -13,7 +13,6 @@ namespace PatternFinder.MemoryManagement
     {
         public SafeMemHandle() : base(true)
         {
-
         }
 
         [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
@@ -42,6 +41,6 @@ namespace PatternFinder.MemoryManagement
             return CloseHandle(handle);
         }
 
-        #endregion
+        #endregion Overrides of SafeHandle
     }
 }

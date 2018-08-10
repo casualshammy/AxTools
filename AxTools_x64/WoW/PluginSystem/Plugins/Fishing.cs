@@ -1,19 +1,18 @@
 ﻿using AxTools.Helpers;
 using AxTools.Properties;
+using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
     internal class Fishing : IPlugin3
     {
-
         #region Info
 
         public string Name
@@ -42,7 +41,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Events
 
@@ -96,7 +95,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         int breakTime = Utils.Rnd.Next(15, 45);
                         this.LogPrint(string.Format("I'm human! Let's have a break ({0} sec)", breakTime));
                         int breakStartTime = Environment.TickCount;
-                        while ((Environment.TickCount - breakStartTime < breakTime*1000) && pluginIsActive)
+                        while ((Environment.TickCount - breakStartTime < breakTime * 1000) && pluginIsActive)
                         {
                             Thread.Sleep(1000);
                         }
@@ -214,7 +213,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 WowPoint goodFishingPoint = new WowPoint(2024.49f, 191.33f, 83.86f);
                 this.LogPrint(string.Format("Moving to fishing point [{0}]", goodFishingPoint));
                 info.Move2D(goodFishingPoint, 2f, 2000, false, false);
-                WowPoint water = new WowPoint((float) (Utils.Rnd.NextDouble()*5 + 2032.5f), (float) (Utils.Rnd.NextDouble()*5 + 208.5f), 82f);
+                WowPoint water = new WowPoint((float)(Utils.Rnd.NextDouble() * 5 + 2032.5f), (float)(Utils.Rnd.NextDouble() * 5 + 208.5f), 82f);
                 this.LogPrint(string.Format("Facing water [{0}]", water));
                 info.Face(water);
             }
@@ -342,7 +341,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
         }
 
-        #endregion
+        #endregion Events
 
         #region Fields, propeties
 
@@ -438,7 +437,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             { 7558, new LegionRepPoint { StartingPlayerPoint = new WowPoint(2314.55f, 6668.39f, 133.63f), StartingFacingPoint = new WowPoint(2301.23f, 6671.69f, 129.85f)} }, // Вальшара
         };
 
-        #endregion
+        #endregion Fields, propeties
 
         #region Classes
 
@@ -460,7 +459,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
             internal WowPoint StartingFacingPoint;
         }
 
-        #endregion
-
+        #endregion Classes
     }
 }

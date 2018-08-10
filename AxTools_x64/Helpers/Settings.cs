@@ -1,20 +1,19 @@
-﻿using System;
+﻿using AxTools.Forms.Helpers;
+using AxTools.Services.PingerHelpers;
+using KeyboardWatcher;
+using MetroFramework;
+using Microsoft.Win32;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using AxTools.Forms.Helpers;
-using AxTools.Services.PingerHelpers;
-using KeyboardWatcher;
-using MetroFramework;
-using Microsoft.Win32;
-using Newtonsoft.Json;
 
 namespace AxTools.Helpers
 {
@@ -24,6 +23,7 @@ namespace AxTools.Helpers
         private static readonly Log2 logger = new Log2("Settings2");
         private static readonly object _lock = new object();
         private static Settings2 _instance;
+
         internal static Settings2 Instance
         {
             get
@@ -64,7 +64,6 @@ namespace AxTools.Helpers
 
         private Settings2()
         {
-
         }
 
         internal void ValidateAndFix()
@@ -128,7 +127,7 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 4, PropertyName = "MinimizeToTray")]
         internal bool MinimizeToTray = true;
 
-        #endregion
+        #endregion General
 
         #region WoW
 
@@ -158,8 +157,8 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 19, PropertyName = "WoWCustomWindowNoBorder")]
         internal bool WoWCustomWindowNoBorder = false;
-        
-        #endregion
+
+        #endregion WoW
 
         #region Clicker
 
@@ -172,10 +171,10 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 22, PropertyName = "ClickerKey")]
         internal Keys ClickerKey = Keys.None;
 
-        #endregion
+        #endregion Clicker
 
         #region VoIP
-        
+
         [JsonProperty(Order = 30, PropertyName = "MumbleDirectory")]
         internal string MumbleDirectory = string.Empty;
 
@@ -203,22 +202,24 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 38, PropertyName = "StartTwitchWithWoW")]
         internal bool StartTwitchWithWoW = false;
 
-        #endregion
+        #endregion VoIP
 
         #region WoWPlugins
 
         [JsonProperty(Order = 71, PropertyName = "WoWPluginShowIngameNotifications")]
         internal bool WoWPluginShowIngameNotifications = true;
-        
+
         internal event Action PluginHotkeysChanged;
+
         internal void InvokePluginHotkeysChanged()
         {
             PluginHotkeysChanged?.Invoke();
         }
+
         [JsonProperty(Order = 73, PropertyName = "PluginHotkeys")]
         internal Dictionary<string, KeyExt> PluginHotkeys = new Dictionary<string, KeyExt>();
 
-        #endregion
+        #endregion WoWPlugins
 
         #region Pinger
 
@@ -240,7 +241,7 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 85, PropertyName = "PingerLastWoWServerIP")]
         internal string PingerLastWoWServerIP = "8.8.8.8";
 
-        #endregion
+        #endregion Pinger
 
         #region AddonsBackup
 
@@ -265,8 +266,7 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 96, PropertyName = "WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning")]
         internal bool WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning = true;
 
-        #endregion
-        
+        #endregion AddonsBackup
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -275,6 +275,7 @@ namespace AxTools.Helpers
         private static readonly Log2 logger = new Log2("Settings");
         private static readonly object _lock = new object();
         private static Settings _instance;
+
         internal static Settings Instance
         {
             get
@@ -315,7 +316,6 @@ namespace AxTools.Helpers
 
         public Settings()
         {
-
         }
 
         internal void ValidateAndFix()
@@ -399,7 +399,7 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 4, PropertyName = "MinimizeToTray")]
         internal bool MinimizeToTray = true;
 
-        #endregion
+        #endregion General
 
         #region WoW
 
@@ -430,7 +430,7 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 18, PropertyName = "WoWCustomWindowNoBorder")]
         internal bool WoWCustomWindowNoBorder = false;
 
-        #endregion
+        #endregion WoW
 
         #region Clicker
 
@@ -443,7 +443,7 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 22, PropertyName = "ClickerKey")]
         internal Keys ClickerKey = Keys.None;
 
-        #endregion
+        #endregion Clicker
 
         #region VoIP
 
@@ -471,11 +471,12 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 37, PropertyName = "VentriloStartWithWoW")]
         internal bool VentriloStartWithWoW = false;
 
-        #endregion
+        #endregion VoIP
 
         #region Radar
 
         private readonly ObservableCollection<RadarObject> wowRadarList = new ObservableCollection<RadarObject>();
+
         [JsonProperty(Order = 50, PropertyName = "WoWRadarList")]
         internal ObservableCollection<RadarObject> WoWRadarList
         {
@@ -525,7 +526,7 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 61, PropertyName = "WoWRadarShowLocalPlayerRotationArrowOnTop")]
         internal bool WoWRadarShowLocalPlayerRotationArrowOnTop = false;
 
-        #endregion
+        #endregion Radar
 
         #region WoWPlugins
 
@@ -536,14 +537,16 @@ namespace AxTools.Helpers
         internal Dictionary<string, List<DateTime>> PluginsUsageStat2 = new Dictionary<string, List<DateTime>>();
 
         internal event Action PluginHotkeysChanged;
+
         internal void InvokePluginHotkeysChanged()
         {
             PluginHotkeysChanged?.Invoke();
         }
+
         [JsonProperty(Order = 73, PropertyName = "PluginHotkeys")]
         internal Dictionary<string, KeyExt> PluginHotkeys = new Dictionary<string, KeyExt>();
 
-        #endregion
+        #endregion WoWPlugins
 
         #region Pinger
 
@@ -565,7 +568,7 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 85, PropertyName = "PingerLastWoWServerIP")]
         internal string PingerLastWoWServerIP = "8.8.8.8";
 
-        #endregion
+        #endregion Pinger
 
         #region AddonsBackup
 
@@ -590,7 +593,7 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 96, PropertyName = "WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning")]
         internal bool WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning = true;
 
-        #endregion
+        #endregion AddonsBackup
 
         #region Methods - Paths
 
@@ -717,8 +720,6 @@ namespace AxTools.Helpers
             }
         }
 
-        #endregion
-
+        #endregion Methods - Paths
     }
-
 }

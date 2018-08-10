@@ -1,18 +1,17 @@
-﻿using System;
+﻿using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals;
-using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 
 namespace AutoLoot
 {
     internal class AutoLoot : IPlugin3
     {
-
         #region Info
 
         public string Name { get { return "AutoLoot"; } }
@@ -24,30 +23,30 @@ namespace AutoLoot
         public string Description { get { return "Loots mobs in 100 yd range"; } }
 
         private Image trayIcon;
+
         public Image TrayIcon
         {
             get { return trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\AutoLoot\\inv_misc_coin_01.jpg")); }
         }
-        
+
         public bool ConfigAvailable { get { return false; } }
 
         public string[] Dependencies => null;
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Events
 
         public void OnConfig()
         {
-
         }
 
         public void OnStart(GameInterface game)
         {
             this.game = game;
-            (timer = this.CreateTimer(250,game, OnPulse)).Start();
+            (timer = this.CreateTimer(250, game, OnPulse)).Start();
         }
 
         public void OnPulse()
@@ -57,7 +56,7 @@ namespace AutoLoot
             {
                 foreach (WowNpc npc in wowNpcs.Where(l => l.Health == 0 && l.Location.Distance2D(localPlayer.Location) < 40 && !unlootableNpcs.Contains(l.GUID)).OrderBy(l => l.Location.Distance(localPlayer.Location)))
                 {
-                    if (game.LuaIsTrue($"CanLootUnit('{npc.GetGameGUID()}')==true")) // game.LuaIsTrue($"select(2,CanLootUnit('{npc.GetGameGUID()}'))==true") && 
+                    if (game.LuaIsTrue($"CanLootUnit('{npc.GetGameGUID()}')==true")) // game.LuaIsTrue($"select(2,CanLootUnit('{npc.GetGameGUID()}'))==true") &&
                     {
                         if (npc.Location.Distance(localPlayer.Location) > 3f)
                         {
@@ -82,12 +81,11 @@ namespace AutoLoot
             timer.Dispose();
         }
 
-        #endregion
+        #endregion Events
 
         private readonly List<WowNpc> wowNpcs = new List<WowNpc>();
         private readonly List<WoWGUID> unlootableNpcs = new List<WoWGUID>();
         private SafeTimer timer;
         private GameInterface game;
-
     }
 }

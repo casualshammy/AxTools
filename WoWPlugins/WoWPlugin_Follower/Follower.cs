@@ -1,18 +1,17 @@
-﻿using System;
+﻿using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals;
-using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 
 namespace Follower
 {
     internal class Follower : IPlugin3
     {
-
         #region Info
 
         public string Name
@@ -39,6 +38,7 @@ namespace Follower
         }
 
         private Image trayIcon;
+
         public Image TrayIcon
         {
             get { return trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\Follower\\ability_hunter_posthaste.jpg")); }
@@ -58,7 +58,7 @@ namespace Follower
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Events
 
@@ -122,7 +122,7 @@ namespace Follower
             timer.Dispose();
         }
 
-        #endregion
+        #endregion Events
 
         private readonly List<WowPlayer> players = new List<WowPlayer>();
         private readonly List<WowNpc> npcs = new List<WowNpc>();
@@ -131,6 +131,5 @@ namespace Follower
         private Settings SettingsInstance;
         private dynamic libNavigator;
         private GameInterface game;
-
     }
 }

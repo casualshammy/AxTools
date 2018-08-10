@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AxTools.WoW.Helpers;
+﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.Linq;
 
 namespace WoWPlugin_CombatRoutine
 {
     public class CombatRoutine : IPlugin3
     {
-
         #region Info
 
         public string Name
@@ -44,13 +40,12 @@ namespace WoWPlugin_CombatRoutine
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Events
 
         public void OnConfig()
         {
-
         }
 
         public void OnStart(GameInterface game)
@@ -98,7 +93,7 @@ namespace WoWPlugin_CombatRoutine
             }
         }
 
-        #endregion
+        #endregion Events
 
         #region Fields, propeties
 
@@ -106,7 +101,6 @@ namespace WoWPlugin_CombatRoutine
         private SafeTimer timer;
         private GameInterface game;
 
-        #endregion
-
+        #endregion Fields, propeties
     }
 }

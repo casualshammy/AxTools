@@ -1,9 +1,9 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
-using MetroFramework;
+﻿using MetroFramework;
 using MetroFramework.Components;
 using MetroFramework.Drawing;
 using MetroFramework.Interfaces;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace Components
 {
@@ -13,7 +13,7 @@ namespace Components
         public MetroThemeStyle Theme { get; set; }
         public MetroStyleManager StyleManager { get; set; }
         private readonly Pen pen = new Pen(Color.Black, 2f);
-        
+
         public Line()
         {
             InitializeComponent();
@@ -30,6 +30,5 @@ namespace Components
             pen.Color = MetroPaint.GetStyleColor(Style);
             e.Graphics.DrawLine(pen, new Point(-1, 0), new Point(Width, 1));
         }
-
     }
 }

@@ -2,7 +2,6 @@
 using AxTools.WinAPI;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -95,6 +94,7 @@ namespace AxTools.WoW
             Credits = 7,
             RegionalSelection = 8
         }
+
         // ReSharper restore UnusedMember.Local
     }
 }

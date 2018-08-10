@@ -33,22 +33,22 @@ namespace Components.Forms
             Icon = image;
             timer = new System.Timers.Timer(33.3); // 30fps
             timer.Elapsed += timer_Tick;
-            BeginInvoke((MethodInvoker) delegate
-            {
+            BeginInvoke((MethodInvoker)delegate
+           {
                 //SetLocation();
                 ArrangementTimer_Elapsed(null, null);
-                loadTime = DateTime.UtcNow;
-                timer.Start();
-                Timeout = Timeout == 0 ? 30 : Timeout;
-                MouseClick += ALL_MouseClick;
-                foreach (Control control in Controls)
-                {
-                    control.MouseEnter += ALL_MouseEnter;
-                    control.MouseClick += ALL_MouseClick;
-                }
-            });
+               loadTime = DateTime.UtcNow;
+               timer.Start();
+               Timeout = Timeout == 0 ? 30 : Timeout;
+               MouseClick += ALL_MouseClick;
+               foreach (Control control in Controls)
+               {
+                   control.MouseEnter += ALL_MouseEnter;
+                   control.MouseClick += ALL_MouseClick;
+               }
+           });
         }
-        
+
         public string Title
         {
             get { return metroLabel1.Text; }
@@ -125,7 +125,8 @@ namespace Components.Forms
         {
             APPBARDATA appBarData = GetAppBarData();
             List<PopupNotification> popups = FindForms<PopupNotification>().ToList();
-            popups.Sort((first, second) => {
+            popups.Sort((first, second) =>
+            {
                 return appBarData.uEdge == ABE.Top ? first.DesktopLocation.Y.CompareTo(second.DesktopLocation.Y) : -first.DesktopLocation.Y.CompareTo(second.DesktopLocation.Y);
             });
             if (appBarData.uEdge == ABE.Top)
@@ -171,7 +172,7 @@ namespace Components.Forms
         //{
         //    int startPosX;
         //    int startPosY;
-            
+
         //    List<PopupNotification> popups = FindForms<PopupNotification>().ToList();
         //    popups.Remove(this);
         //    if (data.uEdge == ABE.Top)
@@ -225,7 +226,7 @@ namespace Components.Forms
         {
             using (Font font = MetroFonts.Label(metroLabel2.FontSize, metroLabel2.FontWeight))
             {
-                List<string> words = text.Split(new[] {" ", "\r", "\n"}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                List<string> words = text.Split(new[] { " ", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 string result = "";
                 int sizeOfSpace = TextRenderer.MeasureText(" ", font).Width;
                 while (words.Any())
@@ -264,6 +265,5 @@ namespace Components.Forms
             }
             return data;
         }
-
     }
 }

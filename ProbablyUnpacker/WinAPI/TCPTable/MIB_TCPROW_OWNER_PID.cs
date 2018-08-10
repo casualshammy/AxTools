@@ -9,6 +9,7 @@ namespace AxTools.WinAPI.TCPTable
         // ReSharper disable MemberCanBePrivate.Local
         // ReSharper disable FieldCanBeMadeReadOnly.Local
         public uint state;
+
         public uint localAddr;
         public byte localPort1;
         public byte localPort2;

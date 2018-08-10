@@ -1,11 +1,11 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using AxTools.Helpers;
+﻿using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
 using Components.Forms;
 using KeyboardWatcher;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
@@ -35,12 +35,12 @@ namespace AxTools.Forms
             textBoxClickerHotkey.Text = settings.ClickerHotkey.ToString();
             textBoxClickerHotkey.KeyDown += TextBoxClickerHotkey_KeyDown;
             buttonClickerHotkey.Click += ButtonClickerHotkey_Click;
-            BeginInvoke((MethodInvoker) delegate
-            {
-                MainForm mainForm = MainForm.Instance;
-                Location = new Point(mainForm.Location.X + mainForm.Size.Width - Size.Width, mainForm.Location.Y + mainForm.Size.Height - Size.Height);
-                OnActivated(EventArgs.Empty);
-            });
+            BeginInvoke((MethodInvoker)delegate
+           {
+               MainForm mainForm = MainForm.Instance;
+               Location = new Point(mainForm.Location.X + mainForm.Size.Width - Size.Width, mainForm.Location.Y + mainForm.Size.Height - Size.Height);
+               OnActivated(EventArgs.Empty);
+           });
         }
 
         private void ButtonClickerHotkey_Click(object sender, EventArgs e)
@@ -99,6 +99,5 @@ namespace AxTools.Forms
                 }
             }
         }
-
     }
 }

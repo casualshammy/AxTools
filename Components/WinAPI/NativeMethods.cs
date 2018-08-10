@@ -20,7 +20,7 @@ namespace Components.WinAPI
 
         [DllImport("user32")]
         internal static extern IntPtr GetForegroundWindow();
-        
+
         [DllImport("winmm.dll", EntryPoint = "sndPlaySoundW")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool sndPlaySoundW([In] [MarshalAs(UnmanagedType.LPWStr)] string pszSound, uint fuSound);
@@ -54,6 +54,5 @@ namespace Components.WinAPI
              int cx,               // Width
              int cy,               // Height
              uint uFlags);         // Window positioning flags
-
     }
 }

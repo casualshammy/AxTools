@@ -1,5 +1,4 @@
-﻿using Components.TaskbarProgressbar;
-using AxTools.Helpers;
+﻿using AxTools.Helpers;
 using AxTools.Properties;
 using AxTools.Services;
 using AxTools.Services.PingerHelpers;
@@ -8,6 +7,9 @@ using AxTools.WinAPI;
 using AxTools.WoW;
 using AxTools.WoW.PluginSystem;
 using BrightIdeasSoftware;
+using Components.Forms;
+using Components.TaskbarProgressbar;
+using KeyboardWatcher;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -19,12 +21,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WindowsFormsAero.TaskDialog;
-using AxTools.WoW.PluginSystem.API;
-using Components.Forms;
 using Settings2 = AxTools.Helpers.Settings2;
-using KeyboardWatcher;
-using System.Security.Cryptography;
 
 namespace AxTools.Forms
 {
@@ -46,8 +43,8 @@ namespace AxTools.Forms
             Closing += MainFormClosing;
             notifyIconMain.Icon = Resources.AppIcon;
             tabControl.SelectedIndex = 0;
-            linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width/2 - linkEditWowAccounts.Size.Width/2, linkEditWowAccounts.Location.Y);
-            cmbboxAccSelect.Location = new Point(metroTabPage1.Size.Width/2 - cmbboxAccSelect.Size.Width/2, cmbboxAccSelect.Location.Y);
+            linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width / 2 - linkEditWowAccounts.Size.Width / 2, linkEditWowAccounts.Location.Y);
+            cmbboxAccSelect.Location = new Point(metroTabPage1.Size.Width / 2 - cmbboxAccSelect.Size.Width / 2, cmbboxAccSelect.Location.Y);
             progressBarAddonsBackup.Size = linkBackup.Size;
             progressBarAddonsBackup.Location = linkBackup.Location;
             progressBarAddonsBackup.Visible = false;
@@ -75,7 +72,7 @@ namespace AxTools.Forms
                 base.WndProc(ref m);
             }
         }
-        
+
         #region MainFormEvents
 
         private void SetTooltips()
@@ -112,12 +109,12 @@ namespace AxTools.Forms
             PluginManagerEx.PluginUnloaded += PluginManagerExOnPluginLoaded;
             HotkeyManager.KeyPressed += KeyboardHookKeyDown;
         }
-        
+
         private void MainFormClosing(object sender, CancelEventArgs e)
         {
             isClosing = true;
             // Close all children forms
-            Form[] forms = Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof (MainForm) && i.GetType() != typeof (MetroFlatDropShadow)).ToArray();
+            Form[] forms = Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof(MainForm) && i.GetType() != typeof(MetroFlatDropShadow)).ToArray();
             foreach (Form i in forms)
             {
                 i.Close();
@@ -146,7 +143,7 @@ namespace AxTools.Forms
             HotkeyManager.RemoveKeys(typeof(PluginManagerEx).ToString());
             log.Info("Closed");
         }
-        
+
         private void NotifyIconMainMouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -229,6 +226,7 @@ namespace AxTools.Forms
                         Pinger.Enabled = true;
                     });
                     break;
+
                 case MouseButtons.Right:
                     int pingerTabPageIndex = 5;
                     new AppSettings(pingerTabPageIndex).ShowDialog(this);
@@ -251,7 +249,7 @@ namespace AxTools.Forms
             }
         }
 
-        #endregion
+        #endregion MainFormEvents
 
         #region TrayContextMenu
 
@@ -260,7 +258,8 @@ namespace AxTools.Forms
             foreach (ToolStripItem item in contextMenuStripMain.Items.GetAllToolStripItems().ToArray())
                 item.Dispose();
             contextMenuStripMain.Items.Clear();
-            contextMenuStripMain.Items.Add(new ToolStripMenuItem("Radar", Resources.radar, (o, e) => {
+            contextMenuStripMain.Items.Add(new ToolStripMenuItem("Radar", Resources.radar, (o, e) =>
+            {
                 WowProcess process = WoWManager.GetProcess();
                 if (process != null) new WowRadar(process).Show();
             }));
@@ -270,8 +269,8 @@ namespace AxTools.Forms
             foreach (IPlugin3 i in topUsedPlugins)
             {
                 IPlugin3 plugin = i;
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) {Tag = plugin};
-                toolStripMenuItem.MouseDown += delegate(object sender, MouseEventArgs args)
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
+                toolStripMenuItem.MouseDown += delegate (object sender, MouseEventArgs args)
                 {
                     if (args.Button == MouseButtons.Left) olvPlugins.CheckObject(plugin);
                     else if (plugin.ConfigAvailable) plugin.OnConfig();
@@ -326,7 +325,8 @@ namespace AxTools.Forms
             contextMenuStripMain.Items.Add(new ToolStripSeparator());
             contextMenuStripMain.Items.Add(launchWoW);
             contextMenuStripMain.Items.Add(new ToolStripSeparator());
-            contextMenuStripMain.Items.Add(new ToolStripMenuItem("Exit", Resources.close_26px, (o, e) => {
+            contextMenuStripMain.Items.Add(new ToolStripMenuItem("Exit", Resources.close_26px, (o, e) =>
+            {
                 if (!isClosing)
                 {
                     if (InvokeRequired) Invoke(new Action(Close));
@@ -334,8 +334,8 @@ namespace AxTools.Forms
                 }
             }));
         }
-        
-        #endregion
+
+        #endregion TrayContextMenu
 
         #region Tab: Home
 
@@ -471,10 +471,10 @@ namespace AxTools.Forms
             }
         }
 
-        #endregion
+        #endregion Tab: Home
 
         #region Tab: VoIP
-        
+
         private void TileVentriloClick(object sender, EventArgs e)
         {
             try
@@ -572,7 +572,7 @@ namespace AxTools.Forms
             settings.StartTwitchWithWoW = checkBoxTwitch.Checked;
         }
 
-        #endregion
+        #endregion Tab: VoIP
 
         #region Tab: Modules
 
@@ -584,15 +584,8 @@ namespace AxTools.Forms
                 new WowRadar(process).Show();
             }
         }
-        
-        private void TileLua_Click(object sender, EventArgs e)
-        {
-            WowProcess process = WoWManager.GetProcess();
-            if (process != null)
-                new LuaConsole(process).Show();
-        }
 
-        #endregion
+        #endregion Tab: Modules
 
         #region Tab: Plug-ins
 
@@ -744,7 +737,7 @@ namespace AxTools.Forms
             Process.Start(Globals.PluginsURL);
         }
 
-        #endregion
+        #endregion Tab: Plug-ins
 
         #region Events handlers
 
@@ -769,7 +762,7 @@ namespace AxTools.Forms
             ToolStripItem[] items = contextMenuStripMain.Items.Find("World of Warcraft", false);
             if (items.Length > 0)
             {
-                ToolStripMenuItem launchWoW = (ToolStripMenuItem) items[0];
+                ToolStripMenuItem launchWoW = (ToolStripMenuItem)items[0];
                 launchWoW.DropDownItems.Cast<ToolStripMenuItem>().ToList().ForEach(l => l.Dispose());
                 foreach (WoWAccount2 wowAccount in WoWAccount2.AllAccounts)
                 {
@@ -784,25 +777,25 @@ namespace AxTools.Forms
 
         private void PluginManagerOnPluginStateChanged()
         {
-            BeginInvoke((MethodInvoker) delegate
-            {
-                RebuildTrayContextMenu();
-            });
+            BeginInvoke((MethodInvoker)delegate
+           {
+               RebuildTrayContextMenu();
+           });
         }
 
         private void PluginManagerExOnPluginLoaded(IPlugin3 plugin)
         {
-            BeginInvoke((MethodInvoker) delegate
-            {
-                string checkMark = Encoding.UTF8.GetString(new byte[] { 0xE2, 0x9C, 0x93 });
-                olvColumn2.AspectToStringConverter = value => (bool)value ? checkMark : "";
-                olvColumn2.TextAlign = HorizontalAlignment.Center;
-                olvPlugins.SetObjects(PluginManagerEx.GetSortedByUsageListOfPlugins());
-                olvPlugins.BooleanCheckStateGetter = OlvPlugins_BooleanCheckStateGetter;
-                olvPlugins.BooleanCheckStatePutter = OlvPlugins_BooleanCheckStatePutter;
-                RebuildTrayContextMenu();
-                labelTotalPluginsEnabled.Text = "Plugins running: 0";
-            });
+            BeginInvoke((MethodInvoker)delegate
+           {
+               string checkMark = Encoding.UTF8.GetString(new byte[] { 0xE2, 0x9C, 0x93 });
+               olvColumn2.AspectToStringConverter = value => (bool)value ? checkMark : "";
+               olvColumn2.TextAlign = HorizontalAlignment.Center;
+               olvPlugins.SetObjects(PluginManagerEx.GetSortedByUsageListOfPlugins());
+               olvPlugins.BooleanCheckStateGetter = OlvPlugins_BooleanCheckStateGetter;
+               olvPlugins.BooleanCheckStatePutter = OlvPlugins_BooleanCheckStatePutter;
+               RebuildTrayContextMenu();
+               labelTotalPluginsEnabled.Text = "Plugins running: 0";
+           });
         }
 
         private void WoWPluginHotkeyChanged()
@@ -815,28 +808,28 @@ namespace AxTools.Forms
 
         private void AddonsBackup_IsRunningChanged(bool isRunning)
         {
-            BeginInvoke((MethodInvoker) delegate
-            {
-                linkBackup.Visible = !isRunning;
-                progressBarAddonsBackup.Value = 0;
-                progressBarAddonsBackup.Visible = isRunning;
-                if (isRunning)
-                {
-                    AddonsBackup.ProgressPercentageChanged += AddonsBackup_ProgressPercentageChanged;
-                }
-                else
-                {
-                    AddonsBackup.ProgressPercentageChanged -= AddonsBackup_ProgressPercentageChanged;
-                }
-            });
+            BeginInvoke((MethodInvoker)delegate
+           {
+               linkBackup.Visible = !isRunning;
+               progressBarAddonsBackup.Value = 0;
+               progressBarAddonsBackup.Visible = isRunning;
+               if (isRunning)
+               {
+                   AddonsBackup.ProgressPercentageChanged += AddonsBackup_ProgressPercentageChanged;
+               }
+               else
+               {
+                   AddonsBackup.ProgressPercentageChanged -= AddonsBackup_ProgressPercentageChanged;
+               }
+           });
         }
 
         private void AddonsBackup_ProgressPercentageChanged(int percent)
         {
-            BeginInvoke((MethodInvoker) delegate
-            {
-                progressBarAddonsBackup.Value = percent;
-            });
+            BeginInvoke((MethodInvoker)delegate
+           {
+               progressBarAddonsBackup.Value = percent;
+           });
         }
 
         private void PingerOnStateChanged(bool enabled)
@@ -852,23 +845,23 @@ namespace AxTools.Forms
 
         private void Pinger_DataChanged(PingerStat pingResult)
         {
-            BeginInvoke((MethodInvoker) delegate
-            {
-                linkPing.Text = string.Format("[{0}]::[{1}%]  |", pingResult.PingDataIsRelevant ? pingResult.Ping + "ms" : "n/a", pingResult.PacketLoss);
-                TBProgressBar.SetProgressValue(Handle, 1, 1);
-                if (pingResult.PacketLoss >= settings.PingerVeryBadPacketLoss || pingResult.Ping >= settings.PingerVeryBadPing)
-                {
-                    TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
-                }
-                else if (pingResult.PacketLoss >= settings.PingerBadPacketLoss || pingResult.Ping >= settings.PingerBadPing)
-                {
-                    TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
-                }
-                else
-                {
-                    TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
-                }
-            });
+            BeginInvoke((MethodInvoker)delegate
+           {
+               linkPing.Text = string.Format("[{0}]::[{1}%]  |", pingResult.PingDataIsRelevant ? pingResult.Ping + "ms" : "n/a", pingResult.PacketLoss);
+               TBProgressBar.SetProgressValue(Handle, 1, 1);
+               if (pingResult.PacketLoss >= settings.PingerVeryBadPacketLoss || pingResult.Ping >= settings.PingerVeryBadPing)
+               {
+                   TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
+               }
+               else if (pingResult.PacketLoss >= settings.PingerBadPacketLoss || pingResult.Ping >= settings.PingerBadPing)
+               {
+                   TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
+               }
+               else
+               {
+                   TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
+               }
+           });
         }
 
         private void KeyboardHookKeyDown(KeyExt key)
@@ -896,9 +889,7 @@ namespace AxTools.Forms
                 }
             }
         }
-        
-        #endregion
 
-
+        #endregion Events handlers
     }
 }

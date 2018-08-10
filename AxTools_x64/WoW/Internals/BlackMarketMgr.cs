@@ -4,10 +4,7 @@ using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AxTools.WoW.Internals
 {
@@ -42,8 +39,6 @@ namespace AxTools.WoW.Internals
             }
         }
 
-
-
         [StructLayout(LayoutKind.Explicit, Size = 168)]
         private struct BlackMarketItemInternal
         {
@@ -65,9 +60,7 @@ namespace AxTools.WoW.Internals
 
             [FieldOffset(0xA0)]
             public readonly uint NumBids;
-
         }
-
     }
 
     public class BlackMarketItem
@@ -78,7 +71,4 @@ namespace AxTools.WoW.Internals
         public int LastBidGold;
         public int NumBids;
     }
-
-    
-
 }

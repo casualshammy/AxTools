@@ -1,10 +1,6 @@
 ﻿using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoDispel
 {
@@ -26,7 +22,6 @@ namespace AutoDispel
 
         public void OnConfig()
         {
-            
         }
 
         public void OnStart()
@@ -41,9 +36,6 @@ namespace AutoDispel
 
         public void OnStop()
         {
-            
         }
-
-
     }
 }

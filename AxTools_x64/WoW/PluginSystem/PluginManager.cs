@@ -1,19 +1,18 @@
 ﻿using AxTools.Helpers;
+using AxTools.WoW.PluginSystem.API;
 using AxTools.WoW.PluginSystem.Plugins;
+using KeyboardWatcher;
+using Newtonsoft.Json;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using AxTools.WoW.PluginSystem.API;
 using System.Text;
-using Newtonsoft.Json;
-using System.Globalization;
-using KeyboardWatcher;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AxTools.WoW.PluginSystem
@@ -24,12 +23,17 @@ namespace AxTools.WoW.PluginSystem
         private static readonly SynchronizedCollection<PluginContainer> _pluginContainers = new SynchronizedCollection<PluginContainer>();
         private static readonly object AddRemoveLock = new object();
         internal static readonly Dictionary<string, int> PluginWoW = new Dictionary<string, int>();
+
         internal static event Action PluginStateChanged;
+
         internal static event Action PluginsLoaded;
+
         internal static event Action<IPlugin3> PluginLoaded;
+
         internal static event Action<IPlugin3> PluginUnloaded;
 
         internal static Dictionary<string, List<DateTime>> _pluginsUsageStats;
+
         private static Dictionary<string, List<DateTime>> PluginsUsageStats
         {
             get
@@ -92,7 +96,7 @@ namespace AxTools.WoW.PluginSystem
                 return _pluginContainers.Select(l => l.Plugin);
             }
         }
-        
+
         internal static void AddPluginToRunning(IPlugin3 plugin, WowProcess process)
         {
             lock (AddRemoveLock)
@@ -146,10 +150,11 @@ namespace AxTools.WoW.PluginSystem
                 }
             }
         }
-        
+
         internal static Task LoadPluginsAsync()
         {
-            return Task.Run(delegate {
+            return Task.Run(delegate
+            {
                 LoadPlugins();
                 LoadPluginsFromDisk();
                 CheckDependencies();
@@ -228,10 +233,10 @@ namespace AxTools.WoW.PluginSystem
                     }
                     if (dll != null)
                     {
-                        Type type = dll.GetTypes().FirstOrDefault(k => k.IsClass && typeof (IPlugin3).IsAssignableFrom(k));
+                        Type type = dll.GetTypes().FirstOrDefault(k => k.IsClass && typeof(IPlugin3).IsAssignableFrom(k));
                         if (type != default(Type))
                         {
-                            IPlugin3 temp = (IPlugin3) Activator.CreateInstance(type);
+                            IPlugin3 temp = (IPlugin3)Activator.CreateInstance(type);
                             if (_pluginContainers.Select(l => l.Plugin).All(l => l.Name != temp.Name))
                             {
                                 if (!string.IsNullOrWhiteSpace(temp.Name))
@@ -310,7 +315,7 @@ namespace AxTools.WoW.PluginSystem
                 catch { /* don't care why */ }
             }
         }
-        
+
         private static Assembly CompilePlugin(string directory)
         {
             CodeCompiler cc = new CodeCompiler(directory);
@@ -325,7 +330,5 @@ namespace AxTools.WoW.PluginSystem
             }
             return cc.CompiledAssembly;
         }
-    
     }
-
 }

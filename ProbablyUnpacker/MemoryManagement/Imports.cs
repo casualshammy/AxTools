@@ -678,5 +678,4 @@ namespace AxTools.Helpers.MemoryManagement
         /// </summary>
         MEM_RELEASE = 0x8000
     }
-
 }

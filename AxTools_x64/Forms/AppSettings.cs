@@ -1,20 +1,18 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using AxTools.Properties;
+using AxTools.Services;
+using AxTools.Services.PingerHelpers;
+using Components.Forms;
+using MetroFramework;
+using MetroFramework.Forms;
+using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AxTools.Helpers;
-using AxTools.Properties;
-using AxTools.Services;
-using AxTools.Services.PingerHelpers;
-using AxTools.WoW.PluginSystem;
-using Components.Forms;
-using KeyboardWatcher;
-using MetroFramework;
-using MetroFramework.Forms;
-using Microsoft.Win32;
 using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
@@ -192,7 +190,7 @@ namespace AxTools.Forms
                 ErrorProviderExt.SetError(textBoxVeryBadNetworkStatusProcent, "Value must be a number", Color.Red);
             }
         }
-        
+
         private void CheckBox9CheckedChanged(object sender, EventArgs e)
         {
             if (CheckBoxStartAxToolsWithWindows.Checked)
@@ -242,7 +240,7 @@ namespace AxTools.Forms
         private void CheckBox6CheckedChanged(object sender, EventArgs e)
         {
             settings.WoWCustomizeWindow = CheckBox6.Checked;
-            foreach (Control i in new Control[] {CheckBox7, GroupBox1, GroupBox2})
+            foreach (Control i in new Control[] { CheckBox7, GroupBox1, GroupBox2 })
             {
                 i.Enabled = CheckBox6.Checked;
             }
@@ -299,7 +297,7 @@ namespace AxTools.Forms
                 ErrorProviderExt.SetError(TextBox4, "Incorrect value! It must be bigger than zero", Color.Red);
             }
         }
-        
+
         private void CheckBox1CheckedChanged(object sender, EventArgs e)
         {
             settings.WoWAntiKick = checkBox_AntiAFK.Checked;
@@ -313,17 +311,17 @@ namespace AxTools.Forms
 
         private void NumericUpDownBackupCopiesToKeepValueChanged(object sender, EventArgs e)
         {
-            settings.WoWAddonsBackupNumberOfArchives = (int) numericUpDownBackupCopiesToKeep.Value;
+            settings.WoWAddonsBackupNumberOfArchives = (int)numericUpDownBackupCopiesToKeep.Value;
         }
 
         private void NumericUpDownBackupTimerValueChanged(object sender, EventArgs e)
         {
-            settings.WoWAddonsBackupMinimumTimeBetweenBackup = (int) numericUpDownBackupTimer.Value;
+            settings.WoWAddonsBackupMinimumTimeBetweenBackup = (int)numericUpDownBackupTimer.Value;
         }
-        
+
         private void ButtonBackupPathClick(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog p = new FolderBrowserDialog {ShowNewFolderButton = false, SelectedPath = string.Empty})
+            using (FolderBrowserDialog p = new FolderBrowserDialog { ShowNewFolderButton = false, SelectedPath = string.Empty })
             {
                 p.Description = "Select addons backup directory:";
                 if (p.ShowDialog(this) == DialogResult.OK)
@@ -338,18 +336,18 @@ namespace AxTools.Forms
         {
             settings.WoWAddonsBackupCompressionLevel = metroComboBoxBackupCompressionLevel.SelectedIndex;
         }
-        
+
         private void MetroComboBoxStyle_SelectedIndexChanged(object sender, EventArgs e)
         {
             int style = metroComboBoxStyle.SelectedIndex == 0 ? 0 : metroComboBoxStyle.SelectedIndex + 1;
-            settings.StyleColor = (MetroColorStyle) style;
+            settings.StyleColor = (MetroColorStyle)style;
             foreach (object i in Application.OpenForms)
             {
-                if (i.GetType().ParentTypes().Any(l => l == typeof (MetroForm)))
+                if (i.GetType().ParentTypes().Any(l => l == typeof(MetroForm)))
                 {
-                    if (((MetroForm) i).StyleManager != null)
+                    if (((MetroForm)i).StyleManager != null)
                     {
-                        ((MetroForm) i).StyleManager.Style = (MetroColorStyle) style;
+                        ((MetroForm)i).StyleManager.Style = (MetroColorStyle)style;
                     }
                 }
             }
@@ -431,7 +429,6 @@ namespace AxTools.Forms
                         Pinger.Enabled = true;
                     }
                 }
-                
             }
         }
 
@@ -444,7 +441,5 @@ namespace AxTools.Forms
         {
             settings.WoWPluginShowIngameNotifications = checkBoxPluginsShowIngameNotifications.Checked;
         }
-        
-        
     }
 }

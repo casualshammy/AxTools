@@ -1,18 +1,16 @@
-﻿using AxTools.Helpers;
-using AxTools.Properties;
+﻿using AxTools.Properties;
+using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
     internal class FlagReturner : IPlugin3
     {
-
         #region Info
 
         public string Name
@@ -40,13 +38,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
         public string[] Dependencies => null;
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Events
 
         public void OnConfig()
         {
-            
         }
 
         public void OnStart(GameInterface info)
@@ -113,19 +110,24 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 case 5031: // Два Пика
                     searchingObjects = new[] { Wowhead.GetSpellInfo(23335).Name, Wowhead.GetSpellInfo(23333).Name }; // Флаг Альянса, Horde Flag
                     break;
+
                 case 3820: // regular Око Бури
                 case 5799:
-                    searchingObjects = new[] {  Wowhead.GetSpellInfo(34976).Name, "Флаг Ока Бури" }; // Флаг Пустоверти
+                    searchingObjects = new[] { Wowhead.GetSpellInfo(34976).Name, "Флаг Ока Бури" }; // Флаг Пустоверти
                     break;
+
                 case 6051:
                     searchingObjects = new[] { Wowhead.GetSpellInfo(121164).Name }; // entry ids: 212091, 212092, 212093, 212094; Сфера могущества
                     break;
+
                 case 6665: // Каньон Суровых Ветров
                     searchingObjects = new[] { Wowhead.GetSpellInfo(140876).Name, Wowhead.GetSpellInfo(141210).Name }; // Вагонетка Альянса, Вагонетка Орды
                     break;
+
                 case 9136: // Бурлящий берег
                     searchingObjects = new[] { Wowhead.GetSpellInfo(273459).Name }; // Азерит
                     break;
+
                 default:
                     searchingObjects = new string[] { };
                     break;
@@ -143,7 +145,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
         }
 
-        #endregion
+        #endregion Events
 
         #region Variables
 
@@ -153,7 +155,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
         private SafeTimer timer;
         private GameInterface info;
 
-        #endregion
-
+        #endregion Variables
     }
 }

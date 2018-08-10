@@ -1,6 +1,5 @@
 using AxTools.WoW.Internals;
 using System;
-using System.Collections.Generic;
 
 namespace AxTools.WoW.Helpers
 {
@@ -22,7 +21,7 @@ namespace AxTools.WoW.Helpers
             if (other is null)
             {
                 return false;
-            } 
+            }
             return Type == other.Type && SenderGUID == other.SenderGUID && TimeStamp == other.TimeStamp;
         }
 
@@ -63,6 +62,5 @@ namespace AxTools.WoW.Helpers
             dtDateTime = dtDateTime.AddSeconds(TimeStamp).ToLocalTime();
             return dtDateTime;
         }
-
     }
 }

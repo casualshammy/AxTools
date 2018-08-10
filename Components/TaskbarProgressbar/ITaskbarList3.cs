@@ -30,6 +30,7 @@ namespace Components.TaskbarProgressbar
 
         // ITaskbarList3
         void SetProgressValue(IntPtr hwnd, ulong ullCompleted, ulong ullTotal);
+
         void SetProgressState(IntPtr hwnd, ThumbnailProgressState tbpFlags);
     }
 }

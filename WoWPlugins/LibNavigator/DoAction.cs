@@ -1,5 +1,5 @@
-using System.Runtime.Serialization;
 using AxTools.WoW.Internals;
+using System.Runtime.Serialization;
 
 namespace LibNavigator
 {

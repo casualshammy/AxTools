@@ -1,15 +1,12 @@
 ﻿using AxTools.Helpers;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AxTools.Forms.Helpers
@@ -17,12 +14,12 @@ namespace AxTools.Forms.Helpers
     [JsonObject(MemberSerialization.OptIn)]
     internal class WoWRadarSettings
     {
-
         private static readonly Log2 logger = new Log2("WoWRadarSettings");
         private static readonly object _lock = new object();
         private static string settingsFile = AppFolders.ConfigDir + "\\wow-radar.json";
 
         private static WoWRadarSettings _instance;
+
         internal static WoWRadarSettings Instance
         {
             get
@@ -60,7 +57,9 @@ namespace AxTools.Forms.Helpers
             }
         }
 
-        private WoWRadarSettings() { }
+        private WoWRadarSettings()
+        {
+        }
 
         private void SaveJSON()
         {
@@ -111,7 +110,7 @@ namespace AxTools.Forms.Helpers
 
         [JsonProperty(Order = 9, PropertyName = "Zoom")]
         internal float Zoom = 0.5f;
-        
+
         [JsonProperty(Order = 10, PropertyName = "FriendColor")]
         internal Color FriendColor = Color.Green;
 
@@ -131,6 +130,7 @@ namespace AxTools.Forms.Helpers
         internal bool ShowLocalPlayerRotationArrowOnTop = false;
 
         private readonly ObservableCollection<RadarObject> list = new ObservableCollection<RadarObject>();
+
         [JsonProperty(Order = 50, PropertyName = "WoWRadarList")]
         internal ObservableCollection<RadarObject> List
         {
@@ -146,6 +146,5 @@ namespace AxTools.Forms.Helpers
                 }
             }
         }
-
     }
 }

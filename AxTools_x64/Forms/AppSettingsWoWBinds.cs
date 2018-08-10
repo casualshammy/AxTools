@@ -1,7 +1,7 @@
-﻿using System;
-using System.Windows.Forms;
-using AxTools.Helpers;
+﻿using AxTools.Helpers;
 using Components.Forms;
+using System;
+using System.Windows.Forms;
 
 namespace AxTools.Forms
 {
@@ -10,7 +10,7 @@ namespace AxTools.Forms
         public AppSettingsWoWBinds()
         {
             InitializeComponent();
-           StyleManager.Style = Settings2.Instance.StyleColor;
+            StyleManager.Style = Settings2.Instance.StyleColor;
             textBoxTarget.Text = new KeysConverter().ConvertToInvariantString(Settings2.Instance.WoWTargetMouseover);
             textBoxInteract.Text = new KeysConverter().ConvertToInvariantString(Settings2.Instance.WoWInteractMouseover);
             textBoxTarget.KeyDown += textBoxTarget_KeyDown;
@@ -59,16 +59,19 @@ namespace AxTools.Forms
             {
                 case Keys.Shift | Keys.Control | Keys.Alt:
                     return args.KeyData & ~Keys.Control & ~Keys.Alt;
+
                 case Keys.Shift | Keys.Control:
                     return args.KeyData & ~Keys.Control;
+
                 case Keys.Shift | Keys.Alt:
                     return args.KeyData & ~Keys.Alt;
+
                 case Keys.Control | Keys.Alt:
                     return args.KeyData & ~Keys.Alt;
+
                 default:
                     return args.KeyData;
             }
         }
-
     }
 }

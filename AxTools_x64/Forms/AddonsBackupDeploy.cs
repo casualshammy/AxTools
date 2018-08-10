@@ -1,17 +1,17 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using AxTools.Services;
+using Components.Forms;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AxTools.Helpers;
-using AxTools.Services;
-using Components.Forms;
 
 namespace AxTools.Forms
 {
     internal partial class AddonsBackupDeploy : BorderedMetroForm
     {
-        private readonly string[] pathsToArchives; 
+        private readonly string[] pathsToArchives;
 
         public AddonsBackupDeploy()
         {
@@ -50,11 +50,11 @@ namespace AxTools.Forms
         private void buttonBeginDeployment_Click(object sender, EventArgs e)
         {
             buttonBeginDeployment.Enabled = false;
-            Task.Run(() => { AddonsBackup.DeployArchive(pathsToArchives[comboBoxArchives.SelectedIndex]); }).ContinueWith(task => {
+            Task.Run(() => { AddonsBackup.DeployArchive(pathsToArchives[comboBoxArchives.SelectedIndex]); }).ContinueWith(task =>
+            {
                 this.TaskDialog("Operation successful", "", NotifyUserType.Info);
                 buttonBeginDeployment.Enabled = true;
             });
         }
-
     }
 }

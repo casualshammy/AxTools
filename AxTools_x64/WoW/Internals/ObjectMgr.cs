@@ -1,14 +1,13 @@
-﻿using System;
+﻿using FMemory;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
-using FMemory;
 
 namespace AxTools.WoW.Internals
 {
     [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
     internal class ObjectMgr
     {
-
         private static byte GetObjectType(MemoryManager memory, IntPtr address)
         {
             return memory.Read<byte>(address + WowBuildInfoX64.ObjectType);
@@ -21,11 +20,11 @@ namespace AxTools.WoW.Internals
         }
 
         internal static WoWPlayerMe Pulse(
-            WowProcess wow, 
-            List<WowObject> wowObjects = null, 
-            List<WowPlayer> wowUnits = null, 
-            List<WowNpc> wowNpcs = null, 
-            List<WoWItem> items = null, 
+            WowProcess wow,
+            List<WowObject> wowObjects = null,
+            List<WowPlayer> wowUnits = null,
+            List<WowNpc> wowNpcs = null,
+            List<WoWItem> items = null,
             List<WowObject> containers = null)
         {
             wowObjects?.Clear();
@@ -45,9 +44,11 @@ namespace AxTools.WoW.Internals
                     case (byte)ObjectType.Unit:
                         wowNpcs?.Add(new WowNpc(currObject, wow));
                         break;
+
                     case (byte)ObjectType.Player:
                         wowUnits?.Add(new WowPlayer(currObject, wow.Memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID), wow));
                         break;
+
                     case (byte)ObjectType.ActivePlayer:
                         WoWGUID guid = wow.Memory.Read<WoWGUID>(currObject + WowBuildInfoX64.ObjectGUID);
                         if (guid == playerGUID)
@@ -55,12 +56,15 @@ namespace AxTools.WoW.Internals
                             me = new WoWPlayerMe(currObject, wow);
                         }
                         break;
+
                     case (byte)ObjectType.GameObject:
                         wowObjects?.Add(new WowObject(currObject, wow));
                         break;
+
                     case (byte)ObjectType.Container:
                         containers?.Add(new WowObject(currObject, wow));
                         break;
+
                     case (byte)ObjectType.Item:
                         items?.Add(new WoWItem(currObject, wow));
                         break;
@@ -73,6 +77,5 @@ namespace AxTools.WoW.Internals
             }
             return me;
         }
-
     }
 }

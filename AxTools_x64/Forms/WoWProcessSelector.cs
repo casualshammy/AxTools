@@ -1,25 +1,24 @@
-﻿using AxTools.WinAPI;
+﻿using AxTools.Helpers;
+using AxTools.WinAPI;
 using AxTools.WoW;
-using System;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using AxTools.Helpers;
 using AxTools.WoW.PluginSystem.API;
 using Components.Forms;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace AxTools.Forms
 {
     internal partial class WoWProcessSelector : BorderedMetroForm
     {
-
         private WowProcess process;
         private Dictionary<int, WowProcess> processPerComboboxIndex = new Dictionary<int, WowProcess>();
 
         /// <summary>
-        ///     
+        ///
         /// </summary>
         /// <returns></returns>
         internal static WowProcess GetWoWProcess()
@@ -51,18 +50,19 @@ namespace AxTools.Forms
             }
             button1.Enabled = false;
             button2.Enabled = false;
-            BeginInvoke((MethodInvoker) delegate
-            {
-                MainForm main = MainForm.Instance;
-                Location = new Point(main.Location.X + main.Size.Width/2 - Size.Width/2, main.Location.Y + main.Size.Height/2 - Size.Height/2);
-                OnActivated(EventArgs.Empty);
-            });
+            BeginInvoke((MethodInvoker)delegate
+           {
+               MainForm main = MainForm.Instance;
+               Location = new Point(main.Location.X + main.Size.Width / 2 - Size.Width / 2, main.Location.Y + main.Size.Height / 2 - Size.Height / 2);
+               OnActivated(EventArgs.Empty);
+           });
         }
-        
+
         private void Button2Click(object sender, EventArgs e)
         {
-            FLASHWINFO fi = new FLASHWINFO {
-                cbSize = (uint) Marshal.SizeOf(typeof (FLASHWINFO)),
+            FLASHWINFO fi = new FLASHWINFO
+            {
+                cbSize = (uint)Marshal.SizeOf(typeof(FLASHWINFO)),
                 hwnd = processPerComboboxIndex[comboBox1.SelectedIndex].MainWindowHandle,
                 dwFlags = FlashWindowFlags.FLASHW_TRAY | FlashWindowFlags.FLASHW_TIMERNOFG
             };
@@ -80,6 +80,5 @@ namespace AxTools.Forms
             button1.Enabled = comboBox1.Text != string.Empty;
             button2.Enabled = comboBox1.Text != string.Empty;
         }
-    
     }
 }

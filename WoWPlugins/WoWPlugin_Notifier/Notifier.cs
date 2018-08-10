@@ -1,19 +1,18 @@
-﻿using System;
+﻿using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals;
-using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_Notifier
 {
     public class Notifier : IPlugin3
     {
-
         #region Info
 
         public string Name { get { return "Notifier"; } }
@@ -31,7 +30,7 @@ namespace WoWPlugin_Notifier
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Methods
 
@@ -72,7 +71,7 @@ namespace WoWPlugin_Notifier
             }
             if (settingsInstance.OnStaticPopup)
             {
-                (timerStaticPopup = this.CreateTimer(15000,game, TimerStaticPopup_OnElapsed)).Start();
+                (timerStaticPopup = this.CreateTimer(15000, game, TimerStaticPopup_OnElapsed)).Start();
                 foreach (var i in PopupFrames)
                 {
                     this.LogPrint($"{i.Item1} --> {i.Item2}");
@@ -129,7 +128,6 @@ namespace WoWPlugin_Notifier
                         if (timerStaticPopup.IsRunning)
                         {
                             Thread.Sleep(1000);
-                            
                         }
                     }
                     break;
@@ -162,8 +160,8 @@ namespace WoWPlugin_Notifier
                 libSMS.SendSMS("Player is not in game!", game);
             }
         }
-        
-        #endregion
+
+        #endregion Methods
 
         private Settings settingsInstance;
         private GameInterface game;
@@ -172,11 +170,11 @@ namespace WoWPlugin_Notifier
         private System.Timers.Timer timerDisconnect;
         private DateTime lastTimeNotifiedAboutDisconnect = DateTime.MinValue;
         private bool running = false;
+
         private static Tuple<string, string>[] PopupFrames = {
             new Tuple<string, string>("General popup", "StaticPopup1"),
             new Tuple<string, string>("PvE dungeon invite", "LFGDungeonReadyDialog"),
             //new Tuple<string, string>("PvP dungeon invite", "PVPReadyDialog")
         };
-
     }
 }

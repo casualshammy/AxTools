@@ -1,19 +1,18 @@
-﻿using System;
+﻿using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals;
-using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_AttackFirst
 {
     public class AttackFirst : IPlugin3
     {
-
         #region Info
 
         public string Name
@@ -42,13 +41,12 @@ namespace WoWPlugin_AttackFirst
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Events
 
         public void OnConfig()
         {
-            
         }
 
         public void OnStart(GameInterface game)
@@ -83,12 +81,12 @@ namespace WoWPlugin_AttackFirst
             }
         }
 
-        #endregion
+        #endregion Events
 
         #region Fields, propeties
 
         private readonly Stopwatch stopwatch = new Stopwatch();
-        private readonly List<WowNpc> npcs = new List<WowNpc>(); 
+        private readonly List<WowNpc> npcs = new List<WowNpc>();
         private SafeTimer timer;
         private readonly string mobName = "Тренировочный манекен рейдера";
         private readonly string spell = "Огненный шок";
@@ -97,10 +95,10 @@ namespace WoWPlugin_AttackFirst
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
         internal const uint WM_KEYDOWN = 0x100;
         internal const uint WM_KEYUP = 0x101;
 
-        #endregion
-
+        #endregion Fields, propeties
     }
 }

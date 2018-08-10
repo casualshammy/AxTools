@@ -24,8 +24,10 @@ namespace AxTools.Services
         private static bool _isBackingUp;
         private static Timer _timer;
         private static bool _serviceIsStarted;
-        private static readonly string[] FoldersToArchive = {"WTF", "Interface"};
+        private static readonly string[] FoldersToArchive = { "WTF", "Interface" };
+
         internal static event Action<bool> IsRunningChanged;
+
         internal static event Action<int> ProgressPercentageChanged;
 
         internal static void StartService()
@@ -300,6 +302,5 @@ namespace AxTools.Services
                 }
             }
         }
-    
     }
 }

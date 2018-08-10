@@ -1,16 +1,15 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using AxTools.WoW.Helpers;
+﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace WoWPlugin_PathCreator
 {
     public class PathCreator : IPlugin3
     {
-
         #region Info
 
         public string Name { get { return "PathCreator"; } }
@@ -30,13 +29,12 @@ namespace WoWPlugin_PathCreator
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Methods
 
         public void OnConfig()
         {
-
         }
 
         public void OnStart(GameInterface game)
@@ -62,11 +60,10 @@ namespace WoWPlugin_PathCreator
             mainForm.Dispose();
         }
 
-        #endregion
+        #endregion Methods
 
         private SafeTimer timer;
         private MainForm mainForm;
         private GameInterface game;
-
     }
 }

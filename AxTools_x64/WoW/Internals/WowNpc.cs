@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using AxTools.Helpers;
 
 namespace AxTools.WoW.Internals
 {
@@ -12,7 +12,6 @@ namespace AxTools.WoW.Internals
     /// </summary>
     public sealed class WowNpc : WoWObjectBase
     {
-        
         internal WowNpc(IntPtr pAddress, WowProcess wow) : base(wow)
         {
             Address = pAddress;
@@ -26,6 +25,7 @@ namespace AxTools.WoW.Internals
         public IntPtr Address;
 
         private IntPtr mDescriptors = IntPtr.Zero;
+
         internal IntPtr Descriptors
         {
             get
@@ -39,6 +39,7 @@ namespace AxTools.WoW.Internals
         }
 
         private WoWGUID mGUID;
+
         public override WoWGUID GUID
         {
             get
@@ -87,7 +88,9 @@ namespace AxTools.WoW.Internals
 
         // We don't use System.Nullable<> because it's for 40% slower
         private bool mLocationRead;
+
         private WowPoint mLocation;
+
         public WowPoint Location
         {
             get
@@ -102,6 +105,7 @@ namespace AxTools.WoW.Internals
         }
 
         private uint mHealth = uint.MaxValue;
+
         public uint Health
         {
             get
@@ -115,6 +119,7 @@ namespace AxTools.WoW.Internals
         }
 
         private uint mHealthMax = uint.MaxValue;
+
         public uint HealthMax
         {
             get
@@ -133,6 +138,7 @@ namespace AxTools.WoW.Internals
         }
 
         private int lootable = -1;
+
         public bool Lootable
         {
             get
@@ -147,6 +153,7 @@ namespace AxTools.WoW.Internals
         }
 
         private uint mEntryID;
+
         public uint EntryID
         {
             get
@@ -162,7 +169,7 @@ namespace AxTools.WoW.Internals
 
         private List<WoWAura> auras;
         public List<WoWAura> Auras => auras ?? (auras = WoWAura.GetAurasForMemoryAddress(memory, Address));
-        
+
         public string GetGameGUID()
         {
             ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
@@ -172,6 +179,5 @@ namespace AxTools.WoW.Internals
             ushort zoneID = BitConverter.ToUInt16(new byte[] { guidBytes[5], guidBytes[6] }, 0);
             return $"Creature-0-{serverID}-{instanceID}-{zoneID}-{EntryID}-{spawnID}";
         }
-
     }
 }

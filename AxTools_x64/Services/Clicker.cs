@@ -1,12 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Timers;
-using System.Windows.Forms;
-using AxTools.Forms;
+﻿using AxTools.Forms;
 using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW;
+using System;
+using System.Linq;
+using System.Timers;
+using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
 namespace AxTools.Services
@@ -25,7 +24,7 @@ namespace AxTools.Services
             KeyboardWatcher.HotkeyManager.KeyPressed += KeyboardListener2_KeyPressed;
             KeyboardWatcher.HotkeyManager.AddKeys(typeof(Clicker).ToString(), _settings.ClickerHotkey);
         }
-        
+
         internal static void Start(double interval, IntPtr hwnd, IntPtr keyToPress)
         {
             lock (Lock)
@@ -108,6 +107,5 @@ namespace AxTools.Services
                 }
             }
         }
-
     }
 }

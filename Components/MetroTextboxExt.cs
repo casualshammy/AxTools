@@ -1,7 +1,7 @@
-﻿using System;
+﻿using MetroFramework.Controls;
+using System;
 using System.Reflection;
 using System.Windows.Forms;
-using MetroFramework.Controls;
 
 namespace Components
 {
@@ -19,7 +19,7 @@ namespace Components
                 FieldInfo field = baseType.GetField("baseTextBox", bindFlags);
                 if (field != null)
                 {
-                    internalTextBox = (TextBox) field.GetValue(this);
+                    internalTextBox = (TextBox)field.GetValue(this);
                 }
             }
         }
@@ -35,6 +35,5 @@ namespace Components
             get { return internalTextBox.ReadOnly; }
             set { internalTextBox.ReadOnly = value; }
         }
-
     }
 }

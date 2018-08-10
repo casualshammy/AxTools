@@ -1,13 +1,11 @@
 ﻿using AxTools.Helpers;
-using FMemory;
 using AxTools.WinAPI;
+using FMemory;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 
 namespace AxTools.WoW
 {
@@ -19,13 +17,17 @@ namespace AxTools.WoW
         internal static ConcurrentDictionary<int, WowProcess> Processes = new ConcurrentDictionary<int, WowProcess>();
 
         internal static event Action WoWProcessStartedOrClosed;
+
         internal static event Action<int> WoWProcessClosed;
+
         internal static event Action<WowProcess> WoWProcessReadyForInteraction;
 
         private static readonly object _listLock = new object();
+
         //private static readonly ConcurrentDictionary<int, WowProcess> _wowProcesses = new ConcurrentDictionary<int, WowProcess>();
         //private static readonly List<WowProcess> _sharedList = new List<WowProcess>();
         private static readonly object _lock = new object();
+
         private static readonly Log2 log = new Log2("WoWProcessManager");
 
         internal static void StartWatcher()
@@ -133,7 +135,8 @@ namespace AxTools.WoW
                     {
                         if (Settings2.Instance.WoWCustomizeWindow)
                         {
-                            Task.Run(() => {
+                            Task.Run(() =>
+                            {
                                 Thread.Sleep(1000); // because sometimes pause is needed
                                 try
                                 {
@@ -168,7 +171,7 @@ namespace AxTools.WoW
                         {
                             log.Error(string.Format("{0} Memory manager initialization failed with error: {1}", process, ex.Message));
                         }
-                        
+
                         break;
                     }
                 }
@@ -178,6 +181,5 @@ namespace AxTools.WoW
                 log.Error("General error: " + ex.Message);
             }
         }
-        
     }
 }

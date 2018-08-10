@@ -1,18 +1,17 @@
-﻿using System;
+﻿using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals;
-using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 
 namespace InkCrafter
 {
     public class InkCrafter : IPlugin3
     {
-
         #region Info
 
         public string Name
@@ -39,6 +38,7 @@ namespace InkCrafter
         }
 
         private Image trayIcon;
+
         public Image TrayIcon
         {
             get { return trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\InkCrafter\\inv_inscription_ink_starlight.jpg")); }
@@ -58,7 +58,7 @@ namespace InkCrafter
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Events
 
@@ -119,7 +119,7 @@ namespace InkCrafter
             timer.Dispose();
         }
 
-        #endregion
+        #endregion Events
 
         private SafeTimer timer;
         internal InkCrafterSettings SettingsInstance;
@@ -157,6 +157,5 @@ namespace InkCrafter
             "Толстая борейская кожа",
             "Чернила разжигателя войны",
         };
-
     }
 }

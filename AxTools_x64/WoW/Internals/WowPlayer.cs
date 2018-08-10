@@ -1,13 +1,13 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using AxTools.WoW.Helpers;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AxTools.Helpers;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Internals
 {
@@ -47,6 +47,7 @@ namespace AxTools.WoW.Internals
                 case Race.PandarenHorde:
                     Faction = Faction.Horde;
                     break;
+
                 case Race.Human:
                 case Race.Dwarf:
                 case Race.NightElf:
@@ -56,12 +57,13 @@ namespace AxTools.WoW.Internals
                 case Race.PandarenAlliance:
                     Faction = Faction.Alliance;
                     break;
+
                 default:
                     Faction = Faction.Unknown;
                     break;
             }
         }
-        
+
         public readonly IntPtr Address;
 
         /// <summary>
@@ -100,6 +102,7 @@ namespace AxTools.WoW.Internals
         public readonly WowPlayerClass Class;
 
         private uint castingSpellID = uint.MaxValue;
+
         public uint CastingSpellID
         {
             get
@@ -111,6 +114,7 @@ namespace AxTools.WoW.Internals
                 return castingSpellID;
             }
         }
+
         public string CastingSpellName
         {
             get
@@ -120,6 +124,7 @@ namespace AxTools.WoW.Internals
         }
 
         private uint channelSpellID = uint.MaxValue;
+
         public uint ChannelSpellID
         {
             get
@@ -127,6 +132,7 @@ namespace AxTools.WoW.Internals
                 return channelSpellID == uint.MaxValue ? (channelSpellID = memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID)) : channelSpellID;
             }
         }
+
         public string ChannelSpellName
         {
             get
@@ -136,6 +142,7 @@ namespace AxTools.WoW.Internals
         }
 
         protected WoWGUID MGUID;
+
         public override WoWGUID GUID
         {
             get
@@ -223,7 +230,7 @@ namespace AxTools.WoW.Internals
                 return null;
             }
         }
-        
+
         public bool IsFlying
         {
             get
@@ -239,6 +246,7 @@ namespace AxTools.WoW.Internals
 
         private bool mLocationRead;
         private WowPoint mLocation;
+
         public WowPoint Location
         {
             get
@@ -251,7 +259,6 @@ namespace AxTools.WoW.Internals
                 return mLocation;
             }
         }
-
 
         public float Rotation
         {
@@ -277,11 +284,11 @@ namespace AxTools.WoW.Internals
             }
             set
             {
-                return; // todo: 
-                #pragma warning disable CS0162 // Unreachable code detected
+                return; // todo:
+#pragma warning disable CS0162 // Unreachable code detected
                 memory.Write(Address + WowBuildInfoX64.UnitPitch, value);
                 pitch = null;
-                #pragma warning restore CS0162 // Unreachable code detected
+#pragma warning restore CS0162 // Unreachable code detected
             }
         }
 
@@ -310,7 +317,6 @@ namespace AxTools.WoW.Internals
                         log.Error("[SaveToDB] Error-0: " + ex.Message +
                             $"\r\nINSERT INTO players (guid, name) values ('{GUID}', '{name.Replace("'", "''")}')");
                     }
-
                 }
             }
         }
@@ -348,7 +354,6 @@ namespace AxTools.WoW.Internals
                 }
             }
         }
-        
     }
 
     public enum Faction
@@ -375,5 +380,4 @@ namespace AxTools.WoW.Internals
         PandarenAlliance = 0x961,
         PandarenHorde = 0x962,
     }
-
 }

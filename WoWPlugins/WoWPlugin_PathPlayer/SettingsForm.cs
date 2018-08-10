@@ -5,7 +5,6 @@ namespace PathPlayer
 {
     public partial class SettingsForm : Form
     {
-
         private PathPlayer pluginInst;
 
         public SettingsForm()
@@ -28,6 +27,7 @@ namespace PathPlayer
 
         // ReSharper disable once InconsistentNaming
         private const int CP_NOCLOSE_BUTTON = 0x200;
+
         protected override CreateParams CreateParams
         {
             get

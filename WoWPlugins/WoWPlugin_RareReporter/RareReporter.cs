@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using AxTools.WoW.Helpers;
+﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace WoWPlugin_RareReporter
 {
@@ -30,13 +30,12 @@ namespace WoWPlugin_RareReporter
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Methods
 
         public void OnConfig()
         {
-            
         }
 
         public void OnStart(GameInterface game)
@@ -92,7 +91,7 @@ namespace WoWPlugin_RareReporter
             }
         }
 
-        #endregion
+        #endregion Methods
 
         #region Fields
 
@@ -104,7 +103,6 @@ namespace WoWPlugin_RareReporter
         private const int timeout = 120;
         private GameInterface game;
 
-        #endregion
-
+        #endregion Fields
     }
 }

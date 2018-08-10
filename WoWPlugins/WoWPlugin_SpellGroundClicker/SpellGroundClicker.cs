@@ -1,17 +1,16 @@
-﻿using System;
-using System.Drawing;
-using System.Threading;
-using System.Windows.Forms;
-using AxTools.WoW.Helpers;
+﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
+using System;
+using System.Drawing;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace WoWPlugin_SpellGroundClicker
 {
     public class SpellGroundClicker : IPlugin3
     {
-
         #region Info
 
         public string Name { get { return "SpellGroundClicker"; } }
@@ -31,13 +30,12 @@ namespace WoWPlugin_SpellGroundClicker
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Methods
 
         public void OnConfig()
         {
-            
         }
 
         public void OnStart(GameInterface game)
@@ -66,7 +64,7 @@ namespace WoWPlugin_SpellGroundClicker
             }
         }
 
-        #endregion
+        #endregion Methods
 
         #region Variables
 
@@ -77,7 +75,6 @@ namespace WoWPlugin_SpellGroundClicker
         private Point clickPoint;
         private GameInterface game;
 
-        #endregion
-
+        #endregion Variables
     }
 }

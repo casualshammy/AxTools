@@ -13,7 +13,7 @@ namespace InkCrafter
         {
             InkCrafterConfig goodsDestroyerConfig = new InkCrafterConfig
             {
-                textBoxModernInk = {Text = settingsInstance.WarbindersInkCount.ToString()}
+                textBoxModernInk = { Text = settingsInstance.WarbindersInkCount.ToString() }
             };
             goodsDestroyerConfig.ShowDialog();
             int temp;
@@ -25,6 +25,7 @@ namespace InkCrafter
 
         // ReSharper disable once InconsistentNaming
         private const int CP_NOCLOSE_BUTTON = 0x200;
+
         protected override CreateParams CreateParams
         {
             get
@@ -39,6 +40,5 @@ namespace InkCrafter
         {
             Close();
         }
-
     }
 }

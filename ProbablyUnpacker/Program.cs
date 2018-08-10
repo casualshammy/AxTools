@@ -1,18 +1,15 @@
 ﻿using AxTools.Helpers.MemoryManagement;
 using PeNet;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ProbablyUnpacker
 {
-    class Program
+    internal class Program
     {
-
-        static PeNet.Structures.IMAGE_SECTION_HEADER GetSectionHeader(PeFile file, string name)
+        private static PeNet.Structures.IMAGE_SECTION_HEADER GetSectionHeader(PeFile file, string name)
         {
             foreach (var section in file.ImageSectionHeaders)
             {
@@ -26,7 +23,7 @@ namespace ProbablyUnpacker
             throw new Exception("section not found");
         }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             int processID = GetProcessID();
             if (processID != 0)
@@ -61,8 +58,10 @@ namespace ProbablyUnpacker
                                         writer.Seek(file_ofs, System.IO.SeekOrigin.Begin);
                                         writer.Write((oldOffset - (ulong)memoryManager.ImageBase + peFile.ImageNtHeaders.OptionalHeader.ImageBase));
                                         break;
+
                                     case 0:
                                         break;
+
                                     default:
                                         //throw new Exception("wrong relocation offset type");
                                         break;
@@ -121,7 +120,5 @@ namespace ProbablyUnpacker
                 return input;
             }
         }
-
-
     }
 }

@@ -13,6 +13,5 @@ namespace LibSMS
 
         [DataMember(Name = "PushbulletRecipient")]
         internal string PushbulletRecipient;
-
     }
 }

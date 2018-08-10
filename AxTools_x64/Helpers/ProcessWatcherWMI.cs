@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Management;
-using AxTools.Forms;
 
 namespace AxTools.Helpers
 {
@@ -75,7 +74,6 @@ namespace AxTools.Helpers
                 _wowWatcherStart.Dispose();
             }
         }
-        
 
         private static void WowProcessStopped(object sender, EventArrivedEventArgs e)
         {
@@ -94,7 +92,6 @@ namespace AxTools.Helpers
                 _processStarted(pInfo);
             }
         }
-
     }
 
     internal class ProcessInfo
@@ -108,5 +105,4 @@ namespace AxTools.Helpers
             ProcessID = id;
         }
     }
-
 }

@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
+﻿using MetroFramework.Controls;
+using MetroFramework.Drawing;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using MetroFramework.Controls;
-using MetroFramework.Drawing;
 
 namespace Components
 {
@@ -51,6 +51,5 @@ namespace Components
                 }
             }
         }
-
     }
 }

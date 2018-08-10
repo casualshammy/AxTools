@@ -1,8 +1,8 @@
-﻿using FMemory;
+﻿using AxTools.WinAPI.TCPTable;
+using FMemory;
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
-using AxTools.WinAPI.TCPTable;
 
 namespace AxTools.WinAPI
 {
@@ -31,7 +31,7 @@ namespace AxTools.WinAPI
         [DllImport("user32")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
-        
+
         [DllImport("winmm.dll", EntryPoint = "sndPlaySoundW")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool sndPlaySoundW([In] [MarshalAs(UnmanagedType.LPWStr)] string pszSound, uint fuSound);
@@ -61,6 +61,5 @@ namespace AxTools.WinAPI
 
         [DllImport("iphlpapi.dll", SetLastError = true)]
         internal static extern uint GetExtendedTcpTable(IntPtr pTcpTable, ref int dwOutBufLen, bool sort, int ipVersion, TCP_TABLE_CLASS tblClass, int reserved);
-
     }
 }

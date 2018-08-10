@@ -6,7 +6,6 @@ namespace WoWPlugin_SpellGroundClicker
 {
     internal class WinAPI
     {
-
         public static void SetCursorPosition(Point point)
         {
             SetCursorPos(point.X, point.Y);
@@ -26,7 +25,7 @@ namespace WoWPlugin_SpellGroundClicker
         public static void MouseEvent(MouseEventFlags value)
         {
             Point point = GetCursorPosition();
-            mouse_event((int) value, point.X, point.Y, 0, 0);
+            mouse_event((int)value, point.X, point.Y, 0, 0);
         }
 
         [DllImport("user32.dll", EntryPoint = "SetCursorPos")]
@@ -51,7 +50,6 @@ namespace WoWPlugin_SpellGroundClicker
                 X = x;
                 Y = y;
             }
-
         }
 
         [Flags]
@@ -66,6 +64,5 @@ namespace WoWPlugin_SpellGroundClicker
             RightDown = 0x00000008,
             RightUp = 0x00000010
         }
-
     }
 }

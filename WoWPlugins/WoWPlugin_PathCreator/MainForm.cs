@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Windows.Forms;
-using AxTools.WoW.Internals;
 using System.Runtime.Serialization;
-using AxTools.WoW.PluginSystem.API;
+using System.Windows.Forms;
 
 namespace WoWPlugin_PathCreator
 {
@@ -33,7 +33,7 @@ namespace WoWPlugin_PathCreator
             WoWPlayerMe me = game.GetGameObjects();
             if (me != null)
             {
-                list.Add(new DoAction {ActionType = DoActionType.Move, WowPoint = me.Location});
+                list.Add(new DoAction { ActionType = DoActionType.Move, WowPoint = me.Location });
                 WriteJSON();
             }
             else
@@ -44,7 +44,7 @@ namespace WoWPlugin_PathCreator
 
         private void buttonInteract_Click(object sender, EventArgs e)
         {
-            list.Add(new DoAction {ActionType = DoActionType.Interact, Data = textBoxInteract.Text});
+            list.Add(new DoAction { ActionType = DoActionType.Interact, Data = textBoxInteract.Text });
             WriteJSON();
         }
 
@@ -56,13 +56,13 @@ namespace WoWPlugin_PathCreator
 
         private void buttonSendChat_Click(object sender, EventArgs e)
         {
-            list.Add(new DoAction {ActionType = DoActionType.SendChat, Data = textBoxSendChat.Text});
+            list.Add(new DoAction { ActionType = DoActionType.SendChat, Data = textBoxSendChat.Text });
             WriteJSON();
         }
 
         private void buttonStopProfile_Click(object sender, EventArgs e)
         {
-            list.Add(new DoAction {ActionType = DoActionType.StopProfile});
+            list.Add(new DoAction { ActionType = DoActionType.StopProfile });
             WriteJSON();
             Close();
         }
@@ -83,7 +83,7 @@ namespace WoWPlugin_PathCreator
 
         private void buttonPrecision2D_Click(object sender, EventArgs e)
         {
-            list.Add(new DoAction {ActionType = DoActionType.SetPrecision2D, Data = numericPrecision2D.Value.ToString(CultureInfo.InvariantCulture)});
+            list.Add(new DoAction { ActionType = DoActionType.SetPrecision2D, Data = numericPrecision2D.Value.ToString(CultureInfo.InvariantCulture) });
             WriteJSON();
         }
 
@@ -104,7 +104,6 @@ namespace WoWPlugin_PathCreator
             list.Add(new DoAction { ActionType = DoActionType.SetStartFromNearestPoint, Data = true.ToString() });
             WriteJSON();
         }
-
     }
 
     [DataContract]
@@ -128,28 +127,27 @@ namespace WoWPlugin_PathCreator
     {
         [DataMember(Name = "ActionType")]
         internal DoActionType ActionType;
-        
+
         [DataMember(Name = "Location", EmitDefaultValue = false)]
         internal WowPoint Location;
-        
+
         [DataMember(Name = "Name", EmitDefaultValue = false)]
         internal string Name;
-        
+
         [DataMember(Name = "Text", EmitDefaultValue = false)]
         internal string Text;
 
         [DataMember(Name = "LuaCode", EmitDefaultValue = false)]
         internal string LuaCode;
-        
+
         [DataMember(Name = "FloatValue", EmitDefaultValue = false)]
         internal float FloatValue;
-        
+
         [DataMember(Name = "BoolValue", EmitDefaultValue = false)]
         internal bool BoolValue;
-        
+
         [DataMember(Name = "TimeInMsBetweenEvaluations", EmitDefaultValue = false)]
         internal int TimeInMsBetweenEvaluations;
-
     }
 
     internal enum DoActionType

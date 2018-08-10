@@ -2,7 +2,6 @@
 {
     internal static class Win32Consts
     {
-
         internal const uint WM_NULL = 0x0;
         internal const uint WM_QUERYENDSESSION = 0x11;
         internal const uint WM_KEYDOWN = 0x100;
@@ -32,6 +31,5 @@
         internal const int PAGE_WRITECOPY = 0x08;
         internal const int PAGE_TARGETS_INVALID = 0x40000000;
         internal const int PAGE_TARGETS_NO_UPDATE = 0x40000000;
-
     }
 }

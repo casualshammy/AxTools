@@ -1,14 +1,13 @@
 ﻿using AxTools.Helpers;
-using FMemory;
 using AxTools.WinAPI;
 using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
+using FMemory;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -26,7 +25,7 @@ namespace AxTools.WoW.PluginSystem.API
         private static readonly Dictionary<int, object> chatLocks = new Dictionary<int, object>();
         private static readonly Dictionary<int, object> readChatLocks = new Dictionary<int, object>();
         private static readonly Dictionary<int, object> luaLocks = new Dictionary<int, object>();
-  
+
         internal GameInterface(WowProcess wow)
         {
             wowProcess = wow ?? throw new ArgumentNullException("wow");
@@ -70,7 +69,7 @@ namespace AxTools.WoW.PluginSystem.API
         {
             ChatboxSendText(command);
         }
-        
+
         #region Internal methods
 
         internal void ChatboxSendText(string text, int attempts = 3)
@@ -156,12 +155,12 @@ namespace AxTools.WoW.PluginSystem.API
             get { return wowProcess.Memory.Read<uint>(wowProcess.Memory.ImageBase + WowBuildInfoX64.ChatIsOpened) == 1; }
         }
 
-        #endregion
+        #endregion Internal methods
 
-        #endregion
+        #endregion game
 
         #region Chat
-        
+
         /// <summary>
         ///     Invokes <see cref="NewChatMessage"/> if new messages appears
         /// </summary>
@@ -219,12 +218,10 @@ namespace AxTools.WoW.PluginSystem.API
         //    return new ChatMsg();
         //}
 
-
-
-        #endregion
+        #endregion Chat
 
         #region Info
-        
+
         public string ZoneText
         {
             get
@@ -329,10 +326,10 @@ namespace AxTools.WoW.PluginSystem.API
             get { return Memory.Read<WoWGUID>(Memory.ImageBase + WowBuildInfoX64.MouseoverGUID); }
         }
 
-        #endregion
+        #endregion Info
 
         #region Lua
-        
+
         public string LuaGetValue(string function)
         {
             lock (luaLocks[wowProcess.ProcessID])
@@ -374,7 +371,7 @@ namespace AxTools.WoW.PluginSystem.API
             return LuaGetValue($"tostring({condition})") == "true";
         }
 
-        #endregion
+        #endregion Lua
 
         #region MoveMgr
 
@@ -488,7 +485,7 @@ namespace AxTools.WoW.PluginSystem.API
                 log.Info(string.Format("[game.Move3D] Return, timeout: {0}, diffXY: {1}, diffZ: {2}", timeoutInMs, me.Location.Distance2D(point), zDiff)); // todo: remove
             }
         }
-        
+
         public void Jump()
         {
             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.Space, IntPtr.Zero);
@@ -524,11 +521,11 @@ namespace AxTools.WoW.PluginSystem.API
                 MoveHelper.FaceHorizontalWithTimer(wowProcess, face, Keys.D, moving);
             }
         }
-        
-        #endregion
+
+        #endregion MoveMgr
 
         #region ObjMgr
-        
+
         public WoWPlayerMe GetGameObjects(List<WowObject> wowObjects = null, List<WowPlayer> wowUnits = null, List<WowNpc> wowNpcs = null)
         {
             if (IsInGame)
@@ -541,7 +538,7 @@ namespace AxTools.WoW.PluginSystem.API
             return null;
         }
 
-        #endregion
+        #endregion ObjMgr
 
         #region Utils
 
@@ -553,7 +550,6 @@ namespace AxTools.WoW.PluginSystem.API
             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)key, IntPtr.Zero);
         }
 
-        #endregion
-
+        #endregion Utils
     }
 }

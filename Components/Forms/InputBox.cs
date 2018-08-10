@@ -1,6 +1,6 @@
-﻿using System;
+﻿using MetroFramework;
+using System;
 using System.Windows.Forms;
-using MetroFramework;
 
 namespace Components.Forms
 {
@@ -49,7 +49,6 @@ namespace Components.Forms
 
         private void InputBoxLoad(object sender, EventArgs e)
         {
-
         }
     }
 }

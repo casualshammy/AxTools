@@ -1,14 +1,11 @@
 ﻿using AxTools.Helpers;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AxTools.WoW
 {
@@ -40,7 +37,7 @@ namespace AxTools.WoW
         {
             return ProtectedData.Protect(Encoding.UTF8.GetBytes(data), null, DataProtectionScope.CurrentUser);
         }
-        
+
         internal static ObservableCollection<WoWAccount2> AllAccounts
         {
             get
@@ -51,7 +48,7 @@ namespace AxTools.WoW
                 }
             }
         }
-        
+
         private static ObservableCollection<WoWAccount2> Load()
         {
             try
@@ -95,6 +92,5 @@ namespace AxTools.WoW
                 log.Error("WoW accounts saving failed: " + ex.Message);
             }
         }
-
     }
 }

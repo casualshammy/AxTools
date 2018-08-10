@@ -26,8 +26,6 @@ namespace AxTools.Forms.Helpers
         [JsonConstructor]
         public RadarShowMode()
         {
-            
         }
-
     }
 }

@@ -15,7 +15,6 @@ namespace LibNavigator
 {
     public class LibNavigator : IPlugin3
     {
-
         #region Info
 
         public string Name => "LibNavigator";
@@ -26,7 +25,7 @@ namespace LibNavigator
         public string[] Dependencies => null;
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region IPlugin2 methods
 
@@ -45,10 +44,10 @@ namespace LibNavigator
             throw new InvalidOperationException("You should not explicitly stop this library");
         }
 
-        #endregion
+        #endregion IPlugin2 methods
 
         #region Methods
-        
+
         public void Go(WowPoint dest, float precision, GameInterface game)
         {
             if (isRunning)
@@ -114,7 +113,7 @@ namespace LibNavigator
         }
 
         public bool IsRunning => isRunning;
-        
+
         public bool LoadScriptData(string data)
         {
             if (isRunning)
@@ -173,6 +172,7 @@ namespace LibNavigator
                         case DoActionType.SetLoopPath:
                             loopPath = bool.Parse(actionsList[tCounter].Data);
                             break;
+
                         case DoActionType.SetStartFromNearestPoint:
                             startFromNearestPoint = bool.Parse(actionsList[tCounter].Data);
                             break;
@@ -242,27 +242,32 @@ namespace LibNavigator
                             IncreaseCounterAndDoAction();
                         }
                         break;
+
                     case DoActionType.StopProfile:
                         if (loopPath)
                         {
                             IncreaseCounterAndDoAction();
                         }
                         break;
+
                     case DoActionType.RunLua:
                         Thread.Sleep(500); // player should be stopped before interact
                         game.SendToChat("/run " + string.Concat(action.Data.TakeWhile(l => l != '\r' && l != '\n')));
                         IncreaseCounterAndDoAction();
                         break;
+
                     case DoActionType.SendChat:
                         Thread.Sleep(500); // player should be stopped before interact
                         game.SendToChat(action.Data);
                         IncreaseCounterAndDoAction();
                         break;
+
                     case DoActionType.SelectGossipOption:
                         Thread.Sleep(1000); // player should be stopped before interact
                         game.SelectDialogOption(action.Data);
                         IncreaseCounterAndDoAction();
                         break;
+
                     case DoActionType.Interact:
                         WowObject[] objectsWithCorrectName = wowObjects.Where(l => l.Name == action.Data).ToArray();
                         if (objectsWithCorrectName.Length > 0)
@@ -280,6 +285,7 @@ namespace LibNavigator
                         }
                         IncreaseCounterAndDoAction();
                         break;
+
                     case DoActionType.Wait:
                         int timeToWait = int.Parse(action.Data);
                         while (timeToWait > 0 && timer.IsRunning)
@@ -289,6 +295,7 @@ namespace LibNavigator
                         }
                         IncreaseCounterAndDoAction();
                         break;
+
                     case DoActionType.SetPrecision2D:
                         if (!float.TryParse(action.Data, out precision2D))
                         {
@@ -296,6 +303,7 @@ namespace LibNavigator
                         }
                         IncreaseCounterAndDoAction();
                         break;
+
                     case DoActionType.SetPrecision3D:
                         if (!float.TryParse(action.Data, out precision3D))
                         {
@@ -303,6 +311,7 @@ namespace LibNavigator
                         }
                         IncreaseCounterAndDoAction();
                         break;
+
                     case DoActionType.WaitWhile:
                         if (!game.LuaIsTrue(action.Data))
                         {
@@ -313,6 +322,7 @@ namespace LibNavigator
                             Thread.Sleep(lag);
                         }
                         break;
+
                     case DoActionType.SendToChatWhile:
                         string[] p = action.Data.Split(new string[] { "##@##" }, StringSplitOptions.RemoveEmptyEntries);
                         string _action = p[0];
@@ -326,6 +336,7 @@ namespace LibNavigator
                             IncreaseCounterAndDoAction();
                         }
                         break;
+
                     case DoActionType.StopProfileIf:
                         if (game.LuaIsTrue(action.Data))
                         {
@@ -333,10 +344,12 @@ namespace LibNavigator
                         }
                         IncreaseCounterAndDoAction();
                         break;
+
                     case DoActionType.NotifyUser:
                         this.ShowNotify(action.Data, false, false);
                         IncreaseCounterAndDoAction();
                         break;
+
                     case DoActionType.NotifyUserIf:
                         if (game.LuaIsTrue(action.AdditionalData))
                         {
@@ -344,6 +357,7 @@ namespace LibNavigator
                         }
                         IncreaseCounterAndDoAction();
                         break;
+
                     default:
                         IncreaseCounterAndDoAction();
                         break;
@@ -417,7 +431,7 @@ namespace LibNavigator
             }
         }
 
-        #endregion
+        #endregion Methods
 
         #region Fields
 
@@ -435,7 +449,6 @@ namespace LibNavigator
         private GameInterface game;
         private bool EndOfActionsListIsReached = false;
 
-        #endregion
-
+        #endregion Fields
     }
 }

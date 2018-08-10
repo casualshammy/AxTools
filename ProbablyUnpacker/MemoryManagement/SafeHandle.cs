@@ -1,6 +1,6 @@
-﻿using System.Reflection;
-using Microsoft.Win32.SafeHandles;
+﻿using Microsoft.Win32.SafeHandles;
 using System;
+using System.Reflection;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -15,7 +15,6 @@ namespace AxTools.Helpers.MemoryManagement
     {
         public SafeMemoryHandle() : base(true)
         {
-
         }
 
         [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
@@ -44,6 +43,6 @@ namespace AxTools.Helpers.MemoryManagement
             return CloseHandle(handle);
         }
 
-        #endregion
+        #endregion Overrides of SafeHandle
     }
 }

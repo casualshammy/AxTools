@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AxTools.WoW.Helpers;
+using FMemory;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using FMemory;
-using AxTools.WoW.Helpers;
 
 namespace AxTools.WoW.Internals
 {
@@ -13,7 +13,7 @@ namespace AxTools.WoW.Internals
         [FieldOffset(0x88)] public int SpellId;
         [FieldOffset(0x91)] public byte Stack;
         [FieldOffset(0x98)] public uint TimeLeftInMs;
-        
+
         internal WoWAura(WoWGUID ownerGUID, int spellID, byte stack, uint timeLeft)
         {
             OwnerGUID = ownerGUID;
@@ -53,6 +53,5 @@ namespace AxTools.WoW.Internals
             }
             return auras;
         }
-
     }
 }

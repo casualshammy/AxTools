@@ -1,5 +1,5 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace AxTools.Helpers
 {
@@ -137,6 +137,5 @@ namespace AxTools.Helpers
         {
             return Major + "." + Minor + "." + Build;
         }
-        
     }
 }

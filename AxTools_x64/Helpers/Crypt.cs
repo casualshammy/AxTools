@@ -6,7 +6,6 @@ namespace AxTools.Helpers
 {
     internal static class Crypt
     {
-
         internal static byte[] Encrypt<T>(byte[] bytes, byte[] key) where T : SymmetricAlgorithm, new()
         {
             using (T cryptoProvider = new T())
@@ -40,7 +39,7 @@ namespace AxTools.Helpers
                 }
             }
         }
-        
+
         internal static byte[] Decrypt<T>(byte[] bytes, byte[] key) where T : SymmetricAlgorithm, new()
         {
             using (T cryptoProvider = new T())
@@ -73,6 +72,5 @@ namespace AxTools.Helpers
                 return hash;
             }
         }
-
     }
 }

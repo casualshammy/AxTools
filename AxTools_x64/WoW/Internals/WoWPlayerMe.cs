@@ -6,13 +6,14 @@ namespace AxTools.WoW.Internals
 {
     public sealed class WoWPlayerMe : WowPlayer
     {
-        
         private float? speed;
         private WoWItem[] itemsInBags;
         private WoWItem[] inventory;
 
-        internal WoWPlayerMe(IntPtr address, WowProcess wow) : base(address, WoWGUID.Zero, wow) { }
-        
+        internal WoWPlayerMe(IntPtr address, WowProcess wow) : base(address, WoWGUID.Zero, wow)
+        {
+        }
+
         public WoWItem[] Inventory
         {
             get
@@ -32,7 +33,7 @@ namespace AxTools.WoW.Internals
                 return inventory;
             }
         }
-        
+
         public unsafe WoWItem[] ItemsInBags
         {
             get
@@ -61,7 +62,7 @@ namespace AxTools.WoW.Internals
                         itemIndexInContainer.Add(container.GUID, new List<WoWGUID>());
                         for (int i = 0; i < 36; i++) // max size of container
                         {
-                            WoWGUID itemGUID = memory.Read<WoWGUID>(containerDescriptors + WowBuildInfoX64.WoWContainerItems + i*sizeof(WoWGUID));
+                            WoWGUID itemGUID = memory.Read<WoWGUID>(containerDescriptors + WowBuildInfoX64.WoWContainerItems + i * sizeof(WoWGUID));
                             itemIndexInContainer[container.GUID].Add(itemGUID);
                         }
                     }
@@ -91,7 +92,7 @@ namespace AxTools.WoW.Internals
                 return itemsInBags;
             }
         }
-        
+
         public float Speed
         {
             get
@@ -109,9 +110,5 @@ namespace AxTools.WoW.Internals
         {
             get { return Speed > 0f; }
         }
-        
     }
-
-    
-
 }

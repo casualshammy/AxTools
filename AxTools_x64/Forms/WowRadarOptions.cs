@@ -1,18 +1,18 @@
-﻿using System.Globalization;
+﻿using AxTools.Forms.Helpers;
 using AxTools.Helpers;
+using AxTools.WoW;
+using AxTools.WoW.Internals;
+using Components.Forms;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using AxTools.Forms.Helpers;
-using AxTools.WoW;
-using AxTools.WoW.Internals;
-using Components.Forms;
 
 namespace AxTools.Forms
 {
@@ -39,39 +39,39 @@ namespace AxTools.Forms
             textboxAlarmSound.Text = settings.AlarmSoundFile;
             textboxAlarmSound.TextChanged += TextboxAlarmSound_TextChanged;
             metroTabControl1.SelectedIndex = 0;
-            BeginInvoke((MethodInvoker) delegate
-            {
-                int maxWidth = Screen.PrimaryScreen.WorkingArea.Width;
-                WowRadar pRadar = Utils.FindForms<WowRadar>().FirstOrDefault();
-                if (pRadar != null)
-                {
-                    Location = maxWidth - pRadar.Location.X - pRadar.Size.Width - 20 > Size.Width
-                        ? new Point(pRadar.Location.X + pRadar.Size.Width + 20, pRadar.Location.Y)
-                        : new Point(pRadar.Location.X - Size.Width - 20, pRadar.Location.Y);
-                }
-                OnActivated(EventArgs.Empty);
-            });
+            BeginInvoke((MethodInvoker)delegate
+           {
+               int maxWidth = Screen.PrimaryScreen.WorkingArea.Width;
+               WowRadar pRadar = Utils.FindForms<WowRadar>().FirstOrDefault();
+               if (pRadar != null)
+               {
+                   Location = maxWidth - pRadar.Location.X - pRadar.Size.Width - 20 > Size.Width
+                       ? new Point(pRadar.Location.X + pRadar.Size.Width + 20, pRadar.Location.Y)
+                       : new Point(pRadar.Location.X - Size.Width - 20, pRadar.Location.Y);
+               }
+               OnActivated(EventArgs.Empty);
+           });
 
             oListView.SetObjects(settings.List);
             oListView.CheckObjects(settings.List.Where(l => l.Enabled));
             oListView.BooleanCheckStateGetter = OListView_BooleanCheckStateGetter;
             oListView.BooleanCheckStatePutter = OListView_BooleanCheckStatePutter;
             oListView.KeyUp += OListView_OnKeyUp;
-            oColumnInteract.AspectPutter = delegate(object rowObject, object value)
+            oColumnInteract.AspectPutter = delegate (object rowObject, object value)
             {
                 if (rowObject is RadarObject radarObject)
                 {
                     RefreshRadarObject(radarObject, radarObject.Name, (bool)value, radarObject.SoundAlarm);
                 }
             };
-            oColumnSoundAlarm.AspectPutter = delegate(object rowObject, object value)
+            oColumnSoundAlarm.AspectPutter = delegate (object rowObject, object value)
             {
                 if (rowObject is RadarObject radarObject)
                 {
                     RefreshRadarObject(radarObject, radarObject.Name, radarObject.Interact, (bool)value);
                 }
             };
-            oColumnName.AspectPutter = delegate(object rowObject, object value)
+            oColumnName.AspectPutter = delegate (object rowObject, object value)
             {
                 if (rowObject is RadarObject radarObject)
                 {
@@ -181,7 +181,7 @@ namespace AxTools.Forms
                 else
                 {
                     this.TaskDialog("Object with the same name is already exist!", "", NotifyUserType.Error);
-                } 
+                }
                 comboboxObjects.SelectedIndex = -1;
                 comboboxObjects.Invalidate();
             }
@@ -228,7 +228,7 @@ namespace AxTools.Forms
                 List<WowObject> objectList = new List<WowObject>();
                 WoWPlayerMe localPlayer = ObjectMgr.Pulse(wowProcess, objectList);
                 List<WowObject> objectsWithUniqueNames = objectList.DistinctBy(i => i.Name).ToList();
-                objectsWithUniqueNames.Sort(delegate(WowObject wo1, WowObject wo2)
+                objectsWithUniqueNames.Sort(delegate (WowObject wo1, WowObject wo2)
                 {
                     // ReSharper disable ImpureMethodCallOnReadonlyValueField
                     double distance1 = wo1.Location.Distance(localPlayer.Location);
@@ -313,6 +313,5 @@ namespace AxTools.Forms
         {
             settings.ShowLocalPlayerRotationArrowOnTop = checkBoxPlayerArrowOnTop.Checked;
         }
-
     }
 }

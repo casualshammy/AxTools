@@ -1,10 +1,10 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using MetroFramework;
+﻿using MetroFramework;
 using MetroFramework.Components;
 using MetroFramework.Drawing;
 using MetroFramework.Forms;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace Components.Forms
 {
@@ -15,7 +15,7 @@ namespace Components.Forms
         public BorderedMetroForm()
         {
             ShadowType = ShadowType.None;
-            styleManagerInst = new MetroStyleManager(this) {Style = MetroColorStyle.Blue, Theme = MetroThemeStyle.Light};
+            styleManagerInst = new MetroStyleManager(this) { Style = MetroColorStyle.Blue, Theme = MetroThemeStyle.Light };
         }
 
         protected override void Dispose(bool disposing)
@@ -45,6 +45,5 @@ namespace Components.Forms
         {
             BeginInvoke(new MethodInvoker(action));
         }
-        
     }
 }

@@ -24,6 +24,5 @@ namespace Follower
         {
             _settings.MaxDistance = (int)numericMaxDistance.Value;
         }
-
     }
 }

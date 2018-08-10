@@ -34,7 +34,5 @@ namespace LibSMS
                 Close();
             }
         }
-
-
     }
 }

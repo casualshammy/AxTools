@@ -21,6 +21,5 @@ namespace AxTools.Services.PingerHelpers
             Port = port;
             Description = description;
         }
-
     }
 }

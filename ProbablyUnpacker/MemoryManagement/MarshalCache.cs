@@ -31,28 +31,26 @@ namespace AxTools.Helpers.MemoryManagement
 
         static MarshalCache()
         {
-            TypeCode = Type.GetTypeCode(typeof (T));
-
+            TypeCode = Type.GetTypeCode(typeof(T));
 
             // Bools = 1 char.
-            if (typeof (T) == typeof (bool))
+            if (typeof(T) == typeof(bool))
             {
                 Size = 1;
-                RealType = typeof (T);
+                RealType = typeof(T);
             }
-            else if (typeof (T).IsEnum)
+            else if (typeof(T).IsEnum)
             {
-                Type underlying = typeof (T).GetEnumUnderlyingType();
+                Type underlying = typeof(T).GetEnumUnderlyingType();
                 Size = GetSizeOf(underlying);
                 RealType = underlying;
                 TypeCode = Type.GetTypeCode(underlying);
             }
             else
             {
-                Size = GetSizeOf(typeof (T));
-                RealType = typeof (T);
+                Size = GetSizeOf(typeof(T));
+                RealType = typeof(T);
             }
-
 
             // Basically, if any members of the type have a MarshalAs attrib, then we can't just pointer deref. :(
             // This literally means any kind of MarshalAs. Strings, arrays, custom type sizes, etc.
@@ -61,25 +59,22 @@ namespace AxTools.Helpers.MemoryManagement
             TypeRequiresMarshal = RequiresMarshal(RealType);
             //Debug.WriteLine("Type " + typeof(T).Name + " requires marshaling: " + TypeRequiresMarshal);
 
-
             // Generate a method to get the address of a generic type. We'll be using this for RtlMoveMemory later for much faster structure reads.
             DynamicMethod method = new DynamicMethod(
-                string.Format("GetPinnedPtr<{0}>", typeof (T).FullName.Replace(".", "<>")), typeof (void*), new[] {typeof (T).MakeByRefType()},
-                typeof (MarshalCache<>).Module);
+                string.Format("GetPinnedPtr<{0}>", typeof(T).FullName.Replace(".", "<>")), typeof(void*), new[] { typeof(T).MakeByRefType() },
+                typeof(MarshalCache<>).Module);
             ILGenerator generator = method.GetILGenerator();
             generator.Emit(OpCodes.Ldarg_0);
             generator.Emit(OpCodes.Conv_U);
             generator.Emit(OpCodes.Ret);
-            GetUnsafePtr = (GetUnsafePtrDelegate) method.CreateDelegate(typeof (GetUnsafePtrDelegate));
+            GetUnsafePtr = (GetUnsafePtrDelegate)method.CreateDelegate(typeof(GetUnsafePtrDelegate));
         }
-
 
         private static int GetSizeOf(Type t)
         {
             try
             {
                 // Note: This is in a try/catch for a reason.
-
 
                 // A structure doesn't have to be marked as generic, to have generic types INSIDE of it.
                 // Marshal.SizeOf will toss an exception when it can't find a size due to a generic type inside it.
@@ -93,23 +88,20 @@ namespace AxTools.Helpers.MemoryManagement
                 // Good for STL implementations, bad for most everything else.
                 // But for the sake of completeness, lets make this work.
 
-
                 int totalSize = 0;
-
 
                 foreach (FieldInfo field in t.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
                 {
                     // Check if its a fixed-size-buffer. Eg; fixed byte Pad[50];
-                    object[] attr = field.GetCustomAttributes(typeof (FixedBufferAttribute), false);
+                    object[] attr = field.GetCustomAttributes(typeof(FixedBufferAttribute), false);
                     if (attr.Length > 0)
                     {
                         FixedBufferAttribute fba = attr[0] as FixedBufferAttribute;
                         if (fba != null)
                         {
-                            totalSize += GetSizeOf(fba.ElementType)*fba.Length;
+                            totalSize += GetSizeOf(fba.ElementType) * fba.Length;
                         }
                     }
-
 
                     // Recursive. We want to allow ourselves to dive back into this function if we need to!
                     totalSize += GetSizeOf(field.FieldType);
@@ -118,13 +110,11 @@ namespace AxTools.Helpers.MemoryManagement
             }
         }
 
-
         private static bool RequiresMarshal(Type t)
         {
             foreach (FieldInfo fieldInfo in t.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
             {
-                bool requires = fieldInfo.GetCustomAttributes(typeof (MarshalAsAttribute), true).Any();
-
+                bool requires = fieldInfo.GetCustomAttributes(typeof(MarshalAsAttribute), true).Any();
 
                 if (requires)
                 {
@@ -132,16 +122,13 @@ namespace AxTools.Helpers.MemoryManagement
                     return true;
                 }
 
-
                 // Nope
-                if (t == typeof (IntPtr) || t == typeof (string))
+                if (t == typeof(IntPtr) || t == typeof(string))
                     continue;
-
 
                 // If it's a custom object, then check it separately for marshaling requirements.
                 if (Type.GetTypeCode(t) == TypeCode.Object)
                     requires |= RequiresMarshal(fieldInfo.FieldType);
-
 
                 // if anything requires a marshal, period, no matter where/what it is.
                 // just return true. Hop out of this func as early as possible.
@@ -153,7 +140,6 @@ namespace AxTools.Helpers.MemoryManagement
             }
             return false;
         }
-
 
         internal unsafe delegate void* GetUnsafePtrDelegate(ref T value);
     }

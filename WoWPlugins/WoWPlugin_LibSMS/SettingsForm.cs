@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Windows.Forms;
-using Microsoft.Win32;
 
 namespace LibSMS
 {
@@ -8,6 +8,7 @@ namespace LibSMS
     {
         //private static LibSMS plugin;
         private const int CP_NOCLOSE_BUTTON = 0x200;
+
         private Settings settings;
 
         public SettingsForm()
@@ -31,9 +32,9 @@ namespace LibSMS
             {
                 SettingsForm fishingConfig = new SettingsForm
                 {
-                    textBoxSMSAPI = {Text = settingsInstance.SMSAPI},
-                    textBoxPushbulletAPIKey = {Text = settingsInstance.PushbulletAPIKey},
-                    textBoxPushbulletRecipient = {Text = settingsInstance.PushbulletRecipient},
+                    textBoxSMSAPI = { Text = settingsInstance.SMSAPI },
+                    textBoxPushbulletAPIKey = { Text = settingsInstance.PushbulletAPIKey },
+                    textBoxPushbulletRecipient = { Text = settingsInstance.PushbulletRecipient },
                     settings = settingsInstance
                 };
                 fishingConfig.ShowDialog();
@@ -69,6 +70,5 @@ namespace LibSMS
             new PushBulletAuth(settings).ShowDialog(this);
             textBoxPushbulletAPIKey.Text = settings.PushbulletAPIKey;
         }
-    
     }
 }

@@ -1,8 +1,8 @@
-﻿using System.Drawing;
-using System.IO;
-using AxTools.Helpers;
+﻿using AxTools.Helpers;
 using AxTools.Properties;
 using Components.Forms;
+using System.Drawing;
+using System.IO;
 using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
@@ -38,6 +38,5 @@ namespace AxTools.Forms
             }
             Settings2.Instance.LastUsedVersion = Globals.AppVersion;
         }
-
     }
 }

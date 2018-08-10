@@ -8,12 +8,12 @@ namespace Components.Forms
         private CustomScriptEdit()
         {
             InitializeComponent();
-            closeButton.Location = new Point(Size.Width/2 - closeButton.Size.Width/2, closeButton.Location.Y);
+            closeButton.Location = new Point(Size.Width / 2 - closeButton.Size.Width / 2, closeButton.Location.Y);
         }
 
         internal static string OpenDialog(string values)
         {
-            CustomScriptEdit cse = new CustomScriptEdit {customScriptTextBox = {Text = values}};
+            CustomScriptEdit cse = new CustomScriptEdit { customScriptTextBox = { Text = values } };
             cse.ShowDialog();
             return cse.customScriptTextBox.Text.Trim(' ', '\r', '\n');
         }
@@ -22,6 +22,5 @@ namespace Components.Forms
         {
             Close();
         }
-
     }
 }

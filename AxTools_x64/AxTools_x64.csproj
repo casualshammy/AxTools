@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.3.46.2315</AssemblyVersion>
+    <AssemblyVersion>12.3.46.2319</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
@@ -185,16 +185,9 @@
     <Compile Include="Forms\AppSettingsWoWBinds.Designer.cs">
       <DependentUpon>AppSettingsWoWBinds.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Helpers\LuaConsoleSettings.cs" />
     <Compile Include="Forms\Helpers\RadarObject.cs" />
     <Compile Include="Forms\Helpers\RadarShowMode.cs" />
     <Compile Include="Forms\Helpers\WoWRadarSettings.cs" />
-    <Compile Include="Forms\LuaConsole.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\LuaConsole.Designer.cs">
-      <DependentUpon>LuaConsole.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\MainForm_PluginHotkeys.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -368,9 +361,6 @@
     <EmbeddedResource Include="Forms\ClickerSettings.resx">
       <DependentUpon>ClickerSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\LuaConsole.resx">
-      <DependentUpon>LuaConsole.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

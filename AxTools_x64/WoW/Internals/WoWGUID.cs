@@ -52,6 +52,5 @@ namespace AxTools.WoW.Internals
             return "[" + High.ToString("X") + ", " + Low.ToString("X") + "]";
             // ReSharper restore ImpureMethodCallOnReadonlyValueField
         }
-
     }
 }

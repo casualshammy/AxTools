@@ -1,18 +1,14 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace AxTools.Helpers
 {
     internal static class VoIP
     {
-
         private static Log2 log = new Log2("VoIP");
-        
+
         /// <summary>
         /// Launches VoIP with specified name
         /// </summary>
@@ -55,6 +51,7 @@ namespace AxTools.Helpers
                         return new VoipInfo(Settings2.Instance.TS3Directory + "\\ts3client_win32.exe", "-nosingleinstance", Settings2.Instance.TS3Directory);
                     }
                     break;
+
                 case "Ventrilo":
                     if (string.IsNullOrWhiteSpace(Settings2.Instance.VentriloDirectory) || !File.Exists(Settings2.Instance.VentriloDirectory + "\\Ventrilo.exe"))
                     {
@@ -65,6 +62,7 @@ namespace AxTools.Helpers
                         return new VoipInfo(Settings2.Instance.VentriloDirectory + "\\Ventrilo.exe", "-m", Settings2.Instance.VentriloDirectory);
                     }
                     break;
+
                 case "Raidcall":
                     if (string.IsNullOrWhiteSpace(Settings2.Instance.RaidcallDirectory) || !File.Exists(Settings2.Instance.RaidcallDirectory + "\\raidcall.exe"))
                     {
@@ -75,6 +73,7 @@ namespace AxTools.Helpers
                         return new VoipInfo(Settings2.Instance.RaidcallDirectory + "\\raidcall.exe", "", Settings2.Instance.RaidcallDirectory);
                     }
                     break;
+
                 case "Mumble":
                     if (string.IsNullOrWhiteSpace(Settings2.Instance.MumbleDirectory) || !File.Exists(Settings2.Instance.MumbleDirectory + "\\mumble.exe"))
                     {
@@ -85,6 +84,7 @@ namespace AxTools.Helpers
                         return new VoipInfo(Settings2.Instance.MumbleDirectory + "\\mumble.exe", "", Settings2.Instance.MumbleDirectory);
                     }
                     break;
+
                 case "Discord":
                     string discordDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Discord");
                     string discordExecutable = Path.Combine(discordDir, "Update.exe");
@@ -93,6 +93,7 @@ namespace AxTools.Helpers
                         return new VoipInfo(discordExecutable, "--processStart Discord.exe", discordDir);
                     }
                     break;
+
                 case "Twitch":
                     string twitchDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Curse Client\\Bin");
                     string twitchExecutable = Path.Combine(twitchDir, "Twitch.exe");
@@ -169,12 +170,10 @@ namespace AxTools.Helpers
             log.Info("Mumble client is not found!");
             return null;
         }
-        
     }
 
     internal class VoipInfo
     {
-        
         internal string ExecutablePath;
         internal string ExecutableArguments;
         internal string DirectoryPath;
@@ -184,8 +183,6 @@ namespace AxTools.Helpers
             ExecutablePath = executablePath;
             ExecutableArguments = executableArguments;
             DirectoryPath = directoryPath;
+        }
     }
-
-    }
-
 }

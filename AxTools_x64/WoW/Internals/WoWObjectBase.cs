@@ -1,7 +1,7 @@
 ﻿using AxTools.Helpers;
-using FMemory;
 using AxTools.WinAPI;
 using AxTools.WoW.PluginSystem.API;
+using FMemory;
 using System;
 using System.Threading;
 using System.Windows.Forms;
@@ -10,7 +10,6 @@ namespace AxTools.WoW.Internals
 {
     public class WoWObjectBase
     {
-
         protected MemoryManager memory;
         protected WowProcess wowProcess;
         protected GameInterface info;
@@ -72,6 +71,5 @@ namespace AxTools.WoW.Internals
                 }
             }
         }
-        
     }
 }

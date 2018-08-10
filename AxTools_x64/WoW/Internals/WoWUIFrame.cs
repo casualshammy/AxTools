@@ -1,11 +1,11 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using AxTools.Helpers;
-using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Internals
 {
@@ -17,7 +17,7 @@ namespace AxTools.WoW.Internals
         private WowProcess process;
         private static readonly Log2 log = new Log2("WoWUIFrame");
         private static readonly Dictionary<int, ConcurrentDictionary<string, IntPtr>> cachedFrames = new Dictionary<int, ConcurrentDictionary<string, IntPtr>>();
-        
+
         internal WoWUIFrame(IntPtr address, WowProcess proc)
         {
             this.address = address;
@@ -61,7 +61,7 @@ namespace AxTools.WoW.Internals
         {
             get { return ((process.Memory.Read<int>(address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) == 1; }
         }
-        
+
         public static WoWUIFrame GetFrameByName(GameInterface game, string name)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -83,7 +83,7 @@ namespace AxTools.WoW.Internals
                 log.Error(string.Format("GetFrameByName exec time: {0}ms", stopwatch.ElapsedMilliseconds));
             return frame;
         }
-        
+
         private static IEnumerable<WoWUIFrame> GetAllFrames(GameInterface game)
         {
             if (game.IsInGame && game.wowProcess.IsValidBuild)
@@ -126,7 +126,5 @@ namespace AxTools.WoW.Internals
                     log.Error(string.Format("GetAllFrames exec time: {0}ms", stopwatch.ElapsedMilliseconds));
             }
         }
-        
     }
-    
 }

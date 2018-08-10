@@ -1,6 +1,6 @@
-﻿using System;
+﻿using AxTools.Forms;
+using System;
 using System.Windows.Forms;
-using AxTools.Forms;
 
 namespace AxTools.WoW.PluginSystem.Plugins
 {
@@ -25,9 +25,9 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             FishingConfig fishingConfig = new FishingConfig(fishingSettings)
             {
-                checkBoxUseBestBait = {Checked = fishingSettings.UseBestBait},
-                checkBoxUseSpecialBait = {Checked = fishingSettings.UseSpecialBait},
-                comboBoxSpecialBait = {Text = fishingSettings.SpecialBait}
+                checkBoxUseBestBait = { Checked = fishingSettings.UseBestBait },
+                checkBoxUseSpecialBait = { Checked = fishingSettings.UseSpecialBait },
+                comboBoxSpecialBait = { Text = fishingSettings.SpecialBait }
             };
             fishingConfig.ShowDialog(MainForm.Instance);
             fishingSettings.UseBestBait = fishingConfig.checkBoxUseBestBait.Checked;
@@ -45,6 +45,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
 
         // ReSharper disable once InconsistentNaming
         private const int CP_NOCLOSE_BUTTON = 0x200;
+
         protected override CreateParams CreateParams
         {
             get
@@ -74,6 +75,5 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             thisSettings.EnableBreaks = checkBoxBreaks.Checked;
         }
-
     }
 }

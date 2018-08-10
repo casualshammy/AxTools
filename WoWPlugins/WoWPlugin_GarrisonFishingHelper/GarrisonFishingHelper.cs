@@ -1,20 +1,19 @@
-﻿using System;
+﻿using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals;
-using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_GarrisonFishingHelper
 {
     public class GarrisonFishingHelper : IPlugin3
     {
-
         #region Properties
 
         public string Name
@@ -49,13 +48,12 @@ namespace WoWPlugin_GarrisonFishingHelper
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Properties
 
         #region Methods
 
         public void OnConfig()
         {
-            
         }
 
         public void OnStart(GameInterface game)
@@ -146,7 +144,7 @@ namespace WoWPlugin_GarrisonFishingHelper
             }
         }
 
-        #endregion
+        #endregion Methods
 
         #region Variables
 
@@ -157,7 +155,6 @@ namespace WoWPlugin_GarrisonFishingHelper
         private static bool _isworking;
         private GameInterface game;
 
-        #endregion
-
+        #endregion Variables
     }
 }

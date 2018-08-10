@@ -1,13 +1,13 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using AxTools.Services.PingerHelpers;
+using AxTools.WinAPI.TCPTable;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Timers;
-using AxTools.Helpers;
-using AxTools.Services.PingerHelpers;
-using AxTools.WinAPI.TCPTable;
 using Timer = System.Timers.Timer;
 
 namespace AxTools.Services
@@ -35,7 +35,7 @@ namespace AxTools.Services
 
         internal static bool Enabled
         {
-            get 
+            get
             {
                 return _timer != null && _timer.Enabled;
             }
@@ -103,7 +103,7 @@ namespace AxTools.Services
                         {
                             _pingList.RemoveAt(0);
                         }
-                        _pingList.Add(new PingerReply((int) elapsed, result && pSocket.Connected));
+                        _pingList.Add(new PingerReply((int)elapsed, result && pSocket.Connected));
                         int ping = Max(_pingList.GetRange(_pingList.Count - 10, 10).Where(l => l.Successful).Select(l => l.PingInMs));
                         int packetLoss = _pingList.Count(l => !l.Successful);
                         if (ping != _lastPing || packetLoss != _lastPacketLoss)
@@ -168,6 +168,5 @@ namespace AxTools.Services
                 _cachedServer = GameServers.Entries[_settings.PingerServerID];
             }
         }
-
     }
 }

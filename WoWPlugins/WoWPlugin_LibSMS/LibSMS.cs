@@ -10,7 +10,6 @@ namespace LibSMS
 {
     public class LibSMS : IPlugin3
     {
-
         #region Info
 
         public string Name { get { return "LibSMS"; } }
@@ -30,7 +29,7 @@ namespace LibSMS
 
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion
+        #endregion Info
 
         #region Methods
 
@@ -52,7 +51,6 @@ namespace LibSMS
 
         public void OnStop()
         {
-            
         }
 
         public void SendSMS(string text, GameInterface game)
@@ -104,15 +102,13 @@ namespace LibSMS
             return sb.ToString();
         }
 
-
-        #endregion
+        #endregion Methods
 
         #region Vars
 
         private Settings settingsInstance;
         private static readonly string ReservedCharacters = " !*'();:@&=+$,/?%#[]";
 
-        #endregion
-
+        #endregion Vars
     }
 }

@@ -129,46 +129,60 @@ namespace AxTools.Helpers.MemoryManagement
                         // All System.Object's require marshaling!
                         ret = Marshal.PtrToStructure(address, typeof(T));
                         break;
+
                     case TypeCode.Boolean:
                         ret = *(byte*)address != 0;
                         break;
+
                     case TypeCode.Char:
                         ret = *(char*)address;
                         break;
+
                     case TypeCode.SByte:
                         ret = *(sbyte*)address;
                         break;
+
                     case TypeCode.Byte:
                         ret = *(byte*)address;
                         break;
+
                     case TypeCode.Int16:
                         ret = *(short*)address;
                         break;
+
                     case TypeCode.UInt16:
                         ret = *(ushort*)address;
                         break;
+
                     case TypeCode.Int32:
                         ret = *(int*)address;
                         break;
+
                     case TypeCode.UInt32:
                         ret = *(uint*)address;
                         break;
+
                     case TypeCode.Int64:
                         ret = *(long*)address;
                         break;
+
                     case TypeCode.UInt64:
                         ret = *(ulong*)address;
                         break;
+
                     case TypeCode.Single:
                         ret = *(float*)address;
                         break;
+
                     case TypeCode.Double:
                         ret = *(double*)address;
                         break;
+
                     case TypeCode.Decimal:
                         // Probably safe to remove this. I'm unaware of anything that actually uses "decimal" that would require memory reading...
                         ret = *(decimal*)address;
                         break;
+
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

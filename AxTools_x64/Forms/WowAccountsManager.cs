@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AxTools.Properties;
+﻿using AxTools.Properties;
 using AxTools.WoW;
 using Components.Forms;
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
@@ -65,7 +65,6 @@ namespace AxTools.Forms
                 textBoxWowAccountLogin.Text = WoWAccount2.AllAccounts[comboBoxWowAccounts.SelectedIndex].GetLogin();
                 textBoxWowAccountPassword.Text = "********";
             }
-            
         }
 
         private void UpdateControls()
@@ -78,6 +77,5 @@ namespace AxTools.Forms
             textBoxWowAccountLogin.Text = "Login";
             textBoxWowAccountPassword.Text = "Password";
         }
-
     }
 }

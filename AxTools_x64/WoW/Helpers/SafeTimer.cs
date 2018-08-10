@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AxTools.Helpers;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Diagnostics;
 using System.Threading;
-using AxTools.Helpers;
-using AxTools.WoW.PluginSystem.API;
 
 namespace AxTools.WoW.Helpers
 {
@@ -33,7 +33,7 @@ namespace AxTools.WoW.Helpers
             {
                 if (thread == null)
                 {
-                    thread = new Thread(Loop) { IsBackground = true};
+                    thread = new Thread(Loop) { IsBackground = true };
                     balancingStopwatch = new Stopwatch();
                     flag = true;
                     thread.Start();
@@ -48,7 +48,7 @@ namespace AxTools.WoW.Helpers
                 if (thread != null)
                 {
                     flag = false;
-                    if (!thread.Join(60*1000))
+                    if (!thread.Join(60 * 1000))
                     {
                         throw new Exception(string.Format("[{0}] SafeTimer: Can't stop!", PluginName ?? "Unknown plug-in"));
                     }
@@ -73,7 +73,7 @@ namespace AxTools.WoW.Helpers
                         log.Error(string.Format("[{0}] SafeTimer error: {1}", PluginName ?? "", ex.Message));
                     }
                 }
-                int shouldWait = (int) (interval - balancingStopwatch.ElapsedMilliseconds);
+                int shouldWait = (int)(interval - balancingStopwatch.ElapsedMilliseconds);
                 while (shouldWait > 0 && flag)
                 {
                     Thread.Sleep(Math.Min(shouldWait, 100));
@@ -96,6 +96,5 @@ namespace AxTools.WoW.Helpers
         {
             get { return flag; }
         }
-
     }
 }

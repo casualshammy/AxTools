@@ -16,7 +16,7 @@ namespace Components.Forms
         private int waitInMs;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="label"></param>
@@ -26,7 +26,8 @@ namespace Components.Forms
             InitializeComponent();
             parentForm = parent;
             this.waitInMs = waitInMs;
-            Load += delegate {
+            Load += delegate
+            {
                 Size = parentForm.Size;
                 Location = parentForm.Location;
                 panel = new WaitingOverlaySub(this, metroColorStyle);
@@ -56,7 +57,7 @@ namespace Components.Forms
             }
             return this;
         }
-        
+
         private void WaitingOverlay_FormClosing(object sender, FormClosingEventArgs e)
         {
             panel.Close();
@@ -101,13 +102,6 @@ namespace Components.Forms
                 }
             }
 
-
-
-
-
-
-
-
             /// <summary>
             /// Required designer variable.
             /// </summary>
@@ -137,9 +131,9 @@ namespace Components.Forms
                 this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
                 this.metroProgressSpinner1 = new MetroFramework.Controls.MetroProgressSpinner();
                 this.SuspendLayout();
-                // 
+                //
                 // metroLabel1
-                // 
+                //
                 this.metroLabel1.AutoSize = true;
                 this.metroLabel1.CustomBackground = false;
                 this.metroLabel1.CustomForeColor = false;
@@ -155,9 +149,9 @@ namespace Components.Forms
                 this.metroLabel1.Text = "Please wait...";
                 this.metroLabel1.Theme = MetroFramework.MetroThemeStyle.Light;
                 this.metroLabel1.UseStyleColors = true;
-                // 
+                //
                 // metroProgressSpinner1
-                // 
+                //
                 this.metroProgressSpinner1.CustomBackground = false;
                 this.metroProgressSpinner1.Location = new System.Drawing.Point(5, 5);
                 this.metroProgressSpinner1.Maximum = 100;
@@ -168,9 +162,9 @@ namespace Components.Forms
                 this.metroProgressSpinner1.StyleManager = null;
                 this.metroProgressSpinner1.TabIndex = 1;
                 this.metroProgressSpinner1.Theme = MetroFramework.MetroThemeStyle.Light;
-                // 
+                //
                 // WaitingOverlaySub
-                // 
+                //
                 this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
                 this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
                 this.ClientSize = new System.Drawing.Size(190, 50);
@@ -184,15 +178,12 @@ namespace Components.Forms
                 this.Load += new System.EventHandler(this.WaitingOverlaySub_Load);
                 this.ResumeLayout(false);
                 this.PerformLayout();
-
             }
 
-            #endregion
+            #endregion Windows Form Designer generated code
 
             internal MetroFramework.Controls.MetroLabel metroLabel1;
             internal MetroFramework.Controls.MetroProgressSpinner metroProgressSpinner1;
-
         }
-    
     }
 }

@@ -47,7 +47,7 @@ namespace PatternFinder
             File.Delete(reportFilePath);
             Stopwatch stopwatch = Stopwatch.StartNew();
             Console.WriteLine("Calculating hash...");
-            File.AppendAllLines(reportFilePath, new[] {"internal static readonly byte[] WoWHash =", "{", "\t" + CalcucateHash(wowProcess[0].MainModule.FileName), "};"});
+            File.AppendAllLines(reportFilePath, new[] { "internal static readonly byte[] WoWHash =", "{", "\t" + CalcucateHash(wowProcess[0].MainModule.FileName), "};" });
             var versionInfo = FileVersionInfo.GetVersionInfo(wowProcess[0].MainModule.FileName);
             File.AppendAllLines(reportFilePath, new[] { $"internal const int WoWRevision = {versionInfo.FilePrivatePart}" });
             Console.WriteLine("Hash is calculated");
@@ -117,7 +117,7 @@ namespace PatternFinder
         public string Name { get; private set; }
         public byte[] Bytes { get; private set; }
         public bool[] Mask { get; private set; }
-        const long CacheSize = 0x500;
+        private const long CacheSize = 0x500;
         public List<IModifier> Modifiers = new List<IModifier>();
 
         public struct Result
@@ -142,13 +142,13 @@ namespace PatternFinder
 
             for (long i = 0; i < size - patternLength; i += CacheSize - patternLength)
             {
-                byte[] cache = bm.ReadBytes(start + (int)i, (int) (CacheSize > size - i ? size - i : CacheSize));
+                byte[] cache = bm.ReadBytes(start + (int)i, (int)(CacheSize > size - i ? size - i : CacheSize));
                 for (uint i2 = 0; i2 < cache.Length - patternLength; i2++)
                 {
                     if (DataCompare(cache, i2))
                     {
                         addresses.Add(start + (int)(i + i2));
-                    } 
+                    }
                 }
             }
             if (addresses.Count > 0)
@@ -264,25 +264,29 @@ namespace PatternFinder
             switch (Type)
             {
                 case LeaType.Byte:
-                    return (IntPtr) bm.Read<byte>(address);
+                    return (IntPtr)bm.Read<byte>(address);
+
                 case LeaType.Word:
-                    return (IntPtr) bm.Read<ushort>(address);
+                    return (IntPtr)bm.Read<ushort>(address);
+
                 case LeaType.Dword:
-                    return (IntPtr) bm.Read<uint>(address);
+                    return (IntPtr)bm.Read<uint>(address);
+
                 case LeaType.E8:
                     return address + 4 + bm.Read<int>(address); // 4 = <call instruction size> - <E8>
                 case LeaType.SimpleAddress:
                     return address;
+
                 case LeaType.Cmp:
                     return address + 5 + bm.Read<int>(address);
+
                 case LeaType.CmpMinusOne:
                     return address + 4 + bm.Read<int>(address);
+
                 case LeaType.RelativePlus8:
                     return address + 8 + bm.Read<int>(address);
-
             }
             throw new InvalidDataException("Unknown LeaType");
         }
     }
-
 }

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using AxTools.WoW.Helpers;
+using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem.API;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AxTools.WoW.Helpers;
-using AxTools.WoW.Internals;
-using AxTools.WoW.PluginSystem.API;
 
 namespace WoWPlugin_Dumper
 {
@@ -24,8 +24,8 @@ namespace WoWPlugin_Dumper
 
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
-            string origText = ((Button) sender).Text;
-            ((Button) sender).Text = "Please wait";
+            string origText = ((Button)sender).Text;
+            ((Button)sender).Text = "Please wait";
             progressBar1.Maximum = 8;
             progressBar1.Value = 0;
             Dump();
@@ -68,7 +68,7 @@ namespace WoWPlugin_Dumper
                 Log("Local player---------------------------------------");
                 Log(string.Format("\tGUID: 0x{0}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; IsLooting: {5}; Name: {6}; TargetGUID: {7}; Class: {8}; Health/MaxHealth: {9}/{10}, Level: {11}; Faction: {12}; IsMounted: {13}",
                     localPlayer.GUID, localPlayer.Address.ToInt64(), localPlayer.Location, game.ZoneID, game.ZoneText, game.IsLooting, localPlayer.Name, localPlayer.TargetGUID, localPlayer.Class,
-                    localPlayer.Health, localPlayer.HealthMax,localPlayer.Level, localPlayer.Faction, localPlayer.IsMounted));
+                    localPlayer.Health, localPlayer.HealthMax, localPlayer.Level, localPlayer.Faction, localPlayer.IsMounted));
             }
             catch (Exception ex)
             {
@@ -148,7 +148,7 @@ namespace WoWPlugin_Dumper
             progressBar1.Value++;
             progressBar1.Value++;
         }
-        
+
         private void buttonDumpobjects_Click(object sender, EventArgs e)
         {
             Log("Dump START");
@@ -246,7 +246,8 @@ namespace WoWPlugin_Dumper
                 Log("Chat messages-----------------------------------------");
                 if (chatTimer == null)
                 {
-                    (chatTimer = dumper.CreateTimer(1000, game, delegate {
+                    (chatTimer = dumper.CreateTimer(1000, game, delegate
+                    {
                         foreach (ChatMsg msg in game.ReadChat())
                         {
                             //Log(string.Format("\tType: {0}; Channel: {1}; Sender: {2}; SenderGUID: {3}; Text: {4}", msg.Type, msg.Channel, msg.Sender, msg.SenderGUID, msg.Text));
@@ -403,7 +404,7 @@ namespace WoWPlugin_Dumper
                 Log("ERROR(0): " + ex.Message);
                 return;
             }
-            lp.Pitch = (float)((new Random().NextDouble())/10);
+            lp.Pitch = (float)((new Random().NextDouble()) / 10);
             Log($"New pitch: {lp.Pitch}");
         }
 

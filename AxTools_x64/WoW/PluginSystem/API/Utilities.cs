@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using AxTools.Forms;
+﻿using AxTools.Forms;
 using AxTools.Helpers;
-using AxTools.Services;
 using AxTools.WoW.Helpers;
 using MetroFramework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace AxTools.WoW.PluginSystem.API
 {
@@ -30,6 +25,7 @@ namespace AxTools.WoW.PluginSystem.API
         }
 
         public static event Action<IntPtr> AntiAfkActionEmulated;
+
         public static MetroColorStyle MetroColorStyle => Settings2.Instance.StyleColor;
         public static Random Rnd = new Random(Environment.TickCount + 17);
 
@@ -44,7 +40,7 @@ namespace AxTools.WoW.PluginSystem.API
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static IntPtr MainWindowHandle
         {
@@ -53,7 +49,7 @@ namespace AxTools.WoW.PluginSystem.API
                 return MainForm.Instance.Handle;
             }
         }
-        
+
         /// <summary>
         ///     Creates new <see cref="SafeTimer"/> timer.
         /// </summary>
@@ -162,9 +158,9 @@ namespace AxTools.WoW.PluginSystem.API
         {
             return PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pluginName);
         }
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="plugin"></param>
         /// <param name="text">Any text you want</param>
@@ -175,7 +171,7 @@ namespace AxTools.WoW.PluginSystem.API
         {
             Notify.TrayPopup("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, plugin.TrayIcon, timeout, onClick);
         }
-        
+
         public static string GetPluginSettingsDir(this IPlugin3 plugin)
         {
             return $"{AppFolders.PluginsSettingsDir}\\{plugin.Name}";
@@ -190,6 +186,5 @@ namespace AxTools.WoW.PluginSystem.API
         {
             MainForm.Instance.PostInvoke(action);
         }
-        
     }
 }
