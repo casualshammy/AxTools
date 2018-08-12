@@ -8,9 +8,9 @@ namespace AxTools.WoW.Internals
     [StructLayout(LayoutKind.Sequential)]
     public struct WowPoint : IEquatable<WowPoint>
     {
-        public float X;
-        public float Y;
-        public float Z;
+        public readonly float X;
+        public readonly float Y;
+        public readonly float Z;
 
         public WowPoint(float x, float y, float z)
         {
@@ -34,18 +34,11 @@ namespace AxTools.WoW.Internals
         public static WowPoint GetNearestPoint(WowPoint start, WowPoint end, float distanceFromEnd)
         {
             WowPoint dir = end - start;
-            dir.Normalize();
-            return end - dir * distanceFromEnd;
+            float magnitude = (float)Math.Sqrt(dir.X * dir.X + dir.Y * dir.Y + dir.Z * dir.Z);
+            WowPoint point = new WowPoint(dir.X / magnitude, dir.Y / magnitude, dir.Z / magnitude);
+            return end - point * distanceFromEnd;
         }
-
-        private void Normalize()
-        {
-            float magnitude = (float)Math.Sqrt(X * X + Y * Y + Z * Z);
-            X /= magnitude;
-            Y /= magnitude;
-            Z /= magnitude;
-        }
-
+        
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture, "{0}, {1}, {2}", Math.Round(X, 2), Math.Round(Y, 2), Math.Round(Z, 2));
@@ -61,22 +54,16 @@ namespace AxTools.WoW.Internals
             return new WowPoint(wowPoint.X * v, wowPoint.Y * v, wowPoint.Z * v);
         }
 
-        public bool IsEmpty
-        {
-            get
-            {
-                return X == 0 && Y == 0 && Z == 0;
-            }
-        }
+        public bool IsEmpty => Math.Abs(X) < 0.001 && Math.Abs(Y) < 0.001 && Math.Abs(Z) < 0.001;
 
         public bool Equals(WowPoint other)
         {
-            return X == other.X && Y == other.Y && Z == other.Z;
+            return Math.Abs(X - other.X) < 0.001 && Math.Abs(Y - other.Y) < 0.001 && Math.Abs(Z - other.Z) < 0.001;
         }
 
         public override bool Equals(object other)
         {
-            return other != null && other is WowPoint p && X == p.X && Y == p.Y && Z == p.Z;
+            return other != null && other is WowPoint p && Equals(p);
         }
 
         public static bool operator ==(WowPoint a, WowPoint b)

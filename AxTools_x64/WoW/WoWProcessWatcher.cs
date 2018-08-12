@@ -45,7 +45,7 @@ namespace AxTools.WoW
             {
                 string name = i.Value.ProcessName;
                 i.Value.Dispose();
-                log.Info(string.Format("{0}:{1} :: [WoW hook] Memory manager disposed", name, i.Key));
+                log.Info($"{name}:{i.Key} :: [WoW hook] Memory manager disposed");
             }
         }
 
@@ -58,20 +58,20 @@ namespace AxTools.WoW
                     if (Processes.TryRemove(obj.ProcessID, out WowProcess pWowProcess))
                     {
                         pWowProcess.Dispose();
-                        log.Info(string.Format("{0} Process closed, {1} total", pWowProcess, Processes.Count));
+                        log.Info($"{pWowProcess} Process closed, {Processes.Count} total");
                         WoWProcessStartedOrClosed?.Invoke();
                         WoWProcessClosed?.Invoke(obj.ProcessID);
                     }
                     else
                     {
                         string name = obj.ProcessName.Substring(0, obj.ProcessName.Length - 4);
-                        log.Error(string.Format("[{0}:{1}] Closed WoW process not found", name, obj.ProcessID));
+                        log.Error($"[{name}:{obj.ProcessID}] Closed WoW process not found");
                     }
                 }
             }
             catch (Exception ex)
             {
-                log.Error(string.Format("[{0}:{1}] Process stopped with error: {2}", obj.ProcessName, obj.ProcessID, ex.Message));
+                log.Error($"[{obj.ProcessName}:{obj.ProcessID}] Process stopped with error: {ex.Message}");
             }
         }
 
@@ -84,14 +84,14 @@ namespace AxTools.WoW
                 {
                     WowProcess wowProcess = new WowProcess(obj.ProcessID);
                     Processes.TryAdd(obj.ProcessID, wowProcess);
-                    log.Info(string.Format("{0} Process started, {1} total", wowProcess, Processes.Count));
+                    log.Info($"{wowProcess} Process started, {Processes.Count} total");
                     WoWProcessStartedOrClosed?.Invoke();
                     Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
                 }
             }
             catch (Exception ex)
             {
-                log.Error(string.Format("[{0}:{1}] Process started with error: {2}", obj.ProcessName, obj.ProcessID, ex.Message));
+                log.Error($"[{obj.ProcessName}:{obj.ProcessID}] Process started with error: {ex.Message}");
             }
         }
 
@@ -113,7 +113,7 @@ namespace AxTools.WoW
                     case "wow":
                         WowProcess process = new WowProcess(i.Id);
                         Processes.TryAdd(i.Id, process);
-                        log.Info(string.Format("{0} Process added", process));
+                        log.Info($"{process} Process added");
                         Task.Factory.StartNew(OnWowProcessStartup, process);
                         break;
                 }
@@ -125,7 +125,7 @@ namespace AxTools.WoW
             try
             {
                 WowProcess process = (WowProcess)wowProcess;
-                log.Info(string.Format("{0} Attaching...", process));
+                log.Info($"{process} Attaching...");
                 for (int i = 0; i < 600; i++)
                 {
                     Thread.Sleep(100);
@@ -145,30 +145,30 @@ namespace AxTools.WoW
                                     }
                                     NativeMethods.MoveWindow(process.MainWindowHandle, Settings2.Instance.WoWCustomWindowRectangle.X, Settings2.Instance.WoWCustomWindowRectangle.Y,
                                         Settings2.Instance.WoWCustomWindowRectangle.Width, Settings2.Instance.WoWCustomWindowRectangle.Height, false);
-                                    log.Info(string.Format("{0} Window style is changed", process));
+                                    log.Info($"{process} Window style is changed");
                                 }
                                 catch (Exception ex)
                                 {
-                                    log.Error(string.Format("{0} Window changing failed with error: {1}", process, ex.Message));
+                                    log.Error($"{process} Window changing failed with error: {ex.Message}");
                                 }
                             });
                         }
                         try
                         {
                             process.Memory = new MemoryManager(Process.GetProcessById(process.ProcessID));
-                            log.Info(string.Format("{0} Memory manager initialized, base address 0x{1:X}", process, process.Memory.ImageBase.ToInt64()));
+                            log.Info($"{process} Memory manager initialized, base address 0x{process.Memory.ImageBase.ToInt64():X}");
                             if (!process.IsValidBuild)
                             {
                                 if (process.GetExecutableRevision() > WowBuildInfoX64.WoWRevision)
                                     log.Error($"AxTools is outdated! WowBuildInfoX64.WoWRevision: {WowBuildInfoX64.WoWRevision}; actual revision: {process.GetExecutableRevision()}");
-                                log.Info(string.Format("{0} Memory manager: invalid WoW executable", process));
+                                log.Info($"{process} Memory manager: invalid WoW executable");
                                 Notify.TrayPopup("Incorrect WoW version", "Injector is locked, please wait for update", NotifyUserType.Warn, true);
                             }
                             WoWProcessReadyForInteraction?.Invoke(process);
                         }
                         catch (Exception ex)
                         {
-                            log.Error(string.Format("{0} Memory manager initialization failed with error: {1}", process, ex.Message));
+                            log.Error($"{process} Memory manager initialization failed with error: {ex.Message}");
                         }
 
                         break;

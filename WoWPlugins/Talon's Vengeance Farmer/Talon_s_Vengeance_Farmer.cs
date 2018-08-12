@@ -13,27 +13,15 @@ namespace Talon_s_Vengeance_Farmer
     {
         #region Info
 
-        public string Name
-        {
-            get { return "Talon's Vengeance Farmer"; }
-        }
+        public string Name => "Talon's Vengeance Farmer";
 
-        public Version Version
-        {
-            get { return new Version(1, 0); }
-        }
+        public Version Version => new Version(1, 0);
 
-        public string Description
-        {
-            get { return ""; }
-        }
+        public string Description => "";
 
-        public Image TrayIcon { get { return null; } }
+        public Image TrayIcon => null;
 
-        public bool ConfigAvailable
-        {
-            get { return false; }
-        }
+        public bool ConfigAvailable => false;
 
         public string[] Dependencies => null;
 

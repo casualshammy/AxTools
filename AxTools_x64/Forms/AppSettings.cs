@@ -69,7 +69,7 @@ namespace AxTools.Forms
             {
                 using (RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run"))
                 {
-                    CheckBoxStartAxToolsWithWindows.Checked = regVersion != null && regVersion.GetValue("AxTools") != null && regVersion.GetValue("AxTools").ToString() == Application.ExecutablePath;
+                    CheckBoxStartAxToolsWithWindows.Checked = regVersion?.GetValue("AxTools") != null && regVersion.GetValue("AxTools").ToString() == Application.ExecutablePath;
                 }
             }
             catch (Exception ex)
@@ -127,7 +127,7 @@ namespace AxTools.Forms
 
         private void ButtonIngameKeyBinds_Click(object sender, EventArgs e)
         {
-            AppSettingsWoWBinds form = Utils.FindForms<AppSettingsWoWBinds>().FirstOrDefault(); ;
+            AppSettingsWoWBinds form = Utils.FindForms<AppSettingsWoWBinds>().FirstOrDefault();
             if (form != null)
             {
                 form.Show();
@@ -216,13 +216,10 @@ namespace AxTools.Forms
                 {
                     RegistryKey regVersion =
                         Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
-                    if (regVersion != null)
+                    if (regVersion?.GetValue("AxTools") != null)
                     {
-                        if (regVersion.GetValue("AxTools") != null)
-                        {
-                            regVersion.DeleteValue("AxTools");
-                            regVersion.Close();
-                        }
+                        regVersion.DeleteValue("AxTools");
+                        regVersion.Close();
                     }
                 }
                 catch (Exception ex)

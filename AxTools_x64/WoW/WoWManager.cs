@@ -26,7 +26,7 @@ namespace AxTools.WoW
 
         /// <summary>
         ///     Selects <see cref="WowProcess"/> from all available processes (via <see cref="WoWProcessSelector"/>).
-        ///     Checks selected process for <see cref="WowProcess.IsValidBuild"/> and <see cref="Info.IsInGame"/> states.
+        ///     Checks selected process for <see cref="WowProcess.IsValidBuild"/> and <see cref="GameInterface.IsInGame"/> states.
         ///     If something went wrong, informs user via Utils.NotifyUser().
         /// </summary>
         /// <returns>
@@ -47,7 +47,7 @@ namespace AxTools.WoW
                         }
                         return wowProcess;
                     }
-                    log.Info(string.Format("{0} Player isn't logged in", wowProcess));
+                    log.Info($"{wowProcess} Player isn't logged in");
                     Notify.SmartNotify("Cannot attach to WoW client", "Player isn't logged in", NotifyUserType.Error, true);
                     return null;
                 }

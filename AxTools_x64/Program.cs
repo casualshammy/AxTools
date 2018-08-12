@@ -5,11 +5,9 @@ using AxTools.Updater;
 using AxTools.WoW;
 using Newtonsoft.Json;
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
@@ -60,9 +58,9 @@ namespace AxTools
                             DeleteTempFolder();
                             Legacy();
                             InstallRootCertificate();
-                            log.Info($"{typeof(WoWAntiKick).ToString()} is subscribing for {typeof(WoWProcessManager).ToString()}'s events");
+                            log.Info($"{typeof(WoWAntiKick)} is subscribing for {typeof(WoWProcessManager)}'s events");
                             WoWAntiKick.StartWaitForWoWProcesses();
-                            log.Info(string.Format("Registered for: {0}", Settings2.Instance.UserID));
+                            log.Info($"Registered for: {Settings2.Instance.UserID}");
                             log.Info($"Constructing MainWindow, app version: {Globals.AppVersion}");
                             Application.Run(MainForm.Instance = new MainForm());
                             log.Info("MainWindow is closed, waiting for ShutdownLock...");
@@ -85,7 +83,7 @@ namespace AxTools
             }
             else
             {
-                ProcessArgs(args);
+                ProcessArgs();
             }
         }
 
@@ -106,7 +104,7 @@ namespace AxTools
 
         private static void Legacy()
         {
-            Log2 log = new Log2("Legacy");
+            Log2 legacyLog = new Log2("Legacy");
             // 08.10.2015
             try
             {
@@ -138,7 +136,7 @@ namespace AxTools
             // 12.01.2018
             try
             {
-                foreach (string hotkeyName in new string[] { "ClickerHotkey", "WoWPluginHotkey" })
+                foreach (string hotkeyName in new[] { "ClickerHotkey", "WoWPluginHotkey" })
                 {
                     string cfg = File.ReadAllText(AppFolders.ConfigDir + "\\settings.json", Encoding.UTF8);
                     Regex regex = new Regex($"\"{hotkeyName}\": (\\d+)");
@@ -171,37 +169,7 @@ namespace AxTools
             {
                 MessageBox.Show(ex.Message);
             }
-
-            // 14.03.2018
-            try
-            {
-                string cfg = File.ReadAllText(AppFolders.ConfigDir + "\\settings.json", Encoding.UTF8);
-                Regex regex = new Regex("\"WoWAccounts\": (\".*\")");
-                Match match = regex.Match(cfg);
-                if (match.Success && match.Groups[1].Value.Length > 0)
-                {
-                    log.Info("Found old WoWAccounts db, migrating...");
-                    byte[] oldEncryptedPasswordData = JsonConvert.DeserializeObject<byte[]>(match.Groups[1].Value);
-#pragma warning disable CS0618 // Type or member is obsolete
-                    var oldAccounts = WoWAccount.Load(oldEncryptedPasswordData);
-#pragma warning restore CS0618 // Type or member is obsolete
-                    var newAccounts = new ObservableCollection<WoWAccount2>();
-                    foreach (var entry in oldAccounts)
-                    {
-                        var encryptedLogin = ProtectedData.Protect(Encoding.UTF8.GetBytes(entry.Login), null, DataProtectionScope.CurrentUser);
-                        var encryptedPassword = ProtectedData.Protect(Encoding.UTF8.GetBytes(entry.Password), null, DataProtectionScope.CurrentUser);
-                        newAccounts.Add(new WoWAccount2() { EncryptedLogin = encryptedLogin, EncryptedPassword = encryptedPassword });
-                    }
-                    log.Info("Total accounts: " + newAccounts.Count);
-                    string newCfg = cfg.Replace(match.Value, $"\"WoWAccounts2\": {JsonConvert.SerializeObject(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(newAccounts)))}");
-                    File.WriteAllText(AppFolders.ConfigDir + "\\settings.json", newCfg, Encoding.UTF8);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
+            
             // 17.04.2017
             try
             {
@@ -211,7 +179,7 @@ namespace AxTools
                     if (File.Exists(fileName))
                     {
                         File.Delete(fileName);
-                        log.Info("Old db file is deleted");
+                        legacyLog.Info("Old db file is deleted");
                     }
                 }
             }
@@ -227,13 +195,13 @@ namespace AxTools
                 if (File.Exists(fileName))
                 {
                     File.Delete(fileName);
-                    log.Info($"Old db file is deleted ({fileName})");
+                    legacyLog.Info($"Old db file is deleted ({fileName})");
                 }
                 fileName = AppFolders.DataDir + "\\players.ldb";
                 if (File.Exists(fileName))
                 {
                     File.Delete(fileName);
-                    log.Info($"Old db file is deleted ({fileName})");
+                    legacyLog.Info($"Old db file is deleted ({fileName})");
                 }
             }
             catch (Exception ex)
@@ -250,7 +218,7 @@ namespace AxTools
                     if (File.Exists(fileName))
                     {
                         File.Delete(fileName);
-                        log.Info($"{fileName} is deleted");
+                        legacyLog.Info($"{fileName} is deleted");
                     }
                 }
             }
@@ -274,7 +242,7 @@ namespace AxTools
                         string config = rawConfig.Replace(Path.Combine(AppFolders.ResourcesDir, "alarm.wav").Replace(@"\", @"\\"), Path.Combine(AppFolders.PluginsDir, "Radar\\alarm.wav").Replace(@"\", @"\\"));
                         File.WriteAllText(fileName, config, Encoding.UTF8);
                         File.Move(fileName, newFilePath);
-                        log.Info($"{fileName} is moved to {newFilePath}");
+                        legacyLog.Info($"{fileName} is moved to {newFilePath}");
                     }
                 }
             }
@@ -317,7 +285,7 @@ namespace AxTools
 
         #region Arguments
 
-        private static void ProcessArgs(string[] args)
+        private static void ProcessArgs()
         {
             string arguments = Environment.CommandLine;
             log.Info("CMD arguments: " + arguments);

@@ -19,7 +19,7 @@ namespace LuaConsole
         internal bool TimerRnd = true;
 
         [DataMember(Name = "IgnoreGameState")]
-        internal bool IgnoreGameState = false;
+        internal bool IgnoreGameState;
 
         [DataMember(Name = "TimerInterval")]
         internal int TimerInterval = 1000;
@@ -27,10 +27,7 @@ namespace LuaConsole
         [DataMember(Name = "TimerHotkey")]
         internal KeyExt TimerHotkey
         {
-            get
-            {
-                return timerHotkey;
-            }
+            get => timerHotkey;
             set
             {
                 timerHotkey = value;

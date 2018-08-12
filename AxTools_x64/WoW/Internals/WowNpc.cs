@@ -20,7 +20,7 @@ namespace AxTools.WoW.Internals
         internal static readonly Dictionary<uint, string> Names = new Dictionary<uint, string>();
 
         private static int _maxNameLength = 125;
-        private static Log2 log = new Log2("WowNpc");
+        private static readonly Log2 log = new Log2("WowNpc");
 
         public IntPtr Address;
 
@@ -40,7 +40,7 @@ namespace AxTools.WoW.Internals
 
         private WoWGUID mGUID;
 
-        public override WoWGUID GUID
+        public new WoWGUID GUID
         {
             get
             {
@@ -132,10 +132,7 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        public bool Alive
-        {
-            get { return Health > 1; }
-        }
+        public bool Alive => Health > 1;
 
         private int lootable = -1;
 
@@ -175,8 +172,8 @@ namespace AxTools.WoW.Internals
             ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
             ushort instanceID = (ushort)((GUID.Low >> 29) & 0x1FFF);
             var guidBytes = GetGUIDBytes();
-            string spawnID = BitConverter.ToString(new byte[] { guidBytes[4], guidBytes[3], guidBytes[2], guidBytes[1], guidBytes[0] }).Replace("-", "");
-            ushort zoneID = BitConverter.ToUInt16(new byte[] { guidBytes[5], guidBytes[6] }, 0);
+            string spawnID = BitConverter.ToString(new[] { guidBytes[4], guidBytes[3], guidBytes[2], guidBytes[1], guidBytes[0] }).Replace("-", "");
+            ushort zoneID = BitConverter.ToUInt16(new[] { guidBytes[5], guidBytes[6] }, 0);
             return $"Creature-0-{serverID}-{instanceID}-{zoneID}-{EntryID}-{spawnID}";
         }
     }

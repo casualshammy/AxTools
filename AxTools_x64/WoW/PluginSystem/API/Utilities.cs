@@ -48,19 +48,14 @@ namespace AxTools.WoW.PluginSystem.API
         /// <summary>
         ///
         /// </summary>
-        public static IntPtr MainWindowHandle
-        {
-            get
-            {
-                return MainForm.Instance.Handle;
-            }
-        }
+        public static IntPtr MainWindowHandle => MainForm.Instance.Handle;
 
         /// <summary>
         ///     Creates new <see cref="SafeTimer"/> timer.
         /// </summary>
         /// <param name="plugin"></param>
         /// <param name="interval"></param>
+        /// <param name="game"></param>
         /// <param name="action"></param>
         /// <returns></returns>
         public static SafeTimer CreateTimer(this IPlugin3 plugin, int interval, GameInterface game, Action action)
@@ -93,7 +88,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static T LoadSettingsJSON<T>(this IPlugin3 plugin, string path = null) where T : class, new()
         {
-            string mySettingsFile = path ?? string.Format("{0}\\{1}\\settings.json", AppFolders.PluginsSettingsDir, plugin.Name);
+            string mySettingsFile = path ?? $"{AppFolders.PluginsSettingsDir}\\{plugin.Name}\\settings.json";
             if (File.Exists(mySettingsFile))
             {
                 string rawText = File.ReadAllText(mySettingsFile, Encoding.UTF8);
@@ -133,6 +128,7 @@ namespace AxTools.WoW.PluginSystem.API
         /// <summary>
         /// DO NOT USE INSIDE <see cref="IPlugin3.OnStop"/> or <see cref="IPlugin3.OnStart"/> METHODS!
         /// </summary>
+        /// <param name="callerPlugin"></param>
         /// <param name="name"></param>
         public static void AddPluginToRunning(this IPlugin3 callerPlugin, string name)
         {
@@ -165,14 +161,15 @@ namespace AxTools.WoW.PluginSystem.API
             return PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pluginName);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="plugin"></param>
-        /// <param name="text">Any text you want</param>
-        /// <param name="warning">Is it warning or info</param>
-        /// <param name="sound">Play sound</param>
-        /// <param name="timeout">Time in seconds before popup disappears</param>
+        ///  <summary>
+        /// 
+        ///  </summary>
+        ///  <param name="plugin"></param>
+        ///  <param name="text">Any text you want</param>
+        ///  <param name="warning">Is it warning or info</param>
+        ///  <param name="sound">Play sound</param>
+        ///  <param name="timeout">Time in seconds before popup disappears</param>
+        /// <param name="onClick"></param>
         public static void ShowNotify(this IPlugin3 plugin, string text, bool warning, bool sound, int timeout = 10, EventHandler onClick = null)
         {
             Notify.TrayPopup("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, plugin.TrayIcon, timeout, onClick);

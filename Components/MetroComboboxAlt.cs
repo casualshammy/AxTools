@@ -13,14 +13,8 @@ namespace Components
 
         public MetroColorStyle Style
         {
-            get
-            {
-                return StyleManager != null ? StyleManager.Style : metroStyle;
-            }
-            set
-            {
-                metroStyle = value;
-            }
+            get => StyleManager != null ? StyleManager.Style : metroStyle;
+            set => metroStyle = value;
         }
 
         public MetroComboboxAlt()

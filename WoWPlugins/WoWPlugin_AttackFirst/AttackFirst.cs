@@ -15,27 +15,15 @@ namespace WoWPlugin_AttackFirst
     {
         #region Info
 
-        public string Name
-        {
-            get { return "AttackFirst"; }
-        }
+        public string Name => "AttackFirst";
 
-        public Version Version
-        {
-            get { return new Version(1, 0); }
-        }
+        public Version Version => new Version(1, 0);
 
-        public string Description
-        {
-            get { return "Select mob name and this plugin will try to hit it first"; }
-        }
+        public string Description => "Select mob name and this plugin will try to hit it first";
 
-        public Image TrayIcon { get { return null; } }
+        public Image TrayIcon => null;
 
-        public bool ConfigAvailable
-        {
-            get { return false; }
-        }
+        public bool ConfigAvailable => false;
 
         public string[] Dependencies => null;
 

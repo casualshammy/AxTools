@@ -87,7 +87,7 @@ namespace AxTools.Updater
                 if (_hardwareID == null)
                 {
                     _hardwareID = Utils.GetComputerHID();
-                    log.Info(string.Format("Your credentials for updates: login: {0} password: {1}{2}", Settings2.Instance.UserID, new string('*', _hardwareID.Length - 4), _hardwareID.Substring(_hardwareID.Length - 4)));
+                    log.Info($"Your credentials for updates: login: {Settings2.Instance.UserID} password: {new string('*', _hardwareID.Length - 4)}{_hardwareID.Substring(_hardwareID.Length - 4)}");
                 }
                 if (_updateFileURL == null)
                 {
@@ -151,7 +151,8 @@ namespace AxTools.Updater
                 log.Error("Can't find updater executable! Files: " + string.Join(", ", new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().Select(l => l.Name)));
                 return;
             }
-            Action closeAndUpdate = delegate
+
+            void CloseAndUpdate()
             {
                 try
                 {
@@ -163,19 +164,20 @@ namespace AxTools.Updater
                 {
                     log.Error("Update error: " + ex.Message);
                 }
-            };
+            }
+
             if (WinAPI.NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
             {
                 TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton)((int)TaskDialogButton.Yes + (int)TaskDialogButton.No), TaskDialogIcon.Information);
                 if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
                 {
-                    closeAndUpdate();
+                    CloseAndUpdate();
                 }
             }
             else
             {
                 // 1-hour notification!
-                Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 60 * 60, (sender, args) => closeAndUpdate());
+                Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 60 * 60, (sender, args) => CloseAndUpdate());
             }
         }
 
@@ -193,7 +195,7 @@ namespace AxTools.Updater
             }
             catch (WebException webEx)
             {
-                if (webEx.Status == WebExceptionStatus.ProtocolError && webEx.Response is HttpWebResponse && ((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Unauthorized)
+                if (webEx.Status == WebExceptionStatus.ProtocolError && webEx.Response is HttpWebResponse response && response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     Notify.TrayPopup("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact dev", NotifyUserType.Error, false);
                     _timer.Elapsed -= Timer_Elapsed;
@@ -212,7 +214,7 @@ namespace AxTools.Updater
                          webEx.Status != WebExceptionStatus.ConnectFailure &&
                          webEx.Status != WebExceptionStatus.SecureChannelFailure)
                 {
-                    log.Error(string.Format("Fetching info error (status {0}): {1}", webEx.Status, webEx.Message));
+                    log.Error($"Fetching info error (status {webEx.Status}): {webEx.Message}");
                 }
                 return;
             }
@@ -261,7 +263,7 @@ namespace AxTools.Updater
             Process.Start(new ProcessStartInfo
             {
                 FileName = Path.Combine(DistrDirectory, "AxTools.exe"),
-                Arguments = string.Format("-update-dir \"{0}\" -axtools-dir \"{1}\"", DistrDirectory, Application.StartupPath) // if you change arguments, don't forget to change regex in <ApplyUpdate> method
+                Arguments = $"-update-dir \"{DistrDirectory}\" -axtools-dir \"{Application.StartupPath}\"" // if you change arguments, don't forget to change regex in <ApplyUpdate> method
             });
         }
 
@@ -269,7 +271,7 @@ namespace AxTools.Updater
         {
             ProcessStartInfo startInfo = new ProcessStartInfo("nslookup")
             {
-                Arguments = string.Format("-type=TXT {0}", hostname),
+                Arguments = $"-type=TXT {hostname}",
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true

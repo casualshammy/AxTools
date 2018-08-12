@@ -14,45 +14,21 @@ namespace InkCrafter
     {
         #region Info
 
-        public string Name
-        {
-            get { return "InkCrafter"; }
-        }
+        public string Name => "InkCrafter";
 
-        public Version Version
-        {
-            get { return new Version(1, 0); }
-        }
+        public Version Version => new Version(1, 0);
 
-        public string Author
-        {
-            get { return "CasualShammy"; }
-        }
+        public string Author => "CasualShammy";
 
-        public string Description
-        {
-            get
-            {
-                return "Crafts all inks";
-            }
-        }
+        public string Description => "Crafts all inks";
 
         private Image trayIcon;
 
-        public Image TrayIcon
-        {
-            get { return trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\InkCrafter\\inv_inscription_ink_starlight.jpg")); }
-        }
+        public Image TrayIcon => trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\InkCrafter\\inv_inscription_ink_starlight.jpg"));
 
-        public string WowIcon
-        {
-            get { return "Interface\\\\Icons\\\\inv_inscription_ink_starlight"; }
-        }
+        public string WowIcon => "Interface\\\\Icons\\\\inv_inscription_ink_starlight";
 
-        public bool ConfigAvailable
-        {
-            get { return true; }
-        }
+        public bool ConfigAvailable => true;
 
         public string[] Dependencies => null;
 
@@ -79,14 +55,14 @@ namespace InkCrafter
             startupTask = Task.Run(() =>
             {
                 this.ShowNotify("Please wait while plugin set up inks lists...", false, false);
-                game.SendToChat(string.Format("/run {0} = {{}};", tableNames));
-                game.SendToChat(string.Format("/run {0} = {{}};", tableAvailable));
-                game.SendToChat(string.Format("/run {0} = {{}};", tableIndexes));
-                game.SendToChat(string.Format("/run {0} = {{}};", tableRemain));
+                game.SendToChat($"/run {tableNames} = {{}};");
+                game.SendToChat($"/run {tableAvailable} = {{}};");
+                game.SendToChat($"/run {tableIndexes} = {{}};");
+                game.SendToChat($"/run {tableRemain} = {{}};");
                 foreach (string ink in inks)
                 {
-                    game.SendToChat(string.Format("/run {0}[\"{1}\"] = true;", tableNames, ink));
-                    game.SendToChat(string.Format("/run {0}[\"{1}\"] = {2};", tableRemain, ink, ink == "Чернила разжигателя войны" ? SettingsInstance.WarbindersInkCount : 0));
+                    game.SendToChat($"/run {tableNames}[\"{ink}\"] = true;");
+                    game.SendToChat($"/run {tableRemain}[\"{ink}\"] = {(ink == "Чернила разжигателя войны" ? SettingsInstance.WarbindersInkCount : 0)};");
                 }
                 this.ShowNotify("Completed, starting to craft", false, false);
                 (timer = this.CreateTimer(1000, game, OnPulse)).Start();
@@ -98,8 +74,8 @@ namespace InkCrafter
             WoWPlayerMe me = game.GetGameObjects();
             if (me != null && me.CastingSpellID == 0 && me.ChannelSpellID == 0)
             {
-                game.SendToChat(string.Format("/run {0}={{}}", tableSkills));
-                string prepare = string.Format("/run local s=C_TradeSkillUI.GetFilteredRecipeIDs();local t={{}};if(#s>0) then for i=1,#s do C_TradeSkillUI.GetRecipeInfo(s[i], t);{0}[t.name]={{t.recipeID,t.numAvailable}}; end end", tableSkills);
+                game.SendToChat($"/run {tableSkills}={{}}");
+                string prepare = $"/run local s=C_TradeSkillUI.GetFilteredRecipeIDs();local t={{}};if(#s>0) then for i=1,#s do C_TradeSkillUI.GetRecipeInfo(s[i], t);{tableSkills}[t.name]={{t.recipeID,t.numAvailable}}; end end";
                 game.SendToChat(prepare);
                 string craft = string.Format("/run for n,i in pairs({0}) do if({1}[n] and i[2]>{2}[n])then C_TradeSkillUI.CraftRecipe(i[1],i[2]-{2}[n]);return; end end", tableSkills, tableNames, tableRemain);
                 game.SendToChat(craft);
@@ -123,10 +99,10 @@ namespace InkCrafter
 
         private SafeTimer timer;
         internal InkCrafterSettings SettingsInstance;
-        private readonly string tableNames = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6, true));
-        private readonly string tableAvailable = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6, true));
-        private readonly string tableIndexes = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6, true));
-        private readonly string tableRemain = string.Format("_G[\"{0}\"]", Utilities.GetRandomString(6, true));
+        private readonly string tableNames = $"_G[\"{Utilities.GetRandomString(6, true)}\"]";
+        private readonly string tableAvailable = $"_G[\"{Utilities.GetRandomString(6, true)}\"]";
+        private readonly string tableIndexes = $"_G[\"{Utilities.GetRandomString(6, true)}\"]";
+        private readonly string tableRemain = $"_G[\"{Utilities.GetRandomString(6, true)}\"]";
         private readonly string tableSkills = Utilities.GetRandomString(6, true);
         private Task startupTask;
         private GameInterface game;

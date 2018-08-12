@@ -13,18 +13,18 @@ namespace WoWPlugin_SpellGroundClicker
     {
         #region Info
 
-        public string Name { get { return "SpellGroundClicker"; } }
+        public string Name => "SpellGroundClicker";
 
-        public Version Version { get { return new Version(1, 0); } }
+        public Version Version => new Version(1, 0);
 
-        public string Description { get { return "Spams one AoE spell at the feet"; } }
+        public string Description => "Spams one AoE spell at the feet";
 
         private Image trayIcon;
-        public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\Spell_shaman_earthquake.png", Application.StartupPath, Name))); } }
+        public Image TrayIcon => trayIcon ?? (trayIcon = Image.FromFile($"{Application.StartupPath}\\plugins\\{Name}\\Spell_shaman_earthquake.png"));
 
-        public string WowIcon { get { return "Interface\\\\Icons\\\\spell_shaman_earthquake"; } }
+        public string WowIcon => "Interface\\\\Icons\\\\spell_shaman_earthquake";
 
-        public bool ConfigAvailable { get { return false; } }
+        public bool ConfigAvailable => false;
 
         public string[] Dependencies => null;
 

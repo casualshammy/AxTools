@@ -12,20 +12,20 @@ namespace WoWPlugin_PathCreator
     {
         #region Info
 
-        public string Name { get { return "PathCreator"; } }
+        public string Name => "PathCreator";
 
-        public Version Version { get { return new Version(1, 0); } }
+        public Version Version => new Version(1, 0);
 
-        public string Description { get { return "Creates profiles for PathPlayer"; } }
+        public string Description => "Creates profiles for PathPlayer";
 
         private Image trayIcon;
-        public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\Achievement_faction_lorewalkers.png", Application.StartupPath, Name))); } }
+        public Image TrayIcon => trayIcon ?? (trayIcon = Image.FromFile($"{Application.StartupPath}\\plugins\\{Name}\\Achievement_faction_lorewalkers.png"));
 
-        public string WowIcon { get { return string.Empty; } }
+        public string WowIcon => string.Empty;
 
-        public bool ConfigAvailable { get { return false; } }
+        public bool ConfigAvailable => false;
 
-        public string[] Dependencies => new string[] { "LibNavigator" };
+        public string[] Dependencies => new[] { "LibNavigator" };
 
         public bool DontCloseOnWowShutdown => false;
 

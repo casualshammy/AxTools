@@ -13,18 +13,18 @@ namespace WoWPlugin_RareReporter
     {
         #region Info
 
-        public string Name { get { return "RareReporter"; } }
+        public string Name => "RareReporter";
 
-        public Version Version { get { return new Version(1, 0); } }
+        public Version Version => new Version(1, 0);
 
-        public string Description { get { return "Reports about rare respawn via SMS (need LibSMS)"; } }
+        public string Description => "Reports about rare respawn via SMS (need LibSMS)";
 
         private Image trayIcon;
-        public Image TrayIcon { get { return trayIcon ?? (trayIcon = null); } }
+        public Image TrayIcon => trayIcon ?? (trayIcon = null);
 
-        public string WowIcon { get { return string.Empty; } }
+        public string WowIcon => string.Empty;
 
-        public bool ConfigAvailable { get { return false; } }
+        public bool ConfigAvailable => false;
 
         public string[] Dependencies => null;
 

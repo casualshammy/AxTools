@@ -36,7 +36,7 @@ namespace AxTools.WoW
                     {
                         if (WoWProcessManager.Processes.TryGetValue(process.Id, out WowProcess wowProcess) && wowProcess.Memory != null)
                         {
-                            bool okay = false;
+                            bool okay;
                             if (wowProcess.IsValidBuild)
                             {
                                 GlueState glueState = wowProcess.Memory.Read<GlueState>(wowProcess.Memory.ImageBase + WowBuildInfoX64.GlueState);
@@ -67,7 +67,7 @@ namespace AxTools.WoW
                                 IntPtr enterCode = new IntPtr(0x0D);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, enterCode, IntPtr.Zero);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, enterCode, IntPtr.Zero);
-                                log.Info(string.Format("{0} Credendials have been entered [{1}]", wowProcess, Utils.SecureString(wowAccount.GetLogin())));
+                                log.Info($"{wowProcess} Credendials have been entered [{Utils.SecureString(wowAccount.GetLogin())}]");
                                 break;
                             }
                         }
@@ -77,7 +77,7 @@ namespace AxTools.WoW
                 }
                 catch (Exception ex)
                 {
-                    log.Error(string.Format("[{0}:{1}] Internal error: {2}", process.ProcessName, process.Id, ex.Message));
+                    log.Error($"[{process.ProcessName}:{process.Id}] Internal error: {ex.Message}");
                 }
             }
         }

@@ -37,8 +37,7 @@ namespace AxTools.Helpers
 
         private static void ControlOnLostFocus(object sender, EventArgs eventArgs)
         {
-            Control control = sender as Control;
-            if (control != null)
+            if (sender is Control control)
             {
                 ToolTip.Hide(control);
             }
@@ -46,8 +45,7 @@ namespace AxTools.Helpers
 
         private static void ControlOnDisposed(object sender, EventArgs eventArgs)
         {
-            Control control = sender as Control;
-            if (control != null)
+            if (sender is Control control)
             {
                 ControlColors.Remove(control);
                 control.LostFocus -= ControlOnLostFocus;

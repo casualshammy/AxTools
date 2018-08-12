@@ -34,19 +34,19 @@ namespace AxTools.Helpers
             long num2 = 0L;
             foreach (FileSystemInfo info2 in info.GetFileSystemInfos())
             {
-                if (info2 is FileInfo)
+                if (info2 is FileInfo fileInfo)
                 {
-                    num2 += (info2 as FileInfo).Length;
+                    num2 += fileInfo.Length;
                 }
-                else if (info2 is DirectoryInfo)
+                else if (info2 is DirectoryInfo directoryInfo)
                 {
-                    num2 += CalcDirectorySize((info2 as DirectoryInfo).FullName);
+                    num2 += CalcDirectorySize(directoryInfo.FullName);
                 }
             }
             return num2;
         }
 
-        internal static IEnumerable<string> FindFiles(string path, string fileName, int depth = Int32.MaxValue)
+        internal static IEnumerable<string> FindFiles(string path, string fileName, int depth = int.MaxValue)
         {
             if (depth == 0)
             {
@@ -252,7 +252,7 @@ namespace AxTools.Helpers
             if (Thread.CurrentThread.ManagedThreadId == Program.UIThread)
             {
                 StackTrace stackTrace = new StackTrace();
-                log.Error($"Trying to call from UI thread; call stack:\r\n{stackTrace.ToString()}");
+                log.Error($"Trying to call from UI thread; call stack:\r\n{stackTrace}");
             }
         }
 

@@ -13,7 +13,7 @@ namespace Components.Forms
     {
         private readonly MetroForm parentForm;
         private WaitingOverlaySub panel;
-        private int waitInMs;
+        private readonly int waitInMs;
 
         /// <summary>
         ///
@@ -65,7 +65,7 @@ namespace Components.Forms
 
         private class WaitingOverlaySub : Form
         {
-            private MetroColorStyle metroColorStyle;
+            private readonly MetroColorStyle metroColorStyle;
 
             internal WaitingOverlaySub(Form form, MetroColorStyle metroColorStyle)
             {

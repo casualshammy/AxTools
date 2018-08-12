@@ -17,7 +17,7 @@ namespace AxTools.WoW.Internals
     public class WowPlayer : WoWObjectBase
     {
         internal static readonly ConcurrentDictionary<WoWGUID, string> Names = new ConcurrentDictionary<WoWGUID, string>();
-        private static readonly Log2 log = new Log2($"WowPlayer");
+        private static readonly Log2 log = new Log2("WowPlayer");
         private float? rotation;
         private float? pitch;
 
@@ -26,16 +26,16 @@ namespace AxTools.WoW.Internals
             Address = pAddress;
             MGUID = guid;
             IntPtr desc = memory.Read<IntPtr>(pAddress + WowBuildInfoX64.UnitDescriptors);
-            WowPlayerInfo info = memory.Read<WowPlayerInfo>(desc);
-            TargetGUID = info.TargetGUID;
-            Health = info.Health;
-            HealthMax = info.HealthMax;
-            Alive = info.Health > 1;
-            Level = info.Level;
-            InCombat = ((info.UnitFlags >> 19) & 1) == 1; // Script_UnitAffectingCombat
-            Class = info.Class;
-            IsMounted = info.MountDisplayID != 0;
-            Race = info.Race;
+            WowPlayerInfo inf = memory.Read<WowPlayerInfo>(desc);
+            TargetGUID = inf.TargetGUID;
+            Health = inf.Health;
+            HealthMax = inf.HealthMax;
+            Alive = inf.Health > 1;
+            Level = inf.Level;
+            InCombat = ((inf.UnitFlags >> 19) & 1) == 1; // Script_UnitAffectingCombat
+            Class = inf.Class;
+            IsMounted = inf.MountDisplayID != 0;
+            Race = inf.Race;
             switch (Race)
             {
                 case Race.Orc:
@@ -115,35 +115,17 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        public string CastingSpellName
-        {
-            get
-            {
-                return CastingSpellID != 0 ? Wowhead.GetSpellInfo((int)CastingSpellID).Name : null;
-            }
-        }
+        public string CastingSpellName => CastingSpellID != 0 ? Wowhead.GetSpellInfo((int)CastingSpellID).Name : null;
 
         private uint channelSpellID = uint.MaxValue;
 
-        public uint ChannelSpellID
-        {
-            get
-            {
-                return channelSpellID == uint.MaxValue ? (channelSpellID = memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID)) : channelSpellID;
-            }
-        }
+        public uint ChannelSpellID => channelSpellID == uint.MaxValue ? (channelSpellID = memory.Read<uint>(Address + WowBuildInfoX64.UnitChannelingID)) : channelSpellID;
 
-        public string ChannelSpellName
-        {
-            get
-            {
-                return ChannelSpellID != 0 ? Wowhead.GetSpellInfo((int)ChannelSpellID).Name : null;
-            }
-        }
+        public string ChannelSpellName => ChannelSpellID != 0 ? Wowhead.GetSpellInfo((int)ChannelSpellID).Name : null;
 
         protected WoWGUID MGUID;
 
-        public override WoWGUID GUID
+        public new WoWGUID GUID
         {
             get
             {

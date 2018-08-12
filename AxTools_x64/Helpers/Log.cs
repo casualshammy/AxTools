@@ -18,7 +18,7 @@ namespace AxTools.Helpers
         private const string ERROR_PREFIX_PATTERN = "[ERROR]";
         private const string DATETIME_PREFIX_PATTERN = "dd.MM.yyyy HH:mm:ss.fff";
         private readonly string _className;
-        private static bool _haveErrors = false;
+        private static bool _haveErrors;
 
         static Log2()
         {
@@ -31,7 +31,7 @@ namespace AxTools.Helpers
         {
             if (string.IsNullOrWhiteSpace(className))
             {
-                throw new ArgumentNullException("className");
+                throw new ArgumentNullException(nameof(className));
             }
             _className = className;
         }
@@ -64,7 +64,7 @@ namespace AxTools.Helpers
             lock (_lock)
             {
                 StackTrace stackTrace = new StackTrace(1);
-                _stringBuilder.AppendLine($"{DateTime.UtcNow.ToString(DATETIME_PREFIX_PATTERN)} {ERROR_PREFIX_PATTERN} [{_className}] {text}\r\n{stackTrace.ToString()}");
+                _stringBuilder.AppendLine($"{DateTime.UtcNow.ToString(DATETIME_PREFIX_PATTERN)} {ERROR_PREFIX_PATTERN} [{_className}] {text}\r\n{stackTrace}");
             }
         }
 
@@ -78,11 +78,16 @@ namespace AxTools.Helpers
                 char[] subjCharsCleared = Array.FindAll(subjChars, c => char.IsLetterOrDigit(c) || c == '.' || c == ',' || c == ' ' || c == '-' || c == '!' || c == '?');
                 subject = new string(subjCharsCleared);
             }
-            var values = new NameValueCollection();
-            values.Add("user", Settings2.Instance.UserID);
-            values.Add("comment", subject ?? "");
-            values.Add("log-file", $"ERRORS:\r\n{string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN)))}\r\n\r\n\r\n" +
-                    $"{File.ReadAllText(Globals.LogFileName, Encoding.UTF8)}");
+
+            var values = new NameValueCollection
+            {
+                {"user", Settings2.Instance.UserID},
+                {"comment", subject ?? ""},
+                {
+                    "log-file", $"ERRORS:\r\n{string.Join("\r\n", File.ReadAllLines(Globals.LogFileName, Encoding.UTF8).Where(l => l.Contains(ERROR_PREFIX_PATTERN)))}\r\n\r\n\r\n" +
+                                $"{File.ReadAllText(Globals.LogFileName, Encoding.UTF8)}"
+                }
+            };
             using (WebClient wc = new WebClient())
             {
                 wc.UploadValues("https://axio.name/axtools/log-reporter/make_log.php", "POST", values);

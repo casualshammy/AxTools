@@ -14,47 +14,23 @@ namespace Follower
     {
         #region Info
 
-        public string Name
-        {
-            get { return "Follower"; }
-        }
+        public string Name => "Follower";
 
-        public Version Version
-        {
-            get { return new Version(1, 0); }
-        }
+        public Version Version => new Version(1, 0);
 
-        public string Author
-        {
-            get { return "CasualShammy"; }
-        }
+        public string Author => "CasualShammy";
 
-        public string Description
-        {
-            get
-            {
-                return "Follows target";
-            }
-        }
+        public string Description => "Follows target";
 
         private Image trayIcon;
 
-        public Image TrayIcon
-        {
-            get { return trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\Follower\\ability_hunter_posthaste.jpg")); }
-        }
+        public Image TrayIcon => trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\Follower\\ability_hunter_posthaste.jpg"));
 
-        public string WowIcon
-        {
-            get { return string.Empty; }
-        }
+        public string WowIcon => string.Empty;
 
-        public bool ConfigAvailable
-        {
-            get { return true; }
-        }
+        public bool ConfigAvailable => true;
 
-        public string[] Dependencies => new string[] { "LibNavigator" };
+        public string[] Dependencies => new[] { "LibNavigator" };
 
         public bool DontCloseOnWowShutdown => false;
 

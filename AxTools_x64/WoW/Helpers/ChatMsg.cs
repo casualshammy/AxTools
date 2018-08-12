@@ -5,12 +5,23 @@ namespace AxTools.WoW.Helpers
 {
     public class ChatMsg : IEquatable<ChatMsg>
     {
-        public WoWChatMsgType Type;
+        public static readonly ChatMsg Empty = new ChatMsg(WoWChatMsgType.Addon, 0, string.Empty, WoWGUID.Zero, 0, string.Empty);
+        public readonly WoWChatMsgType Type;
         public byte Channel;
         public string Sender;
-        public WoWGUID SenderGUID;
+        public readonly WoWGUID SenderGUID;
         public string Text;
-        public int TimeStamp;
+        public readonly int TimeStamp;
+
+        internal ChatMsg(WoWChatMsgType type, byte channel, string sender, WoWGUID senderGUID, int timestamp, string text)
+        {
+            Type = type;
+            Channel = channel;
+            Sender = sender;
+            SenderGUID = senderGUID;
+            TimeStamp = timestamp;
+            Text = text;
+        }
 
         public bool Equals(ChatMsg other)
         {

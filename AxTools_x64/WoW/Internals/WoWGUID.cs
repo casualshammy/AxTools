@@ -10,7 +10,7 @@ namespace AxTools.WoW.Internals
         public readonly ulong Low;
 
         public static readonly WoWGUID Zero = new WoWGUID(0, 0);
-        public static unsafe readonly int Size = sizeof(WoWGUID);
+        public static readonly unsafe int Size = sizeof(WoWGUID);
 
         public WoWGUID(ulong high, ulong low)
         {
@@ -30,7 +30,7 @@ namespace AxTools.WoW.Internals
 
         public override bool Equals(object obj)
         {
-            return obj is WoWGUID && Equals((WoWGUID)obj);
+            return obj is WoWGUID wguid && Equals(wguid);
         }
 
         public bool Equals(WoWGUID other)

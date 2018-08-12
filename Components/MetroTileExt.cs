@@ -24,10 +24,7 @@ namespace Components
 
         public string CenterText
         {
-            get
-            {
-                return centerText;
-            }
+            get => centerText;
             set
             {
                 centerText = value;

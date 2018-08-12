@@ -1,8 +1,6 @@
-﻿using AxTools.Forms;
-using AxTools.Helpers;
+﻿using AxTools.Helpers;
 using AxTools.WoW.PluginSystem.API;
 using AxTools.WoW.PluginSystem.Plugins;
-using Components.Forms;
 using KeyboardWatcher;
 using Newtonsoft.Json;
 using System;
@@ -26,7 +24,7 @@ namespace AxTools.WoW.PluginSystem
         private static readonly SynchronizedCollection<PluginContainer> _pluginContainers = new SynchronizedCollection<PluginContainer>();
         private static readonly object AddRemoveLock = new object();
         internal static readonly Dictionary<string, int> PluginWoW = new Dictionary<string, int>();
-        internal static bool UpdateIsActive = false;
+        internal static bool UpdateIsActive;
         
         internal static event Action PluginStateChanged;
         internal static event Action PluginsLoaded;
@@ -111,11 +109,11 @@ namespace AxTools.WoW.PluginSystem
                         PluginWoW[plugin.Name] = process.ProcessID;
                         PluginsUsageStats[plugin.Name].Add(DateTime.UtcNow);
                         SavePluginUsageStats();
-                        log.Info(string.Format("{0} [{1}] Plugin is started", process, plugin.Name));
+                        log.Info($"{process} [{plugin.Name}] Plugin is started");
                     }
                     catch (Exception ex)
                     {
-                        log.Error(string.Format("Plugin OnStart error [{0}]: {1}", plugin.Name, ex.Message));
+                        log.Error($"Plugin OnStart error [{plugin.Name}]: {ex.Message}");
                     }
                     if (Settings2.Instance.WoWPluginShowIngameNotifications)
                     {
@@ -136,11 +134,11 @@ namespace AxTools.WoW.PluginSystem
                     {
                         plugin.OnStop();
                         PluginWoW.Remove(plugin.Name);
-                        log.Info(string.Format("[{0}] Plugin is stopped", plugin.Name));
+                        log.Info($"[{plugin.Name}] Plugin is stopped");
                     }
                     catch (Exception ex)
                     {
-                        log.Error(string.Format("Can't shutdown plugin [{0}]: {1}", plugin.Name, ex.Message));
+                        log.Error($"Can't shutdown plugin [{plugin.Name}]: {ex.Message}");
                     }
                     if (Settings2.Instance.WoWPluginShowIngameNotifications)
                     {
@@ -186,18 +184,15 @@ namespace AxTools.WoW.PluginSystem
                 int cmp = PluginsUsageStats[first.Name].Count.CompareTo(PluginsUsageStats[second.Name].Count);
                 if (cmp == 0)
                 {
-                    return first.Name.CompareTo(second.Name);
+                    return string.Compare(first.Name, second.Name, StringComparison.Ordinal);
                 }
-                else
-                {
-                    return -cmp; // by descending
-                }
+                return -cmp; // by descending
             });
             SavePluginUsageStats();
             return list;
         }
 
-        internal static void UpdatePluginsFromWeb()
+        private static void UpdatePluginsFromWeb()
         {
             Guid @lock = Program.ShutdownLock.GetLock();
             try
@@ -237,15 +232,15 @@ namespace AxTools.WoW.PluginSystem
         {
             IPlugin3 fishing = new Fishing();
             _pluginContainers.Add(new PluginContainer(fishing));
-            log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
+            log.Info($"Plugin loaded: {_pluginContainers.Last().Plugin.Name} {_pluginContainers.Last().Plugin.Version}");
             PluginLoaded?.Invoke(fishing);
             IPlugin3 flagReturner = new FlagReturner();
             _pluginContainers.Add(new PluginContainer(flagReturner));
-            log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
+            log.Info($"Plugin loaded: {_pluginContainers.Last().Plugin.Name} {_pluginContainers.Last().Plugin.Version}");
             PluginLoaded?.Invoke(flagReturner);
             IPlugin3 goodsDestroyer = new GoodsDestroyer();
             _pluginContainers.Add(new PluginContainer(goodsDestroyer));
-            log.Info(string.Format("Plugin loaded: {0} {1}", _pluginContainers.Last().Plugin.Name, _pluginContainers.Last().Plugin.Version));
+            log.Info($"Plugin loaded: {_pluginContainers.Last().Plugin.Name} {_pluginContainers.Last().Plugin.Version}");
             PluginLoaded?.Invoke(goodsDestroyer);
         }
 
@@ -259,19 +254,19 @@ namespace AxTools.WoW.PluginSystem
             {
                 try
                 {
-                    log.Info(string.Format("Processing directory <{0}>", directory));
+                    log.Info($"Processing directory <{directory}>");
                     string md5ForFolder = Utils.CreateMd5ForFolder(directory);
-                    string dllPath = string.Format("{0}\\{1}.dll", AppFolders.PluginsBinariesDir, md5ForFolder);
+                    string dllPath = $"{AppFolders.PluginsBinariesDir}\\{md5ForFolder}.dll";
                     Assembly dll;
                     if (!File.Exists(dllPath))
                     {
                         dll = CompilePlugin(directory);
-                        log.Info(string.Format("Plugin from directory <{0}> is compiled", directory));
+                        log.Info($"Plugin from directory <{directory}> is compiled");
                     }
                     else
                     {
                         dll = Assembly.LoadFile(dllPath);
-                        log.Info(string.Format("Plugin from directory <{0}> with hash {1} is already compiled", directory, md5ForFolder));
+                        log.Info($"Plugin from directory <{directory}> with hash {md5ForFolder} is already compiled");
                     }
                     if (dll != null)
                     {
@@ -284,7 +279,7 @@ namespace AxTools.WoW.PluginSystem
                                 if (!string.IsNullOrWhiteSpace(temp.Name))
                                 {
                                     _pluginContainers.Add(new PluginContainer(temp));
-                                    log.Info(string.Format("Plugin loaded: {0} {1}", temp.Name, temp.Version));
+                                    log.Info($"Plugin loaded: {temp.Name} {temp.Version}");
                                     PluginLoaded?.Invoke(temp);
                                 }
                                 else
@@ -294,7 +289,7 @@ namespace AxTools.WoW.PluginSystem
                             }
                             else
                             {
-                                log.Info(string.Format("Can't load plugin [{0}]: already loaded", temp.Name));
+                                log.Info($"Can't load plugin [{temp.Name}]: already loaded");
                             }
                         }
                         else
@@ -309,7 +304,7 @@ namespace AxTools.WoW.PluginSystem
                 }
                 catch (Exception ex)
                 {
-                    log.Info(string.Format("Can't load plugin <{0}>: {1}", directory, ex.Message));
+                    log.Info($"Can't load plugin <{directory}>: {ex.Message}");
                     Notify.TrayPopup("[PluginManager] Plugin error", $"Plugin from folder '{directory}' cannot be loaded.\r\nClick here to open the website with updated versions of plugins",
                         NotifyUserType.Warn, true, null, 10, (sender, args) => Process.Start(Globals.PluginsURL));
                 }
@@ -337,7 +332,7 @@ namespace AxTools.WoW.PluginSystem
             }
             foreach (int indexOfPluginWithUnresolvedDeps in indexesOfPluginsWithUnresolvedDeps)
             {
-                IPlugin3 plugin2 = _pluginContainers[indexOfPluginWithUnresolvedDeps].Plugin as IPlugin3;
+                IPlugin3 plugin2 = _pluginContainers[indexOfPluginWithUnresolvedDeps].Plugin;
                 _pluginContainers.RemoveAt(indexOfPluginWithUnresolvedDeps);
                 PluginUnloaded?.Invoke(plugin2);
                 Notify.SmartNotify("Plugin error", $"Plugin {plugin2.Name} requires {string.Join(", ", plugin2.Dependencies)}", NotifyUserType.Error, true);

@@ -54,13 +54,7 @@ namespace AxTools.Services
             }
         }
 
-        internal static bool Enabled
-        {
-            get
-            {
-                return _timer != null && _timer.Enabled;
-            }
-        }
+        internal static bool Enabled => _timer != null && _timer.Enabled;
 
         private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -93,7 +87,7 @@ namespace AxTools.Services
                     Stop();
                     WowProcess cProcess = WoWProcessManager.Processes.Values.FirstOrDefault(i => i.MainWindowHandle == Handle);
                     logger.Info(cProcess != null
-                        ? string.Format("{0} Disabled", cProcess)
+                        ? $"{cProcess} Disabled"
                         : "UNKNOWN:null :: Disabled");
                 }
                 else
@@ -102,7 +96,7 @@ namespace AxTools.Services
                     if (cProcess != null)
                     {
                         Start(_settings.ClickerInterval, cProcess.MainWindowHandle, (IntPtr)_settings.ClickerKey);
-                        logger.Info(string.Format("{0} Enabled, interval {1}ms, window handle 0x{2:X}", cProcess, _settings.ClickerInterval, cProcess.MainWindowHandle.ToInt64()));
+                        logger.Info($"{cProcess} Enabled, interval {_settings.ClickerInterval}ms, window handle 0x{cProcess.MainWindowHandle.ToInt64():X}");
                     }
                 }
             }

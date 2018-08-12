@@ -21,15 +21,15 @@ namespace AxTools.WoW.PluginSystem.API
         private readonly string LuaReturnFrameName = Utilities.GetRandomString(5, true);
         private readonly string LuaReturnTokenName = Utilities.GetRandomString(5, true);
         private readonly string LuaReturnVarName = Utilities.GetRandomString(5, true);
-        private readonly List<ChatMsg> ChatMessages = new List<ChatMsg>(Enumerable.Repeat(new ChatMsg(), 60));
+        private readonly List<ChatMsg> ChatMessages = new List<ChatMsg>(Enumerable.Repeat(ChatMsg.Empty, 60));
         private static readonly Dictionary<int, object> chatLocks = new Dictionary<int, object>();
         private static readonly Dictionary<int, object> readChatLocks = new Dictionary<int, object>();
         private static readonly Dictionary<int, object> luaLocks = new Dictionary<int, object>();
 
         internal GameInterface(WowProcess wow)
         {
-            wowProcess = wow ?? throw new ArgumentNullException("wow");
-            Memory = wow.Memory ?? throw new ArgumentNullException("wow.Memory"); ;
+            wowProcess = wow ?? throw new ArgumentNullException(nameof(wow));
+            Memory = wow.Memory ?? throw new ArgumentNullException(nameof(wow), "Memory is null");
             log = new Log2($"GameInterface - {wow.ProcessID}");
             if (!chatLocks.ContainsKey(wowProcess.ProcessID)) chatLocks[wowProcess.ProcessID] = new object();
             if (!readChatLocks.ContainsKey(wowProcess.ProcessID)) readChatLocks[wowProcess.ProcessID] = new object();
@@ -45,7 +45,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public void UseItem(int bagID, int slotID)
         {
-            ChatboxSendText(string.Format("/use {0} {1}", bagID, slotID));
+            ChatboxSendText($"/use {bagID} {slotID}");
         }
 
         public void CastSpellByName(string spellName)
@@ -62,7 +62,7 @@ namespace AxTools.WoW.PluginSystem.API
         public void BuyMerchantItem(uint itemID, int count)
         {
             string itemName = Wowhead.GetItemInfo(itemID).Name;
-            SendToChat(string.Format("/run for i=1,GetMerchantNumItems() do if(GetMerchantItemInfo(i)==\"{0}\")then BuyMerchantItem(i,{1});return;end;end", itemName, count));
+            SendToChat($"/run for i=1,GetMerchantNumItems() do if(GetMerchantItemInfo(i)==\"{itemName}\")then BuyMerchantItem(i,{count});return;end;end");
         }
 
         public void SendToChat(string command)
@@ -123,12 +123,12 @@ namespace AxTools.WoW.PluginSystem.API
                         attempts--;
                         if (attempts > 0)
                         {
-                            log.Info(string.Format("ChatboxSendText: recursive call, attempts: {0}", attempts));
+                            log.Info($"ChatboxSendText: recursive call, attempts: {attempts}");
                             ChatboxSendText(text, attempts);
                         }
                         else
                         {
-                            log.Error(string.Format("ChatboxSendText: text and editboxText are not equal; text: {0}; editboxText: {1}", text, editboxText));
+                            log.Error($"ChatboxSendText: text and editboxText are not equal; text: {text}; editboxText: {editboxText}");
                             Notify.TrayPopup("Can't send command via chat", "Please don't type while this bot is working", NotifyUserType.Warn, true);
                         }
                     }
@@ -136,7 +136,7 @@ namespace AxTools.WoW.PluginSystem.API
             }
             else
             {
-                log.Error(string.Format("ChatboxSendText: string is too long (length={0}): {1}", text.Length, text));
+                log.Error($"ChatboxSendText: string is too long (length={text.Length}): {text}");
             }
         }
 
@@ -150,20 +150,14 @@ namespace AxTools.WoW.PluginSystem.API
             return frame?.EditboxText;
         }
 
-        private bool ChatIsOpened
-        {
-            get { return wowProcess.Memory.Read<uint>(wowProcess.Memory.ImageBase + WowBuildInfoX64.ChatIsOpened) == 1; }
-        }
+        private bool ChatIsOpened => wowProcess.Memory.Read<uint>(wowProcess.Memory.ImageBase + WowBuildInfoX64.ChatIsOpened) == 1;
 
         #endregion Internal methods
 
         #endregion game
 
         #region Chat
-
-        /// <summary>
-        ///     Invokes <see cref="NewChatMessage"/> if new messages appears
-        /// </summary>
+        
         public IEnumerable<ChatMsg> ReadChat()
         {
             lock (readChatLocks[wowProcess.ProcessID])
@@ -174,15 +168,14 @@ namespace AxTools.WoW.PluginSystem.API
                     for (int i = 0; i < 60; i++)
                     {
                         IntPtr baseMsg = chatStart + i * WowBuildInfoX64.ChatNextMessage;
-                        ChatMsg s = new ChatMsg
-                        {
-                            Sender = Encoding.UTF8.GetString(Memory.ReadBytes(baseMsg + WowBuildInfoX64.ChatSenderName, 0x100).TakeWhile(l => l != 0).ToArray()),
-                            Channel = Memory.Read<byte>(baseMsg + WowBuildInfoX64.ChatChannelNum),
-                            SenderGUID = Memory.Read<WoWGUID>(baseMsg + WowBuildInfoX64.ChatSenderGuid),
-                            Text = Encoding.UTF8.GetString(Memory.ReadBytes(baseMsg + WowBuildInfoX64.ChatFullMessageOffset, 0x200).TakeWhile(l => l != 0).ToArray()),
-                            TimeStamp = Memory.Read<int>(baseMsg + WowBuildInfoX64.ChatTimeStamp),
-                            Type = Memory.Read<WoWChatMsgType>(baseMsg + WowBuildInfoX64.ChatType)
-                        };
+                        ChatMsg s = new ChatMsg(
+                            sender: Encoding.UTF8.GetString(Memory.ReadBytes(baseMsg + WowBuildInfoX64.ChatSenderName, 0x100).TakeWhile(l => l != 0).ToArray()),
+                            channel: Memory.Read<byte>(baseMsg + WowBuildInfoX64.ChatChannelNum),
+                            senderGUID: Memory.Read<WoWGUID>(baseMsg + WowBuildInfoX64.ChatSenderGuid),
+                            text: Encoding.UTF8.GetString(Memory.ReadBytes(baseMsg + WowBuildInfoX64.ChatFullMessageOffset, 0x200).TakeWhile(l => l != 0).ToArray()),
+                            timestamp: Memory.Read<int>(baseMsg + WowBuildInfoX64.ChatTimeStamp),
+                            type: Memory.Read<WoWChatMsgType>(baseMsg + WowBuildInfoX64.ChatType)
+                        );
                         if (ChatMessages[i] != s)
                         {
                             ChatMessages[i] = s;
@@ -222,21 +215,9 @@ namespace AxTools.WoW.PluginSystem.API
 
         #region Info
 
-        public string ZoneText
-        {
-            get
-            {
-                return Wowhead.GetZoneText(ZoneID);
-            }
-        }
+        public string ZoneText => Wowhead.GetZoneText(ZoneID);
 
-        public uint ZoneID
-        {
-            get
-            {
-                return Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.PlayerZoneID);
-            }
-        }
+        public uint ZoneID => Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.PlayerZoneID);
 
         public bool IsLooting
         {
@@ -284,8 +265,8 @@ namespace AxTools.WoW.PluginSystem.API
                 {
                     StackTrace stackTrace = new StackTrace();
                     StackFrame[] stackFrames = stackTrace.GetFrames();
-                    string stack = stackFrames != null ? string.Join(" -->> ", stackFrames.Select(l => string.Format("{0}::{1}", l.GetFileName(), l.GetMethod().Name)).Reverse()) : "Stack is null";
-                    log.Error(string.Format("IsLoadingScreen: stack trace: {0}; error message: {1}", stack, ex.Message));
+                    string stack = stackFrames != null ? string.Join(" -->> ", stackFrames.Select(l => $"{l.GetFileName()}::{l.GetMethod().Name}").Reverse()) : "Stack is null";
+                    log.Error($"IsLoadingScreen: stack trace: {stack}; error message: {ex.Message}");
                     return false;
                 }
             }
@@ -293,14 +274,14 @@ namespace AxTools.WoW.PluginSystem.API
 
         public bool IsAfk
         {
-            get
-            {
-                return Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.IsChatAFK) != 0;
-            }
+            get => Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.IsChatAFK) != 0;
             set
             {
                 SendToChat("/afk");
-                SendToChat("/sit");
+                if (value)
+                {
+                    SendToChat("/sit");
+                }
             }
         }
 
@@ -321,10 +302,7 @@ namespace AxTools.WoW.PluginSystem.API
             return false;
         }
 
-        public WoWGUID MouseoverGUID
-        {
-            get { return Memory.Read<WoWGUID>(Memory.ImageBase + WowBuildInfoX64.MouseoverGUID); }
-        }
+        public WoWGUID MouseoverGUID => Memory.Read<WoWGUID>(Memory.ImageBase + WowBuildInfoX64.MouseoverGUID);
 
         #endregion Info
 
@@ -418,7 +396,6 @@ namespace AxTools.WoW.PluginSystem.API
                 WoWPlayerMe me = ObjectMgr.Pulse(wowProcess);
                 WowPoint oldPos = me.Location;
                 float zDiff = Math.Abs(me.Location.Z - point.Z);
-                float oldZDiff = zDiff;
                 float xyDiff = (float)me.Location.Distance2D(point);
                 bool spacePressed = false;
                 while (IsInGame && !IsLoadingScreen && timeoutInMs > 0 && (xyDiff > precision2D || zDiff > precisionZ))
@@ -433,14 +410,14 @@ namespace AxTools.WoW.PluginSystem.API
                         Face(point);
                         if (me.Location.Distance2D(oldPos) > 1f)
                         {
-                            log.Info(string.Format("[Move3D] Okay, we're moving XY; current position: [{0}]; distance2D to dest: [{1}]", me.Location, me.Location.Distance2D(point))); // todo: remove
+                            log.Info($"[Move3D] Okay, we're moving XY; current position: [{me.Location}]; distance2D to dest: [{me.Location.Distance2D(point)}]"); // todo: remove
                         }
                         else if (!me.IsMoving)
                         {
                             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
-                            log.Info(string.Format("[Move3D] W is released: {0}", point)); // todo: remove
+                            log.Info($"[Move3D] W is released: {point}"); // todo: remove
                             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.W, IntPtr.Zero);
-                            log.Info(string.Format("[Move3D] W is pressed: {0}", point)); // todo: remove
+                            log.Info($"[Move3D] W is pressed: {point}"); // todo: remove
                         }
                     }
                     else
@@ -448,12 +425,12 @@ namespace AxTools.WoW.PluginSystem.API
                         if (!continueMovingIfSuccessful)
                         {
                             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
-                            log.Info(string.Format("[Move3D] W is released3: {0}", point)); // todo: remove
+                            log.Info($"[Move3D] W is released3: {point}"); // todo: remove
                         }
                     }
                     if (!spacePressed && zDiff > precisionZ && point.Z > me.Location.Z && me.IsMounted && !me.IsFlying)
                     {
-                        log.Info($"[Move3D] Space is pressed");
+                        log.Info("[Move3D] Space is pressed");
                         NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.Space, IntPtr.Zero);
                         NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.Space, IntPtr.Zero);
                         spacePressed = true;
@@ -470,9 +447,9 @@ namespace AxTools.WoW.PluginSystem.API
                             if (me.Location.Distance(oldPos) < 1f && !me.IsMoving)
                             {
                                 NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)Keys.W, IntPtr.Zero);
-                                log.Info(string.Format("[Move3D] W is released2: {0}", point)); // todo: remove
+                                log.Info($"[Move3D] W is released2: {point}"); // todo: remove
                                 NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.W, IntPtr.Zero);
-                                log.Info(string.Format("[Move3D] W is pressed2: {0}", point)); // todo: remove
+                                log.Info($"[Move3D] W is pressed2: {point}"); // todo: remove
                             }
                         }
                         else
@@ -482,7 +459,7 @@ namespace AxTools.WoW.PluginSystem.API
                     }
                     oldPos = me.Location;
                 }
-                log.Info(string.Format("[game.Move3D] Return, timeout: {0}, diffXY: {1}, diffZ: {2}", timeoutInMs, me.Location.Distance2D(point), zDiff)); // todo: remove
+                log.Info($"[game.Move3D] Return, timeout: {timeoutInMs}, diffXY: {me.Location.Distance2D(point)}, diffZ: {zDiff}"); // todo: remove
             }
         }
 

@@ -87,10 +87,7 @@ namespace AxTools.Forms
             nextBackupTimer = new System.Threading.Timer(delegate
             {
                 TimeSpan duration = new TimeSpan(settings.WoWAddonsBackupMinimumTimeBetweenBackup, 0, 0) - (DateTime.UtcNow - settings.WoWAddonsBackupLastDate);
-                if (duration.Ticks <= 0)
-                    menuItemNextBackupTime.Text = "Backup is running or deferred";
-                else
-                    menuItemNextBackupTime.Text = string.Format("Next backup in {0:%d} day(s), {0:hh\\:mm\\:ss}", duration);
+                menuItemNextBackupTime.Text = duration.Ticks <= 0 ? "Backup is running or deferred" : $"Next backup in {duration:%d} day(s), {duration:hh\\:mm\\:ss}";
             }, null, 0, 1000);
         }
 
@@ -241,7 +238,7 @@ namespace AxTools.Forms
             {
                 foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
                 {
-                    var path = Utils.FindFiles(drive.Name, "Wow.exe", 5).Select(l => Path.GetDirectoryName(l)).Intersect(Utils.FindFiles(drive.Name, "WoW.mfil", 5).Select(l => Path.GetDirectoryName(l))).FirstOrDefault();
+                    var path = Utils.FindFiles(drive.Name, "Wow.exe", 5).Select(Path.GetDirectoryName).Intersect(Utils.FindFiles(drive.Name, "WoW.mfil", 5).Select(Path.GetDirectoryName)).FirstOrDefault();
                     if (path != null)
                     {
                         settings.WoWDirectory = path;
@@ -272,8 +269,8 @@ namespace AxTools.Forms
                     contextMenuStripMain.Hide();
                 };
                 toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start this plugin\r\nRight click to open settings" : "Left click to start this plugin";
-                toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name].ToString() + "]" : null;
-                toolStripMenuItem.Enabled = !PluginManagerEx.RunningPlugins.Any(l => l.Name == toolStripMenuItem.Text);
+                toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name] + "]" : null;
+                toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
             if (sortedPlugins.Length > topUsedPlugins.Length)
@@ -293,13 +290,13 @@ namespace AxTools.Forms
                                 contextMenuStripMain.Hide();
                             };
                             toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start this plugin\r\nRight click to open settings" : "Left click to start this plugin";
-                            toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name].ToString() + "]" : null;
-                            toolStripMenuItem.Enabled = !PluginManagerEx.RunningPlugins.Any(l => l.Name == toolStripMenuItem.Text);
+                            toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name] + "]" : null;
+                            toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
                             customPlugins.DropDownItems.Add(toolStripMenuItem);
                         }
                         catch (Exception ex)
                         {
-                            log.Error(string.Format("Error occured while building tray icon for plugin <{0}>: {1}", plugin.Name, ex.Message));
+                            log.Error($"Error occured while building tray icon for plugin <{plugin.Name}>: {ex.Message}");
                         }
                     }
                 }
@@ -645,7 +642,7 @@ namespace AxTools.Forms
                             else
                             {
                                 this.TaskDialog("Plugin Manager", "You can't launch multiple instances of the same plug-in", NotifyUserType.Error);
-                                return !newValue;
+                                return false;
                             }
                         }
                     }
@@ -655,13 +652,9 @@ namespace AxTools.Forms
                         if (process != null)
                         {
                             if (PluginManagerEx.RunningPlugins.Contains(plugin))
-                            {
                                 PluginManagerEx.RemovePluginFromRunning(plugin);
-                            }
                             else
-                            {
-                                return !newValue;
-                            }
+                                return true;
                         }
                     }
                     PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plugins running: " + PluginManagerEx.RunningPlugins.Count(); });
@@ -730,10 +723,7 @@ namespace AxTools.Forms
 
         private void PluginManagerOnPluginStateChanged()
         {
-            BeginInvoke((MethodInvoker)delegate
-           {
-               RebuildTrayContextMenu();
-           });
+            BeginInvoke((MethodInvoker)RebuildTrayContextMenu);
         }
 
         private void PluginManagerExOnPluginLoaded(IPlugin3 plugin)
@@ -753,10 +743,7 @@ namespace AxTools.Forms
 
         private void WoWPluginHotkeyChanged()
         {
-            BeginInvoke(new MethodInvoker(() =>
-            {
-                RebuildTrayContextMenu();
-            }));
+            BeginInvoke(new MethodInvoker(RebuildTrayContextMenu));
         }
 
         private void AddonsBackup_IsRunningChanged(bool isRunning)
@@ -800,7 +787,7 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker)delegate
            {
-               linkPing.Text = string.Format("[{0}]::[{1}%]  |", pingResult.PingDataIsRelevant ? pingResult.Ping + "ms" : "n/a", pingResult.PacketLoss);
+               linkPing.Text = $"[{(pingResult.PingDataIsRelevant ? pingResult.Ping + "ms" : "n/a")}]::[{pingResult.PacketLoss}%]  |";
                TBProgressBar.SetProgressValue(Handle, 1, 1);
                if (pingResult.PacketLoss >= settings.PingerVeryBadPacketLoss || pingResult.Ping >= settings.PingerVeryBadPing)
                {

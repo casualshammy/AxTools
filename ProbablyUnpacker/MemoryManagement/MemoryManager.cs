@@ -253,11 +253,11 @@ namespace AxTools.Helpers.MemoryManagement
                 VirtualProtectEx(ProcessHandle, address, (IntPtr)bytes.Length, oldProtect, out oldProtect);
                 if (!success || numWritten != bytes.Length)
                 {
-                    throw new AccessViolationException(string.Format("Could not write the specified bytes! {0} to {1} [{2}]", bytes.Length, address.ToString("X8"), new Win32Exception(Marshal.GetLastWin32Error()).Message));
+                    throw new AccessViolationException($"Could not write the specified bytes! {bytes.Length} to {address.ToString("X8")} [{new Win32Exception(Marshal.GetLastWin32Error()).Message}]");
                 }
                 return numWritten;
             }
-            throw new AccessViolationException(string.Format("Could not write the specified bytes! VirtualProtectEx is failed! {0} to {1} [{2}]", bytes.Length, address.ToString("X8"), new Win32Exception(Marshal.GetLastWin32Error()).Message));
+            throw new AccessViolationException($"Could not write the specified bytes! VirtualProtectEx is failed! {bytes.Length} to {address.ToString("X8")} [{new Win32Exception(Marshal.GetLastWin32Error()).Message}]");
         }
 
         /// <summary>

@@ -155,7 +155,7 @@ namespace PatternFinder
             {
                 return addresses.AsEnumerable();
             }
-            throw new InvalidDataException(string.Format("Pattern {0} not found", Name));
+            throw new InvalidDataException($"Pattern {Name} not found");
         }
 
         public IEnumerable<Result> Find(MemoryManagement.MemoryManager bm)

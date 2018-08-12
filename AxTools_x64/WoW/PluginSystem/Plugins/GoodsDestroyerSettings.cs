@@ -6,12 +6,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
     public class GoodsDestroyerSettings
     {
         [JsonProperty(PropertyName = "LaunchInkCrafter")]
-        internal bool LaunchInkCrafter = false;
+        internal bool LaunchInkCrafter;
 
         [JsonProperty(PropertyName = "UseFastDraenorMill")]
         internal bool UseFastDraenorMill = true;
 
         [JsonProperty(PropertyName = "MillFelwort")]
-        internal bool MillFelwort = false;
+        internal bool MillFelwort;
     }
 }

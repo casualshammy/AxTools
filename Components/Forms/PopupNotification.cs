@@ -51,13 +51,13 @@ namespace Components.Forms
 
         public string Title
         {
-            get { return metroLabel1.Text; }
-            set { metroLabel1.Text = value; }
+            get => metroLabel1.Text;
+            set => metroLabel1.Text = value;
         }
 
         public string Message
         {
-            get { return metroLabel2.Text; }
+            get => metroLabel2.Text;
             set
             {
                 metroLabel2.Text = WordWrap(value);
@@ -67,8 +67,8 @@ namespace Components.Forms
 
         public new Image Icon
         {
-            get { return pictureBox1.Image; }
-            set { pictureBox1.Image = value; }
+            get => pictureBox1.Image;
+            set => pictureBox1.Image = value;
         }
 
         public int Timeout { get; private set; }

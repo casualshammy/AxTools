@@ -25,13 +25,13 @@ namespace LuaConsole
     internal partial class LuaConsole : BorderedMetroForm, IPlugin3
     {
         private LuaConsole actualWindow;
-        private NLua.Lua luaEngine;
+        private readonly NLua.Lua luaEngine;
         private readonly GameInterface info;
-        private LuaConsoleSettings luaConsoleSettings;
+        private readonly LuaConsoleSettings luaConsoleSettings;
         private readonly object luaExecutionLock = new object();
         private SafeTimer safeTimer;
         private string helpInfo = "";
-        private bool LuaCancellationRequested = false;
+        private bool LuaCancellationRequested;
 
         #region IPlugin3 info
 
@@ -39,7 +39,7 @@ namespace LuaConsole
 
         public bool ConfigAvailable => false;
 
-        public string[] Dependencies => new string[] { "LibNavigator" };
+        public string[] Dependencies => new[] { "LibNavigator" };
 
         public string Description => "Easy-to-use script platform for World of Warcraft";
 
@@ -396,7 +396,7 @@ namespace LuaConsole
             {
                 InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty);
             }
-            luaConsoleSettings.Code = textBoxLuaCode.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            luaConsoleSettings.Code = textBoxLuaCode.Text.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             luaConsoleSettings.TimerHotkeyChanged -= LuaTimerHotkeyChanged;
             HotkeyManager.RemoveKeys(typeof(LuaConsole).ToString());
             HotkeyManager.KeyPressed -= KeyboardListener2_KeyPressed;
@@ -425,7 +425,7 @@ namespace LuaConsole
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
-                    File.WriteAllText(p.FileName, string.Format("----- Interval={0}\r\n{1}", luaConsoleSettings.TimerInterval, textBoxLuaCode.Text), Encoding.UTF8);
+                    File.WriteAllText(p.FileName, $"----- Interval={luaConsoleSettings.TimerInterval}\r\n{textBoxLuaCode.Text}", Encoding.UTF8);
                 }
             }
         }
@@ -468,7 +468,7 @@ namespace LuaConsole
 
         private void LuaTimerHotkeyChanged(KeyExt key)
         {
-            metroToolTip1.SetToolTip(metroLinkEnableCyclicExecution, string.Format("Enable/disable cyclic script execution\r\nHotkey: [{0}]", key.ToString()));
+            metroToolTip1.SetToolTip(metroLinkEnableCyclicExecution, $"Enable/disable cyclic script execution\r\nHotkey: [{key}]");
         }
 
         private void SetupTimerControls(bool timerActive)
@@ -530,7 +530,7 @@ namespace LuaConsole
                     {
                         PostInvoke(delegate
                         {
-                            labelRequestTime.Text = string.Format("{0}ms", stopwatch.ElapsedMilliseconds);
+                            labelRequestTime.Text = $"{stopwatch.ElapsedMilliseconds}ms";
                             labelRequestTime.Visible = true;
                             metroLinkRunScriptOnce.Text = MetroLinkRunScriptOnceRun;
                             metroLinkRunScriptOnce.Enabled = true;

@@ -50,7 +50,7 @@ namespace AxTools.WoW.Helpers
                     flag = false;
                     if (!thread.Join(60 * 1000))
                     {
-                        throw new Exception(string.Format("[{0}] SafeTimer: Can't stop!", PluginName ?? "Unknown plug-in"));
+                        throw new Exception($"[{PluginName ?? "Unknown plug-in"}] SafeTimer: Can't stop!");
                     }
                     thread = null;
                 }
@@ -70,7 +70,7 @@ namespace AxTools.WoW.Helpers
                     }
                     catch (Exception ex)
                     {
-                        log.Error(string.Format("[{0}] SafeTimer error: {1}", PluginName ?? "", ex.Message));
+                        log.Error($"[{PluginName ?? ""}] SafeTimer error: {ex.Message}");
                     }
                 }
                 int shouldWait = (int)(interval - balancingStopwatch.ElapsedMilliseconds);
@@ -82,9 +82,9 @@ namespace AxTools.WoW.Helpers
             }
         }
 
-        public void ChangeInterval(int interval)
+        public void ChangeInterval(int intervalMs)
         {
-            this.interval = interval;
+            this.interval = intervalMs;
         }
 
         public void Dispose()
@@ -92,9 +92,6 @@ namespace AxTools.WoW.Helpers
             Stop();
         }
 
-        public bool IsRunning
-        {
-            get { return flag; }
-        }
+        public bool IsRunning => flag;
     }
 }

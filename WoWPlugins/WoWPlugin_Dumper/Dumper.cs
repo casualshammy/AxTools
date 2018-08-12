@@ -11,16 +11,16 @@ namespace WoWPlugin_Dumper
     {
         #region Info
 
-        public string Name { get { return "Dumper"; } }
+        public string Name => "Dumper";
 
-        public Version Version { get { return new Version(1, 0); } }
+        public Version Version => new Version(1, 0);
 
-        public string Description { get { return "Dumps ingame info"; } }
+        public string Description => "Dumps ingame info";
 
         private Image trayIcon;
-        public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\icon.png", Application.StartupPath, Name))); } }
+        public Image TrayIcon => trayIcon ?? (trayIcon = Image.FromFile($"{Application.StartupPath}\\plugins\\{Name}\\icon.png"));
 
-        public bool ConfigAvailable { get { return false; } }
+        public bool ConfigAvailable => false;
 
         public string[] Dependencies => null;
 

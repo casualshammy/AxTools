@@ -15,18 +15,18 @@ namespace WoWPlugin_Notifier
     {
         #region Info
 
-        public string Name { get { return "Notifier"; } }
+        public string Name => "Notifier";
 
-        public Version Version { get { return new Version(1, 0); } }
+        public Version Version => new Version(1, 0);
 
-        public string Description { get { return "Sends sms on various events (need LibSMS)"; } }
+        public string Description => "Sends sms on various events (need LibSMS)";
 
         private Image trayIcon;
-        public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\Mobile-Sms-icon.png", Application.StartupPath, Name))); } }
+        public Image TrayIcon => trayIcon ?? (trayIcon = Image.FromFile($"{Application.StartupPath}\\plugins\\{Name}\\Mobile-Sms-icon.png"));
 
-        public bool ConfigAvailable { get { return true; } }
+        public bool ConfigAvailable => true;
 
-        public string[] Dependencies => new string[] { "LibSMS" };
+        public string[] Dependencies => new[] { "LibSMS" };
 
         public bool DontCloseOnWowShutdown => false;
 
@@ -141,10 +141,10 @@ namespace WoWPlugin_Notifier
             {
                 if ((settingsInstance.OnWhisper && msg.Type == WoWChatMsgType.Whisper) || (settingsInstance.OnBNetWhisper && msg.Type == WoWChatMsgType.BNetWisper))
                 {
-                    this.LogPrint(string.Format("New PM from {0}: {1}", msg.Sender, msg.Text));
+                    this.LogPrint($"New PM from {msg.Sender}: {msg.Text}");
                     dynamic libSMS = Utilities.GetReferenceOfPlugin("LibSMS");
-                    libSMS.SendSMS(string.Format("New PM from {0}: {1}", msg.Sender, msg.Text), game);
-                    this.ShowNotify(string.Format("New PM from {0}: {1}", msg.Sender, msg.Text), false, false);
+                    libSMS.SendSMS($"New PM from {msg.Sender}: {msg.Text}", game);
+                    this.ShowNotify($"New PM from {msg.Sender}: {msg.Text}", false, false);
                 }
             }
         }
@@ -169,9 +169,9 @@ namespace WoWPlugin_Notifier
         private SafeTimer timerStaticPopup;
         private System.Timers.Timer timerDisconnect;
         private DateTime lastTimeNotifiedAboutDisconnect = DateTime.MinValue;
-        private bool running = false;
+        private bool running;
 
-        private static Tuple<string, string>[] PopupFrames = {
+        private static readonly Tuple<string, string>[] PopupFrames = {
             new Tuple<string, string>("General popup", "StaticPopup1"),
             new Tuple<string, string>("PvE dungeon invite", "LFGDungeonReadyDialog"),
             //new Tuple<string, string>("PvP dungeon invite", "PVPReadyDialog")

@@ -164,7 +164,7 @@ namespace LibNavigator
                 loopPath = false;
                 startFromNearestPoint = false;
                 int tCounter = 0;
-                DoActionType[] predefinedSettings = new DoActionType[] { DoActionType.SetLoopPath, DoActionType.SetStartFromNearestPoint };
+                DoActionType[] predefinedSettings = new[] { DoActionType.SetLoopPath, DoActionType.SetStartFromNearestPoint };
                 while (predefinedSettings.Contains(actionsList[tCounter].ActionType))
                 {
                     switch (actionsList[tCounter].ActionType)
@@ -228,7 +228,7 @@ namespace LibNavigator
                         if (me.IsFlying && (distance3D > precision3D || (distance3D <= precision3D && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
                         {
                             UnstuckIfNeeded(me.Location, action.ActionType);
-                            this.LogPrint(string.Format("Flying to point --> [{0}]; distance: {1}", action.WowPoint, distance3D));
+                            this.LogPrint($"Flying to point --> [{action.WowPoint}]; distance: {distance3D}");
                             game.Move3D(action.WowPoint, precision3D, precision3D, 1000, true, GetNextAction().ActionType == DoActionType.Move);
                         }
                         else if (!me.IsFlying && (distance2D > precision2D || (distance2D <= precision2D && GetNextAction().ActionType != DoActionType.Move && me.IsMoving)))
@@ -324,7 +324,7 @@ namespace LibNavigator
                         break;
 
                     case DoActionType.SendToChatWhile:
-                        string[] p = action.Data.Split(new string[] { "##@##" }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] p = action.Data.Split(new[] { "##@##" }, StringSplitOptions.RemoveEmptyEntries);
                         string _action = p[0];
                         string condition = p[1];
                         if (game.LuaIsTrue(condition))
@@ -443,11 +443,11 @@ namespace LibNavigator
         private SafeTimer timer;
         private float precision2D = 3f;
         private float precision3D = 8f;
-        private volatile bool isRunning = false;
+        private volatile bool isRunning;
         private const int RESOLUTION_INTERVAL = 50;
         private Dictionary<DateTime, WowPoint> unstuckDictionary = new Dictionary<DateTime, WowPoint>();
         private GameInterface game;
-        private bool EndOfActionsListIsReached = false;
+        private bool EndOfActionsListIsReached;
 
         #endregion Fields
     }

@@ -16,33 +16,18 @@ namespace WoWPlugin_GarrisonFishingHelper
     {
         #region Properties
 
-        public string Name
-        {
-            get { return "GarrisonFishingHelper"; }
-        }
+        public string Name => "GarrisonFishingHelper";
 
-        public Version Version
-        {
-            get { return new Version(1, 0); }
-        }
+        public Version Version => new Version(1, 0);
 
-        public string Description
-        {
-            get { return "Uses coins"; }
-        }
+        public string Description => "Uses coins";
 
         private Image trayIcon;
-        public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\Inv_fishingchair.png", Application.StartupPath, Name))); } }
+        public Image TrayIcon => trayIcon ?? (trayIcon = Image.FromFile($"{Application.StartupPath}\\plugins\\{Name}\\Inv_fishingchair.png"));
 
-        public string WowIcon
-        {
-            get { return null; }
-        }
+        public string WowIcon => null;
 
-        public bool ConfigAvailable
-        {
-            get { return false; }
-        }
+        public bool ConfigAvailable => false;
 
         public string[] Dependencies => null;
 

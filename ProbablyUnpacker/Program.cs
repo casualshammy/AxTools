@@ -44,7 +44,7 @@ namespace ProbablyUnpacker
                     {
                         foreach (var offset in block.TypeOffsets)
                         {
-                            UInt64 rva = offset.Offset + block.VirtualAddress;
+                            ulong rva = offset.Offset + block.VirtualAddress;
                             log.WriteLine("relocation : 0x" + rva.ToString("X4"));
                             log.Flush();
                             if (rva >= text_section.VirtualAddress && rva < text_section.VirtualAddress + text_section.VirtualSize)
@@ -54,7 +54,7 @@ namespace ProbablyUnpacker
                                     case 3:
                                         int file_ofs = (int)(rva - text_section.VirtualAddress);
                                         reader.BaseStream.Seek(file_ofs, System.IO.SeekOrigin.Begin);
-                                        UInt64 oldOffset = reader.ReadUInt64();
+                                        ulong oldOffset = reader.ReadUInt64();
                                         writer.Seek(file_ofs, System.IO.SeekOrigin.Begin);
                                         writer.Write((oldOffset - (ulong)memoryManager.ImageBase + peFile.ImageNtHeaders.OptionalHeader.ImageBase));
                                         break;

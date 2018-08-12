@@ -11,15 +11,15 @@ namespace AxTools.WoW.Internals
     /// </summary>
     public class WowObject : WoWObjectBase
     {
-        private static readonly Log2 log = new Log2($"WowObject");
+        private static readonly Log2 log = new Log2("WowObject");
 
         internal WowObject(IntPtr address, WowProcess wow) : base(wow)
         {
             Address = address;
-            WoWObjectsInfo info = memory.Read<WoWObjectsInfo>(Address);
-            GUID = info.GUID;
-            Bobbing = info.Bobbing == 1;
-            Location = info.Location;
+            WoWObjectsInfo inf = memory.Read<WoWObjectsInfo>(Address);
+            GUID = inf.GUID;
+            Bobbing = inf.Bobbing == 1;
+            Location = inf.Location;
         }
 
         private static int _maxNameLength = 200;
@@ -51,8 +51,7 @@ namespace AxTools.WoW.Internals
         {
             get
             {
-                string temp;
-                if (!Names.TryGetValue(EntryID, out temp))
+                if (!Names.TryGetValue(EntryID, out var temp))
                 {
                     try
                     {

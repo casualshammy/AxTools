@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.3.47.2366</AssemblyVersion>
+    <AssemblyVersion>12.3.47.2376</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
@@ -299,12 +299,10 @@
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Helpers\Log.cs" />
     <Compile Include="Helpers\Settings.cs" />
-    <Compile Include="WoW\WowAccount.cs" />
     <Compile Include="WoW\Internals\WowNpc.cs" />
     <Compile Include="WoW\Internals\WowObject.cs" />
     <Compile Include="WoW\Internals\WowPoint.cs" />
     <Compile Include="WoW\WowProcess.cs" />
-    <Compile Include="Helpers\Crypt.cs" />
     <Compile Include="WoW\Internals\WowPlayer.cs" />
     <Compile Include="Forms\WowAccountsManager.cs">
       <SubType>Form</SubType>

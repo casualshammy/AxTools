@@ -25,20 +25,8 @@ namespace AxTools.WinAPI.TCPTable
         // ReSharper restore MemberCanBePrivate.Local
 
         // ReSharper disable once UnusedMember.Local
-        public ushort LocalPort
-        {
-            get
-            {
-                return BitConverter.ToUInt16(new[] { localPort2, localPort1 }, 0);
-            }
-        }
+        public ushort LocalPort => BitConverter.ToUInt16(new[] { localPort2, localPort1 }, 0);
 
-        public ushort RemotePort
-        {
-            get
-            {
-                return BitConverter.ToUInt16(new[] { remotePort2, remotePort1 }, 0);
-            }
-        }
+        public ushort RemotePort => BitConverter.ToUInt16(new[] { remotePort2, remotePort1 }, 0);
     }
 }

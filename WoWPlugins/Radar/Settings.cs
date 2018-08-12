@@ -55,17 +55,14 @@ namespace Radar
         internal string AlarmSoundFile = Path.Combine(Application.StartupPath, "plugins\\Radar", "alarm.wav");
 
         [DataMember(Name = "ShowLocalPlayerRotationArrowOnTop")]
-        internal bool ShowLocalPlayerRotationArrowOnTop = false;
+        internal bool ShowLocalPlayerRotationArrowOnTop;
 
         private readonly ObservableCollection<RadarObject> list = new ObservableCollection<RadarObject>();
 
         [DataMember(Name = "WoWRadarList")]
         internal ObservableCollection<RadarObject> List
         {
-            get
-            {
-                return list;
-            }
+            get => list;
             set
             {
                 foreach (RadarObject o in value)

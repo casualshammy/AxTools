@@ -15,27 +15,15 @@ namespace AxTools.WoW.PluginSystem.Plugins
     {
         #region Info
 
-        public string Name
-        {
-            get { return "Fishing"; }
-        }
+        public string Name => "Fishing";
 
-        public Version Version
-        {
-            get { return new Version(1, 0); }
-        }
+        public Version Version => new Version(1, 0);
 
-        public string Description
-        {
-            get { return "This is a very simple fish bot. It supports baits and special WoD baits; also it makes breaks to avoid being too tireless"; }
-        }
+        public string Description => "This is a very simple fish bot. It supports baits and special WoD baits; also it makes breaks to avoid being too tireless";
 
-        public Image TrayIcon { get { return AxTools.Helpers.Resources.Plugin_Fishing; } }
+        public Image TrayIcon => AxTools.Helpers.Resources.Plugin_Fishing;
 
-        public bool ConfigAvailable
-        {
-            get { return true; }
-        }
+        public bool ConfigAvailable => true;
 
         public string[] Dependencies => null;
 
@@ -55,14 +43,14 @@ namespace AxTools.WoW.PluginSystem.Plugins
             this.SaveSettingsJSON(fishingSettings);
         }
 
-        public void OnStart(GameInterface info)
+        public void OnStart(GameInterface inf)
         {
-            this.info = info;
+            this.info = inf;
             fishingSettings = this.LoadSettingsJSON<FishingSettings>();
             pluginIsActive = true;
             fishingSpellName = Wowhead.GetSpellInfo(7620).Name;
             this.LogPrint("Fishing spell name: " + fishingSpellName);
-            timer = this.CreateTimer(100, info, OnPulse);
+            timer = this.CreateTimer(100, inf, OnPulse);
             timer.Start();
         }
 
@@ -93,7 +81,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     if (fishingSettings.EnableBreaks && Utils.Rnd.Next(0, 30) == 0)
                     {
                         int breakTime = Utils.Rnd.Next(15, 45);
-                        this.LogPrint(string.Format("I'm human! Let's have a break ({0} sec)", breakTime));
+                        this.LogPrint($"I'm human! Let's have a break ({breakTime} sec)");
                         int breakStartTime = Environment.TickCount;
                         while ((Environment.TickCount - breakStartTime < breakTime * 1000) && pluginIsActive)
                         {
@@ -102,43 +90,43 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     }
                     else if (fishingSettings.UseBestBait && (baitItemID = GetBestBaitID(me)) != 0)
                     {
-                        this.LogPrint(string.Format("Applying lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
+                        this.LogPrint($"Applying lure --> ({Wowhead.GetItemInfo(baitItemID).Name})");
                         info.UseItemByID(baitItemID);
                         lastTimeLureApplied = DateTime.UtcNow;
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
                     else if (fishingSettings.UseSpecialBait && (baitItemID = GetSpecialBaitID(me)) != 0)
                     {
-                        this.LogPrint(string.Format("Applying special lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
+                        this.LogPrint($"Applying special lure --> ({Wowhead.GetItemInfo(baitItemID).Name})");
                         info.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
                     else if (fishingSettings.UseArcaneLure && (baitItemID = GetArcaneLure(me)) != 0)
                     {
-                        this.LogPrint(string.Format("Applying arcane lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
+                        this.LogPrint($"Applying arcane lure --> ({Wowhead.GetItemInfo(baitItemID).Name})");
                         info.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
                     else if (fishingSettings.LegionUseSpecialLure && (baitItemID = GetLegionSpecialLure(me)) != 0)
                     {
-                        this.LogPrint(string.Format("Applying Legion special lure --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
+                        this.LogPrint($"Applying Legion special lure --> ({Wowhead.GetItemInfo(baitItemID).Name})");
                         info.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
                     else if (fishingSettings.DalaranAchievement && (baitItemID = DalaranAchievement(me)) != 0)
                     {
-                        this.LogPrint(string.Format("Applying lure for Dalaran achievement --> ({0})", Wowhead.GetItemInfo(baitItemID).Name));
+                        this.LogPrint($"Applying lure for Dalaran achievement --> ({Wowhead.GetItemInfo(baitItemID).Name})");
                         info.UseItemByID(baitItemID);
                         Thread.Sleep(Utils.Rnd.Next(250, 750));
                     }
-                    else if (fishingSettings.LegionMargossSupport && (baitItemID = GetMargossLure(me)) != 0)
+                    else if (fishingSettings.LegionMargossSupport && GetMargossLure(me) != 0)
                     {
                         Thread.Sleep(Utils.Rnd.Next(1000, 2000));
                     }
                     else
                     {
                         Thread.Sleep(Utils.Rnd.Next(500, 1000));
-                        this.LogPrint(string.Format("Cast fishing --> ({0})", fishingSpellName));
+                        this.LogPrint($"Cast fishing --> ({fishingSpellName})");
                         info.CastSpellByName(fishingSpellName);
                         Thread.Sleep(1500);
                     }
@@ -180,7 +168,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                             }
                         }
                     }
-                    return item != null ? item.EntryID : 0;
+                    return item?.EntryID ?? 0;
                 }
                 return 0;
             }
@@ -199,7 +187,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             WowNpc natPagle = npcs.FirstOrDefault(npc => npc.EntryID == 85984);
             if (natPagle != null)
             {
-                this.LogPrint(string.Format("Nat Pagle is found, guid: {0}, moving to him...", natPagle.GUID));
+                this.LogPrint($"Nat Pagle is found, guid: {natPagle.GUID}, moving to him...");
                 info.Move2D(natPagle.Location, 4f, 2000, false, false);
                 Thread.Sleep(500);
                 this.LogPrint("Opening dialog window with Nat...");
@@ -211,10 +199,10 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 info.SelectDialogOption(gossipText);
                 Thread.Sleep(1500);
                 WowPoint goodFishingPoint = new WowPoint(2024.49f, 191.33f, 83.86f);
-                this.LogPrint(string.Format("Moving to fishing point [{0}]", goodFishingPoint));
+                this.LogPrint($"Moving to fishing point [{goodFishingPoint}]");
                 info.Move2D(goodFishingPoint, 2f, 2000, false, false);
                 WowPoint water = new WowPoint((float)(Utils.Rnd.NextDouble() * 5 + 2032.5f), (float)(Utils.Rnd.NextDouble() * 5 + 208.5f), 82f);
-                this.LogPrint(string.Format("Facing water [{0}]", water));
+                this.LogPrint($"Facing water [{water}]");
                 info.Face(water);
             }
         }
@@ -258,7 +246,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 WowNpc marciaChase = npcs.FirstOrDefault(npc => npc.EntryID == 95844);
                 if (marciaChase != null)
                 {
-                    this.LogPrint(string.Format("Marcia Chase is found, guid: {0}, interacting...", marciaChase.GUID));
+                    this.LogPrint($"Marcia Chase is found, guid: {marciaChase.GUID}, interacting...");
                     marciaChase.Interact();
                     Thread.Sleep(Utils.Rnd.Next(750, 1250));
                     this.LogPrint("I: I wish to buy something...");
@@ -285,10 +273,10 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 string[] allBuffNames = legionSpecialLuresByZone.SelectMany(l => l.Lures).Select(l => Wowhead.GetItemInfo(l).Name).ToArray();
                 if (me.Auras.All(k => !allBuffNames.Contains(k.Name)))
                 {
-                    SpecialLuresForZone info = legionSpecialLuresByZone.FirstOrDefault(l => l.ZoneID == zone);
-                    if (info != null)
+                    SpecialLuresForZone inf = legionSpecialLuresByZone.FirstOrDefault(l => l.ZoneID == zone);
+                    if (inf != null)
                     {
-                        WoWItem item = me.ItemsInBags.FirstOrDefault(l => info.Lures.Contains(l.EntryID));
+                        WoWItem item = me.ItemsInBags.FirstOrDefault(l => inf.Lures.Contains(l.EntryID));
                         if (item != null)
                         {
                             return item.EntryID;

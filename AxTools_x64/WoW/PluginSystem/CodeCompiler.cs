@@ -3,7 +3,6 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -40,7 +39,7 @@ namespace AxTools.WoW.PluginSystem
             SourcePath = path;
             Options = new CompilerParameters { GenerateExecutable = false, GenerateInMemory = false, IncludeDebugInformation = false };
             string str = "BW_" + Assembly.GetEntryAssembly().GetName().Version.Revision;
-            Options.CompilerOptions = string.Format("/d:BW;{0} /unsafe", str);
+            Options.CompilerOptions = $"/d:BW;{str} /unsafe";
             Options.TempFiles = new TempFileCollection(Path.GetTempPath());
             string assemblyPath = Path.Combine(AppFolders.PluginsBinariesDir, (hash ?? Utils.GetRandomString(16, false)) + ".dll");
             DeleteOldAssembly(assemblyPath);
@@ -57,32 +56,32 @@ namespace AxTools.WoW.PluginSystem
                 }
                 catch (Exception ex)
                 {
-                    log.Error(string.Format("Can't add {0}: {1}", assembly.Location, ex.Message));
+                    log.Error($"Can't add {assembly.Location}: {ex.Message}");
                 }
             }
-            string ver = string.Format("{0}.{1}.{2}", Environment.Version.Major, Environment.Version.MajorRevision, Environment.Version.Build);
-            string dllPath = string.Format("C:\\WINDOWS\\Microsoft.NET\\Framework{0}\\v{1}\\Microsoft.CSharp.dll", Environment.Is64BitProcess ? "64" : "", ver);
+            string ver = $"{Environment.Version.Major}.{Environment.Version.MajorRevision}.{Environment.Version.Build}";
+            string dllPath = $"C:\\WINDOWS\\Microsoft.NET\\Framework{(Environment.Is64BitProcess ? "64" : "")}\\v{ver}\\Microsoft.CSharp.dll";
             try
             {
                 AddReference(dllPath);
             }
             catch (Exception ex)
             {
-                log.Error(string.Format("Can't add Microsoft.CSharp ({0}): {1}", dllPath, ex.Message));
+                log.Error($"Can't add Microsoft.CSharp ({dllPath}): {ex.Message}");
             }
         }
 
         public Assembly CompiledAssembly { get; private set; }
 
-        public string CompiledToLocation { get; private set; }
+        public string CompiledToLocation { get; }
 
-        public FileStructureType FileStructure { get; private set; }
+        public FileStructureType FileStructure { get; }
 
-        public CompilerParameters Options { get; private set; }
+        public CompilerParameters Options { get; }
 
-        public List<string> SourceFilePaths { get; private set; }
+        public List<string> SourceFilePaths { get; }
 
-        public string SourcePath { get; private set; }
+        public string SourcePath { get; }
 
         public void AddReference(string assembly)
         {
@@ -101,13 +100,7 @@ namespace AxTools.WoW.PluginSystem
             {
                 return null;
             }
-
-            Dictionary<string, string> providerOptions = new Dictionary<string, string>
-            {
-                {
-                    "CompilerVersion", string.Format(CultureInfo.InvariantCulture.NumberFormat, "v4.0")
-                }
-            };
+            
             using (Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider provider = new Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider())
             {
                 provider.Supports(GeneratorSupport.Resources);

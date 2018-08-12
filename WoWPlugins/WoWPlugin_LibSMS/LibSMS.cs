@@ -12,18 +12,18 @@ namespace LibSMS
     {
         #region Info
 
-        public string Name { get { return "LibSMS"; } }
+        public string Name => "LibSMS";
 
-        public Version Version { get { return new Version(1, 0); } }
+        public Version Version => new Version(1, 0);
 
-        public string Description { get { return "Provides SMS support"; } }
+        public string Description => "Provides SMS support";
 
         private Image trayIcon;
-        public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\dll.jpg", Application.StartupPath, Name))); } }
+        public Image TrayIcon => trayIcon ?? (trayIcon = Image.FromFile($"{Application.StartupPath}\\plugins\\{Name}\\dll.jpg"));
 
-        public string WowIcon { get { return ""; } }
+        public string WowIcon => "";
 
-        public bool ConfigAvailable { get { return true; } }
+        public bool ConfigAvailable => true;
 
         public string[] Dependencies => null;
 
@@ -75,7 +75,7 @@ namespace LibSMS
                     webClient.Headers["Content-Type"] = "application/json";
                     webClient.Headers["Access-Token"] = pbAPIKey;
                     webClient.Encoding = Encoding.UTF8;
-                    string uploadString = webClient.UploadString("https://api.pushbullet.com/v2/pushes", string.Format("{{\"email\": \"{0}\",\"type\": \"note\",\"title\": \"Note from AxTools\",\"body\": \"{1}\"}}", pbRecipient, text));
+                    string uploadString = webClient.UploadString("https://api.pushbullet.com/v2/pushes", $"{{\"email\": \"{pbRecipient}\",\"type\": \"note\",\"title\": \"Note from AxTools\",\"body\": \"{text}\"}}");
                     this.LogPrint("Pushbullet note is sent, response: " + uploadString.Replace('\r', ' ').Replace('\n', ' '));
                 }
             }

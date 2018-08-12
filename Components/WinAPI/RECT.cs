@@ -11,26 +11,14 @@ namespace Components.WinAPI
 
         public int Width
         {
-            get
-            {
-                return Right - Left;
-            }
-            set
-            {
-                Right = Left + value;
-            }
+            get => Right - Left;
+            set => Right = Left + value;
         }
 
         public int Height
         {
-            get
-            {
-                return Bottom - Top;
-            }
-            set
-            {
-                Bottom = Top + value;
-            }
+            get => Bottom - Top;
+            set => Bottom = Top + value;
         }
 
         public RECT(int left, int top, int right, int bottom)

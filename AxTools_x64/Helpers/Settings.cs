@@ -139,7 +139,7 @@ namespace AxTools.Helpers
         internal bool WoWAntiKick = true;
 
         [JsonProperty(Order = 14, PropertyName = "WoW_AntiKick_SetAfkState")]
-        internal bool WoW_AntiKick_SetAfkState = false;
+        internal bool WoW_AntiKick_SetAfkState;
 
         [JsonProperty(Order = 15, PropertyName = "WoWInteractMouseover")]
         internal Keys WoWInteractMouseover = Keys.None;
@@ -148,13 +148,13 @@ namespace AxTools.Helpers
         internal Keys WoWTargetMouseover = Keys.None;
 
         [JsonProperty(Order = 17, PropertyName = "WoWCustomizeWindow")]
-        internal bool WoWCustomizeWindow = false;
+        internal bool WoWCustomizeWindow;
 
         [JsonProperty(Order = 18, PropertyName = "WoWCustomWindowRectangle")]
         internal Rectangle WoWCustomWindowRectangle = new Rectangle(0, 0, 1366, 733);
 
         [JsonProperty(Order = 19, PropertyName = "WoWCustomWindowNoBorder")]
-        internal bool WoWCustomWindowNoBorder = false;
+        internal bool WoWCustomWindowNoBorder;
 
         #endregion WoW
 
@@ -177,28 +177,28 @@ namespace AxTools.Helpers
         internal string MumbleDirectory = string.Empty;
 
         [JsonProperty(Order = 31, PropertyName = "MumbleStartWithWoW")]
-        internal bool MumbleStartWithWoW = false;
+        internal bool MumbleStartWithWoW;
 
         [JsonProperty(Order = 32, PropertyName = "RaidcallDirectory")]
         internal string RaidcallDirectory = string.Empty;
 
         [JsonProperty(Order = 33, PropertyName = "RaidcallStartWithWoW")]
-        internal bool RaidcallStartWithWoW = false;
+        internal bool RaidcallStartWithWoW;
 
         [JsonProperty(Order = 34, PropertyName = "TS3Directory")]
         internal string TS3Directory = string.Empty;
 
         [JsonProperty(Order = 35, PropertyName = "TS3StartWithWoW")]
-        internal bool TS3StartWithWoW = false;
+        internal bool TS3StartWithWoW;
 
         [JsonProperty(Order = 36, PropertyName = "VentriloDirectory")]
         internal string VentriloDirectory = string.Empty;
 
         [JsonProperty(Order = 37, PropertyName = "VentriloStartWithWoW")]
-        internal bool VentriloStartWithWoW = false;
+        internal bool VentriloStartWithWoW;
 
         [JsonProperty(Order = 38, PropertyName = "StartTwitchWithWoW")]
-        internal bool StartTwitchWithWoW = false;
+        internal bool StartTwitchWithWoW;
 
         #endregion VoIP
 
@@ -312,10 +312,6 @@ namespace AxTools.Helpers
             }
         }
 
-        public Settings()
-        {
-        }
-
         internal void ValidateAndFix()
         {
             if (MainWindowLocation.X < 0 || MainWindowLocation.Y < 0)
@@ -411,7 +407,7 @@ namespace AxTools.Helpers
         internal bool WoWAntiKick = true;
 
         [JsonProperty(Order = 13, PropertyName = "WoW_AntiKick_SetAfkState")]
-        internal bool WoW_AntiKick_SetAfkState = false;
+        internal bool WoW_AntiKick_SetAfkState;
 
         [JsonProperty(Order = 14, PropertyName = "WoWInteractMouseover")]
         internal Keys WoWInteractMouseover = Keys.None;
@@ -420,13 +416,13 @@ namespace AxTools.Helpers
         internal Keys WoWTargetMouseover = Keys.None;
 
         [JsonProperty(Order = 16, PropertyName = "WoWCustomizeWindow")]
-        internal bool WoWCustomizeWindow = false;
+        internal bool WoWCustomizeWindow;
 
         [JsonProperty(Order = 17, PropertyName = "WoWCustomWindowRectangle")]
         internal Rectangle WoWCustomWindowRectangle = new Rectangle(0, 0, 1366, 733);
 
         [JsonProperty(Order = 18, PropertyName = "WoWCustomWindowNoBorder")]
-        internal bool WoWCustomWindowNoBorder = false;
+        internal bool WoWCustomWindowNoBorder;
 
         #endregion WoW
 
@@ -449,25 +445,25 @@ namespace AxTools.Helpers
         internal string MumbleDirectory = string.Empty;
 
         [JsonProperty(Order = 31, PropertyName = "MumbleStartWithWoW")]
-        internal bool MumbleStartWithWoW = false;
+        internal bool MumbleStartWithWoW;
 
         [JsonProperty(Order = 32, PropertyName = "RaidcallDirectory")]
         internal string RaidcallDirectory = string.Empty;
 
         [JsonProperty(Order = 33, PropertyName = "RaidcallStartWithWoW")]
-        internal bool RaidcallStartWithWoW = false;
+        internal bool RaidcallStartWithWoW;
 
         [JsonProperty(Order = 34, PropertyName = "TS3Directory")]
         internal string TS3Directory = string.Empty;
 
         [JsonProperty(Order = 35, PropertyName = "TS3StartWithWoW")]
-        internal bool TS3StartWithWoW = false;
+        internal bool TS3StartWithWoW;
 
         [JsonProperty(Order = 36, PropertyName = "VentriloDirectory")]
         internal string VentriloDirectory = string.Empty;
 
         [JsonProperty(Order = 37, PropertyName = "VentriloStartWithWoW")]
-        internal bool VentriloStartWithWoW = false;
+        internal bool VentriloStartWithWoW;
 
         #endregion VoIP
 
@@ -546,7 +542,7 @@ namespace AxTools.Helpers
             {
                 try
                 {
-                    if (regVersion != null && regVersion.GetValue("") != null)
+                    if (regVersion?.GetValue("") != null)
                     {
                         Regex regex = new Regex("\"(.+)\" .*");
                         Match match = regex.Match(regVersion.GetValue("").ToString());
@@ -570,7 +566,7 @@ namespace AxTools.Helpers
             {
                 try
                 {
-                    if (regVersion != null && regVersion.GetValue("") != null)
+                    if (regVersion?.GetValue("") != null)
                     {
                         Regex regex = new Regex("\"(.+)\" .*");
                         Match match = regex.Match(regVersion.GetValue("").ToString());
@@ -594,7 +590,7 @@ namespace AxTools.Helpers
             {
                 try
                 {
-                    if (regVersion != null && regVersion.GetValue("") != null)
+                    if (regVersion?.GetValue("") != null)
                     {
                         Regex regex = new Regex("(.+) .*");
                         Match match = regex.Match(regVersion.GetValue("").ToString());
@@ -618,7 +614,7 @@ namespace AxTools.Helpers
             {
                 try
                 {
-                    if (regVersion != null && regVersion.GetValue("") != null)
+                    if (regVersion?.GetValue("") != null)
                     {
                         Regex regex = new Regex("\"(.+)\" .*");
                         Match match = regex.Match(regVersion.GetValue("").ToString());
@@ -649,7 +645,7 @@ namespace AxTools.Helpers
             {
                 try
                 {
-                    if (regVersion != null && regVersion.GetValue("InstallPath") != null)
+                    if (regVersion?.GetValue("InstallPath") != null)
                     {
                         string raw = regVersion.GetValue("InstallPath").ToString();
                         return raw.Remove(raw.Length - 1);

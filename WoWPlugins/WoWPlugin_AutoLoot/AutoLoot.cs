@@ -14,22 +14,19 @@ namespace AutoLoot
     {
         #region Info
 
-        public string Name { get { return "AutoLoot"; } }
+        public string Name => "AutoLoot";
 
-        public Version Version { get { return new Version(1, 0, 0, 0); } }
+        public Version Version => new Version(1, 0, 0, 0);
 
-        public string Author { get { return "Axioma"; } }
+        public string Author => "Axioma";
 
-        public string Description { get { return "Loots mobs in 100 yd range"; } }
+        public string Description => "Loots mobs in 100 yd range";
 
         private Image trayIcon;
 
-        public Image TrayIcon
-        {
-            get { return trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\AutoLoot\\inv_misc_coin_01.jpg")); }
-        }
+        public Image TrayIcon => trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\AutoLoot\\inv_misc_coin_01.jpg"));
 
-        public bool ConfigAvailable { get { return false; } }
+        public bool ConfigAvailable => false;
 
         public string[] Dependencies => null;
 

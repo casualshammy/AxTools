@@ -23,7 +23,7 @@ namespace AxTools.WoW
 
         public void Dispose()
         {
-            if (Memory != null) Memory.Dispose();
+            Memory?.Dispose();
             Process.Dispose();
         }
 
@@ -46,10 +46,7 @@ namespace AxTools.WoW
             }
         }
 
-        internal IntPtr MainWindowHandle
-        {
-            get => Process.MainWindowHandle;
-        }
+        internal IntPtr MainWindowHandle => Process.MainWindowHandle;
 
         private Process Process
         {

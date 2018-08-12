@@ -23,10 +23,7 @@ namespace Components
 
         public string OverlayText
         {
-            get
-            {
-                return overlayText;
-            }
+            get => overlayText;
             set
             {
                 overlayText = value;

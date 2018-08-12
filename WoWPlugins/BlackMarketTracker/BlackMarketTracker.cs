@@ -123,7 +123,7 @@ namespace BlackMarketTracker
                 listView1.Items.Add(new ListViewItem(new[]
                 {
                     item.Name,
-                    ts.TotalSeconds <= 0 ? "Finished" : string.Format("{0} ({1})", ts.ToString("hh\\:mm\\:ss"), (DateTime.Now + ts).ToString("T")),
+                    ts.TotalSeconds <= 0 ? "Finished" : $"{ts.ToString("hh\\:mm\\:ss")} ({(DateTime.Now + ts).ToString("T")})",
                     item.LastBidGold + " g",
                     item.NumBids.ToString()
                 })

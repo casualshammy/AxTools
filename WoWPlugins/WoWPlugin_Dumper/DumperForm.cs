@@ -13,7 +13,7 @@ namespace WoWPlugin_Dumper
     {
         private readonly Dumper dumper;
         private SafeTimer chatTimer;
-        private GameInterface game;
+        private readonly GameInterface game;
 
         public DumperForm(Dumper dumperInstance, GameInterface game)
         {
@@ -66,9 +66,8 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("Local player---------------------------------------");
-                Log(string.Format("\tGUID: 0x{0}; Address: 0x{1:X}; Location: {2}; ZoneID: {3}; ZoneName: {4}; IsLooting: {5}; Name: {6}; TargetGUID: {7}; Class: {8}; Health/MaxHealth: {9}/{10}, Level: {11}; Faction: {12}; IsMounted: {13}",
-                    localPlayer.GUID, localPlayer.Address.ToInt64(), localPlayer.Location, game.ZoneID, game.ZoneText, game.IsLooting, localPlayer.Name, localPlayer.TargetGUID, localPlayer.Class,
-                    localPlayer.Health, localPlayer.HealthMax, localPlayer.Level, localPlayer.Faction, localPlayer.IsMounted));
+                Log(
+                    $"\tGUID: 0x{localPlayer.GUID}; Address: 0x{localPlayer.Address.ToInt64():X}; Location: {localPlayer.Location}; ZoneID: {game.ZoneID}; ZoneName: {game.ZoneText}; IsLooting: {game.IsLooting}; Name: {localPlayer.Name}; TargetGUID: {localPlayer.TargetGUID}; Class: {localPlayer.Class}; Health/MaxHealth: {localPlayer.Health}/{localPlayer.HealthMax}, Level: {localPlayer.Level}; Faction: {localPlayer.Faction}; IsMounted: {localPlayer.IsMounted}");
             }
             catch (Exception ex)
             {
@@ -77,7 +76,7 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("----Local player buffs----");
-                foreach (string info in localPlayer.Auras.Select(l => string.Format("ID: {0}; Name: {1}; Stack: {2}; TimeLeft: {3}; OwnerGUID: {4}", l.SpellId, l.Name, l.Stack, l.TimeLeftInMs, l.OwnerGUID)))
+                foreach (string info in localPlayer.Auras.Select(l => $"ID: {l.SpellId}; Name: {l.Name}; Stack: {l.Stack}; TimeLeft: {l.TimeLeftInMs}; OwnerGUID: {l.OwnerGUID}"))
                 {
                     Log("\t" + info);
                 }
@@ -89,7 +88,7 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("----Mouseover----");
-                Log(string.Format("\tGUID: {0}", game.MouseoverGUID));
+                Log($"\tGUID: {game.MouseoverGUID}");
             }
             catch (Exception ex)
             {
@@ -104,8 +103,7 @@ namespace WoWPlugin_Dumper
                 foreach (WowObject i in wowObjects)
                 {
                     // ReSharper disable once ImpureMethodCallOnReadonlyValueField
-                    Log(string.Format("\t{0} - GUID: 0x{1}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4}; Address: 0x{5:X}; EntryID: {6}", i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), i.OwnerGUID,
-                        i.Address.ToInt64(), i.EntryID));
+                    Log($"\t{i.Name} - GUID: 0x{i.GUID}; Location: {i.Location}; Distance: {(int) i.Location.Distance(localPlayer.Location)}; OwnerGUID: 0x{i.OwnerGUID}; Address: 0x{i.Address.ToInt64():X}; EntryID: {i.EntryID}");
                 }
             }
             catch (Exception ex)
@@ -121,7 +119,7 @@ namespace WoWPlugin_Dumper
                 {
                     //Log(string.Format("\t{0}; Location: {1}; Distance: {2}; HP:{3}; MaxHP:{4}; Address:0x{5:X}; GUID:0x{6}; EntryID: {7}", i.Name, i.Location,
                     //    (int)i.Location.Distance(localPlayer.Location), i.Health, i.HealthMax, i.Address.ToInt64(), i.GUID, i.EntryID));
-                    Log(string.Format("\t{0}; EntryID: {1}; Location: {2}", i.Name, i.EntryID, i.Location));
+                    Log($"\t{i.Name}; EntryID: {i.EntryID}; Location: {i.Location}");
                 }
             }
             catch (Exception ex)
@@ -134,10 +132,8 @@ namespace WoWPlugin_Dumper
                 Log("Players-----------------------------------------");
                 foreach (WowPlayer i in wowUnits)
                 {
-                    Log(string.Format(
-                        "\t{0} - GUID: 0x{1}; Location: {2}; Distance: {3}; Address:0x{4:X}; Class:{5}; Level:{6}; HP:{7}; MaxHP:{8}; TargetGUID: 0x{9}; IsAlliance:{10}; Auras: {{ {11} }}",
-                        i.Name, i.GUID, i.Location, (int)i.Location.Distance(localPlayer.Location), i.Address.ToInt64(), i.Class, i.Level, i.Health, i.HealthMax,
-                        i.TargetGUID, i.Faction, string.Join(",", i.Auras.Select(l => l.Name + "::" + l.Stack + "::" + l.TimeLeftInMs + "::" + l.OwnerGUID.ToString()))));
+                    Log(
+                        $"\t{i.Name} - GUID: 0x{i.GUID}; Location: {i.Location}; Distance: {(int) i.Location.Distance(localPlayer.Location)}; Address:0x{i.Address.ToInt64():X}; Class:{i.Class}; Level:{i.Level}; HP:{i.Health}; MaxHP:{i.HealthMax}; TargetGUID: 0x{i.TargetGUID}; IsAlliance:{i.Faction}; Auras: {{ {string.Join(",", i.Auras.Select(l => l.Name + "::" + l.Stack + "::" + l.TimeLeftInMs + "::" + l.OwnerGUID.ToString()))} }}");
                 }
             }
             catch (Exception)
@@ -171,8 +167,7 @@ namespace WoWPlugin_Dumper
                 foreach (WowObject i in wowObjects)
                 {
                     // ReSharper disable once ImpureMethodCallOnReadonlyValueField
-                    Log(string.Format("\t{0} - GUID: 0x{1}; Location: {2}; Distance: {3}; OwnerGUID: 0x{4}; Address: 0x{5:X}; EntryID: {6}", i.Name, i.GUID, i.Location, "n/a", i.OwnerGUID,
-                        i.Address.ToInt64(), i.EntryID));
+                    Log($"\t{i.Name} - GUID: 0x{i.GUID}; Location: {i.Location}; Distance: {"n/a"}; OwnerGUID: 0x{i.OwnerGUID}; Address: 0x{i.Address.ToInt64():X}; EntryID: {i.EntryID}");
                 }
             }
             catch (Exception ex)
@@ -361,7 +356,7 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("----Local player buffs----");
-                foreach (string info in lp.Auras.Select(l => string.Format("ID: {0}; Name: {1}; Stack: {2}; TimeLeft: {3}; OwnerGUID: {4}", l.SpellId, l.Name, l.Stack, l.TimeLeftInMs, l.OwnerGUID)))
+                foreach (string info in lp.Auras.Select(l => $"ID: {l.SpellId}; Name: {l.Name}; Stack: {l.Stack}; TimeLeft: {l.TimeLeftInMs}; OwnerGUID: {l.OwnerGUID}"))
                 {
                     Log("\t" + info);
                 }
@@ -373,7 +368,7 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("----Mouseover----");
-                Log(string.Format("\tGUID: {0}", game.MouseoverGUID));
+                Log($"\tGUID: {game.MouseoverGUID}");
             }
             catch (Exception ex)
             {

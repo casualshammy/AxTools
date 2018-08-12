@@ -4,7 +4,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -23,7 +22,7 @@ namespace AxTools.WoW.Helpers
         private const string UNKNOWN = "UNKNOWN";
         private static readonly object DBLock = new object();
         private static SQLiteConnection dbConnection;
-        private static Log2 log = new Log2("Wowhead");
+        private static readonly Log2 log = new Log2("Wowhead");
 
         static Wowhead()
         {
@@ -118,7 +117,7 @@ namespace AxTools.WoW.Helpers
                     using (WebClient webClient = new WebClient())
                     {
                         webClient.Encoding = Encoding.UTF8;
-                        string xml = webClient.DownloadString(string.Format("https://{0}.wowhead.com/zone={1}&power", _locale, zoneID));
+                        string xml = webClient.DownloadString($"https://{_locale}.wowhead.com/zone={zoneID}&power");
                         Regex regex = new Regex("\\s+name_.+:\\s*'(.+)',");
                         Match match = regex.Match(xml);
                         if (match.Success)
@@ -155,7 +154,6 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
                     LoadAndUpdateDBFile();
@@ -192,7 +190,7 @@ namespace AxTools.WoW.Helpers
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
                     command.CommandText =
-                        $"INSERT INTO items2 (itemID, name, class, level, quality, image) " +
+                        "INSERT INTO items2 (itemID, name, class, level, quality, image) " +
                         $"VALUES ({itemID}, '{info.Name.Replace("'", "''")}', {info.Class}, {info.Level}, {info.Quality}, '{JsonConvert.SerializeObject(info.ImageBytes)}')";
                     try
                     {
@@ -210,7 +208,6 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
                     LoadAndUpdateDBFile();
@@ -246,7 +243,7 @@ namespace AxTools.WoW.Helpers
                 using (SQLiteCommand command = new SQLiteCommand(dbConnection))
                 {
                     command.CommandText =
-                        $"INSERT INTO spells2 (spellID, name, image) " +
+                        "INSERT INTO spells2 (spellID, name, image) " +
                         $"VALUES ({spellID}, '{info.Name.Replace("'", "''")}', '{JsonConvert.SerializeObject(info.ImageBytes)}')";
                     try
                     {
@@ -264,7 +261,6 @@ namespace AxTools.WoW.Helpers
         {
             lock (DBLock)
             {
-                Stopwatch stopwatch = Stopwatch.StartNew();
                 try
                 {
                     LoadAndUpdateDBFile();
@@ -328,9 +324,9 @@ namespace AxTools.WoW.Helpers
                     // checking if old databaseses exist
                     Dictionary<string, string[]> oldTables = new Dictionary<string, string[]>()
                     {
-                        { "items", new string[] { "itemID", "name", "class", "level", "quality", "image" } },
-                        { "spells", new string[] { "spellID", "name", "image" } },
-                        { "zones", new string[] { "zoneID", "name" } },
+                        { "items", new[] { "itemID", "name", "class", "level", "quality", "image" } },
+                        { "spells", new[] { "spellID", "name", "image" } },
+                        { "zones", new[] { "zoneID", "name" } },
                     };
                     string migrationCommand = "BEGIN TRANSACTION;";
                     foreach (var s in oldTables)
@@ -349,7 +345,7 @@ namespace AxTools.WoW.Helpers
                     command.CommandText = migrationCommand + "COMMIT;";
                     command.ExecuteNonQuery();
                     // delete npcs2 table
-                    foreach (var tableName in new string[] { "npcs2", "npcs" })
+                    foreach (var tableName in new[] { "npcs2", "npcs" })
                     {
                         command.CommandText = $"SELECT * FROM sqlite_master WHERE name ='{tableName}' and type='table';";
                         migrationCommand = "";

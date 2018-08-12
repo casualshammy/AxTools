@@ -1,5 +1,4 @@
-﻿using AxTools.Helpers;
-using AxTools.WoW.Helpers;
+﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
@@ -14,10 +13,8 @@ namespace AxTools.WoW.Internals
 
         public static IEnumerable<BlackMarketItem> GetAllItems(GameInterface game)
         {
-            Log2 log = new Log2($"BlackMarket - {game.wowProcess.ProcessID}");
             if (game.IsInGame)
             {
-                int startTime = Environment.TickCount;
                 uint numItems = game.Memory.Read<uint>(game.Memory.ImageBase + WowBuildInfoX64.BlackMarketNumItems);
                 if (numItems != 0)
                 {

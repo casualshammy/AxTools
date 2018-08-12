@@ -78,19 +78,13 @@ namespace AxTools.Helpers
         private static void WowProcessStopped(object sender, EventArrivedEventArgs e)
         {
             ProcessInfo pInfo = new ProcessInfo(int.Parse(e.NewEvent["ProcessID"].ToString()), e.NewEvent["ProcessName"].ToString());
-            if (_processExited != null)
-            {
-                _processExited(pInfo);
-            }
+            _processExited?.Invoke(pInfo);
         }
 
         private static void WowProcessStarted(object sender, EventArrivedEventArgs e)
         {
             ProcessInfo pInfo = new ProcessInfo(int.Parse(e.NewEvent["ProcessID"].ToString()), e.NewEvent["ProcessName"].ToString());
-            if (_processStarted != null)
-            {
-                _processStarted(pInfo);
-            }
+            _processStarted?.Invoke(pInfo);
         }
     }
 

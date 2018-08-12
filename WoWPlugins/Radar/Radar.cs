@@ -76,7 +76,7 @@ namespace Radar
         private static readonly HashSet<string> RadarKOSFindAlarm = new HashSet<string>();
         private static readonly HashSet<string> RadarKOSFindInteract = new HashSet<string>();
 
-        private Settings settings;
+        private readonly Settings settings;
         private Pen friendPen, enemyPen, npcPen, objectPen, whitePen, grayPen;
         private SolidBrush friendBrush, enemyBrush, npcBrush, objectBrush, whiteBrush, grayBrush;
         private Point tmpPoint = Point.Empty;
@@ -200,7 +200,7 @@ namespace Radar
                     }
                     catch (Exception ex)
                     {
-                        this.LogError(string.Format("OOG drawing error: {0}", ex.Message));
+                        this.LogError($"OOG drawing error: {ex.Message}");
                     }
                     Thread.Sleep(100);
                     continue;
@@ -213,11 +213,11 @@ namespace Radar
                 {
                     if (ex is Win32Exception win32ex && win32ex.NativeErrorCode == (int)Win32Error.ERROR_PARTIAL_COPY) // it's rarely happening, dunno why
                     {
-                        this.LogPrint(string.Format("Pulsing error: {0}", ex.Message));
+                        this.LogPrint($"Pulsing error: {ex.Message}");
                     }
                     else
                     {
-                        this.LogError(string.Format("Pulsing error: {0}", ex.Message));
+                        this.LogError($"Pulsing error: {ex.Message}");
                     }
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
@@ -237,7 +237,7 @@ namespace Radar
                 }
                 catch (Exception ex)
                 {
-                    this.LogError(string.Format("Prepainting error: {0}", ex.Message));
+                    this.LogError($"Prepainting error: {ex.Message}");
                     shouldDrawObjects = false;
                     BeginInvoke(refreshRadar);
                     Thread.Sleep(100);
@@ -280,7 +280,7 @@ namespace Radar
                 if (whatToInteract != null)
                 {
                     whatToInteract.Interact();
-                    this.LogPrint(string.Format("Interacted with {0} {1}", whatToInteract.Name, whatToInteract.GUID));
+                    this.LogPrint($"Interacted with {whatToInteract.Name} {whatToInteract.GUID}");
                 }
             }
         }
@@ -629,7 +629,7 @@ namespace Radar
                 }
                 catch (Exception ex)
                 {
-                    this.LogError(string.Format("Drawing error: {0}", ex.Message));
+                    this.LogError($"Drawing error: {ex.Message}");
                 }
             }
             else
@@ -730,7 +730,7 @@ namespace Radar
             isRunning = false;
             if (!thread.Join(5000))
             {
-                this.LogError(string.Format("Redraw task termination error, status: {0}", thread.ThreadState));
+                this.LogError($"Redraw task termination error, status: {thread.ThreadState}");
             }
             else
             {

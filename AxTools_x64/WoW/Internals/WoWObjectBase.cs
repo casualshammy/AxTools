@@ -20,7 +20,7 @@ namespace AxTools.WoW.Internals
             wowProcess = wow;
         }
 
-        public virtual WoWGUID GUID { get; protected set; }
+        public WoWGUID GUID { get; protected set; }
         public virtual string Name { get; protected set; }
 
         private void SetMouseoverUnit(WoWGUID guid)

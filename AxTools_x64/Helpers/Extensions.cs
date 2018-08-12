@@ -63,7 +63,7 @@ namespace AxTools.Helpers
         public static void ForceBasicAuth(this WebClient webClient, string username, string password)
         {
             string credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(username + ":" + password));
-            webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Basic {0}", credentials);
+            webClient.Headers[HttpRequestHeader.Authorization] = $"Basic {credentials}";
         }
 
         public static void ActivateBrutal(this Form form)
@@ -92,8 +92,7 @@ namespace AxTools.Helpers
                 if (toolStripItem != null)
                 {
                     yield return toolStripItem;
-                    ToolStripDropDownItem item = toolStripItem as ToolStripDropDownItem;
-                    if (item != null && item.HasDropDownItems)
+                    if (toolStripItem is ToolStripDropDownItem item && item.HasDropDownItems)
                     {
                         foreach (ToolStripItem v in GetAllToolStripItems(item.DropDownItems))
                         {

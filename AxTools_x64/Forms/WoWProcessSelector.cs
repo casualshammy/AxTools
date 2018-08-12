@@ -15,7 +15,7 @@ namespace AxTools.Forms
     internal partial class WoWProcessSelector : BorderedMetroForm
     {
         private WowProcess process;
-        private Dictionary<int, WowProcess> processPerComboboxIndex = new Dictionary<int, WowProcess>();
+        private readonly Dictionary<int, WowProcess> processPerComboboxIndex = new Dictionary<int, WowProcess>();
 
         /// <summary>
         ///
@@ -43,9 +43,8 @@ namespace AxTools.Forms
             StyleManager.Style = Settings2.Instance.StyleColor;
             foreach (var i in WoWProcessManager.Processes)
             {
-                int index = comboBox1.Items.Add(i.Value.IsValidBuild && new GameInterface(i.Value).IsInGame ?
-                    string.Format("pID: {0}", i.Key) :
-                    string.Format("pID: {0} (ERROR DETECTED)", i.Key));
+                int index = comboBox1.Items.Add(i.Value.IsValidBuild && new GameInterface(i.Value).IsInGame ? $"pID: {i.Key}"
+                    : $"pID: {i.Key} (ERROR DETECTED)");
                 processPerComboboxIndex.Add(index, i.Value);
             }
             button1.Enabled = false;

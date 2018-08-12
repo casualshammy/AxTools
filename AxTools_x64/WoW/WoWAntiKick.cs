@@ -18,13 +18,13 @@ namespace AxTools.WoW
         private readonly System.Timers.Timer timer;
         private int maxTime;
         private int fallback_lastTimeActionEmulated;
-        private bool fallback_keyboardWatcherInitialized = false;
-        private GameInterface info;
+        private bool fallback_keyboardWatcherInitialized;
+        private readonly GameInterface info;
 
         internal static event Action<IntPtr> ActionEmulated;
 
-        private static KeyExt[] moveKeys = new KeyExt[] { new KeyExt(Keys.W), new KeyExt(Keys.A), new KeyExt(Keys.S), new KeyExt(Keys.D), new KeyExt(Keys.Space) };
-        private static Dictionary<int, WoWAntiKick> instanses = new Dictionary<int, WoWAntiKick>();
+        private static readonly KeyExt[] moveKeys = new[] { new KeyExt(Keys.W), new KeyExt(Keys.A), new KeyExt(Keys.S), new KeyExt(Keys.D), new KeyExt(Keys.Space) };
+        private static readonly Dictionary<int, WoWAntiKick> instanses = new Dictionary<int, WoWAntiKick>();
 
         internal static void StartWaitForWoWProcesses()
         {
@@ -78,7 +78,7 @@ namespace AxTools.WoW
                             {
                                 maxTime = Utils.Rnd.Next(150000, 280000);
                                 wowProcess.Memory.Write(wowProcess.Memory.ImageBase + WowBuildInfoX64.LastHardwareAction, tickCount);
-                                logger.Info(string.Format("{0} Action emulated, next MaxTime: {1}", wowProcess, maxTime));
+                                logger.Info($"{wowProcess} Action emulated, next MaxTime: {maxTime}");
                                 if (settings.WoW_AntiKick_SetAfkState)
                                 {
                                     if (!wowProcess.IsMinimized)
@@ -103,7 +103,7 @@ namespace AxTools.WoW
                         }
                         catch (Exception ex)
                         {
-                            logger.Error(string.Format("{0} Can't emulate action: {1}", wowProcess, ex.Message));
+                            logger.Error($"{wowProcess} Can't emulate action: {ex.Message}");
                         }
                     }
                 }
@@ -111,7 +111,7 @@ namespace AxTools.WoW
                 {
                     if (!fallback_keyboardWatcherInitialized)
                     {
-                        KeyboardWatcher.HotkeyManager.AddKeys(GetType().ToString() + wowProcess.ProcessID.ToString(), moveKeys);
+                        KeyboardWatcher.HotkeyManager.AddKeys(GetType() + wowProcess.ProcessID.ToString(), moveKeys);
                         KeyboardWatcher.HotkeyManager.KeyPressed += HotkeyManager_KeyPressed;
                         fallback_keyboardWatcherInitialized = true;
                         logger.Info($"{wowProcess} Unsupported version of WoW client. Adding WASDSpace to hotkeys");

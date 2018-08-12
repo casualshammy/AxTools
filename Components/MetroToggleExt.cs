@@ -26,8 +26,8 @@ namespace Components
 
         public int SizeExt
         {
-            get { return size; }
-            set { size = value; }
+            get => size;
+            set => size = value;
         }
 
         protected override void OnPaint(PaintEventArgs e)

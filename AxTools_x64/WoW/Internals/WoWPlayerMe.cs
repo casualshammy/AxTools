@@ -106,9 +106,6 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        public bool IsMoving
-        {
-            get { return Speed > 0f; }
-        }
+        public bool IsMoving => Speed > 0f;
     }
 }

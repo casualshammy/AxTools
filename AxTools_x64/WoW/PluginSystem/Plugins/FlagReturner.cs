@@ -12,27 +12,15 @@ namespace AxTools.WoW.PluginSystem.Plugins
     {
         #region Info
 
-        public string Name
-        {
-            get { return "Capture flags/orbs on the battlefields"; }
-        }
+        public string Name => "Capture flags/orbs on the battlefields";
 
-        public Version Version { get { return new Version(1, 2); } }
+        public Version Version => new Version(1, 2);
 
-        public string Description
-        {
-            get
-            {
-                return "This plugin will automatically return or pickup flags in Warsong Gulch, Twin Peaks and EotS, it will pickup orbs in ToK and return carts in Deepwind Gorge";
-            }
-        }
+        public string Description => "This plugin will automatically return or pickup flags in Warsong Gulch, Twin Peaks and EotS, it will pickup orbs in ToK and return carts in Deepwind Gorge";
 
-        public Image TrayIcon { get { return AxTools.Helpers.Resources.Plugin_Bg; } }
+        public Image TrayIcon => AxTools.Helpers.Resources.Plugin_Bg;
 
-        public bool ConfigAvailable
-        {
-            get { return false; }
-        }
+        public bool ConfigAvailable => false;
 
         public string[] Dependencies => null;
         public bool DontCloseOnWowShutdown => false;
@@ -45,11 +33,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
         }
 
-        public void OnStart(GameInterface info)
+        public void OnStart(GameInterface inf)
         {
-            this.info = info;
+            this.info = inf;
             currentZone = 0;
-            (timer = this.CreateTimer(50, info, OnPulse)).Start();
+            (timer = this.CreateTimer(50, inf, OnPulse)).Start();
         }
 
         public void OnPulse()
@@ -68,7 +56,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             {
                 this.LogPrint($"TODO error0: {ex.Message}");
             }
-            WoWPlayerMe localPlayer = null;
+            WoWPlayerMe localPlayer;
             if (searchingObjects.Length > 0)
             {
                 try
@@ -134,8 +122,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
             if (searchingObjects.Length > 0)
             {
                 string zoneText = info.ZoneText;
-                this.LogPrint(string.Format("We're in {0}, searching for {{{1}}}", zoneText, string.Join(", ", searchingObjects)));
-                this.ShowNotify(string.Format("{0}: {{{1}}}", zoneText, string.Join(", ", searchingObjects)), false, true);
+                this.LogPrint($"We're in {zoneText}, searching for {{{string.Join(", ", searchingObjects)}}}");
+                this.ShowNotify($"{zoneText}: {{{string.Join(", ", searchingObjects)}}}", false, true);
             }
             else
             {

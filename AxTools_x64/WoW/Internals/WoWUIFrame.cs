@@ -14,7 +14,7 @@ namespace AxTools.WoW.Internals
         private readonly IntPtr address;
         private string cachedName;
         private string cachedEditboxText;
-        private WowProcess process;
+        private readonly WowProcess process;
         private static readonly Log2 log = new Log2("WoWUIFrame");
         private static readonly Dictionary<int, ConcurrentDictionary<string, IntPtr>> cachedFrames = new Dictionary<int, ConcurrentDictionary<string, IntPtr>>();
 
@@ -57,17 +57,14 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        public bool IsVisible
-        {
-            get { return ((process.Memory.Read<int>(address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) == 1; }
-        }
+        public bool IsVisible => ((process.Memory.Read<int>(address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) == 1;
 
         public static WoWUIFrame GetFrameByName(GameInterface game, string name)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             if (!cachedFrames.TryGetValue(game.wowProcess.ProcessID, out ConcurrentDictionary<string, IntPtr> dict))
                 dict = (cachedFrames[game.wowProcess.ProcessID] = new ConcurrentDictionary<string, IntPtr>());
-            WoWUIFrame frame = null;
+            WoWUIFrame frame;
             if (dict.TryGetValue(name, out IntPtr address))
             {
                 try
@@ -80,7 +77,7 @@ namespace AxTools.WoW.Internals
             }
             frame = GetAllFrames(game).FirstOrDefault(l => l.GetName == name);
             if (stopwatch.ElapsedMilliseconds > 500)
-                log.Error(string.Format("GetFrameByName exec time: {0}ms", stopwatch.ElapsedMilliseconds));
+                log.Error($"GetFrameByName exec time: {stopwatch.ElapsedMilliseconds}ms");
             return frame;
         }
 
@@ -123,7 +120,7 @@ namespace AxTools.WoW.Internals
                         break;
                 }
                 if (stopwatch.ElapsedMilliseconds > 500)
-                    log.Error(string.Format("GetAllFrames exec time: {0}ms", stopwatch.ElapsedMilliseconds));
+                    log.Error($"GetAllFrames exec time: {stopwatch.ElapsedMilliseconds}ms");
             }
         }
     }

@@ -7,7 +7,7 @@ namespace AxTools.Helpers
 {
     internal static class VoIP
     {
-        private static Log2 log = new Log2("VoIP");
+        private static readonly Log2 log = new Log2("VoIP");
 
         /// <summary>
         /// Launches VoIP with specified name
@@ -29,7 +29,7 @@ namespace AxTools.Helpers
             }
             else
             {
-                throw new ArgumentException("No VoIP client with specified name found", "name");
+                throw new ArgumentException("No VoIP client with specified name found", nameof(name));
             }
         }
 
@@ -111,8 +111,8 @@ namespace AxTools.Helpers
             log.Info("Looking for TS3 client...");
             foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
             {
-                var path = Utils.FindFiles(drive.Name, "ts3client_win64.exe", 5).Select(l => Path.GetDirectoryName(l)).FirstOrDefault() ??
-                    Utils.FindFiles(drive.Name, "ts3client_win32.exe", 5).Select(l => Path.GetDirectoryName(l)).FirstOrDefault();
+                var path = Utils.FindFiles(drive.Name, "ts3client_win64.exe", 5).Select(Path.GetDirectoryName).FirstOrDefault() ??
+                    Utils.FindFiles(drive.Name, "ts3client_win32.exe", 5).Select(Path.GetDirectoryName).FirstOrDefault();
                 if (path != null)
                 {
                     log.Info("TS3 client is found: " + path);
@@ -128,7 +128,7 @@ namespace AxTools.Helpers
             log.Info("Looking for Raidcall client...");
             foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
             {
-                var path = Utils.FindFiles(drive.Name, "raidcall.exe", 5).Select(l => Path.GetDirectoryName(l)).FirstOrDefault();
+                var path = Utils.FindFiles(drive.Name, "raidcall.exe", 5).Select(Path.GetDirectoryName).FirstOrDefault();
                 if (path != null)
                 {
                     log.Info("Raidcall client is found: " + path);
@@ -144,7 +144,7 @@ namespace AxTools.Helpers
             log.Info("Looking for Ventrilo client...");
             foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
             {
-                var path = Utils.FindFiles(drive.Name, "Ventrilo.exe", 5).Select(l => Path.GetDirectoryName(l)).FirstOrDefault();
+                var path = Utils.FindFiles(drive.Name, "Ventrilo.exe", 5).Select(Path.GetDirectoryName).FirstOrDefault();
                 if (path != null)
                 {
                     log.Info("Ventrilo client is found: " + path);
@@ -160,7 +160,7 @@ namespace AxTools.Helpers
             log.Info("Looking for Mumble client...");
             foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
             {
-                var path = Utils.FindFiles(drive.Name, "mumble.exe", 5).Select(l => Path.GetDirectoryName(l)).FirstOrDefault();
+                var path = Utils.FindFiles(drive.Name, "mumble.exe", 5).Select(Path.GetDirectoryName).FirstOrDefault();
                 if (path != null)
                 {
                     log.Info("Mumble client is found: " + path);

@@ -207,7 +207,7 @@ namespace Radar
             }
             catch (Exception ex)
             {
-                radar.LogError(string.Format("Error: {0}", ex.Message));
+                radar.LogError($"Error: {ex.Message}");
             }
         }
 
@@ -231,7 +231,7 @@ namespace Radar
             }
             catch (Exception ex)
             {
-                radar.LogError(string.Format("Error: {0}", ex.Message));
+                radar.LogError($"Error: {ex.Message}");
             }
         }
 

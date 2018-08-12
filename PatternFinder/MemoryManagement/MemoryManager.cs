@@ -86,7 +86,7 @@ namespace PatternFinder.MemoryManagement
                         return buffer;
                     }
                 }
-                throw new AccessViolationException(string.Format("Could not read bytes from {0} [{1}]!", address.ToString("X8"), Marshal.GetLastWin32Error()));
+                throw new AccessViolationException($"Could not read bytes from {address.ToString("X8")} [{Marshal.GetLastWin32Error()}]!");
             }
             return new byte[0];
         }
@@ -252,7 +252,7 @@ namespace PatternFinder.MemoryManagement
             bool success = WriteProcessMemory(ProcessHandle, address, bytes, bytes.Length, out numWritten);
             if (!success || numWritten != bytes.Length)
             {
-                throw new AccessViolationException(string.Format("Could not write the specified bytes! {0} to {1} [{2}]", bytes.Length, address.ToString("X8"), new Win32Exception(Marshal.GetLastWin32Error()).Message));
+                throw new AccessViolationException($"Could not write the specified bytes! {bytes.Length} to {address.ToString("X8")} [{new Win32Exception(Marshal.GetLastWin32Error()).Message}]");
             }
             return numWritten;
         }

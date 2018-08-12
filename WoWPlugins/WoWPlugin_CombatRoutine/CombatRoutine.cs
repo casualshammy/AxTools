@@ -14,27 +14,15 @@ namespace WoWPlugin_CombatRoutine
     {
         #region Info
 
-        public string Name
-        {
-            get { return "CombatRoutine"; }
-        }
+        public string Name => "CombatRoutine";
 
-        public Version Version
-        {
-            get { return new Version(1, 0); }
-        }
+        public Version Version => new Version(1, 0);
 
-        public string Description
-        {
-            get { return "Simple combat routines for all classes"; }
-        }
+        public string Description => "Simple combat routines for all classes";
 
-        public Image TrayIcon { get { return null; } }
+        public Image TrayIcon => null;
 
-        public bool ConfigAvailable
-        {
-            get { return false; }
-        }
+        public bool ConfigAvailable => false;
 
         public string[] Dependencies => null;
 

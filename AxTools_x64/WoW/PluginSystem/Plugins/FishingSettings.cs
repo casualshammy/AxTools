@@ -15,22 +15,22 @@ namespace AxTools.WoW.PluginSystem.Plugins
         internal string SpecialBait;
 
         [JsonProperty(PropertyName = "UseAnySpecialBaitIfPreferredIsNotAvailable")]
-        internal bool UseAnySpecialBaitIfPreferredIsNotAvailable = false;
+        internal bool UseAnySpecialBaitIfPreferredIsNotAvailable;
 
         [JsonProperty(PropertyName = "GetSpecialBaitFromNatPagle")]
-        internal bool GetSpecialBaitFromNatPagle = false;
+        internal bool GetSpecialBaitFromNatPagle;
 
         [JsonProperty(PropertyName = "UseArcaneLure")]
-        internal bool UseArcaneLure = false;
+        internal bool UseArcaneLure;
 
         [JsonProperty(PropertyName = "DalaranAchievement")]
-        internal bool DalaranAchievement = false;
+        internal bool DalaranAchievement;
 
         [JsonProperty(PropertyName = "LegionUseSpecialLure")]
-        internal bool LegionUseSpecialLure = false;
+        internal bool LegionUseSpecialLure;
 
         [JsonProperty(PropertyName = "LegionMargossSupport")]
-        internal bool LegionMargossSupport = false;
+        internal bool LegionMargossSupport;
 
         [JsonProperty(PropertyName = "EnableBreaks")]
         internal bool EnableBreaks = true;

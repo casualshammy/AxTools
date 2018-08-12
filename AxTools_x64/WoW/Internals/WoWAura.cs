@@ -22,15 +22,9 @@ namespace AxTools.WoW.Internals
             TimeLeftInMs = timeLeft;
         }
 
-        public string Name
-        {
-            get
-            {
-                return Wowhead.GetSpellInfo(SpellId).Name;
-            }
-        }
+        public string Name => Wowhead.GetSpellInfo(SpellId).Name;
 
-        private static unsafe int auraStructSize = sizeof(WoWAura);
+        private static readonly unsafe int auraStructSize = sizeof(WoWAura);
 
         internal static List<WoWAura> GetAurasForMemoryAddress(MemoryManager memory, IntPtr address)
         {

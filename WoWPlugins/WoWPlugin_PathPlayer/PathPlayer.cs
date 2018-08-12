@@ -18,7 +18,7 @@ namespace PathPlayer
         public bool ConfigAvailable => true;
 
         private Image trayIcon;
-        public Image TrayIcon { get { return trayIcon ?? (trayIcon = Image.FromFile(string.Format("{0}\\plugins\\{1}\\plainicon.com-50064-256px-4c1.png", Application.StartupPath, Name))); } }
+        public Image TrayIcon => trayIcon ?? (trayIcon = Image.FromFile($"{Application.StartupPath}\\plugins\\{Name}\\plainicon.com-50064-256px-4c1.png"));
 
         public string[] Dependencies => null;
 

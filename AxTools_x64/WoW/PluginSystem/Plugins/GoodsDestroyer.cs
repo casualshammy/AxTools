@@ -13,30 +13,15 @@ namespace AxTools.WoW.PluginSystem.Plugins
     {
         #region Info
 
-        public string Name
-        {
-            get { return "Milling/disenchanting/prospecting"; }
-        }
+        public string Name => "Milling/disenchanting/prospecting";
 
-        public Version Version
-        {
-            get { return new Version(1, 1); }
-        }
+        public Version Version => new Version(1, 1);
 
-        public string Description
-        {
-            get
-            {
-                return "This plugin will mill/prospect any herbs/ores and disenchant greens in your bags";
-            }
-        }
+        public string Description => "This plugin will mill/prospect any herbs/ores and disenchant greens in your bags";
 
-        public Image TrayIcon { get { return AxTools.Helpers.Resources.Plugin_Destroying; } }
+        public Image TrayIcon => AxTools.Helpers.Resources.Plugin_Destroying;
 
-        public bool ConfigAvailable
-        {
-            get { return true; }
-        }
+        public bool ConfigAvailable => true;
 
         public string[] Dependencies => null;
         public bool DontCloseOnWowShutdown => false;
@@ -55,28 +40,28 @@ namespace AxTools.WoW.PluginSystem.Plugins
             this.SaveSettingsJSON(SettingsInstance);
         }
 
-        public void OnStart(GameInterface info)
+        public void OnStart(GameInterface inf)
         {
-            this.info = info;
+            this.info = inf;
             SettingsInstance = this.LoadSettingsJSON<GoodsDestroyerSettings>();
             if (SettingsInstance.MillFelwort)
             {
                 herbs.Add(124106); // Felwort item id
             }
             lastNotifiedAboutCompletion = DateTime.MinValue;
-            if (info.IsSpellKnown(51005)) // mill
+            if (inf.IsSpellKnown(51005)) // mill
             {
                 this.LogPrint("Milling: OK");
             }
-            if (info.IsSpellKnown(31252)) // prospect
+            if (inf.IsSpellKnown(31252)) // prospect
             {
                 this.LogPrint("Prospecting: OK");
             }
-            if (info.IsSpellKnown(13262)) // disenchant
+            if (inf.IsSpellKnown(13262)) // disenchant
             {
                 this.LogPrint("Disenchanting: OK");
             }
-            (timer = this.CreateTimer(50, info, OnPulse)).Start();
+            (timer = this.CreateTimer(50, inf, OnPulse)).Start();
         }
 
         public void OnPulse()
@@ -92,10 +77,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         {
                             if (SettingsInstance.UseFastDraenorMill && me.ItemsInBags.Any(l => fastMillHerbs.Contains(l.EntryID) && l.StackSize >= 20))
                             {
-                                info.SendToChat(string.Format("/run {0}={{}}", someRandomString));
-                                string prepare = string.Format("/run local s=C_TradeSkillUI.GetFilteredRecipeIDs();local t={{}};if(#s>0) then for i=1,#s do C_TradeSkillUI.GetRecipeInfo(s[i], t);{0}[t.name]={{t.recipeID,t.numAvailable}}; end end", someRandomString);
+                                info.SendToChat($"/run {someRandomString}={{}}");
+                                string prepare =
+                                    $"/run local s=C_TradeSkillUI.GetFilteredRecipeIDs();local t={{}};if(#s>0) then for i=1,#s do C_TradeSkillUI.GetRecipeInfo(s[i], t);{someRandomString}[t.name]={{t.recipeID,t.numAvailable}}; end end";
                                 info.SendToChat(prepare);
-                                string s = string.Format("/run for n,i in pairs({0}) do if(strfind(n,\"Массовое измельчение\") and i[2]>0) then C_TradeSkillUI.CraftRecipe(i[1],i[2]);return; end end", someRandomString);
+                                string s = $"/run for n,i in pairs({someRandomString}) do if(strfind(n,\"Массовое измельчение\") and i[2]>0) then C_TradeSkillUI.CraftRecipe(i[1],i[2]);return; end end";
                                 info.SendToChat(s);
                                 Thread.Sleep(2000);
                                 return;
@@ -116,7 +102,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                             }
                             if (SettingsInstance.LaunchInkCrafter)
                             {
-                                Utilities.AddPluginToRunning(this, "InkCrafter");
+                                this.AddPluginToRunning("InkCrafter");
                             }
                         }
                         if (info.IsSpellKnown(31252)) // prospect

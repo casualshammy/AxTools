@@ -26,14 +26,14 @@ namespace Components
 
         public HorizontalAlignment TextAlign
         {
-            get { return internalTextBox.TextAlign; }
-            set { internalTextBox.TextAlign = value; }
+            get => internalTextBox.TextAlign;
+            set => internalTextBox.TextAlign = value;
         }
 
         public bool ReadOnly
         {
-            get { return internalTextBox.ReadOnly; }
-            set { internalTextBox.ReadOnly = value; }
+            get => internalTextBox.ReadOnly;
+            set => internalTextBox.ReadOnly = value;
         }
     }
 }

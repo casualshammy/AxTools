@@ -8,8 +8,8 @@ namespace AxTools.Helpers
 {
     internal class MultiLock
     {
-        private object internalLock = new object();
-        private Dictionary<Guid, object> lockObjects = new Dictionary<Guid, object>();
+        private readonly object internalLock = new object();
+        private readonly Dictionary<Guid, object> lockObjects = new Dictionary<Guid, object>();
 
         /// <summary>
         /// Get lock. This instance of <see cref="MultiLock"/> will be in signaled state.
@@ -50,7 +50,10 @@ namespace AxTools.Helpers
         {
             get
             {
-                return lockObjects.Count > 0;
+                lock (internalLock)
+                {
+                    return lockObjects.Count > 0;
+                }
             }
         }
 
@@ -58,7 +61,7 @@ namespace AxTools.Helpers
         /// Wait for all locks to be released
         /// </summary>
         /// <param name="timeoutMs"></param>
-        internal void WaitForLocks(long timeoutMs = Int64.MaxValue)
+        internal void WaitForLocks(long timeoutMs = long.MaxValue)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             while (lockObjects.Count > 0 && stopwatch.ElapsedMilliseconds < timeoutMs)
@@ -67,7 +70,7 @@ namespace AxTools.Helpers
             }
         }
 
-        internal Task WaitForLocksAsync(long timeoutMs = Int64.MaxValue)
+        internal Task WaitForLocksAsync(long timeoutMs = long.MaxValue)
         {
             return Task.Run(() => WaitForLocks(timeoutMs));
         }
