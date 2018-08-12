@@ -54,6 +54,7 @@ namespace AxTools.Forms
             this.linkBackup = new MetroFramework.Controls.MetroLink();
             this.cmbboxAccSelect = new Components.MetroComboboxExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
+            this.linkUpdatePlugins = new MetroFramework.Controls.MetroLink();
             this.labelTotalPluginsEnabled = new MetroFramework.Controls.MetroLabel();
             this.linkDownloadPlugins = new MetroFramework.Controls.MetroLink();
             this.olvPlugins = new BrightIdeasSoftware.ObjectListView();
@@ -85,7 +86,6 @@ namespace AxTools.Forms
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.linkUpdatePlugins = new MetroFramework.Controls.MetroLink();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
@@ -269,6 +269,24 @@ namespace AxTools.Forms
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
             // 
+            // linkUpdatePlugins
+            // 
+            this.linkUpdatePlugins.CustomBackground = false;
+            this.linkUpdatePlugins.CustomForeColor = false;
+            this.linkUpdatePlugins.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkUpdatePlugins.FontWeight = MetroFramework.MetroLinkWeight.Bold;
+            this.linkUpdatePlugins.Location = new System.Drawing.Point(303, 111);
+            this.linkUpdatePlugins.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+            this.linkUpdatePlugins.Name = "linkUpdatePlugins";
+            this.linkUpdatePlugins.Size = new System.Drawing.Size(115, 23);
+            this.linkUpdatePlugins.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkUpdatePlugins.StyleManager = null;
+            this.linkUpdatePlugins.TabIndex = 84;
+            this.linkUpdatePlugins.Text = "Update plugins";
+            this.linkUpdatePlugins.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkUpdatePlugins.UseStyleColors = true;
+            this.linkUpdatePlugins.Click += new System.EventHandler(this.LinkUpdatePlugins_Click);
+            // 
             // labelTotalPluginsEnabled
             // 
             this.labelTotalPluginsEnabled.CustomBackground = false;
@@ -276,13 +294,14 @@ namespace AxTools.Forms
             this.labelTotalPluginsEnabled.FontSize = MetroFramework.MetroLabelSize.Small;
             this.labelTotalPluginsEnabled.FontWeight = MetroFramework.MetroLabelWeight.Bold;
             this.labelTotalPluginsEnabled.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.labelTotalPluginsEnabled.Location = new System.Drawing.Point(303, 47);
+            this.labelTotalPluginsEnabled.Location = new System.Drawing.Point(302, 47);
+            this.labelTotalPluginsEnabled.Margin = new System.Windows.Forms.Padding(0);
             this.labelTotalPluginsEnabled.Name = "labelTotalPluginsEnabled";
-            this.labelTotalPluginsEnabled.Size = new System.Drawing.Size(115, 20);
+            this.labelTotalPluginsEnabled.Size = new System.Drawing.Size(118, 20);
             this.labelTotalPluginsEnabled.Style = MetroFramework.MetroColorStyle.Blue;
             this.labelTotalPluginsEnabled.StyleManager = null;
             this.labelTotalPluginsEnabled.TabIndex = 83;
-            this.labelTotalPluginsEnabled.Text = "Plugins enabled: 99";
+            this.labelTotalPluginsEnabled.Text = "Plug-ins enabled: 99";
             this.labelTotalPluginsEnabled.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.labelTotalPluginsEnabled.Theme = MetroFramework.MetroThemeStyle.Light;
             this.labelTotalPluginsEnabled.UseStyleColors = true;
@@ -300,10 +319,10 @@ namespace AxTools.Forms
             this.linkDownloadPlugins.Style = MetroFramework.MetroColorStyle.Blue;
             this.linkDownloadPlugins.StyleManager = null;
             this.linkDownloadPlugins.TabIndex = 82;
-            this.linkDownloadPlugins.Text = "Download plugins";
+            this.linkDownloadPlugins.Text = "Download plug-ins";
             this.linkDownloadPlugins.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkDownloadPlugins.UseStyleColors = true;
-            this.linkDownloadPlugins.Click += new System.EventHandler(MainForm.LinkDownloadPlugins_Click);
+            this.linkDownloadPlugins.Click += new System.EventHandler(LinkDownloadPlugins_Click);
             // 
             // olvPlugins
             // 
@@ -359,8 +378,8 @@ namespace AxTools.Forms
             this.buttonStartStopPlugin.TabIndex = 74;
             this.buttonStartStopPlugin.Text = "Hotkeys";
             this.buttonStartStopPlugin.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroToolTip1.SetToolTip(this.buttonStartStopPlugin, "Start/stop plugin");
-            this.buttonStartStopPlugin.Click += new System.EventHandler(MainForm.ButtonStartStopPlugin_Click);
+            this.metroToolTip1.SetToolTip(this.buttonStartStopPlugin, "Start/stop plug-in");
+            this.buttonStartStopPlugin.Click += new System.EventHandler(ButtonStartStopPlugin_Click);
             // 
             // metroTabPage2
             // 
@@ -428,7 +447,7 @@ namespace AxTools.Forms
             this.tileExtTwitch.TabIndex = 49;
             this.tileExtTwitch.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileExtTwitch.TileCount = 0;
-            this.tileExtTwitch.Click += new System.EventHandler(MainForm.TileExtTwitch_Click);
+            this.tileExtTwitch.Click += new System.EventHandler(TileExtTwitch_Click);
             // 
             // tileExtDiscord
             // 
@@ -445,7 +464,7 @@ namespace AxTools.Forms
             this.tileExtDiscord.TabIndex = 48;
             this.tileExtDiscord.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileExtDiscord.TileCount = 0;
-            this.tileExtDiscord.Click += new System.EventHandler(MainForm.TileExtDiscord_Click);
+            this.tileExtDiscord.Click += new System.EventHandler(TileExtDiscord_Click);
             // 
             // checkBoxStartTeamspeak3WithWow
             // 
@@ -542,7 +561,7 @@ namespace AxTools.Forms
             this.tileRaidcall.TabIndex = 8;
             this.tileRaidcall.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileRaidcall.TileCount = 0;
-            this.tileRaidcall.Click += new System.EventHandler(MainForm.TileRaidcallClick);
+            this.tileRaidcall.Click += new System.EventHandler(TileRaidcallClick);
             // 
             // tileTeamspeak3
             // 
@@ -559,7 +578,7 @@ namespace AxTools.Forms
             this.tileTeamspeak3.TabIndex = 7;
             this.tileTeamspeak3.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileTeamspeak3.TileCount = 0;
-            this.tileTeamspeak3.Click += new System.EventHandler(MainForm.TileTeamspeak3Click);
+            this.tileTeamspeak3.Click += new System.EventHandler(TileTeamspeak3Click);
             // 
             // tileMumble
             // 
@@ -576,7 +595,7 @@ namespace AxTools.Forms
             this.tileMumble.TabIndex = 6;
             this.tileMumble.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileMumble.TileCount = 0;
-            this.tileMumble.Click += new System.EventHandler(MainForm.TileMumbleClick);
+            this.tileMumble.Click += new System.EventHandler(TileMumbleClick);
             // 
             // tileVentrilo
             // 
@@ -593,7 +612,7 @@ namespace AxTools.Forms
             this.tileVentrilo.TabIndex = 5;
             this.tileVentrilo.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileVentrilo.TileCount = 0;
-            this.tileVentrilo.Click += new System.EventHandler(MainForm.TileVentriloClick);
+            this.tileVentrilo.Click += new System.EventHandler(TileVentriloClick);
             // 
             // metroToolTip1
             // 
@@ -620,9 +639,9 @@ namespace AxTools.Forms
             this.linkPing.Text = "[999ms]::[100%]  |";
             this.linkPing.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.linkPing.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroToolTip1.SetToolTip(this.linkPing, "This is ingame connection info. It\'s formatted as\r\n  [worst ping of the last 10]:" +
-        ":[packet loss in the last 200 seconds]  \r\nLeft-click to clear statistics\r\nRight-" +
-        "click to open pinger settings");
+            this.metroToolTip1.SetToolTip(this.linkPing, "This is in-game connection info. It\'s formatted as\r\n  [worst ping of the last 10]" +
+        "::[packet loss in the last 200 seconds]  \r\nLeft-click to clear statistics\r\nRight" +
+        "-click to open pinger settings");
             this.linkPing.UseStyleColors = true;
             this.linkPing.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LinkPing_MouseDown);
             // 
@@ -729,24 +748,6 @@ namespace AxTools.Forms
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
-            // 
-            // linkUpdatePlugins
-            // 
-            this.linkUpdatePlugins.CustomBackground = false;
-            this.linkUpdatePlugins.CustomForeColor = false;
-            this.linkUpdatePlugins.FontSize = MetroFramework.MetroLinkSize.Small;
-            this.linkUpdatePlugins.FontWeight = MetroFramework.MetroLinkWeight.Bold;
-            this.linkUpdatePlugins.Location = new System.Drawing.Point(303, 111);
-            this.linkUpdatePlugins.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
-            this.linkUpdatePlugins.Name = "linkUpdatePlugins";
-            this.linkUpdatePlugins.Size = new System.Drawing.Size(115, 23);
-            this.linkUpdatePlugins.Style = MetroFramework.MetroColorStyle.Blue;
-            this.linkUpdatePlugins.StyleManager = null;
-            this.linkUpdatePlugins.TabIndex = 84;
-            this.linkUpdatePlugins.Text = "Update plugins";
-            this.linkUpdatePlugins.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.linkUpdatePlugins.UseStyleColors = true;
-            this.linkUpdatePlugins.Click += new System.EventHandler(this.LinkUpdatePlugins_Click);
             // 
             // MainForm
             // 

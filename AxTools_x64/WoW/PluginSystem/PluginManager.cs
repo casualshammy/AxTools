@@ -26,7 +26,7 @@ namespace AxTools.WoW.PluginSystem
         internal static readonly Dictionary<string, int> PluginWoW = new Dictionary<string, int>();
         internal static bool UpdateIsActive { get; set; }
 
-        internal static event Action PluginStateChanged;
+        internal static event Action<IPlugin3> PluginStateChanged;
         internal static event Action PluginsLoaded;
         internal static event Action<IPlugin3> PluginLoaded;
         internal static event Action<IPlugin3> PluginUnloaded;
@@ -119,7 +119,7 @@ namespace AxTools.WoW.PluginSystem
                     {
                         Notify.TrayPopup(nameof(AxTools), "Plug-in <" + plugin.Name + "> is started", NotifyUserType.Info, false, plugin.TrayIcon);
                     }
-                    PluginStateChanged?.Invoke();
+                    PluginStateChanged?.Invoke(plugin);
                 }
             }
         }
@@ -145,7 +145,7 @@ namespace AxTools.WoW.PluginSystem
                         Notify.TrayPopup(nameof(AxTools), "Plug-in <" + plugin.Name + "> is stopped", NotifyUserType.Info, false, plugin.TrayIcon);
                     }
                     _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = false;
-                    PluginStateChanged?.Invoke();
+                    PluginStateChanged?.Invoke(plugin);
                 }
             }
         }

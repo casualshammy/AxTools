@@ -83,6 +83,7 @@ namespace AxTools.Forms
 
         private void SetupControls()
         {
+            pictureBox1.Image = Resources.ApplicationImage;
             checkBoxTwitch.Checked = settings.StartTwitchWithWoW;
             nextBackupTimer = new System.Threading.Timer(delegate
             {
@@ -112,7 +113,7 @@ namespace AxTools.Forms
         {
             isClosing = true;
             // Close all children forms
-            foreach (Form i in Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof(MainForm) && i.GetType() != typeof(MetroFlatDropShadow)))
+            foreach (Form i in Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof(MainForm) && i.GetType() != typeof(MetroFlatDropShadow)).ToArray())
             {
                 i.Close();
             }
@@ -663,7 +664,6 @@ namespace AxTools.Forms
                                 return true;
                         }
                     }
-                    PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plug-ins running: " + PluginManagerEx.RunningPlugins.Count(); });
                     BeginInvoke(new MethodInvoker(RebuildTrayContextMenu));
                 }
                 return newValue;
@@ -726,15 +726,19 @@ namespace AxTools.Forms
             }
         }
 
-        private void PluginManagerOnPluginStateChanged()
+        private void PluginManagerOnPluginStateChanged(IPlugin3 plugin)
         {
-            BeginInvoke((MethodInvoker)RebuildTrayContextMenu);
+            PostInvoke(() => {
+                labelTotalPluginsEnabled.Text = "Plug-ins running: " + PluginManagerEx.RunningPlugins.Count();
+                olvPlugins.RefreshObject(plugin);
+                RebuildTrayContextMenu();
+            });
         }
 
         private void PluginManagerExOnPluginLoaded(IPlugin3 plugin)
         {
             BeginInvoke((MethodInvoker)delegate
-           {
+            {
                var checkMark = Encoding.UTF8.GetString(new byte[] { 0xE2, 0x9C, 0x93 });
                olvColumn2.AspectToStringConverter = value => (bool)value ? checkMark : "";
                olvColumn2.TextAlign = HorizontalAlignment.Center;
@@ -743,7 +747,7 @@ namespace AxTools.Forms
                olvPlugins.BooleanCheckStatePutter = OlvPlugins_BooleanCheckStatePutter;
                RebuildTrayContextMenu();
                labelTotalPluginsEnabled.Text = "Plug-ins running: 0";
-           });
+            });
         }
 
         private void WoWPluginHotkeyChanged()

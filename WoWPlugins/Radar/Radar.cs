@@ -58,8 +58,16 @@ namespace Radar
         {
             Utilities.InvokeInGUIThread(delegate
             {
-                optionsWindow?.Close();
-                actualWindow?.Close();
+                if (actualWindow != null)
+                {
+                    var alreadyClosing = actualWindow.ClosingProcessStarted;
+                    actualWindow.ClosingProcessStarted = true;
+                    if (!alreadyClosing)
+                    {
+                        actualWindow.optionsWindow?.Close();
+                        actualWindow.Close();
+                    }
+                }
             });
         }
 
@@ -70,6 +78,7 @@ namespace Radar
         private readonly GameInterface info;
         private Radar actualWindow;
         private OptionsWindow optionsWindow;
+        private bool ClosingProcessStarted;
 
         private bool processMouseWheelEvents;
 
@@ -708,6 +717,8 @@ namespace Radar
         private void RadarFormClosing(object sender, FormClosingEventArgs e)
         {
             // ReSharper disable once DelegateSubtraction
+            var alreadyClosing = ClosingProcessStarted;
+            ClosingProcessStarted = true;
             settings.List.CollectionChanged -= WoWRadarListChanged;
             this.SaveSettingsJSON(settings);
             whitePen.Dispose();
@@ -736,6 +747,10 @@ namespace Radar
                 this.LogPrint("Redraw task has been successfully ended");
             }
             this.LogPrint("Closed");
+            if (!alreadyClosing)
+            {
+                Utilities.RemovePluginFromRunning(Name);
+            }
         }
 
         private void RadarLoad(object sender, EventArgs e)
