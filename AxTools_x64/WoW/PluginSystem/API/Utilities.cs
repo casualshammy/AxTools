@@ -28,21 +28,21 @@ namespace AxTools.WoW.PluginSystem.API
         public static event Action<IntPtr> AntiAfkActionEmulated;
 
         public static MetroColorStyle MetroColorStyle => Settings2.Instance.StyleColor;
-        public static Random Rnd = new Random(Environment.TickCount + 17);
+        public static readonly Random Rnd = new Random(Environment.TickCount + 17);
 
         /// <summary>
-        /// Makes a record to the log. WoW process name, process id and plugin name are included
+        /// Makes a record to the log. WoW process name, process id and plug-in name are included
         /// </summary>
         /// <param name="plugin"></param>
         /// <param name="text"></param>
         public static void LogPrint(this IPlugin3 plugin, object text)
         {
-            log.Info($"[Plugin: {plugin.Name}] {text}");
+            log.Info($"[Plug-in: {plugin.Name}] {text}");
         }
 
         public static void LogError(this IPlugin3 plugin, object text)
         {
-            log.Error($"[Plugin: {plugin.Name}] {text}");
+            log.Error($"[Plug-in: {plugin.Name}] {text}");
         }
 
         /// <summary>
@@ -65,12 +65,12 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static void SaveSettingsJSON<T>(this IPlugin3 plugin, T data, string path = null) where T : class
         {
-            StringBuilder sb = new StringBuilder(1024);
+            var sb = new StringBuilder(1024);
             using (StringWriter sw = new StringWriter(sb, CultureInfo.InvariantCulture))
             {
                 using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
                 {
-                    JsonSerializer js = new JsonSerializer();
+                    var js = new JsonSerializer();
                     js.Converters.Add(new StringEnumConverter());
                     jsonWriter.Formatting = Formatting.Indented;
                     jsonWriter.IndentChar = ' ';
@@ -78,7 +78,7 @@ namespace AxTools.WoW.PluginSystem.API
                     js.Serialize(jsonWriter, data);
                 }
             }
-            string mySettingsDir = AppFolders.PluginsSettingsDir + "\\" + plugin.Name;
+            var mySettingsDir = AppFolders.PluginsSettingsDir + "\\" + plugin.Name;
             if (!Directory.Exists(mySettingsDir))
             {
                 Directory.CreateDirectory(mySettingsDir);
@@ -88,28 +88,28 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static T LoadSettingsJSON<T>(this IPlugin3 plugin, string path = null) where T : class, new()
         {
-            string mySettingsFile = path ?? $"{AppFolders.PluginsSettingsDir}\\{plugin.Name}\\settings.json";
+            var mySettingsFile = path ?? $"{AppFolders.PluginsSettingsDir}\\{plugin.Name}\\settings.json";
             if (File.Exists(mySettingsFile))
             {
-                string rawText = File.ReadAllText(mySettingsFile, Encoding.UTF8);
+                var rawText = File.ReadAllText(mySettingsFile, Encoding.UTF8);
                 return JsonConvert.DeserializeObject<T>(rawText);
             }
             return new T();
         }
 
-        public static T LoadJSON<T>(this IPlugin3 plugin, string data) where T : class
+        public static T LoadJSON<T>(string data) where T : class
         {
             return JsonConvert.DeserializeObject<T>(data);
         }
 
-        public static string GetJSON<T>(this IPlugin3 plugin, T data) where T : class
+        public static string GetJSON<T>(T data) where T : class
         {
-            StringBuilder sb = new StringBuilder(1024);
+            var sb = new StringBuilder(1024);
             using (StringWriter sw = new StringWriter(sb, CultureInfo.InvariantCulture))
             {
                 using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
                 {
-                    JsonSerializer js = new JsonSerializer();
+                    var js = new JsonSerializer();
                     js.Converters.Add(new StringEnumConverter());
                     jsonWriter.Formatting = Formatting.Indented;
                     jsonWriter.IndentChar = ' ';
@@ -132,10 +132,10 @@ namespace AxTools.WoW.PluginSystem.API
         /// <param name="name"></param>
         public static void AddPluginToRunning(this IPlugin3 callerPlugin, string name)
         {
-            IPlugin3 plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == name);
+            var plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == name);
             if (plugin != null)
             {
-                IPlugin3 activePlugin = PluginManagerEx.RunningPlugins.FirstOrDefault(l => l.Name == name);
+                var activePlugin = PluginManagerEx.RunningPlugins.FirstOrDefault(l => l.Name == name);
                 if (activePlugin == null && WoWProcessManager.Processes.TryGetValue(PluginManagerEx.PluginWoW[callerPlugin.Name], out WowProcess wow))
                 {
                     PluginManagerEx.AddPluginToRunning(plugin, wow);
@@ -149,7 +149,7 @@ namespace AxTools.WoW.PluginSystem.API
         /// <param name="name"></param>
         public static void RemovePluginFromRunning(string name)
         {
-            IPlugin3 plugin = PluginManagerEx.RunningPlugins.FirstOrDefault(l => l.Name == name);
+            var plugin = PluginManagerEx.RunningPlugins.FirstOrDefault(l => l.Name == name);
             if (plugin != null)
             {
                 PluginManagerEx.RemovePluginFromRunning(plugin);
@@ -162,15 +162,15 @@ namespace AxTools.WoW.PluginSystem.API
         }
 
         ///  <summary>
-        /// 
+        ///
         ///  </summary>
         ///  <param name="plugin"></param>
         ///  <param name="text">Any text you want</param>
         ///  <param name="warning">Is it warning or info</param>
         ///  <param name="sound">Play sound</param>
-        ///  <param name="timeout">Time in seconds before popup disappears</param>
+        ///  <param name="timeout">Time in seconds before pop-up disappears</param>
         /// <param name="onClick"></param>
-        public static void ShowNotify(this IPlugin3 plugin, string text, bool warning, bool sound, int timeout = 10, EventHandler onClick = null)
+        public static void ShowNotify(this IPlugin3 plugin, string text, bool warning, bool sound, int timeout = 10, MouseEventHandler onClick = null)
         {
             Notify.TrayPopup("[" + plugin.Name + "]", text, warning ? NotifyUserType.Warn : NotifyUserType.Info, sound, plugin.TrayIcon, timeout, onClick);
         }

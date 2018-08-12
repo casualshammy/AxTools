@@ -244,7 +244,7 @@ namespace Radar
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string rawText = File.ReadAllText(openFileDialog.FileName, Encoding.UTF8);
-                    ObservableCollection<RadarObject> o = Utilities.LoadJSON<ObservableCollection<RadarObject>>(radar, rawText); ;
+                    ObservableCollection<RadarObject> o = Utilities.LoadJSON<ObservableCollection<RadarObject>>(rawText);
                     settings.List.Clear();
                     foreach (RadarObject radarObject in o)
                     {
@@ -265,7 +265,7 @@ namespace Radar
                 saveFileDialog.AddExtension = true;
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string json = radar.GetJSON(settings.List);
+                    string json = Utilities.GetJSON(settings.List);
                     File.WriteAllText(saveFileDialog.FileName, json, Encoding.UTF8);
                 }
             }

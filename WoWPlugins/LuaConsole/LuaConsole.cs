@@ -35,7 +35,7 @@ namespace LuaConsole
 
         #region IPlugin3 info
 
-        public new string Name => "LuaConsole";
+        public new string Name => nameof(LuaConsole);
 
         public bool ConfigAvailable => false;
 
@@ -114,7 +114,7 @@ namespace LuaConsole
                 }
                 helpInfo += "Keys[] is a table containing .Net Windows.Forms.Keys enum values\r\n\r\n";
                 // Moving
-                luaEngine.RegisterFunction("Move2D", this, GetType().GetMethod("Move2D"));
+                luaEngine.RegisterFunction(nameof(Move2D), this, GetType().GetMethod(nameof(Move2D)));
                 helpInfo += "void Move2D(table points) - something like { {[\"X\"] = 5673.50244, [\"Y\"] = 4510.01953, [\"Z\"] = 125.027237}, {[\"X\"] = 5680.97363, [\"Y\"] = 4487.585,   [\"Z\"] = 130.122177} }\r\n";
                 // game
                 luaEngine.RegisterFunction("UseItemByID", info, typeof(GameInterface).GetMethod("UseItemByID"));
@@ -130,47 +130,47 @@ namespace LuaConsole
                 luaEngine.RegisterFunction("SendToChat", info, typeof(GameInterface).GetMethod("SendToChat"));
                 helpInfo += "void SendToChat(string command)\r\n";
                 // Info
-                luaEngine.RegisterFunction("IsInGame", this, GetType().GetMethod("IsInGame"));
+                luaEngine.RegisterFunction(nameof(IsInGame), this, GetType().GetMethod(nameof(IsInGame)));
                 helpInfo += "bool IsInGame()\r\n";
-                luaEngine.RegisterFunction("IsLoadingScreenVisible", this, GetType().GetMethod("IsLoadingScreenVisible"));
+                luaEngine.RegisterFunction(nameof(IsLoadingScreenVisible), this, GetType().GetMethod(nameof(IsLoadingScreenVisible)));
                 helpInfo += "bool IsLoadingScreenVisible()\r\n";
-                luaEngine.RegisterFunction("MouseoverGUID", this, GetType().GetMethod("MouseoverGUID"));
+                luaEngine.RegisterFunction(nameof(MouseoverGUID), this, GetType().GetMethod(nameof(MouseoverGUID)));
                 helpInfo += "string MouseoverGUID()\r\n";
-                luaEngine.RegisterFunction("IsSpellKnown", this, GetType().GetMethod("IsSpellKnown"));
+                luaEngine.RegisterFunction(nameof(IsSpellKnown), this, GetType().GetMethod(nameof(IsSpellKnown)));
                 helpInfo += "bool IsSpellKnown(double spellID)\r\n";
-                luaEngine.RegisterFunction("IsLooting", this, GetType().GetMethod("IsLooting"));
+                luaEngine.RegisterFunction(nameof(IsLooting), this, GetType().GetMethod(nameof(IsLooting)));
                 helpInfo += "bool IsLooting()\r\n";
-                luaEngine.RegisterFunction("ZoneID", this, GetType().GetMethod("ZoneID"));
+                luaEngine.RegisterFunction(nameof(ZoneID), this, GetType().GetMethod(nameof(ZoneID)));
                 helpInfo += "double ZoneID()\r\n";
-                luaEngine.RegisterFunction("ZoneText", this, GetType().GetMethod("ZoneText"));
+                luaEngine.RegisterFunction(nameof(ZoneText), this, GetType().GetMethod(nameof(ZoneText)));
                 helpInfo += "string ZoneText()\r\n";
-                luaEngine.RegisterFunction("Lua_GetValue", this, GetType().GetMethod("Lua_GetValue"));
+                luaEngine.RegisterFunction(nameof(Lua_GetValue), this, GetType().GetMethod(nameof(Lua_GetValue)));
                 helpInfo += "string Lua_GetValue(string func)\r\n";
-                luaEngine.RegisterFunction("Lua_IsTrue", this, GetType().GetMethod("Lua_IsTrue"));
+                luaEngine.RegisterFunction(nameof(Lua_IsTrue), this, GetType().GetMethod(nameof(Lua_IsTrue)));
                 helpInfo += "bool Lua_IsTrue(string condition)\r\n";
                 // Objects
-                luaEngine.RegisterFunction("GetLocalPlayer", this, GetType().GetMethod("GetLocalPlayer"));
+                luaEngine.RegisterFunction(nameof(GetLocalPlayer), this, GetType().GetMethod(nameof(GetLocalPlayer)));
                 helpInfo += "uservalue WoWPlayerMe GetLocalPlayer()\r\n";
-                luaEngine.RegisterFunction("GetNpcs", this, GetType().GetMethod("GetNpcs"));
+                luaEngine.RegisterFunction(nameof(GetNpcs), this, GetType().GetMethod(nameof(GetNpcs)));
                 helpInfo += "double, uservalue List<WowNpc> GetNpcs()\r\n";
-                luaEngine.RegisterFunction("GetPlayers", this, GetType().GetMethod("GetPlayers"));
+                luaEngine.RegisterFunction(nameof(GetPlayers), this, GetType().GetMethod(nameof(GetPlayers)));
                 helpInfo += "double, uservalue List<WowPlayer> GetPlayers()\r\n";
-                luaEngine.RegisterFunction("GetObjects", this, GetType().GetMethod("GetObjects"));
+                luaEngine.RegisterFunction(nameof(GetObjects), this, GetType().GetMethod(nameof(GetObjects)));
                 helpInfo += "double, uservalue List<WowObject> GetObjects()\r\n";
-                luaEngine.RegisterFunction("GetTargetObject", this, GetType().GetMethod("GetTargetObject"));
+                luaEngine.RegisterFunction(nameof(GetTargetObject), this, GetType().GetMethod(nameof(GetTargetObject)));
                 helpInfo += "uservalue dynamic GetTargetObject()\r\n";
-                // utils
-                luaEngine.RegisterFunction("MsgBox", this, GetType().GetMethod("MsgBox"));
-                helpInfo += "viod MsgBox(object text)\r\n";
+                // utilities
+                luaEngine.RegisterFunction(nameof(MsgBox), this, GetType().GetMethod(nameof(MsgBox)));
+                helpInfo += "void MsgBox(object text)\r\n";
                 luaEngine.RegisterFunction("PressKey", info, info.GetType().GetMethod("PressKey"));
                 helpInfo += "void PressKey(int key)\r\n";
-                luaEngine.RegisterFunction("Log", this, GetType().GetMethod("Log"));
+                luaEngine.RegisterFunction(nameof(Log), this, GetType().GetMethod(nameof(Log)));
                 helpInfo += "void Log(object text)\r\n";
-                luaEngine.RegisterFunction("Wait", this, GetType().GetMethod("Wait"));
+                luaEngine.RegisterFunction(nameof(Wait), this, GetType().GetMethod(nameof(Wait)));
                 helpInfo += "void Wait(double ms) - this method contains call to StopExecutionIfCancellationRequested()\r\n";
-                luaEngine.RegisterFunction("NotifyUser", this, GetType().GetMethod("NotifyUser"));
+                luaEngine.RegisterFunction(nameof(NotifyUser), this, GetType().GetMethod(nameof(NotifyUser)));
                 helpInfo += "void NotifyUser(object text)\r\n";
-                luaEngine.RegisterFunction("StopExecutionIfCancellationRequested", this, GetType().GetMethod("StopExecutionIfCancellationRequested"));
+                luaEngine.RegisterFunction(nameof(StopExecutionIfCancellationRequested), this, GetType().GetMethod(nameof(StopExecutionIfCancellationRequested)));
                 helpInfo += "bool StopExecutionIfCancellationRequested()\r\n";
                 // lua lib
                 luaEngine.DoString("format=string.format;");
@@ -190,7 +190,7 @@ namespace LuaConsole
 
         public void Move2D(NLua.LuaTable points)
         {
-            dynamic libNavigator = Utilities.GetReferenceOfPlugin("LibNavigator");
+            var libNavigator = Utilities.GetReferenceOfPlugin("LibNavigator");
             // 'Convert.ToSingle' - okay, cast to 'float' - not okay
             libNavigator.GoPath(points.Values.Cast<NLua.LuaTable>().Select(l => new WowPoint(Convert.ToSingle(l["X"]), Convert.ToSingle(l["Y"]), Convert.ToSingle(l["Z"]))).ToArray(),
                 3f, info);
@@ -275,19 +275,19 @@ namespace LuaConsole
 
         public dynamic GetTargetObject()
         {
-            List<WowNpc> npcs = new List<WowNpc>();
-            List<WowPlayer> players = new List<WowPlayer>();
-            WoWPlayerMe me = info.GetGameObjects(null, players, npcs);
+            var npcs = new List<WowNpc>();
+            var players = new List<WowPlayer>();
+            var me = info.GetGameObjects(null, players, npcs);
             if (me != null)
             {
-                WowNpc npc = npcs.FirstOrDefault(l => l.GUID == me.TargetGUID);
+                var npc = npcs.FirstOrDefault(l => l.GUID == me.TargetGUID);
                 if (npc != null)
                 {
                     return npc;
                 }
                 else
                 {
-                    WowPlayer player = players.FirstOrDefault(l => l.GUID == me.TargetGUID);
+                    var player = players.FirstOrDefault(l => l.GUID == me.TargetGUID);
                     if (player != null)
                     {
                         return player;
@@ -299,7 +299,7 @@ namespace LuaConsole
 
         #endregion Wrappers - Objects
 
-        #region Wrappers - Utils
+        #region Wrappers - Utilities
 
         public void MsgBox(object text)
         {
@@ -313,8 +313,8 @@ namespace LuaConsole
 
         public void Wait(double ms)
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            int time = (int)ms;
+            var stopwatch = Stopwatch.StartNew();
+            var time = (int)ms;
             while (time > 0)
             {
                 Thread.Sleep(Math.Min(time, 100));
@@ -326,17 +326,17 @@ namespace LuaConsole
 
         public void NotifyUser(object text, bool warning, bool sound)
         {
-            Utilities.ShowNotify(this, text.ToString(), warning, sound);
+            this.ShowNotify(text.ToString(), warning, sound);
         }
 
         public bool StopExecutionIfCancellationRequested()
         {
             if (LuaCancellationRequested)
-                throw new Exception(LUA_CANCELLATION_MSG);
+                throw new OperationCanceledException(LUA_CANCELLATION_MSG);
             return true;
         }
 
-        #endregion Wrappers - Utils
+        #endregion Wrappers - Utilities
 
         private void SwitchTimer()
         {
@@ -411,7 +411,7 @@ namespace LuaConsole
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {
-                    string text = File.ReadAllText(p.FileName, Encoding.UTF8);
+                    var text = File.ReadAllText(p.FileName, Encoding.UTF8);
                     ParseLuaScript(text);
                     textBoxLuaCode.Invalidate(true);
                 }
@@ -432,8 +432,8 @@ namespace LuaConsole
 
         private void ParseLuaScript(string text)
         {
-            Regex regex = new Regex("----- Interval=(\\d+)\r\n(.+)$", RegexOptions.Singleline);
-            Match match = regex.Match(text);
+            var regex = new Regex("----- Interval=(\\d+)\r\n(.+)$", RegexOptions.Singleline);
+            var match = regex.Match(text);
             if (match.Success)
             {
                 luaConsoleSettings.TimerInterval = Convert.ToInt32(match.Groups[1].Value);
@@ -506,12 +506,11 @@ namespace LuaConsole
                 {
                     if (!info.IsInGame)
                     {
-                        new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
+                        new TaskDialog("Error!", nameof(AxTools), "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                         return;
                     }
-                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    var stopwatch = Stopwatch.StartNew();
                     metroLinkRunScriptOnce.Text = MetroLinkRunScriptOnceStop;
-                    //metroLinkRunScriptOnce.Enabled = false;
                     Task.Run(() =>
                     {
                         try
@@ -555,22 +554,23 @@ namespace LuaConsole
                 labelRequestTime.Visible = false;
                 if (!info.IsInGame)
                 {
-                    new TaskDialog("Error!", "AxTools", "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
+                    new TaskDialog("Error!", nameof(AxTools), "Player isn't logged in", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                     return;
                 }
                 if (!int.TryParse(metroTextBoxTimerInterval.Text, out luaConsoleSettings.TimerInterval) || luaConsoleSettings.TimerInterval < 50)
                 {
-                    TaskDialog.Show("Incorrect input!", "AxTools", "Interval must be a number more or equal 50", TaskDialogButton.OK, TaskDialogIcon.Warning);
+                    TaskDialog.Show("Incorrect input!", nameof(AxTools), "Interval must be a number more or equal 50", TaskDialogButton.OK, TaskDialogIcon.Warning);
                     return;
                 }
                 if (textBoxLuaCode.Text.Trim().Length == 0)
                 {
-                    new TaskDialog("Error!", "AxTools", "Script is empty", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
+                    new TaskDialog("Error!", nameof(AxTools), "Script is empty", TaskDialogButton.OK, TaskDialogIcon.Stop).Show(this);
                     return;
                 }
                 SetupTimerControls(true);
                 LuaCancellationRequested = false;
-                (safeTimer = this.CreateTimer(luaConsoleSettings.TimerInterval, info, TimerLuaElapsed)).Start();
+                safeTimer = this.CreateTimer(luaConsoleSettings.TimerInterval, info, TimerLuaElapsed);
+                safeTimer.Start();
                 NotifyUser("Timer is started", false, false);
                 this.LogPrint("Timer enabled");
             }
@@ -600,7 +600,7 @@ namespace LuaConsole
                 }
                 else
                 {
-                    KeyExt key = new KeyExt(e.KeyCode, e.Alt, e.Shift, e.Control);
+                    var key = new KeyExt(e.KeyCode, e.Alt, e.Shift, e.Control);
                     textBoxTimerHotkey.Text = key.ToString();
                     HotkeyManager.RemoveKeys(typeof(LuaConsole).ToString());
                     luaConsoleSettings.TimerHotkey = key;
@@ -629,7 +629,8 @@ namespace LuaConsole
         {
             Utilities.InvokeInGUIThread(delegate
             {
-                (actualWindow = new LuaConsole(game)).Show();
+                actualWindow = new LuaConsole(game);
+                actualWindow.Show();
             });
         }
 

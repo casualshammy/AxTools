@@ -6,7 +6,6 @@ namespace LibSMS
 {
     public partial class SettingsForm : Form
     {
-        //private static LibSMS plugin;
         private const int CP_NOCLOSE_BUTTON = 0x200;
 
         private Settings settings;

@@ -1,5 +1,4 @@
 ﻿using AxTools.Helpers;
-
 using AxTools.Services;
 using AxTools.Services.PingerHelpers;
 using AxTools.Updater;
@@ -28,7 +27,7 @@ namespace AxTools.Forms
 {
     internal partial class MainForm : BorderedMetroForm
     {
-        internal static MainForm Instance;
+        internal static MainForm Instance { get; private set; }
         internal MultiLock WoWLaunchLock = new MultiLock();
         private bool isClosing;
         private readonly Settings2 settings = Settings2.Instance;
@@ -37,6 +36,7 @@ namespace AxTools.Forms
 
         internal MainForm()
         {
+            Instance = this;
             log.Info("Initializing main window...");
             InitializeComponent();
             StyleManager.Style = Settings2.Instance.StyleColor;
@@ -78,7 +78,7 @@ namespace AxTools.Forms
 
         private void SetTooltips()
         {
-            metroToolTip1.SetToolTip(buttonStartStopPlugin, "Click this button to set up individual hotkey for each plugin");
+            metroToolTip1.SetToolTip(buttonStartStopPlugin, "Click this button to set up individual hotkey for each plug-in");
         }
 
         private void SetupControls()
@@ -86,7 +86,7 @@ namespace AxTools.Forms
             checkBoxTwitch.Checked = settings.StartTwitchWithWoW;
             nextBackupTimer = new System.Threading.Timer(delegate
             {
-                TimeSpan duration = new TimeSpan(settings.WoWAddonsBackupMinimumTimeBetweenBackup, 0, 0) - (DateTime.UtcNow - settings.WoWAddonsBackupLastDate);
+                var duration = new TimeSpan(settings.WoWAddonsBackupMinimumTimeBetweenBackup, 0, 0) - (DateTime.UtcNow - settings.WoWAddonsBackupLastDate);
                 menuItemNextBackupTime.Text = duration.Ticks <= 0 ? "Backup is running or deferred" : $"Next backup in {duration:%d} day(s), {duration:hh\\:mm\\:ss}";
             }, null, 0, 1000);
         }
@@ -112,8 +112,7 @@ namespace AxTools.Forms
         {
             isClosing = true;
             // Close all children forms
-            Form[] forms = Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof(MainForm) && i.GetType() != typeof(MetroFlatDropShadow)).ToArray();
-            foreach (Form i in forms)
+            foreach (Form i in Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof(MainForm) && i.GetType() != typeof(MetroFlatDropShadow)))
             {
                 i.Close();
             }
@@ -126,8 +125,7 @@ namespace AxTools.Forms
             AddonsBackup.ProgressPercentageChanged -= AddonsBackup_ProgressPercentageChanged;
             //
             settings.MainWindowLocation = Location;
-            //save settings
-            settings.SaveJSON();
+            Settings2.SaveJSON();
             //
             Clicker.Stop();
             //stop timers
@@ -155,29 +153,30 @@ namespace AxTools.Forms
         private void MainForm_Resize(object sender, EventArgs e)
         {
             if (settings.MinimizeToTray && WindowState == FormWindowState.Minimized)
-            {
                 Hide();
-            }
         }
 
         private async void AfterInitializingAsync()
         {
-            Task pluginsLoader = PluginManagerEx.LoadPluginsAsync();    // start loading plugins
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            PluginManagerEx.LoadPluginsAsync();                         // start loading plug-ins
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Location = settings.MainWindowLocation;                     // should do it here...
             OnActivated(EventArgs.Empty);                               // ...and calling OnActivated is necessary
-            // form is visible, placing overlay
-            WaitingOverlay startupOverlay = new WaitingOverlay(this, "Load WoW accounts...", settings.StyleColor).Show();
-            WoWAccounts_CollectionChanged(null, null);                  // initial load wowaccounts
+            var startupOverlay = new WaitingOverlay(this, "Load WoW accounts...", settings.StyleColor).Show(); // form is visible, placing overlay
+            WoWAccounts_CollectionChanged(null, null);                  // initial load wow accounts
             // searching for wow client
             startupOverlay.Label = "Looking for WoW client...";
             await Task.Run((Action)CheckWoWDirectoryIsValid);
+            // check if it's time to update plug-ins
+            CheckIfPluginsAreOutdated();
             // styling, events attaching...
             checkBoxStartVenriloWithWow.Checked = settings.VentriloStartWithWoW;
             checkBoxStartTeamspeak3WithWow.Checked = settings.TS3StartWithWoW;
             checkBoxStartRaidcallWithWow.Checked = settings.RaidcallStartWithWoW;
             checkBoxStartMumbleWithWow.Checked = settings.MumbleStartWithWoW;
             // end of styling, events attaching...
-            startupOverlay.Label = "Starting addons backup service...";
+            startupOverlay.Label = "Starting add-ons backup service...";
             AddonsBackup.StartService();                                // start backup service
             startupOverlay.Label = "Starting pinger...";
             Pinger.Enabled = settings.PingerServerID != 0;              // set pinger
@@ -185,9 +184,7 @@ namespace AxTools.Forms
             await Task.Run((Action)WoWProcessManager.StartWatcher);     // start WoW spy
             startupOverlay.Label = "Setting tray animation...";
             TrayIconAnimation.Initialize(notifyIconMain);               // initialize tray animation
-            //startupOverlay.Label = "Waiting for plug-ins...";
-            //await pluginsLoader;                                      // waiting for plugins to be loaded
-            startupOverlay.Close();                                     // close startup overkay
+            startupOverlay.Close();                                   // close startup overlay
             Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
             UpdaterService.Start();                                     // start updater service
             log.Info("All start-up routines are finished");             // situation normal :)
@@ -195,7 +192,7 @@ namespace AxTools.Forms
 
         private void LinkSettings_Click(object sender, EventArgs e)
         {
-            AppSettings appSettings = Utils.FindForms<AppSettings>().FirstOrDefault();
+            var appSettings = Utils.FindForms<AppSettings>().FirstOrDefault();
             if (appSettings != null)
             {
                 appSettings.Activate();
@@ -226,7 +223,7 @@ namespace AxTools.Forms
                     break;
 
                 case MouseButtons.Right:
-                    int pingerTabPageIndex = 5;
+                    const int pingerTabPageIndex = 5;
                     new AppSettings(pingerTabPageIndex).ShowDialog(this);
                     break;
             }
@@ -247,6 +244,17 @@ namespace AxTools.Forms
             }
         }
 
+        private void CheckIfPluginsAreOutdated()
+        {
+            if ((DateTime.UtcNow - settings.PluginsLastTimeUpdated).TotalDays > 7)
+                Notify.TrayPopup("Your plug-ins may be outdated", "Would you like to update all plug-ins?", NotifyUserType.Warn, false, null, 10, (s, arg) => {
+                    if (arg.Button == MouseButtons.Left)
+                        InvokeOnClick(linkUpdatePlugins, EventArgs.Empty);
+                    else
+                        settings.PluginsLastTimeUpdated = DateTime.UtcNow - new TimeSpan(6, 0, 0, 0); // user will be notified after 24 hours
+                });
+        }
+
         #endregion MainFormEvents
 
         #region TrayContextMenu
@@ -256,59 +264,57 @@ namespace AxTools.Forms
             foreach (ToolStripItem item in contextMenuStripMain.Items.GetAllToolStripItems().ToArray())
                 item.Dispose();
             contextMenuStripMain.Items.Clear();
-            IPlugin3[] sortedPlugins = PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray();
-            IPlugin3[] topUsedPlugins = sortedPlugins.Take(3).ToArray();
+            var sortedPlugins = PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray();
+            var topUsedPlugins = sortedPlugins.Take(3).ToArray();
             foreach (IPlugin3 i in topUsedPlugins)
             {
-                IPlugin3 plugin = i;
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
+                var plugin = i;
+                var toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
                 toolStripMenuItem.MouseDown += delegate (object sender, MouseEventArgs args)
                 {
                     if (args.Button == MouseButtons.Left) olvPlugins.CheckObject(plugin);
                     else if (plugin.ConfigAvailable) plugin.OnConfig();
                     contextMenuStripMain.Hide();
                 };
-                toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start this plugin\r\nRight click to open settings" : "Left click to start this plugin";
+                toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start this plug-in\r\nRight click to open settings" : "Left click to start this plug-in";
                 toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name] + "]" : null;
                 toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
-            if (sortedPlugins.Length > topUsedPlugins.Length)
+            if (sortedPlugins.Length > topUsedPlugins.Length && contextMenuStripMain.Items.Add("Other plug-ins") is ToolStripMenuItem customPlugins)
             {
-                if (contextMenuStripMain.Items.Add("Other plugins") is ToolStripMenuItem customPlugins)
+                foreach (IPlugin3 i in sortedPlugins.Where(i => !topUsedPlugins.Select(l => l.Name).Contains(i.Name)))
                 {
-                    foreach (IPlugin3 i in sortedPlugins.Where(i => !topUsedPlugins.Select(l => l.Name).Contains(i.Name)))
+                    var plugin = i;
+                    try
                     {
-                        IPlugin3 plugin = i;
-                        try
+                        var toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
+                        toolStripMenuItem.MouseDown += delegate (object sender, MouseEventArgs args)
                         {
-                            ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
-                            toolStripMenuItem.MouseDown += delegate (object sender, MouseEventArgs args)
-                            {
-                                if (args.Button == MouseButtons.Left) olvPlugins.CheckObject(plugin);
-                                else if (plugin.ConfigAvailable) plugin.OnConfig();
-                                contextMenuStripMain.Hide();
-                            };
-                            toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start this plugin\r\nRight click to open settings" : "Left click to start this plugin";
-                            toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name] + "]" : null;
-                            toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
-                            customPlugins.DropDownItems.Add(toolStripMenuItem);
-                        }
-                        catch (Exception ex)
-                        {
-                            log.Error($"Error occured while building tray icon for plugin <{plugin.Name}>: {ex.Message}");
-                        }
+                            if (args.Button == MouseButtons.Left) olvPlugins.CheckObject(plugin);
+                            else if (plugin.ConfigAvailable) plugin.OnConfig();
+                            contextMenuStripMain.Hide();
+                        };
+                        toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start this plug-in\r\nRight click to open settings" : "Left click to start this plug-in";
+                        toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name] + "]" : null;
+                        toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
+                        customPlugins.DropDownItems.Add(toolStripMenuItem);
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error($"Error occurred while building tray icon for plug-in <{plugin.Name}>: {ex.Message}");
                     }
                 }
             }
-            ToolStripMenuItem launchWoW = new ToolStripMenuItem("World of Warcraft", null, delegate
+
+            var launchWoW = new ToolStripMenuItem("World of Warcraft", null, delegate
             {
                 contextMenuStripMain.Hide();
                 StartWoW();
             }, "World of Warcraft");
             foreach (WoWAccount2 wowAccount in WoWAccount2.AllAccounts)
             {
-                WoWAccount2 account = wowAccount;
+                var account = wowAccount;
                 launchWoW.DropDownItems.Add(new ToolStripMenuItem(wowAccount.GetLogin(), null, delegate
                 {
                     StartWoW(account);
@@ -317,7 +323,7 @@ namespace AxTools.Forms
             contextMenuStripMain.Items.Add(new ToolStripSeparator());
             contextMenuStripMain.Items.Add(launchWoW);
             contextMenuStripMain.Items.Add(new ToolStripSeparator());
-            contextMenuStripMain.Items.Add(new ToolStripMenuItem("Exit", AxTools.Helpers.Resources.Close, (o, e) =>
+            contextMenuStripMain.Items.Add(new ToolStripMenuItem("Exit", Resources.Close, (o, e) =>
             {
                 if (!isClosing)
                 {
@@ -336,7 +342,7 @@ namespace AxTools.Forms
             new WaitingOverlay(this, "Please wait...", settings.StyleColor, 1000).Show();
             if (File.Exists(settings.WoWDirectory + "\\Wow.exe"))
             {
-                Process process = Process.Start(new ProcessStartInfo
+                var process = Process.Start(new ProcessStartInfo
                 {
                     WorkingDirectory = settings.WoWDirectory,
                     FileName = settings.WoWDirectory + "\\Wow.exe",
@@ -352,9 +358,9 @@ namespace AxTools.Forms
             }
         }
 
-        private async void CmbboxAccSelectSelectedIndexChanged(object sender, EventArgs e)
+        private async void CmbboxAccSelectSelectedIndexChangedAsync(object sender, EventArgs e)
         {
-            WaitingOverlay overlay = new WaitingOverlay(this, "Waiting for background tasks (60 sec)", settings.StyleColor).Show();
+            var overlay = new WaitingOverlay(this, "Waiting for background tasks (60 sec)", settings.StyleColor).Show();
             // wait 60 sec
             await WoWLaunchLock.WaitForLocksAsync(1000 * 60);
             overlay.Close();
@@ -403,7 +409,7 @@ namespace AxTools.Forms
             }
             else
             {
-                ClickerSettings clickerSettings = Utils.FindForms<ClickerSettings>().FirstOrDefault();
+                var clickerSettings = Utils.FindForms<ClickerSettings>().FirstOrDefault();
                 if (clickerSettings == null)
                 {
                     new ClickerSettings().Show(this);
@@ -428,7 +434,7 @@ namespace AxTools.Forms
 
         private void ToolStripMenuItemDeployArchive_Click(object sender, EventArgs e)
         {
-            AddonsBackupDeploy form = Utils.FindForms<AddonsBackupDeploy>().FirstOrDefault();
+            var form = Utils.FindForms<AddonsBackupDeploy>().FirstOrDefault();
             if (form != null)
             {
                 form.ActivateBrutal();
@@ -467,73 +473,73 @@ namespace AxTools.Forms
 
         #region Tab: VoIP
 
-        private void TileVentriloClick(object sender, EventArgs e)
+        private static void TileVentriloClick(object sender, EventArgs e)
         {
             try
             {
                 VoIP.StartVoIPClient("Ventrilo");
             }
-            catch
+            catch (Exception)
             {
                 Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
             }
         }
 
-        private void TileRaidcallClick(object sender, EventArgs e)
+        private static void TileRaidcallClick(object sender, EventArgs e)
         {
             try
             {
                 VoIP.StartVoIPClient("Raidcall");
             }
-            catch
+            catch (Exception)
             {
                 Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
             }
         }
 
-        private void TileTeamspeak3Click(object sender, EventArgs e)
+        private static void TileTeamspeak3Click(object sender, EventArgs e)
         {
             try
             {
                 VoIP.StartVoIPClient("Teamspeak 3");
             }
-            catch
+            catch (Exception)
             {
                 Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
             }
         }
 
-        private void TileMumbleClick(object sender, EventArgs e)
+        private static void TileMumbleClick(object sender, EventArgs e)
         {
             try
             {
                 VoIP.StartVoIPClient("Mumble");
             }
-            catch
+            catch (Exception)
             {
                 Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
             }
         }
 
-        private void TileExtDiscord_Click(object sender, EventArgs e)
+        private static void TileExtDiscord_Click(object sender, EventArgs e)
         {
             try
             {
                 VoIP.StartVoIPClient("Discord");
             }
-            catch
+            catch (Exception)
             {
                 Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
             }
         }
 
-        private void TileExtTwitch_Click(object sender, EventArgs e)
+        private static void TileExtTwitch_Click(object sender, EventArgs e)
         {
             try
             {
                 VoIP.StartVoIPClient("Twitch");
             }
-            catch
+            catch (Exception)
             {
                 Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
             }
@@ -567,10 +573,10 @@ namespace AxTools.Forms
         #endregion Tab: VoIP
 
         #region Tab: Plug-ins
-        
-        private void ButtonStartStopPlugin_Click(object sender, EventArgs e)
+
+        private static void ButtonStartStopPlugin_Click(object sender, EventArgs e)
         {
-            MainForm_PluginHotkeys form = Utils.FindForms<MainForm_PluginHotkeys>().FirstOrDefault();
+            var form = Utils.FindForms<MainForm_PluginHotkeys>().FirstOrDefault();
             if (form == null)
             {
                 new MainForm_PluginHotkeys(PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray()).Show();
@@ -581,7 +587,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void ObjectListView1_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
+        private static void ObjectListView1_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
         {
             if (e.Model is IPlugin3 plugin)
             {
@@ -604,17 +610,17 @@ namespace AxTools.Forms
                     }
                     else
                     {
-                        this.TaskDialog(plugin.Name, "This plugin hasn't settings dialog", NotifyUserType.Info);
+                        this.TaskDialog(plugin.Name, "This plug-in hasn't settings dialog", NotifyUserType.Info);
                     }
                 }
                 else
                 {
-                    this.TaskDialog(plugin.Name, "Unable to edit settings of running plugin", NotifyUserType.Info);
+                    this.TaskDialog(plugin.Name, "Unable to edit settings of running plug-in", NotifyUserType.Info);
                 }
             }
         }
 
-        private bool OlvPlugins_BooleanCheckStateGetter(object rowObject)
+        private static bool OlvPlugins_BooleanCheckStateGetter(object rowObject)
         {
             if (rowObject is IPlugin3 plugin)
             {
@@ -632,7 +638,7 @@ namespace AxTools.Forms
                 {
                     if (newValue)
                     {
-                        WowProcess process = WoWManager.GetProcess();
+                        var process = WoWManager.GetProcess();
                         if (process != null)
                         {
                             if (!PluginManagerEx.RunningPlugins.Contains(plugin))
@@ -641,14 +647,14 @@ namespace AxTools.Forms
                             }
                             else
                             {
-                                this.TaskDialog("Plugin Manager", "You can't launch multiple instances of the same plug-in", NotifyUserType.Error);
+                                this.TaskDialog("Plug-in Manager", "You can't launch multiple instances of the same plug-in", NotifyUserType.Error);
                                 return false;
                             }
                         }
                     }
                     else
                     {
-                        WowProcess process = WoWManager.GetProcess();
+                        var process = WoWManager.GetProcess();
                         if (process != null)
                         {
                             if (PluginManagerEx.RunningPlugins.Contains(plugin))
@@ -657,7 +663,7 @@ namespace AxTools.Forms
                                 return true;
                         }
                     }
-                    PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plugins running: " + PluginManagerEx.RunningPlugins.Count(); });
+                    PostInvoke(() => { labelTotalPluginsEnabled.Text = "Plug-ins running: " + PluginManagerEx.RunningPlugins.Count(); });
                     BeginInvoke(new MethodInvoker(RebuildTrayContextMenu));
                 }
                 return newValue;
@@ -668,14 +674,14 @@ namespace AxTools.Forms
             }
         }
 
-        private void LinkDownloadPlugins_Click(object sender, EventArgs e)
+        private static void LinkDownloadPlugins_Click(object sender, EventArgs e)
         {
             Process.Start(Globals.PluginsURL);
         }
 
         private void LinkUpdatePlugins_Click(object sender, EventArgs e)
         {
-            TaskDialog taskDialog = new TaskDialog("Do you really want to update all plugins?", "AxTools", "AxTools will be restarted", TaskDialogButton.Yes | TaskDialogButton.No, TaskDialogIcon.Warning);
+            var taskDialog = new TaskDialog("Do you really want to update all plug-ins?", nameof(AxTools), "AxTools will be restarted", TaskDialogButton.Yes | TaskDialogButton.No, TaskDialogIcon.Warning);
             if (taskDialog.Show(this).CommonButton == Result.Yes)
             {
                 Program.Exit += delegate { Process.Start(Application.StartupPath + "\\AxTools.exe", "-update-plugins"); };
@@ -705,17 +711,16 @@ namespace AxTools.Forms
                 cmbboxAccSelect.Enabled = false;
             }
 
-            ToolStripItem[] items = contextMenuStripMain.Items.Find("World of Warcraft", false);
+            var items = contextMenuStripMain.Items.Find("World of Warcraft", false);
             if (items.Length > 0)
             {
-                ToolStripMenuItem launchWoW = (ToolStripMenuItem)items[0];
+                var launchWoW = (ToolStripMenuItem)items[0];
                 launchWoW.DropDownItems.Cast<ToolStripMenuItem>().ToList().ForEach(l => l.Dispose());
                 foreach (WoWAccount2 wowAccount in WoWAccount2.AllAccounts)
                 {
-                    WoWAccount2 account = wowAccount;
-                    launchWoW.DropDownItems.Add(new ToolStripMenuItem(account.GetLogin(), null, delegate
+                    launchWoW.DropDownItems.Add(new ToolStripMenuItem(wowAccount.GetLogin(), null, delegate
                     {
-                        StartWoW(account);
+                        StartWoW(wowAccount);
                     }));
                 }
             }
@@ -730,14 +735,14 @@ namespace AxTools.Forms
         {
             BeginInvoke((MethodInvoker)delegate
            {
-               string checkMark = Encoding.UTF8.GetString(new byte[] { 0xE2, 0x9C, 0x93 });
+               var checkMark = Encoding.UTF8.GetString(new byte[] { 0xE2, 0x9C, 0x93 });
                olvColumn2.AspectToStringConverter = value => (bool)value ? checkMark : "";
                olvColumn2.TextAlign = HorizontalAlignment.Center;
                olvPlugins.SetObjects(PluginManagerEx.GetSortedByUsageListOfPlugins());
                olvPlugins.BooleanCheckStateGetter = OlvPlugins_BooleanCheckStateGetter;
                olvPlugins.BooleanCheckStatePutter = OlvPlugins_BooleanCheckStatePutter;
                RebuildTrayContextMenu();
-               labelTotalPluginsEnabled.Text = "Plugins running: 0";
+               labelTotalPluginsEnabled.Text = "Plug-ins running: 0";
            });
         }
 
@@ -812,8 +817,8 @@ namespace AxTools.Forms
                 {
                     if (pair.Value == key)
                     {
-                        IPlugin3 plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pair.Key);
-                        bool pluginRunning = PluginManagerEx.RunningPlugins.Any(l => l.Name == pair.Key);
+                        var plugin = PluginManagerEx.LoadedPlugins.FirstOrDefault(l => l.Name == pair.Key);
+                        var pluginRunning = PluginManagerEx.RunningPlugins.Any(l => l.Name == pair.Key);
                         if (plugin != null)
                         {
                             if (pluginRunning)
@@ -832,6 +837,6 @@ namespace AxTools.Forms
 
         #endregion Events handlers
 
-        
+
     }
 }

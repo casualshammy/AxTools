@@ -123,7 +123,7 @@ namespace LibNavigator
             Stopwatch stopwatch = Stopwatch.StartNew();
             try
             {
-                actionsList = this.LoadJSON<List<DoAction>>(data);
+                actionsList = Utilities.LoadJSON<List<DoAction>>(data);
                 loadedScriptHash = CalculateHashForScriptData(data);
                 this.LogPrint($"Script is loaded, hash: {loadedScriptHash}, JSON loading time: {stopwatch.ElapsedMilliseconds}ms");
                 return true;

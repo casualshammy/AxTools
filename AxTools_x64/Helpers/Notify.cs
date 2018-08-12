@@ -15,7 +15,7 @@ namespace AxTools.Helpers
         {
             if (!showOnlyTrayPopup && NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
             {
-                TaskDialog taskDialog = new TaskDialog(title, "AxTools", message, TaskDialogButton.OK);
+                var taskDialog = new TaskDialog(title, nameof(AxTools), message, TaskDialogButton.OK);
                 switch (type)
                 {
                     case NotifyUserType.Error:
@@ -49,7 +49,7 @@ namespace AxTools.Helpers
 
         internal static void TaskDialog(this Form form, string title, string message, NotifyUserType type, EventHandler<HyperlinkEventArgs> onHyperlinkClick = null)
         {
-            TaskDialog taskDialog = new TaskDialog(title, "AxTools", message, TaskDialogButton.OK);
+            var taskDialog = new TaskDialog(title, nameof(AxTools), message, TaskDialogButton.OK);
             if (onHyperlinkClick != null)
             {
                 taskDialog.EnableHyperlinks = true;
@@ -78,11 +78,13 @@ namespace AxTools.Helpers
             }
         }
 
-        internal static void TrayPopup(string title, string message, NotifyUserType type, bool sound, Image image = null, int timeoutSec = 10, EventHandler onClick = null)
+        internal static void TrayPopup(string title, string message, NotifyUserType type, bool sound, Image image = null, int timeoutSec = 10, MouseEventHandler onClick = null)
         {
             MainForm.Instance.BeginInvoke((MethodInvoker)delegate
            {
-               PopupNotification trayPopup = new PopupNotification(title, message, image, Settings2.Instance.StyleColor);
+#pragma warning disable CC0022
+               var trayPopup = new PopupNotification(title, message, image, Settings2.Instance.StyleColor);
+#pragma warning restore CC0022
                if (image == null)
                {
                    if (type == NotifyUserType.Error)
@@ -91,11 +93,11 @@ namespace AxTools.Helpers
                    }
                    else if (type == NotifyUserType.Warn)
                    {
-                       trayPopup.Icon = AxTools.Helpers.Resources.DialogWarning;
+                       trayPopup.Icon = Resources.DialogWarning;
                    }
                    else
                    {
-                       trayPopup.Icon = AxTools.Helpers.Resources.DialogInfo;
+                       trayPopup.Icon = Resources.DialogInfo;
                    }
                }
                if (onClick != null)
@@ -108,7 +110,6 @@ namespace AxTools.Helpers
                {
                    if (type == NotifyUserType.Error || type == NotifyUserType.Warn)
                    {
-                       //SystemSounds.Hand.Play();
                        Utils.PlaySystemExclamationAsync();
                    }
                    else

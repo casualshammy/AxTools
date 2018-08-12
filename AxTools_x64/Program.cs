@@ -1,6 +1,5 @@
 ﻿using AxTools.Forms;
 using AxTools.Helpers;
-
 using AxTools.Updater;
 using AxTools.WoW;
 using Newtonsoft.Json;
@@ -22,9 +21,9 @@ namespace AxTools
     {
         internal static event Action Exit;
 
-        internal static int UIThread;
-        internal static MultiLock ShutdownLock = new MultiLock();
-        private static readonly Log2 log = new Log2("Program");
+        internal static int UIThread { get; private set; }
+        internal static readonly MultiLock ShutdownLock = new MultiLock();
+        private static readonly Log2 log = new Log2(nameof(Program));
 
         [STAThread]
         private static void Main(string[] args)
@@ -32,7 +31,7 @@ namespace AxTools
             UIThread = Thread.CurrentThread.ManagedThreadId;
             if (args.Length == 0)
             {
-                if (Process.GetProcessesByName("AxTools").Length > 1)
+                if (Process.GetProcessesByName(nameof(AxTools)).Length > 1)
                 {
                     log.Info("Waiting for parent AxTools process (1000 ms)");
                     Thread.Sleep(1000);
@@ -45,10 +44,10 @@ namespace AxTools
                         {
                             using (WindowsIdentity p = WindowsIdentity.GetCurrent())
                             {
-                                WindowsPrincipal pricipal = new WindowsPrincipal(p);
+                                var pricipal = new WindowsPrincipal(p);
                                 if (!pricipal.IsInRole(WindowsBuiltInRole.Administrator))
                                 {
-                                    TaskDialog.Show("This program requires administrator privileges", "AxTools", "Make sure you have administrator privileges", TaskDialogButton.OK, TaskDialogIcon.SecurityError);
+                                    TaskDialog.Show("This program requires administrator privileges", nameof(AxTools), "Make sure you have administrator privileges", TaskDialogButton.OK, TaskDialogIcon.SecurityError);
                                     return;
                                 }
                             }
@@ -62,7 +61,7 @@ namespace AxTools
                             WoWAntiKick.StartWaitForWoWProcesses();
                             log.Info($"Registered for: {Settings2.Instance.UserID}");
                             log.Info($"Constructing MainWindow, app version: {Globals.AppVersion}");
-                            Application.Run(MainForm.Instance = new MainForm());
+                            Application.Run(new MainForm());
                             log.Info("MainWindow is closed, waiting for ShutdownLock...");
                             ShutdownLock.WaitForLocks();
                             log.Info($"Invoking 'Exit' handlers ({Exit?.GetInvocationList().Length})...");
@@ -72,12 +71,12 @@ namespace AxTools
                         }
                         else
                         {
-                            MessageBox.Show("This program works only on Windows 7 or higher", "AxTools", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("This program works only on Windows 7 or higher", nameof(AxTools), MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                     else
                     {
-                        TaskDialog.Show("This program is already running", "AxTools", "", TaskDialogButton.OK, TaskDialogIcon.Warning);
+                        TaskDialog.Show("This program is already running", nameof(AxTools), "", TaskDialogButton.OK, TaskDialogIcon.Warning);
                     }
                 }
             }
@@ -95,21 +94,20 @@ namespace AxTools
                 {
                     Directory.Delete(AppFolders.TempDir, true);
                 }
-                catch
-                {
-                    //
-                }
+#pragma warning disable CC0004
+                catch { /* don't care why */ }
+#pragma warning restore CC0004
             }
         }
 
         private static void Legacy()
         {
-            Log2 legacyLog = new Log2("Legacy");
+            var legacyLog = new Log2(nameof(Legacy));
             // 08.10.2015
             try
             {
-                string mySettingsDir = AppFolders.PluginsSettingsDir + "\\Fishing";
-                string mySettingsFile = mySettingsDir + "\\FishingSettings.json";
+                var mySettingsDir = AppFolders.PluginsSettingsDir + "\\Fishing";
+                var mySettingsFile = mySettingsDir + "\\FishingSettings.json";
                 if (File.Exists(mySettingsFile))
                 {
                     File.Move(mySettingsFile, mySettingsDir + "\\settings.json");
@@ -138,15 +136,15 @@ namespace AxTools
             {
                 foreach (string hotkeyName in new[] { "ClickerHotkey", "WoWPluginHotkey" })
                 {
-                    string cfg = File.ReadAllText(AppFolders.ConfigDir + "\\settings.json", Encoding.UTF8);
-                    Regex regex = new Regex($"\"{hotkeyName}\": (\\d+)");
-                    Match match = regex.Match(cfg);
+                    var cfg = File.ReadAllText(AppFolders.ConfigDir + "\\settings.json", Encoding.UTF8);
+                    var regex = new Regex($"\"{hotkeyName}\": (\\d+)");
+                    var match = regex.Match(cfg);
                     if (match.Success)
                     {
-                        Keys oldKey = JsonConvert.DeserializeObject<Keys>(match.Groups[1].Value);
-                        bool alt = false;
-                        bool ctrl = false;
-                        bool shift = false;
+                        var oldKey = JsonConvert.DeserializeObject<Keys>(match.Groups[1].Value);
+                        var alt = false;
+                        var ctrl = false;
+                        var shift = false;
                         if ((oldKey & Keys.Alt) == Keys.Alt)
                         {
                             alt = true;
@@ -160,7 +158,7 @@ namespace AxTools
                             shift = true;
                         }
                         oldKey = oldKey & ~Keys.Control & ~Keys.Shift & ~Keys.Alt;
-                        string newCfg = cfg.Replace(match.Value, $"\"{hotkeyName}\": " + JsonConvert.SerializeObject(new KeyboardWatcher.KeyExt(oldKey, alt, shift, ctrl)));
+                        var newCfg = cfg.Replace(match.Value, $"\"{hotkeyName}\": " + JsonConvert.SerializeObject(new KeyboardWatcher.KeyExt(oldKey, alt, shift, ctrl)));
                         File.WriteAllText(AppFolders.ConfigDir + "\\settings.json", newCfg, Encoding.UTF8);
                     }
                 }
@@ -169,13 +167,13 @@ namespace AxTools
             {
                 MessageBox.Show(ex.Message);
             }
-            
+
             // 17.04.2017
             try
             {
                 if (Settings2.Instance.LastUsedVersion <= new VersionExt(12, 2, 46))
                 {
-                    string fileName = AppFolders.DataDir + "\\wowhead.ldb";
+                    var fileName = AppFolders.DataDir + "\\wowhead.ldb";
                     if (File.Exists(fileName))
                     {
                         File.Delete(fileName);
@@ -191,7 +189,7 @@ namespace AxTools
             // 17.01.2018
             try
             {
-                string fileName = AppFolders.DataDir + "\\wowhead.ldb";
+                var fileName = AppFolders.DataDir + "\\wowhead.ldb";
                 if (File.Exists(fileName))
                 {
                     File.Delete(fileName);
@@ -214,7 +212,7 @@ namespace AxTools
             {
                 if (Settings2.Instance.LastUsedVersion <= new VersionExt(12, 3, 46))
                 {
-                    string fileName = Path.Combine(AppFolders.ConfigDir, "lua-console.json");
+                    var fileName = Path.Combine(AppFolders.ConfigDir, "lua-console.json");
                     if (File.Exists(fileName))
                     {
                         File.Delete(fileName);
@@ -232,14 +230,14 @@ namespace AxTools
             {
                 if (Settings2.Instance.LastUsedVersion <= new VersionExt(12, 3, 46))
                 {
-                    string fileName = Path.Combine(AppFolders.ConfigDir, "wow-radar.json");
+                    var fileName = Path.Combine(AppFolders.ConfigDir, "wow-radar.json");
                     if (File.Exists(fileName))
                     {
-                        string newFilePath = Path.Combine(AppFolders.PluginsSettingsDir, "Radar\\settings.json");
+                        var newFilePath = Path.Combine(AppFolders.PluginsSettingsDir, "Radar\\settings.json");
                         if (File.Exists(newFilePath))
                             File.Delete(newFilePath);
-                        string rawConfig = File.ReadAllText(fileName, Encoding.UTF8);
-                        string config = rawConfig.Replace(Path.Combine(AppFolders.ResourcesDir, "alarm.wav").Replace(@"\", @"\\"), Path.Combine(AppFolders.PluginsDir, "Radar\\alarm.wav").Replace(@"\", @"\\"));
+                        var rawConfig = File.ReadAllText(fileName, Encoding.UTF8);
+                        var config = rawConfig.Replace(Path.Combine(AppFolders.ResourcesDir, "alarm.wav").Replace(@"\", @"\\"), Path.Combine(AppFolders.PluginsDir, "Radar\\alarm.wav").Replace(@"\", @"\\"));
                         File.WriteAllText(fileName, config, Encoding.UTF8);
                         File.Move(fileName, newFilePath);
                         legacyLog.Info($"{fileName} is moved to {newFilePath}");
@@ -254,22 +252,24 @@ namespace AxTools
 
         private static void InstallRootCertificate()
         {
-            X509Certificate2 x509 = new X509Certificate2();
-            x509.Import(Helpers.Resources.CACert);
-            X509Store store = new X509Store(StoreName.Root, StoreLocation.LocalMachine);
-            store.Open(OpenFlags.ReadWrite);
-            if (x509.SerialNumber != null && store.Certificates.Find(X509FindType.FindBySerialNumber, x509.SerialNumber, true).Count == 0)
+            var x509 = new X509Certificate2();
+            x509.Import(Resources.CACert);
+            using (var store = new X509Store(StoreName.Root, StoreLocation.LocalMachine))
             {
-                log.Info("[AxTools] Certificate isn't found, installing...");
-                store.Add(x509);
+                store.Open(OpenFlags.ReadWrite);
+                if (x509.SerialNumber != null && store.Certificates.Find(X509FindType.FindBySerialNumber, x509.SerialNumber, true).Count == 0)
+                {
+                    log.Info("[AxTools] Certificate isn't found, installing...");
+                    store.Add(x509);
+                }
+                store.Close();
             }
-            store.Close();
         }
 
         private static void SendLogToDeveloper()
         {
-            TaskDialogButton yesNo = TaskDialogButton.Yes + (int)TaskDialogButton.No;
-            TaskDialog taskDialog = new TaskDialog("There were errors during runtime", "AxTools", "Do you want to send log file to developer?", yesNo, TaskDialogIcon.Warning);
+            const TaskDialogButton yesNo = TaskDialogButton.Yes + (int)TaskDialogButton.No;
+            var taskDialog = new TaskDialog("There were errors during runtime", nameof(AxTools), "Do you want to send log file to developer?", yesNo, TaskDialogIcon.Warning);
             if (log.HaveErrors && Utils.InternetAvailable && taskDialog.Show().CommonButton == Result.Yes && File.Exists(Globals.LogFileName))
             {
                 try
@@ -287,10 +287,10 @@ namespace AxTools
 
         private static void ProcessArgs()
         {
-            string arguments = Environment.CommandLine;
+            var arguments = Environment.CommandLine;
             log.Info("CMD arguments: " + arguments);
-            Match updatedir = new Regex("-update-dir \"(.+?)\"").Match(arguments);
-            Match axtoolsdir = new Regex("-axtools-dir \"(.+?)\"").Match(arguments);
+            var updatedir = new Regex("-update-dir \"(.+?)\"").Match(arguments);
+            var axtoolsdir = new Regex("-axtools-dir \"(.+?)\"").Match(arguments);
             if (updatedir.Success && axtoolsdir.Success)
             {
                 log.Info("Parsed update info, processing...");
@@ -302,7 +302,7 @@ namespace AxTools
             }
             else if (arguments.Contains("-update-plugins"))
             {
-                while (Process.GetProcessesByName("AxTools").Length > 1)
+                while (Process.GetProcessesByName(nameof(AxTools)).Length > 1)
                 {
                     log.Info("Waiting for parent AxTools process...");
                     Thread.Sleep(250);
@@ -312,14 +312,14 @@ namespace AxTools
             }
             else
             {
-                TaskDialog.Show("Invalid command line arguments", "AxTools", "", TaskDialogButton.OK, TaskDialogIcon.Warning);
+                TaskDialog.Show("Invalid command line arguments", nameof(AxTools), "", TaskDialogButton.OK, TaskDialogIcon.Warning);
                 Main(new string[] { });
             }
         }
 
         private static void Update(string updateDir, string axtoolsDir)
         {
-            while (Process.GetProcessesByName("AxTools").Length > 1)
+            while (Process.GetProcessesByName(nameof(AxTools)).Length > 1)
             {
                 log.Info("Waiting for parent AxTools process...");
                 Thread.Sleep(500);
@@ -335,14 +335,14 @@ namespace AxTools
 
         private static void RestartApplication()
         {
-            while (Process.GetProcessesByName("AxTools").Length > 1)
+            while (Process.GetProcessesByName(nameof(AxTools)).Length > 1)
             {
                 log.Info("Waiting for parent AxTools process...");
                 Thread.Sleep(250);
             }
             Process.Start(Application.StartupPath + "\\AxTools.exe");
         }
-        
+
         #endregion
 
     }

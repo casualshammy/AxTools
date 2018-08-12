@@ -22,11 +22,11 @@ namespace Radar
     {
         #region IPlugin3 info
 
-        public new string Name => "Radar";
+        public new string Name => nameof(Radar);
 
         public bool ConfigAvailable => false;
 
-        public string[] Dependencies => null;
+        public string[] Dependencies => new string[0];
 
         public string Description => "Displays players/NPCs/objects on radar";
 
@@ -49,7 +49,8 @@ namespace Radar
         {
             Utilities.InvokeInGUIThread(delegate
             {
-                (actualWindow = new Radar(game)).Show();
+                actualWindow = new Radar(game);
+                actualWindow.Show();
             });
         }
 
@@ -119,9 +120,7 @@ namespace Radar
 
         #endregion Fields
 
-        public Radar()
-        {
-        }
+        public Radar() { }
 
         internal Radar(GameInterface game)
         {
@@ -186,8 +185,8 @@ namespace Radar
         private void Redraw()
         {
             Action refreshRadar = pictureBoxMain.Invalidate;
-            bool soundAlarmPrevState = false;
-            Stopwatch stopwatch = new Stopwatch();
+            var soundAlarmPrevState = false;
+            var stopwatch = new Stopwatch();
             while (isRunning)
             {
                 stopwatch.Restart();
@@ -243,7 +242,7 @@ namespace Radar
                     Thread.Sleep(100);
                     continue;
                 }
-                int counter = 100 - (int)stopwatch.ElapsedMilliseconds;
+                var counter = 100 - (int)stopwatch.ElapsedMilliseconds;
                 if (counter > 0 && isRunning)
                 {
                     Thread.Sleep(counter);
@@ -261,7 +260,7 @@ namespace Radar
                 // ReSharper disable once ImpureMethodCallOnReadonlyValueField
                 foreach (WowObject i in objects.Where(i => RadarKOSFindInteract.Contains(i.Name)))
                 {
-                    double distance = i.Location.Distance(localPlayer.Location);
+                    var distance = i.Location.Distance(localPlayer.Location);
                     if (distance < interactDistance)
                     {
                         interactDistance = distance;
@@ -270,7 +269,7 @@ namespace Radar
                 }
                 foreach (WowNpc i in npcs.Where(i => RadarKOSFindInteract.Contains(i.Name)))
                 {
-                    double distance = i.Location.Distance(localPlayer.Location);
+                    var distance = i.Location.Distance(localPlayer.Location);
                     if (distance < interactDistance)
                     {
                         interactDistance = distance;
@@ -288,14 +287,14 @@ namespace Radar
         private void Redraw_Alarm(ref bool alarmState)
         {
             string newPOIName = null;
-            WowObject @object = objects.FirstOrDefault(i => RadarKOSFindAlarm.Contains(i.Name));
+            var @object = objects.FirstOrDefault(i => RadarKOSFindAlarm.Contains(i.Name));
             if (@object != null)
             {
                 newPOIName = @object.Name;
             }
             else
             {
-                WowNpc npc = npcs.FirstOrDefault(i => RadarKOSFindAlarm.Contains(i.Name) && i.Alive);
+                var npc = npcs.FirstOrDefault(i => RadarKOSFindAlarm.Contains(i.Name) && i.Alive);
                 if (npc != null)
                 {
                     newPOIName = npc.Name;
@@ -325,19 +324,19 @@ namespace Radar
                 try
                 {
                     flicker = !flicker;
-                    int friendsCountAlive = friends.Count(i => i.Alive);
+                    var friendsCountAlive = friends.Count(i => i.Alive);
                     checkBoxFriends.Text = string.Concat("F: ", friendsCountAlive.ToString(), "/", friends.Length.ToString());
-                    int enemiesCountAlive = enemies.Count(i => i.Alive);
+                    var enemiesCountAlive = enemies.Count(i => i.Alive);
                     checkBoxEnemies.Text = string.Concat("E: ", enemiesCountAlive.ToString(), "/", enemies.Length.ToString());
                     checkBoxObjects.Text = string.Concat("Objects: ", objects.Length.ToString());
-                    int npcsCountAlive = npcs.Count(i => i.Alive);
+                    var npcsCountAlive = npcs.Count(i => i.Alive);
                     checkBoxNpcs.Text = string.Concat("N: ", npcsCountAlive.ToString(), "/", npcs.Length.ToString());
 
                     objectsPointsInRadarCoords.Clear();
 
-                    Point point = new Point();
-                    Point point2 = new Point();
-                    Graphics graphics = e.Graphics;
+                    var point = new Point();
+                    var point2 = new Point();
+                    var graphics = e.Graphics;
                     graphics.SmoothingMode = SmoothingMode.AntiAlias;
                     double localPlayerLocationX = localPlayer.Location.X;
                     double localPlayerLocationY = localPlayer.Location.Y;
@@ -349,7 +348,7 @@ namespace Radar
 
                     if (!settings.ShowLocalPlayerRotationArrowOnTop)
                     {
-                        double d = -localPlayer.Rotation + 3 * Math.PI / 2;
+                        var d = -localPlayer.Rotation + 3 * Math.PI / 2;
                         point.X = halfOfPictureboxSize;
                         point.Y = halfOfPictureboxSize;
                         graphics.FillRectangle(whiteBrush, point.X - 2, point.Y - 2, 4, 4);
@@ -376,7 +375,7 @@ namespace Radar
                                 var2Y = localPlayerLocationY - var2Y;
                                 var2X = (int)(zoomR * var2X);
                                 var2Y = (int)(zoomR * var2Y);
-                                double num3 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
+                                var num3 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
                                 point.X = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num3) * Math.Cos(num2 + 3.1415926535897931));
                                 point.Y = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num3) * Math.Sin(num2));
                                 Pen pen;
@@ -392,7 +391,7 @@ namespace Radar
                                     solidBrush = grayBrush;
                                 }
                                 Point[] pts;
-                                float zDiff = i.Location.Z - localPlayer.Location.Z;
+                                var zDiff = i.Location.Z - localPlayer.Location.Z;
                                 if (zDiff >= 10)
                                 {
                                     pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
@@ -449,7 +448,7 @@ namespace Radar
                                 var2Y = localPlayerLocationY - var2Y;
                                 var2X = (int)(zoomR * var2X);
                                 var2Y = (int)(zoomR * var2Y);
-                                double num3 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
+                                var num3 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
                                 point.X = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num3) * Math.Cos(num2 + 3.1415926535897931));
                                 point.Y = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num3) * Math.Sin(num2));
                                 Pen pen;
@@ -465,7 +464,7 @@ namespace Radar
                                     solidBrush = grayBrush;
                                 }
                                 Point[] pts;
-                                float zDiff = i.Location.Z - localPlayer.Location.Z;
+                                var zDiff = i.Location.Z - localPlayer.Location.Z;
                                 if (zDiff >= 10)
                                 {
                                     pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
@@ -520,11 +519,11 @@ namespace Radar
                             var2Y = localPlayerLocationY - var2Y;
                             var2X = (int)(zoomR * var2X);
                             var2Y = (int)(zoomR * var2Y);
-                            double num4 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
+                            var num4 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
                             point.X = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num4) * Math.Cos(num2 + 3.1415926535897931));
                             point.Y = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num4) * Math.Sin(num2));
                             Point[] pts;
-                            float zDiff = i.Location.Z - localPlayer.Location.Z;
+                            var zDiff = i.Location.Z - localPlayer.Location.Z;
                             if (zDiff >= 10)
                             {
                                 pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
@@ -566,11 +565,11 @@ namespace Radar
                                 var2Y = localPlayerLocationY - var2Y;
                                 var2X = (int)(zoomR * var2X);
                                 var2Y = (int)(zoomR * var2Y);
-                                double num4 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
+                                var num4 = Math.Sqrt(var2X * var2X + var2Y * var2Y);
                                 point.X = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num4) * Math.Cos(num2 + 3.1415926535897931));
                                 point.Y = (int)Math.Round(halfOfPictureboxSize + Math.Abs(num4) * Math.Sin(num2));
                                 Point[] pts;
-                                float zDiff = i.Location.Z - localPlayer.Location.Z;
+                                var zDiff = i.Location.Z - localPlayer.Location.Z;
                                 if (zDiff >= 10)
                                 {
                                     pts = new[] { new Point(point.X, point.Y - 2), new Point(point.X + 2, point.Y + 2), new Point(point.X - 2, point.Y + 2) };
@@ -602,7 +601,7 @@ namespace Radar
 
                     if (settings.ShowLocalPlayerRotationArrowOnTop)
                     {
-                        double d = -localPlayer.Rotation + 4.71238898038469;
+                        var d = -localPlayer.Rotation + 4.71238898038469;
                         point.X = halfOfPictureboxSize;
                         point.Y = halfOfPictureboxSize;
                         graphics.FillRectangle(whiteBrush, point.X - 2, point.Y - 2, 4, 4);
@@ -619,7 +618,7 @@ namespace Radar
                     point.Y -= Location.Y;
                     if (point.X >= 0 && point.Y > 0 && point.X <= pictureBoxMain.Width && point.Y <= pictureBoxMain.Height)
                     {
-                        MeasureTooltip(point);
+                        MeasureTooltipAsync(point);
                         processMouseWheelEvents = true;
                     }
                     else
@@ -748,7 +747,8 @@ namespace Radar
 
         private void PictureBoxRadarSettingsClick(object sender, EventArgs e)
         {
-            (optionsWindow = new OptionsWindow(this, info, settings)).ShowDialog();
+            optionsWindow = new OptionsWindow(this, info, settings);
+            optionsWindow.ShowDialog();
         }
 
         private void SaveCheckBoxes(object sender, EventArgs e)
@@ -761,26 +761,26 @@ namespace Radar
             settings.Zoom = zoomR;
         }
 
-        private async void MeasureTooltip(Point mousePosition)
+        private async void MeasureTooltipAsync(Point mousePosition)
         {
             foreach (KeyValuePair<WoWGUID, Point> pair in objectsPointsInRadarCoords)
             {
                 if (Math.Abs(pair.Value.X - mousePosition.X) < 4 && Math.Abs(pair.Value.Y - mousePosition.Y) < 4)
                 {
                     lastMouseLocation = mousePosition;
-                    WowPlayer unit = wowPlayers.FirstOrDefault(i => i.GUID == pair.Key);
+                    var unit = wowPlayers.FirstOrDefault(i => i.GUID == pair.Key);
                     if (unit != null)
                     {
                         DrawTooltip(mousePosition, $"   {await GetPlayerNameAsync(unit)}  \r\n   ({unit.Class}*{unit.Level}) {(uint)(unit.Health / (float)unit.HealthMax * 100)}%", unit.Class);
                         return;
                     }
-                    WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
+                    var npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
                     if (npc != null)
                     {
                         DrawTooltip(mousePosition, string.Concat("   ", npc.Name, "  \r\n   ", ((uint)(npc.Health / (float)npc.HealthMax * 100)).ToString(), "%"), WowPlayerClass.War);
                         return;
                     }
-                    WowObject _object = wowObjects.FirstOrDefault(i => i.GUID == pair.Key);
+                    var _object = wowObjects.FirstOrDefault(i => i.GUID == pair.Key);
                     if (_object != null)
                     {
                         DrawTooltip(mousePosition, string.Concat("   ", _object.Name, "  "), WowPlayerClass.Rog);
@@ -839,7 +839,7 @@ namespace Radar
             {
                 if (Math.Abs(pair.Value.X - e.X) < 4 && Math.Abs(pair.Value.Y - e.Y) < 4)
                 {
-                    WowPlayer unit = wowPlayers.FirstOrDefault(i => i.GUID == pair.Key);
+                    var unit = wowPlayers.FirstOrDefault(i => i.GUID == pair.Key);
                     if (unit != null)
                     {
                         if (e.Button == MouseButtons.Left)
@@ -852,7 +852,7 @@ namespace Radar
                         }
                         break;
                     }
-                    WowNpc npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
+                    var npc = wowNpcs.FirstOrDefault(i => i.GUID == pair.Key);
                     if (npc != null)
                     {
                         if (e.Button == MouseButtons.Left)
@@ -869,7 +869,7 @@ namespace Radar
                         }
                         break;
                     }
-                    WowObject wowObject = wowObjects.FirstOrDefault(i => i.GUID == pair.Key);
+                    var wowObject = wowObjects.FirstOrDefault(i => i.GUID == pair.Key);
                     if (wowObject != null)
                     {
                         if (e.Button == MouseButtons.Left)

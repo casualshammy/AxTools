@@ -19,7 +19,7 @@ namespace AxTools.Updater
     [Obfuscation(Exclude = false, Feature = "constants")]
     internal static class UpdaterService
     {
-        private static readonly Log2 log = new Log2("UpdaterService");
+        private static readonly Log2 log = new Log2(nameof(UpdaterService));
         private static readonly System.Timers.Timer _timer = new System.Timers.Timer(600000);
         private static readonly string DistrDirectory = AppFolders.TempDir + "\\update";
         private static readonly string[] JunkFiles = { };
@@ -41,22 +41,23 @@ namespace AxTools.Updater
             {
                 log.Info("Copying distr directory, updateDir: " + updateDir + "; axtoolsDir: " + axtoolsDir);
                 Utils.DirectoryCopy(updateDir, axtoolsDir, true);
-                DirectoryInfo pluginsDirectoryInfo = new DirectoryInfo(Path.Combine(axtoolsDir, "pluginsAssemblies"));
+                var pluginsDirectoryInfo = new DirectoryInfo(Path.Combine(axtoolsDir, "pluginsAssemblies"));
                 if (pluginsDirectoryInfo.Exists)
                 {
-                    log.Info("Deleting plugins assemblies directory...");
+                    log.Info("Deleting plug-ins assemblies directory...");
                     pluginsDirectoryInfo.Delete(true);
                 }
                 log.Info("Deleting junk files...");
                 foreach (string i in JunkFiles)
                 {
-                    // ReSharper disable once RedundantEmptyFinallyBlock
                     try
                     {
                         File.Delete(Path.Combine(axtoolsDir, i));
                         log.Info("Junk file is deleted: " + Path.Combine(axtoolsDir, i));
                     }
-                    catch {/* */}
+#pragma warning disable CC0004
+                    catch { /* don't care why */ }
+#pragma warning restore CC0004
                 }
                 foreach (string junkFolder in JunkFolders)
                 {
@@ -64,13 +65,15 @@ namespace AxTools.Updater
                     {
                         Directory.Delete(Path.Combine(axtoolsDir, junkFolder), true);
                     }
-                    catch {/* */}
+#pragma warning disable CC0004
+                    catch { /* don't care why */ }
+#pragma warning restore CC0004
                 }
                 log.Info("ApplyUpdate: done");
             }
             catch (Exception ex)
             {
-                TaskDialog.Show("Critical update error", "AxTools", ex.Message, TaskDialogButton.Close, TaskDialogIcon.Stop);
+                TaskDialog.Show("Critical update error", nameof(AxTools), ex.Message, TaskDialogButton.Close, TaskDialogIcon.Stop);
             }
         }
 
@@ -108,14 +111,14 @@ namespace AxTools.Updater
 
         private static void DownloadExtractUpdate()
         {
-            string distrZipFile = AppFolders.TempDir + "\\_distr.zip";
+            var distrZipFile = AppFolders.TempDir + "\\_distr.zip";
             File.Delete(distrZipFile);
             using (WebClient webClient = new WebClient())
             {
                 try
                 {
                     webClient.ForceBasicAuth(Settings2.Instance.UserID, _hardwareID);
-                    byte[] distrFile = webClient.UploadData(_updateFileURL, "POST", Encoding.UTF8.GetBytes("get-update-package"));
+                    var distrFile = webClient.UploadData(_updateFileURL, "POST", Encoding.UTF8.GetBytes("get-update-package"));
                     File.WriteAllBytes(distrZipFile, distrFile);
                     log.Info("Packages are downloaded!");
                 }
@@ -125,7 +128,7 @@ namespace AxTools.Updater
                     return;
                 }
             }
-            DirectoryInfo updateDirectoryInfo = new DirectoryInfo(DistrDirectory);
+            var updateDirectoryInfo = new DirectoryInfo(DistrDirectory);
             if (updateDirectoryInfo.Exists)
             {
                 updateDirectoryInfo.Delete(true);
@@ -145,7 +148,7 @@ namespace AxTools.Updater
                 log.Error("Can't extract <distr> package: " + ex.Message);
                 return;
             }
-            FileInfo updaterExe = new DirectoryInfo(DistrDirectory).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
+            var updaterExe = new DirectoryInfo(DistrDirectory).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().FirstOrDefault(info => info.Extension == ".exe");
             if (updaterExe == null)
             {
                 log.Error("Can't find updater executable! Files: " + string.Join(", ", new DirectoryInfo(AppFolders.TempDir).GetFileSystemInfos().Where(l => l is FileInfo).Cast<FileInfo>().Select(l => l.Name)));
@@ -168,7 +171,7 @@ namespace AxTools.Updater
 
             if (WinAPI.NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
             {
-                TaskDialog taskDialog = new TaskDialog("Update is available", "AxTools", "Do you wish to restart now?", (TaskDialogButton)((int)TaskDialogButton.Yes + (int)TaskDialogButton.No), TaskDialogIcon.Information);
+                var taskDialog = new TaskDialog("Update is available", nameof(AxTools), "Do you wish to restart now?", (TaskDialogButton)((int)TaskDialogButton.Yes + (int)TaskDialogButton.No), TaskDialogIcon.Information);
                 if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
                 {
                     CloseAndUpdate();
@@ -177,7 +180,7 @@ namespace AxTools.Updater
             else
             {
                 // 1-hour notification!
-                Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 60 * 60, (sender, args) => CloseAndUpdate());
+                Notify.TrayPopup("Update for AxTools is ready to install", "Click here to install", NotifyUserType.Info, false, null, 60 * 60, (sender, args) => { if (args.Button == MouseButtons.Left) CloseAndUpdate(); });
             }
         }
 
@@ -200,13 +203,13 @@ namespace AxTools.Updater
                     Notify.TrayPopup("AxTools update error!", "Your credentials are invalid. Updater is disabled. Please contact dev", NotifyUserType.Error, false);
                     _timer.Elapsed -= Timer_Elapsed;
                     log.Info($"Your credentials are invalid. Updater is disabled. Please contact devs (status {webEx.Status}): {webEx.Message}");
-                    log.Error($"Your username: {Settings2.Instance.UserID}; your HWID: {_hardwareID}");
+                    log.Error($"Your user name: {Settings2.Instance.UserID}; your HWID: {_hardwareID}");
                 }
                 else if (webEx.Status == WebExceptionStatus.TrustFailure)
                 {
-                    Notify.TrayPopup("AxTools update error!", "Cannot validate remote server. Your internet connection is compromised", NotifyUserType.Error, true);
+                    Notify.TrayPopup("AxTools update error!", "Cannot validate remote server. Your Internet connection is compromised", NotifyUserType.Error, true);
                     _timer.Elapsed -= Timer_Elapsed;
-                    log.Info($"Cannot validate remote server. Your internet connection is compromised (status {webEx.Status}): {webEx.Message}");
+                    log.Info($"Cannot validate remote server. Your Internet connection is compromised (status {webEx.Status}): {webEx.Message}");
                     log.Info($"Inner exception: {webEx.InnerException?.Message}");
                 }
                 else if (webEx.Status != WebExceptionStatus.NameResolutionFailure &&
@@ -227,7 +230,7 @@ namespace AxTools.Updater
             {
                 try
                 {
-                    UpdateInfo2 updateInfo = UpdateInfo2.FromJSON(updateString);
+                    var updateInfo = UpdateInfo2.FromJSON(updateString);
                     if (updateInfo != null)
                     {
                         if (Globals.AppVersion != updateInfo.Version)
@@ -269,7 +272,7 @@ namespace AxTools.Updater
 
         private static string GetUpdateFileURL(string hostname)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo("nslookup")
+            var startInfo = new ProcessStartInfo("nslookup")
             {
                 Arguments = $"-type=TXT {hostname}",
                 RedirectStandardOutput = true,
@@ -282,16 +285,16 @@ namespace AxTools.Updater
                 {
                     try
                     {
-                        string output = cmd.StandardOutput.ReadToEnd();
-                        Match match = Regex.Match(output, "text =\\s*\"(.+)\"");
+                        var output = cmd.StandardOutput.ReadToEnd();
+                        var match = Regex.Match(output, "text =\\s*\"(.+)\"");
                         if (match.Success)
                         {
-                            bool result = Uri.TryCreate(match.Groups[1].Value, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                            var result = Uri.TryCreate(match.Groups[1].Value, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
                             return result ? match.Groups[1].Value : null;
                         }
                         return null;
                     }
-                    catch
+                    catch (Exception)
                     {
                         return null;
                     }

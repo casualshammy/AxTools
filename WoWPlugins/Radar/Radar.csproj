@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ImagesBase64.cs" />
     <Compile Include="OptionsWindow.cs">
       <SubType>Form</SubType>

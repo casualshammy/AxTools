@@ -242,7 +242,7 @@ namespace AxTools.Forms
             this.cmbboxAccSelect.StyleManager = null;
             this.cmbboxAccSelect.TabIndex = 5;
             this.cmbboxAccSelect.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.cmbboxAccSelect.SelectedIndexChanged += new System.EventHandler(this.CmbboxAccSelectSelectedIndexChanged);
+            this.cmbboxAccSelect.SelectedIndexChanged += new System.EventHandler(this.CmbboxAccSelectSelectedIndexChangedAsync);
             // 
             // metroTabPage3
             // 
@@ -303,7 +303,7 @@ namespace AxTools.Forms
             this.linkDownloadPlugins.Text = "Download plugins";
             this.linkDownloadPlugins.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkDownloadPlugins.UseStyleColors = true;
-            this.linkDownloadPlugins.Click += new System.EventHandler(this.LinkDownloadPlugins_Click);
+            this.linkDownloadPlugins.Click += new System.EventHandler(MainForm.LinkDownloadPlugins_Click);
             // 
             // olvPlugins
             // 
@@ -360,7 +360,7 @@ namespace AxTools.Forms
             this.buttonStartStopPlugin.Text = "Hotkeys";
             this.buttonStartStopPlugin.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroToolTip1.SetToolTip(this.buttonStartStopPlugin, "Start/stop plugin");
-            this.buttonStartStopPlugin.Click += new System.EventHandler(this.ButtonStartStopPlugin_Click);
+            this.buttonStartStopPlugin.Click += new System.EventHandler(MainForm.ButtonStartStopPlugin_Click);
             // 
             // metroTabPage2
             // 
@@ -428,7 +428,7 @@ namespace AxTools.Forms
             this.tileExtTwitch.TabIndex = 49;
             this.tileExtTwitch.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileExtTwitch.TileCount = 0;
-            this.tileExtTwitch.Click += new System.EventHandler(this.TileExtTwitch_Click);
+            this.tileExtTwitch.Click += new System.EventHandler(MainForm.TileExtTwitch_Click);
             // 
             // tileExtDiscord
             // 
@@ -445,7 +445,7 @@ namespace AxTools.Forms
             this.tileExtDiscord.TabIndex = 48;
             this.tileExtDiscord.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileExtDiscord.TileCount = 0;
-            this.tileExtDiscord.Click += new System.EventHandler(this.TileExtDiscord_Click);
+            this.tileExtDiscord.Click += new System.EventHandler(MainForm.TileExtDiscord_Click);
             // 
             // checkBoxStartTeamspeak3WithWow
             // 
@@ -542,7 +542,7 @@ namespace AxTools.Forms
             this.tileRaidcall.TabIndex = 8;
             this.tileRaidcall.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileRaidcall.TileCount = 0;
-            this.tileRaidcall.Click += new System.EventHandler(this.TileRaidcallClick);
+            this.tileRaidcall.Click += new System.EventHandler(MainForm.TileRaidcallClick);
             // 
             // tileTeamspeak3
             // 
@@ -559,7 +559,7 @@ namespace AxTools.Forms
             this.tileTeamspeak3.TabIndex = 7;
             this.tileTeamspeak3.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileTeamspeak3.TileCount = 0;
-            this.tileTeamspeak3.Click += new System.EventHandler(this.TileTeamspeak3Click);
+            this.tileTeamspeak3.Click += new System.EventHandler(MainForm.TileTeamspeak3Click);
             // 
             // tileMumble
             // 
@@ -576,7 +576,7 @@ namespace AxTools.Forms
             this.tileMumble.TabIndex = 6;
             this.tileMumble.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileMumble.TileCount = 0;
-            this.tileMumble.Click += new System.EventHandler(this.TileMumbleClick);
+            this.tileMumble.Click += new System.EventHandler(MainForm.TileMumbleClick);
             // 
             // tileVentrilo
             // 
@@ -593,7 +593,7 @@ namespace AxTools.Forms
             this.tileVentrilo.TabIndex = 5;
             this.tileVentrilo.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileVentrilo.TileCount = 0;
-            this.tileVentrilo.Click += new System.EventHandler(this.TileVentriloClick);
+            this.tileVentrilo.Click += new System.EventHandler(MainForm.TileVentriloClick);
             // 
             // metroToolTip1
             // 
