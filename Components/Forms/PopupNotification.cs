@@ -35,8 +35,8 @@ namespace Components.Forms
             timer.Elapsed += timer_Tick;
             BeginInvoke((MethodInvoker)delegate
            {
-                //SetLocation();
-                ArrangementTimer_Elapsed(null, null);
+               //SetLocation();
+               ArrangementTimer_Elapsed(null, null);
                loadTime = DateTime.UtcNow;
                timer.Start();
                Timeout = Timeout == 0 ? 30 : Timeout;

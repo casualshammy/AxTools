@@ -1,5 +1,4 @@
-﻿using AxTools.Properties;
-using AxTools.WoW.PluginSystem;
+﻿using AxTools.WoW.PluginSystem;
 using Components.Forms;
 using KeyboardWatcher;
 using MetroFramework.Controls;
@@ -18,7 +17,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             StyleManager.Style = AxTools.Helpers.Settings2.Instance.StyleColor;
-            Icon = Resources.AppIcon;
+            Icon = Helpers.Resources.ApplicationIcon;
             for (int i = 0; i < plugins.Length; i++)
             {
                 PictureBox pictureBox = new PictureBox

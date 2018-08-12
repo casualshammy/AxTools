@@ -1,5 +1,4 @@
-﻿using AxTools.Properties;
-using AxTools.WoW.Helpers;
+﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 using System;
@@ -32,7 +31,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
         }
 
-        public Image TrayIcon { get { return Resources.inv_misc_gem_bloodgem_01; } }
+        public Image TrayIcon { get { return AxTools.Helpers.Resources.Plugin_Destroying; } }
 
         public bool ConfigAvailable
         {

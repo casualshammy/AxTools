@@ -1,5 +1,5 @@
 ﻿using AxTools.Helpers;
-using AxTools.Properties;
+
 using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
@@ -30,7 +30,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             get { return "This is a very simple fish bot. It supports baits and special WoD baits; also it makes breaks to avoid being too tireless"; }
         }
 
-        public Image TrayIcon { get { return Resources.trade_fishing; } }
+        public Image TrayIcon { get { return AxTools.Helpers.Resources.Plugin_Fishing; } }
 
         public bool ConfigAvailable
         {

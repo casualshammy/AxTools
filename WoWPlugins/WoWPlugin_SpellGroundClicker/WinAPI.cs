@@ -13,8 +13,7 @@ namespace WoWPlugin_SpellGroundClicker
 
         public static Point GetCursorPosition()
         {
-            MousePoint currentMousePoint;
-            bool gotPoint = GetCursorPos(out currentMousePoint);
+            bool gotPoint = GetCursorPos(out MousePoint currentMousePoint);
             if (!gotPoint)
             {
                 currentMousePoint = new MousePoint(0, 0);

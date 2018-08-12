@@ -61,7 +61,7 @@
             0,
             0,
             0});
-            this.num_clicker_interval.ValueChanged += new System.EventHandler(this.num_clicker_interval_ValueChanged);
+            this.num_clicker_interval.ValueChanged += new System.EventHandler(this.Num_clicker_interval_ValueChanged);
             // 
             // comboBoxClickerKey
             // 
@@ -77,7 +77,7 @@
             this.comboBoxClickerKey.Style = MetroFramework.MetroColorStyle.Blue;
             this.comboBoxClickerKey.TabIndex = 58;
             this.comboBoxClickerKey.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.comboBoxClickerKey.SelectedIndexChanged += new System.EventHandler(this.comboBoxClickerKey_SelectedIndexChanged);
+            this.comboBoxClickerKey.SelectedIndexChanged += new System.EventHandler(this.ComboBoxClickerKey_SelectedIndexChanged);
             // 
             // metroLabel7
             // 

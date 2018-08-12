@@ -23,9 +23,7 @@ namespace AxTools.WoW
         internal static event Action<WowProcess> WoWProcessReadyForInteraction;
 
         private static readonly object _listLock = new object();
-
-        //private static readonly ConcurrentDictionary<int, WowProcess> _wowProcesses = new ConcurrentDictionary<int, WowProcess>();
-        //private static readonly List<WowProcess> _sharedList = new List<WowProcess>();
+        
         private static readonly object _lock = new object();
 
         private static readonly Log2 log = new Log2("WoWProcessManager");
@@ -161,9 +159,10 @@ namespace AxTools.WoW
                             log.Info(string.Format("{0} Memory manager initialized, base address 0x{1:X}", process, process.Memory.ImageBase.ToInt64()));
                             if (!process.IsValidBuild)
                             {
+                                if (process.GetExecutableRevision() > WowBuildInfoX64.WoWRevision)
+                                    log.Error($"AxTools is outdated! WowBuildInfoX64.WoWRevision: {WowBuildInfoX64.WoWRevision}; actual revision: {process.GetExecutableRevision()}");
                                 log.Info(string.Format("{0} Memory manager: invalid WoW executable", process));
                                 Notify.TrayPopup("Incorrect WoW version", "Injector is locked, please wait for update", NotifyUserType.Warn, true);
-                                Utils.PlaySystemNotificationAsync();
                             }
                             WoWProcessReadyForInteraction?.Invoke(process);
                         }

@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.3.46.2319</AssemblyVersion>
+    <AssemblyVersion>12.3.47.2366</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
@@ -185,9 +185,6 @@
     <Compile Include="Forms\AppSettingsWoWBinds.Designer.cs">
       <DependentUpon>AppSettingsWoWBinds.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Helpers\RadarObject.cs" />
-    <Compile Include="Forms\Helpers\RadarShowMode.cs" />
-    <Compile Include="Forms\Helpers\WoWRadarSettings.cs" />
     <Compile Include="Forms\MainForm_PluginHotkeys.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -199,6 +196,7 @@
     <Compile Include="Helpers\MultiLock.cs" />
     <Compile Include="Helpers\Notify.cs" />
     <Compile Include="Helpers\ProcessWatcherWMI.cs" />
+    <Compile Include="Helpers\Resources.cs" />
     <Compile Include="Helpers\VersionExt.cs" />
     <Compile Include="Helpers\VoIP.cs" />
     <Compile Include="Services\AddonsBackup.cs" />
@@ -314,11 +312,6 @@
     <Compile Include="Forms\WowAccountsManager.Designer.cs">
       <DependentUpon>WowAccountsManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Services\PingerHelpers\SrvAddress.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -327,18 +320,6 @@
     </Compile>
     <Compile Include="Forms\WoWProcessSelector.Designer.cs">
       <DependentUpon>WoWProcessSelector.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\WowRadar.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\WowRadar.Designer.cs">
-      <DependentUpon>WowRadar.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\WowRadarOptions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\WowRadarOptions.Designer.cs">
-      <DependentUpon>WowRadarOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="WoW\WowBuildInfoX64.cs" />
     <Compile Include="WoW\Internals\WowPlayerClass.cs" />
@@ -373,21 +354,8 @@
       <DependentUpon>WowAccountsManager.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WoWProcessSelector.resx">
       <DependentUpon>WoWProcessSelector.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\WowRadar.resx">
-      <DependentUpon>WowRadar.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\WowRadarOptions.resx">
-      <DependentUpon>WowRadarOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WoW\PluginSystem\Plugins\FishingConfig.resx">
@@ -399,118 +367,9 @@
     <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Ashran.lua" />
-    <None Include="Resources\Axio.Lab CA.crt" />
-    <None Include="Resources\repeat_7959.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\emesene_1915.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\epiphany_1183.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\old-go-next_8616.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\old-go-previous_6961.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
-    <None Include="Resources\dialog_warning.png" />
-    <None Include="Resources\dialog_information.png" />
-    <None Include="Resources\dialog_error.png" />
-    <None Include="Resources\boxes37.png" />
-    <None Include="Resources\Ashran.txt" />
-    <None Include="Resources\1435959119_add-item.png" />
-    <None Include="Resources\pluginSettingsLight.png" />
-    <None Include="Resources\pluginSettings.png" />
-    <None Include="Resources\1410198466_672392-info-20_light.png" />
-    <None Include="Resources\1410198466_672392-info-20.png" />
-    <None Include="Resources\data_backup.png" />
-    <None Include="Resources\archive.png" />
-    <None Include="Resources\close_26px_hl.png" />
-    <None Include="Resources\close_26px.png" />
-    <None Include="Resources\yellow_play_grey.png" />
-    <None Include="Resources\yellow_stop_grey.png" />
-    <None Include="Resources\yellow_record_grey.png" />
-    <None Include="Resources\yellow_forward_grey.png" />
-    <None Include="Resources\yellow_stop_light.png" />
-    <None Include="Resources\yellow_record_light.png" />
-    <None Include="Resources\yellow_forward_light.png" />
-    <None Include="Resources\play_light.png" />
-    <None Include="Resources\gtk-media-stop_6038.png" />
-    <None Include="Resources\gtk-media-record_6548.png" />
-    <None Include="Resources\gtk-media-play-ltr_4659.png" />
-    <None Include="Resources\gtk-media-forward-ltr_6874.png" />
-    <None Include="Resources\1a.png" />
-    <None Include="Resources\1.png" />
-    <None Include="Resources\networkWarning.ico" />
-    <None Include="Resources\zip.ico" />
-    <None Include="Resources\go_next.png" />
-    <None Include="Resources\AppIcon1.png" />
-    <None Include="Resources\BlackMarket.png" />
-    <None Include="Resources\AppIconPluginOnLuaOn.png" />
-    <None Include="Resources\AppIconPluginOnLuaOff.png" />
-    <None Include="Resources\AppIconPluginOffLuaOn.png" />
-    <None Include="Resources\SettingsLight20px.png" />
-    <None Include="Resources\Settings20px.png" />
-    <None Include="Resources\PlusLight.png" />
-    <None Include="Resources\MinusLight.png" />
-    <None Include="Resources\cSettingsLight.png" />
-    <None Include="Resources\DeleteLineLight.png" />
-    <None Include="Resources\DocumentSaveLight.png" />
-    <None Include="Resources\DocumentOpenLight.png" />
-    <None Include="Resources\trade_fishing.png" />
-    <None Include="Resources\inv_misc_gem_bloodgem_01.png" />
-    <None Include="Resources\achievement_bg_winwsg.png" />
-    <None Include="Resources\green_dialbut_611.png" />
-    <None Include="Resources\tab_c_74.png" />
-    <None Include="Resources\tab_c_73.png" />
-    <None Include="Resources\delete_line.png" />
-    <None Include="Resources\file_delete.png" />
-    <None Include="Resources\modules.png" />
-    <None Include="Resources\lua.png" />
-    <None Include="Resources\radar.png" />
-    <None Include="Resources\pumpkin_84413.ico" />
-    <None Include="Resources\diagram_16_6052.png" />
-    <None Include="Resources\close_41741.png" />
-    <None Include="Resources\minus.png" />
-    <None Include="Resources\plus.png" />
-    <None Include="Resources\lua.ico" />
-    <None Include="Resources\luaReset.png" />
-    <None Include="Resources\document_save.png" />
-    <None Include="Resources\document_open.png" />
-    <None Include="Resources\alarm.wav" />
-    <None Include="Resources\kwikdisk_9043.ico" />
-    <None Include="Resources\kwikdisk_commandLink.ico" />
-    <None Include="Resources\uploadAddonsBackup.png" />
-    <None Include="Resources\log.png" />
-    <None Include="Resources\loader.gif" />
-    <None Include="Resources\folder.ico" />
-    <None Include="Resources\downloadAddonsBackup.png" />
-    <None Include="Resources\cWow.png" />
-    <None Include="Resources\cWol.png" />
-    <None Include="Resources\cVentrilo16.png" />
-    <None Include="Resources\cTeamspeak16.png" />
-    <None Include="Resources\cSettings.png" />
-    <None Include="Resources\cRaidcall16.png" />
-    <None Include="Resources\cMumble16.png" />
-    <None Include="Resources\cMisc.png" />
-    <None Include="Resources\cAxExec.png" />
-    <None Include="Resources\AppIcon.ico" />
-    <None Include="Resources\voip.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

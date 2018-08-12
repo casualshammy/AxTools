@@ -1,5 +1,5 @@
 ﻿using AxTools.Forms;
-using AxTools.Properties;
+
 using AxTools.WinAPI;
 using Components.Forms;
 using System;
@@ -87,15 +87,15 @@ namespace AxTools.Helpers
                {
                    if (type == NotifyUserType.Error)
                    {
-                       trayPopup.Icon = Resources.dialog_error;
+                       trayPopup.Icon = Resources.DialogError;
                    }
                    else if (type == NotifyUserType.Warn)
                    {
-                       trayPopup.Icon = Resources.dialog_warning;
+                       trayPopup.Icon = AxTools.Helpers.Resources.DialogWarning;
                    }
                    else
                    {
-                       trayPopup.Icon = Resources.dialog_information;
+                       trayPopup.Icon = AxTools.Helpers.Resources.DialogInfo;
                    }
                }
                if (onClick != null)

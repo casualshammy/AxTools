@@ -1,5 +1,4 @@
-﻿using AxTools.Properties;
-using AxTools.WoW;
+﻿using AxTools.WoW;
 using Components.Forms;
 using System;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             StyleManager.Style = Settings2.Instance.StyleColor;
-            Icon = Resources.AppIcon;
+            Icon = AxTools.Helpers.Resources.ApplicationIcon;
             UpdateControls();
         }
 

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D1965F30-5326-4899-A7EC-C32FB47EF03E}</ProjectGuid>
+    <ProjectGuid>{4D19A87A-3D0E-4583-8016-2F98BDC3FCE8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LuaConsole</RootNamespace>
-    <AssemblyName>LuaConsole</AssemblyName>
+    <RootNamespace>Radar</RootNamespace>
+    <AssemblyName>Radar</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -28,22 +28,32 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.TextEditor">
-      <HintPath>..\..\..\.NET libs\ICSharpCode.TextEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="KeraLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=04d04586786c6f34, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NLua.1.3.2.1\lib\net45\KeraLua.dll</HintPath>
-    </Reference>
-    <Reference Include="KeyboardWatcher">
-      <HintPath>..\..\..\KeyboardHook\KeyboardHook\bin\Release\KeyboardWatcher.dll</HintPath>
-    </Reference>
     <Reference Include="MetroFramework">
       <HintPath>..\..\..\.NET libs\MetroFramework.dll</HintPath>
     </Reference>
-    <Reference Include="NLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=8df2ab518030ea95, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NLua.1.3.2.1\lib\net45\NLua.dll</HintPath>
+    <Reference Include="ObjectListView">
+      <HintPath>..\..\..\.NET libs\ObjectListView.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -56,42 +66,37 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsFormsAero">
-      <HintPath>..\..\..\.NET libs\WindowsFormsAero.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LuaConsole.cs">
+    <Compile Include="ImagesBase64.cs" />
+    <Compile Include="OptionsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LuaConsole.Designer.cs">
-      <DependentUpon>LuaConsole.cs</DependentUpon>
+    <Compile Include="OptionsWindow.Designer.cs">
+      <DependentUpon>OptionsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="LuaConsoleSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="LuaConsole.resx">
-      <DependentUpon>LuaConsole.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="Radar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Radar.Designer.cs">
+      <DependentUpon>Radar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RadarObject.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AxTools_x64\AxTools_x64.csproj">
-      <Project>{E579B921-37DA-4DA7-B0BF-FBEB2732F937}</Project>
+      <Project>{e579b921-37da-4da7-b0bf-fbeb2732f937}</Project>
       <Name>AxTools_x64</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\Components.csproj">
-      <Project>{63D3AF8E-11D1-4D4E-B791-7FBF09E9AEF3}</Project>
+      <Project>{63d3af8e-11d1-4d4e-b791-7fbf09e9aef3}</Project>
       <Name>Components</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Content Include="alarm.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-xcopy /s /y "F:\sync\private\Projects\AxTools\packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"</PostBuildEvent>
-  </PropertyGroup>
 </Project>

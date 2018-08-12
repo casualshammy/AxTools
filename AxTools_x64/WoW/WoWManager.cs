@@ -69,20 +69,10 @@ namespace AxTools.WoW
         }
 
         /// <summary>
-        ///     Closes //WowRadarOptions, WoWRadar//
         ///     Stops WoW plugin
-        ///     Releases DX hook
         /// </summary>
         internal static void Unhook(int processID)
         {
-            foreach (var form in Utils.FindForms<WowRadarOptions>().Where(l => l.ProcessID == processID))
-            {
-                form.Close();
-            }
-            foreach (var form in Utils.FindForms<WowRadar>().Where(l => l.ProcessID == processID))
-            {
-                form.Close();
-            }
             // cast 'PluginManagerEx.RunningPlugins' to array because we will get 'collection changed' exception otherwise
             foreach (var plugin in PluginManagerEx.RunningPlugins.ToArray())
             {

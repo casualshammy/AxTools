@@ -1,5 +1,5 @@
 ﻿using AxTools.Helpers;
-using AxTools.Properties;
+
 using Components.Forms;
 using System.Drawing;
 using System.IO;
@@ -13,7 +13,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             StyleManager.Style = Settings2.Instance.StyleColor;
-            Icon = Resources.AppIcon;
+            Icon = Helpers.Resources.ApplicationIcon;
             using (Image objImage = Image.FromFile(imagePath))
             {
                 Width = objImage.Width + 40;

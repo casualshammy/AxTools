@@ -14,3 +14,5 @@ AxTools.v11.suo
 .vs/AxTools/v15/.suo
 AxTools_x64/AxTools_x64.csproj.user
 .vs/AxTools/v15/sqlite3/storage.ide
+AxTools_x64/_make_plugins_symlinks.bat
+AxTools_x64/_makeRelease2_plugins.py

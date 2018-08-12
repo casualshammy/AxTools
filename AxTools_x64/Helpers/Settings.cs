@@ -1,12 +1,10 @@
-﻿using AxTools.Forms.Helpers;
-using AxTools.Services.PingerHelpers;
+﻿using AxTools.Services.PingerHelpers;
 using KeyboardWatcher;
 using MetroFramework;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -472,61 +470,6 @@ namespace AxTools.Helpers
         internal bool VentriloStartWithWoW = false;
 
         #endregion VoIP
-
-        #region Radar
-
-        private readonly ObservableCollection<RadarObject> wowRadarList = new ObservableCollection<RadarObject>();
-
-        [JsonProperty(Order = 50, PropertyName = "WoWRadarList")]
-        internal ObservableCollection<RadarObject> WoWRadarList
-        {
-            get
-            {
-                return wowRadarList;
-            }
-            set
-            {
-                foreach (RadarObject o in value)
-                {
-                    wowRadarList.Add(o);
-                }
-            }
-        }
-
-        [JsonProperty(Order = 51, PropertyName = "WoWRadarLocation")]
-        internal Point WoWRadarLocation = Point.Empty;
-
-        [JsonProperty(Order = 52, PropertyName = "WoWRadarShowPlayersClasses")]
-        internal bool WoWRadarShowPlayersClasses = true;
-
-        [JsonProperty(Order = 53, PropertyName = "WoWRadarShowNPCsNames")]
-        internal bool WoWRadarShowNPCsNames = true;
-
-        [JsonProperty(Order = 54, PropertyName = "WoWRadarShowObjectsNames")]
-        internal bool WoWRadarShowObjectsNames = true;
-
-        [JsonProperty(Order = 55, PropertyName = "WoWRadarShowMode")]
-        internal RadarShowMode WoWRadarShowMode = new RadarShowMode { Corpses = true, Enemies = true, Friends = true, Npcs = true, Objects = true, Zoom = 0.5f };
-
-        [JsonProperty(Order = 56, PropertyName = "WoWRadarFriendColor")]
-        internal Color WoWRadarFriendColor = Color.Green;
-
-        [JsonProperty(Order = 57, PropertyName = "WoWRadarEnemyColor")]
-        internal Color WoWRadarEnemyColor = Color.Red;
-
-        [JsonProperty(Order = 58, PropertyName = "WoWRadarNPCColor")]
-        internal Color WoWRadarNPCColor = Color.GreenYellow;
-
-        [JsonProperty(Order = 59, PropertyName = "WoWRadarObjectColor")]
-        internal Color WoWRadarObjectColor = Color.Gold;
-
-        [JsonProperty(Order = 60, PropertyName = "WoWRadarAlarmSoundFile")]
-        internal string WoWRadarAlarmSoundFile = AppFolders.ResourcesDir + "\\alarm.wav";
-
-        [JsonProperty(Order = 61, PropertyName = "WoWRadarShowLocalPlayerRotationArrowOnTop")]
-        internal bool WoWRadarShowLocalPlayerRotationArrowOnTop = false;
-
-        #endregion Radar
 
         #region WoWPlugins
 

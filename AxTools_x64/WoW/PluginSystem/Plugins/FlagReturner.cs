@@ -1,5 +1,4 @@
-﻿using AxTools.Properties;
-using AxTools.WoW.Helpers;
+﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem.API;
 using System;
@@ -28,7 +27,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
         }
 
-        public Image TrayIcon { get { return Resources.achievement_bg_winwsg; } }
+        public Image TrayIcon { get { return AxTools.Helpers.Resources.Plugin_Bg; } }
 
         public bool ConfigAvailable
         {

@@ -119,12 +119,12 @@ namespace AxTools.Helpers
 
         internal static void PlaySystemNotificationAsync()
         {
-            Task.Factory.StartNew(() => NativeMethods.sndPlaySoundW("SystemNotification", Win32Consts.SND_ALIAS | Win32Consts.SND_NODEFAULT));
+            Task.Factory.StartNew(() => NativeMethods.SndPlaySoundW("SystemNotification", Win32Consts.SND_ALIAS | Win32Consts.SND_NODEFAULT));
         }
 
         internal static void PlaySystemExclamationAsync()
         {
-            Task.Factory.StartNew(() => NativeMethods.sndPlaySoundW("SystemExclamation", Win32Consts.SND_ALIAS | Win32Consts.SND_NODEFAULT));
+            Task.Factory.StartNew(() => NativeMethods.SndPlaySoundW("SystemExclamation", Win32Consts.SND_ALIAS | Win32Consts.SND_NODEFAULT));
         }
 
         internal static Image Base64ToImage(string base64)

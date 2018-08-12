@@ -1,6 +1,8 @@
-﻿using AxTools.Helpers;
+﻿using AxTools.Forms;
+using AxTools.Helpers;
 using AxTools.WoW.PluginSystem.API;
 using AxTools.WoW.PluginSystem.Plugins;
+using Components.Forms;
 using KeyboardWatcher;
 using Newtonsoft.Json;
 using System;
@@ -10,6 +12,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,13 +26,11 @@ namespace AxTools.WoW.PluginSystem
         private static readonly SynchronizedCollection<PluginContainer> _pluginContainers = new SynchronizedCollection<PluginContainer>();
         private static readonly object AddRemoveLock = new object();
         internal static readonly Dictionary<string, int> PluginWoW = new Dictionary<string, int>();
-
+        internal static bool UpdateIsActive = false;
+        
         internal static event Action PluginStateChanged;
-
         internal static event Action PluginsLoaded;
-
         internal static event Action<IPlugin3> PluginLoaded;
-
         internal static event Action<IPlugin3> PluginUnloaded;
 
         internal static Dictionary<string, List<DateTime>> _pluginsUsageStats;
@@ -155,6 +156,11 @@ namespace AxTools.WoW.PluginSystem
         {
             return Task.Run(delegate
             {
+                if (UpdateIsActive)
+                {
+                    UpdatePluginsFromWeb();
+                    UpdateIsActive = false;
+                }
                 LoadPlugins();
                 LoadPluginsFromDisk();
                 CheckDependencies();
@@ -189,6 +195,42 @@ namespace AxTools.WoW.PluginSystem
             });
             SavePluginUsageStats();
             return list;
+        }
+
+        internal static void UpdatePluginsFromWeb()
+        {
+            Guid @lock = Program.ShutdownLock.GetLock();
+            try
+            {
+                if (!Directory.Exists(Path.Combine(AppFolders.TempDir, "plugins_update")))
+                    Directory.CreateDirectory(Path.Combine(AppFolders.TempDir, "plugins_update"));
+                using (WebClient webClient = new WebClient())
+                {
+                    foreach (string pluginName in new DirectoryInfo(AppFolders.PluginsDir).GetDirectories().Select(l => l.Name))
+                    {
+                        try
+                        {
+                            log.Info($"UpdatePluginsFromWeb: updating '{pluginName}'");
+                            string fileName = Path.Combine(AppFolders.TempDir, $"plugins_update\\{pluginName}.zip");
+                            webClient.DownloadFile($"https://axio.name/axtools/plugins/{pluginName}.zip", fileName);
+                            Directory.Delete(Path.Combine(AppFolders.PluginsDir, pluginName), true);
+                            using (Ionic.Zip.ZipFile zip = new Ionic.Zip.ZipFile(fileName, Encoding.UTF8))
+                            {
+                                zip.ExtractAll(AppFolders.PluginsDir, Ionic.Zip.ExtractExistingFileAction.OverwriteSilently);
+                            }
+                            log.Info($"UpdatePluginsFromWeb: '{pluginName}' is updated");
+                        }
+                        catch (Exception ex)
+                        {
+                            log.Info($"Call to UpdatePluginsFromWeb caused non-critical error while processing '{pluginName}' plugin: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                Program.ShutdownLock.ReleaseLock(@lock);
+            }
         }
 
         private static void LoadPlugins()
@@ -330,5 +372,8 @@ namespace AxTools.WoW.PluginSystem
             }
             return cc.CompiledAssembly;
         }
+
+        
+
     }
 }

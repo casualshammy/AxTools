@@ -1,5 +1,5 @@
 ﻿using AxTools.Helpers;
-using AxTools.Properties;
+
 using AxTools.Services;
 using AxTools.Services.PingerHelpers;
 using AxTools.Updater;
@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsFormsAero.TaskDialog;
 using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
@@ -39,9 +40,9 @@ namespace AxTools.Forms
             log.Info("Initializing main window...");
             InitializeComponent();
             StyleManager.Style = Settings2.Instance.StyleColor;
-            Icon = Resources.AppIcon;
+            Icon = AxTools.Helpers.Resources.ApplicationIcon;
             Closing += MainFormClosing;
-            notifyIconMain.Icon = Resources.AppIcon;
+            notifyIconMain.Icon = AxTools.Helpers.Resources.ApplicationIcon;
             tabControl.SelectedIndex = 0;
             linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width / 2 - linkEditWowAccounts.Size.Width / 2, linkEditWowAccounts.Location.Y);
             cmbboxAccSelect.Location = new Point(metroTabPage1.Size.Width / 2 - cmbboxAccSelect.Size.Width / 2, cmbboxAccSelect.Location.Y);
@@ -258,12 +259,6 @@ namespace AxTools.Forms
             foreach (ToolStripItem item in contextMenuStripMain.Items.GetAllToolStripItems().ToArray())
                 item.Dispose();
             contextMenuStripMain.Items.Clear();
-            contextMenuStripMain.Items.Add(new ToolStripMenuItem("Radar", Resources.radar, (o, e) =>
-            {
-                WowProcess process = WoWManager.GetProcess();
-                if (process != null) new WowRadar(process).Show();
-            }));
-            contextMenuStripMain.Items.Add(new ToolStripSeparator());
             IPlugin3[] sortedPlugins = PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray();
             IPlugin3[] topUsedPlugins = sortedPlugins.Take(3).ToArray();
             foreach (IPlugin3 i in topUsedPlugins)
@@ -325,7 +320,7 @@ namespace AxTools.Forms
             contextMenuStripMain.Items.Add(new ToolStripSeparator());
             contextMenuStripMain.Items.Add(launchWoW);
             contextMenuStripMain.Items.Add(new ToolStripSeparator());
-            contextMenuStripMain.Items.Add(new ToolStripMenuItem("Exit", Resources.close_26px, (o, e) =>
+            contextMenuStripMain.Items.Add(new ToolStripMenuItem("Exit", AxTools.Helpers.Resources.Close, (o, e) =>
             {
                 if (!isClosing)
                 {
@@ -574,60 +569,8 @@ namespace AxTools.Forms
 
         #endregion Tab: VoIP
 
-        #region Tab: Modules
-
-        private void TileRadar_Click(object sender, EventArgs e)
-        {
-            WowProcess process = WoWManager.GetProcess();
-            if (process != null)
-            {
-                new WowRadar(process).Show();
-            }
-        }
-
-        #endregion Tab: Modules
-
         #region Tab: Plug-ins
-
-        //private void SwitchWoWPlugin()
-        //{
-        //    buttonStartStopPlugin.Enabled = false;
-        //    if (!PluginManagerEx.RunningPlugins.Any())
-        //    {
-        //        if (olvPlugins.CheckedObjects.Count != 0)
-        //        {
-        //            if (WoWManager.Hooked || WoWManager.HookWoWAndNotifyUserIfError())
-        //            {
-        //                if (Info.IsInGame)
-        //                {
-        //                    PluginManagerEx.StartPlugins();
-        //                }
-        //                else
-        //                {
-        //                    Notify.SmartNotify("Plugin error", "Player isn't logged in", NotifyUserType.Error, true);
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            Notify.SmartNotify("Plugin error", "You didn't select valid plugin", NotifyUserType.Error, true);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        try
-        //        {
-        //            PluginManagerEx.StopPlugins();
-        //        }
-        //        catch
-        //        {
-        //            log.Error("Plugin task failed to cancel");
-        //            Notify.SmartNotify("Plugin error", "Fatal error: please restart AxTools", NotifyUserType.Error, true);
-        //        }
-        //    }
-        //    buttonStartStopPlugin.Enabled = true;
-        //}
-
+        
         private void ButtonStartStopPlugin_Click(object sender, EventArgs e)
         {
             MainForm_PluginHotkeys form = Utils.FindForms<MainForm_PluginHotkeys>().FirstOrDefault();
@@ -735,6 +678,16 @@ namespace AxTools.Forms
         private void LinkDownloadPlugins_Click(object sender, EventArgs e)
         {
             Process.Start(Globals.PluginsURL);
+        }
+
+        private void LinkUpdatePlugins_Click(object sender, EventArgs e)
+        {
+            TaskDialog taskDialog = new TaskDialog("Do you really want to update all plugins?", "AxTools", "AxTools will be restarted", TaskDialogButton.Yes | TaskDialogButton.No, TaskDialogIcon.Warning);
+            if (taskDialog.Show(this).CommonButton == Result.Yes)
+            {
+                Program.Exit += delegate { Process.Start(Application.StartupPath + "\\AxTools.exe", "-update-plugins"); };
+                Close();
+            }
         }
 
         #endregion Tab: Plug-ins
@@ -891,5 +844,7 @@ namespace AxTools.Forms
         }
 
         #endregion Events handlers
+
+        
     }
 }

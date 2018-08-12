@@ -1,5 +1,5 @@
 ﻿using AxTools.Helpers;
-using AxTools.Properties;
+
 using AxTools.Services;
 using AxTools.Services.PingerHelpers;
 using Components.Forms;
@@ -26,7 +26,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             StyleManager.Style = Settings2.Instance.StyleColor;
-            Icon = Resources.AppIcon;
+            Icon = Helpers.Resources.ApplicationIcon;
             tabControl.SelectedIndex = 0;
             SetupData();
             SetupEvents();

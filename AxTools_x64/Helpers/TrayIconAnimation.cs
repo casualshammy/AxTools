@@ -1,5 +1,4 @@
-﻿using AxTools.Properties;
-using AxTools.Services;
+﻿using AxTools.Services;
 using AxTools.WoW.PluginSystem;
 using System.Drawing;
 using System.Linq;
@@ -15,8 +14,8 @@ namespace AxTools.Helpers
         private static readonly Timer _timer = new Timer(500);
         private static readonly object _lock = new object();
         private static Phase _phase = Phase.Clearing;
-        private static readonly Icon AppIconPluginOnLuaOff = Icon.FromHandle(Resources.AppIconPluginOnLuaOff.GetHicon());
-        private static readonly Icon AppIconNormal = Icon.FromHandle(Resources.AppIcon1.GetHicon());
+        private static readonly Icon AppIconPluginOnLuaOff = (Icon)AxTools.Helpers.Resources.ApplicationIconPluginActive.Clone();
+        private static readonly Icon AppIconNormal = (Icon)Resources.ApplicationIcon.Clone();
         private static readonly Icon EmptyIcon = Icon.FromHandle(new Bitmap(1, 1).GetHicon());
 
         internal static void Initialize(NotifyIcon notifyIcon)

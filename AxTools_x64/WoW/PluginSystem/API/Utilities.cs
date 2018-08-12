@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace AxTools.WoW.PluginSystem.API
 {
@@ -37,6 +38,11 @@ namespace AxTools.WoW.PluginSystem.API
         public static void LogPrint(this IPlugin3 plugin, object text)
         {
             log.Info($"[Plugin: {plugin.Name}] {text}");
+        }
+
+        public static void LogError(this IPlugin3 plugin, object text)
+        {
+            log.Error($"[Plugin: {plugin.Name}] {text}");
         }
 
         /// <summary>
@@ -185,6 +191,11 @@ namespace AxTools.WoW.PluginSystem.API
         public static void InvokeInGUIThread(Action action)
         {
             MainForm.Instance.PostInvoke(action);
+        }
+
+        public static void TaskDialog(this Form form, string title, string message, bool warningOrError)
+        {
+            form.TaskDialog(title, message, warningOrError ? NotifyUserType.Warn : NotifyUserType.Info);
         }
     }
 }

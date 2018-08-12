@@ -34,7 +34,7 @@ namespace AxTools.WinAPI
 
         [DllImport("winmm.dll", EntryPoint = "sndPlaySoundW")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool sndPlaySoundW([In] [MarshalAs(UnmanagedType.LPWStr)] string pszSound, uint fuSound);
+        internal static extern bool SndPlaySoundW([In] [MarshalAs(UnmanagedType.LPWStr)] string pszSound, uint fuSound);
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
@@ -42,9 +42,13 @@ namespace AxTools.WinAPI
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
+#pragma warning disable IDE1006 // Naming Styles
+
         [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
         [SuppressUnmanagedCodeSecurity]
         internal static extern unsafe int memcmp(byte* b1, byte* b2, UIntPtr count);
+
+#pragma warning restore IDE1006 // Naming Styles
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool MoveWindow(IntPtr hWnd, int x, int y, int nWidth, int nHeight, bool bRepaint);

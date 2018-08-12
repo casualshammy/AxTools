@@ -66,12 +66,7 @@ namespace AxTools.Updater
                     }
                     catch {/* */}
                 }
-                log.Info("Starting AxTools...");
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = Path.Combine(axtoolsDir, "AxTools.exe"),
-                    WorkingDirectory = axtoolsDir
-                });
+                log.Info("ApplyUpdate: done");
             }
             catch (Exception ex)
             {
@@ -302,5 +297,6 @@ namespace AxTools.Updater
                 return null;
             }
         }
+
     }
 }

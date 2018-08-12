@@ -1,5 +1,5 @@
 ﻿using AxTools.Helpers;
-using AxTools.Properties;
+
 using AxTools.Services;
 using Components.Forms;
 using KeyboardWatcher;
@@ -18,7 +18,7 @@ namespace AxTools.Forms
         {
             InitializeComponent();
             StyleManager.Style = Settings2.Instance.StyleColor;
-            Icon = Resources.AppIcon;
+            Icon = Helpers.Resources.ApplicationIcon;
             Keys[] keys =
             {
                 Keys.None, Keys.F1, Keys.F2, Keys.F3, Keys.F4, Keys.F5, Keys.F6, Keys.F7, Keys.F8, Keys.F9, Keys.F10, Keys.F11,
@@ -31,7 +31,7 @@ namespace AxTools.Forms
             }
             comboBoxClickerKey.Text = settings.ClickerKey.ToString();
             num_clicker_interval.Value = settings.ClickerInterval;
-            num_clicker_interval.TextChanged += num_clicker_interval_TextChanged;
+            num_clicker_interval.TextChanged += Num_clicker_interval_TextChanged;
             textBoxClickerHotkey.Text = settings.ClickerHotkey.ToString();
             textBoxClickerHotkey.KeyDown += TextBoxClickerHotkey_KeyDown;
             buttonClickerHotkey.Click += ButtonClickerHotkey_Click;
@@ -62,12 +62,12 @@ namespace AxTools.Forms
             }
         }
 
-        private void comboBoxClickerKey_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxClickerKey_SelectedIndexChanged(object sender, EventArgs e)
         {
             Enum.TryParse(comboBoxClickerKey.Text, true, out settings.ClickerKey);
         }
 
-        private void num_clicker_interval_ValueChanged(object sender, EventArgs e)
+        private void Num_clicker_interval_ValueChanged(object sender, EventArgs e)
         {
             if (IsHandleCreated)
             {
@@ -84,12 +84,11 @@ namespace AxTools.Forms
             }
         }
 
-        private void num_clicker_interval_TextChanged(object sender, EventArgs e)
+        private void Num_clicker_interval_TextChanged(object sender, EventArgs e)
         {
             if (IsHandleCreated)
             {
-                int interval;
-                if (!int.TryParse(num_clicker_interval.Text, out interval) || interval < 50)
+                if (!int.TryParse(num_clicker_interval.Text, out int interval) || interval < 50)
                 {
                     ErrorProviderExt.SetError(num_clicker_interval, "Interval can't be less than 50ms", Color.Red);
                 }

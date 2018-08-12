@@ -7,7 +7,7 @@ using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using Components;
-using AxTools.Properties;
+
 using MetroFramework;
 using MetroFramework.Components;
 using MetroFramework.Controls;
@@ -53,8 +53,6 @@ namespace AxTools.Forms
             this.linkClickerSettings = new MetroFramework.Controls.MetroLink();
             this.linkBackup = new MetroFramework.Controls.MetroLink();
             this.cmbboxAccSelect = new Components.MetroComboboxExt(this.components);
-            this.tabPageModules = new MetroFramework.Controls.MetroTabPage();
-            this.tileRadar = new Components.MetroTileExt(this.components);
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
             this.labelTotalPluginsEnabled = new MetroFramework.Controls.MetroLabel();
             this.linkDownloadPlugins = new MetroFramework.Controls.MetroLink();
@@ -87,9 +85,9 @@ namespace AxTools.Forms
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkTitle = new MetroFramework.Controls.MetroLink();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.linkUpdatePlugins = new MetroFramework.Controls.MetroLink();
             this.tabControl.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
-            this.tabPageModules.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvPlugins)).BeginInit();
             this.metroTabPage2.SuspendLayout();
@@ -112,7 +110,6 @@ namespace AxTools.Forms
             // tabControl
             // 
             this.tabControl.Controls.Add(this.metroTabPage1);
-            this.tabControl.Controls.Add(this.tabPageModules);
             this.tabControl.Controls.Add(this.metroTabPage3);
             this.tabControl.Controls.Add(this.metroTabPage2);
             this.tabControl.CustomBackground = false;
@@ -150,7 +147,7 @@ namespace AxTools.Forms
             this.metroTabPage1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage1.StyleManager = null;
             this.metroTabPage1.TabIndex = 0;
-            this.metroTabPage1.Text = "         Home       ";
+            this.metroTabPage1.Text = "              Home            ";
             this.metroTabPage1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage1.VerticalScrollbar = false;
             this.metroTabPage1.VerticalScrollbarBarColor = true;
@@ -247,46 +244,9 @@ namespace AxTools.Forms
             this.cmbboxAccSelect.Theme = MetroFramework.MetroThemeStyle.Light;
             this.cmbboxAccSelect.SelectedIndexChanged += new System.EventHandler(this.CmbboxAccSelectSelectedIndexChanged);
             // 
-            // tabPageModules
-            // 
-            this.tabPageModules.Controls.Add(this.tileRadar);
-            this.tabPageModules.CustomBackground = false;
-            this.tabPageModules.HorizontalScrollbar = false;
-            this.tabPageModules.HorizontalScrollbarBarColor = true;
-            this.tabPageModules.HorizontalScrollbarHighlightOnWheel = false;
-            this.tabPageModules.HorizontalScrollbarSize = 10;
-            this.tabPageModules.Location = new System.Drawing.Point(4, 35);
-            this.tabPageModules.Name = "tabPageModules";
-            this.tabPageModules.Size = new System.Drawing.Size(421, 160);
-            this.tabPageModules.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tabPageModules.StyleManager = null;
-            this.tabPageModules.TabIndex = 3;
-            this.tabPageModules.Text = "      Modules    ";
-            this.tabPageModules.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tabPageModules.VerticalScrollbar = false;
-            this.tabPageModules.VerticalScrollbarBarColor = true;
-            this.tabPageModules.VerticalScrollbarHighlightOnWheel = false;
-            this.tabPageModules.VerticalScrollbarSize = 10;
-            // 
-            // tileRadar
-            // 
-            this.tileRadar.ActiveControl = null;
-            this.tileRadar.CenterText = "Radar";
-            this.tileRadar.CustomBackground = false;
-            this.tileRadar.CustomForeColor = false;
-            this.tileRadar.Location = new System.Drawing.Point(3, 15);
-            this.tileRadar.Name = "tileRadar";
-            this.tileRadar.PaintTileCount = true;
-            this.tileRadar.Size = new System.Drawing.Size(415, 142);
-            this.tileRadar.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileRadar.StyleManager = null;
-            this.tileRadar.TabIndex = 7;
-            this.tileRadar.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileRadar.TileCount = 0;
-            this.tileRadar.Click += new System.EventHandler(this.TileRadar_Click);
-            // 
             // metroTabPage3
             // 
+            this.metroTabPage3.Controls.Add(this.linkUpdatePlugins);
             this.metroTabPage3.Controls.Add(this.labelTotalPluginsEnabled);
             this.metroTabPage3.Controls.Add(this.linkDownloadPlugins);
             this.metroTabPage3.Controls.Add(this.olvPlugins);
@@ -302,7 +262,7 @@ namespace AxTools.Forms
             this.metroTabPage3.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage3.StyleManager = null;
             this.metroTabPage3.TabIndex = 2;
-            this.metroTabPage3.Text = "      Plug-ins    ";
+            this.metroTabPage3.Text = "          Plug-ins        ";
             this.metroTabPage3.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage3.VerticalScrollbar = false;
             this.metroTabPage3.VerticalScrollbarBarColor = true;
@@ -334,6 +294,7 @@ namespace AxTools.Forms
             this.linkDownloadPlugins.FontSize = MetroFramework.MetroLinkSize.Small;
             this.linkDownloadPlugins.FontWeight = MetroFramework.MetroLinkWeight.Bold;
             this.linkDownloadPlugins.Location = new System.Drawing.Point(303, 134);
+            this.linkDownloadPlugins.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.linkDownloadPlugins.Name = "linkDownloadPlugins";
             this.linkDownloadPlugins.Size = new System.Drawing.Size(115, 23);
             this.linkDownloadPlugins.Style = MetroFramework.MetroColorStyle.Blue;
@@ -425,7 +386,7 @@ namespace AxTools.Forms
             this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage2.StyleManager = null;
             this.metroTabPage2.TabIndex = 1;
-            this.metroTabPage2.Text = "        VoIP     ";
+            this.metroTabPage2.Text = "            VoIP          ";
             this.metroTabPage2.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage2.VerticalScrollbar = true;
             this.metroTabPage2.VerticalScrollbarBarColor = true;
@@ -705,7 +666,6 @@ namespace AxTools.Forms
             // 
             // toolStripMenuItemBackupWoWAddOns
             // 
-            this.toolStripMenuItemBackupWoWAddOns.Image = global::AxTools.Properties.Resources.data_backup;
             this.toolStripMenuItemBackupWoWAddOns.Name = "toolStripMenuItemBackupWoWAddOns";
             this.toolStripMenuItemBackupWoWAddOns.Size = new System.Drawing.Size(194, 22);
             this.toolStripMenuItemBackupWoWAddOns.Text = "Backup WoW AddOns";
@@ -713,7 +673,6 @@ namespace AxTools.Forms
             // 
             // toolStripMenuItemDeployArchive
             // 
-            this.toolStripMenuItemDeployArchive.Image = global::AxTools.Properties.Resources.data_deploy;
             this.toolStripMenuItemDeployArchive.Name = "toolStripMenuItemDeployArchive";
             this.toolStripMenuItemDeployArchive.Size = new System.Drawing.Size(194, 22);
             this.toolStripMenuItemDeployArchive.Text = "Deploy archive...";
@@ -740,7 +699,6 @@ namespace AxTools.Forms
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::AxTools.Properties.Resources.AppIcon1;
             this.pictureBox1.Location = new System.Drawing.Point(13, 6);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(20, 20);
@@ -772,6 +730,24 @@ namespace AxTools.Forms
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
             // 
+            // linkUpdatePlugins
+            // 
+            this.linkUpdatePlugins.CustomBackground = false;
+            this.linkUpdatePlugins.CustomForeColor = false;
+            this.linkUpdatePlugins.FontSize = MetroFramework.MetroLinkSize.Small;
+            this.linkUpdatePlugins.FontWeight = MetroFramework.MetroLinkWeight.Bold;
+            this.linkUpdatePlugins.Location = new System.Drawing.Point(303, 111);
+            this.linkUpdatePlugins.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+            this.linkUpdatePlugins.Name = "linkUpdatePlugins";
+            this.linkUpdatePlugins.Size = new System.Drawing.Size(115, 23);
+            this.linkUpdatePlugins.Style = MetroFramework.MetroColorStyle.Blue;
+            this.linkUpdatePlugins.StyleManager = null;
+            this.linkUpdatePlugins.TabIndex = 84;
+            this.linkUpdatePlugins.Text = "Update plugins";
+            this.linkUpdatePlugins.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.linkUpdatePlugins.UseStyleColors = true;
+            this.linkUpdatePlugins.Click += new System.EventHandler(this.LinkUpdatePlugins_Click);
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(469, 234);
@@ -791,7 +767,6 @@ namespace AxTools.Forms
             this.tabControl.ResumeLayout(false);
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage1.PerformLayout();
-            this.tabPageModules.ResumeLayout(false);
             this.metroTabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvPlugins)).EndInit();
             this.metroTabPage2.ResumeLayout(false);
@@ -836,8 +811,6 @@ namespace AxTools.Forms
         private BrightIdeasSoftware.ObjectListView olvPlugins;
         private BrightIdeasSoftware.OLVColumn olvColumn1;
         private BrightIdeasSoftware.OLVColumn olvColumn2;
-        private MetroTabPage tabPageModules;
-        private MetroTileExt tileRadar;
         private ToolStripMenuItem toolStripMenuItemDeployArchive;
         private MetroLink linkDownloadPlugins;
         private MetroLabel labelTotalPluginsEnabled;
@@ -847,6 +820,7 @@ namespace AxTools.Forms
         private ToolStripSeparator toolStripSeparator2;
         private MetroCheckBox checkBoxTwitch;
         private ToolStripMenuItem menuItemNextBackupTime;
+        private MetroLink linkUpdatePlugins;
     }
 }
 

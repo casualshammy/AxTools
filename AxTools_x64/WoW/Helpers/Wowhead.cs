@@ -92,7 +92,7 @@ namespace AxTools.WoW.Helpers
                             }
                             else
                             {
-                                info.Image = Properties.Resources.dialog_error;
+                                info.Image = Resources.DialogError;
                             }
 
                             SpellInfo_SaveToCache(spellID, info);

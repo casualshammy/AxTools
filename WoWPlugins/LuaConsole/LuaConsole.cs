@@ -45,7 +45,7 @@ namespace LuaConsole
 
         public bool DontCloseOnWowShutdown => true;
 
-        public Image TrayIcon => null;
+        public Image TrayIcon => Resources.PluginImage;
 
         public Version Version => new Version(1, 0);
 
@@ -61,19 +61,6 @@ namespace LuaConsole
 
         #endregion Consts
 
-        #region Images
-
-        private const string OpenFile = "iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAABVUlEQVRoQ+2Yzw7BQBDGW44IXgKP4OwuIt6FK0fv4iDO4swbiIcgEm7+fZto0q5N2+1M26yMZE52vp3fzLdtur7n+M93vH5PAMqeoExAJkD" +
-            "swN9aqIvGLBEDRMOySQusn1vmZF5umkAHagdEK7Oq5xUGYQJYofAJofggtRAIE8AZFbQZAJRE7hAmgAc2rjIBcMjcIbJDTBFHXdAE8MSiCsfOzBpX6PV1CJcAVD82iFG4Ma4B3PTHehqAsl92b82KkXoEgPmgmuSsJ/CCSngyzllIAJhtJRaSM0" +
-            "C0lLWFYhOIxWRJFwDnzoBYKIvRY3LkDMgZIFpKLCQWKtpC6sO5Rtw0r/RUH/Xq6mKYVwVE3TXyx0nXKj0s2COaxM240y/fi61TEoD6X0EE1+t17kos9ZRttogZIlK80in7CWPJ8rtcAMgtJArIBIgNJKfLBMgtJAo4P4EPa2dGMSGVYO4AAAAASUVORK5CYII=";
-
-        private const string SaveFile = "iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAB60lEQVRoQ+2ZPUsEMRCG7xo/ULHXP2ChIqhgbacgYq+1WBwiFrbaaSNiIf4A7UUQG3+AH2ih2NiKtSAiWuk74MIRdrOTTJJLIAcvd7c3k7z" +
-            "PTDYcm2Yj8Vczcf+NDNDpDuYOxN6BERjchWahAc9mdzD+tukcuiVE5q+hQdNBBfHGEDqAMxhZFJixTTWC0AF8BFg2VZBsCB3ArzK66x1LHV+FYUHEDEBAtRCxA9RCpACghUgFgCBKvWYA280eeXW7kDp07oCg2E5SxR1w4kIwSAYQFM9Jau6Akz" +
-            "IKBskdEBTPSWqwDnzD7hF0Cj3/Wx/F+zK0BnVb4gQBeIW5uTbjqtcxXLiEhi0gvANQ5ac05gvP4/hwB3UZQngH2IehTaapA8StM2OLMO8Ak5jpgWmKOkVdMHl5B+iBmx+mo17EfTFjg3UgeQBaFvfMqk4j7pYZG6wDdGNuME0dIq7FjA0GQOufK" +
-            "vtUY2wCv99A0W2j5PsNmoceKyDI/AU0ZFh9Cve+CxWeqBPH0AnU/ldiBd9XLSpvvYQ+kdlnUSkfKeSl9HxC91zoHEkLPtxYjEmP+pfK8mI74Cjz+I6LM9CLKQDF0ynNHkRHTP0WlZOk0LK5graqzFfe2ZJZQ+e6PrQI7T+f1AevuDphXkKdbsEfAZhbMfflGqAAAAAASUVORK5CYII=";
-
-        #endregion Images
-
         public LuaConsole()
         {
         }
@@ -81,15 +68,10 @@ namespace LuaConsole
         public LuaConsole(GameInterface info)
         {
             InitializeComponent();
+            Icon = Resources.PluginIcon;
             luaConsoleSettings = this.LoadSettingsJSON<LuaConsoleSettings>();
-            using (MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(OpenFile)))
-            {
-                pictureBoxOpenLuaFile.Image = Image.FromStream(memoryStream);
-            }
-            using (MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(SaveFile)))
-            {
-                pictureBoxSaveLuaFile.Image = Image.FromStream(memoryStream);
-            }
+            pictureBoxOpenLuaFile.Image = Resources.OpenFile;
+            pictureBoxSaveLuaFile.Image = Resources.SaveFile;
             StyleManager.Style = Utilities.MetroColorStyle;
             this.info = info;
             luaEngine = new NLua.Lua();

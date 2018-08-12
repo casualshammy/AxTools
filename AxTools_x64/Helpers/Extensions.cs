@@ -6,9 +6,9 @@ using System.Windows.Forms;
 
 namespace AxTools.Helpers
 {
-    internal static class Extensions
+    public static class Extensions
     {
-        internal static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
             HashSet<TKey> knownKeys = new HashSet<TKey>();
             foreach (TSource element in source)

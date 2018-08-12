@@ -1,10 +1,8 @@
 ﻿using AxTools.Forms;
-using AxTools.Forms.Helpers;
 using AxTools.Helpers;
-using AxTools.Properties;
+
 using AxTools.Updater;
 using AxTools.WoW;
-using AxTools.WoW.PluginSystem;
 using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
@@ -36,6 +34,11 @@ namespace AxTools
             UIThread = Thread.CurrentThread.ManagedThreadId;
             if (args.Length == 0)
             {
+                if (Process.GetProcessesByName("AxTools").Length > 1)
+                {
+                    log.Info("Waiting for parent AxTools process (1000 ms)");
+                    Thread.Sleep(1000);
+                }
                 using (new Mutex(true, "AxToolsMainExecutable", out bool newInstance))
                 {
                     if (newInstance)
@@ -112,39 +115,6 @@ namespace AxTools
                 if (File.Exists(mySettingsFile))
                 {
                     File.Move(mySettingsFile, mySettingsDir + "\\settings.json");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            // 01.06.2016
-            try
-            {
-                //"WoWRadarShowMode": 2199040098561,
-                Regex regex = new Regex("\"WoWRadarShowMode\": (\\d+)");
-                string cfg = File.ReadAllText(AppFolders.ConfigDir + "\\settings.json", Encoding.UTF8);
-                Match match = regex.Match(cfg);
-                if (match.Success)
-                {
-                    ulong radarShowMode = ulong.Parse(match.Groups[1].Value);
-                    byte[] p = BitConverter.GetBytes(radarShowMode);
-                    RadarShowMode newRadarShowMode = new RadarShowMode
-                    {
-                        Friends = p[0] == 1,
-                        Enemies = p[1] == 1,
-                        Npcs = p[2] == 1,
-                        Objects = p[3] == 1,
-                        Corpses = p[4] == 1,
-                        Zoom = p[5] * 0.25F
-                    };
-                    if (newRadarShowMode.Zoom > 2F || newRadarShowMode.Zoom < 0.25F)
-                    {
-                        newRadarShowMode.Zoom = 0.5F;
-                    }
-                    string newCfg = cfg.Replace(match.Value, "\"WoWRadarShowMode\": " + JsonConvert.SerializeObject(newRadarShowMode));
-                    File.WriteAllText(AppFolders.ConfigDir + "\\settings.json", newCfg, Encoding.UTF8);
                 }
             }
             catch (Exception ex)
@@ -271,36 +241,41 @@ namespace AxTools
                 MessageBox.Show(ex.Message);
             }
 
-            // 09.02.2018
+            // 10.08.2018
             try
             {
-                string cfg = File.ReadAllText(AppFolders.ConfigDir + "\\settings.json", Encoding.UTF8);
-                if (cfg.Contains("\"WoWRadarList\": ["))
+                if (Settings2.Instance.LastUsedVersion <= new VersionExt(12, 3, 46))
                 {
-                    Helpers.Settings oldSettings = JsonConvert.DeserializeObject<Helpers.Settings>(cfg);
-                    WoWRadarSettings.Instance.AlarmSoundFile = oldSettings.WoWRadarAlarmSoundFile;
-                    WoWRadarSettings.Instance.DisplayCorpses = oldSettings.WoWRadarShowMode.Corpses;
-                    WoWRadarSettings.Instance.DisplayEnemies = oldSettings.WoWRadarShowMode.Enemies;
-                    WoWRadarSettings.Instance.DisplayFriends = oldSettings.WoWRadarShowMode.Friends;
-                    WoWRadarSettings.Instance.DisplayNpcs = oldSettings.WoWRadarShowMode.Npcs;
-                    WoWRadarSettings.Instance.DisplayObjects = oldSettings.WoWRadarShowMode.Objects;
-                    WoWRadarSettings.Instance.EnemyColor = oldSettings.WoWRadarEnemyColor;
-                    WoWRadarSettings.Instance.FriendColor = oldSettings.WoWRadarFriendColor;
-                    WoWRadarSettings.Instance.List = oldSettings.WoWRadarList;
-                    WoWRadarSettings.Instance.Location = oldSettings.WoWRadarLocation;
-                    WoWRadarSettings.Instance.NPCColor = oldSettings.WoWRadarNPCColor;
-                    WoWRadarSettings.Instance.ObjectColor = oldSettings.WoWRadarObjectColor;
-                    WoWRadarSettings.Instance.ShowLocalPlayerRotationArrowOnTop = oldSettings.WoWRadarShowLocalPlayerRotationArrowOnTop;
-                    WoWRadarSettings.Instance.ShowNPCsNames = oldSettings.WoWRadarShowNPCsNames;
-                    WoWRadarSettings.Instance.ShowObjectsNames = oldSettings.WoWRadarShowObjectsNames;
-                    WoWRadarSettings.Instance.ShowPlayersClasses = oldSettings.WoWRadarShowPlayersClasses;
-                    WoWRadarSettings.Instance.Zoom = oldSettings.WoWRadarShowMode.Zoom;
+                    string fileName = Path.Combine(AppFolders.ConfigDir, "lua-console.json");
+                    if (File.Exists(fileName))
+                    {
+                        File.Delete(fileName);
+                        log.Info($"{fileName} is deleted");
+                    }
                 }
-                if (cfg.Contains("\"PluginsUsageStat2\": {"))
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            // 10.08.2018
+            try
+            {
+                if (Settings2.Instance.LastUsedVersion <= new VersionExt(12, 3, 46))
                 {
-                    Helpers.Settings oldSettings = JsonConvert.DeserializeObject<Helpers.Settings>(cfg);
-                    PluginManagerEx._pluginsUsageStats = oldSettings.PluginsUsageStat2;
-                    PluginManagerEx.SavePluginUsageStats();
+                    string fileName = Path.Combine(AppFolders.ConfigDir, "wow-radar.json");
+                    if (File.Exists(fileName))
+                    {
+                        string newFilePath = Path.Combine(AppFolders.PluginsSettingsDir, "Radar\\settings.json");
+                        if (File.Exists(newFilePath))
+                            File.Delete(newFilePath);
+                        string rawConfig = File.ReadAllText(fileName, Encoding.UTF8);
+                        string config = rawConfig.Replace(Path.Combine(AppFolders.ResourcesDir, "alarm.wav").Replace(@"\", @"\\"), Path.Combine(AppFolders.PluginsDir, "Radar\\alarm.wav").Replace(@"\", @"\\"));
+                        File.WriteAllText(fileName, config, Encoding.UTF8);
+                        File.Move(fileName, newFilePath);
+                        log.Info($"{fileName} is moved to {newFilePath}");
+                    }
                 }
             }
             catch (Exception ex)
@@ -312,7 +287,7 @@ namespace AxTools
         private static void InstallRootCertificate()
         {
             X509Certificate2 x509 = new X509Certificate2();
-            x509.Import(Resources.Axio_Lab_CA);
+            x509.Import(Helpers.Resources.CACert);
             X509Store store = new X509Store(StoreName.Root, StoreLocation.LocalMachine);
             store.Open(OpenFlags.ReadWrite);
             if (x509.SerialNumber != null && store.Certificates.Find(X509FindType.FindBySerialNumber, x509.SerialNumber, true).Count == 0)
@@ -321,34 +296,6 @@ namespace AxTools
                 store.Add(x509);
             }
             store.Close();
-        }
-
-        private static void ProcessArgs(string[] args)
-        {
-            string arguments = Environment.CommandLine;
-            log.Info("CMD arguments: " + arguments);
-            Match updatedir = new Regex("-update-dir \"(.+?)\"").Match(arguments);
-            Match axtoolsdir = new Regex("-axtools-dir \"(.+?)\"").Match(arguments);
-            if (updatedir.Success && axtoolsdir.Success)
-            {
-                log.Info("Parsed update info, processing...");
-                Update(updatedir.Groups[1].Value, axtoolsdir.Groups[1].Value);
-            }
-            else
-            {
-                TaskDialog.Show("Invalid command line arguments", "AxTools", "", TaskDialogButton.OK, TaskDialogIcon.Warning);
-                Main(new string[] { });
-            }
-        }
-
-        private static void Update(string updateDir, string axtoolsDir)
-        {
-            while (Process.GetProcessesByName("AxTools").Length > 1)
-            {
-                log.Info("Waiting for parent AxTools process...");
-                Thread.Sleep(500);
-            }
-            UpdaterService.ApplyUpdate(updateDir, axtoolsDir);
         }
 
         private static void SendLogToDeveloper()
@@ -367,5 +314,68 @@ namespace AxTools
                 }
             }
         }
+
+        #region Arguments
+
+        private static void ProcessArgs(string[] args)
+        {
+            string arguments = Environment.CommandLine;
+            log.Info("CMD arguments: " + arguments);
+            Match updatedir = new Regex("-update-dir \"(.+?)\"").Match(arguments);
+            Match axtoolsdir = new Regex("-axtools-dir \"(.+?)\"").Match(arguments);
+            if (updatedir.Success && axtoolsdir.Success)
+            {
+                log.Info("Parsed update info, processing...");
+                Update(updatedir.Groups[1].Value, axtoolsdir.Groups[1].Value);
+            }
+            else if (arguments.Contains("-restart"))
+            {
+                RestartApplication();
+            }
+            else if (arguments.Contains("-update-plugins"))
+            {
+                while (Process.GetProcessesByName("AxTools").Length > 1)
+                {
+                    log.Info("Waiting for parent AxTools process...");
+                    Thread.Sleep(250);
+                }
+                WoW.PluginSystem.PluginManagerEx.UpdateIsActive = true;
+                Main(new string[] { });
+            }
+            else
+            {
+                TaskDialog.Show("Invalid command line arguments", "AxTools", "", TaskDialogButton.OK, TaskDialogIcon.Warning);
+                Main(new string[] { });
+            }
+        }
+
+        private static void Update(string updateDir, string axtoolsDir)
+        {
+            while (Process.GetProcessesByName("AxTools").Length > 1)
+            {
+                log.Info("Waiting for parent AxTools process...");
+                Thread.Sleep(500);
+            }
+            UpdaterService.ApplyUpdate(updateDir, axtoolsDir);
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Path.Combine(axtoolsDir, "AxTools.exe"),
+                WorkingDirectory = axtoolsDir,
+                Arguments = "-update-plugins",
+            });
+        }
+
+        private static void RestartApplication()
+        {
+            while (Process.GetProcessesByName("AxTools").Length > 1)
+            {
+                log.Info("Waiting for parent AxTools process...");
+                Thread.Sleep(250);
+            }
+            Process.Start(Application.StartupPath + "\\AxTools.exe");
+        }
+        
+        #endregion
+
     }
 }
