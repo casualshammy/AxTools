@@ -266,7 +266,7 @@ namespace AxTools.Forms
                 item.Dispose();
             contextMenuStripMain.Items.Clear();
             var sortedPlugins = PluginManagerEx.GetSortedByUsageListOfPlugins().ToArray();
-            var topUsedPlugins = sortedPlugins.Take(3).ToArray();
+            var topUsedPlugins = sortedPlugins.Take(5).ToArray();
             foreach (IPlugin3 i in topUsedPlugins)
             {
                 var plugin = i;

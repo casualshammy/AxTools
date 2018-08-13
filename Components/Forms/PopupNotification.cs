@@ -34,6 +34,7 @@ namespace Components.Forms
             Icon = image;
             timer = new System.Timers.Timer(33.3); // 30fps
             timer.Elapsed += Timer_Tick;
+            FormClosing += PopupNotification_FormClosing;
             BeginInvoke((MethodInvoker)delegate
             {
                 ArrangementTimer_Elapsed(null, null);
@@ -48,7 +49,7 @@ namespace Components.Forms
                 }
             });
         }
-
+        
         public string Title
         {
             get => metroLabel1.Text;
@@ -73,6 +74,8 @@ namespace Components.Forms
 
         public int Timeout { get; private set; }
 
+        public bool IsClosed { get; private set; }
+
         public void Show(int timeout)
         {
             var prevForegroundWindow = NativeMethods.GetForegroundWindow();
@@ -84,6 +87,12 @@ namespace Components.Forms
         public new void Show()
         {
             Show(7);
+        }
+
+        public void RefreshTimeout()
+        {
+            loadTime = DateTime.UtcNow;
+            Opacity = 1.0d;
         }
 
         public new event MouseEventHandler Click
@@ -155,8 +164,7 @@ namespace Components.Forms
 
         private void ALL_MouseEnter(object sender, EventArgs e)
         {
-            loadTime = DateTime.UtcNow;
-            Opacity = 1.0d;
+            RefreshTimeout();
         }
 
         private void ALL_MouseClick(object sender, MouseEventArgs e)
@@ -166,6 +174,11 @@ namespace Components.Forms
                 Close();
                 ArrangementTimer_Elapsed(null, null);
             }
+        }
+
+        private void PopupNotification_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            IsClosed = true;
         }
 
         private string WordWrap(string text)

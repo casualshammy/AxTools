@@ -15,11 +15,11 @@ namespace BlackMarketTracker
     {
         #region IPlugin3 info
 
-        public new string Name => "BlackMarketTracker";
+        public new string Name => nameof(BlackMarketTracker);
 
         public bool ConfigAvailable => false;
 
-        public string[] Dependencies => null;
+        public string[] Dependencies => new string[0];
 
         public string Description => "Shows exact remaining time of black market auctions";
 
@@ -36,10 +36,9 @@ namespace BlackMarketTracker
         private DateTime lastRefresh = DateTime.UtcNow;
         private readonly object imageListLocker = new object();
         private readonly List<BlackMarketItem> bmItems = new List<BlackMarketItem>();
+        private bool ClosingProcessStarted;
 
-        public BlackMarketTracker()
-        {
-        }
+        public BlackMarketTracker() { }
 
         public BlackMarketTracker(GameInterface gameInterface)
         {
@@ -51,8 +50,14 @@ namespace BlackMarketTracker
 
         private void BlackMarketFormClosing(object sender, FormClosingEventArgs e)
         {
+            var alreadyClosing = ClosingProcessStarted;
+            ClosingProcessStarted = true;
             timerUpdateList.Enabled = false;
             this.LogPrint("Closed");
+            if (!alreadyClosing)
+            {
+                Utilities.RemovePluginFromRunning(Name);
+            }
         }
 
         private void MetroLinkRefreshClick(object sender, EventArgs e)
@@ -63,7 +68,7 @@ namespace BlackMarketTracker
                 listView1.Items.Clear();
                 bmItems.Clear();
                 timerUpdateList.Enabled = false;
-                WaitingOverlay waitingOverlay = new WaitingOverlay(this, "Please wait...", Utilities.MetroColorStyle).Show();
+                var waitingOverlay = new WaitingOverlay(this, "Please wait...", Utilities.MetroColorStyle).Show();
                 Task.Run(delegate
                 {
                     foreach (BlackMarketItem item in BlackMarketMgr.GetAllItems(game))
@@ -94,7 +99,7 @@ namespace BlackMarketTracker
             }
             else
             {
-                TaskDialog.Show("Player isn't logged in", "AxTools", "If you sure it is, close this window and open BMTracker again", 0, TaskDialogIcon.Warning);
+                TaskDialog.Show("Player isn't logged in", nameof(AxTools), "If you sure it is, close this window and open BMTracker again", 0, TaskDialogIcon.Warning);
             }
         }
 
@@ -119,7 +124,7 @@ namespace BlackMarketTracker
             listView1.Items.Clear();
             foreach (BlackMarketItem item in bmItems)
             {
-                TimeSpan ts = item.TimeLeft - (DateTime.UtcNow - lastRefresh);
+                var ts = item.TimeLeft - (DateTime.UtcNow - lastRefresh);
                 listView1.Items.Add(new ListViewItem(new[]
                 {
                     item.Name,
@@ -142,7 +147,8 @@ namespace BlackMarketTracker
         {
             Utilities.InvokeInGUIThread(delegate
             {
-                (actualWindow = new BlackMarketTracker(game)).Show();
+                actualWindow = new BlackMarketTracker(game);
+                actualWindow.Show();
             });
         }
 
@@ -150,7 +156,15 @@ namespace BlackMarketTracker
         {
             Utilities.InvokeInGUIThread(delegate
             {
-                actualWindow?.Close();
+                if (actualWindow != null)
+                {
+                    var alreadyClosing = actualWindow.ClosingProcessStarted;
+                    actualWindow.ClosingProcessStarted = true;
+                    if (!alreadyClosing)
+                    {
+                        actualWindow.Close();
+                    }
+                }
             });
         }
 

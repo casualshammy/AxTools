@@ -32,6 +32,7 @@ namespace LuaConsole
         private SafeTimer safeTimer;
         private string helpInfo = "";
         private bool LuaCancellationRequested;
+        private bool ClosingProcessStarted;
 
         #region IPlugin3 info
 
@@ -61,9 +62,7 @@ namespace LuaConsole
 
         #endregion Consts
 
-        public LuaConsole()
-        {
-        }
+        public LuaConsole() { }
 
         public LuaConsole(GameInterface info)
         {
@@ -392,6 +391,8 @@ namespace LuaConsole
 
         private void WowModulesFormClosing(object sender, FormClosingEventArgs e)
         {
+            var alreadyClosing = ClosingProcessStarted;
+            ClosingProcessStarted = true;
             if (safeTimer != null && safeTimer.IsRunning)
             {
                 InvokeOnClick(metroLinkEnableCyclicExecution, EventArgs.Empty);
@@ -402,6 +403,10 @@ namespace LuaConsole
             HotkeyManager.KeyPressed -= KeyboardListener2_KeyPressed;
             this.SaveSettingsJSON(luaConsoleSettings);
             this.LogPrint("Closed");
+            if (!alreadyClosing)
+            {
+                Utilities.RemovePluginFromRunning(Name);
+            }
         }
 
         private void PictureBoxOpenLuaFileClick(object sender, EventArgs e)
@@ -638,7 +643,15 @@ namespace LuaConsole
         {
             Utilities.InvokeInGUIThread(delegate
             {
-                actualWindow?.Close();
+                if (actualWindow != null)
+                {
+                    var alreadyClosing = actualWindow.ClosingProcessStarted;
+                    actualWindow.ClosingProcessStarted = true;
+                    if (!alreadyClosing)
+                    {
+                        actualWindow.Close();
+                    }
+                }
             });
         }
     }

@@ -58,6 +58,7 @@
     <Compile Include="BlackMarketTracker.Designer.cs">
       <DependentUpon>BlackMarketTracker.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("AxTools")]
-[assembly: AssemblyCopyright("Axio.Lab © 2017")]
+[assembly: AssemblyCopyright("axio.name © 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // Можно задать все значения или принять номер построения и номер редакции по умолчанию,
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("12.3.47.2388")]
+[assembly: AssemblyVersion("12.3.48.2390")]
 //[assembly: AssemblyFileVersion("0.0.0.0")]
