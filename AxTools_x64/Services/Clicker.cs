@@ -73,7 +73,7 @@ namespace AxTools.Services
                         ClickerSettings clickerSettings = Utils.FindForms<ClickerSettings>().FirstOrDefault();
                         if (clickerSettings == null)
                         {
-                            new ClickerSettings().Show(MainForm.Instance);
+                            new ClickerSettings().Show(MainWindow.Instance);
                         }
                         else
                         {

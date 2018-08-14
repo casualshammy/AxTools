@@ -13,7 +13,7 @@ namespace AxTools.Helpers
     {
         internal static void SmartNotify(string title, string message, NotifyUserType type, bool sound, bool showOnlyTrayPopup = false)
         {
-            if (!showOnlyTrayPopup && NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
+            if (!showOnlyTrayPopup && NativeMethods.GetForegroundWindow() == MainWindow.Instance.Handle)
             {
                 var taskDialog = new TaskDialog(title, nameof(AxTools), message, TaskDialogButton.OK);
                 switch (type)
@@ -30,10 +30,10 @@ namespace AxTools.Helpers
                         taskDialog.CommonIcon = TaskDialogIcon.Information;
                         break;
                 }
-                MainForm.Instance.PostInvoke(() =>
+                MainWindow.Instance.PostInvoke(() =>
                 {
-                    MainForm.Instance.Activate();
-                    taskDialog.Show(MainForm.Instance);
+                    MainWindow.Instance.Activate();
+                    taskDialog.Show(MainWindow.Instance);
                 });
             }
             else
@@ -44,7 +44,7 @@ namespace AxTools.Helpers
 
         internal static void TaskDialog(string title, string message, NotifyUserType type, EventHandler<HyperlinkEventArgs> onHyperlinkClick = null)
         {
-            TaskDialog(MainForm.Instance, title, message, type, onHyperlinkClick);
+            TaskDialog(MainWindow.Instance, title, message, type, onHyperlinkClick);
         }
 
         internal static void TaskDialog(this Form form, string title, string message, NotifyUserType type, EventHandler<HyperlinkEventArgs> onHyperlinkClick = null)
@@ -80,7 +80,7 @@ namespace AxTools.Helpers
 
         internal static void TrayPopup(string title, string message, NotifyUserType type, bool sound, Image image = null, int timeoutSec = 10, MouseEventHandler onClick = null)
         {
-            MainForm.Instance.BeginInvoke((MethodInvoker)delegate
+            MainWindow.Instance.BeginInvoke((MethodInvoker)delegate
            {
 #pragma warning disable CC0022
                var trayPopup = new PopupNotification(title, message, image, Settings2.Instance.StyleColor);

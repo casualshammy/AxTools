@@ -61,7 +61,7 @@ namespace AxTools
                             WoWAntiKick.StartWaitForWoWProcesses();
                             log.Info($"Registered for: {Settings2.Instance.UserID}");
                             log.Info($"Constructing MainWindow, app version: {Globals.AppVersion}");
-                            Application.Run(new MainForm());
+                            Application.Run(new MainWindow());
                             log.Info("MainWindow is closed, waiting for ShutdownLock...");
                             ShutdownLock.WaitForLocks();
                             log.Info($"Invoking 'Exit' handlers ({Exit?.GetInvocationList().Length})...");

@@ -48,7 +48,7 @@ namespace AxTools.WoW.PluginSystem.API
         /// <summary>
         ///
         /// </summary>
-        public static IntPtr MainWindowHandle => MainForm.Instance.Handle;
+        public static IntPtr MainWindowHandle => MainWindow.Instance.Handle;
 
         /// <summary>
         ///     Creates new <see cref="SafeTimer"/> timer.
@@ -187,7 +187,7 @@ namespace AxTools.WoW.PluginSystem.API
 
         public static void InvokeInGUIThread(Action action)
         {
-            MainForm.Instance.PostInvoke(action);
+            MainWindow.Instance.PostInvoke(action);
         }
 
         public static void TaskDialog(this Form form, string title, string message, bool warningOrError)

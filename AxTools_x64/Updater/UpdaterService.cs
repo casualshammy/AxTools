@@ -161,7 +161,7 @@ namespace AxTools.Updater
                 {
                     log.Info("Closing for update...");
                     Application.ApplicationExit += ApplicationOnApplicationExit;
-                    MainForm.Instance.BeginInvoke(new Action(MainForm.Instance.Close));
+                    MainWindow.Instance.BeginInvoke(new Action(MainWindow.Instance.Close));
                 }
                 catch (Exception ex)
                 {
@@ -169,10 +169,10 @@ namespace AxTools.Updater
                 }
             }
 
-            if (WinAPI.NativeMethods.GetForegroundWindow() == MainForm.Instance.Handle)
+            if (WinAPI.NativeMethods.GetForegroundWindow() == MainWindow.Instance.Handle)
             {
                 var taskDialog = new TaskDialog("Update is available", nameof(AxTools), "Do you wish to restart now?", (TaskDialogButton)((int)TaskDialogButton.Yes + (int)TaskDialogButton.No), TaskDialogIcon.Information);
-                if (taskDialog.Show(MainForm.Instance).CommonButton == Result.Yes)
+                if (taskDialog.Show(MainWindow.Instance).CommonButton == Result.Yes)
                 {
                     CloseAndUpdate();
                 }

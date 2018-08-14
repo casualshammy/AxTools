@@ -29,7 +29,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 checkBoxUseSpecialBait = { Checked = fishingSettings.UseSpecialBait },
                 comboBoxSpecialBait = { Text = fishingSettings.SpecialBait }
             };
-            fishingConfig.ShowDialog(MainForm.Instance);
+            fishingConfig.ShowDialog(MainWindow.Instance);
             fishingSettings.UseBestBait = fishingConfig.checkBoxUseBestBait.Checked;
             fishingSettings.UseSpecialBait = fishingConfig.checkBoxUseSpecialBait.Checked;
             fishingSettings.SpecialBait = fishingConfig.comboBoxSpecialBait.Text;

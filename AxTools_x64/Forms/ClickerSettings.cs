@@ -37,7 +37,7 @@ namespace AxTools.Forms
             buttonClickerHotkey.Click += ButtonClickerHotkey_Click;
             BeginInvoke((MethodInvoker)delegate
            {
-               MainForm mainForm = MainForm.Instance;
+               MainWindow mainForm = MainWindow.Instance;
                Location = new Point(mainForm.Location.X + mainForm.Size.Width - Size.Width, mainForm.Location.Y + mainForm.Size.Height - Size.Height);
                OnActivated(EventArgs.Empty);
            });

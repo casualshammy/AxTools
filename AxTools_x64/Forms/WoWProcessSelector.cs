@@ -51,7 +51,7 @@ namespace AxTools.Forms
             button2.Enabled = false;
             BeginInvoke((MethodInvoker)delegate
            {
-               MainForm main = MainForm.Instance;
+               MainWindow main = MainWindow.Instance;
                Location = new Point(main.Location.X + main.Size.Width / 2 - Size.Width / 2, main.Location.Y + main.Size.Height / 2 - Size.Height / 2);
                OnActivated(EventArgs.Empty);
            });

@@ -25,24 +25,25 @@ using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
 {
-    internal partial class MainForm : BorderedMetroForm
+    internal partial class MainWindow : BorderedMetroForm
     {
-        internal static MainForm Instance { get; private set; }
-        internal MultiLock WoWLaunchLock = new MultiLock();
+        internal static MainWindow Instance { get; private set; }
+        internal MultiLock WoWLaunchLock { get; private set; }
         private bool isClosing;
         private readonly Settings2 settings = Settings2.Instance;
-        private static readonly Log2 log = new Log2("MainWindow");
+        private static readonly Log2 log = new Log2(nameof(MainWindow));
         private System.Threading.Timer nextBackupTimer;
 
-        internal MainForm()
+        internal MainWindow()
         {
-            Instance = this;
             log.Info("Initializing main window...");
+            Instance = this;
+            WoWLaunchLock = new MultiLock();
             InitializeComponent();
             StyleManager.Style = Settings2.Instance.StyleColor;
-            Icon = AxTools.Helpers.Resources.ApplicationIcon;
+            Icon = Resources.ApplicationIcon;
             Closing += MainFormClosing;
-            notifyIconMain.Icon = AxTools.Helpers.Resources.ApplicationIcon;
+            notifyIconMain.Icon = Resources.ApplicationIcon;
             tabControl.SelectedIndex = 0;
             linkEditWowAccounts.Location = new Point(metroTabPage1.Size.Width / 2 - linkEditWowAccounts.Size.Width / 2, linkEditWowAccounts.Location.Y);
             cmbboxAccSelect.Location = new Point(metroTabPage1.Size.Width / 2 - cmbboxAccSelect.Size.Width / 2, cmbboxAccSelect.Location.Y);
@@ -113,7 +114,7 @@ namespace AxTools.Forms
         {
             isClosing = true;
             // Close all children forms
-            foreach (Form i in Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof(MainForm) && i.GetType() != typeof(MetroFlatDropShadow)).ToArray())
+            foreach (Form i in Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof(MainWindow) && i.GetType() != typeof(MetroFlatDropShadow)).ToArray())
             {
                 i.Close();
             }

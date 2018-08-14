@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,7 +15,7 @@ using Settings2 = AxTools.Helpers.Settings2;
 
 namespace AxTools.Forms
 {
-    partial class MainForm
+    partial class MainWindow
     {
         /// <summary>
         /// Требуется переменная конструктора.

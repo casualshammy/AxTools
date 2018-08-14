@@ -139,7 +139,7 @@ namespace AxTools.Services
         private static void MakeNewArchive()
         {
             Guid _lock = Program.ShutdownLock.GetLock();
-            Guid _wowLock = MainForm.Instance.WoWLaunchLock.GetLock();
+            Guid _wowLock = MainWindow.Instance.WoWLaunchLock.GetLock();
             try
             {
                 _isBackingUp = true;
@@ -185,7 +185,7 @@ namespace AxTools.Services
             finally
             {
                 Program.ShutdownLock.ReleaseLock(_lock);
-                MainForm.Instance.WoWLaunchLock.ReleaseLock(_wowLock);
+                MainWindow.Instance.WoWLaunchLock.ReleaseLock(_wowLock);
             }
         }
 

@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.3.48.2390</AssemblyVersion>
+    <AssemblyVersion>12.3.49.2394</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
@@ -191,6 +191,12 @@
     <Compile Include="Forms\MainForm_PluginHotkeys.Designer.cs">
       <DependentUpon>MainForm_PluginHotkeys.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\AppFolders.cs" />
     <Compile Include="Helpers\ErrorProviderExt.cs" />
@@ -290,12 +296,6 @@
     <Compile Include="Forms\ClickerSettings.Designer.cs">
       <DependentUpon>ClickerSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Helpers\Log.cs" />
@@ -340,10 +340,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ClickerSettings.resx">
       <DependentUpon>ClickerSettings.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm_PluginHotkeys.resx">
