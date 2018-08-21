@@ -20,19 +20,19 @@ namespace AxTools.WoW.Internals
             wowProcess = wow;
         }
 
-        public WoWGUID GUID { get; protected set; }
+        public virtual WoWGUID GUID { get; protected set; }
         public virtual string Name { get; protected set; }
 
         private void SetMouseoverUnit(WoWGUID guid)
         {
-            WoWGUID mouseoverGUID = memory.Read<WoWGUID>(memory.ImageBase + WowBuildInfoX64.MouseoverGUID);
+            var mouseoverGUID = memory.Read<WoWGUID>(memory.ImageBase + WowBuildInfoX64.MouseoverGUID);
             if (mouseoverGUID != guid)
             {
                 memory.Write(memory.ImageBase + WowBuildInfoX64.MouseoverGUID, guid);
             }
         }
 
-        public void Interact()
+        public virtual void Interact()
         {
             wowProcess.WaitWhileWoWIsMinimized();
             info = info ?? new GameInterface(wowProcess);
@@ -71,5 +71,6 @@ namespace AxTools.WoW.Internals
                 }
             }
         }
+
     }
 }

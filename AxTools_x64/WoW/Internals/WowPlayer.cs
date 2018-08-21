@@ -125,7 +125,7 @@ namespace AxTools.WoW.Internals
 
         protected WoWGUID MGUID;
 
-        public new WoWGUID GUID
+        public override WoWGUID GUID
         {
             get
             {

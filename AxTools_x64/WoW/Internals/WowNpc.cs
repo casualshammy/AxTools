@@ -20,7 +20,7 @@ namespace AxTools.WoW.Internals
         internal static readonly Dictionary<uint, string> Names = new Dictionary<uint, string>();
 
         private static int _maxNameLength = 125;
-        private static readonly Log2 log = new Log2("WowNpc");
+        private static readonly Log2 log = new Log2(nameof(WowNpc));
 
         public IntPtr Address;
 
@@ -40,7 +40,7 @@ namespace AxTools.WoW.Internals
 
         private WoWGUID mGUID;
 
-        public new WoWGUID GUID
+        public override WoWGUID GUID
         {
             get
             {

@@ -3,6 +3,7 @@ using MetroFramework;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -15,6 +16,7 @@ namespace Components.Forms
     {
         private readonly System.Timers.Timer timer;
         private static readonly System.Timers.Timer arrangementTimer = new System.Timers.Timer(250);
+        private static readonly MemoryMappedFile mmf = MemoryMappedFile.CreateOrOpen($"FComponents_{nameof(PopupNotification)}", 1024*1024);
         private DateTime loadTime;
         private const float FadeOutStep = 1f / 5000f * 33.3f;
 

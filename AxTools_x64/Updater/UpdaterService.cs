@@ -159,6 +159,8 @@ namespace AxTools.Updater
             if (WoWProcessManager.Processes.Count > 0)
             {
                 WoWProcessManager.WoWProcessClosed += WoWProcessManager_WoWProcessClosed;
+                Notify.TrayPopup("Update for AxTools is ready", "AxTools can't update itself while WoW is running. You will be prompted to update as soon as you close all running WoW clients", NotifyUserType.Info, false, null, 60);
+                log.Info("WoW client is running, waiting...");
             }
             else
             {
@@ -170,6 +172,7 @@ namespace AxTools.Updater
         {
             if (WoWProcessManager.Processes.Count == 0)
             {
+                log.Info("All WoW clients are closed");
                 WoWProcessManager.WoWProcessClosed -= WoWProcessManager_WoWProcessClosed;
                 var mainWindowWowLaunchLock = MainWindow.Instance.WoWLaunchLock.GetLock();
                 try

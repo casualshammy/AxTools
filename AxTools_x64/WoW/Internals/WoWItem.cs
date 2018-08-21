@@ -19,6 +19,7 @@ namespace AxTools.WoW.Internals
         public int BagID = 0;
         public int SlotID = 0;
         private WowheadItemInfo itemInfo;
+        private WoWGUID MGUID;
 
         public new string Name
         {
@@ -67,6 +68,18 @@ namespace AxTools.WoW.Internals
                 return itemInfo.Level;
             }
         }
+        
+        public override WoWGUID GUID
+        {
+            get
+            {
+                if (MGUID == WoWGUID.Zero)
+                {
+                    MGUID = memory.Read<WoWGUID>(Address + WowBuildInfoX64.ObjectGUID);
+                }
+                return MGUID;
+            }
+        }
 
         public byte[] GetGUIDBytes()
         {
@@ -75,5 +88,6 @@ namespace AxTools.WoW.Internals
                 return memory.ReadBytes(Address + WowBuildInfoX64.ObjectGUID, sizeof(WoWGUID));
             }
         }
+
     }
 }

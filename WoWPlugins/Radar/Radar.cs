@@ -266,7 +266,6 @@ namespace Radar
             {
                 WoWObjectBase whatToInteract = null;
                 double interactDistance = 11;
-                // ReSharper disable once ImpureMethodCallOnReadonlyValueField
                 foreach (WowObject i in objects.Where(i => RadarKOSFindInteract.Contains(i.Name)))
                 {
                     var distance = i.Location.Distance(localPlayer.Location);
