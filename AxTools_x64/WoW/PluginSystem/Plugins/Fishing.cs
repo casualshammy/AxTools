@@ -80,9 +80,9 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     uint baitItemID;
                     if (fishingSettings.EnableBreaks && Utils.Rnd.Next(0, 30) == 0)
                     {
-                        int breakTime = Utils.Rnd.Next(15, 45);
+                        var breakTime = Utils.Rnd.Next(15, 45);
                         this.LogPrint($"I'm human! Let's have a break ({breakTime} sec)");
-                        int breakStartTime = Environment.TickCount;
+                        var breakStartTime = Environment.TickCount;
                         while ((Environment.TickCount - breakStartTime < breakTime * 1000) && pluginIsActive)
                         {
                             Thread.Sleep(1000);
@@ -161,7 +161,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                         }
                         else if (fishingSettings.UseAnySpecialBaitIfPreferredIsNotAvailable)
                         {
-                            bool haveBuff = me.Auras.Any(aura => specialBaits.Keys.Select(baitID => Wowhead.GetItemInfo(baitID).Name).Contains(aura.Name));
+                            var haveBuff = me.Auras.Any(aura => specialBaits.Keys.Select(baitID => Wowhead.GetItemInfo(baitID).Name).Contains(aura.Name));
                             if (!haveBuff)
                             {
                                 return specialBaits.Keys.FirstOrDefault(itemID => me.ItemsInBags.Select(itemInBag => itemInBag.EntryID).Contains(itemID));
@@ -269,7 +269,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             try
             {
-                uint zone = info.ZoneID;
+                var zone = info.ZoneID;
                 string[] allBuffNames = legionSpecialLuresByZone.SelectMany(l => l.Lures).Select(l => Wowhead.GetItemInfo(l).Name).ToArray();
                 if (me.Auras.All(k => !allBuffNames.Contains(k.Name)))
                 {
@@ -319,7 +319,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             if (LegionRepZones.TryGetValue(info.ZoneID, out LegionRepPoint value))
             {
                 WoWPlayerMe me = info.GetGameObjects();
-                int timeout = 5000;
+                var timeout = 5000;
                 while (timeout > 0 && me.Location.Distance2D(value.StartingPlayerPoint) > 3)
                 {
                     info.Move2D(value.StartingPlayerPoint, 3f, 1000, true, false);

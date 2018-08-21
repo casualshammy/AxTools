@@ -43,7 +43,7 @@ namespace AxTools.Forms
             StyleManager.Style = Settings2.Instance.StyleColor;
             foreach (var i in WoWProcessManager.Processes)
             {
-                int index = comboBox1.Items.Add(i.Value.IsValidBuild && new GameInterface(i.Value).IsInGame ? $"pID: {i.Key}"
+                var index = comboBox1.Items.Add(i.Value.IsValidBuild && new GameInterface(i.Value).IsInGame ? $"pID: {i.Key}"
                     : $"pID: {i.Key} (ERROR DETECTED)");
                 processPerComboboxIndex.Add(index, i.Value);
             }

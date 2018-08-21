@@ -83,7 +83,9 @@ namespace AxTools.WoW.PluginSystem.API
                     {
                         if (ChatIsOpened)
                         {
-                            IntPtr vkLControl = (IntPtr)0xA2, vkA = (IntPtr)0x41, vkDelete = (IntPtr)0x2E;
+                            var vkLControl = (IntPtr)0xA2;
+                            var vkA = (IntPtr)0x41;
+                            var vkDelete = (IntPtr)0x2E;
                             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, vkLControl, IntPtr.Zero);
                             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, vkA, IntPtr.Zero);
                             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, vkA, IntPtr.Zero);
@@ -94,7 +96,7 @@ namespace AxTools.WoW.PluginSystem.API
                         }
                         else
                         {
-                            int counter = 1000;
+                            var counter = 1000;
                             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)13, IntPtr.Zero);
                             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)13, IntPtr.Zero);
                             while (!ChatIsOpened && counter > 0)
@@ -164,10 +166,10 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 if (IsInGame && !IsLoadingScreen)
                 {
-                    IntPtr chatStart = Memory.ImageBase + WowBuildInfoX64.ChatBuffer;
+                    var chatStart = Memory.ImageBase + WowBuildInfoX64.ChatBuffer;
                     for (int i = 0; i < 60; i++)
                     {
-                        IntPtr baseMsg = chatStart + i * WowBuildInfoX64.ChatNextMessage;
+                        var baseMsg = chatStart + i * WowBuildInfoX64.ChatNextMessage;
                         ChatMsg s = new ChatMsg(
                             sender: Encoding.UTF8.GetString(Memory.ReadBytes(baseMsg + WowBuildInfoX64.ChatSenderName, 0x100).TakeWhile(l => l != 0).ToArray()),
                             channel: Memory.Read<byte>(baseMsg + WowBuildInfoX64.ChatChannelNum),
@@ -223,7 +225,7 @@ namespace AxTools.WoW.PluginSystem.API
         {
             get
             {
-                uint lootNum = Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting + WowBuildInfoX64.PlayerIsLootingOffset0);
+                var lootNum = Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting + WowBuildInfoX64.PlayerIsLootingOffset0);
                 if (lootNum == 0xFFFFFFF)
                 {
                     lootNum = Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.PlayerIsLooting + WowBuildInfoX64.PlayerIsLootingOffset1);
@@ -275,25 +277,18 @@ namespace AxTools.WoW.PluginSystem.API
         public bool IsAfk
         {
             get => Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.IsChatAFK) != 0;
-            set
-            {
-                SendToChat("/afk");
-                if (value)
-                {
-                    SendToChat("/sit");
-                }
-            }
+            set => SendToChat("/afk");
         }
 
         public bool IsSpellKnown(uint spellID)
         {
-            uint totalKnownSpells = Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.KnownSpellsCount);
-            IntPtr knownSpells = Memory.Read<IntPtr>(Memory.ImageBase + WowBuildInfoX64.KnownSpells);
+            var totalKnownSpells = Memory.Read<uint>(Memory.ImageBase + WowBuildInfoX64.KnownSpellsCount);
+            var knownSpells = Memory.Read<IntPtr>(Memory.ImageBase + WowBuildInfoX64.KnownSpells);
             for (int i = 0; i < totalKnownSpells; i++)
             {
-                IntPtr spellAddress = Memory.Read<IntPtr>(knownSpells + 8 * i);
-                uint pSpellID = Memory.Read<uint>(spellAddress + 4);
-                uint pSpellSuccess = Memory.Read<uint>(spellAddress);
+                var spellAddress = Memory.Read<IntPtr>(knownSpells + 8 * i);
+                var pSpellID = Memory.Read<uint>(spellAddress + 4);
+                var pSpellSuccess = Memory.Read<uint>(spellAddress);
                 if (pSpellSuccess == 1 && pSpellID == spellID)
                 {
                     return true;
@@ -312,19 +307,19 @@ namespace AxTools.WoW.PluginSystem.API
         {
             lock (luaLocks[wowProcess.ProcessID])
             {
-                WoWUIFrame myEditbox = WoWUIFrame.GetFrameByName(this, LuaReturnFrameName);
+                var myEditbox = WoWUIFrame.GetFrameByName(this, LuaReturnFrameName);
                 if (myEditbox == null)
                 {
                     SendToChat($"/run if(not {LuaReturnFrameName})then CreateFrame(\"EditBox\", \"{LuaReturnFrameName}\", UIParent);{LuaReturnFrameName}:SetAutoFocus(false);{LuaReturnFrameName}:ClearFocus(); end");
                 }
                 SendToChat($"/run {LuaReturnVarName}={function};{LuaReturnFrameName}:SetText(\"{LuaReturnTokenName}=\"..{LuaReturnVarName});");
-                int counter = 2000;
+                var counter = 2000;
                 while (counter > 0)
                 {
-                    WoWUIFrame frame = WoWUIFrame.GetFrameByName(this, LuaReturnFrameName);
+                    var frame = WoWUIFrame.GetFrameByName(this, LuaReturnFrameName);
                     if (frame != null)
                     {
-                        string editboxText = frame.EditboxText;
+                        var editboxText = frame.EditboxText;
                         if (editboxText != null)
                         {
                             if (editboxText.Contains(LuaReturnTokenName))
@@ -395,9 +390,9 @@ namespace AxTools.WoW.PluginSystem.API
             {
                 WoWPlayerMe me = ObjectMgr.Pulse(wowProcess);
                 WowPoint oldPos = me.Location;
-                float zDiff = Math.Abs(me.Location.Z - point.Z);
-                float xyDiff = (float)me.Location.Distance2D(point);
-                bool spacePressed = false;
+                var zDiff = Math.Abs(me.Location.Z - point.Z);
+                var xyDiff = (float)me.Location.Distance2D(point);
+                var spacePressed = false;
                 while (IsInGame && !IsLoadingScreen && timeoutInMs > 0 && (xyDiff > precision2D || zDiff > precisionZ))
                 {
                     Thread.Sleep(50);
@@ -439,7 +434,7 @@ namespace AxTools.WoW.PluginSystem.API
                     {
                         if (zDiff > precisionZ)
                         {
-                            float needPitch = MoveHelper.AngleVertical(me, point);
+                            var needPitch = MoveHelper.AngleVertical(me, point);
                             if (Math.Abs(needPitch - me.Pitch) > 0.1)
                             {
                                 me.Pitch = needPitch;
@@ -476,7 +471,7 @@ namespace AxTools.WoW.PluginSystem.API
             if (MoveHelper.NegativeAngle(MoveHelper.AngleHorizontal(wowProcess, point) - me.Rotation) < Math.PI)
             {
                 face = MoveHelper.NegativeAngle(MoveHelper.AngleHorizontal(wowProcess, point) - me.Rotation);
-                bool moving = me.IsMoving;
+                var moving = me.IsMoving;
                 if (face > 1)
                 {
                     NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.S, IntPtr.Zero);
@@ -488,7 +483,7 @@ namespace AxTools.WoW.PluginSystem.API
             else
             {
                 face = MoveHelper.NegativeAngle(me.Rotation - MoveHelper.AngleHorizontal(wowProcess, point));
-                bool moving = me.IsMoving;
+                var moving = me.IsMoving;
                 if (face > 1)
                 {
                     NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)Keys.S, IntPtr.Zero);
@@ -527,6 +522,12 @@ namespace AxTools.WoW.PluginSystem.API
             NativeMethods.SendMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)key, IntPtr.Zero);
         }
 
+        public WoWUIFrame GetUIFrameByName(string name)
+        {
+            return WoWUIFrame.GetFrameByName(this, name);
+        }
+
         #endregion Utils
+
     }
 }

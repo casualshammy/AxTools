@@ -31,7 +31,7 @@ namespace AxTools.Helpers
         internal static long CalcDirectorySize(string path)
         {
             DirectoryInfo info = new DirectoryInfo(path);
-            long num2 = 0L;
+            var num2 = 0L;
             foreach (FileSystemInfo info2 in info.GetFileSystemInfos())
             {
                 if (info2 is FileInfo fileInfo)
@@ -84,7 +84,7 @@ namespace AxTools.Helpers
             string chars = onlyLetters ? "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" : "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             for (int i = 0; i < size; i++)
             {
-                char c = chars[Rnd.Next(0, chars.Length)];
+                var c = chars[Rnd.Next(0, chars.Length)];
                 builder.Append(c);
             }
             return builder.ToString();
@@ -290,7 +290,7 @@ namespace AxTools.Helpers
             int[] indexesToHide = new int[input.Length / 2];
             for (int i = 0; i < indexesToHide.Length; i++)
             {
-                int newValue = rnd.Next(0, input.Length);
+                var newValue = rnd.Next(0, input.Length);
                 while (indexesToHide.Contains(newValue))
                 {
                     newValue = rnd.Next(0, input.Length);
@@ -298,7 +298,7 @@ namespace AxTools.Helpers
                 indexesToHide[i] = newValue;
             }
             StringBuilder builder = new StringBuilder(input.Length);
-            int counter = 0;
+            var counter = 0;
             foreach (char c in input)
             {
                 builder.Append(indexesToHide.Contains(counter) ? '*' : c);

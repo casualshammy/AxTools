@@ -33,9 +33,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxTools">
-      <HintPath>C:\Program Files (x86)\AxTools\AxTools.exe</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -60,6 +57,12 @@
     <EmbeddedResource Include="DumperForm.resx">
       <DependentUpon>DumperForm.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\AxTools_x64\AxTools_x64.csproj">
+      <Project>{e579b921-37da-4da7-b0bf-fbeb2732f937}</Project>
+      <Name>AxTools_x64</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

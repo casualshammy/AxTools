@@ -29,8 +29,8 @@ namespace AxTools.WoW.Internals
         internal static List<WoWAura> GetAurasForMemoryAddress(MemoryManager memory, IntPtr address)
         {
             List<WoWAura> auras = new List<WoWAura>();
-            IntPtr table = address + WowBuildInfoX64.AuraTable1;
-            int auraCount = memory.Read<int>(address + WowBuildInfoX64.AuraCount1);
+            var table = address + WowBuildInfoX64.AuraTable1;
+            var auraCount = memory.Read<int>(address + WowBuildInfoX64.AuraCount1);
             if (auraCount == -1)
             {
                 table = memory.Read<IntPtr>(address + WowBuildInfoX64.AuraTable2);

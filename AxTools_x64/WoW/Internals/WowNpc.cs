@@ -65,8 +65,8 @@ namespace AxTools.WoW.Internals
                 {
                     try
                     {
-                        IntPtr nameBase = memory.Read<IntPtr>(Address + WowBuildInfoX64.NpcNameBase);
-                        IntPtr nameAddress = memory.Read<IntPtr>(nameBase + WowBuildInfoX64.NpcNameOffset);
+                        var nameBase = memory.Read<IntPtr>(Address + WowBuildInfoX64.NpcNameBase);
+                        var nameAddress = memory.Read<IntPtr>(nameBase + WowBuildInfoX64.NpcNameOffset);
                         byte[] nameBytes = memory.ReadBytes(nameAddress, _maxNameLength);
                         while (!nameBytes.Contains((byte)0))
                         {
@@ -157,7 +157,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mEntryID == 0)
                 {
-                    IntPtr descriptors = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
+                    var descriptors = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
                     mEntryID = memory.Read<uint>(descriptors + WowBuildInfoX64.GameObjectEntryID);
                 }
                 return mEntryID;
@@ -169,11 +169,11 @@ namespace AxTools.WoW.Internals
 
         public string GetGameGUID()
         {
-            ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
-            ushort instanceID = (ushort)((GUID.Low >> 29) & 0x1FFF);
+            var serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
+            var instanceID = (ushort)((GUID.Low >> 29) & 0x1FFF);
             var guidBytes = GetGUIDBytes();
             string spawnID = BitConverter.ToString(new[] { guidBytes[4], guidBytes[3], guidBytes[2], guidBytes[1], guidBytes[0] }).Replace("-", "");
-            ushort zoneID = BitConverter.ToUInt16(new[] { guidBytes[5], guidBytes[6] }, 0);
+            var zoneID = BitConverter.ToUInt16(new[] { guidBytes[5], guidBytes[6] }, 0);
             return $"Creature-0-{serverID}-{instanceID}-{zoneID}-{EntryID}-{spawnID}";
         }
     }

@@ -34,9 +34,9 @@ namespace AxTools.WoW.Internals
             containers?.Clear();
             WoWPlayerMe me = null;
             WoWGUID playerGUID = wow.Memory.Read<WoWGUID>(wow.Memory.ImageBase + WowBuildInfoX64.PlayerGUID);
-            IntPtr manager = wow.Memory.Read<IntPtr>(wow.Memory.ImageBase + WowBuildInfoX64.ObjectManager);
-            IntPtr currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
-            byte objType = GetObjectType(wow.Memory, currObject);
+            var manager = wow.Memory.Read<IntPtr>(wow.Memory.ImageBase + WowBuildInfoX64.ObjectManager);
+            var currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
+            var objType = GetObjectType(wow.Memory, currObject);
             while (objType < (byte)ObjectType.Invalid)
             {
                 switch (objType)

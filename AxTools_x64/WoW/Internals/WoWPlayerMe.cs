@@ -20,7 +20,7 @@ namespace AxTools.WoW.Internals
             {
                 if (inventory == null)
                 {
-                    IntPtr playerDesc = memory.Read<IntPtr>(Address + WowBuildInfoX64.UnitDescriptors);
+                    var playerDesc = memory.Read<IntPtr>(Address + WowBuildInfoX64.UnitDescriptors);
                     List<WoWGUID> itemsInInventory = new List<WoWGUID>();
                     for (int i = 0; i < 19; i++) // 19 slots in active player's inventory
                     {
@@ -40,7 +40,7 @@ namespace AxTools.WoW.Internals
             {
                 if (itemsInBags == null)
                 {
-                    IntPtr playerDesc = memory.Read<IntPtr>(Address + WowBuildInfoX64.UnitDescriptors);
+                    var playerDesc = memory.Read<IntPtr>(Address + WowBuildInfoX64.UnitDescriptors);
                     List<WoWGUID> containerGUIDs = new List<WoWGUID>();
                     for (int i = 0; i < 4; i++) // 4 bags
                     {
@@ -58,7 +58,7 @@ namespace AxTools.WoW.Internals
                     ObjectMgr.Pulse(wowProcess, items: items, containers: containers);
                     foreach (var container in containers.Where(cont => containerGUIDs.Contains(cont.GUID)))
                     {
-                        IntPtr containerDescriptors = memory.Read<IntPtr>(container.Address + WowBuildInfoX64.UnitDescriptors);
+                        var containerDescriptors = memory.Read<IntPtr>(container.Address + WowBuildInfoX64.UnitDescriptors);
                         itemIndexInContainer.Add(container.GUID, new List<WoWGUID>());
                         for (int i = 0; i < 36; i++) // max size of container
                         {
@@ -99,7 +99,7 @@ namespace AxTools.WoW.Internals
             {
                 if (!speed.HasValue)
                 {
-                    IntPtr speedPtr = memory.Read<IntPtr>(Address + WowBuildInfoX64.PlayerSpeedBase);
+                    var speedPtr = memory.Read<IntPtr>(Address + WowBuildInfoX64.PlayerSpeedBase);
                     speed = memory.Read<float>(speedPtr + WowBuildInfoX64.PlayerSpeedOffset);
                 }
                 return speed.Value;

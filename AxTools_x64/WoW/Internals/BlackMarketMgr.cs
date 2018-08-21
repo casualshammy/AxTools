@@ -15,13 +15,13 @@ namespace AxTools.WoW.Internals
         {
             if (game.IsInGame)
             {
-                uint numItems = game.Memory.Read<uint>(game.Memory.ImageBase + WowBuildInfoX64.BlackMarketNumItems);
+                var numItems = game.Memory.Read<uint>(game.Memory.ImageBase + WowBuildInfoX64.BlackMarketNumItems);
                 if (numItems != 0)
                 {
-                    IntPtr baseAddr = game.Memory.Read<IntPtr>(game.Memory.ImageBase + WowBuildInfoX64.BlackMarketItems);
+                    var baseAddr = game.Memory.Read<IntPtr>(game.Memory.ImageBase + WowBuildInfoX64.BlackMarketItems);
                     for (uint i = 0; i < numItems; ++i)
                     {
-                        int finalAddr = (int)(baseAddr + (int)(i * sizeofBmItem));
+                        var finalAddr = (int)(baseAddr + (int)(i * sizeofBmItem));
                         BlackMarketItemInternal item = game.Memory.Read<BlackMarketItemInternal>(new IntPtr(finalAddr));
                         yield return new BlackMarketItem
                         {

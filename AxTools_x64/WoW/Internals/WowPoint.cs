@@ -34,7 +34,7 @@ namespace AxTools.WoW.Internals
         public static WowPoint GetNearestPoint(WowPoint start, WowPoint end, float distanceFromEnd)
         {
             WowPoint dir = end - start;
-            float magnitude = (float)Math.Sqrt(dir.X * dir.X + dir.Y * dir.Y + dir.Z * dir.Z);
+            var magnitude = (float)Math.Sqrt(dir.X * dir.X + dir.Y * dir.Y + dir.Z * dir.Z);
             WowPoint point = new WowPoint(dir.X / magnitude, dir.Y / magnitude, dir.Z / magnitude);
             return end - point * distanceFromEnd;
         }

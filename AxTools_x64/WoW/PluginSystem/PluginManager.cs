@@ -115,10 +115,7 @@ namespace AxTools.WoW.PluginSystem
                     {
                         log.Error($"Plug-in OnStart error [{plugin.Name}]: {ex.Message}");
                     }
-                    if (Settings2.Instance.WoWPluginShowIngameNotifications)
-                    {
-                        Notify.TrayPopup(nameof(AxTools), "Plug-in <" + plugin.Name + "> is started", NotifyUserType.Info, false, plugin.TrayIcon);
-                    }
+                    Notify.TrayPopup(nameof(AxTools), "Plug-in <" + plugin.Name + "> is started", NotifyUserType.Info, false, plugin.TrayIcon);
                     PluginStateChanged?.Invoke(plugin);
                 }
             }
@@ -140,10 +137,7 @@ namespace AxTools.WoW.PluginSystem
                     {
                         log.Error($"Can't shutdown plug-in [{plugin.Name}]: {ex.Message}");
                     }
-                    if (Settings2.Instance.WoWPluginShowIngameNotifications)
-                    {
-                        Notify.TrayPopup(nameof(AxTools), "Plug-in <" + plugin.Name + "> is stopped", NotifyUserType.Info, false, plugin.TrayIcon);
-                    }
+                    Notify.TrayPopup(nameof(AxTools), "Plug-in <" + plugin.Name + "> is stopped", NotifyUserType.Info, false, plugin.TrayIcon);
                     _pluginContainers.First(l => l.Plugin.GetType() == plugin.GetType()).IsRunning = false;
                     PluginStateChanged?.Invoke(plugin);
                 }
@@ -154,7 +148,7 @@ namespace AxTools.WoW.PluginSystem
         {
             return Task.Run(delegate
             {
-                if (UpdateIsActive)
+                if (UpdateIsActive && Settings2.Instance.UpdatePlugins)
                 {
                     UpdatePluginsFromWeb();
                     Settings2.Instance.PluginsLastTimeUpdated = DateTime.UtcNow;

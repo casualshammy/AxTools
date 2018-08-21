@@ -11,7 +11,7 @@ namespace AxTools.WoW.Helpers
         internal static float AngleHorizontal(WowProcess process, WowPoint point)
         {
             WoWPlayerMe me = ObjectMgr.Pulse(process);
-            float angle = Convert.ToSingle(Math.Atan2(Convert.ToDouble(point.Y) - Convert.ToDouble(me.Location.Y), Convert.ToDouble(point.X) - Convert.ToDouble(me.Location.X)));
+            var angle = Convert.ToSingle(Math.Atan2(Convert.ToDouble(point.Y) - Convert.ToDouble(me.Location.Y), Convert.ToDouble(point.X) - Convert.ToDouble(me.Location.X)));
             angle = NegativeAngle(angle);
             return angle;
         }
@@ -29,7 +29,7 @@ namespace AxTools.WoW.Helpers
         {
             if (radius < 0.1f)
                 return;
-            int turnTime = moving ? 1328 : 980;
+            var turnTime = moving ? 1328 : 980;
             NativeMethods.SendMessage(process.MainWindowHandle, Win32Consts.WM_KEYDOWN, (IntPtr)key, IntPtr.Zero);
             Thread.Sleep((int)(radius * turnTime * Math.PI / 10));
             NativeMethods.SendMessage(process.MainWindowHandle, Win32Consts.WM_KEYUP, (IntPtr)key, IntPtr.Zero);

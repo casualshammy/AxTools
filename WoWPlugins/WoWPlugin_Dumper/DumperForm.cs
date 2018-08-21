@@ -24,7 +24,7 @@ namespace WoWPlugin_Dumper
 
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
-            string origText = ((Button)sender).Text;
+            var origText = ((Button)sender).Text;
             ((Button)sender).Text = "Please wait";
             progressBar1.Maximum = 8;
             progressBar1.Value = 0;
@@ -41,9 +41,9 @@ namespace WoWPlugin_Dumper
         private void Dump()
         {
             Log("Dump START");
-            List<WowPlayer> wowUnits = new List<WowPlayer>();
-            List<WowObject> wowObjects = new List<WowObject>();
-            List<WowNpc> wowNpcs = new List<WowNpc>();
+            var wowUnits = new List<WowPlayer>();
+            var wowObjects = new List<WowObject>();
+            var wowNpcs = new List<WowNpc>();
             WoWPlayerMe localPlayer;
             try
             {
@@ -148,9 +148,9 @@ namespace WoWPlugin_Dumper
         private void buttonDumpobjects_Click(object sender, EventArgs e)
         {
             Log("Dump START");
-            List<WowPlayer> wowUnits = new List<WowPlayer>();
-            List<WowObject> wowObjects = new List<WowObject>();
-            List<WowNpc> wowNpcs = new List<WowNpc>();
+            var wowUnits = new List<WowPlayer>();
+            var wowObjects = new List<WowObject>();
+            var wowNpcs = new List<WowNpc>();
             try
             {
                 game.GetGameObjects(wowObjects, wowUnits, wowNpcs);
@@ -167,7 +167,7 @@ namespace WoWPlugin_Dumper
                 foreach (WowObject i in wowObjects)
                 {
                     // ReSharper disable once ImpureMethodCallOnReadonlyValueField
-                    Log($"\t{i.Name} - GUID: 0x{i.GUID}; Location: {i.Location}; Distance: {"n/a"}; OwnerGUID: 0x{i.OwnerGUID}; Address: 0x{i.Address.ToInt64():X}; EntryID: {i.EntryID}");
+                    Log($"\t{i.Name} - GUID: 0x{i.GUID}; Location: {i.Location}; Distance: {"n/a"}; OwnerGUID: 0x{i.OwnerGUID}; Address: 0x{i.Address.ToInt64():X}; EntryID: {i.EntryID}; IsBobbing: {i.Bobbing}");
                 }
             }
             catch (Exception ex)
@@ -181,7 +181,7 @@ namespace WoWPlugin_Dumper
                 foreach (WowNpc i in wowNpcs)
                 {
                     Log($"\t{i.Name}; Location: {i.Location}; Distance: {"n/a"}; Address: 0x{i.Address.ToInt64().ToString("X")} HP:{i.Health}; MaxHP:{i.HealthMax}; GUID:0x{i.GUID}; GameGUID: {i.GetGameGUID()} EntryID: {i.EntryID}");
-                    foreach (var aura in i.Auras)
+                    foreach (WoWAura aura in i.Auras)
                     {
                         Log($"\t\t\t{aura.Name}; {aura.OwnerGUID}");
                     }
@@ -199,7 +199,7 @@ namespace WoWPlugin_Dumper
                 {
                     Log($"\t{i.Name} - GUID: 0x{i.GUID}; Location: {i.Location}; Distance: {"n/a"}; Address:0x{i.Address.ToInt64().ToString("X")}; Class:{i.Class}; Level:{i.Level}; HP:{i.Health}; MaxHP:{i.HealthMax}; " +
                         $"TargetGUID: 0x{i.TargetGUID}; Faction:{i.Faction}; Race: {i.Race}; Auras: {{ {""} }}; GUIDBytes: {BitConverter.ToString(i.GetGUIDBytes())}");
-                    foreach (var aura in i.Auras)
+                    foreach (WoWAura aura in i.Auras)
                     {
                         Log($"\t\t\tName: {aura.Name}; OwnerGUID: {aura.OwnerGUID}; Stack: {aura.Stack}; TimeLeftInMs: {aura.TimeLeftInMs}");
                     }
@@ -406,7 +406,7 @@ namespace WoWPlugin_Dumper
         private void btnTestVertAngle_Click(object sender, EventArgs e)
         {
             WoWPlayerMe lp;
-            List<WowNpc> npcs = new List<WowNpc>();
+            var npcs = new List<WowNpc>();
             try
             {
                 lp = game.GetGameObjects(null, null, npcs);
@@ -425,7 +425,7 @@ namespace WoWPlugin_Dumper
                 Log("ERROR(0): " + ex.Message);
                 return;
             }
-            WowNpc target = npcs.FirstOrDefault(l => l.GUID == lp.TargetGUID);
+            var target = npcs.FirstOrDefault(l => l.GUID == lp.TargetGUID);
             float angle = -(float)Math.Round(Math.Atan2(lp.Location.Distance2D(target.Location), target.Location.Z - lp.Location.Z) - Math.PI / 2, 2);
             //if (angle < 0)
             //    angle += (float)(Math.PI * 2);

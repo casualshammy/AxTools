@@ -74,7 +74,7 @@ namespace AxTools.WoW
         internal static void Unhook(int processID)
         {
             // cast 'PluginManagerEx.RunningPlugins' to array because we will get 'collection changed' exception otherwise
-            foreach (var plugin in PluginManagerEx.RunningPlugins.ToArray())
+            foreach (var plugin in PluginManagerEx.RunningPlugins.Where(l => !l.DontCloseOnWowShutdown).ToArray())
             {
                 if (PluginManagerEx.PluginWoW[plugin.Name] == processID)
                 {

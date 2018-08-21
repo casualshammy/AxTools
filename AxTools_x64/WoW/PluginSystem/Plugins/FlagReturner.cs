@@ -45,7 +45,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             // todo: delete try..catch
             try
             {
-                uint zone = info.ZoneID;
+                var zone = info.ZoneID;
                 if (zone != currentZone)
                 {
                     OnZoneChanged(zone);

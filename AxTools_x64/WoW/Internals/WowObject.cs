@@ -11,12 +11,12 @@ namespace AxTools.WoW.Internals
     /// </summary>
     public class WowObject : WoWObjectBase
     {
-        private static readonly Log2 log = new Log2("WowObject");
+        private static readonly Log2 log = new Log2(nameof(WowObject));
 
         internal WowObject(IntPtr address, WowProcess wow) : base(wow)
         {
             Address = address;
-            WoWObjectsInfo inf = memory.Read<WoWObjectsInfo>(Address);
+            var inf = memory.Read<WoWObjectsInfo>(Address);
             GUID = inf.GUID;
             Bobbing = inf.Bobbing == 1;
             Location = inf.Location;
@@ -30,7 +30,7 @@ namespace AxTools.WoW.Internals
 
         public readonly WowPoint Location;
 
-        internal readonly bool Bobbing;
+        public readonly bool Bobbing;
 
         private WoWGUID mOwnerGUID;
 
@@ -40,7 +40,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mOwnerGUID == WoWGUID.Zero)
                 {
-                    IntPtr tempOwner = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
+                    var tempOwner = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
                     mOwnerGUID = memory.Read<WoWGUID>(tempOwner + WowBuildInfoX64.GameObjectOwnerGUIDOffset);
                 }
                 return mOwnerGUID;
@@ -55,9 +55,9 @@ namespace AxTools.WoW.Internals
                 {
                     try
                     {
-                        IntPtr nameBase = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectNameBase);
-                        IntPtr nameAddress = memory.Read<IntPtr>(nameBase + WowBuildInfoX64.GameObjectNameOffset);
-                        byte[] nameBytes = memory.ReadBytes(nameAddress, _maxNameLength);
+                        var nameBase = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectNameBase);
+                        var nameAddress = memory.Read<IntPtr>(nameBase + WowBuildInfoX64.GameObjectNameOffset);
+                        var nameBytes = memory.ReadBytes(nameAddress, _maxNameLength);
                         while (!nameBytes.Contains((byte)0))
                         {
                             _maxNameLength += 1;
@@ -67,7 +67,7 @@ namespace AxTools.WoW.Internals
                         temp = Encoding.UTF8.GetString(nameBytes.TakeWhile(l => l != 0).ToArray());
                         Names.Add(EntryID, temp);
                     }
-                    catch
+                    catch (Exception)
                     {
                         return string.Empty;
                     }
@@ -84,7 +84,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mEntryID == 0)
                 {
-                    IntPtr descriptors = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
+                    var descriptors = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
                     mEntryID = memory.Read<uint>(descriptors + WowBuildInfoX64.GameObjectEntryID);
                 }
                 return mEntryID;

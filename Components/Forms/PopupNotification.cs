@@ -28,7 +28,6 @@ namespace Components.Forms
         {
             InitializeComponent();
             StyleManager.Style = metroColorStyle;
-            TopMost = true;
             Title = title;
             Message = message;
             Icon = image;
@@ -79,6 +78,7 @@ namespace Components.Forms
         public void Show(int timeout)
         {
             var prevForegroundWindow = NativeMethods.GetForegroundWindow();
+            TopMost = true;
             Timeout = timeout;
             base.Show();
             NativeMethods.SetForegroundWindow(prevForegroundWindow);

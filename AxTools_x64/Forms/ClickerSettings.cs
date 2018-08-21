@@ -71,7 +71,7 @@ namespace AxTools.Forms
         {
             if (IsHandleCreated)
             {
-                int interval = Convert.ToInt32(num_clicker_interval.Value);
+                var interval = Convert.ToInt32(num_clicker_interval.Value);
                 if (interval >= 50)
                 {
                     ErrorProviderExt.ClearError(num_clicker_interval);

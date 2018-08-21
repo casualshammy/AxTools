@@ -73,7 +73,7 @@ namespace AxTools.WoW.Helpers
                         log.Error($"[{PluginName ?? ""}] SafeTimer error: {ex.Message}");
                     }
                 }
-                int shouldWait = (int)(interval - balancingStopwatch.ElapsedMilliseconds);
+                var shouldWait = (int)(interval - balancingStopwatch.ElapsedMilliseconds);
                 while (shouldWait > 0 && flag)
                 {
                     Thread.Sleep(Math.Min(shouldWait, 100));

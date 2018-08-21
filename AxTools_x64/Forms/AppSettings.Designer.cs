@@ -58,7 +58,7 @@ namespace AxTools.Forms
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
             this.checkBoxSetAfkStatus = new MetroFramework.Controls.MetroCheckBox();
             this.buttonIngameKeyBinds = new MetroFramework.Controls.MetroButton();
-            this.checkBoxPluginsShowIngameNotifications = new MetroFramework.Controls.MetroCheckBox();
+            this.checkBoxPluginsUpdate = new MetroFramework.Controls.MetroCheckBox();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
             this.checkBoxMakeBackupNotWhilePlaying = new MetroFramework.Controls.MetroCheckBox();
             this.metroComboBoxBackupCompressionLevel = new MetroFramework.Controls.MetroComboBox();
@@ -451,7 +451,7 @@ namespace AxTools.Forms
             this.tabControl.FontWeight = MetroFramework.MetroTabControlWeight.Regular;
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 2;
+            this.tabControl.SelectedIndex = 1;
             this.tabControl.Size = new System.Drawing.Size(565, 234);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 65;
@@ -592,7 +592,7 @@ namespace AxTools.Forms
             // 
             this.metroTabPage3.Controls.Add(this.checkBoxSetAfkStatus);
             this.metroTabPage3.Controls.Add(this.buttonIngameKeyBinds);
-            this.metroTabPage3.Controls.Add(this.checkBoxPluginsShowIngameNotifications);
+            this.metroTabPage3.Controls.Add(this.checkBoxPluginsUpdate);
             this.metroTabPage3.Controls.Add(this.GroupBox2);
             this.metroTabPage3.Controls.Add(this.CheckBox6);
             this.metroTabPage3.Controls.Add(this.CheckBox7);
@@ -646,24 +646,24 @@ namespace AxTools.Forms
             this.buttonIngameKeyBinds.Text = "Ingame key binds...";
             this.buttonIngameKeyBinds.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
-            // checkBoxPluginsShowIngameNotifications
+            // checkBoxPluginsUpdate
             // 
-            this.checkBoxPluginsShowIngameNotifications.AutoSize = true;
-            this.checkBoxPluginsShowIngameNotifications.CustomBackground = false;
-            this.checkBoxPluginsShowIngameNotifications.CustomForeColor = false;
-            this.checkBoxPluginsShowIngameNotifications.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.checkBoxPluginsShowIngameNotifications.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxPluginsShowIngameNotifications.Location = new System.Drawing.Point(3, 40);
-            this.checkBoxPluginsShowIngameNotifications.Name = "checkBoxPluginsShowIngameNotifications";
-            this.checkBoxPluginsShowIngameNotifications.Size = new System.Drawing.Size(236, 19);
-            this.checkBoxPluginsShowIngameNotifications.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxPluginsShowIngameNotifications.StyleManager = null;
-            this.checkBoxPluginsShowIngameNotifications.TabIndex = 43;
-            this.checkBoxPluginsShowIngameNotifications.Text = "Plugins: Show ingame notifications";
-            this.checkBoxPluginsShowIngameNotifications.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.toolTip.SetToolTip(this.checkBoxPluginsShowIngameNotifications, "Show various plugins notifications in game\r\n(it appears on recordings/streams)");
-            this.checkBoxPluginsShowIngameNotifications.UseStyleColors = true;
-            this.checkBoxPluginsShowIngameNotifications.UseVisualStyleBackColor = true;
+            this.checkBoxPluginsUpdate.AutoSize = true;
+            this.checkBoxPluginsUpdate.CustomBackground = false;
+            this.checkBoxPluginsUpdate.CustomForeColor = false;
+            this.checkBoxPluginsUpdate.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.checkBoxPluginsUpdate.FontWeight = MetroFramework.MetroLinkWeight.Regular;
+            this.checkBoxPluginsUpdate.Location = new System.Drawing.Point(3, 40);
+            this.checkBoxPluginsUpdate.Name = "checkBoxPluginsUpdate";
+            this.checkBoxPluginsUpdate.Size = new System.Drawing.Size(509, 19);
+            this.checkBoxPluginsUpdate.Style = MetroFramework.MetroColorStyle.Blue;
+            this.checkBoxPluginsUpdate.StyleManager = null;
+            this.checkBoxPluginsUpdate.TabIndex = 43;
+            this.checkBoxPluginsUpdate.Text = "Update plug-ins along with AxTools update + notify about update once a week";
+            this.checkBoxPluginsUpdate.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.toolTip.SetToolTip(this.checkBoxPluginsUpdate, "Show various plugins notifications in game\r\n(it appears on recordings/streams)");
+            this.checkBoxPluginsUpdate.UseStyleColors = true;
+            this.checkBoxPluginsUpdate.UseVisualStyleBackColor = true;
             // 
             // metroTabPage4
             // 
@@ -1167,7 +1167,7 @@ namespace AxTools.Forms
         private MetroLabel metroLabel13;
         private MetroCheckBox checkBoxMinimizeToTray;
         private MetroLink linkTitle;
-        private MetroCheckBox checkBoxPluginsShowIngameNotifications;
+        private MetroCheckBox checkBoxPluginsUpdate;
         private MetroTextboxExt textBoxVeryBadNetworkStatusPing;
         private MetroTextboxExt textBoxVeryBadNetworkStatusProcent;
         private MetroTextboxExt textBoxBadNetworkStatusPing;

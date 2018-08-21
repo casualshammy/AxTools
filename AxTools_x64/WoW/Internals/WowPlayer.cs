@@ -25,7 +25,7 @@ namespace AxTools.WoW.Internals
         {
             Address = pAddress;
             MGUID = guid;
-            IntPtr desc = memory.Read<IntPtr>(pAddress + WowBuildInfoX64.UnitDescriptors);
+            var desc = memory.Read<IntPtr>(pAddress + WowBuildInfoX64.UnitDescriptors);
             WowPlayerInfo inf = memory.Read<WowPlayerInfo>(desc);
             TargetGUID = inf.TargetGUID;
             Health = inf.Health;
@@ -178,8 +178,8 @@ namespace AxTools.WoW.Internals
             try
             {
                 string name = null;
-                IntPtr firstEntry = memory.Read<IntPtr>(memory.ImageBase + WowBuildInfoX64.NameCacheBase + WowBuildInfoX64.NameCacheNext);
-                IntPtr nextEntry = firstEntry;
+                var firstEntry = memory.Read<IntPtr>(memory.ImageBase + WowBuildInfoX64.NameCacheBase + WowBuildInfoX64.NameCacheNext);
+                var nextEntry = firstEntry;
                 while (true)
                 {
                     if (memory.Read<WoWGUID>(nextEntry + WowBuildInfoX64.NameCacheGuid) == GUID)
@@ -203,7 +203,7 @@ namespace AxTools.WoW.Internals
         {
             try
             {
-                ushort serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
+                var serverID = (ushort)((GUID.Low >> 42) & 0x1FFF);
                 info = info ?? new GameInterface(wowProcess);
                 return info.LuaGetValue("select(6, GetPlayerInfoByGUID(\"Player-" + serverID + "-" + GUID.High.ToString("X") + "\"))");
             }
@@ -217,11 +217,11 @@ namespace AxTools.WoW.Internals
         {
             get
             {
-                int isFlyingPointer = 0x198;
-                int isFlyingOffset = 0x58;
+                var isFlyingPointer = 0x198;
+                var isFlyingOffset = 0x58;
                 uint isFlyingMask = 0x1000000;
-                IntPtr p1 = memory.Read<IntPtr>(Address + isFlyingPointer);
-                uint p2 = memory.Read<uint>(p1 + isFlyingOffset);
+                var p1 = memory.Read<IntPtr>(Address + isFlyingPointer);
+                var p2 = memory.Read<uint>(p1 + isFlyingOffset);
                 return (p2 & isFlyingMask) != 0;
             }
         }

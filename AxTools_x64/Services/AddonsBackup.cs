@@ -18,7 +18,7 @@ namespace AxTools.Services
 {
     internal static class AddonsBackup
     {
-        private static readonly Log2 log = new Log2("AddonsBackup");
+        private static readonly Log2 log = new Log2(nameof(AddonsBackup));
         private static readonly Settings2 _settings = Settings2.Instance;
         private static int _prevProcent = -1;
         private static bool _isBackingUp;
@@ -281,7 +281,7 @@ namespace AxTools.Services
         {
             if (e.EntriesTotal != 0)
             {
-                int procent = e.EntriesSaved * 100 / e.EntriesTotal;
+                var procent = e.EntriesSaved * 100 / e.EntriesTotal;
                 if (procent != _prevProcent && procent >= 0 && procent <= 100)
                 {
                     _prevProcent = procent;
@@ -294,7 +294,7 @@ namespace AxTools.Services
         {
             if (e.EntriesTotal != 0)
             {
-                int procent = e.EntriesExtracted * 100 / e.EntriesTotal;
+                var procent = e.EntriesExtracted * 100 / e.EntriesTotal;
                 if (procent != _prevProcent && procent >= 0 && procent <= 100)
                 {
                     _prevProcent = procent;

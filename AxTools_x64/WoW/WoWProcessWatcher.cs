@@ -140,7 +140,7 @@ namespace AxTools.WoW
                                 {
                                     if (Settings2.Instance.WoWCustomWindowNoBorder)
                                     {
-                                        long styleWow = NativeMethods.GetWindowLong64(process.MainWindowHandle, Win32Consts.GWL_STYLE) & ~(Win32Consts.WS_CAPTION | Win32Consts.WS_THICKFRAME);
+                                        var styleWow = NativeMethods.GetWindowLong64(process.MainWindowHandle, Win32Consts.GWL_STYLE) & ~(Win32Consts.WS_CAPTION | Win32Consts.WS_THICKFRAME);
                                         NativeMethods.SetWindowLong64(process.MainWindowHandle, Win32Consts.GWL_STYLE, styleWow);
                                     }
                                     NativeMethods.MoveWindow(process.MainWindowHandle, Settings2.Instance.WoWCustomWindowRectangle.X, Settings2.Instance.WoWCustomWindowRectangle.Y,

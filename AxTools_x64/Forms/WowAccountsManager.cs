@@ -22,7 +22,7 @@ namespace AxTools.Forms
             WoWAccount2 wowAccount = WoWAccount2.AllAccounts.FirstOrDefault(i => i.GetLogin() == textBoxWowAccountLogin.Text);
             if (wowAccount != null)
             {
-                int index = WoWAccount2.AllAccounts.IndexOf(wowAccount);
+                var index = WoWAccount2.AllAccounts.IndexOf(wowAccount);
                 WoWAccount2.AllAccounts[index] = new WoWAccount2() { EncryptedLogin = WoWAccount2.GetEncryptedArray(textBoxWowAccountLogin.Text), EncryptedPassword = WoWAccount2.GetEncryptedArray(textBoxWowAccountPassword.Text) };
             }
             else

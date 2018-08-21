@@ -53,7 +53,7 @@ namespace AxTools.Forms
             textBoxBackupPath.Text = settings.WoWAddonsBackupPath;
             metroComboBoxStyle.SelectedIndex = settings.StyleColor == 0 ? 0 : (int)settings.StyleColor - 1;
             checkBoxMinimizeToTray.Checked = settings.MinimizeToTray;
-            checkBoxPluginsShowIngameNotifications.Checked = settings.WoWPluginShowIngameNotifications;
+            checkBoxPluginsUpdate.Checked = settings.UpdatePlugins;
             checkBox_AntiAFK.Checked = settings.WoWAntiKick;
             CheckBox7.Checked = settings.WoWCustomWindowNoBorder;
             CheckBox6.Checked = settings.WoWCustomizeWindow;
@@ -101,7 +101,7 @@ namespace AxTools.Forms
             textBoxVeryBadNetworkStatusPing.KeyUp += TextBoxVeryBadNetworkStatusPing_KeyUp;
             buttonBackupPath.Click += ButtonBackupPathClick;
             metroComboBoxBackupCompressionLevel.SelectedIndexChanged += MetroComboBoxBackupCompressionLevelSelectedIndexChanged;
-            checkBoxPluginsShowIngameNotifications.CheckedChanged += MetroCheckBox1_CheckedChanged;
+            checkBoxPluginsUpdate.CheckedChanged += MetroCheckBox1_CheckedChanged;
             metroComboBoxStyle.SelectedIndexChanged += MetroComboBoxStyle_SelectedIndexChanged;
             linkShowLog.Click += LinkShowLog_Click;
             linkSendLogToDev.Click += LinkSendLogToDev_Click;
@@ -336,7 +336,7 @@ namespace AxTools.Forms
 
         private void MetroComboBoxStyle_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int style = metroComboBoxStyle.SelectedIndex == 0 ? 0 : metroComboBoxStyle.SelectedIndex + 1;
+            var style = metroComboBoxStyle.SelectedIndex == 0 ? 0 : metroComboBoxStyle.SelectedIndex + 1;
             settings.StyleColor = (MetroColorStyle)style;
             foreach (object i in Application.OpenForms)
             {
@@ -436,7 +436,7 @@ namespace AxTools.Forms
 
         private void MetroCheckBox1_CheckedChanged(object sender, EventArgs e)
         {
-            settings.WoWPluginShowIngameNotifications = checkBoxPluginsShowIngameNotifications.Checked;
+            settings.UpdatePlugins = checkBoxPluginsUpdate.Checked;
         }
     }
 }

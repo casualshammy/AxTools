@@ -171,6 +171,8 @@ namespace LuaConsole
                 helpInfo += "void NotifyUser(object text)\r\n";
                 luaEngine.RegisterFunction(nameof(StopExecutionIfCancellationRequested), this, GetType().GetMethod(nameof(StopExecutionIfCancellationRequested)));
                 helpInfo += "bool StopExecutionIfCancellationRequested()\r\n";
+                luaEngine.RegisterFunction("GetUIFrameByName", info, info.GetType().GetMethod("GetUIFrameByName"));
+                helpInfo += "uservalue<WoWUIFrame> GetUIFrameByName(string frameName)\r\n";
                 // lua lib
                 luaEngine.DoString("format=string.format;");
                 luaEngine.DoString("if (not table.count) then table.count = function(tbl) local count = 0; for index in pairs(tbl) do count = count+1; end return count; end end");
@@ -178,6 +180,8 @@ namespace LuaConsole
                 helpInfo += "real table.count(tbl)\r\nvalue table.first(tbl)\r\n";
                 luaEngine.DoString("if (not GetNearestObjectByName) then GetNearestObjectByName = function(listCount, list, name) local t = { }; for i = 0,  listCount-1 do local object = list[i]; if (object.Name == name) then t[#t+1] = object; end end if (table.count(t) > 0) then local lp = GetLocalPlayer(); table.sort(t, function(a,b) return a.Location:Distance(lp.Location) < b.Location:Distance(lp.Location); end); return table.first(t); end return nil; end end");
                 helpInfo += "uservalue WowNpc/WowObject/WowPlayer GetNearestObjectByName(listLength, list, name)\r\n";
+                luaEngine.DoString("print = function(...) local text = \"\"; for i = 1, select(\"#\", ...) do text = text..tostring(select(i, ...))..\" \" end SendToChat(\"/run print(\"..text..\")\"); end");
+                helpInfo += "void print(params string)\r\n";
             }
             catch (Exception ex)
             {

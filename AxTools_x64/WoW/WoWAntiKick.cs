@@ -72,8 +72,8 @@ namespace AxTools.WoW
                     {
                         try
                         {
-                            int lastHardwareAction = wowProcess.Memory.Read<int>(wowProcess.Memory.ImageBase + WowBuildInfoX64.LastHardwareAction);
-                            int tickCount = wowProcess.Memory.Read<int>(wowProcess.Memory.ImageBase + WowBuildInfoX64.TickCount);
+                            var lastHardwareAction = wowProcess.Memory.Read<int>(wowProcess.Memory.ImageBase + WowBuildInfoX64.LastHardwareAction);
+                            var tickCount = wowProcess.Memory.Read<int>(wowProcess.Memory.ImageBase + WowBuildInfoX64.TickCount);
                             if (tickCount - lastHardwareAction > maxTime)
                             {
                                 maxTime = Utils.Rnd.Next(150000, 280000);

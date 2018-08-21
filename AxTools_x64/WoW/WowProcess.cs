@@ -61,7 +61,7 @@ namespace AxTools.WoW
         {
             get
             {
-                long style = NativeMethods.GetWindowLong64(MainWindowHandle, Win32Consts.GWL_STYLE);
+                var style = NativeMethods.GetWindowLong64(MainWindowHandle, Win32Consts.GWL_STYLE);
                 return (style & Win32Consts.WS_MINIMIZE) != 0;
             }
         }

@@ -57,7 +57,7 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        public bool IsVisible => ((process.Memory.Read<int>(address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) == 1;
+        public bool IsVisible => ((process.Memory.Read<int>(address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) != 0;
 
         public static WoWUIFrame GetFrameByName(GameInterface game, string name)
         {
@@ -87,12 +87,12 @@ namespace AxTools.WoW.Internals
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 var dict = cachedFrames[game.wowProcess.ProcessID];
-                IntPtr @base = game.wowProcess.Memory.Read<IntPtr>(game.wowProcess.Memory.ImageBase + WowBuildInfoX64.UIFrameBase);
-                IntPtr currentFrame = game.wowProcess.Memory.Read<IntPtr>(@base + WowBuildInfoX64.UIFirstFrame);
+                var @base = game.wowProcess.Memory.Read<IntPtr>(game.wowProcess.Memory.ImageBase + WowBuildInfoX64.UIFrameBase);
+                var currentFrame = game.wowProcess.Memory.Read<IntPtr>(@base + WowBuildInfoX64.UIFirstFrame);
                 while (currentFrame != IntPtr.Zero)
                 {
                     WoWUIFrame f = null;
-                    bool shouldExit = false;
+                    var shouldExit = false;
                     try
                     {
                         WoWUIFrame temp = new WoWUIFrame(currentFrame, game.wowProcess);

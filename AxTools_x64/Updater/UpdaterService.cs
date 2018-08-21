@@ -1,5 +1,6 @@
 ﻿using AxTools.Forms;
 using AxTools.Helpers;
+using AxTools.WoW;
 using Ionic.Zip;
 using System;
 using System.Diagnostics;
@@ -155,6 +156,35 @@ namespace AxTools.Updater
                 return;
             }
 
+            if (WoWProcessManager.Processes.Count > 0)
+            {
+                WoWProcessManager.WoWProcessClosed += WoWProcessManager_WoWProcessClosed;
+            }
+            else
+            {
+                NotifyAboutUpdate();
+            }
+        }
+
+        private static void WoWProcessManager_WoWProcessClosed(int obj)
+        {
+            if (WoWProcessManager.Processes.Count == 0)
+            {
+                WoWProcessManager.WoWProcessClosed -= WoWProcessManager_WoWProcessClosed;
+                var mainWindowWowLaunchLock = MainWindow.Instance.WoWLaunchLock.GetLock();
+                try
+                {
+                    NotifyAboutUpdate();
+                }
+                finally
+                {
+                    MainWindow.Instance.WoWLaunchLock.ReleaseLock(mainWindowWowLaunchLock);
+                }
+            }
+        }
+
+        private static void NotifyAboutUpdate()
+        {
             void CloseAndUpdate()
             {
                 try

@@ -94,15 +94,15 @@ namespace AxTools.Services
                     using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                     {
                         _stopwatch.Restart();
-                        bool result = pSocket.BeginConnect(_cachedServer.Ip, _cachedServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
-                        long elapsed = _stopwatch.ElapsedMilliseconds;
+                        var result = pSocket.BeginConnect(_cachedServer.Ip, _cachedServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
+                        var elapsed = _stopwatch.ElapsedMilliseconds;
                         if (_pingList.Count == 100)
                         {
                             _pingList.RemoveAt(0);
                         }
                         _pingList.Add(new PingerReply((int)elapsed, result && pSocket.Connected));
-                        int ping = Max(_pingList.GetRange(_pingList.Count - 10, 10).Where(l => l.Successful).Select(l => l.PingInMs));
-                        int packetLoss = _pingList.Count(l => !l.Successful);
+                        var ping = Max(_pingList.GetRange(_pingList.Count - 10, 10).Where(l => l.Successful).Select(l => l.PingInMs));
+                        var packetLoss = _pingList.Count(l => !l.Successful);
                         if (ping != _lastPing || packetLoss != _lastPacketLoss)
                         {
                             StatChanged?.Invoke(new PingerStat(ping, packetLoss, ping != IncorrectPing));

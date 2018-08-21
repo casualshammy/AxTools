@@ -204,8 +204,8 @@ namespace AxTools.Helpers
 
         #region WoWPlugins
 
-        [JsonProperty(Order = 71, PropertyName = nameof(WoWPluginShowIngameNotifications))]
-        internal bool WoWPluginShowIngameNotifications = true;
+        [JsonProperty(Order = 70, PropertyName = nameof(UpdatePlugins))]
+        internal bool UpdatePlugins = true;
 
         internal event Action PluginHotkeysChanged;
 

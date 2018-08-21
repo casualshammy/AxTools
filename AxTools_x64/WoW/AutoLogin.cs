@@ -26,7 +26,7 @@ namespace AxTools.WoW
 
         private void EnterCredentialsASAP()
         {
-            int counter = 300;
+            var counter = 300;
             while (counter > 0)
             {
                 try
@@ -40,7 +40,7 @@ namespace AxTools.WoW
                             if (wowProcess.IsValidBuild)
                             {
                                 GlueState glueState = wowProcess.Memory.Read<GlueState>(wowProcess.Memory.ImageBase + WowBuildInfoX64.GlueState);
-                                IntPtr focusedWidget = wowProcess.Memory.Read<IntPtr>(wowProcess.Memory.ImageBase + WowBuildInfoX64.FocusedWidget);
+                                var focusedWidget = wowProcess.Memory.Read<IntPtr>(wowProcess.Memory.ImageBase + WowBuildInfoX64.FocusedWidget);
                                 okay = glueState == GlueState.Disconnected && focusedWidget != (IntPtr)0;
                             }
                             else
@@ -55,7 +55,7 @@ namespace AxTools.WoW
                                     NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
                                     Thread.Sleep(5);
                                 }
-                                IntPtr tabCode = new IntPtr(0x09);
+                                var tabCode = new IntPtr(0x09);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, tabCode, IntPtr.Zero);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, tabCode, IntPtr.Zero);
                                 Thread.Sleep(5);
@@ -64,7 +64,7 @@ namespace AxTools.WoW
                                     NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_CHAR, (IntPtr)ch, IntPtr.Zero);
                                     Thread.Sleep(5);
                                 }
-                                IntPtr enterCode = new IntPtr(0x0D);
+                                var enterCode = new IntPtr(0x0D);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYDOWN, enterCode, IntPtr.Zero);
                                 NativeMethods.PostMessage(wowProcess.MainWindowHandle, Win32Consts.WM_KEYUP, enterCode, IntPtr.Zero);
                                 log.Info($"{wowProcess} Credendials have been entered [{Utils.SecureString(wowAccount.GetLogin())}]");
