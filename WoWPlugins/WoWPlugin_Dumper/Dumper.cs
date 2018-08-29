@@ -1,6 +1,5 @@
 ﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -11,7 +10,7 @@ namespace WoWPlugin_Dumper
     {
         #region Info
 
-        public string Name => "Dumper";
+        public string Name => nameof(Dumper);
 
         public Version Version => new Version(1, 0);
 

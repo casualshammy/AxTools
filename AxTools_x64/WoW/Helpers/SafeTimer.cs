@@ -1,5 +1,4 @@
 ﻿using AxTools.Helpers;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -15,7 +14,7 @@ namespace AxTools.WoW.Helpers
         private volatile bool flag;
         private Thread thread;
         private readonly GameInterface info;
-        private static readonly Log2 log = new Log2("SafeTimer");
+        private static readonly Log2 log = new Log2(nameof(SafeTimer));
 
         // optional variable
         public string PluginName;

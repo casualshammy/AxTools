@@ -1,6 +1,6 @@
 ﻿using AxTools.Helpers;
 using AxTools.WinAPI;
-using AxTools.WoW.PluginSystem.API;
+using AxTools.WoW.Helpers;
 using KeyboardWatcher;
 using System;
 using System.Collections.Generic;

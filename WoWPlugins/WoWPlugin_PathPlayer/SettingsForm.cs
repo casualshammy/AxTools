@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AxTools.WoW.Helpers;
+using System;
 using System.Windows.Forms;
 
 namespace PathPlayer
@@ -45,7 +46,7 @@ namespace PathPlayer
 
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog p = new OpenFileDialog { Filter = @"Text files (*.txt, *.json)|*.txt;*.json", InitialDirectory = AxTools.WoW.PluginSystem.API.Utilities.GetPluginSettingsDir(pluginInst) })
+            using (OpenFileDialog p = new OpenFileDialog { Filter = @"Text files (*.txt, *.json)|*.txt;*.json", InitialDirectory = Utilities.GetPluginSettingsDir(pluginInst) })
             {
                 if (p.ShowDialog(this) == DialogResult.OK)
                 {

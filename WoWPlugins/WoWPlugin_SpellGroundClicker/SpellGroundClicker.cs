@@ -1,7 +1,6 @@
 ﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Drawing;
 using System.Threading;
@@ -13,7 +12,7 @@ namespace WoWPlugin_SpellGroundClicker
     {
         #region Info
 
-        public string Name => "SpellGroundClicker";
+        public string Name => nameof(SpellGroundClicker);
 
         public Version Version => new Version(1, 0);
 

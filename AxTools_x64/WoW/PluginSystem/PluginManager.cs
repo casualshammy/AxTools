@@ -1,6 +1,5 @@
 ﻿using AxTools.Helpers;
-using AxTools.WoW.PluginSystem.API;
-using AxTools.WoW.PluginSystem.Plugins;
+using AxTools.WoW.Helpers;
 using KeyboardWatcher;
 using Newtonsoft.Json;
 using System;
@@ -154,7 +153,6 @@ namespace AxTools.WoW.PluginSystem
                     Settings2.Instance.PluginsLastTimeUpdated = DateTime.UtcNow;
                     UpdateIsActive = false;
                 }
-                LoadPlugins();
                 LoadPluginsFromDisk();
                 CheckDependencies();
                 ClearOldAssemblies();
@@ -222,15 +220,7 @@ namespace AxTools.WoW.PluginSystem
                 Program.ShutdownLock.ReleaseLock(@lock);
             }
         }
-
-        private static void LoadPlugins()
-        {
-            IPlugin3 goodsDestroyer = new GoodsDestroyer();
-            _pluginContainers.Add(new PluginContainer(goodsDestroyer));
-            log.Info($"Plug-in loaded: {_pluginContainers.Last().Plugin.Name} {_pluginContainers.Last().Plugin.Version}");
-            PluginLoaded?.Invoke(goodsDestroyer);
-        }
-
+        
         private static void LoadPluginsFromDisk()
         {
 #pragma warning disable S3885 // "Assembly.Load" should be used

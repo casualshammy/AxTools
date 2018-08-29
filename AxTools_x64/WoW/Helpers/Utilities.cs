@@ -1,6 +1,7 @@
 ﻿using AxTools.Forms;
 using AxTools.Helpers;
 using AxTools.WoW.Helpers;
+using AxTools.WoW.PluginSystem;
 using MetroFramework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -11,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace AxTools.WoW.PluginSystem.API
+namespace AxTools.WoW.Helpers
 {
     public static class Utilities
     {

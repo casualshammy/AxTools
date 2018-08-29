@@ -1,7 +1,7 @@
 ﻿using AxTools.Forms;
 using AxTools.Helpers;
+using AxTools.WoW.Helpers;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using FMemory;
 using System.Diagnostics;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace AxTools.WoW
 {
     internal static class WoWManager
     {
-        private static readonly Log2 log = new Log2("WoWManager");
+        private static readonly Log2 log = new Log2(nameof(WoWManager));
         //internal static WowProcess WoWProcess;
         //internal static bool Hooked { private set; get; }
 

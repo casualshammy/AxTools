@@ -1,5 +1,5 @@
-﻿using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
+﻿using AxTools.WoW.Helpers;
+using AxTools.WoW.PluginSystem;
 using System;
 using System.Drawing;
 using System.IO;
@@ -12,7 +12,7 @@ namespace PathPlayer
     {
         #region Info
 
-        public string Name => "PathPlayer";
+        public string Name => nameof(PathPlayer);
         public Version Version => new Version(1, 0);
         public string Description => "Wrapper for LibNavigator";
         public bool ConfigAvailable => true;

@@ -1,6 +1,5 @@
 ﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;

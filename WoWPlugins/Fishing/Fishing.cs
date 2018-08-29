@@ -1,7 +1,6 @@
 ﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +42,7 @@ namespace Fishing
         private readonly string WATER_WALKING_NAME = Wowhead.GetSpellInfo(546).Name; // Water Walking https://wowhead.com/spell=546
         private readonly uint[] FISHING_RODS =
         {
+            133755, // Удочка Темносвета
             44050, // Мастерски сделанная калуакская удочка
             25978, // Графитовая удочка Сета
             19022, // Продвинутая рыбалка Ната Пэгла FC-5000

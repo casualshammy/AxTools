@@ -1,5 +1,5 @@
-﻿using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
+﻿using AxTools.WoW.Helpers;
+using AxTools.WoW.PluginSystem;
 using System;
 using System.Drawing;
 using System.Net;
@@ -12,7 +12,7 @@ namespace LibSMS
     {
         #region Info
 
-        public string Name => "LibSMS";
+        public string Name => nameof(LibSMS);
 
         public Version Version => new Version(1, 0);
 

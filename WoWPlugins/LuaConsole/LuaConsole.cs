@@ -3,7 +3,6 @@ using AxTools.WinAPI;
 using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using Components.Forms;
 using KeyboardWatcher;
 using NLua.Exceptions;

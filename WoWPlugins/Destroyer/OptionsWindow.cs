@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace AxTools.WoW.PluginSystem.Plugins
+namespace Destroyer
 {
-    public partial class GoodsDestroyerConfig : Form
+    public partial class OptionsWindow : Form
     {
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-        private GoodsDestroyerSettings settings;
+        private readonly Settings settings;
 
-        public GoodsDestroyerConfig(GoodsDestroyerSettings settingsInstance)
+        public OptionsWindow(Settings settingsInstance)
         {
             InitializeComponent();
             settings = settingsInstance;
@@ -17,16 +17,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
             checkBoxUseFastDraenorMill.Checked = settings.UseFastDraenorMill;
             checkBoxMillFelwort.Checked = settings.MillFelwort;
         }
-
-        internal static void Open(GoodsDestroyerSettings settingsInstance)
-        {
-            GoodsDestroyerConfig goodsDestroyerConfig = new GoodsDestroyerConfig(settingsInstance);
-            goodsDestroyerConfig.ShowDialog();
-            settingsInstance.LaunchInkCrafter = goodsDestroyerConfig.checkBox1.Checked;
-            settingsInstance.UseFastDraenorMill = goodsDestroyerConfig.checkBoxUseFastDraenorMill.Checked;
-            settingsInstance.MillFelwort = goodsDestroyerConfig.checkBoxMillFelwort.Checked;
-        }
-
+        
         // ReSharper disable once InconsistentNaming
         private const int CP_NOCLOSE_BUTTON = 0x200;
 
@@ -44,5 +35,21 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             Close();
         }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.LaunchInkCrafter = checkBox1.Checked;
+        }
+
+        private void checkBoxUseFastDraenorMill_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.UseFastDraenorMill = checkBoxUseFastDraenorMill.Checked;
+        }
+
+        private void checkBoxMillFelwort_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.MillFelwort = checkBoxMillFelwort.Checked;
+        }
+
     }
 }

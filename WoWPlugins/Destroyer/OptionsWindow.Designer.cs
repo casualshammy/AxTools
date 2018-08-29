@@ -1,6 +1,6 @@
-﻿namespace AxTools.WoW.PluginSystem.Plugins
+﻿namespace Destroyer
 {
-    partial class GoodsDestroyerConfig
+    partial class OptionsWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -53,6 +53,7 @@
             this.checkBox1.TabIndex = 7;
             this.checkBox1.Text = "Launch InkCrafter plugin when player hasn\'t herbs to mill";
             this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // checkBoxUseFastDraenorMill
             // 
@@ -63,6 +64,7 @@
             this.checkBoxUseFastDraenorMill.TabIndex = 8;
             this.checkBoxUseFastDraenorMill.Text = "Use mass mill";
             this.checkBoxUseFastDraenorMill.UseVisualStyleBackColor = true;
+            this.checkBoxUseFastDraenorMill.CheckedChanged += new System.EventHandler(this.checkBoxUseFastDraenorMill_CheckedChanged);
             // 
             // checkBoxMillFelwort
             // 
@@ -73,8 +75,9 @@
             this.checkBoxMillFelwort.TabIndex = 9;
             this.checkBoxMillFelwort.Text = "Mill Felwort";
             this.checkBoxMillFelwort.UseVisualStyleBackColor = true;
+            this.checkBoxMillFelwort.CheckedChanged += new System.EventHandler(this.checkBoxMillFelwort_CheckedChanged);
             // 
-            // GoodsDestroyerConfig
+            // OptionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -86,7 +89,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "GoodsDestroyerConfig";
+            this.Name = "OptionsWindow";
             this.Text = "GoodsDestroyerSettings";
             this.ResumeLayout(false);
             this.PerformLayout();

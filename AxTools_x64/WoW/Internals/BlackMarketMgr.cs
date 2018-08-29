@@ -1,5 +1,4 @@
 ﻿using AxTools.WoW.Helpers;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

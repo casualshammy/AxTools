@@ -1,7 +1,6 @@
 ﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +16,7 @@ namespace LibNavigator
     {
         #region Info
 
-        public string Name => "LibNavigator";
+        public string Name => nameof(LibNavigator);
         public Version Version => new Version(1, 0);
         public string Description => "Follows routes";
         public Image TrayIcon => null;

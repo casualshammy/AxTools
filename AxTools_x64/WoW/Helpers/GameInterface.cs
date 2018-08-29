@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace AxTools.WoW.PluginSystem.API
+namespace AxTools.WoW.Helpers
 {
     public class GameInterface
     {
@@ -187,31 +187,6 @@ namespace AxTools.WoW.PluginSystem.API
                 }
             }
         }
-
-        //private ChatMsg ParseChatMsg(string s, IntPtr baseMsg)
-        //{
-        //    // Type: [7], Channel: [], Player Name: [Тэлин-Гордунни], Sender GUID: [Player-1602-05E946D2], Active player: [Player-1929-0844D1FA], Text: [2]
-        //    Regex regex = new Regex("Type: \\[(\\d+)\\], Channel: \\[(.*)\\], Player Name: \\[(.*)\\], Sender GUID: \\[(.*)\\], Active player: \\[.*\\], Text: \\[(.*)\\]");
-        //    Match match = regex.Match(s);
-        //    if (match.Success)
-        //    {
-        //        if (!Enum.IsDefined(typeof(WoWChatMsgType), int.Parse(match.Groups[1].Value)))
-        //        {
-        //            log.Error(string.Format("Type: {0}; Channel: {1}; Player Name: {2}; Sender GUID: {3}; Text: {4}",
-        //                int.Parse(match.Groups[1].Value), match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value));
-        //        }
-        //        return new ChatMsg
-        //        {
-        //            Type = (WoWChatMsgType)int.Parse(match.Groups[1].Value),
-        //            Channel = match.Groups[2].Value,
-        //            Sender = match.Groups[3].Value,
-        //            SenderGUID = match.Groups[4].Value,
-        //            Text = match.Groups[5].Value
-        //        };
-        //    }
-        //    log.Error($"ParseChatMsg: unknown signature: 0x{baseMsg.ToInt64().ToString("X")} ({s})");
-        //    return new ChatMsg();
-        //}
 
         #endregion Chat
 

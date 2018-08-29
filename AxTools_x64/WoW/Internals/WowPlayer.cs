@@ -1,6 +1,5 @@
 ﻿using AxTools.Helpers;
 using AxTools.WoW.Helpers;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace AxTools.WoW.Internals
     public class WowPlayer : WoWObjectBase
     {
         internal static readonly ConcurrentDictionary<WoWGUID, string> Names = new ConcurrentDictionary<WoWGUID, string>();
-        private static readonly Log2 log = new Log2("WowPlayer");
+        private static readonly Log2 log = new Log2(nameof(WowPlayer));
         private float? rotation;
         private float? pitch;
 

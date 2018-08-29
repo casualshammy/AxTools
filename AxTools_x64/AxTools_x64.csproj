@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.3.58.2448</AssemblyVersion>
+    <AssemblyVersion>12.3.59.2458</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
@@ -241,15 +241,8 @@
     <Compile Include="WoW\Helpers\ChatMsg.cs" />
     <Compile Include="WoW\Helpers\MoveHelper.cs" />
     <Compile Include="WoW\Helpers\SafeTimer.cs" />
-    <Compile Include="WoW\PluginSystem\API\GameInterface.cs" />
+    <Compile Include="WoW\Helpers\GameInterface.cs" />
     <Compile Include="WoW\PluginSystem\PluginContainer.cs" />
-    <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyerConfig.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyerConfig.Designer.cs">
-      <DependentUpon>GoodsDestroyerConfig.cs</DependentUpon>
-    </Compile>
-    <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyerSettings.cs" />
     <Compile Include="WoW\WoWAccount2.cs" />
     <Compile Include="WoW\WoWAntiKick.cs" />
     <Compile Include="WoW\Helpers\Wowhead.cs" />
@@ -257,11 +250,10 @@
     <Compile Include="WoW\Internals\WoWPlayerMe.cs" />
     <Compile Include="WoW\Internals\ObjectMgr.cs" />
     <Compile Include="WoW\WoWManager.cs" />
-    <Compile Include="WoW\PluginSystem\API\Utilities.cs" />
+    <Compile Include="WoW\Helpers\Utilities.cs" />
     <Compile Include="WoW\PluginSystem\CodeCompiler.cs" />
     <Compile Include="WoW\PluginSystem\IPlugin.cs" />
     <Compile Include="WoW\PluginSystem\PluginManager.cs" />
-    <Compile Include="WoW\PluginSystem\Plugins\GoodsDestroyer.cs" />
     <Compile Include="Helpers\Globals.cs" />
     <Compile Include="WoW\Internals\WowPlayerInfo.cs" />
     <Compile Include="Forms\AppSettings.cs">
@@ -343,9 +335,6 @@
     <EmbeddedResource Include="Forms\WoWProcessSelector.resx">
       <DependentUpon>WoWProcessSelector.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WoW\PluginSystem\Plugins\GoodsDestroyerConfig.resx">
-      <DependentUpon>GoodsDestroyerConfig.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="app.manifest" />

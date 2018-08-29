@@ -1,7 +1,7 @@
 ﻿using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW;
-using AxTools.WoW.PluginSystem.API;
+using AxTools.WoW.Helpers;
 using Components.Forms;
 using System;
 using System.Collections.Generic;
