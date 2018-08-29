@@ -2,13 +2,13 @@
 using System;
 using System.Windows.Forms;
 
-namespace AxTools.WoW.PluginSystem.Plugins
+namespace Fishing
 {
-    internal partial class FishingConfig : Form
+    internal partial class OptionsWindow : Form
     {
-        private readonly FishingSettings thisSettings;
+        private readonly Settings thisSettings;
 
-        public FishingConfig(FishingSettings fishingSettings)
+        public OptionsWindow(Settings fishingSettings)
         {
             InitializeComponent();
             thisSettings = fishingSettings;
@@ -19,25 +19,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
             checkBoxLegionUseSpecialLure.Checked = thisSettings.LegionUseSpecialLure;
             checkBoxLegionMargoss.Checked = thisSettings.LegionMargossSupport;
             checkBoxBreaks.Checked = thisSettings.EnableBreaks;
+            checkBoxUseWaterWalking.Checked = thisSettings.UseWaterWalking;
+            checkBoxUseBestBait.Checked = thisSettings.UseBestBait;
+            checkBoxUseSpecialBait.Checked = fishingSettings.UseSpecialBait;
+            comboBoxSpecialBait.Text = fishingSettings.SpecialBait;
         }
-
-        internal static void Open(FishingSettings fishingSettings)
-        {
-            FishingConfig fishingConfig = new FishingConfig(fishingSettings)
-            {
-                checkBoxUseBestBait = { Checked = fishingSettings.UseBestBait },
-                checkBoxUseSpecialBait = { Checked = fishingSettings.UseSpecialBait },
-                comboBoxSpecialBait = { Text = fishingSettings.SpecialBait }
-            };
-            fishingConfig.ShowDialog(MainWindow.Instance);
-            fishingSettings.UseBestBait = fishingConfig.checkBoxUseBestBait.Checked;
-            fishingSettings.UseSpecialBait = fishingConfig.checkBoxUseSpecialBait.Checked;
-            fishingSettings.SpecialBait = fishingConfig.comboBoxSpecialBait.Text;
-            fishingSettings.UseAnySpecialBaitIfPreferredIsNotAvailable = fishingConfig.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Checked;
-            fishingSettings.GetSpecialBaitFromNatPagle = fishingConfig.checkBoxGetSpecialBaitFromNatPagle.Checked;
-            fishingSettings.UseArcaneLure = fishingConfig.checkBoxUseArcaneLure.Checked;
-        }
-
+        
         private void button1_Click(object sender, EventArgs e)
         {
             Close();
@@ -56,24 +43,27 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
         }
 
-        private void checkBoxDalaran_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxDalaran_CheckedChanged(object sender, EventArgs e)
         {
             thisSettings.DalaranAchievement = checkBoxDalaran.Checked;
         }
 
-        private void checkBoxLegionUseSpecialLure_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxLegionUseSpecialLure_CheckedChanged(object sender, EventArgs e)
         {
             thisSettings.LegionUseSpecialLure = checkBoxLegionUseSpecialLure.Checked;
         }
 
-        private void checkBoxLegionMargoss_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxLegionMargoss_CheckedChanged(object sender, EventArgs e)
         {
             thisSettings.LegionMargossSupport = checkBoxLegionMargoss.Checked;
         }
 
-        private void checkBoxBreaks_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxBreaks_CheckedChanged(object sender, EventArgs e)
         {
             thisSettings.EnableBreaks = checkBoxBreaks.Checked;
         }
+
+
+
     }
 }

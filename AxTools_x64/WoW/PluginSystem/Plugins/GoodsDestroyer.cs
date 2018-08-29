@@ -92,11 +92,11 @@ namespace AxTools.WoW.PluginSystem.Plugins
                                 Thread.Sleep(500);
                                 return;
                             }
-                            WoWItem herb = me.ItemsInBags.FirstOrDefault(l => herbs.Contains(l.EntryID) && l.StackSize >= 5);
-                            if (herb != null)
+                            var nextHerb = me.ItemsInBags.FirstOrDefault(l => herbs.Contains(l.EntryID) && l.StackSize >= 5);
+                            if (nextHerb != null)
                             {
                                 info.CastSpellByName(Wowhead.GetSpellInfo(51005).Name);
-                                info.UseItem(herb.BagID, herb.SlotID);
+                                info.UseItem(nextHerb.BagID, nextHerb.SlotID);
                                 Thread.Sleep(500);
                                 return;
                             }
@@ -167,7 +167,8 @@ namespace AxTools.WoW.PluginSystem.Plugins
         {
             785, 2449, 2447, 765, 2450, 2453, 3820, 2452, 3369, 3356, 3357, 3355, 3819, 3818, 3821, 3358, 8836, 8839, 4625, 8846, 8831, 8838, 13463, 13464, 13465, 13466, 13467, 22786, 22785, 22793, 22791, 22792,
             22787, 22789, 36907, 36903, 36906, 36904, 36905, 36901, 39970, 37921, 52983, 52987, 52984, 52986, 52985, 52988, 22790, 72235, 72234, 72237, 79010, 79011, 89639, 109129, 109128, 109127, 109126, 109125, 109124, 8845,
-            128304, 124101, 124102, 124104, 124103, 124105
+            128304, 124101, 124102, 124104, 124103, 124105, 152505, 152506, 152507, 152508, 152509, 152511,
+            //152510 // Якорь-трава
         };
 
         private readonly uint[] fastMillHerbs =
@@ -178,19 +179,28 @@ namespace AxTools.WoW.PluginSystem.Plugins
             109128, // Награндский стрелоцвет
             109125, // Пламецвет
             109129, // Таладорская орхидея
+            // Legion
             128304, // Семя Изеры
             124101, // Айтрил
             124102, // Грезолист
             124103, // Лисоцвет
             124104, // Фьярнскаггл
+            // BfA
+            152505, // Речной горох
+            152506, // Звездный мох
+            152507, // Укус Акунды
+            152508, // Поцелуй зимы
+            152509, // Пыльца сирены
+            152511, // Морской стебель
         };
 
         private readonly uint[] ores = { 2770, 2771, 2772, 10620, 3858, 23424, 23425, 36909, 36912, 36910, 52185, 53038, 52183, 72093, 72094, 72103, 72092 };
 
         private readonly string someRandomString = Utilities.GetRandomString(6, true);
 
-        private DateTime lastNotifiedAboutCompletion = DateTime.MinValue;
+        private DateTime lastNotifiedAboutCompletion;
 
         #endregion Variables
+
     }
 }

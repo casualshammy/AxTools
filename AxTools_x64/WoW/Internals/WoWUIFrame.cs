@@ -15,7 +15,7 @@ namespace AxTools.WoW.Internals
         private string cachedName;
         private string cachedEditboxText;
         private readonly WowProcess process;
-        private static readonly Log2 log = new Log2("WoWUIFrame");
+        private static readonly Log2 log = new Log2(nameof(WoWUIFrame));
         private static readonly Dictionary<int, ConcurrentDictionary<string, IntPtr>> cachedFrames = new Dictionary<int, ConcurrentDictionary<string, IntPtr>>();
 
         internal WoWUIFrame(IntPtr address, WowProcess proc)
@@ -48,7 +48,7 @@ namespace AxTools.WoW.Internals
                         byte[] bytes = process.Memory.ReadBytes(process.Memory.Read<IntPtr>(address + WowBuildInfoX64.UIEditBoxText), 255 * 2); // 255 - max string length; 2 - utf8 char length
                         cachedEditboxText = Encoding.UTF8.GetString(bytes.TakeWhile(l => l != 0).ToArray());
                     }
-                    catch
+                    catch (Exception)
                     {
                         return "";
                     }
@@ -58,6 +58,8 @@ namespace AxTools.WoW.Internals
         }
 
         public bool IsVisible => ((process.Memory.Read<int>(address + WowBuildInfoX64.UIFrameVisible) >> WowBuildInfoX64.UIFrameVisible1) & WowBuildInfoX64.UIFrameVisible2) != 0;
+
+        public bool IsEnabled => ((process.Memory.Read<uint>(address + WowBuildInfoX64.UIFrameIsEnabled0) >> WowBuildInfoX64.UIFrameIsEnabled1) & WowBuildInfoX64.UIFrameIsEnabled2) == 0;
 
         public static WoWUIFrame GetFrameByName(GameInterface game, string name)
         {

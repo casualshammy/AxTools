@@ -1,51 +1,70 @@
 ﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
+using AxTools.WoW.PluginSystem;
 using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace AxTools.WoW.PluginSystem.Plugins
+namespace BattlegroundHelper
 {
-    internal class FlagReturner : IPlugin3
+    public class BattlegroundHelper : IPlugin3
     {
-        #region Info
 
-        public string Name => "Capture flags/orbs on the battlefields";
-
-        public Version Version => new Version(1, 2);
-
-        public string Description => "This plugin will automatically return or pickup flags in Warsong Gulch, Twin Peaks and EotS, it will pickup orbs in ToK and return carts in Deepwind Gorge";
-
-        public Image TrayIcon => AxTools.Helpers.Resources.Plugin_Bg;
+        #region IPlugin3 info
 
         public bool ConfigAvailable => false;
 
         public string[] Dependencies => null;
+
+        public string Description => "This plugin will automatically return or pickup flags in Warsong Gulch, Twin Peaks and EotS, it will pickup orbs in ToK and return carts in Deepwind Gorge";
+
         public bool DontCloseOnWowShutdown => false;
 
-        #endregion Info
+        public string Name => nameof(BattlegroundHelper);
 
-        #region Events
+        public Image TrayIcon => Resources.Plugin_Bg;
+
+        public Version Version => new Version(1, 0);
+
+        #endregion IPlugin3 info
+
+        #region Variables
+
+        private GameInterface game;
+        private uint currentZone;
+        private string[] searchingObjects;
+        private readonly List<WowObject> wowObjects = new List<WowObject>();
+        private SafeTimer timer;
+
+        #endregion Variables
 
         public void OnConfig()
         {
+            throw new NotImplementedException();
         }
 
-        public void OnStart(GameInterface inf)
+        public void OnStart(GameInterface game)
         {
-            this.info = inf;
+            this.game = game;
             currentZone = 0;
-            (timer = this.CreateTimer(50, inf, OnPulse)).Start();
+            (timer = this.CreateTimer(50, game, Timer_OnElapsed)).Start();
         }
 
-        public void OnPulse()
+        public void OnStop()
+        {
+            timer.Dispose();
+        }
+
+        private void Timer_OnElapsed()
         {
             // todo: delete try..catch
             try
             {
-                var zone = info.ZoneID;
+                var zone = game.ZoneID;
                 if (zone != currentZone)
                 {
                     OnZoneChanged(zone);
@@ -56,12 +75,12 @@ namespace AxTools.WoW.PluginSystem.Plugins
             {
                 this.LogPrint($"TODO error0: {ex.Message}");
             }
-            WoWPlayerMe localPlayer;
+            WoWPlayerMe activePlayer;
             if (searchingObjects.Length > 0)
             {
                 try
                 {
-                    localPlayer = info.GetGameObjects(wowObjects);
+                    activePlayer = game.GetGameObjects(wowObjects);
                 }
                 catch (Exception ex)
                 {
@@ -71,7 +90,7 @@ namespace AxTools.WoW.PluginSystem.Plugins
                 // todo: delete try..catch
                 try
                 {
-                    foreach (WowObject i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(localPlayer.Location) <= 10))
+                    foreach (WowObject i in wowObjects.Where(l => searchingObjects.Contains(l.Name) && l.Location.Distance(activePlayer.Location) <= 10))
                     {
                         i.Interact();
                         this.LogPrint($"Interacting with {i.Name} ({i.GUID})");
@@ -82,11 +101,6 @@ namespace AxTools.WoW.PluginSystem.Plugins
                     this.LogPrint($"TODO error2: {ex.Message}");
                 }
             }
-        }
-
-        public void OnStop()
-        {
-            timer.Dispose();
         }
 
         private void OnZoneChanged(uint zone)
@@ -121,27 +135,16 @@ namespace AxTools.WoW.PluginSystem.Plugins
             }
             if (searchingObjects.Length > 0)
             {
-                string zoneText = info.ZoneText;
+                var zoneText = game.ZoneText;
                 this.LogPrint($"We're in {zoneText}, searching for {{{string.Join(", ", searchingObjects)}}}");
                 this.ShowNotify($"{zoneText}: {{{string.Join(", ", searchingObjects)}}}", false, true);
             }
             else
             {
-                this.LogPrint("Unknown battlefield, ID: " + zone + "; zoneText: " + info.ZoneText);
-                this.ShowNotify("Unknown battlefield (" + info.ZoneText + "). I don't know what to do in this zone...", true, true);
+                this.LogPrint("Unknown battlefield, ID: " + zone + "; zoneText: " + game.ZoneText);
+                this.ShowNotify("Unknown battlefield (" + game.ZoneText + "). I don't know what to do in this zone...", true, true);
             }
         }
 
-        #endregion Events
-
-        #region Variables
-
-        private uint currentZone;
-        private string[] searchingObjects;
-        private readonly List<WowObject> wowObjects = new List<WowObject>();
-        private SafeTimer timer;
-        private GameInterface info;
-
-        #endregion Variables
     }
 }

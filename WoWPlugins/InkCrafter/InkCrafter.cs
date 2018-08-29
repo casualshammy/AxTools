@@ -14,7 +14,7 @@ namespace InkCrafter
     {
         #region Info
 
-        public string Name => "InkCrafter";
+        public string Name => nameof(InkCrafter);
 
         public Version Version => new Version(1, 0);
 
@@ -132,6 +132,8 @@ namespace InkCrafter
             "Великолепная шкура",
             "Толстая борейская кожа",
             "Чернила разжигателя войны",
+            "Алые чернила",
+            "Ультрамариновые чернила",
         };
     }
 }

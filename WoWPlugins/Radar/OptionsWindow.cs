@@ -188,7 +188,7 @@ namespace Radar
             try
             {
                 List<WowNpc> npcList = new List<WowNpc>();
-                WoWPlayerMe localPlayer = info.GetGameObjects(wowNpcs: npcList);
+                WoWPlayerMe localPlayer = info.GetGameObjects(npcs: npcList);
                 if (localPlayer != null)
                 {
                     List<WowNpc> npcsWithUniqueNames = npcList.DistinctBy(i => i.Name).ToList();

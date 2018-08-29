@@ -14,7 +14,6 @@ namespace AxTools.Helpers
         private static readonly Timer _timer = new Timer(500);
         private static readonly object _lock = new object();
         private static Phase _phase = Phase.Clearing;
-        private static readonly Icon AppIconPluginOnLuaOff = (Icon)AxTools.Helpers.Resources.ApplicationIconPluginActive.Clone();
         private static readonly Icon AppIconNormal = (Icon)Resources.ApplicationIcon.Clone();
         private static readonly Icon EmptyIcon = Icon.FromHandle(new Bitmap(1, 1).GetHicon());
 
@@ -34,7 +33,6 @@ namespace AxTools.Helpers
             {
                 _timer.Elapsed -= Timer_OnElapsed;
                 _timer.Stop();
-                AppIconPluginOnLuaOff.Dispose();
                 AppIconNormal.Dispose();
                 EmptyIcon.Dispose();
             }
@@ -47,24 +45,14 @@ namespace AxTools.Helpers
                 if (_phase == Phase.Clearing)
                 {
                     _phase = Phase.Actualizing;
-                    ClearingPhase();
+                    _notifyIcon.Icon = Clicker.Enabled ? EmptyIcon : AppIconNormal;
                 }
                 else
                 {
                     _phase = Phase.Clearing;
-                    ActualizingPhase();
+                    _notifyIcon.Icon = AppIconNormal;
                 }
             }
-        }
-
-        private static void ClearingPhase()
-        {
-            _notifyIcon.Icon = Clicker.Enabled ? EmptyIcon : AppIconNormal;
-        }
-
-        private static void ActualizingPhase()
-        {
-            _notifyIcon.Icon = PluginManagerEx.RunningPlugins.Count() != 0 ? AppIconPluginOnLuaOff : AppIconNormal;
         }
 
         private enum Phase

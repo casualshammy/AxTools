@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace AxTools.WoW.Internals
 {
     [StructLayout(LayoutKind.Explicit, Size = 0xA8)]
-    public struct WoWAura
+    public struct WoWAura : IEquatable<WoWAura>
     {
         [FieldOffset(0x68)] public WoWGUID OwnerGUID;
         [FieldOffset(0x88)] public int SpellId;
@@ -47,5 +47,47 @@ namespace AxTools.WoW.Internals
             }
             return auras;
         }
+
+        #region IEquatable
+
+        public bool Equals(WoWAura other)
+        {
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+            return OwnerGUID == other.OwnerGUID && SpellId == other.SpellId && Stack == other.Stack && TimeLeftInMs == other.TimeLeftInMs;
+        }
+
+        public override bool Equals(object other)
+        {
+            return other is WoWAura ? Equals((WoWAura)other) : false;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = -1741874398;
+                hashCode = hashCode * -1521134295 + OwnerGUID.GetHashCode();
+                hashCode = hashCode * -1521134295 + SpellId.GetHashCode();
+                hashCode = hashCode * -1521134295 + Stack.GetHashCode();
+                hashCode = hashCode * -1521134295 + TimeLeftInMs.GetHashCode();
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==(WoWAura a, WoWAura b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(WoWAura a, WoWAura b)
+        {
+            return !(a == b);
+        }
+
+        #endregion IEquatable
+
     }
 }

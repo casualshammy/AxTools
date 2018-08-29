@@ -225,14 +225,6 @@ namespace AxTools.WoW.PluginSystem
 
         private static void LoadPlugins()
         {
-            IPlugin3 fishing = new Fishing();
-            _pluginContainers.Add(new PluginContainer(fishing));
-            log.Info($"Plug-in loaded: {_pluginContainers.Last().Plugin.Name} {_pluginContainers.Last().Plugin.Version}");
-            PluginLoaded?.Invoke(fishing);
-            IPlugin3 flagReturner = new FlagReturner();
-            _pluginContainers.Add(new PluginContainer(flagReturner));
-            log.Info($"Plug-in loaded: {_pluginContainers.Last().Plugin.Name} {_pluginContainers.Last().Plugin.Version}");
-            PluginLoaded?.Invoke(flagReturner);
             IPlugin3 goodsDestroyer = new GoodsDestroyer();
             _pluginContainers.Add(new PluginContainer(goodsDestroyer));
             log.Info($"Plug-in loaded: {_pluginContainers.Last().Plugin.Name} {_pluginContainers.Last().Plugin.Version}");

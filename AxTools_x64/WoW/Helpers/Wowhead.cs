@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace AxTools.WoW.Helpers
 {
-    internal static class Wowhead
+    public static class Wowhead
     {
         private static readonly string _locale;
         private static readonly ConcurrentDictionary<uint, WowheadItemInfo> ItemInfos = new ConcurrentDictionary<uint, WowheadItemInfo>();
@@ -22,14 +22,14 @@ namespace AxTools.WoW.Helpers
         private const string UNKNOWN = "UNKNOWN";
         private static readonly object DBLock = new object();
         private static SQLiteConnection dbConnection;
-        private static readonly Log2 log = new Log2("Wowhead");
+        private static readonly Log2 log = new Log2(nameof(Wowhead));
 
         static Wowhead()
         {
             _locale = GetLocale();
         }
 
-        internal static WowheadItemInfo GetItemInfo(uint itemID)
+        public static WowheadItemInfo GetItemInfo(uint itemID)
         {
             // <name><![CDATA[Iceblade Arrow]]></name>
             // <class id="1"><![CDATA[Контейнеры]]></class>
@@ -67,7 +67,7 @@ namespace AxTools.WoW.Helpers
             return info;
         }
 
-        internal static WowheadSpellInfo GetSpellInfo(int spellID)
+        public static WowheadSpellInfo GetSpellInfo(int spellID)
         {
             if (!SpellInfos.TryGetValue(spellID, out WowheadSpellInfo info))
             {
@@ -108,7 +108,7 @@ namespace AxTools.WoW.Helpers
             return info;
         }
 
-        internal static string GetZoneText(uint zoneID)
+        public static string GetZoneText(uint zoneID)
         {
             if (!ZoneInfos.TryGetValue(zoneID, out string info))
             {
@@ -368,9 +368,9 @@ namespace AxTools.WoW.Helpers
         }
     }
 
-    internal class WowheadItemInfo
+    public class WowheadItemInfo
     {
-        public WowheadItemInfo()
+        internal WowheadItemInfo()
         {
         }
 
@@ -382,13 +382,13 @@ namespace AxTools.WoW.Helpers
             Quality = quality;
         }
 
-        internal string Name;
+        public string Name;
 
-        internal uint Class;
+        public uint Class;
 
-        internal uint Level;
+        public uint Level;
 
-        internal uint Quality;
+        public uint Quality;
 
         internal byte[] ImageBytes
         {
@@ -419,10 +419,10 @@ namespace AxTools.WoW.Helpers
             }
         }
 
-        internal Image Image;
+        public Image Image;
     }
 
-    internal class WowheadSpellInfo
+    public class WowheadSpellInfo
     {
         internal WowheadSpellInfo()
         {
@@ -433,7 +433,7 @@ namespace AxTools.WoW.Helpers
             Name = name;
         }
 
-        internal string Name;
+        public string Name;
 
         internal byte[] ImageBytes
         {
@@ -464,6 +464,7 @@ namespace AxTools.WoW.Helpers
             }
         }
 
-        internal Image Image;
+        public Image Image;
     }
+
 }

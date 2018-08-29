@@ -1,6 +1,6 @@
-﻿namespace AxTools.WoW.PluginSystem.Plugins
+﻿namespace Fishing
 {
-    partial class FishingConfig
+    partial class OptionsWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -41,6 +41,7 @@
             this.checkBoxDalaran = new System.Windows.Forms.CheckBox();
             this.checkBoxUseArcaneLure = new System.Windows.Forms.CheckBox();
             this.checkBoxBreaks = new System.Windows.Forms.CheckBox();
+            this.checkBoxUseWaterWalking = new System.Windows.Forms.CheckBox();
             this.groupBoxWOD.SuspendLayout();
             this.groupBoxLegion.SuspendLayout();
             this.SuspendLayout();
@@ -65,7 +66,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(12, 297);
+            this.button1.Location = new System.Drawing.Point(12, 342);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(377, 23);
             this.button1.TabIndex = 4;
@@ -121,7 +122,7 @@
             this.groupBoxWOD.Controls.Add(this.comboBoxSpecialBait);
             this.groupBoxWOD.Controls.Add(this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable);
             this.groupBoxWOD.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.groupBoxWOD.Location = new System.Drawing.Point(12, 69);
+            this.groupBoxWOD.Location = new System.Drawing.Point(12, 114);
             this.groupBoxWOD.Name = "groupBoxWOD";
             this.groupBoxWOD.Size = new System.Drawing.Size(377, 92);
             this.groupBoxWOD.TabIndex = 9;
@@ -134,7 +135,7 @@
             this.groupBoxLegion.Controls.Add(this.checkBoxLegionUseSpecialLure);
             this.groupBoxLegion.Controls.Add(this.checkBoxDalaran);
             this.groupBoxLegion.Controls.Add(this.checkBoxUseArcaneLure);
-            this.groupBoxLegion.Location = new System.Drawing.Point(12, 167);
+            this.groupBoxLegion.Location = new System.Drawing.Point(12, 212);
             this.groupBoxLegion.Name = "groupBoxLegion";
             this.groupBoxLegion.Size = new System.Drawing.Size(377, 124);
             this.groupBoxLegion.TabIndex = 10;
@@ -150,7 +151,7 @@
             this.checkBoxLegionMargoss.TabIndex = 3;
             this.checkBoxLegionMargoss.Text = "Farm Legion rep";
             this.checkBoxLegionMargoss.UseVisualStyleBackColor = true;
-            this.checkBoxLegionMargoss.CheckedChanged += new System.EventHandler(this.checkBoxLegionMargoss_CheckedChanged);
+            this.checkBoxLegionMargoss.CheckedChanged += new System.EventHandler(this.CheckBoxLegionMargoss_CheckedChanged);
             // 
             // checkBoxLegionUseSpecialLure
             // 
@@ -161,7 +162,7 @@
             this.checkBoxLegionUseSpecialLure.TabIndex = 2;
             this.checkBoxLegionUseSpecialLure.Text = "Use special lure";
             this.checkBoxLegionUseSpecialLure.UseVisualStyleBackColor = true;
-            this.checkBoxLegionUseSpecialLure.CheckedChanged += new System.EventHandler(this.checkBoxLegionUseSpecialLure_CheckedChanged);
+            this.checkBoxLegionUseSpecialLure.CheckedChanged += new System.EventHandler(this.CheckBoxLegionUseSpecialLure_CheckedChanged);
             // 
             // checkBoxDalaran
             // 
@@ -172,7 +173,7 @@
             this.checkBoxDalaran.TabIndex = 1;
             this.checkBoxDalaran.Text = "Do Dalaran achievement (stand near Marcia Chase)";
             this.checkBoxDalaran.UseVisualStyleBackColor = true;
-            this.checkBoxDalaran.CheckedChanged += new System.EventHandler(this.checkBoxDalaran_CheckedChanged);
+            this.checkBoxDalaran.CheckedChanged += new System.EventHandler(this.CheckBoxDalaran_CheckedChanged);
             // 
             // checkBoxUseArcaneLure
             // 
@@ -193,13 +194,24 @@
             this.checkBoxBreaks.TabIndex = 11;
             this.checkBoxBreaks.Text = "Make random breaks";
             this.checkBoxBreaks.UseVisualStyleBackColor = true;
-            this.checkBoxBreaks.CheckedChanged += new System.EventHandler(this.checkBoxBreaks_CheckedChanged);
+            this.checkBoxBreaks.CheckedChanged += new System.EventHandler(this.CheckBoxBreaks_CheckedChanged);
+            // 
+            // checkBoxUseWaterWalking
+            // 
+            this.checkBoxUseWaterWalking.AutoSize = true;
+            this.checkBoxUseWaterWalking.Location = new System.Drawing.Point(12, 58);
+            this.checkBoxUseWaterWalking.Name = "checkBoxUseWaterWalking";
+            this.checkBoxUseWaterWalking.Size = new System.Drawing.Size(113, 17);
+            this.checkBoxUseWaterWalking.TabIndex = 12;
+            this.checkBoxUseWaterWalking.Text = "Use water walking";
+            this.checkBoxUseWaterWalking.UseVisualStyleBackColor = true;
             // 
             // FishingConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(404, 332);
+            this.ClientSize = new System.Drawing.Size(404, 377);
+            this.Controls.Add(this.checkBoxUseWaterWalking);
             this.Controls.Add(this.checkBoxBreaks);
             this.Controls.Add(this.groupBoxLegion);
             this.Controls.Add(this.groupBoxWOD);
@@ -234,5 +246,6 @@
         private System.Windows.Forms.CheckBox checkBoxLegionUseSpecialLure;
         private System.Windows.Forms.CheckBox checkBoxLegionMargoss;
         private System.Windows.Forms.CheckBox checkBoxBreaks;
+        private System.Windows.Forms.CheckBox checkBoxUseWaterWalking;
     }
 }

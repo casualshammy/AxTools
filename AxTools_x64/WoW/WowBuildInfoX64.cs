@@ -69,34 +69,34 @@ namespace AxTools.WoW
 
 		internal static readonly byte[] WoWHash =
 		{
-			0x87, 0x06, 0xDC, 0x48, 0x33, 0x7C, 0x79, 0x51, 0xC2, 0xF8, 0x8F, 0xBB, 0xE4, 0xAB, 0x66, 0x44, 0xB0, 0x59, 0xFE, 0x41, 0x20, 0x4F, 0x8B, 0xDC, 0xBB, 0x94, 0x93, 0x1F, 0x25, 0xCD, 0x8C, 0x8F
+			0x33, 0x45, 0xB7, 0xAB, 0x46, 0xD1, 0x88, 0x14, 0x03, 0x1D, 0x51, 0xF1, 0x66, 0x42, 0x6F, 0x91, 0x59, 0x9A, 0x1F, 0xD2, 0xBF, 0x7E, 0x98, 0x57, 0xF6, 0x24, 0x68, 0x2F, 0x3F, 0x8A, 0x86, 0xAD
 		};
 
-		internal const int WoWRevision = 27404;
+		internal const int WoWRevision = 27481;
 
 		#endregion Build info
 
 		#region Static infos
 
-		internal const int NotLoadingScreen = 0x23E93AC;
-		internal const int GlueState = 0x2702C99;
-		internal const int BlackMarketItems = 0x2BCD6B8;
-		internal const int GameState = 0x2B41B11;
-		internal const int IsChatAFK = 0x2B429C0;
-		internal const int LastHardwareAction = 0x26FC568;
-		internal const int UIFrameBase = 0x26FC560;
-		internal const int ChatBuffer = 0x2B429D0;
-		internal const int MouseoverGUID = 0x2B41B38;
-		internal const int BlackMarketNumItems = 0x2BCD6B0;
-		internal const int TickCount = 0x26FBB5C;
-		internal const int KnownSpellsCount = 0x2B75EA0;
-		internal const int ChatIsOpened = 0x272B6B4;
-		internal const int KnownSpells = 0x2B75EA8;
-		internal const int FocusedWidget = 0x26FC648;
-		internal const int PlayerZoneID = 0x2B40E0C;
-		internal const int PlayerGUID = 0x2C5FB10;
-		internal const int ObjectManager = 0x27E9E48;
-		internal const int PlayerIsLooting = 0x2BA5818;
+		internal const int GlueState = 0x270ACB9;
+		internal const int UIFrameBase = 0x2704560;
+		internal const int BlackMarketItems = 0x2BD56F8;
+		internal const int BlackMarketNumItems = 0x2BD56F0;
+		internal const int NotLoadingScreen = 0x23F13AC;
+		internal const int MouseoverGUID = 0x2B49B58;
+		internal const int PlayerZoneID = 0x2B48E2C;
+		internal const int GameState = 0x2B49B31;
+		internal const int LastHardwareAction = 0x2704568;
+		internal const int PlayerIsLooting = 0x2BAD858;
+		internal const int TickCount = 0x2703B5C;
+		internal const int KnownSpellsCount = 0x2B7DED0;
+		internal const int ChatIsOpened = 0x27336D4;
+		internal const int KnownSpells = 0x2B7DED8;
+		internal const int IsChatAFK = 0x2B4A9F0;
+		internal const int ObjectManager = 0x27F1E78;
+		internal const int PlayerGUID = 0x2C67B50;
+		internal const int FocusedWidget = 0x2704648;
+		internal const int ChatBuffer = 0x2B4AA00;
 		internal const int NameCacheBase = 0x166A918;
 
 		#endregion Static infos
@@ -110,12 +110,15 @@ namespace AxTools.WoW
 		internal const int UIFrameVisible2 = 1;
 		internal const int UIFrameName = 0x20;
 		internal const int UIEditBoxText = 0x238;
+        internal const int UIFrameIsEnabled0 = 0xF4;
+        internal const int UIFrameIsEnabled1 = 3;
+        internal const int UIFrameIsEnabled2 = 1;
 
-		#endregion UIFrame
+        #endregion UIFrame
 
-		#region Object manager
+        #region Object manager
 
-		internal const int ObjectManagerFirstObject = 0x18;
+        internal const int ObjectManagerFirstObject = 0x18;
 		internal const int ObjectManagerNextObject = 0x70;
 		internal const int ObjectType = 0x20;
 		internal const int ObjectGUID = 0x58;

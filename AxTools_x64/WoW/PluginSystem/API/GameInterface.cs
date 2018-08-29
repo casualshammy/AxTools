@@ -159,7 +159,7 @@ namespace AxTools.WoW.PluginSystem.API
         #endregion game
 
         #region Chat
-        
+
         public IEnumerable<ChatMsg> ReadChat()
         {
             lock (readChatLocks[wowProcess.ProcessID])
@@ -170,7 +170,7 @@ namespace AxTools.WoW.PluginSystem.API
                     for (int i = 0; i < 60; i++)
                     {
                         var baseMsg = chatStart + i * WowBuildInfoX64.ChatNextMessage;
-                        ChatMsg s = new ChatMsg(
+                        var message = new ChatMsg(
                             sender: Encoding.UTF8.GetString(Memory.ReadBytes(baseMsg + WowBuildInfoX64.ChatSenderName, 0x100).TakeWhile(l => l != 0).ToArray()),
                             channel: Memory.Read<byte>(baseMsg + WowBuildInfoX64.ChatChannelNum),
                             senderGUID: Memory.Read<WoWGUID>(baseMsg + WowBuildInfoX64.ChatSenderGuid),
@@ -178,10 +178,10 @@ namespace AxTools.WoW.PluginSystem.API
                             timestamp: Memory.Read<int>(baseMsg + WowBuildInfoX64.ChatTimeStamp),
                             type: Memory.Read<WoWChatMsgType>(baseMsg + WowBuildInfoX64.ChatType)
                         );
-                        if (ChatMessages[i] != s)
+                        if (ChatMessages[i] != message)
                         {
-                            ChatMessages[i] = s;
-                            yield return s;
+                            ChatMessages[i] = message;
+                            yield return message;
                         }
                     }
                 }
@@ -498,15 +498,16 @@ namespace AxTools.WoW.PluginSystem.API
 
         #region ObjMgr
 
-        public WoWPlayerMe GetGameObjects(List<WowObject> wowObjects = null, List<WowPlayer> wowUnits = null, List<WowNpc> wowNpcs = null)
+        public WoWPlayerMe GetGameObjects(List<WowObject> objects = null, List<WowPlayer> players = null, List<WowNpc> npcs = null)
         {
+            object o = new WoWAura();
             if (IsInGame)
             {
-                return ObjectMgr.Pulse(wowProcess, wowObjects, wowUnits, wowNpcs);
+                return ObjectMgr.Pulse(wowProcess, objects, players, npcs);
             }
-            wowObjects?.Clear();
-            wowUnits?.Clear();
-            wowNpcs?.Clear();
+            objects?.Clear();
+            players?.Clear();
+            npcs?.Clear();
             return null;
         }
 

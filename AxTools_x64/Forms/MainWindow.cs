@@ -248,7 +248,7 @@ namespace AxTools.Forms
 
         private void CheckIfPluginsAreOutdated()
         {
-            if ((DateTime.UtcNow - settings.PluginsLastTimeUpdated).TotalDays > 7)
+            if (settings.UpdatePlugins && (DateTime.UtcNow - settings.PluginsLastTimeUpdated).TotalDays > 7)
                 Notify.TrayPopup("Your plug-ins may be outdated", "Would you like to update all plug-ins?", NotifyUserType.Warn, false, null, 10, (s, arg) => {
                     if (arg.Button == MouseButtons.Left)
                         InvokeOnClick(linkUpdatePlugins, EventArgs.Empty);
