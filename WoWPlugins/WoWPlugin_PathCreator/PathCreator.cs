@@ -1,7 +1,6 @@
 ﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -12,7 +11,7 @@ namespace WoWPlugin_PathCreator
     {
         #region Info
 
-        public string Name => "PathCreator";
+        public string Name => nameof(PathCreator);
 
         public Version Version => new Version(1, 0);
 

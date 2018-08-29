@@ -1,7 +1,6 @@
 ﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,7 +12,7 @@ namespace WoWPlugin_RareReporter
     {
         #region Info
 
-        public string Name => "RareReporter";
+        public string Name => nameof(RareReporter);
 
         public Version Version => new Version(1, 0);
 

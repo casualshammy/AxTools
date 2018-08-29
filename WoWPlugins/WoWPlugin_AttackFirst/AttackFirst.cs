@@ -1,7 +1,6 @@
 ﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +14,7 @@ namespace WoWPlugin_AttackFirst
     {
         #region Info
 
-        public string Name => "AttackFirst";
+        public string Name => nameof(AttackFirst);
 
         public Version Version => new Version(1, 0);
 

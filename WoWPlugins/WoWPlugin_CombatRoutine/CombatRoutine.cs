@@ -1,7 +1,6 @@
 ﻿using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
-using AxTools.WoW.PluginSystem.API;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,7 +13,7 @@ namespace WoWPlugin_CombatRoutine
     {
         #region Info
 
-        public string Name => "CombatRoutine";
+        public string Name => nameof(CombatRoutine);
 
         public Version Version => new Version(1, 0);
 
