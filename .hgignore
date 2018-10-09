@@ -7,6 +7,7 @@ packages/.*
 _webservice/upd/.+\.zip
 _webservice/plugins/.+?\.zip
 .vs/AxTools/.+
+.git/*
 syntax: glob
 AxTools.opensdf
 AxTools.sdf

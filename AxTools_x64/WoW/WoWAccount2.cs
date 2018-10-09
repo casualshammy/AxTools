@@ -25,12 +25,28 @@ namespace AxTools.WoW
 
         internal string GetLogin()
         {
-            return Encoding.UTF8.GetString(ProtectedData.Unprotect(EncryptedLogin, null, DataProtectionScope.CurrentUser));
+            try
+            {
+                return Encoding.UTF8.GetString(ProtectedData.Unprotect(EncryptedLogin, null, DataProtectionScope.CurrentUser));
+            }
+            catch (Exception ex)
+            {
+                log.Error($"Exception is thrown in GetLogin(): {ex.Message}");
+                return null;
+            }
         }
 
         internal string GetPassword()
         {
-            return Encoding.UTF8.GetString(ProtectedData.Unprotect(EncryptedPassword, null, DataProtectionScope.CurrentUser));
+            try
+            {
+                return Encoding.UTF8.GetString(ProtectedData.Unprotect(EncryptedPassword, null, DataProtectionScope.CurrentUser));
+            }
+            catch (Exception ex)
+            {
+                log.Error($"Exception is thrown in GetPassword(): {ex.Message}");
+                return null;
+            }
         }
 
         internal static byte[] GetEncryptedArray(string data)

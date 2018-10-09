@@ -1,4 +1,5 @@
-﻿using FMemory;
+﻿using AxTools.Helpers;
+using FMemory;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -6,8 +7,17 @@ using System.Reflection;
 namespace AxTools.WoW.Internals
 {
     [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
-    internal class ObjectMgr
+    internal static class ObjectMgr
     {
+
+        private static readonly bool IsWin10 = false;
+
+        static ObjectMgr()
+        {
+            IsWin10 = Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version.Major == 10;
+            new Log2(nameof(ObjectMgr)).Info($"IsWin10 = {IsWin10}; Environment.OSVersion.Version.Major = {Environment.OSVersion.Version.Major}; Environment.OSVersion.Version.Minor = {Environment.OSVersion.Version.Minor}");
+        }
+
         private static byte GetObjectType(MemoryManager memory, IntPtr address)
         {
             return memory.Read<byte>(address + WowBuildInfoX64.ObjectType);
@@ -16,7 +26,10 @@ namespace AxTools.WoW.Internals
         private static bool TryGetNextObject(WowProcess wow, IntPtr address, out IntPtr nextAddress)
         {
             nextAddress = wow.Memory.Read<IntPtr>(address + WowBuildInfoX64.ObjectManagerNextObject);
-            return nextAddress != IntPtr.Zero && (ulong)nextAddress < (ulong)uint.MaxValue * 2;
+            if (IsWin10)
+                return nextAddress != IntPtr.Zero;
+            else
+                return nextAddress != IntPtr.Zero && (ulong)nextAddress < (ulong)uint.MaxValue * 2;
         }
 
         internal static WoWPlayerMe Pulse(
@@ -74,6 +87,7 @@ namespace AxTools.WoW.Internals
                     break;
                 }
                 objType = GetObjectType(wow.Memory, currObject);
+                //new Log2("ObjectMgr").Info(objType.ToString());
             }
             return me;
         }

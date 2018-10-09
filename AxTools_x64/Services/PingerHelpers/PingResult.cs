@@ -2,15 +2,13 @@
 {
     internal struct PingerStat
     {
-        internal int Ping;
-        internal int PacketLoss;
-        internal bool PingDataIsRelevant;
+        internal int MaxPing;
+        internal int NumPingFailedFromTenAttempts;
 
-        internal PingerStat(int ping, int packetLoss, bool pingDataIsRelevant)
+        internal PingerStat(int maxPing, int numPingFailedFromTenAttempts)
         {
-            Ping = ping;
-            PacketLoss = packetLoss;
-            PingDataIsRelevant = pingDataIsRelevant;
+            MaxPing = maxPing;
+            NumPingFailedFromTenAttempts = numPingFailedFromTenAttempts;
         }
     }
 }

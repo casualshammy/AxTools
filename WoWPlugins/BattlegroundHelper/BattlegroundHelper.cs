@@ -141,7 +141,6 @@ namespace BattlegroundHelper
             else
             {
                 this.LogPrint("Unknown battlefield, ID: " + zone + "; zoneText: " + game.ZoneText);
-                this.ShowNotify("Unknown battlefield (" + game.ZoneText + "). I don't know what to do in this zone...", true, true);
             }
         }
 

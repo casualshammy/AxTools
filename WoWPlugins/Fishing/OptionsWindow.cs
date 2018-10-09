@@ -1,6 +1,4 @@
-﻿using AxTools.Forms;
-using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Fishing
 {
@@ -12,58 +10,40 @@ namespace Fishing
         {
             InitializeComponent();
             thisSettings = fishingSettings;
+
             checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Checked = thisSettings.UseAnySpecialBaitIfPreferredIsNotAvailable;
+            checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.CheckedChanged += (s, args) => thisSettings.UseAnySpecialBaitIfPreferredIsNotAvailable = checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable.Checked;
+
             checkBoxGetSpecialBaitFromNatPagle.Checked = thisSettings.GetSpecialBaitFromNatPagle;
+            checkBoxGetSpecialBaitFromNatPagle.CheckedChanged += (s, args) => thisSettings.GetSpecialBaitFromNatPagle = checkBoxGetSpecialBaitFromNatPagle.Checked;
+
             checkBoxUseArcaneLure.Checked = thisSettings.UseArcaneLure;
+            checkBoxUseArcaneLure.CheckedChanged += (s, args) => thisSettings.UseArcaneLure = checkBoxUseArcaneLure.Checked;
+
             checkBoxDalaran.Checked = thisSettings.DalaranAchievement;
+            checkBoxDalaran.CheckedChanged += (s, args) => thisSettings.DalaranAchievement = checkBoxDalaran.Checked;
+
             checkBoxLegionUseSpecialLure.Checked = thisSettings.LegionUseSpecialLure;
+            checkBoxLegionUseSpecialLure.CheckedChanged += (s, args) => thisSettings.LegionUseSpecialLure = checkBoxLegionUseSpecialLure.Checked;
+
             checkBoxLegionMargoss.Checked = thisSettings.LegionMargossSupport;
+            checkBoxLegionMargoss.CheckedChanged += (s, args) => thisSettings.LegionMargossSupport = checkBoxLegionMargoss.Checked;
+
             checkBoxBreaks.Checked = thisSettings.EnableBreaks;
+            checkBoxBreaks.CheckedChanged += (s, args) => thisSettings.EnableBreaks = checkBoxBreaks.Checked;
+
             checkBoxUseWaterWalking.Checked = thisSettings.UseWaterWalking;
+            checkBoxUseWaterWalking.CheckedChanged += (s, args) => thisSettings.UseWaterWalking = checkBoxUseWaterWalking.Checked;
+
             checkBoxUseBestBait.Checked = thisSettings.UseBestBait;
+            checkBoxUseBestBait.CheckedChanged += (s, args) => thisSettings.UseBestBait = checkBoxUseBestBait.Checked;
+
             checkBoxUseSpecialBait.Checked = fishingSettings.UseSpecialBait;
+            checkBoxUseSpecialBait.CheckedChanged += (s, args) => fishingSettings.UseSpecialBait = checkBoxUseSpecialBait.Checked;
+
             comboBoxSpecialBait.Text = fishingSettings.SpecialBait;
+            comboBoxSpecialBait.SelectedIndexChanged += (s, args) => fishingSettings.SpecialBait = comboBoxSpecialBait.Items[comboBoxSpecialBait.SelectedIndex].ToString();
         }
-        
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        // ReSharper disable once InconsistentNaming
-        private const int CP_NOCLOSE_BUTTON = 0x200;
-
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams myCp = base.CreateParams;
-                myCp.ClassStyle = myCp.ClassStyle | CP_NOCLOSE_BUTTON;
-                return myCp;
-            }
-        }
-
-        private void CheckBoxDalaran_CheckedChanged(object sender, EventArgs e)
-        {
-            thisSettings.DalaranAchievement = checkBoxDalaran.Checked;
-        }
-
-        private void CheckBoxLegionUseSpecialLure_CheckedChanged(object sender, EventArgs e)
-        {
-            thisSettings.LegionUseSpecialLure = checkBoxLegionUseSpecialLure.Checked;
-        }
-
-        private void CheckBoxLegionMargoss_CheckedChanged(object sender, EventArgs e)
-        {
-            thisSettings.LegionMargossSupport = checkBoxLegionMargoss.Checked;
-        }
-
-        private void CheckBoxBreaks_CheckedChanged(object sender, EventArgs e)
-        {
-            thisSettings.EnableBreaks = checkBoxBreaks.Checked;
-        }
-
-
 
     }
 }

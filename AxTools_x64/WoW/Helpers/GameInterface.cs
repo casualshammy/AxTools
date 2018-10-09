@@ -38,6 +38,8 @@ namespace AxTools.WoW.Helpers
 
         #region game
 
+        public bool ChatIsOpened => wowProcess.Memory.Read<uint>(wowProcess.Memory.ImageBase + WowBuildInfoX64.ChatIsOpened) == 1;
+
         public void UseItemByID(uint id)
         {
             ChatboxSendText("/use item:" + id);
@@ -68,6 +70,11 @@ namespace AxTools.WoW.Helpers
         public void SendToChat(string command)
         {
             ChatboxSendText(command);
+        }
+
+        public object GetChatLock()
+        {
+            return chatLocks[wowProcess.ProcessID];
         }
 
         #region Internal methods
@@ -151,9 +158,7 @@ namespace AxTools.WoW.Helpers
             }
             return frame?.EditboxText;
         }
-
-        private bool ChatIsOpened => wowProcess.Memory.Read<uint>(wowProcess.Memory.ImageBase + WowBuildInfoX64.ChatIsOpened) == 1;
-
+        
         #endregion Internal methods
 
         #endregion game

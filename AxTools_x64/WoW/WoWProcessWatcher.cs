@@ -4,6 +4,7 @@ using FMemory;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,20 +24,15 @@ namespace AxTools.WoW
         internal static event Action<WowProcess> WoWProcessReadyForInteraction;
 
         private static readonly object _listLock = new object();
-        
-        private static readonly object _lock = new object();
 
-        private static readonly Log2 log = new Log2("WoWProcessManager");
+        private static readonly Log2 log = new Log2(nameof(WoWProcessManager));
 
         internal static void StartWatcher()
         {
-            lock (_lock)
-            {
-                ProcessWatcherWMI.ProcessStarted += ProcessWatcher_ProcessStarted;
-                ProcessWatcherWMI.ProcessExited += ProcessWatcher_ProcessExited;
-                GetWoWProcesses();
-                Program.Exit += Program_Exit;
-            }
+            ProcessManager.ProcessStarted += ProcessWatcher_ProcessStarted;
+            ProcessManager.ProcessStopped += ProcessWatcher_ProcessExited;
+            GetWoWProcesses();
+            Program.Exit += Program_Exit;
         }
 
         private static void Program_Exit()
@@ -49,41 +45,42 @@ namespace AxTools.WoW
             }
         }
 
-        private static void ProcessWatcher_ProcessExited(ProcessInfo obj)
+        private static void ProcessWatcher_ProcessExited(ProcessManagerEvent obj)
         {
             try
             {
                 if (obj.ProcessName.ToLower() == "wow.exe")
                 {
-                    if (Processes.TryRemove(obj.ProcessID, out WowProcess pWowProcess))
+                    if (Processes.TryRemove(obj.ProcessId, out WowProcess pWowProcess))
                     {
                         pWowProcess.Dispose();
                         log.Info($"{pWowProcess} Process closed, {Processes.Count} total");
+                        OnWowProcessStopped();
                         WoWProcessStartedOrClosed?.Invoke();
-                        WoWProcessClosed?.Invoke(obj.ProcessID);
+                        WoWProcessClosed?.Invoke(obj.ProcessId);
                     }
                     else
                     {
                         string name = obj.ProcessName.Substring(0, obj.ProcessName.Length - 4);
-                        log.Error($"[{name}:{obj.ProcessID}] Closed WoW process not found");
+                        log.Error($"[{name}:{obj.ProcessId}] Closed WoW process not found");
                     }
                 }
             }
             catch (Exception ex)
             {
-                log.Error($"[{obj.ProcessName}:{obj.ProcessID}] Process stopped with error: {ex.Message}");
+                log.Error($"[{obj.ProcessName}:{obj.ProcessId}] Process stopped with error: {ex.Message}");
             }
         }
 
-        private static void ProcessWatcher_ProcessStarted(ProcessInfo obj)
+        private static void ProcessWatcher_ProcessStarted(ProcessManagerEvent obj)
         {
             try
             {
                 string processName = obj.ProcessName.ToLower();
                 if (processName == "wow.exe")
                 {
-                    WowProcess wowProcess = new WowProcess(obj.ProcessID);
-                    Processes.TryAdd(obj.ProcessID, wowProcess);
+                    WowProcess wowProcess = new WowProcess(obj.ProcessId);
+                    Processes.TryAdd(obj.ProcessId, wowProcess);
                     log.Info($"{wowProcess} Process started, {Processes.Count} total");
                     WoWProcessStartedOrClosed?.Invoke();
                     Task.Factory.StartNew(OnWowProcessStartup, wowProcess);
@@ -91,19 +88,10 @@ namespace AxTools.WoW
             }
             catch (Exception ex)
             {
-                log.Error($"[{obj.ProcessName}:{obj.ProcessID}] Process started with error: {ex.Message}");
+                log.Error($"[{obj.ProcessName}:{obj.ProcessId}] Process started with error: {ex.Message}");
             }
         }
-
-        internal static void StopWatcher()
-        {
-            lock (_lock)
-            {
-                ProcessWatcherWMI.ProcessStarted -= ProcessWatcher_ProcessStarted;
-                ProcessWatcherWMI.ProcessExited -= ProcessWatcher_ProcessExited;
-            }
-        }
-
+        
         private static void GetWoWProcesses()
         {
             foreach (Process i in Process.GetProcesses())
@@ -159,8 +147,6 @@ namespace AxTools.WoW
                             log.Info($"{process} Memory manager initialized, base address 0x{process.Memory.ImageBase.ToInt64():X}");
                             if (!process.IsValidBuild)
                             {
-                                if (process.GetExecutableRevision() > WowBuildInfoX64.WoWRevision)
-                                    log.Error($"AxTools is outdated! WowBuildInfoX64.WoWRevision: {WowBuildInfoX64.WoWRevision}; actual revision: {process.GetExecutableRevision()}");
                                 log.Info($"{process} Memory manager: invalid WoW executable");
                                 Notify.TrayPopup("Incorrect WoW version", "Injector is locked, please wait for update", NotifyUserType.Warn, true);
                             }
@@ -180,5 +166,31 @@ namespace AxTools.WoW
                 log.Error("General error: " + ex.Message);
             }
         }
+
+        private static void OnWowProcessStopped()
+        {
+            if (Settings2.Instance.WoWClearCache && Processes.Count == 0)
+            {
+                string cachePath = Path.Combine(Settings2.Instance.WoWDirectory, "Cache");
+                if (Directory.Exists(cachePath))
+                {
+                    log.Info($"Deleting WoW cache --> {cachePath}");
+                    try
+                    {
+                        Directory.Delete(cachePath, true);
+                        log.Info("WoW cache is deleted");
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error($"Exception is thrown while trying to delete WoW cache --> {ex.Message}");
+                    }
+                }
+                else
+                {
+                    log.Info($"WoW cache is not found --> {cachePath}");
+                }
+            }
+        }
+
     }
 }

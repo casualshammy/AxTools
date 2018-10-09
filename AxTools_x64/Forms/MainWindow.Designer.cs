@@ -101,6 +101,7 @@ namespace AxTools.Forms
             this.notifyIconMain.Text = "AxTools";
             this.notifyIconMain.Visible = true;
             this.notifyIconMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconMainMouseClick);
+            this.notifyIconMain.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIconMain_MouseDoubleClick);
             // 
             // contextMenuStripMain
             // 
@@ -120,7 +121,7 @@ namespace AxTools.Forms
             this.tabControl.ItemSize = new System.Drawing.Size(148, 31);
             this.tabControl.Location = new System.Drawing.Point(20, 30);
             this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 1;
+            this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(429, 199);
             this.tabControl.Style = MetroFramework.MetroColorStyle.Blue;
             this.tabControl.TabIndex = 59;
@@ -322,7 +323,7 @@ namespace AxTools.Forms
             this.linkDownloadPlugins.Text = "Download plug-ins";
             this.linkDownloadPlugins.Theme = MetroFramework.MetroThemeStyle.Light;
             this.linkDownloadPlugins.UseStyleColors = true;
-            this.linkDownloadPlugins.Click += new System.EventHandler(LinkDownloadPlugins_Click);
+            this.linkDownloadPlugins.Click += new System.EventHandler(this.LinkDownloadPlugins_Click);
             // 
             // olvPlugins
             // 
@@ -379,7 +380,7 @@ namespace AxTools.Forms
             this.buttonStartStopPlugin.Text = "Hotkeys";
             this.buttonStartStopPlugin.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroToolTip1.SetToolTip(this.buttonStartStopPlugin, "Start/stop plug-in");
-            this.buttonStartStopPlugin.Click += new System.EventHandler(ButtonStartStopPlugin_Click);
+            this.buttonStartStopPlugin.Click += new System.EventHandler(this.ButtonStartStopPlugin_Click);
             // 
             // metroTabPage2
             // 
@@ -447,7 +448,7 @@ namespace AxTools.Forms
             this.tileExtTwitch.TabIndex = 49;
             this.tileExtTwitch.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileExtTwitch.TileCount = 0;
-            this.tileExtTwitch.Click += new System.EventHandler(TileExtTwitch_Click);
+            this.tileExtTwitch.Click += new System.EventHandler(this.TileExtTwitch_Click);
             // 
             // tileExtDiscord
             // 
@@ -464,7 +465,7 @@ namespace AxTools.Forms
             this.tileExtDiscord.TabIndex = 48;
             this.tileExtDiscord.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileExtDiscord.TileCount = 0;
-            this.tileExtDiscord.Click += new System.EventHandler(TileExtDiscord_Click);
+            this.tileExtDiscord.Click += new System.EventHandler(this.TileExtDiscord_Click);
             // 
             // checkBoxStartTeamspeak3WithWow
             // 
@@ -561,7 +562,7 @@ namespace AxTools.Forms
             this.tileRaidcall.TabIndex = 8;
             this.tileRaidcall.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileRaidcall.TileCount = 0;
-            this.tileRaidcall.Click += new System.EventHandler(TileRaidcallClick);
+            this.tileRaidcall.Click += new System.EventHandler(this.TileRaidcallClick);
             // 
             // tileTeamspeak3
             // 
@@ -578,7 +579,7 @@ namespace AxTools.Forms
             this.tileTeamspeak3.TabIndex = 7;
             this.tileTeamspeak3.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileTeamspeak3.TileCount = 0;
-            this.tileTeamspeak3.Click += new System.EventHandler(TileTeamspeak3Click);
+            this.tileTeamspeak3.Click += new System.EventHandler(this.TileTeamspeak3Click);
             // 
             // tileMumble
             // 
@@ -595,7 +596,7 @@ namespace AxTools.Forms
             this.tileMumble.TabIndex = 6;
             this.tileMumble.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileMumble.TileCount = 0;
-            this.tileMumble.Click += new System.EventHandler(TileMumbleClick);
+            this.tileMumble.Click += new System.EventHandler(this.TileMumbleClick);
             // 
             // tileVentrilo
             // 
@@ -612,7 +613,7 @@ namespace AxTools.Forms
             this.tileVentrilo.TabIndex = 5;
             this.tileVentrilo.Theme = MetroFramework.MetroThemeStyle.Light;
             this.tileVentrilo.TileCount = 0;
-            this.tileVentrilo.Click += new System.EventHandler(TileVentriloClick);
+            this.tileVentrilo.Click += new System.EventHandler(this.TileVentriloClick);
             // 
             // metroToolTip1
             // 
@@ -630,18 +631,17 @@ namespace AxTools.Forms
             this.linkPing.CustomForeColor = false;
             this.linkPing.FontSize = MetroFramework.MetroLinkSize.Small;
             this.linkPing.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.linkPing.Location = new System.Drawing.Point(253, 5);
+            this.linkPing.Location = new System.Drawing.Point(233, 5);
             this.linkPing.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.linkPing.Name = "linkPing";
-            this.linkPing.Size = new System.Drawing.Size(100, 20);
+            this.linkPing.Size = new System.Drawing.Size(120, 20);
             this.linkPing.Style = MetroFramework.MetroColorStyle.Blue;
             this.linkPing.TabIndex = 68;
-            this.linkPing.Text = "[999ms]::[100%]  |";
+            this.linkPing.Text = "[999ms]::[very bad]  |";
             this.linkPing.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.linkPing.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroToolTip1.SetToolTip(this.linkPing, "This is in-game connection info. It\'s formatted as\r\n  [worst ping of the last 10]" +
-        "::[packet loss in the last 200 seconds]  \r\nLeft-click to clear statistics\r\nRight" +
-        "-click to open pinger settings");
+            this.metroToolTip1.SetToolTip(this.linkPing, "This is in-game connection info. It\'s formatted as\r\n  [worst ping]::[connection s" +
+        "tate]  \r\nRight-click to open pinger settings");
             this.linkPing.UseStyleColors = true;
             this.linkPing.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LinkPing_MouseDown);
             // 
@@ -749,7 +749,7 @@ namespace AxTools.Forms
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
             // 
-            // MainForm
+            // MainWindow
             // 
             this.ClientSize = new System.Drawing.Size(469, 234);
             this.Controls.Add(this.linkTitle);
@@ -760,7 +760,7 @@ namespace AxTools.Forms
             this.DisplayHeader = false;
             this.Location = new System.Drawing.Point(0, 0);
             this.MaximizeBox = false;
-            this.Name = "MainForm";
+            this.Name = "MainWindow";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 5);
             this.Resizable = false;
             this.Text = "AxTools";

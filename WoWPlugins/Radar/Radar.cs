@@ -995,7 +995,7 @@ namespace Radar
                 if (mouseEventArgs.Delta > 0)
                 {
                     // ReSharper disable CompareOfFloatsByEqualityOperator
-                    if (zoomR == 0.125F) return;
+                    if (zoomR == 0.0625F) return;
                     // ReSharper restore CompareOfFloatsByEqualityOperator
                     zoomR = zoomR / 2;
                     SaveCheckBoxes(null, EventArgs.Empty);

@@ -3,7 +3,9 @@ using AxTools.Helpers;
 using AxTools.WoW.Helpers;
 using AxTools.WoW.PluginSystem;
 using FMemory;
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace AxTools.WoW
@@ -49,12 +51,6 @@ namespace AxTools.WoW
                     }
                     log.Info($"{wowProcess} Player isn't logged in");
                     Notify.SmartNotify("Cannot attach to WoW client", "Player isn't logged in", NotifyUserType.Error, true);
-                    return null;
-                }
-                else if (wowProcess.GetExecutableRevision() < WowBuildInfoX64.WoWRevision)
-                {
-                    log.Error($"{wowProcess} WoW client is outdated: {wowProcess.GetExecutableRevision()}");
-                    Notify.SmartNotify("Cannot attach to WoW client", "WoW client is outdated. Please update it with Battle.Net client", NotifyUserType.Error, true);
                     return null;
                 }
                 else

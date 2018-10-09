@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace WoWPlugin_CombatRoutine
 {
@@ -52,31 +53,93 @@ namespace WoWPlugin_CombatRoutine
             WoWPlayerMe me = game.GetGameObjects(null, null, npcs);
             if (me != null && me.InCombat)
             {
+                if (specialization == 0)
+                {
+                    specialization = int.Parse(game.LuaGetValue("GetSpecialization()"));
+                }
                 WowNpc nearestNpc = npcs.FirstOrDefault(l => l.GUID == me.TargetGUID);
                 if (nearestNpc == null)
                 {
                     game.SendToChat("/targetenemy");
                 }
-                if (me.Class == WowPlayerClass.Sha)
+                me = game.GetGameObjects(null, null, npcs);
+                nearestNpc = npcs.FirstOrDefault(l => l.GUID == me.TargetGUID);
+                if (nearestNpc != null)
                 {
-                    ShamanRoutine(me);
+                    game.Face(nearestNpc.Location);
+                    if (me.Class == WowPlayerClass.Sha)
+                    {
+                        ShamanRoutine(me);
+                    }
                 }
+            }
+            else
+            {
+                specialization = 0;
             }
         }
 
         private void ShamanRoutine(WoWPlayerMe me)
         {
-            if (game.LuaGetValue("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
+            var myEditbox = WoWUIFrame.GetFrameByName(game, frameName);
+            //if (myEditbox == null)
+            //{
+            //    var funcName = Utilities.GetRandomString(6, true);
+            //    var commands = new string[] {
+            //        $"/run if(not {frameName})then CreateFrame(\"EditBox\", \"{frameName}\", UIParent);{frameName}:SetAutoFocus(false);{frameName}:ClearFocus(); end",
+            //        $"/run {funcName}=\"{frameName}:SetText(tostring(GetSpellCooldown(\\\"Удар бури\\\"))..\\\"#\\\"..tostring(GetSpellCooldown(\\\"Камнедробитель\\\"))\"",
+            //        $"/run {funcName}={funcName}..\"..\\\"#\\\"..tostring(GetSpellCooldown(\\\"Язык пламени\\\"))..\\\"#\\\"..tostring(UnitPower(\\\"player\\\", 11)))\"",
+            //        $"/run C_Timer.NewTicker(.25, function() loadstring({funcName}); end)"
+            //    };
+            //    foreach (var command in commands)
+            //        game.SendToChat(command);
+            //}
+            
+            if (specialization == 1)
             {
-                game.CastSpellByName("Огненный шок");
+                if (game.LuaGetValue("tostring(UnitDebuff(\"target\", \"Огненный шок\") or \"nil\")") == "nil")
+                {
+                    game.CastSpellByName("Огненный шок");
+                }
+                else if (float.Parse(game.LuaGetValue("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
+                {
+                    game.CastSpellByName("Выброс лавы");
+                }
+                else
+                {
+                    game.CastSpellByName("Молния");
+                }
             }
-            else if (float.Parse(game.LuaGetValue("tostring(select(2, GetSpellCooldown(\"Выброс лавы\")))"), CultureInfo.InvariantCulture) <= 1.5)
+            else if (specialization == 2)
             {
-                game.CastSpellByName("Выброс лавы");
-            }
-            else
-            {
-                game.CastSpellByName("Молния");
+                myEditbox = WoWUIFrame.GetFrameByName(game, frameName);
+
+                var regex = new Regex("(\\d+)#(\\d+)#(\\d+)#(\\d+)");
+                this.LogPrint(myEditbox.EditboxText);
+                var match = regex.Match(myEditbox.EditboxText);
+                var stormstrikeHasCd = match.Groups[1].Value != "0";
+                var maelstrom = int.Parse(match.Groups[4].Value);
+                var rockbiterHasCd = match.Groups[2].Value != "0";
+                var flameTongueHasCd = match.Groups[3].Value != "0";
+                if (!stormstrikeHasCd && maelstrom >= 30)
+                {
+                    game.CastSpellByName("Удар бури");
+                    return;
+                }
+                if (!rockbiterHasCd)
+                {
+                    game.CastSpellByName("Камнедробитель");
+                    return;
+                }
+                if (!flameTongueHasCd)
+                {
+                    game.CastSpellByName("Язык пламени");
+                    return;
+                }
+                if (maelstrom >= 40)
+                {
+                    game.CastSpellByName("Вскипание лавы");
+                }
             }
         }
 
@@ -87,6 +150,8 @@ namespace WoWPlugin_CombatRoutine
         private readonly List<WowNpc> npcs = new List<WowNpc>();
         private SafeTimer timer;
         private GameInterface game;
+        private string frameName = "Knvskvkvbe";//Utilities.GetRandomString(8, true);
+        private int specialization = 0;
 
         #endregion Fields, propeties
     }

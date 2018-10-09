@@ -39,10 +39,6 @@ namespace AxTools.Forms
 
         private void SetupData()
         {
-            textBoxBadNetworkStatusProcent.Text = settings.PingerBadPacketLoss.ToString();
-            textBoxVeryBadNetworkStatusProcent.Text = settings.PingerVeryBadPacketLoss.ToString();
-            textBoxBadNetworkStatusPing.Text = settings.PingerBadPing.ToString();
-            textBoxVeryBadNetworkStatusPing.Text = settings.PingerVeryBadPing.ToString();
             ComboBox_server_ip.Items.Clear();
             ComboBox_server_ip.Items.AddRange(GameServers.Entries.Select(k => k.Description).Cast<object>().ToArray());
             ComboBox_server_ip.SelectedIndex = settings.PingerServerID;
@@ -83,6 +79,8 @@ namespace AxTools.Forms
             checkBoxSetAfkStatus.Checked = settings.WoW_AntiKick_SetAfkState;
             checkBoxSetAfkStatus.Enabled = checkBox_AntiAFK.Checked;
             toolTip.SetToolTip(checkBoxSetAfkStatus, "This feature will not work if WoW client is minimized");
+            checkBoxClearWoWCache.Checked = settings.WoWClearCache;
+            checkBoxSendLogOnShutdown.Checked = settings.SendLogToDeveloperOnShutdown;
         }
 
         private void SetupEvents()
@@ -95,10 +93,6 @@ namespace AxTools.Forms
             TextBox5.TextChanged += TextBox5TextChanged;
             TextBox4.TextChanged += TextBox4TextChanged;
             ComboBox_server_ip.SelectedIndexChanged += ComboBox_server_ip_SelectedIndexChanged;
-            textBoxVeryBadNetworkStatusProcent.KeyUp += TextBoxVeryBadNetworkStatusProcent_KeyUp;
-            textBoxBadNetworkStatusProcent.KeyUp += TextBoxBadNetworkStatusProcent_KeyUp;
-            textBoxBadNetworkStatusPing.KeyUp += TextBoxBadNetworkStatusPing_KeyUp;
-            textBoxVeryBadNetworkStatusPing.KeyUp += TextBoxVeryBadNetworkStatusPing_KeyUp;
             buttonBackupPath.Click += ButtonBackupPathClick;
             metroComboBoxBackupCompressionLevel.SelectedIndexChanged += MetroComboBoxBackupCompressionLevelSelectedIndexChanged;
             checkBoxPluginsUpdate.CheckedChanged += MetroCheckBox1_CheckedChanged;
@@ -113,6 +107,18 @@ namespace AxTools.Forms
             buttonIngameKeyBinds.Click += ButtonIngameKeyBinds_Click;
             checkBoxMakeBackupNotWhilePlaying.CheckedChanged += CheckBoxMakeBackupNotWhilePlaying_CheckedChanged;
             checkBoxSetAfkStatus.CheckedChanged += CheckBoxSetAfkStatus_CheckedChanged;
+            checkBoxClearWoWCache.CheckedChanged += CheckBoxClearWoWCache_CheckedChanged;
+            checkBoxSendLogOnShutdown.CheckedChanged += CheckBoxSendLogOnShutdown_CheckedChanged;
+        }
+
+        private void CheckBoxSendLogOnShutdown_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.SendLogToDeveloperOnShutdown = checkBoxSendLogOnShutdown.Checked;
+        }
+
+        private void CheckBoxClearWoWCache_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.WoWClearCache = checkBoxClearWoWCache.Checked;
         }
 
         private void CheckBoxSetAfkStatus_CheckedChanged(object sender, EventArgs e)
@@ -138,59 +144,7 @@ namespace AxTools.Forms
                 new AppSettingsWoWBinds().ShowDialog(this);
             }
         }
-
-        private void TextBoxVeryBadNetworkStatusPing_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (int.TryParse(textBoxVeryBadNetworkStatusPing.Text, out int value))
-            {
-                ErrorProviderExt.ClearError(textBoxVeryBadNetworkStatusPing);
-                settings.PingerVeryBadPing = value;
-            }
-            else
-            {
-                ErrorProviderExt.SetError(textBoxVeryBadNetworkStatusPing, "Value must be a number", Color.Red);
-            }
-        }
-
-        private void TextBoxBadNetworkStatusPing_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (int.TryParse(textBoxBadNetworkStatusPing.Text, out int value))
-            {
-                ErrorProviderExt.ClearError(textBoxBadNetworkStatusPing);
-                settings.PingerBadPing = value;
-            }
-            else
-            {
-                ErrorProviderExt.SetError(textBoxBadNetworkStatusPing, "Value must be a number", Color.Red);
-            }
-        }
-
-        private void TextBoxBadNetworkStatusProcent_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (int.TryParse(textBoxBadNetworkStatusProcent.Text, out int value))
-            {
-                ErrorProviderExt.ClearError(textBoxBadNetworkStatusProcent);
-                settings.PingerBadPacketLoss = value;
-            }
-            else
-            {
-                ErrorProviderExt.SetError(textBoxBadNetworkStatusProcent, "Value must be a number", Color.Red);
-            }
-        }
-
-        private void TextBoxVeryBadNetworkStatusProcent_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (int.TryParse(textBoxVeryBadNetworkStatusProcent.Text, out int value))
-            {
-                ErrorProviderExt.ClearError(textBoxVeryBadNetworkStatusProcent);
-                settings.PingerVeryBadPacketLoss = value;
-            }
-            else
-            {
-                ErrorProviderExt.SetError(textBoxVeryBadNetworkStatusProcent, "Value must be a number", Color.Red);
-            }
-        }
-
+        
         private void CheckBox9CheckedChanged(object sender, EventArgs e)
         {
             if (CheckBoxStartAxToolsWithWindows.Checked)

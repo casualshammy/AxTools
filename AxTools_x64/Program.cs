@@ -268,9 +268,7 @@ namespace AxTools
 
         private static void SendLogToDeveloper()
         {
-            const TaskDialogButton yesNo = TaskDialogButton.Yes + (int)TaskDialogButton.No;
-            var taskDialog = new TaskDialog("There were errors during runtime", nameof(AxTools), "Do you want to send log file to developer?", yesNo, TaskDialogIcon.Warning);
-            if (log.HaveErrors && Utils.InternetAvailable && taskDialog.Show().CommonButton == Result.Yes && File.Exists(Globals.LogFileName))
+            if (Settings2.Instance.SendLogToDeveloperOnShutdown && log.HaveErrors && Utils.InternetAvailable && File.Exists(Globals.LogFileName))
             {
                 try
                 {

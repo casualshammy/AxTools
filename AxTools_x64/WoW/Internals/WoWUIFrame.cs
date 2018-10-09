@@ -63,7 +63,7 @@ namespace AxTools.WoW.Internals
 
         public static WoWUIFrame GetFrameByName(GameInterface game, string name)
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
+            var stopwatch = Stopwatch.StartNew();
             if (!cachedFrames.TryGetValue(game.wowProcess.ProcessID, out ConcurrentDictionary<string, IntPtr> dict))
                 dict = (cachedFrames[game.wowProcess.ProcessID] = new ConcurrentDictionary<string, IntPtr>());
             WoWUIFrame frame;

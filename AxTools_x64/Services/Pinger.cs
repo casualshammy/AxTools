@@ -19,9 +19,6 @@ namespace AxTools.Services
         private static Timer _timer;
         private static readonly object Lock = new object();
         private static Stopwatch _stopwatch;
-        private static List<PingerReply> _pingList;
-        private static int _lastPing;
-        private static int _lastPacketLoss;
         private const int IncorrectPing = -1;
         private static SrvAddress _cachedServer = new SrvAddress(string.Empty, 0, string.Empty);
         private static readonly Timer AutodetectedIPUpdateTimer = new Timer(60000);
@@ -53,16 +50,15 @@ namespace AxTools.Services
         {
             lock (Lock)
             {
-                if (_timer != null && _timer.Enabled)
+                if (Enabled)
                 {
                     throw new Exception("Pinger is already running!");
                 }
                 AutodetectedIPUpdateTimer.Elapsed += AutodetectedIPUpdateTimerOnElapsed;
                 AutodetectedIPUpdateTimer.Start();
                 AutodetectedIPUpdateTimerOnElapsed(null, null);
-                _pingList = Enumerable.Repeat(new PingerReply(0, true), 10).ToList();
                 _stopwatch = new Stopwatch();
-                _timer = new Timer(2000);
+                _timer = new Timer(5000);
                 _timer.Elapsed += TimerOnElapsed;
                 _timer.Start();
                 IsEnabledChanged?.Invoke(true);
@@ -91,25 +87,22 @@ namespace AxTools.Services
             {
                 try
                 {
-                    using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+                    int failedNum = 0;
+                    int maxPing = 0;
+                    for (int i = 0; i < 10; i++)
                     {
-                        _stopwatch.Restart();
-                        var result = pSocket.BeginConnect(_cachedServer.Ip, _cachedServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
-                        var elapsed = _stopwatch.ElapsedMilliseconds;
-                        if (_pingList.Count == 100)
+                        using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                         {
-                            _pingList.RemoveAt(0);
-                        }
-                        _pingList.Add(new PingerReply((int)elapsed, result && pSocket.Connected));
-                        var ping = Max(_pingList.GetRange(_pingList.Count - 10, 10).Where(l => l.Successful).Select(l => l.PingInMs));
-                        var packetLoss = _pingList.Count(l => !l.Successful);
-                        if (ping != _lastPing || packetLoss != _lastPacketLoss)
-                        {
-                            StatChanged?.Invoke(new PingerStat(ping, packetLoss, ping != IncorrectPing));
-                            _lastPing = ping;
-                            _lastPacketLoss = packetLoss;
+                            _stopwatch.Restart();
+                            var result = pSocket.BeginConnect(_cachedServer.Ip, _cachedServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
+                            var elapsed = _stopwatch.ElapsedMilliseconds;
+                            if (result && pSocket.Connected)
+                                maxPing = Math.Max(maxPing, (int)elapsed);
+                            else
+                                failedNum++;
                         }
                     }
+                    StatChanged?.Invoke(new PingerStat(maxPing, failedNum));
                 }
                 catch (Exception ex)
                 {

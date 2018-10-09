@@ -139,67 +139,25 @@ namespace AxTools.Helpers
 
         [Obfuscation(Exclude = false, Feature = "rename(mode=unicode)")]
         [Obfuscation(Exclude = false, Feature = "constants")]
+        [Obfuscation(Exclude = false, Feature = "ctrl flow(type=jump)")]
         internal static string GetComputerHID()
         {
             if (_hardwareID == null)
             {
-                string processorID = "";
-                string diskID = "";
-                string motherboardID = "";
                 try
                 {
-                    using (ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select * From Win32_processor"))
+                    byte[] userName = Encoding.UTF8.GetBytes(Settings2.Instance.UserID);
+                    byte[] windowsUserName = Encoding.UTF8.GetBytes(System.Security.Principal.WindowsIdentity.GetCurrent().Name);
+                    byte[] machineName = Encoding.UTF8.GetBytes(Environment.MachineName);
+                    using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
                     {
-                        using (ManagementObjectCollection mbsList = mbs.Get())
-                        {
-                            foreach (ManagementObject mo in mbsList.Cast<ManagementObject>())
-                            {
-                                processorID = mo["ProcessorID"].ToString();
-                                break;
-                            }
-                        }
+                        byte[] hash = sha256.ComputeHash(userName.Concat(windowsUserName).Concat(machineName).ToArray());
+                        _hardwareID = BitConverter.ToString(hash).Replace("-", "");
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // ignore
-                }
-                try
-                {
-                    using (ManagementObject dsk = new ManagementObject(@"win32_logicaldisk.deviceid=""c:"""))
-                    {
-                        dsk.Get();
-                        diskID = dsk["VolumeSerialNumber"].ToString();
-                    }
-                }
-                catch
-                {
-                    // ignore
-                }
-                try
-                {
-                    using (ManagementObjectSearcher mos = new ManagementObjectSearcher("SELECT * FROM Win32_BaseBoard"))
-                    {
-                        using (ManagementObjectCollection moc = mos.Get())
-                        {
-                            foreach (ManagementObject mo in moc.Cast<ManagementObject>())
-                            {
-                                motherboardID = mo["SerialNumber"].ToString();
-                                break;
-                            }
-                        }
-                    }
-                }
-                catch
-                {
-                    // ignore
-                }
-                using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
-                {
-                    string raw = processorID + diskID + motherboardID;
-                    byte[] bytes = Encoding.UTF8.GetBytes(raw);
-                    byte[] hash = sha256.ComputeHash(bytes);
-                    _hardwareID = BitConverter.ToString(hash).Replace("-", "");
+                    log.Error($"Exception is thrown in GetComputerHID: {ex.Message}");
                 }
             }
             return _hardwareID;

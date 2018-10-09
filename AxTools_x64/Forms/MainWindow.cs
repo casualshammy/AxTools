@@ -134,15 +134,23 @@ namespace AxTools.Forms
             AddonsBackup.StopService();
             TrayIconAnimation.Close();
             Pinger.Enabled = false;
-            //stop watching process trace
-            WoWProcessManager.StopWatcher();
-            log.Info("WoW processes trace watching is stopped");
             HotkeyManager.KeyPressed -= KeyboardHookKeyDown;
             HotkeyManager.RemoveKeys(typeof(PluginManagerEx).ToString());
             log.Info("Closed");
         }
 
         private void NotifyIconMainMouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                Notify.TrayPopup(
+                    PluginManagerEx.RunningPlugins.Any() ? $"{nameof(AxTools)} :: Running plug-ins" : $"{nameof(AxTools)} :: No running plug-ins",
+                    PluginManagerEx.RunningPlugins.Any() ? string.Join("\r\n", PluginManagerEx.RunningPlugins.Select(l => l.Name)) : "",
+                    NotifyUserType.Info, false, null, 5);
+            }
+        }
+
+        private void notifyIconMain_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -274,13 +282,13 @@ namespace AxTools.Forms
                 var toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
                 toolStripMenuItem.MouseDown += delegate (object sender, MouseEventArgs args)
                 {
-                    if (args.Button == MouseButtons.Left) olvPlugins.CheckObject(plugin);
+                    if (args.Button == MouseButtons.Left) olvPlugins.ToggleCheckObject(plugin);
                     else if (plugin.ConfigAvailable) plugin.OnConfig();
                     contextMenuStripMain.Hide();
                 };
                 toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start this plug-in\r\nRight click to open settings" : "Left click to start this plug-in";
                 toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name] + "]" : null;
-                toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
+                //toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
             if (sortedPlugins.Length > topUsedPlugins.Length && contextMenuStripMain.Items.Add("Other plug-ins") is ToolStripMenuItem customPlugins)
@@ -293,13 +301,13 @@ namespace AxTools.Forms
                         var toolStripMenuItem = new ToolStripMenuItem(plugin.Name, plugin.TrayIcon) { Tag = plugin };
                         toolStripMenuItem.MouseDown += delegate (object sender, MouseEventArgs args)
                         {
-                            if (args.Button == MouseButtons.Left) olvPlugins.CheckObject(plugin);
+                            if (args.Button == MouseButtons.Left) olvPlugins.ToggleCheckObject(plugin);
                             else if (plugin.ConfigAvailable) plugin.OnConfig();
                             contextMenuStripMain.Hide();
                         };
                         toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start this plug-in\r\nRight click to open settings" : "Left click to start this plug-in";
                         toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name] + "]" : null;
-                        toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
+                        //toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
                         customPlugins.DropDownItems.Add(toolStripMenuItem);
                     }
                     catch (Exception ex)
@@ -475,7 +483,7 @@ namespace AxTools.Forms
 
         #region Tab: VoIP
 
-        private static void TileVentriloClick(object sender, EventArgs e)
+        private void TileVentriloClick(object sender, EventArgs e)
         {
             try
             {
@@ -487,7 +495,7 @@ namespace AxTools.Forms
             }
         }
 
-        private static void TileRaidcallClick(object sender, EventArgs e)
+        private void TileRaidcallClick(object sender, EventArgs e)
         {
             try
             {
@@ -499,7 +507,7 @@ namespace AxTools.Forms
             }
         }
 
-        private static void TileTeamspeak3Click(object sender, EventArgs e)
+        private void TileTeamspeak3Click(object sender, EventArgs e)
         {
             try
             {
@@ -511,7 +519,7 @@ namespace AxTools.Forms
             }
         }
 
-        private static void TileMumbleClick(object sender, EventArgs e)
+        private void TileMumbleClick(object sender, EventArgs e)
         {
             try
             {
@@ -523,7 +531,7 @@ namespace AxTools.Forms
             }
         }
 
-        private static void TileExtDiscord_Click(object sender, EventArgs e)
+        private void TileExtDiscord_Click(object sender, EventArgs e)
         {
             try
             {
@@ -535,7 +543,7 @@ namespace AxTools.Forms
             }
         }
 
-        private static void TileExtTwitch_Click(object sender, EventArgs e)
+        private void TileExtTwitch_Click(object sender, EventArgs e)
         {
             try
             {
@@ -576,7 +584,7 @@ namespace AxTools.Forms
 
         #region Tab: Plug-ins
 
-        private static void ButtonStartStopPlugin_Click(object sender, EventArgs e)
+        private void ButtonStartStopPlugin_Click(object sender, EventArgs e)
         {
             var form = Utils.FindForms<MainForm_PluginHotkeys>().FirstOrDefault();
             if (form == null)
@@ -675,7 +683,7 @@ namespace AxTools.Forms
             }
         }
 
-        private static void LinkDownloadPlugins_Click(object sender, EventArgs e)
+        private void LinkDownloadPlugins_Click(object sender, EventArgs e)
         {
             Process.Start(Globals.PluginsURL);
         }
@@ -796,22 +804,28 @@ namespace AxTools.Forms
         private void Pinger_DataChanged(PingerStat pingResult)
         {
             BeginInvoke((MethodInvoker)delegate
-           {
-               linkPing.Text = $"[{(pingResult.PingDataIsRelevant ? pingResult.Ping + "ms" : "n/a")}]::[{pingResult.PacketLoss}%]  |";
-               TBProgressBar.SetProgressValue(Handle, 1, 1);
-               if (pingResult.PacketLoss >= settings.PingerVeryBadPacketLoss || pingResult.Ping >= settings.PingerVeryBadPing)
-               {
-                   TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Error);
-               }
-               else if (pingResult.PacketLoss >= settings.PingerBadPacketLoss || pingResult.Ping >= settings.PingerBadPing)
-               {
-                   TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.Paused);
-               }
-               else
-               {
-                   TBProgressBar.SetProgressState(Handle, ThumbnailProgressState.NoProgress);
-               }
-           });
+            {
+                string state;
+                ThumbnailProgressState colorState;
+                if (pingResult.NumPingFailedFromTenAttempts == 0)
+                {
+                    state = "fine";
+                    colorState = ThumbnailProgressState.NoProgress;
+                }  
+                else if (pingResult.NumPingFailedFromTenAttempts < 4)
+                {
+                    state = "poorly";
+                    colorState = ThumbnailProgressState.Paused;
+                }
+                else
+                {
+                    state = "very bad";
+                    colorState = ThumbnailProgressState.Error;
+                }
+                linkPing.Text = $"[{pingResult.MaxPing}ms]::[{state}]  |";
+                TBProgressBar.SetProgressValue(Handle, 1, 1);
+                TBProgressBar.SetProgressState(Handle, colorState);
+            });
         }
 
         private void KeyboardHookKeyDown(KeyExt key)
@@ -840,8 +854,8 @@ namespace AxTools.Forms
             }
         }
 
+
         #endregion Events handlers
-
-
+        
     }
 }

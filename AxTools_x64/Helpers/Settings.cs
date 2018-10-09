@@ -125,6 +125,9 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 4, PropertyName = nameof(MinimizeToTray))]
         internal bool MinimizeToTray = true;
 
+        [JsonProperty(Order = 5, PropertyName = nameof(SendLogToDeveloperOnShutdown))]
+        internal bool SendLogToDeveloperOnShutdown = true;
+
         #endregion General
 
         #region WoW
@@ -155,6 +158,9 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 19, PropertyName = nameof(WoWCustomWindowNoBorder))]
         internal bool WoWCustomWindowNoBorder;
+
+        [JsonProperty(PropertyName = nameof(WoWClearCache))]
+        internal bool WoWClearCache = false;
 
         #endregion WoW
 
@@ -226,20 +232,8 @@ namespace AxTools.Helpers
 
         [JsonProperty(Order = 80, PropertyName = nameof(PingerServerID))]
         internal int PingerServerID = 1;
-
-        [JsonProperty(Order = 81, PropertyName = nameof(PingerBadPing))]
-        internal int PingerBadPing = 125;
-
-        [JsonProperty(Order = 82, PropertyName = nameof(PingerBadPacketLoss))]
-        internal int PingerBadPacketLoss = 5;
-
-        [JsonProperty(Order = 83, PropertyName = nameof(PingerVeryBadPing))]
-        internal int PingerVeryBadPing = 250;
-
-        [JsonProperty(Order = 84, PropertyName = nameof(PingerVeryBadPacketLoss))]
-        internal int PingerVeryBadPacketLoss = 10;
-
-        [JsonProperty(Order = 85, PropertyName = nameof(PingerLastWoWServerIP))]
+        
+        [JsonProperty(Order = 81, PropertyName = nameof(PingerLastWoWServerIP))]
         internal string PingerLastWoWServerIP = "8.8.8.8";
 
         #endregion Pinger

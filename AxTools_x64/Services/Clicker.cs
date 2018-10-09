@@ -2,6 +2,7 @@
 using AxTools.Helpers;
 using AxTools.WinAPI;
 using AxTools.WoW;
+using AxTools.WoW.Helpers;
 using System;
 using System.Linq;
 using System.Timers;
@@ -18,6 +19,7 @@ namespace AxTools.Services
         internal static IntPtr Handle { get; private set; }
         private static readonly Settings2 _settings = Settings2.Instance;
         private static readonly Log2 logger = new Log2("Clicker");
+        private static GameInterface game;
 
         static Clicker()
         {
@@ -35,6 +37,7 @@ namespace AxTools.Services
                     _timer.Elapsed += Timer_Elapsed;
                     _key = keyToPress;
                     Handle = hwnd;
+                    game = new GameInterface(WoWProcessManager.Processes.Values.First(l => l.MainWindowHandle == hwnd));
                     _timer.Start();
                 }
             }
@@ -58,8 +61,14 @@ namespace AxTools.Services
 
         private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            NativeMethods.PostMessage(Handle, Win32Consts.WM_KEYDOWN, _key, IntPtr.Zero);
-            NativeMethods.PostMessage(Handle, Win32Consts.WM_KEYUP, _key, IntPtr.Zero);
+            if (!game.ChatIsOpened)
+            {
+                lock (game.GetChatLock())
+                {
+                    NativeMethods.PostMessage(Handle, Win32Consts.WM_KEYDOWN, _key, IntPtr.Zero);
+                    NativeMethods.PostMessage(Handle, Win32Consts.WM_KEYUP, _key, IntPtr.Zero);
+                }
+            }
         }
 
         private static void KeyboardListener2_KeyPressed(KeyboardWatcher.KeyExt obj)

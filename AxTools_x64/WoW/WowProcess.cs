@@ -11,7 +11,7 @@ namespace AxTools.WoW
 {
     public class WowProcess : IDisposable
     {
-        private static readonly Log2 log = new Log2("WowProcess");
+        private static readonly Log2 log = new Log2(nameof(WowProcess));
 
         internal WowProcess(int processID)
         {
@@ -78,17 +78,16 @@ namespace AxTools.WoW
                         {
                             try
                             {
-                                Stopwatch stopwatch = Stopwatch.StartNew();
+                                var stopwatch = Stopwatch.StartNew();
                                 using (SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider())
                                 {
+                                    byte[] hash;
                                     using (FileStream fileStream = File.Open(Process.Modules[0].FileName, FileMode.Open, FileAccess.Read))
-                                    {
-                                        byte[] hash = provider.ComputeHash(fileStream);
-                                        isValidBuild = hash.SequenceEqual(WowBuildInfoX64.WoWHash) ? 1 : 0;
-                                        log.Info($"{ToString()} Reference hash: {BitConverter.ToString(WowBuildInfoX64.WoWHash)}");
-                                        log.Info($"{ToString()} Actual hash:    {BitConverter.ToString(hash)}");
-                                        log.Info($"{ToString()} Hash is computed, took {stopwatch.ElapsedMilliseconds}ms");
-                                    }
+                                        hash = provider.ComputeHash(fileStream);
+                                    isValidBuild = hash.SequenceEqual(WowBuildInfoX64.WoWHash) || WowBuildInfoX64.TryFindNewOffsets(Memory) ? 1 : 0;
+                                    log.Info($"{ToString()} Reference hash: {BitConverter.ToString(WowBuildInfoX64.WoWHash)}");
+                                    log.Info($"{ToString()} Actual hash:    {BitConverter.ToString(hash)}");
+                                    log.Info($"{ToString()} Hash is computed, took {stopwatch.ElapsedMilliseconds}ms");
                                 }
                             }
                             catch (Exception ex)

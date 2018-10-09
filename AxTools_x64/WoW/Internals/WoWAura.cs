@@ -28,7 +28,7 @@ namespace AxTools.WoW.Internals
 
         internal static List<WoWAura> GetAurasForMemoryAddress(MemoryManager memory, IntPtr address)
         {
-            List<WoWAura> auras = new List<WoWAura>();
+            var auras = new List<WoWAura>();
             var table = address + WowBuildInfoX64.AuraTable1;
             var auraCount = memory.Read<int>(address + WowBuildInfoX64.AuraCount1);
             if (auraCount == -1)
@@ -38,10 +38,10 @@ namespace AxTools.WoW.Internals
             }
             for (int i = 0; i < auraCount; i++)
             {
-                WoWAura rawAura = memory.Read<WoWAura>(table + i * auraStructSize);
+                var rawAura = memory.Read<WoWAura>(table + i * auraStructSize);
                 if (rawAura.SpellId != 0)
                 {
-                    WoWAura aura = new WoWAura(rawAura.OwnerGUID, rawAura.SpellId, rawAura.Stack, (uint)(rawAura.TimeLeftInMs - Environment.TickCount));
+                    var aura = new WoWAura(rawAura.OwnerGUID, rawAura.SpellId, rawAura.Stack, (uint)(rawAura.TimeLeftInMs - Environment.TickCount));
                     auras.Add(aura);
                 }
             }

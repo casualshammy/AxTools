@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.comboBoxSpecialBait = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.checkBoxUseBestBait = new System.Windows.Forms.CheckBox();
             this.checkBoxUseSpecialBait = new System.Windows.Forms.CheckBox();
             this.checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable = new System.Windows.Forms.CheckBox();
@@ -62,17 +61,6 @@
             this.comboBoxSpecialBait.Name = "comboBoxSpecialBait";
             this.comboBoxSpecialBait.Size = new System.Drawing.Size(229, 21);
             this.comboBoxSpecialBait.TabIndex = 1;
-            // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(12, 342);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(377, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Save";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // checkBoxUseBestBait
             // 
@@ -151,7 +139,6 @@
             this.checkBoxLegionMargoss.TabIndex = 3;
             this.checkBoxLegionMargoss.Text = "Farm Legion rep";
             this.checkBoxLegionMargoss.UseVisualStyleBackColor = true;
-            this.checkBoxLegionMargoss.CheckedChanged += new System.EventHandler(this.CheckBoxLegionMargoss_CheckedChanged);
             // 
             // checkBoxLegionUseSpecialLure
             // 
@@ -162,7 +149,6 @@
             this.checkBoxLegionUseSpecialLure.TabIndex = 2;
             this.checkBoxLegionUseSpecialLure.Text = "Use special lure";
             this.checkBoxLegionUseSpecialLure.UseVisualStyleBackColor = true;
-            this.checkBoxLegionUseSpecialLure.CheckedChanged += new System.EventHandler(this.CheckBoxLegionUseSpecialLure_CheckedChanged);
             // 
             // checkBoxDalaran
             // 
@@ -173,7 +159,6 @@
             this.checkBoxDalaran.TabIndex = 1;
             this.checkBoxDalaran.Text = "Do Dalaran achievement (stand near Marcia Chase)";
             this.checkBoxDalaran.UseVisualStyleBackColor = true;
-            this.checkBoxDalaran.CheckedChanged += new System.EventHandler(this.CheckBoxDalaran_CheckedChanged);
             // 
             // checkBoxUseArcaneLure
             // 
@@ -194,7 +179,6 @@
             this.checkBoxBreaks.TabIndex = 11;
             this.checkBoxBreaks.Text = "Make random breaks";
             this.checkBoxBreaks.UseVisualStyleBackColor = true;
-            this.checkBoxBreaks.CheckedChanged += new System.EventHandler(this.CheckBoxBreaks_CheckedChanged);
             // 
             // checkBoxUseWaterWalking
             // 
@@ -216,7 +200,6 @@
             this.Controls.Add(this.groupBoxLegion);
             this.Controls.Add(this.groupBoxWOD);
             this.Controls.Add(this.checkBoxUseBestBait);
-            this.Controls.Add(this.button1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -234,7 +217,6 @@
         #endregion
 
         private System.Windows.Forms.ComboBox comboBoxSpecialBait;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox checkBoxUseBestBait;
         private System.Windows.Forms.CheckBox checkBoxUseSpecialBait;
         private System.Windows.Forms.CheckBox checkBoxUseAnySpecialBaitIfPreferredIsNotAvailable;
