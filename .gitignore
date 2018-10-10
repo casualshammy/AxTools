@@ -1,0 +1,12 @@
+/.vs/
+/AxTools.sdf
+/AxTools.v11.suo
+/AxTools.sln.DotSettings.user
+*.DotSettings
+*.user
+*.dll
+*.exe
+*.zip
+*/bin/*
+*/obj/*
+packages/*

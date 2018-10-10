@@ -1,0 +1,400 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E579B921-37DA-4DA7-B0BF-FBEB2732F937}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AxTools</RootNamespace>
+    <AssemblyName>AxTools</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <AssemblyInfoFilePath>Properties\AssemblyInfo.cs</AssemblyInfoFilePath>
+    <UpdateAssemblyVersion>True</UpdateAssemblyVersion>
+    <UpdateAssemblyFileVersion>False</UpdateAssemblyFileVersion>
+    <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
+    <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
+    <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
+    <AssemblyVersion>12.3.68.2501</AssemblyVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FMemory">
+      <HintPath>..\..\FMemory\FMemory\bin\Release\FMemory.dll</HintPath>
+    </Reference>
+    <Reference Include="FMemoryPattern">
+      <HintPath>..\..\FMemoryPattern\FMemoryPattern\FMemoryPattern\bin\Release\FMemoryPattern.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.TextEditor">
+      <HintPath>..\..\.NET libs\ICSharpCode.TextEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\.NET libs\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="KeraLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=04d04586786c6f34, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLua.1.3.2.1\lib\net45\KeraLua.dll</HintPath>
+    </Reference>
+    <Reference Include="KeyboardWatcher">
+      <HintPath>..\..\KeyboardHook\KeyboardHook\bin\Release\KeyboardWatcher.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\.NET libs\MetroFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=8df2ab518030ea95, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLua.1.3.2.1\lib\net45\NLua.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectListView">
+      <HintPath>..\..\.NET libs\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\..\.NET libs\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsFormsAero">
+      <HintPath>..\..\.NET libs\WindowsFormsAero.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Forms\AddonsBackupDeploy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddonsBackupDeploy.Designer.cs">
+      <DependentUpon>AddonsBackupDeploy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AppSettingsWoWBinds.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AppSettingsWoWBinds.Designer.cs">
+      <DependentUpon>AppSettingsWoWBinds.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainForm_PluginHotkeys.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainForm_PluginHotkeys.Designer.cs">
+      <DependentUpon>MainForm_PluginHotkeys.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Helpers\AppFolders.cs" />
+    <Compile Include="Helpers\ErrorProviderExt.cs" />
+    <Compile Include="Helpers\MultiLock.cs" />
+    <Compile Include="Helpers\Notify.cs" />
+    <Compile Include="Helpers\ProcessManager.cs" />
+    <Compile Include="Helpers\Resources.cs" />
+    <Compile Include="Helpers\VersionExt.cs" />
+    <Compile Include="Helpers\VoIP.cs" />
+    <Compile Include="Services\AddonsBackup.cs" />
+    <Compile Include="Services\Clicker.cs" />
+    <Compile Include="Services\Pinger.cs" />
+    <Compile Include="Helpers\NotifyUserType.cs" />
+    <Compile Include="Helpers\TrayIconAnimation.cs" />
+    <Compile Include="Services\PingerHelpers\GameServers.cs" />
+    <Compile Include="Services\PingerHelpers\PingerReply.cs" />
+    <Compile Include="Services\PingerHelpers\PingResult.cs" />
+    <Compile Include="Updater\UpdateInfo2.cs" />
+    <Compile Include="Updater\UpdaterService.cs" />
+    <Compile Include="WinAPI\ABE.cs" />
+    <Compile Include="WinAPI\APPBARDATA.cs" />
+    <Compile Include="WinAPI\APPBARMESSAGE.cs" />
+    <Compile Include="WinAPI\TCPTable\MIB_TCPROW_OWNER_PID.cs" />
+    <Compile Include="WinAPI\TCPTable\MIB_TCPTABLE_OWNER_PID.cs" />
+    <Compile Include="WinAPI\TCPTable\TCPConnectionInfo.cs" />
+    <Compile Include="WinAPI\TCPTable\TCP_TABLE_CLASS.cs" />
+    <Compile Include="WinAPI\Win32Consts.cs" />
+    <Compile Include="WinAPI\Win32Error.cs" />
+    <Compile Include="WoW\AutoLogin.cs" />
+    <Compile Include="WoW\Internals\BlackMarketMgr.cs" />
+    <Compile Include="WoW\Internals\ObjectType.cs" />
+    <Compile Include="WoW\Internals\WoWChatMsgType.cs" />
+    <Compile Include="WoW\Internals\WoWObjectBase.cs" />
+    <Compile Include="WoW\Internals\WoWUIFrame.cs" />
+    <Compile Include="WoW\Internals\WoWAura.cs" />
+    <Compile Include="WoW\Internals\WoWItem.cs" />
+    <Compile Include="WoW\Internals\WoWObjectInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WoW\Internals\WoWGUID.cs" />
+    <Compile Include="WoW\Helpers\ChatMsg.cs" />
+    <Compile Include="WoW\Helpers\MoveHelper.cs" />
+    <Compile Include="WoW\Helpers\SafeTimer.cs" />
+    <Compile Include="WoW\Helpers\GameInterface.cs" />
+    <Compile Include="WoW\PluginSystem\PluginContainer.cs" />
+    <Compile Include="WoW\WoWAccount2.cs" />
+    <Compile Include="WoW\WoWAntiKick.cs" />
+    <Compile Include="WoW\Helpers\Wowhead.cs" />
+    <Compile Include="WoW\WoWProcessWatcher.cs" />
+    <Compile Include="WoW\Internals\WoWPlayerMe.cs" />
+    <Compile Include="WoW\Internals\ObjectMgr.cs" />
+    <Compile Include="WoW\WoWManager.cs" />
+    <Compile Include="WoW\Helpers\Utilities.cs" />
+    <Compile Include="WoW\PluginSystem\CodeCompiler.cs" />
+    <Compile Include="WoW\PluginSystem\IPlugin.cs" />
+    <Compile Include="WoW\PluginSystem\PluginManager.cs" />
+    <Compile Include="Helpers\Globals.cs" />
+    <Compile Include="WoW\Internals\WowPlayerInfo.cs" />
+    <Compile Include="Forms\AppSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AppSettings.Designer.cs">
+      <DependentUpon>AppSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Changes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Changes.Designer.cs">
+      <DependentUpon>Changes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WinAPI\FlashWindowFlags.cs" />
+    <Compile Include="WinAPI\SetWindowPosFlags.cs" />
+    <Compile Include="WinAPI\SpecialWindowHandles.cs" />
+    <Compile Include="WinAPI\FLASHWINFO.cs" />
+    <Compile Include="WinAPI\NativeMethods.cs" />
+    <Compile Include="Forms\ClickerSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ClickerSettings.Designer.cs">
+      <DependentUpon>ClickerSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Helpers\Log.cs" />
+    <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="WoW\Internals\WowNpc.cs" />
+    <Compile Include="WoW\Internals\WowObject.cs" />
+    <Compile Include="WoW\Internals\WowPoint.cs" />
+    <Compile Include="WoW\WowProcess.cs" />
+    <Compile Include="WoW\Internals\WowPlayer.cs" />
+    <Compile Include="Forms\WowAccountsManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WowAccountsManager.Designer.cs">
+      <DependentUpon>WowAccountsManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\PingerHelpers\SrvAddress.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Forms\WoWProcessSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WoWProcessSelector.Designer.cs">
+      <DependentUpon>WoWProcessSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WoW\WowBuildInfoX64.cs" />
+    <Compile Include="WoW\Internals\WowPlayerClass.cs" />
+    <EmbeddedResource Include="Forms\AddonsBackupDeploy.resx">
+      <DependentUpon>AddonsBackupDeploy.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AppSettings.resx">
+      <DependentUpon>AppSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AppSettingsWoWBinds.resx">
+      <DependentUpon>AppSettingsWoWBinds.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Changes.resx">
+      <DependentUpon>Changes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ClickerSettings.resx">
+      <DependentUpon>ClickerSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainForm_PluginHotkeys.resx">
+      <DependentUpon>MainForm_PluginHotkeys.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WowAccountsManager.resx">
+      <DependentUpon>WowAccountsManager.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WoWProcessSelector.resx">
+      <DependentUpon>WoWProcessSelector.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Components\Components.csproj">
+      <Project>{63d3af8e-11d1-4d4e-b791-7fbf09e9aef3}</Project>
+      <Name>Components</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+xcopy /s /y "F:\sync\private\Projects\AxTools\packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
