@@ -640,8 +640,8 @@ namespace AxTools.Forms
             this.linkPing.Text = "[999ms]::[very bad]  |";
             this.linkPing.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.linkPing.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroToolTip1.SetToolTip(this.linkPing, "This is in-game connection info. It\'s formatted as\r\n  [worst ping]::[connection s" +
-        "tate]  \r\nRight-click to open pinger settings");
+            this.metroToolTip1.SetToolTip(this.linkPing, "This is in-game connection info. It\'s formatted as\r\n  [ping : connection quality]" +
+        "  \r\nRight-click to open pinger settings");
             this.linkPing.UseStyleColors = true;
             this.linkPing.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LinkPing_MouseDown);
             // 

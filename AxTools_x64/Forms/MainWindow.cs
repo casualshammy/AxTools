@@ -814,7 +814,7 @@ namespace AxTools.Forms
                 }  
                 else if (pingResult.NumPingFailedFromTenAttempts < 4)
                 {
-                    state = "poorly";
+                    state = "poor";
                     colorState = ThumbnailProgressState.Paused;
                 }
                 else
@@ -822,7 +822,7 @@ namespace AxTools.Forms
                     state = "very bad";
                     colorState = ThumbnailProgressState.Error;
                 }
-                linkPing.Text = $"[{pingResult.MaxPing}ms]::[{state}]  |";
+                linkPing.Text = $"[{pingResult.MaxPing}ms : {state}]  |";
                 TBProgressBar.SetProgressValue(Handle, 1, 1);
                 TBProgressBar.SetProgressState(Handle, colorState);
             });
