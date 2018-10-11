@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -14,9 +15,11 @@ namespace AxTools.Services
 {
     internal static class Pinger
     {
+        private const int INTERVAL = 5000;
         private static readonly Log2 log = new Log2("Pinger");
         private static readonly Settings2 _settings = Settings2.Instance;
-        private static Timer _timer;
+        private static Task timerTask;
+        private static volatile bool timerTaskIsRunning = false;
         private static readonly object Lock = new object();
         private static Stopwatch _stopwatch;
         private const int IncorrectPing = -1;
@@ -32,7 +35,7 @@ namespace AxTools.Services
 
         internal static bool Enabled
         {
-            get => _timer != null && _timer.Enabled;
+            get => timerTask != null && timerTaskIsRunning;
             set
             {
                 if (value)
@@ -58,9 +61,14 @@ namespace AxTools.Services
                 AutodetectedIPUpdateTimer.Start();
                 AutodetectedIPUpdateTimerOnElapsed(null, null);
                 _stopwatch = new Stopwatch();
-                _timer = new Timer(5000);
-                _timer.Elapsed += TimerOnElapsed;
-                _timer.Start();
+                timerTaskIsRunning = true;
+                timerTask = Task.Run(() => {
+                    while (timerTaskIsRunning)
+                    {
+                        TimerOnElapsed();
+                        Thread.Sleep(INTERVAL);
+                    }
+                });
                 IsEnabledChanged?.Invoke(true);
             }
         }
@@ -69,49 +77,43 @@ namespace AxTools.Services
         {
             lock (Lock)
             {
-                if (_timer != null)
+                if (timerTask != null)
                 {
                     AutodetectedIPUpdateTimer.Elapsed -= AutodetectedIPUpdateTimerOnElapsed;
                     AutodetectedIPUpdateTimer.Stop();
-                    _timer.Elapsed -= TimerOnElapsed;
-                    _timer.Stop();
-                    _timer.Close();
+                    timerTaskIsRunning = false;
+                    timerTask.Wait(INTERVAL * 2);
+                    timerTask.Dispose();
+                    timerTask = null;
                 }
                 IsEnabledChanged?.Invoke(false);
             }
         }
 
-        private static void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        private static void TimerOnElapsed()
         {
-            if (Monitor.TryEnter(Lock))
+            try
             {
-                try
+                int failedNum = 0;
+                int maxPing = 0;
+                for (int i = 0; i < 10; i++)
                 {
-                    int failedNum = 0;
-                    int maxPing = 0;
-                    for (int i = 0; i < 10; i++)
+                    using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                     {
-                        using (Socket pSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-                        {
-                            _stopwatch.Restart();
-                            var result = pSocket.BeginConnect(_cachedServer.Ip, _cachedServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
-                            var elapsed = _stopwatch.ElapsedMilliseconds;
-                            if (result && pSocket.Connected)
-                                maxPing = Math.Max(maxPing, (int)elapsed);
-                            else
-                                failedNum++;
-                        }
+                        _stopwatch.Restart();
+                        var result = pSocket.BeginConnect(_cachedServer.Ip, _cachedServer.Port, null, null).AsyncWaitHandle.WaitOne(1000, false);
+                        var elapsed = _stopwatch.ElapsedMilliseconds;
+                        if (result && pSocket.Connected)
+                            maxPing = Math.Max(maxPing, (int)elapsed);
+                        else
+                            failedNum++;
                     }
-                    StatChanged?.Invoke(new PingerStat(maxPing, failedNum));
                 }
-                catch (Exception ex)
-                {
-                    log.Error(ex.Message);
-                }
-                finally
-                {
-                    Monitor.Exit(Lock);
-                }
+                StatChanged?.Invoke(new PingerStat(maxPing, failedNum));
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
             }
         }
 
