@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AxTools.Helpers;
 using FMemoryPattern;
+using Newtonsoft.Json;
 
 namespace AxTools.WoW
 {
@@ -18,24 +19,24 @@ namespace AxTools.WoW
 
 		static WowBuildInfoX64()
 		{
-			WoWHash = new byte[] { 0xB8, 0xFA, 0x71, 0x8C, 0xFB, 0x50, 0xCE, 0xA8, 0x21, 0x57, 0xD3, 0x7F, 0x6E, 0xF8, 0xF1, 0x9C, 0x84, 0x28, 0x90, 0x8C, 0x52, 0x23, 0x12, 0xAE, 0x97, 0x1B, 0xAD, 0x5D, 0x2F, 0xA8, 0x15, 0x94 };
-            BlackMarketNumItems = 0x2902018;
-            KnownSpellsCount = 0x28AAD20;
-            ChatBuffer = 0x2877830;
+			WoWHash = new byte[] { 0x9E, 0x84, 0x56, 0x56, 0x43, 0x04, 0xD2, 0xE3, 0x87, 0x18, 0xBC, 0x2F, 0x58, 0x17, 0xB8, 0xA1, 0xF1, 0xE9, 0x7D, 0xA1, 0x85, 0x34, 0x31, 0x94, 0x46, 0x36, 0xF2, 0x5B, 0x0E, 0x9B, 0xE3, 0x8E };
+            BlackMarketNumItems = 0x2902008;
+            KnownSpellsCount = 0x28AAD00;
+            ChatBuffer = 0x2877810;
             ObjectManager = 0x251EBC8;
-            PlayerGUID = 0x29949A0;
-            GameState = 0x2876988;
-            ChatIsOpened = 0x2460424;
+            PlayerGUID = 0x2994990;
+            GameState = 0x2876944;
             TickCount = 0x2430A3C;
-            MouseoverGUID = 0x2876990;
-            BlackMarketItems = 0x2902020;
+            ChatIsOpened = 0x2460424;
+            MouseoverGUID = 0x2876968;
+            BlackMarketItems = 0x2902010;
+            IsChatAFK = 0x2877804;
             FocusedWidget = 0x2431520;
-            IsChatAFK = 0x2877824;
             NotLoadingScreen = 0x211E33C;
-            PlayerZoneID = 0x2876420;
+            PlayerZoneID = 0x28763BC;
             GlueState = 0x2437B71;
-            KnownSpells = 0x28AAD28;
-            PlayerIsLooting = 0x28DA698;
+            KnownSpells = 0x28AAD08;
+            PlayerIsLooting = 0x28DA688;
             UIFrameBase = 0x2431430;
             LastHardwareAction = 0x2431438;
             NameCacheBase = 0x166A918;
@@ -66,19 +67,60 @@ namespace AxTools.WoW
 			MemoryPattern.FromTextstyle(nameof(ChatBuffer),             "48 69 D8 B8 0C 00 00 48 8D 05 ?? ?? ?? ?? 48 03 D8 48 8D 8B E6 00 00 00",                                  new LeaModifier(LeaType.CmpMinusOne)),
 		};
 
-		internal static bool TryFindNewOffsets(FMemory.MemoryManager memoryManager)
+        private static bool TryGetSavedOffsets(byte[] hash)
+        {
+            Log2 log = new Log2(nameof(WowBuildInfoX64));
+            string hashAsString = BitConverter.ToString(hash);
+            var directory = Directory.CreateDirectory(Path.Combine(AppFolders.DataDir, "wow-builds"));
+            var filePath = Path.Combine(directory.FullName, hashAsString + ".json");
+            log.Info($"TryGetSavedOffsets: filepath: '{filePath}'");
+            if (File.Exists(filePath))
+            {
+                log.Info($"TryGetSavedOffsets: file exists, trying to deserialize...");
+                try
+                {
+                    var offsets = JsonConvert.DeserializeObject<Dictionary<string, IntPtr>>(File.ReadAllText(filePath, Encoding.UTF8));
+                    if (offsets.Count == patterns.Length)
+                    {
+                        log.Info("TryGetSavedOffsets: deserialization is successful!");
+                        WoWHash = hash;
+                        BlackMarketNumItems = offsets[nameof(BlackMarketNumItems)].ToInt32();
+                        BlackMarketItems = offsets[nameof(BlackMarketItems)].ToInt32();
+                        LastHardwareAction = offsets[nameof(LastHardwareAction)].ToInt32();
+                        TickCount = offsets[nameof(TickCount)].ToInt32();
+                        MouseoverGUID = offsets[nameof(MouseoverGUID)].ToInt32();
+                        ChatIsOpened = offsets[nameof(ChatIsOpened)].ToInt32();
+                        FocusedWidget = offsets[nameof(FocusedWidget)].ToInt32();
+                        ObjectManager = offsets[nameof(ObjectManager)].ToInt32();
+                        GlueState = offsets[nameof(GlueState)].ToInt32();
+                        GameState = offsets[nameof(GameState)].ToInt32();
+                        KnownSpellsCount = offsets[nameof(KnownSpellsCount)].ToInt32();
+                        KnownSpells = offsets[nameof(KnownSpells)].ToInt32();
+                        UIFrameBase = offsets[nameof(UIFrameBase)].ToInt32();
+                        PlayerZoneID = offsets[nameof(PlayerZoneID)].ToInt32();
+                        PlayerIsLooting = offsets[nameof(PlayerIsLooting)].ToInt32();
+                        PlayerGUID = offsets[nameof(PlayerGUID)].ToInt32();
+                        NotLoadingScreen = offsets[nameof(NotLoadingScreen)].ToInt32();
+                        IsChatAFK = offsets[nameof(IsChatAFK)].ToInt32();
+                        ChatBuffer = offsets[nameof(ChatBuffer)].ToInt32();
+                        return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($"TryGetSavedOffsets: deserialization is failed: {ex.Message}");
+                }
+            }
+            return false;
+        }
+
+		internal static bool TryFindNewOffsets(FMemory.MemoryManager memoryManager, byte[] executableHash)
 		{
+            if (TryGetSavedOffsets(executableHash))
+                return true;
 			Notify.TrayPopup("This WoW version is unsupported", nameof(AxTools) + " is trying to adapt to the new version. Please wait...", NotifyUserType.Warn, true);
 			var sb = new StringBuilder();
-			byte[] hash;
-			using (SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider())
-			{
-				using (FileStream fileStream = File.Open(memoryManager.Process.MainModule.FileName, FileMode.Open, FileAccess.Read))
-				{
-					hash = provider.ComputeHash(fileStream);
-					sb.AppendLine("0x" + BitConverter.ToString(hash).Replace("-", ", 0x"));
-				}
-			}
+            sb.AppendLine("0x" + BitConverter.ToString(executableHash).Replace("-", ", 0x"));
 			sb.AppendLine($"WoW build: {FileVersionInfo.GetVersionInfo(memoryManager.Process.MainModule.FileName).FilePrivatePart}");
 			sb.AppendLine($"Base address: 0x{memoryManager.ImageBase.ToInt64().ToString("X")}");
 			sb.AppendLine($"Size of Wow.exe: 0x{memoryManager.Process.MainModule.ModuleMemorySize.ToString("X")}");
@@ -95,7 +137,7 @@ namespace AxTools.WoW
 					sb.AppendLine($"{entry.Key} = 0x{entry.Value.ToInt32().ToString("X")};");
 				}
 				File.WriteAllText(Path.Combine(AppFolders.TempDir, "new-offsets.txt"), sb.ToString(), Encoding.UTF8);
-				WoWHash = hash;
+				WoWHash = executableHash;
 				BlackMarketNumItems = offsets[nameof(BlackMarketNumItems)].ToInt32();
 				BlackMarketItems = offsets[nameof(BlackMarketItems)].ToInt32();
 				LastHardwareAction = offsets[nameof(LastHardwareAction)].ToInt32();
@@ -115,6 +157,9 @@ namespace AxTools.WoW
 				NotLoadingScreen = offsets[nameof(NotLoadingScreen)].ToInt32();
 				IsChatAFK = offsets[nameof(IsChatAFK)].ToInt32();
 				ChatBuffer = offsets[nameof(ChatBuffer)].ToInt32();
+                var directory = Directory.CreateDirectory(Path.Combine(AppFolders.DataDir, "wow-builds"));
+                var filePath = Path.Combine(directory.FullName, BitConverter.ToString(executableHash) + ".json");
+                File.WriteAllText(filePath, JsonConvert.SerializeObject(offsets), Encoding.UTF8);
 				Notify.TrayPopup("Adaptation is successful", $"You can use {nameof(AxTools)} as usual", NotifyUserType.Info, true);
 				return true;
 			}

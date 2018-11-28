@@ -91,7 +91,7 @@ namespace AxTools.Updater
                 if (_hardwareID == null)
                 {
                     _hardwareID = Utils.GetComputerHID();
-                    log.Info($"Your credentials for updates: login: {Settings2.Instance.UserID} password: {new string('*', _hardwareID.Length - 4)}{_hardwareID.Substring(_hardwareID.Length - 4)}");
+                    log.Info($"Your credentials for updates: login: {Settings2.Instance.UserID} password: {_hardwareID}");
                 }
                 if (_updateFileURL == null)
                 {

@@ -115,9 +115,7 @@ namespace AxTools.Forms
             isClosing = true;
             // Close all children forms
             foreach (Form i in Application.OpenForms.Cast<Form>().Where(i => i.GetType() != typeof(MainWindow) && i.GetType() != typeof(MetroFlatDropShadow)).ToArray())
-            {
                 i.Close();
-            }
             //
             settings.PluginHotkeysChanged -= WoWPluginHotkeyChanged;
             PluginManagerEx.PluginStateChanged -= PluginManagerOnPluginStateChanged;
@@ -133,7 +131,6 @@ namespace AxTools.Forms
             //stop timers
             AddonsBackup.StopService();
             TrayIconAnimation.Close();
-            Pinger.Enabled = false;
             HotkeyManager.KeyPressed -= KeyboardHookKeyDown;
             HotkeyManager.RemoveKeys(typeof(PluginManagerEx).ToString());
             log.Info("Closed");
@@ -222,18 +219,8 @@ namespace AxTools.Forms
         {
             switch (e.Button)
             {
-                case MouseButtons.Left:
-                    Pinger.Enabled = false;
-                    linkPing.Text = "cleared";
-                    Task.Factory.StartNew(() =>
-                    {
-                        Thread.Sleep(1000);
-                        Pinger.Enabled = true;
-                    });
-                    break;
-
                 case MouseButtons.Right:
-                    const int pingerTabPageIndex = 5;
+                    const int pingerTabPageIndex = 4;
                     new AppSettings(pingerTabPageIndex).ShowDialog(this);
                     break;
             }
@@ -822,7 +809,10 @@ namespace AxTools.Forms
                     state = "very bad";
                     colorState = ThumbnailProgressState.Error;
                 }
-                linkPing.Text = $"[{pingResult.MaxPing}ms : {state}]  |";
+                if (pingResult.MaxPing == 0)
+                    linkPing.Text = $"[n/a : {state}]  |";
+                else
+                    linkPing.Text = $"[{pingResult.MaxPing}ms : {state}]  |";
                 TBProgressBar.SetProgressValue(Handle, 1, 1);
                 TBProgressBar.SetProgressState(Handle, colorState);
             });

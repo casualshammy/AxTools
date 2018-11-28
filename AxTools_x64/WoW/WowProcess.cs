@@ -84,7 +84,7 @@ namespace AxTools.WoW
                                     byte[] hash;
                                     using (FileStream fileStream = File.Open(Process.Modules[0].FileName, FileMode.Open, FileAccess.Read))
                                         hash = provider.ComputeHash(fileStream);
-                                    isValidBuild = hash.SequenceEqual(WowBuildInfoX64.WoWHash) || WowBuildInfoX64.TryFindNewOffsets(Memory) ? 1 : 0;
+                                    isValidBuild = hash.SequenceEqual(WowBuildInfoX64.WoWHash) || WowBuildInfoX64.TryFindNewOffsets(Memory, hash) ? 1 : 0;
                                     log.Info($"{ToString()} Reference hash: {BitConverter.ToString(WowBuildInfoX64.WoWHash)}");
                                     log.Info($"{ToString()} Actual hash:    {BitConverter.ToString(hash)}");
                                     log.Info($"{ToString()} Hash is computed, took {stopwatch.ElapsedMilliseconds}ms");

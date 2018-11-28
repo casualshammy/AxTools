@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.3.69.2505</AssemblyVersion>
+    <AssemblyVersion>12.3.72.2516</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
@@ -121,6 +121,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AlphaVSS.Common, Version=1.4.0.0, Culture=neutral, PublicKeyToken=959d3993561034e3, processorArchitecture=MSIL">
+      <HintPath>..\packages\AlphaVSS.1.4.0\lib\net45\AlphaVSS.Common.dll</HintPath>
+    </Reference>
     <Reference Include="FMemory">
       <HintPath>..\..\FMemory\FMemory\bin\Release\FMemory.dll</HintPath>
     </Reference>
@@ -389,7 +392,9 @@ xcopy /s /y "F:\sync\private\Projects\AxTools\packages\NLua.1.3.2.1\lib\native\*
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\AlphaVSS.1.4.0\build\net45\AlphaVSS.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AlphaVSS.1.4.0\build\net45\AlphaVSS.targets'))" />
   </Target>
+  <Import Project="..\packages\AlphaVSS.1.4.0\build\net45\AlphaVSS.targets" Condition="Exists('..\packages\AlphaVSS.1.4.0\build\net45\AlphaVSS.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

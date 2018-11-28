@@ -66,7 +66,11 @@ namespace AxTools.Services
                     while (timerTaskIsRunning)
                     {
                         TimerOnElapsed();
-                        Thread.Sleep(INTERVAL);
+                        _stopwatch.Restart();
+                        while (_stopwatch.ElapsedMilliseconds < INTERVAL && timerTaskIsRunning)
+                        {
+                            Thread.Sleep(Math.Min(100, INTERVAL - (int)_stopwatch.ElapsedMilliseconds));
+                        }
                     }
                 });
                 IsEnabledChanged?.Invoke(true);

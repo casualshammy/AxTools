@@ -1,4 +1,5 @@
-﻿using AxTools.Forms;
+﻿using Alphaleonis.Win32.Vss;
+using AxTools.Forms;
 using AxTools.Helpers;
 using AxTools.WoW;
 using Ionic.Zip;
@@ -247,6 +248,28 @@ namespace AxTools.Services
 
         private static void Zip()
         {
+            Log2 vssLog = new Log2(nameof(AddonsBackup) + " - VSS Service");
+            // get free drive letter
+            string driveLetter = new string[] { "P:", "Q:", "R:", "S:", "T:", "U:", "V:", "W:" }.FirstOrDefault(l => !DriveInfo.GetDrives().Select(m => m.RootDirectory.Name).Contains(l));
+            if (driveLetter == default(string))
+                throw new IOException("Can't find free drive letter!");
+            vssLog.Info($"Free drive letter: {driveLetter}");
+            // making VSS snapshot
+            IVssImplementation vssImplementation = VssUtils.LoadImplementation();
+            IVssBackupComponents backupComponents = vssImplementation.CreateVssBackupComponents();
+            backupComponents.InitializeForBackup(null);
+            vssLog.Info("VssBackupComponents is initialized");
+            backupComponents.GatherWriterMetadata();
+            backupComponents.SetContext(VssVolumeSnapshotAttributes.Persistent | VssVolumeSnapshotAttributes.NoAutoRelease);
+            backupComponents.SetBackupState(false, true, VssBackupType.Full, false);
+            vssLog.Info("VssBackupComponents is set up");
+            backupComponents.StartSnapshotSet();
+            Guid backupGuid1 = backupComponents.AddToSnapshotSet(new DirectoryInfo(_settings.WoWDirectory).Root.Name, Guid.Empty);
+            backupComponents.PrepareForBackup();
+            backupComponents.DoSnapshotSet();
+            vssLog.Info("Snapshot is taken");
+            backupComponents.ExposeSnapshot(backupGuid1, null, VssVolumeSnapshotAttributes.ExposedLocally, driveLetter);
+            // zipping
             string zipPath = $"{_settings.WoWAddonsBackupPath}\\AddonsBackup_{DateTime.UtcNow:yyyyMMdd_HHmmss}.zip";
             log.Info("Zipping to file: " + zipPath);
             using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
@@ -254,7 +277,7 @@ namespace AxTools.Services
                 zip.CompressionLevel = (CompressionLevel)_settings.WoWAddonsBackupCompressionLevel;
                 foreach (string dirName in FoldersToArchive)
                 {
-                    zip.AddDirectory(_settings.WoWDirectory + "\\" + dirName, "\\" + dirName);
+                    var entry = zip.AddDirectory(_settings.WoWDirectory.Replace(new DirectoryInfo(_settings.WoWDirectory).Root.Name, $"{driveLetter}\\") + "\\" + dirName, "\\" + dirName);
                 }
                 zip.SaveProgress += AddonsBackup_SaveProgress;
                 var processPriority = Process.GetCurrentProcess().PriorityClass;
@@ -262,6 +285,18 @@ namespace AxTools.Services
                 zip.Save();
                 Process.GetCurrentProcess().PriorityClass = processPriority;
                 zip.SaveProgress -= AddonsBackup_SaveProgress;
+            }
+            VssSnapshotProperties existingSnapshot = backupComponents.QuerySnapshots().FirstOrDefault(l => l.SnapshotId == backupGuid1);
+            if (existingSnapshot == default(VssSnapshotProperties))
+            {
+                vssLog.Error($"Can't delete snapshot {backupGuid1}");
+                throw new IOException($"Can't delete snapshot {backupGuid1}");
+            }
+            else
+            {
+                backupComponents.DeleteSnapshot(existingSnapshot.SnapshotId, true);
+                backupComponents.Dispose();
+                vssLog.Info($"Snapshot is deleted ({existingSnapshot.SnapshotId})");
             }
             GC.Collect();
         }

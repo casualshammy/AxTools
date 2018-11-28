@@ -30,9 +30,7 @@ namespace AxTools.Helpers
         internal Log2(string className)
         {
             if (string.IsNullOrWhiteSpace(className))
-            {
                 throw new ArgumentNullException(nameof(className));
-            }
             _className = className;
         }
 
@@ -90,6 +88,7 @@ namespace AxTools.Helpers
             };
             using (WebClient wc = new WebClient())
             {
+                wc.ForceBasicAuth(Settings2.Instance.UserID, Utils.GetComputerHID());
                 wc.UploadValues("https://axio.name/axtools/log-reporter/make_log.php", "POST", values);
             }
         }
