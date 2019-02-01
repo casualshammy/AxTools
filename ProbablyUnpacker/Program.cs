@@ -37,6 +37,8 @@ namespace ProbablyUnpacker
                     string pathToExecutable = GetPathToOriginalExecutable();
                     PeFile peFile = new PeFile(pathToExecutable);
                     PeNet.Structures.IMAGE_SECTION_HEADER text_section = GetSectionHeader(peFile, ".text");
+                    Console.WriteLine($".text VirtualSize={text_section.VirtualSize}");
+                    Console.WriteLine($".text SizeOfRawData={text_section.SizeOfRawData}");
                     System.IO.BinaryReader reader = new System.IO.BinaryReader(new System.IO.MemoryStream(buffer));
                     System.IO.BinaryWriter writer = new System.IO.BinaryWriter(new System.IO.MemoryStream(buffer));
                     System.IO.StreamWriter log = new System.IO.StreamWriter("log.txt");
@@ -109,11 +111,11 @@ namespace ProbablyUnpacker
 
         private static string GetPathToOriginalExecutable()
         {
-            Console.WriteLine("Enter path to original executable: (G:\\games\\World of Warcraft\\Wow.exe)");
+            Console.WriteLine("Enter path to original executable: (D:\\games\\World of Warcraft\\_retail_\\Wow.exe)");
             string input = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(input))
             {
-                return "G:\\games\\World of Warcraft\\Wow.exe";
+                return "D:\\games\\World of Warcraft\\_retail_\\Wow.exe";
             }
             else
             {
