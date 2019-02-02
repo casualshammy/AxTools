@@ -30,57 +30,50 @@ namespace ProbablyUnpacker
             {
                 MemoryManager memoryManager = new MemoryManager(Process.GetProcessById(processID));
                 IntPtr startAddress = memoryManager.ImageBase + 0x1000;
-                Console.WriteLine($"Enter size of .text segment (module memory size is 0x{memoryManager.Process.MainModule.ModuleMemorySize.ToString("X")})");
-                if (int.TryParse(Console.ReadLine(), out int sizeOfTextSegment))
+                string pathToExecutable = GetPathToOriginalExecutable();
+                PeFile peFile = new PeFile(pathToExecutable);
+                PeNet.Structures.IMAGE_SECTION_HEADER text_section = GetSectionHeader(peFile, ".text");
+                byte[] buffer = memoryManager.ReadBytes(startAddress, (int)text_section.VirtualSize);
+                System.IO.BinaryReader reader = new System.IO.BinaryReader(new System.IO.MemoryStream(buffer));
+                System.IO.BinaryWriter writer = new System.IO.BinaryWriter(new System.IO.MemoryStream(buffer));
+                System.IO.StreamWriter log = new System.IO.StreamWriter("log.txt");
+                foreach (var block in peFile.ImageRelocationDirectory)
                 {
-                    byte[] buffer = memoryManager.ReadBytes(startAddress, sizeOfTextSegment);
-                    string pathToExecutable = GetPathToOriginalExecutable();
-                    PeFile peFile = new PeFile(pathToExecutable);
-                    PeNet.Structures.IMAGE_SECTION_HEADER text_section = GetSectionHeader(peFile, ".text");
-                    Console.WriteLine($".text VirtualSize={text_section.VirtualSize}");
-                    Console.WriteLine($".text SizeOfRawData={text_section.SizeOfRawData}");
-                    System.IO.BinaryReader reader = new System.IO.BinaryReader(new System.IO.MemoryStream(buffer));
-                    System.IO.BinaryWriter writer = new System.IO.BinaryWriter(new System.IO.MemoryStream(buffer));
-                    System.IO.StreamWriter log = new System.IO.StreamWriter("log.txt");
-                    foreach (var block in peFile.ImageRelocationDirectory)
+                    foreach (var offset in block.TypeOffsets)
                     {
-                        foreach (var offset in block.TypeOffsets)
+                        ulong rva = offset.Offset + block.VirtualAddress;
+                        log.WriteLine("relocation : 0x" + rva.ToString("X4"));
+                        log.Flush();
+                        if (rva >= text_section.VirtualAddress && rva < text_section.VirtualAddress + text_section.VirtualSize)
                         {
-                            ulong rva = offset.Offset + block.VirtualAddress;
-                            log.WriteLine("relocation : 0x" + rva.ToString("X4"));
-                            log.Flush();
-                            if (rva >= text_section.VirtualAddress && rva < text_section.VirtualAddress + text_section.VirtualSize)
+                            switch (offset.Type)
                             {
-                                switch (offset.Type)
-                                {
-                                    case 3:
-                                        int file_ofs = (int)(rva - text_section.VirtualAddress);
-                                        reader.BaseStream.Seek(file_ofs, System.IO.SeekOrigin.Begin);
-                                        ulong oldOffset = reader.ReadUInt64();
-                                        writer.Seek(file_ofs, System.IO.SeekOrigin.Begin);
-                                        writer.Write((oldOffset - (ulong)memoryManager.ImageBase + peFile.ImageNtHeaders.OptionalHeader.ImageBase));
-                                        break;
+                                case 3:
+                                    int file_ofs = (int)(rva - text_section.VirtualAddress);
+                                    reader.BaseStream.Seek(file_ofs, System.IO.SeekOrigin.Begin);
+                                    ulong oldOffset = reader.ReadUInt64();
+                                    writer.Seek(file_ofs, System.IO.SeekOrigin.Begin);
+                                    writer.Write((oldOffset - (ulong)memoryManager.ImageBase + peFile.ImageNtHeaders.OptionalHeader.ImageBase));
+                                    break;
 
-                                    case 0:
-                                        break;
+                                case 0:
+                                    break;
 
-                                    default:
-                                        //throw new Exception("wrong relocation offset type");
-                                        break;
-                                }
+                                default:
+                                    //throw new Exception("wrong relocation offset type");
+                                    break;
                             }
                         }
                     }
-                    int text_size = Math.Min(buffer.Length, (int)text_section.SizeOfRawData);
-                    System.IO.FileStream wow_file = System.IO.File.OpenRead(pathToExecutable);
-                    byte[] wow_data = new byte[wow_file.Length];
-                    wow_file.Read(wow_data, 0, (int)wow_file.Length);
-                    writer = new System.IO.BinaryWriter(new System.IO.MemoryStream(wow_data));
-                    writer.Seek((int)text_section.PointerToRawData, System.IO.SeekOrigin.Begin);
-                    writer.Write(buffer);
-
-                    System.IO.File.Open($"{pathToExecutable.TrimEnd('e').TrimEnd('x').Trim('e')}.dumped.exe", System.IO.FileMode.CreateNew).Write(wow_data, 0, wow_data.Length);
                 }
+                int text_size = Math.Min(buffer.Length, (int)text_section.SizeOfRawData);
+                System.IO.FileStream wow_file = System.IO.File.OpenRead(pathToExecutable);
+                byte[] wow_data = new byte[wow_file.Length];
+                wow_file.Read(wow_data, 0, (int)wow_file.Length);
+                writer = new System.IO.BinaryWriter(new System.IO.MemoryStream(wow_data));
+                writer.Seek((int)text_section.PointerToRawData, System.IO.SeekOrigin.Begin);
+                writer.Write(buffer);
+                System.IO.File.Open($"{pathToExecutable.TrimEnd('e').TrimEnd('x').Trim('e')}.dumped.exe", System.IO.FileMode.CreateNew).Write(wow_data, 0, wow_data.Length);
             }
         }
 

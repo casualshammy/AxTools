@@ -53,17 +53,17 @@ namespace AxTools.WoW
 			MemoryPattern.FromTextstyle(nameof(MouseoverGUID),          "E8 xx xx xx xx 0F 10 xx xx 0F 11 05 ?? ?? ?? ?? E8 xx xx xx xx 0F BE D0",                                  new LeaModifier(LeaType.CmpMinusOne)),
 			MemoryPattern.FromTextstyle(nameof(ChatIsOpened),           "83 3D ?? ?? ?? ?? 00 48 8B CB 7E xx 48 8B D0 EB xx 33 D2 E8 xx xx xx xx E8",                               new LeaModifier(LeaType.Cmp)),
 			MemoryPattern.FromTextstyle(nameof(FocusedWidget),          "48 8B CB E8 xx xx xx xx 33 C9 48 39 0D ?? ?? ?? ??",                                                       new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(ObjectManager),          "48 83 EC 30 4C 8B 05 ?? ?? ?? ?? 45 33 F6 33 ED 45 33 FF 33 DB 33 FF 33 F6 49 8B 80 E8 01 00 00 A8 01",    new LeaModifier(LeaType.CmpMinusOne)),
+			MemoryPattern.FromTextstyle(nameof(ObjectManager),          "57 41 56 41 57 48 83 EC 30 4C 8B 05 ?? ?? ?? ??",                                                          new LeaModifier(LeaType.CmpMinusOne)),
 			MemoryPattern.FromTextstyle(nameof(GlueState),              "80 3D xx xx xx xx 00 75 19 80 3D ?? ?? ?? ?? 00 74 10 80 7B 20 00 74 0A 48 83 C4 20 5B",                   new LeaModifier(LeaType.Cmp)),
 			MemoryPattern.FromTextstyle(nameof(GameState),              "48 83 EC 58 0F B6 05 ?? ?? ?? ?? A8 10 74 44 0F B6 C8 0F BA F1 04",                                        new LeaModifier(LeaType.CmpMinusOne)),
 			MemoryPattern.FromTextstyle(nameof(KnownSpellsCount),       "8B C2 C3 44 8B 0D ?? ?? ?? ?? 33 D2 45 85 C9 74 23 4C 8B 15 xx xx xx xx",                                  new LeaModifier(LeaType.CmpMinusOne)),
 			MemoryPattern.FromTextstyle(nameof(KnownSpells),            "8B C2 C3 44 8B 0D xx xx xx xx 33 D2 45 85 C9 74 23 4C 8B 15 ?? ?? ?? ??",                                  new LeaModifier(LeaType.CmpMinusOne)),
 			MemoryPattern.FromTextstyle(nameof(UIFrameBase),            "E8 xx xx xx xx 48 8B CD 4C 89 35 ?? ?? ?? ?? E8",                                                          new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(PlayerZoneID),           "40 55 48 83 EC 70 8B 2D ?? ?? ?? ??",                                                                      new LeaModifier(LeaType.CmpMinusOne)),
+			MemoryPattern.FromTextstyle(nameof(PlayerZoneID),           "E8 xx xx xx xx 48 85 C0 0F 44 1D ?? ?? ?? ?? 8B C3",                                                       new LeaModifier(LeaType.CmpMinusOne)),
 			MemoryPattern.FromTextstyle(nameof(PlayerIsLooting),        "8B D7 48 8D 0D ?? ?? ?? ?? E8 xx xx xx xx 80 38 00 74",                                                    new LeaModifier(LeaType.CmpMinusOne)),
 			MemoryPattern.FromTextstyle(nameof(PlayerGUID),             "48 8D 05 ?? ?? ?? ?? 41 B8 03 00 00 00 0F 1F 00",                                                          new LeaModifier(LeaType.CmpMinusOne)),
 			MemoryPattern.FromTextstyle(nameof(NotLoadingScreen),       "48 83 EC 28 80 3D ?? ?? ?? ?? 00 0F 84 xx xx xx xx 83 3D xx xx xx xx 00 48",                               new LeaModifier(LeaType.Cmp)),
-			MemoryPattern.FromTextstyle(nameof(IsChatAFK),              "8B 0C 81 C1 E9 07 F6 C1 01 74 xx 39 1D ?? ?? ?? ?? 75",                                                    new LeaModifier(LeaType.CmpMinusOne)),
+			MemoryPattern.FromTextstyle(nameof(IsChatAFK),              "39 1D ?? ?? ?? ?? 74 xx 33 D2 49 8B CF E8",                                                                new LeaModifier(LeaType.CmpMinusOne)),
 			MemoryPattern.FromTextstyle(nameof(ChatBuffer),             "48 69 D8 B8 0C 00 00 48 8D 05 ?? ?? ?? ?? 48 03 D8 48 8D 8B E6 00 00 00",                                  new LeaModifier(LeaType.CmpMinusOne)),
 		};
 
@@ -148,17 +148,17 @@ namespace AxTools.WoW
 				MouseoverGUID = offsets[nameof(MouseoverGUID)].ToInt32();
 				ChatIsOpened = offsets[nameof(ChatIsOpened)].ToInt32();
 				FocusedWidget = offsets[nameof(FocusedWidget)].ToInt32();
-				//ObjectManager = offsets[nameof(ObjectManager)].ToInt32();
+				ObjectManager = offsets[nameof(ObjectManager)].ToInt32();
 				GlueState = offsets[nameof(GlueState)].ToInt32();
 				GameState = offsets[nameof(GameState)].ToInt32();
 				KnownSpellsCount = offsets[nameof(KnownSpellsCount)].ToInt32();
 				KnownSpells = offsets[nameof(KnownSpells)].ToInt32();
 				UIFrameBase = offsets[nameof(UIFrameBase)].ToInt32();
-				//PlayerZoneID = offsets[nameof(PlayerZoneID)].ToInt32();
+				PlayerZoneID = offsets[nameof(PlayerZoneID)].ToInt32();
 				PlayerIsLooting = offsets[nameof(PlayerIsLooting)].ToInt32();
 				PlayerGUID = offsets[nameof(PlayerGUID)].ToInt32();
 				NotLoadingScreen = offsets[nameof(NotLoadingScreen)].ToInt32();
-				//IsChatAFK = offsets[nameof(IsChatAFK)].ToInt32();
+				IsChatAFK = offsets[nameof(IsChatAFK)].ToInt32();
 				ChatBuffer = offsets[nameof(ChatBuffer)].ToInt32();
                 var directory = Directory.CreateDirectory(Path.Combine(AppFolders.DataDir, "wow-builds"));
                 var filePath = Path.Combine(directory.FullName, BitConverter.ToString(executableHash) + ".json");
