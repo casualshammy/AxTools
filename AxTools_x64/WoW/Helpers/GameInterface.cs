@@ -480,7 +480,6 @@ namespace AxTools.WoW.Helpers
 
         public WoWPlayerMe GetGameObjects(List<WowObject> objects = null, List<WowPlayer> players = null, List<WowNpc> npcs = null)
         {
-            object o = new WoWAura();
             if (IsInGame)
             {
                 return ObjectMgr.Pulse(wowProcess, objects, players, npcs);

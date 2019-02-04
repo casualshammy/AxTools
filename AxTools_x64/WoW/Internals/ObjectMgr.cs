@@ -40,6 +40,7 @@ namespace AxTools.WoW.Internals
             List<WoWItem> items = null,
             List<WowObject> containers = null)
         {
+            Log2 log = new Log2("TEMPLOGGER0");
             wowObjects?.Clear();
             wowUnits?.Clear();
             wowNpcs?.Clear();
@@ -47,11 +48,14 @@ namespace AxTools.WoW.Internals
             containers?.Clear();
             WoWPlayerMe me = null;
             WoWGUID playerGUID = wow.Memory.Read<WoWGUID>(wow.Memory.ImageBase + WowBuildInfoX64.PlayerGUID);
+            log.Info(playerGUID);
             var manager = wow.Memory.Read<IntPtr>(wow.Memory.ImageBase + WowBuildInfoX64.ObjectManager);
             var currObject = wow.Memory.Read<IntPtr>(manager + WowBuildInfoX64.ObjectManagerFirstObject);
             var objType = GetObjectType(wow.Memory, currObject);
+            log.Info("first obj: " + objType);
             while (objType < (byte)ObjectType.Invalid)
             {
+                log.Info(objType + "; 0x" + currObject.ToInt64().ToString("X"));
                 switch (objType)
                 {
                     case (byte)ObjectType.Unit:

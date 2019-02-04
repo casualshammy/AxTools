@@ -325,6 +325,7 @@ namespace WoWPlugin_Dumper
             catch (Exception ex)
             {
                 Log("ERROR(0): " + ex.Message);
+                MessageBox.Show("ERROR(0): \r\n" + ex.Message);
                 return;
             }
             try

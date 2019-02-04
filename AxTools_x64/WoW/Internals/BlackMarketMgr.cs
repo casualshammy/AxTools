@@ -35,7 +35,7 @@ namespace AxTools.WoW.Internals
             }
         }
 
-        [StructLayout(LayoutKind.Explicit, Size = 168)]
+        [StructLayout(LayoutKind.Explicit, Size = 0xA0)]
         private struct BlackMarketItemInternal
         {
             [FieldOffset(0x8)]
