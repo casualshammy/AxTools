@@ -7,10 +7,9 @@ namespace AxTools.WoW.Internals
     {
         public WoWItem(IntPtr pAddress, WowProcess wow) : base(pAddress, wow)
         {
-            var descriptors = memory.Read<IntPtr>(pAddress + WowBuildInfoX64.GameObjectOwnerGUIDBase);
-            ContainedIn = memory.Read<WoWGUID>(descriptors + WowBuildInfoX64.WoWItemContainedIn);
-            StackSize = memory.Read<uint>(descriptors + WowBuildInfoX64.WoWItemStackCount);
-            WeaponEnchant = memory.Read<uint>(descriptors + WowBuildInfoX64.WoWItem_WeaponEnchant);
+            ContainedIn = memory.Read<WoWGUID>(Address + WowBuildInfoX64.WoWItemContainedIn);
+            StackSize = memory.Read<uint>(Address + WowBuildInfoX64.WoWItemStackCount);
+            WeaponEnchant = memory.Read<uint>(Address + WowBuildInfoX64.WoWItem_WeaponEnchant);
         }
 
         public readonly WoWGUID ContainedIn;

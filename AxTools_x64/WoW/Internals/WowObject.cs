@@ -40,8 +40,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mOwnerGUID == WoWGUID.Zero)
                 {
-                    var tempOwner = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
-                    mOwnerGUID = memory.Read<WoWGUID>(tempOwner + WowBuildInfoX64.GameObjectOwnerGUIDOffset);
+                    mOwnerGUID = memory.Read<WoWGUID>(Address + WowBuildInfoX64.GameObjectOwnerGUIDOffset);
                 }
                 return mOwnerGUID;
             }
@@ -84,8 +83,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mEntryID == 0)
                 {
-                    var descriptors = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
-                    mEntryID = memory.Read<uint>(descriptors + WowBuildInfoX64.GameObjectEntryID);
+                    mEntryID = memory.Read<uint>(Address + WowBuildInfoX64.GameObjectEntryID);
                 }
                 return mEntryID;
             }

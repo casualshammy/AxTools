@@ -277,82 +277,80 @@ namespace AxTools.WoW
 
 		#region Object manager
 
-		internal const int ObjectManagerFirstObject = 0x18; // untested okay
-		internal const int ObjectManagerNextObject = 0x30; // untested okay
-		internal const int ObjectType = 0x10; // untested okay
-		internal const int ObjectGUID = 0x48; // 0x48? //0x80; // 0x58; very untested
+		internal const int ObjectManagerFirstObject = 0x18;
+		internal const int ObjectManagerNextObject = 0x30;
+		internal const int ObjectType = 0x10;
+		internal const int ObjectGUID = 0x48;
 
 		#endregion Object manager
 
 		#region Game object
-
-		internal static readonly int GameObjectOwnerGUIDBase = 0x10;
-		internal static readonly int GameObjectOwnerGUIDOffset = 0x1C;
-		internal static readonly int GameObjectEntryID = 0xD8; // untested okay
-		internal static readonly int GameObjectNameBase = 0x148; // untested okay
-		internal static readonly int GameObjectNameOffset = 0xE0; // untested okay
-		internal const int GameObjectIsBobbing = 0xA4; // untested okay
-		internal const int GameObjectLocation = 0x180; // untested okay
+        
+		internal static readonly int GameObjectOwnerGUIDOffset = 0x220;
+		internal static readonly int GameObjectEntryID = 0xD8;
+		internal static readonly int GameObjectNameBase = 0x148;
+		internal static readonly int GameObjectNameOffset = 0xE0;
+        internal const int GameObjectIsBobbing = 0xA4;
+		internal const int GameObjectLocation = 0x180;
 
 		#endregion Game object
 
 		#region Player unit
-
-		internal static readonly int UnitDescriptors = 0x10;
-		internal static readonly int UnitCastingID = 0x4F0; // untested okay
-		internal static readonly int UnitChannelingID = 0x520; // untested okay
-		internal static readonly int UnitLocation = 0x150; // untested okay
-		internal static readonly int UnitRotation = UnitLocation + 0x10; // untested okay
+        
+		internal static readonly int UnitCastingID = 0x4F0;
+		internal static readonly int UnitChannelingID = 0x520;
+		internal static readonly int UnitLocation = 0x150;
+		internal static readonly int UnitRotation = UnitLocation + 0x10;
 		internal static readonly int UnitPitch = UnitRotation + 0x4;
 
-		internal const int UnitTargetGUID = 0x9c;
-		internal const int UnitClass = 0xD1;
-		internal const int UnitHealth = 0x1590; // untested okay
-		internal const int UnitPower = 0xE4;
-		internal const int UnitHealthMax = 0x1598; // untested okay
-		internal const int UnitPowerMax = 0x104;
-		internal const int UnitLevel = 0x15A0; // untested okay
-		internal const int UnitRace = 0x15C4; // untested okay
-		internal const int UnitFlags = 0x15C8; // untested okay
-		internal const int UnitMountDisplayID = 0x15F0; // untested okay
-
-		internal const int AuraCount1 = 0x10B0; // untested okay
-		internal const int AuraCount2 = 0x630; // untested okay
-		internal const int AuraTable1 = 0x630; // untested okay
-		internal const int AuraTable2 = 0x638; // untested okay
+        internal const int UnitInfoStart = UnitHealth;
+        internal const int UnitInfoSize = UnitPowerMax + sizeof(uint) - UnitInfoStart;
+        internal const int UnitHealth = 0x1380;
+        internal const int UnitPower = 0x1388;
+        internal const int UnitTargetGUID = 0x1550;
+        internal const int UnitClass = 0x1585;
+        internal const int UnitHealthMax = 0x1598;
+        internal const int UnitLevel = 0x15A0;
+        internal const int UnitRace = 0x15C4;
+        internal const int UnitFlags = 0x15C8;
+        internal const int UnitMountDisplayID = 0x15F0;
+        internal const int UnitPowerMax = 0x1790; // (uint)
+        
+		internal const int AuraCount1 = 0x10B0;
+		internal const int AuraCount2 = 0x630;
+		internal const int AuraTable1 = 0x630;
+		internal const int AuraTable2 = 0x638;
 
 		internal const int NameCacheNext = 0x00;
 		internal const int NameCacheGuid = 0x20;
 		internal const int NameCacheName = 0x31;
 
-		internal const int ActivePlayer_Inventory = 0x4748; // untested okay
+		internal const int ActivePlayer_Inventory = 0x4748;
 		internal const int ActivePlayer_Containers = ActivePlayer_Inventory + 19 * 16; // 19 WoWGUIDs of items in active player's inventory
 		internal const int ActivePlayer_Backpack = ActivePlayer_Containers + 4 * 16; // 4 active player's containers
 
-		internal const int PlayerSpeedBase = 0xF0;
+        internal const int PlayerSpeedBase = 0xF0;
 		internal const int PlayerSpeedOffset = 0xA4;
 
-		internal const int PlayerIsLootingOffset0 = 0x1588;
+		internal const int PlayerIsLootingOffset0 = 0x1508;
 		internal const int PlayerIsLootingOffset1 = 0xA08;
 
 		#endregion Player unit
 
 		#region NPC
 
-		internal static readonly int NpcNameBase = 0x308; // untested okay
-		internal static readonly int NpcNameOffset = 0xE0; // untested okay
+		internal static readonly int NpcNameBase = 0x308;
+		internal static readonly int NpcNameOffset = 0xE0;
 
-		internal const int NpcDynamicFlags = 10;
+        #endregion NPC
 
-		#endregion NPC
+        #region WoWItem
 
-		#region WoWItem
+        internal const int WoWItemContainedIn = 0x1C0;
+		internal const int WoWItemStackCount = 0x1F0;
+		internal const int WoWItem_WeaponEnchant = 0x2E8;
 
-		internal const int WoWItemContainedIn = 0x1C0; // untested okay
-		internal const int WoWItemStackCount = 0x1F0; // untested okay
-		internal const int WoWItem_WeaponEnchant = 0x88;
-
-		internal const int WoWContainerItems = 0x3A0; // untested okay
+        internal const int WoWContainerItems = 0x3A0;
 
 		#endregion WoWItem
 

@@ -179,7 +179,7 @@ namespace WoWPlugin_Dumper
                 Log("NPC count: " + wowNpcs.Count);
                 foreach (WowNpc i in wowNpcs)
                 {
-                    Log($"\t{i.Name}; Location: {i.Location}; Distance: {"n/a"}; Address: 0x{i.Address.ToInt64().ToString("X")} HP:{i.Health}; MaxHP:{i.HealthMax}; GUID:0x{i.GUID}; GameGUID: {i.GetGameGUID()} EntryID: {i.EntryID}");
+                    Log($"\t{i.Name}; Location: {i.Location}; Distance: {"n/a"}; Address: 0x{i.Address.ToInt64().ToString("X")} HP:{i.Health}; MaxHP:{i.HealthMax}; GUID:0x{i.GUID}; GameGUID: {i.GetGameGUID()} EntryID: {i.EntryID}; IsLootable: {i.IsLootable_Lua()}");
                     foreach (WoWAura aura in i.Auras)
                     {
                         Log($"\t\t\t{aura.Name}; {aura.OwnerGUID}");
@@ -276,7 +276,14 @@ namespace WoWPlugin_Dumper
                 int counter = 0;
                 foreach (WoWItem item in me.Inventory)
                 {
-                    Log(string.Format("\tSlot: {5}; ID: {0}; Name: {1}; StackCount: {2}; Contained in: {3}; Enchant: {4}; Address: 0x{6:X}", item.EntryID, item.Name, item.StackSize, item.ContainedIn, item.WeaponEnchant, counter, item.Address.ToInt64()));
+                    Log($"\t{counter}:");
+                    Log($"\t\tAddress: 0x{item.Address.ToInt64().ToString("X")}");
+                    Log($"\t\tEntryID: {item.EntryID}");
+                    Log($"\t\tName: {item.Name}");
+                    Log($"\t\tStackSize: {item.StackSize}");
+                    Log($"\t\tContainedIn: {item.ContainedIn}");
+                    Log($"\t\tWeaponEnchant: {item.WeaponEnchant}");
+                    Log($"\t\tSlot: {counter}");
                     counter++;
                 }
             }
@@ -344,10 +351,10 @@ namespace WoWPlugin_Dumper
             try
             {
                 Log("Local player---------------------------------------");
-                Log($"\tGUID: {lp.GUID}; Address: 0x{lp.Address.ToInt64().ToString("X")}; Location: {lp.Location}; Pitch: {lp.Pitch}");
-                Log($"\tName: {lp.Name}; TargetGUID: {lp.TargetGUID}; Class: {lp.Class}; Health/MaxHealth: {lp.Health}/{lp.HealthMax}");
-                Log($"\tLevel: {lp.Level}; Faction: {lp.Faction}; Race: {lp.Race}; IsMounted: {lp.IsMounted}; IsFlying: {lp.IsFlying}");
-                Log($"\tGUID bytes: {BitConverter.ToString(lp.GetGUIDBytes())}");
+                Log($"\tGUID: {lp.GUID}; Address: 0x{lp.Address.ToInt64().ToString("X")}; GUID bytes: {BitConverter.ToString(lp.GetGUIDBytes())}");
+                Log($"\tLocation: {lp.Location}; Pitch: {lp.Pitch}; Speed: {lp.Speed}; IsMounted: {lp.IsMounted}; IsFlying: {lp.IsFlying}");
+                Log($"\tName: {lp.Name}; TargetGUID: {lp.TargetGUID}; Class: {lp.Class}; Health/MaxHealth: {lp.Health}/{lp.HealthMax}; Power/MaxPower: {lp.Power}/{lp.PowerMax}");
+                Log($"\tLevel: {lp.Level}; Faction: {lp.Faction}; Race: {lp.Race}; InCombat: {lp.InCombat}");
             }
             catch (Exception ex)
             {

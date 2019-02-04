@@ -24,12 +24,13 @@ namespace AxTools.WoW.Internals
         {
             Address = pAddress;
             MGUID = guid;
-            var desc = memory.Read<IntPtr>(pAddress + WowBuildInfoX64.UnitDescriptors);
-            WowPlayerInfo inf = memory.Read<WowPlayerInfo>(desc);
+            WowPlayerInfo inf = memory.Read<WowPlayerInfo>(Address + WowBuildInfoX64.UnitInfoStart);
             TargetGUID = inf.TargetGUID;
             Health = inf.Health;
             HealthMax = inf.HealthMax;
-            Alive = inf.Health > 1;
+            Power = inf.Power;
+            PowerMax = inf.PowerMax;
+            Alive = Health > 1;
             Level = inf.Level;
             InCombat = ((inf.UnitFlags >> 19) & 1) == 1; // Script_UnitAffectingCombat
             Class = inf.Class;
@@ -88,6 +89,10 @@ namespace AxTools.WoW.Internals
         ///     The unit's maximum health.
         /// </summary>
         public readonly uint HealthMax;
+
+        public readonly uint Power;
+
+        public readonly uint PowerMax;
 
         public readonly bool InCombat;
 

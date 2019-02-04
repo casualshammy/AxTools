@@ -1,4 +1,5 @@
 ﻿using AxTools.Helpers;
+using AxTools.WoW.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -23,21 +24,7 @@ namespace AxTools.WoW.Internals
         private static readonly Log2 log = new Log2(nameof(WowNpc));
 
         public IntPtr Address;
-
-        private IntPtr mDescriptors = IntPtr.Zero;
-
-        internal IntPtr Descriptors
-        {
-            get
-            {
-                if (mDescriptors == IntPtr.Zero)
-                {
-                    mDescriptors = memory.Read<IntPtr>(Address + WowBuildInfoX64.UnitDescriptors);
-                }
-                return mDescriptors;
-            }
-        }
-
+        
         private WoWGUID mGUID;
 
         public override WoWGUID GUID
@@ -112,7 +99,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mHealth == uint.MaxValue)
                 {
-                    mHealth = memory.Read<uint>(Descriptors + WowBuildInfoX64.UnitHealth);
+                    mHealth = memory.Read<uint>(Address + WowBuildInfoX64.UnitHealth);
                 }
                 return mHealth;
             }
@@ -126,27 +113,18 @@ namespace AxTools.WoW.Internals
             {
                 if (mHealthMax == uint.MaxValue)
                 {
-                    mHealthMax = memory.Read<uint>(Descriptors + WowBuildInfoX64.UnitHealthMax);
+                    mHealthMax = memory.Read<uint>(Address + WowBuildInfoX64.UnitHealthMax);
                 }
                 return mHealthMax;
             }
         }
 
         public bool Alive => Health > 1;
-
-        private int lootable = -1;
-
-        public bool Lootable
+        
+        public bool IsLootable_Lua()
         {
-            get
-            {
-                if (lootable == -1)
-                {
-                    BitVector32 dynamicFlags = memory.Read<BitVector32>(Descriptors + WowBuildInfoX64.NpcDynamicFlags);
-                    lootable = dynamicFlags[0x2] ? 1 : 0;
-                }
-                return lootable != 0;
-            }
+            info = info ?? new GameInterface(wowProcess);
+            return info.LuaIsTrue($"CanLootUnit(\"{GetGameGUID()}\")");
         }
 
         private uint mEntryID;
@@ -157,8 +135,7 @@ namespace AxTools.WoW.Internals
             {
                 if (mEntryID == 0)
                 {
-                    var descriptors = memory.Read<IntPtr>(Address + WowBuildInfoX64.GameObjectOwnerGUIDBase);
-                    mEntryID = memory.Read<uint>(descriptors + WowBuildInfoX64.GameObjectEntryID);
+                    mEntryID = memory.Read<uint>(Address + WowBuildInfoX64.GameObjectEntryID);
                 }
                 return mEntryID;
             }

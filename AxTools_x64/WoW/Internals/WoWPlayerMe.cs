@@ -20,11 +20,10 @@ namespace AxTools.WoW.Internals
             {
                 if (inventory == null)
                 {
-                    var playerDesc = memory.Read<IntPtr>(Address + WowBuildInfoX64.UnitDescriptors);
                     List<WoWGUID> itemsInInventory = new List<WoWGUID>();
                     for (int i = 0; i < 19; i++) // 19 slots in active player's inventory
                     {
-                        itemsInInventory.Add(wowProcess.Memory.Read<WoWGUID>(playerDesc + WowBuildInfoX64.ActivePlayer_Inventory + i * WoWGUID.Size));
+                        itemsInInventory.Add(wowProcess.Memory.Read<WoWGUID>(Address + WowBuildInfoX64.ActivePlayer_Inventory + i * WoWGUID.Size));
                     }
                     List<WoWItem> items = new List<WoWItem>();
                     ObjectMgr.Pulse(wowProcess, items: items);
@@ -40,16 +39,15 @@ namespace AxTools.WoW.Internals
             {
                 if (itemsInBags == null)
                 {
-                    var playerDesc = memory.Read<IntPtr>(Address + WowBuildInfoX64.UnitDescriptors);
                     List<WoWGUID> containerGUIDs = new List<WoWGUID>();
                     for (int i = 0; i < 4; i++) // 4 bags
                     {
-                        containerGUIDs.Add(wowProcess.Memory.Read<WoWGUID>(playerDesc + WowBuildInfoX64.ActivePlayer_Containers + i * WoWGUID.Size));
+                        containerGUIDs.Add(wowProcess.Memory.Read<WoWGUID>(Address + WowBuildInfoX64.ActivePlayer_Containers + i * WoWGUID.Size));
                     }
                     List<WoWGUID> itemsInBackpack = new List<WoWGUID>();
                     for (int i = 0; i < 20; i++) // 20 items in backpack
                     {
-                        itemsInBackpack.Add(wowProcess.Memory.Read<WoWGUID>(playerDesc + WowBuildInfoX64.ActivePlayer_Backpack + i * WoWGUID.Size));
+                        itemsInBackpack.Add(wowProcess.Memory.Read<WoWGUID>(Address + WowBuildInfoX64.ActivePlayer_Backpack + i * WoWGUID.Size));
                     }
                     List<WoWItem> resultItems = new List<WoWItem>();
                     List<WoWItem> items = new List<WoWItem>();
@@ -58,11 +56,10 @@ namespace AxTools.WoW.Internals
                     ObjectMgr.Pulse(wowProcess, items: items, containers: containers);
                     foreach (var container in containers.Where(cont => containerGUIDs.Contains(cont.GUID)))
                     {
-                        var containerDescriptors = memory.Read<IntPtr>(container.Address + WowBuildInfoX64.UnitDescriptors);
                         itemIndexInContainer.Add(container.GUID, new List<WoWGUID>());
                         for (int i = 0; i < 36; i++) // max size of container
                         {
-                            WoWGUID itemGUID = memory.Read<WoWGUID>(containerDescriptors + WowBuildInfoX64.WoWContainerItems + i * sizeof(WoWGUID));
+                            WoWGUID itemGUID = memory.Read<WoWGUID>(Address + WowBuildInfoX64.WoWContainerItems + i * sizeof(WoWGUID));
                             itemIndexInContainer[container.GUID].Add(itemGUID);
                         }
                     }
