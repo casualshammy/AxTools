@@ -27,7 +27,9 @@ namespace AxTools.WoW.Internals
         {
             nextAddress = wow.Memory.Read<IntPtr>(address + WowBuildInfoX64.ObjectManagerNextObject);
             if (IsWin10)
-                return nextAddress != IntPtr.Zero;
+            {
+                return nextAddress != IntPtr.Zero && (ulong)nextAddress < 0xFF00000000000000;
+            }
             else
                 return nextAddress != IntPtr.Zero && (ulong)nextAddress < (ulong)uint.MaxValue * 2;
         }

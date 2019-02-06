@@ -57,7 +57,7 @@ namespace AxTools.Helpers
             {
                 infos = new DirectoryInfo(path).GetFileSystemInfos();
             }
-            catch { }
+            catch { /*we don't care if we can't access some folder*/ }
             if (infos != null)
             {
                 foreach (FileSystemInfo info2 in infos)
@@ -191,18 +191,18 @@ namespace AxTools.Helpers
         internal static string WordWrap(string text, int chunkSize)
         {
             List<string> words = text.Split(' ').ToList();
-            string result = "";
+            StringBuilder result = new StringBuilder();
             while (words.Any())
             {
-                string buffer = "";
-                while (words.Any() && buffer.Length + 1 + words.First().Length <= 55)
+                StringBuilder sb = new StringBuilder();
+                while (words.Any() && sb.Length + 1 + words.First().Length <= 55)
                 {
-                    buffer += " " + words.First();
+                    sb.Append(" " + words.First());
                     words.RemoveAt(0);
                 }
-                result += buffer + "\r\n";
+                result.Append(sb.ToString() + "\r\n");
             }
-            return result.TrimEnd('\n').TrimEnd('\r');
+            return result.ToString().TrimEnd('\n').TrimEnd('\r');
         }
 
         internal static void LogIfCalledFromUIThread()

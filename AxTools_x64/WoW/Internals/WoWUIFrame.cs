@@ -104,7 +104,7 @@ namespace AxTools.WoW.Internals
                             f = temp;
                         }
                     }
-                    catch { }
+                    catch { /* we don't care if we can't create WoWUIFrame from address, just skip it */ }
                     finally
                     {
                         try

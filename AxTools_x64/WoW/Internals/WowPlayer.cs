@@ -155,7 +155,7 @@ namespace AxTools.WoW.Internals
             {
                 if (!Names.TryGetValue(GUID, out string temp))
                 {
-                    temp = GetNameFromMemorySafe();
+                    //temp = GetNameFromMemorySafe();
                     if (string.IsNullOrWhiteSpace(temp))
                     {
                         temp = GetNameFromDB();

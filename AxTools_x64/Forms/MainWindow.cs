@@ -194,6 +194,7 @@ namespace AxTools.Forms
             startupOverlay.Close();                                   // close startup overlay
             Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
             UpdaterService.Start();                                     // start updater service
+            UACLevelWarning();
             log.Info("All start-up routines are finished");             // situation normal :)
         }
 
@@ -250,6 +251,21 @@ namespace AxTools.Forms
                     else
                         settings.PluginsLastTimeUpdated = DateTime.UtcNow - new TimeSpan(6, 0, 0, 0); // user will be notified after 24 hours
                 });
+        }
+
+        private void UACLevelWarning()
+        {
+            if (!settings.UACLevelWarningSuppress)
+            {
+                TaskDialog td = new TaskDialog("AxTools doesn't support UAC policy level higher than the second ('Notify me only when apps try to make changes to my computer (don't dim my desktop))'.\r\n" +
+                    "Please make sure you have appropriate UAC policy level.", "AxTools")
+                {
+                    CommonButtons = TaskDialogButton.OK,
+                    CustomButtons = new CustomButton[] { new CustomButton(Result.Ignore, "Don't show again") }
+                };
+                if (td.Show(this).CommonButton == Result.Ignore)
+                    settings.UACLevelWarningSuppress = true;
+            }
         }
 
         #endregion MainFormEvents
