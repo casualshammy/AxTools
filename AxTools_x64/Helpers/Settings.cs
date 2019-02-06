@@ -179,38 +179,7 @@ namespace AxTools.Helpers
         internal Keys ClickerKey = Keys.None;
 
         #endregion Clicker
-
-        #region VoIP
-
-        [JsonProperty(Order = 30, PropertyName = nameof(MumbleDirectory))]
-        internal string MumbleDirectory = string.Empty;
-
-        [JsonProperty(Order = 31, PropertyName = nameof(MumbleStartWithWoW))]
-        internal bool MumbleStartWithWoW;
-
-        [JsonProperty(Order = 32, PropertyName = nameof(RaidcallDirectory))]
-        internal string RaidcallDirectory = string.Empty;
-
-        [JsonProperty(Order = 33, PropertyName = nameof(RaidcallStartWithWoW))]
-        internal bool RaidcallStartWithWoW;
-
-        [JsonProperty(Order = 34, PropertyName = nameof(TS3Directory))]
-        internal string TS3Directory = string.Empty;
-
-        [JsonProperty(Order = 35, PropertyName = nameof(TS3StartWithWoW))]
-        internal bool TS3StartWithWoW;
-
-        [JsonProperty(Order = 36, PropertyName = nameof(VentriloDirectory))]
-        internal string VentriloDirectory = string.Empty;
-
-        [JsonProperty(Order = 37, PropertyName = nameof(VentriloStartWithWoW))]
-        internal bool VentriloStartWithWoW;
-
-        [JsonProperty(Order = 38, PropertyName = nameof(StartTwitchWithWoW))]
-        internal bool StartTwitchWithWoW;
-
-        #endregion VoIP
-
+        
         #region WoWPlugins
 
         [JsonProperty(Order = 70, PropertyName = nameof(UpdatePlugins))]

@@ -61,18 +61,6 @@ namespace AxTools.Forms
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.buttonStartStopPlugin = new MetroFramework.Controls.MetroButton();
-            this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
-            this.checkBoxTwitch = new MetroFramework.Controls.MetroCheckBox();
-            this.tileExtTwitch = new Components.MetroTileExt(this.components);
-            this.tileExtDiscord = new Components.MetroTileExt(this.components);
-            this.checkBoxStartTeamspeak3WithWow = new MetroFramework.Controls.MetroCheckBox();
-            this.checkBoxStartMumbleWithWow = new MetroFramework.Controls.MetroCheckBox();
-            this.checkBoxStartRaidcallWithWow = new MetroFramework.Controls.MetroCheckBox();
-            this.checkBoxStartVenriloWithWow = new MetroFramework.Controls.MetroCheckBox();
-            this.tileRaidcall = new Components.MetroTileExt(this.components);
-            this.tileTeamspeak3 = new Components.MetroTileExt(this.components);
-            this.tileMumble = new Components.MetroTileExt(this.components);
-            this.tileVentrilo = new Components.MetroTileExt(this.components);
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.linkPing = new MetroFramework.Controls.MetroLink();
             this.linkSettings = new MetroFramework.Controls.MetroLink();
@@ -90,7 +78,6 @@ namespace AxTools.Forms
             this.metroTabPage1.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvPlugins)).BeginInit();
-            this.metroTabPage2.SuspendLayout();
             this.contextMenuStripBackupAndClean.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -101,7 +88,7 @@ namespace AxTools.Forms
             this.notifyIconMain.Text = "AxTools";
             this.notifyIconMain.Visible = true;
             this.notifyIconMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconMainMouseClick);
-            this.notifyIconMain.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIconMain_MouseDoubleClick);
+            this.notifyIconMain.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconMain_MouseDoubleClick);
             // 
             // contextMenuStripMain
             // 
@@ -112,7 +99,6 @@ namespace AxTools.Forms
             // 
             this.tabControl.Controls.Add(this.metroTabPage1);
             this.tabControl.Controls.Add(this.metroTabPage3);
-            this.tabControl.Controls.Add(this.metroTabPage2);
             this.tabControl.CustomBackground = false;
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.FontSize = MetroFramework.MetroTabControlSize.Medium;
@@ -148,7 +134,7 @@ namespace AxTools.Forms
             this.metroTabPage1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage1.StyleManager = null;
             this.metroTabPage1.TabIndex = 0;
-            this.metroTabPage1.Text = "              Home            ";
+            this.metroTabPage1.Text = "                      Home                     ";
             this.metroTabPage1.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage1.VerticalScrollbar = false;
             this.metroTabPage1.VerticalScrollbarBarColor = true;
@@ -263,7 +249,7 @@ namespace AxTools.Forms
             this.metroTabPage3.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTabPage3.StyleManager = null;
             this.metroTabPage3.TabIndex = 2;
-            this.metroTabPage3.Text = "          Plug-ins        ";
+            this.metroTabPage3.Text = "                  Plug-ins                ";
             this.metroTabPage3.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTabPage3.VerticalScrollbar = false;
             this.metroTabPage3.VerticalScrollbarBarColor = true;
@@ -381,239 +367,6 @@ namespace AxTools.Forms
             this.buttonStartStopPlugin.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroToolTip1.SetToolTip(this.buttonStartStopPlugin, "Start/stop plug-in");
             this.buttonStartStopPlugin.Click += new System.EventHandler(this.ButtonStartStopPlugin_Click);
-            // 
-            // metroTabPage2
-            // 
-            this.metroTabPage2.Controls.Add(this.checkBoxTwitch);
-            this.metroTabPage2.Controls.Add(this.tileExtTwitch);
-            this.metroTabPage2.Controls.Add(this.tileExtDiscord);
-            this.metroTabPage2.Controls.Add(this.checkBoxStartTeamspeak3WithWow);
-            this.metroTabPage2.Controls.Add(this.checkBoxStartMumbleWithWow);
-            this.metroTabPage2.Controls.Add(this.checkBoxStartRaidcallWithWow);
-            this.metroTabPage2.Controls.Add(this.checkBoxStartVenriloWithWow);
-            this.metroTabPage2.Controls.Add(this.tileRaidcall);
-            this.metroTabPage2.Controls.Add(this.tileTeamspeak3);
-            this.metroTabPage2.Controls.Add(this.tileMumble);
-            this.metroTabPage2.Controls.Add(this.tileVentrilo);
-            this.metroTabPage2.CustomBackground = false;
-            this.metroTabPage2.HorizontalScrollbar = true;
-            this.metroTabPage2.HorizontalScrollbarBarColor = true;
-            this.metroTabPage2.HorizontalScrollbarHighlightOnWheel = false;
-            this.metroTabPage2.HorizontalScrollbarSize = 10;
-            this.metroTabPage2.Location = new System.Drawing.Point(4, 35);
-            this.metroTabPage2.Name = "metroTabPage2";
-            this.metroTabPage2.Size = new System.Drawing.Size(421, 160);
-            this.metroTabPage2.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTabPage2.StyleManager = null;
-            this.metroTabPage2.TabIndex = 1;
-            this.metroTabPage2.Text = "            VoIP          ";
-            this.metroTabPage2.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTabPage2.VerticalScrollbar = true;
-            this.metroTabPage2.VerticalScrollbarBarColor = true;
-            this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
-            this.metroTabPage2.VerticalScrollbarSize = 10;
-            // 
-            // checkBoxTwitch
-            // 
-            this.checkBoxTwitch.AutoSize = true;
-            this.checkBoxTwitch.CustomBackground = false;
-            this.checkBoxTwitch.CustomForeColor = false;
-            this.checkBoxTwitch.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.checkBoxTwitch.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxTwitch.Location = new System.Drawing.Point(241, 99);
-            this.checkBoxTwitch.Margin = new System.Windows.Forms.Padding(1);
-            this.checkBoxTwitch.Name = "checkBoxTwitch";
-            this.checkBoxTwitch.Size = new System.Drawing.Size(165, 19);
-            this.checkBoxTwitch.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxTwitch.StyleManager = null;
-            this.checkBoxTwitch.TabIndex = 50;
-            this.checkBoxTwitch.Text = "Start Twitch with WoW";
-            this.checkBoxTwitch.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.checkBoxTwitch.UseStyleColors = true;
-            this.checkBoxTwitch.UseVisualStyleBackColor = true;
-            this.checkBoxTwitch.CheckedChanged += new System.EventHandler(this.CheckBoxTwitch_CheckedChanged);
-            // 
-            // tileExtTwitch
-            // 
-            this.tileExtTwitch.ActiveControl = null;
-            this.tileExtTwitch.CenterText = "Twitch";
-            this.tileExtTwitch.CustomBackground = false;
-            this.tileExtTwitch.CustomForeColor = false;
-            this.tileExtTwitch.Location = new System.Drawing.Point(109, 87);
-            this.tileExtTwitch.Name = "tileExtTwitch";
-            this.tileExtTwitch.PaintTileCount = true;
-            this.tileExtTwitch.Size = new System.Drawing.Size(60, 66);
-            this.tileExtTwitch.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileExtTwitch.StyleManager = null;
-            this.tileExtTwitch.TabIndex = 49;
-            this.tileExtTwitch.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileExtTwitch.TileCount = 0;
-            this.tileExtTwitch.Click += new System.EventHandler(this.TileExtTwitch_Click);
-            // 
-            // tileExtDiscord
-            // 
-            this.tileExtDiscord.ActiveControl = null;
-            this.tileExtDiscord.CenterText = "Discord";
-            this.tileExtDiscord.CustomBackground = false;
-            this.tileExtDiscord.CustomForeColor = false;
-            this.tileExtDiscord.Location = new System.Drawing.Point(3, 87);
-            this.tileExtDiscord.Name = "tileExtDiscord";
-            this.tileExtDiscord.PaintTileCount = true;
-            this.tileExtDiscord.Size = new System.Drawing.Size(100, 66);
-            this.tileExtDiscord.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileExtDiscord.StyleManager = null;
-            this.tileExtDiscord.TabIndex = 48;
-            this.tileExtDiscord.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileExtDiscord.TileCount = 0;
-            this.tileExtDiscord.Click += new System.EventHandler(this.TileExtDiscord_Click);
-            // 
-            // checkBoxStartTeamspeak3WithWow
-            // 
-            this.checkBoxStartTeamspeak3WithWow.AutoSize = true;
-            this.checkBoxStartTeamspeak3WithWow.CustomBackground = false;
-            this.checkBoxStartTeamspeak3WithWow.CustomForeColor = false;
-            this.checkBoxStartTeamspeak3WithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.checkBoxStartTeamspeak3WithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartTeamspeak3WithWow.Location = new System.Drawing.Point(241, 78);
-            this.checkBoxStartTeamspeak3WithWow.Margin = new System.Windows.Forms.Padding(1);
-            this.checkBoxStartTeamspeak3WithWow.Name = "checkBoxStartTeamspeak3WithWow";
-            this.checkBoxStartTeamspeak3WithWow.Size = new System.Drawing.Size(148, 19);
-            this.checkBoxStartTeamspeak3WithWow.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxStartTeamspeak3WithWow.StyleManager = null;
-            this.checkBoxStartTeamspeak3WithWow.TabIndex = 46;
-            this.checkBoxStartTeamspeak3WithWow.Text = "Start TS3 with WoW";
-            this.checkBoxStartTeamspeak3WithWow.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.checkBoxStartTeamspeak3WithWow.UseStyleColors = true;
-            this.checkBoxStartTeamspeak3WithWow.UseVisualStyleBackColor = true;
-            this.checkBoxStartTeamspeak3WithWow.CheckedChanged += new System.EventHandler(this.CheckBoxStartTeamspeak3WithWow_CheckedChanged);
-            // 
-            // checkBoxStartMumbleWithWow
-            // 
-            this.checkBoxStartMumbleWithWow.AutoSize = true;
-            this.checkBoxStartMumbleWithWow.CustomBackground = false;
-            this.checkBoxStartMumbleWithWow.CustomForeColor = false;
-            this.checkBoxStartMumbleWithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.checkBoxStartMumbleWithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartMumbleWithWow.Location = new System.Drawing.Point(241, 57);
-            this.checkBoxStartMumbleWithWow.Margin = new System.Windows.Forms.Padding(1);
-            this.checkBoxStartMumbleWithWow.Name = "checkBoxStartMumbleWithWow";
-            this.checkBoxStartMumbleWithWow.Size = new System.Drawing.Size(177, 19);
-            this.checkBoxStartMumbleWithWow.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxStartMumbleWithWow.StyleManager = null;
-            this.checkBoxStartMumbleWithWow.TabIndex = 47;
-            this.checkBoxStartMumbleWithWow.Text = "Start Mumble with WoW";
-            this.checkBoxStartMumbleWithWow.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.checkBoxStartMumbleWithWow.UseStyleColors = true;
-            this.checkBoxStartMumbleWithWow.UseVisualStyleBackColor = true;
-            this.checkBoxStartMumbleWithWow.CheckedChanged += new System.EventHandler(this.CheckBoxStartMumbleWithWow_CheckedChanged);
-            // 
-            // checkBoxStartRaidcallWithWow
-            // 
-            this.checkBoxStartRaidcallWithWow.AutoSize = true;
-            this.checkBoxStartRaidcallWithWow.CustomBackground = false;
-            this.checkBoxStartRaidcallWithWow.CustomForeColor = false;
-            this.checkBoxStartRaidcallWithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.checkBoxStartRaidcallWithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartRaidcallWithWow.Location = new System.Drawing.Point(241, 36);
-            this.checkBoxStartRaidcallWithWow.Margin = new System.Windows.Forms.Padding(1);
-            this.checkBoxStartRaidcallWithWow.Name = "checkBoxStartRaidcallWithWow";
-            this.checkBoxStartRaidcallWithWow.Size = new System.Drawing.Size(171, 19);
-            this.checkBoxStartRaidcallWithWow.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxStartRaidcallWithWow.StyleManager = null;
-            this.checkBoxStartRaidcallWithWow.TabIndex = 45;
-            this.checkBoxStartRaidcallWithWow.Text = "Start Raidcall with WoW";
-            this.checkBoxStartRaidcallWithWow.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.checkBoxStartRaidcallWithWow.UseStyleColors = true;
-            this.checkBoxStartRaidcallWithWow.UseVisualStyleBackColor = true;
-            this.checkBoxStartRaidcallWithWow.CheckedChanged += new System.EventHandler(this.CheckBoxStartRaidcallWithWow_CheckedChanged);
-            // 
-            // checkBoxStartVenriloWithWow
-            // 
-            this.checkBoxStartVenriloWithWow.AutoSize = true;
-            this.checkBoxStartVenriloWithWow.CustomBackground = false;
-            this.checkBoxStartVenriloWithWow.CustomForeColor = false;
-            this.checkBoxStartVenriloWithWow.FontSize = MetroFramework.MetroLinkSize.Medium;
-            this.checkBoxStartVenriloWithWow.FontWeight = MetroFramework.MetroLinkWeight.Regular;
-            this.checkBoxStartVenriloWithWow.Location = new System.Drawing.Point(241, 15);
-            this.checkBoxStartVenriloWithWow.Margin = new System.Windows.Forms.Padding(1);
-            this.checkBoxStartVenriloWithWow.Name = "checkBoxStartVenriloWithWow";
-            this.checkBoxStartVenriloWithWow.Size = new System.Drawing.Size(174, 19);
-            this.checkBoxStartVenriloWithWow.Style = MetroFramework.MetroColorStyle.Blue;
-            this.checkBoxStartVenriloWithWow.StyleManager = null;
-            this.checkBoxStartVenriloWithWow.TabIndex = 44;
-            this.checkBoxStartVenriloWithWow.Text = "Start Ventrilo with WoW";
-            this.checkBoxStartVenriloWithWow.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.checkBoxStartVenriloWithWow.UseStyleColors = true;
-            this.checkBoxStartVenriloWithWow.UseVisualStyleBackColor = true;
-            this.checkBoxStartVenriloWithWow.CheckedChanged += new System.EventHandler(this.CheckBoxStartVenriloWithWow_CheckedChanged);
-            // 
-            // tileRaidcall
-            // 
-            this.tileRaidcall.ActiveControl = null;
-            this.tileRaidcall.CenterText = "Raidcall";
-            this.tileRaidcall.CustomBackground = false;
-            this.tileRaidcall.CustomForeColor = false;
-            this.tileRaidcall.Location = new System.Drawing.Point(109, 15);
-            this.tileRaidcall.Name = "tileRaidcall";
-            this.tileRaidcall.PaintTileCount = true;
-            this.tileRaidcall.Size = new System.Drawing.Size(60, 66);
-            this.tileRaidcall.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileRaidcall.StyleManager = null;
-            this.tileRaidcall.TabIndex = 8;
-            this.tileRaidcall.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileRaidcall.TileCount = 0;
-            this.tileRaidcall.Click += new System.EventHandler(this.TileRaidcallClick);
-            // 
-            // tileTeamspeak3
-            // 
-            this.tileTeamspeak3.ActiveControl = null;
-            this.tileTeamspeak3.CenterText = "Teamspeak 3";
-            this.tileTeamspeak3.CustomBackground = false;
-            this.tileTeamspeak3.CustomForeColor = false;
-            this.tileTeamspeak3.Location = new System.Drawing.Point(3, 15);
-            this.tileTeamspeak3.Name = "tileTeamspeak3";
-            this.tileTeamspeak3.PaintTileCount = true;
-            this.tileTeamspeak3.Size = new System.Drawing.Size(100, 66);
-            this.tileTeamspeak3.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileTeamspeak3.StyleManager = null;
-            this.tileTeamspeak3.TabIndex = 7;
-            this.tileTeamspeak3.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileTeamspeak3.TileCount = 0;
-            this.tileTeamspeak3.Click += new System.EventHandler(this.TileTeamspeak3Click);
-            // 
-            // tileMumble
-            // 
-            this.tileMumble.ActiveControl = null;
-            this.tileMumble.CenterText = "Mumble";
-            this.tileMumble.CustomBackground = false;
-            this.tileMumble.CustomForeColor = false;
-            this.tileMumble.Location = new System.Drawing.Point(175, 15);
-            this.tileMumble.Name = "tileMumble";
-            this.tileMumble.PaintTileCount = true;
-            this.tileMumble.Size = new System.Drawing.Size(60, 66);
-            this.tileMumble.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileMumble.StyleManager = null;
-            this.tileMumble.TabIndex = 6;
-            this.tileMumble.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileMumble.TileCount = 0;
-            this.tileMumble.Click += new System.EventHandler(this.TileMumbleClick);
-            // 
-            // tileVentrilo
-            // 
-            this.tileVentrilo.ActiveControl = null;
-            this.tileVentrilo.CenterText = "Ventrilo";
-            this.tileVentrilo.CustomBackground = false;
-            this.tileVentrilo.CustomForeColor = false;
-            this.tileVentrilo.Location = new System.Drawing.Point(175, 87);
-            this.tileVentrilo.Name = "tileVentrilo";
-            this.tileVentrilo.PaintTileCount = true;
-            this.tileVentrilo.Size = new System.Drawing.Size(60, 66);
-            this.tileVentrilo.Style = MetroFramework.MetroColorStyle.Blue;
-            this.tileVentrilo.StyleManager = null;
-            this.tileVentrilo.TabIndex = 5;
-            this.tileVentrilo.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.tileVentrilo.TileCount = 0;
-            this.tileVentrilo.Click += new System.EventHandler(this.TileVentriloClick);
             // 
             // metroToolTip1
             // 
@@ -770,8 +523,6 @@ namespace AxTools.Forms
             this.metroTabPage1.PerformLayout();
             this.metroTabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvPlugins)).EndInit();
-            this.metroTabPage2.ResumeLayout(false);
-            this.metroTabPage2.PerformLayout();
             this.contextMenuStripBackupAndClean.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -783,19 +534,10 @@ namespace AxTools.Forms
         internal NotifyIcon notifyIconMain;
         private MetroTabControl tabControl;
         private MetroTabPage metroTabPage1;
-        private MetroTabPage metroTabPage2;
-        private MetroTileExt tileRaidcall;
-        private MetroTileExt tileTeamspeak3;
-        private MetroTileExt tileMumble;
-        private MetroTileExt tileVentrilo;
         private MetroTabPage metroTabPage3;
         private MetroComboboxExt cmbboxAccSelect;
         private MetroToolTip metroToolTip1;
         private ContextMenuStrip contextMenuStripMain;
-        private MetroCheckBox checkBoxStartVenriloWithWow;
-        private MetroCheckBox checkBoxStartRaidcallWithWow;
-        private MetroCheckBox checkBoxStartTeamspeak3WithWow;
-        private MetroCheckBox checkBoxStartMumbleWithWow;
         private MetroLink linkBackup;
         private MetroLink linkClickerSettings;
         private MetroButton buttonStartStopPlugin;
@@ -816,10 +558,7 @@ namespace AxTools.Forms
         private MetroLink linkDownloadPlugins;
         private MetroLabel labelTotalPluginsEnabled;
         private ToolStripMenuItem toolStripMenuItem1;
-        private MetroTileExt tileExtDiscord;
-        private MetroTileExt tileExtTwitch;
         private ToolStripSeparator toolStripSeparator2;
-        private MetroCheckBox checkBoxTwitch;
         private ToolStripMenuItem menuItemNextBackupTime;
         private MetroLink linkUpdatePlugins;
     }

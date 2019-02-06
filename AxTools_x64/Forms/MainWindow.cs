@@ -85,7 +85,6 @@ namespace AxTools.Forms
         private void SetupControls()
         {
             pictureBox1.Image = Resources.ApplicationImage;
-            checkBoxTwitch.Checked = settings.StartTwitchWithWoW;
             nextBackupTimer = new System.Threading.Timer(delegate
             {
                 var duration = new TimeSpan(settings.WoWAddonsBackupMinimumTimeBetweenBackup, 0, 0) - (DateTime.UtcNow - settings.WoWAddonsBackupLastDate);
@@ -147,7 +146,7 @@ namespace AxTools.Forms
             }
         }
 
-        private void notifyIconMain_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void NotifyIconMain_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -177,12 +176,6 @@ namespace AxTools.Forms
             await Task.Run((Action)CheckWoWDirectoryIsValid);
             // check if it's time to update plug-ins
             CheckIfPluginsAreOutdated();
-            // styling, events attaching...
-            checkBoxStartVenriloWithWow.Checked = settings.VentriloStartWithWoW;
-            checkBoxStartTeamspeak3WithWow.Checked = settings.TS3StartWithWoW;
-            checkBoxStartRaidcallWithWow.Checked = settings.RaidcallStartWithWoW;
-            checkBoxStartMumbleWithWow.Checked = settings.MumbleStartWithWoW;
-            // end of styling, events attaching...
             startupOverlay.Label = "Starting add-ons backup service...";
             AddonsBackup.StartService();                                // start backup service
             startupOverlay.Label = "Starting pinger...";
@@ -191,7 +184,7 @@ namespace AxTools.Forms
             await Task.Run((Action)WoWProcessManager.StartWatcher);     // start WoW spy
             startupOverlay.Label = "Setting tray animation...";
             TrayIconAnimation.Initialize(notifyIconMain);               // initialize tray animation
-            startupOverlay.Close();                                   // close startup overlay
+            startupOverlay.Close();                                     // close startup overlay
             Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
             UpdaterService.Start();                                     // start updater service
             UACLevelWarning();
@@ -291,7 +284,6 @@ namespace AxTools.Forms
                 };
                 toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start this plug-in\r\nRight click to open settings" : "Left click to start this plug-in";
                 toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name] + "]" : null;
-                //toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
                 contextMenuStripMain.Items.Add(toolStripMenuItem);
             }
             if (sortedPlugins.Length > topUsedPlugins.Length && contextMenuStripMain.Items.Add("Other plug-ins") is ToolStripMenuItem customPlugins)
@@ -310,7 +302,6 @@ namespace AxTools.Forms
                         };
                         toolStripMenuItem.ToolTipText = plugin.ConfigAvailable ? "Left click to start this plug-in\r\nRight click to open settings" : "Left click to start this plug-in";
                         toolStripMenuItem.ShortcutKeyDisplayString = settings.PluginHotkeys.ContainsKey(plugin.Name) ? "[" + settings.PluginHotkeys[plugin.Name] + "]" : null;
-                        //toolStripMenuItem.Enabled = PluginManagerEx.RunningPlugins.All(l => l.Name != toolStripMenuItem.Text);
                         customPlugins.DropDownItems.Add(toolStripMenuItem);
                     }
                     catch (Exception ex)
@@ -383,26 +374,6 @@ namespace AxTools.Forms
             }
             if (cmbboxAccSelect.SelectedIndex != -1)
             {
-                if (settings.VentriloStartWithWoW && !Process.GetProcessesByName("Ventrilo").Any())
-                {
-                    InvokeOnClick(tileVentrilo, null);
-                }
-                if (settings.TS3StartWithWoW && !Process.GetProcessesByName("ts3client_win64").Any() && !Process.GetProcessesByName("ts3client_win32").Any())
-                {
-                    InvokeOnClick(tileTeamspeak3, null);
-                }
-                if (settings.RaidcallStartWithWoW && !Process.GetProcessesByName("raidcall").Any())
-                {
-                    InvokeOnClick(tileRaidcall, null);
-                }
-                if (settings.MumbleStartWithWoW && !Process.GetProcessesByName("mumble").Any())
-                {
-                    InvokeOnClick(tileMumble, null);
-                }
-                if (settings.StartTwitchWithWoW && !Process.GetProcessesByName("Twitch").Any())
-                {
-                    InvokeOnClick(tileExtTwitch, null);
-                }
                 StartWoW(WoWAccount2.AllAccounts[cmbboxAccSelect.SelectedIndex]);
                 cmbboxAccSelect.SelectedIndex = -1;
                 cmbboxAccSelect.Invalidate();
@@ -483,108 +454,7 @@ namespace AxTools.Forms
         }
 
         #endregion Tab: Home
-
-        #region Tab: VoIP
-
-        private void TileVentriloClick(object sender, EventArgs e)
-        {
-            try
-            {
-                VoIP.StartVoIPClient("Ventrilo");
-            }
-            catch (Exception)
-            {
-                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
-            }
-        }
-
-        private void TileRaidcallClick(object sender, EventArgs e)
-        {
-            try
-            {
-                VoIP.StartVoIPClient("Raidcall");
-            }
-            catch (Exception)
-            {
-                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
-            }
-        }
-
-        private void TileTeamspeak3Click(object sender, EventArgs e)
-        {
-            try
-            {
-                VoIP.StartVoIPClient("Teamspeak 3");
-            }
-            catch (Exception)
-            {
-                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
-            }
-        }
-
-        private void TileMumbleClick(object sender, EventArgs e)
-        {
-            try
-            {
-                VoIP.StartVoIPClient("Mumble");
-            }
-            catch (Exception)
-            {
-                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
-            }
-        }
-
-        private void TileExtDiscord_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                VoIP.StartVoIPClient("Discord");
-            }
-            catch (Exception)
-            {
-                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
-            }
-        }
-
-        private void TileExtTwitch_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                VoIP.StartVoIPClient("Twitch");
-            }
-            catch (Exception)
-            {
-                Notify.SmartNotify("Cannot launch VoIP client", "Maybe you haven't it installed?", NotifyUserType.Error, false);
-            }
-        }
-
-        private void CheckBoxStartVenriloWithWow_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.VentriloStartWithWoW = checkBoxStartVenriloWithWow.Checked;
-        }
-
-        private void CheckBoxStartRaidcallWithWow_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.RaidcallStartWithWoW = checkBoxStartRaidcallWithWow.Checked;
-        }
-
-        private void CheckBoxStartMumbleWithWow_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.MumbleStartWithWoW = checkBoxStartMumbleWithWow.Checked;
-        }
-
-        private void CheckBoxStartTeamspeak3WithWow_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.TS3StartWithWoW = checkBoxStartTeamspeak3WithWow.Checked;
-        }
-
-        private void CheckBoxTwitch_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.StartTwitchWithWoW = checkBoxTwitch.Checked;
-        }
-
-        #endregion Tab: VoIP
-
+        
         #region Tab: Plug-ins
 
         private void ButtonStartStopPlugin_Click(object sender, EventArgs e)

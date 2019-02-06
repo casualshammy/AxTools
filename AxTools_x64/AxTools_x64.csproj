@@ -23,7 +23,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
     <AssemblyVersionSettings>None.None.None.Increment</AssemblyVersionSettings>
-    <AssemblyVersion>12.3.73.2571</AssemblyVersion>
+    <AssemblyVersion>12.3.73.2573</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
@@ -210,7 +210,6 @@
     <Compile Include="Helpers\ProcessManager.cs" />
     <Compile Include="Helpers\Resources.cs" />
     <Compile Include="Helpers\VersionExt.cs" />
-    <Compile Include="Helpers\VoIP.cs" />
     <Compile Include="Services\AddonsBackup.cs" />
     <Compile Include="Services\Clicker.cs" />
     <Compile Include="Services\Pinger.cs" />

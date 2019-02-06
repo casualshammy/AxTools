@@ -22,4 +22,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CC0022:Should dispose object", Justification = "<Pending>", Scope = "member", Target = "~M:AxTools.Forms.MainWindow.WoWAccounts_CollectionChanged(System.Object,System.Collections.Specialized.NotifyCollectionChangedEventArgs)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S101:Types should be named in PascalCase", Justification = "<Pending>", Scope = "type", Target = "~T:AxTools.WoW.Internals.WoWUIFrame")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S1854:Dead stores should be removed", Justification = "<Pending>", Scope = "member", Target = "~M:AxTools.WoW.Internals.WoWUIFrame.GetAllFrames(AxTools.WoW.Helpers.GameInterface)~System.Collections.Generic.IEnumerable{AxTools.WoW.Internals.WoWUIFrame}")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Blocker Code Smell", "S3875:\"operator==\" should not be overloaded on reference types", Justification = "<Pending>", Scope = "member", Target = "~M:AxTools.Helpers.VersionExt.op_Equality(AxTools.Helpers.VersionExt,AxTools.Helpers.VersionExt)~System.Boolean")]
 

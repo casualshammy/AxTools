@@ -36,7 +36,7 @@ namespace AxTools.Helpers
             {
                 return true;
             }
-            if ((object)a == null || (object)b == null)
+            if (a is null || b is null)
             {
                 return false;
             }
@@ -123,7 +123,7 @@ namespace AxTools.Helpers
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == GetType() && Equals((VersionExt)obj);
         }

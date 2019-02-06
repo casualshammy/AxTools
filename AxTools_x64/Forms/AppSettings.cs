@@ -294,12 +294,9 @@ namespace AxTools.Forms
             settings.StyleColor = (MetroColorStyle)style;
             foreach (object i in Application.OpenForms)
             {
-                if (i.GetType().ParentTypes().Any(l => l == typeof(MetroForm)))
+                if (i.GetType().ParentTypes().Any(l => l == typeof(MetroForm)) && (i as MetroForm).StyleManager != null)
                 {
-                    if (((MetroForm)i).StyleManager != null)
-                    {
-                        ((MetroForm)i).StyleManager.Style = (MetroColorStyle)style;
-                    }
+                    (i as MetroForm).StyleManager.Style = (MetroColorStyle)style;
                 }
             }
         }
