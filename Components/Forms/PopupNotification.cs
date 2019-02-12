@@ -192,8 +192,10 @@ namespace Components.Forms
                 var sizeOfSpace = TextRenderer.MeasureText(" ", font).Width;
                 while (words.Any())
                 {
-                    var sizePixels = 0;
-                    while (words.Any() && sizePixels + sizeOfSpace + TextRenderer.MeasureText(words.First(), font).Width <= 300) // 300 - max length of <metroLabel2>
+                    result.Append(" " + words.First());
+                    var sizePixels = sizeOfSpace + TextRenderer.MeasureText(words.First(), font).Width;
+                    words.RemoveAt(0);
+                    while (words.Any() && sizePixels + sizeOfSpace + TextRenderer.MeasureText(words.First(), font).Width <= 300*1.4) // 300 - max length of <metroLabel2>, plus fix
                     {
                         result.Append(" " + words.First());
                         sizePixels += sizeOfSpace + TextRenderer.MeasureText(words.First(), font).Width;

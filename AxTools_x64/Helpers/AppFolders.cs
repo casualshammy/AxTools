@@ -30,20 +30,7 @@ namespace AxTools.Helpers
                 return path;
             }
         }
-
-        internal static string PluginsDir
-        {
-            get
-            {
-                string path = Application.StartupPath + "\\plugins";
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                return path;
-            }
-        }
-
+        
         internal static string PluginsBinariesDir
         {
             get

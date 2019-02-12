@@ -4,6 +4,7 @@ using AxTools.WoW.Helpers;
 using AxTools.WoW.Internals;
 using AxTools.WoW.PluginSystem;
 using Components.Forms;
+using KeraLua;
 using KeyboardWatcher;
 using NLua.Exceptions;
 using System;
@@ -102,6 +103,7 @@ namespace LuaConsole
         {
             try
             {
+                luaEngine.State.Encoding = Encoding.UTF8;
                 luaEngine.LoadCLRPackage();
                 helpInfo += "CLR package is loaded, using:\r\nimport ('System.Web');\r\nlocal client = WebClient()\r\n\r\n";
                 // Keys
@@ -177,7 +179,7 @@ namespace LuaConsole
                 luaEngine.DoString("if (not table.count) then table.count = function(tbl) local count = 0; for index in pairs(tbl) do count = count+1; end return count; end end");
                 luaEngine.DoString("if (not table.first) then table.first = function(tbl) for _, value in pairs(tbl) do return value; end end end");
                 helpInfo += "real table.count(tbl)\r\nvalue table.first(tbl)\r\n";
-                luaEngine.DoString("if (not GetNearestObjectByName) then GetNearestObjectByName = function(listCount, list, name) local t = { }; for i = 0,  listCount-1 do local object = list[i]; if (object.Name == name) then t[#t+1] = object; end end if (table.count(t) > 0) then local lp = GetLocalPlayer(); table.sort(t, function(a,b) return a.Location:Distance(lp.Location) < b.Location:Distance(lp.Location); end); return table.first(t); end return nil; end end");
+                luaEngine.DoString(GetNearestObjectByName);
                 helpInfo += "uservalue WowNpc/WowObject/WowPlayer GetNearestObjectByName(listLength, list, name)\r\n";
                 luaEngine.DoString("print = function(...) local text = \"\"; for i = 1, select(\"#\", ...) do text = text..tostring(select(i, ...))..\" \" end SendToChat(\"/run print(\"..text..\")\"); end");
                 helpInfo += "void print(params string)\r\n";
@@ -639,6 +641,7 @@ namespace LuaConsole
             {
                 actualWindow = new LuaConsole(game);
                 actualWindow.Show();
+                actualWindow.Activate();
             });
         }
 
@@ -657,5 +660,23 @@ namespace LuaConsole
                 }
             });
         }
+
+        private const string GetNearestObjectByName = 
+            "GetNearestObjectByName = function(listCount, list, name)" +
+            "    local t = { };" +
+            "    for i = 0,  listCount-1 do" +
+            "        local object = list[i];" +
+            "        if (object.Name == name) then" +
+            "            t[#t+1] = object;" +
+            "        end" +
+            "    end" +
+            "    if (table.count(t) > 0) then" +
+            "        local lp = GetLocalPlayer();" +
+            "        table.sort(t, function(a,b) return a.Location:Distance(lp.Location) < b.Location:Distance(lp.Location); end);" +
+            "        return table.first(t);" +
+            "    end " +
+            "    return nil;" +
+            "end";
+
     }
 }

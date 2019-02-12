@@ -6,6 +6,7 @@ using Components.Forms;
 using MetroFramework;
 using MetroFramework.Forms;
 using Microsoft.Win32;
+using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -13,12 +14,15 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Action = System.Action;
 using Settings2 = AxTools.Helpers.Settings2;
+using Task = System.Threading.Tasks.Task;
 
 namespace AxTools.Forms
 {
     internal partial class AppSettings : BorderedMetroForm
     {
+        private const string StartupTaskName = "AxTools_Startup";
         private static readonly Log2 log = new Log2("AppSettings");
         private readonly Settings2 settings = Settings2.Instance;
 
@@ -61,17 +65,9 @@ namespace AxTools.Forms
             TextBox6.Text = settings.WoWCustomWindowRectangle.Height.ToString();
             TextBox5.Text = settings.WoWCustomWindowRectangle.X.ToString();
             TextBox4.Text = settings.WoWCustomWindowRectangle.Y.ToString();
-            try
+            using (TaskService ts = new TaskService())
             {
-                using (RegistryKey regVersion = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run"))
-                {
-                    CheckBoxStartAxToolsWithWindows.Checked = regVersion?.GetValue("AxTools") != null && regVersion.GetValue("AxTools").ToString() == Application.ExecutablePath;
-                }
-            }
-            catch (Exception ex)
-            {
-                CheckBoxStartAxToolsWithWindows.Checked = false;
-                log.Error("Error occured then trying to open registry key [SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run]: " + ex.Message);
+                CheckBoxStartAxToolsWithWindows.Checked = ts.RootFolder.AllTasks.Any(l => l.Name == StartupTaskName && l.Enabled);
             }
             toolTip.SetToolTip(checkBox_AntiAFK, "Enables anti kick function for WoW.\r\nIt will prevent your character\r\nfrom /afk status");
             checkBoxMakeBackupNotWhilePlaying.Checked = settings.WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning;
@@ -85,7 +81,7 @@ namespace AxTools.Forms
 
         private void SetupEvents()
         {
-            CheckBoxStartAxToolsWithWindows.CheckedChanged += CheckBox9CheckedChanged;
+            CheckBoxStartAxToolsWithWindows.CheckedChanged += CheckBoxStartAxToolsWithWindows_CheckedChanged;
             CheckBox7.CheckedChanged += CheckBox7CheckedChanged;
             CheckBox6.CheckedChanged += CheckBox6CheckedChanged;
             TextBox7.TextChanged += TextBox7TextChanged;
@@ -145,40 +141,33 @@ namespace AxTools.Forms
             }
         }
         
-        private void CheckBox9CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxStartAxToolsWithWindows_CheckedChanged(object sender, EventArgs e)
         {
             if (CheckBoxStartAxToolsWithWindows.Checked)
             {
-                try
+                using (TaskService ts = new TaskService())
                 {
-                    RegistryKey regVersion =
-                        Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
-                    if (regVersion != null)
+                    using (TaskDefinition td = ts.NewTask())
                     {
-                        regVersion.SetValue("AxTools", Application.ExecutablePath);
-                        regVersion.Close();
+                        td.Triggers.Add(new LogonTrigger());
+                        td.Actions.Add(new ExecAction(Application.ExecutablePath, null, Application.StartupPath));
+                        td.Settings.AllowDemandStart = true;
+                        td.Settings.AllowHardTerminate = true;
+                        td.Settings.ExecutionTimeLimit = TimeSpan.Zero;
+                        td.Settings.Priority = ProcessPriorityClass.Normal;
+                        td.Settings.DisallowStartIfOnBatteries = false;
+                        td.Settings.Enabled = true;
+                        td.Principal.LogonType = TaskLogonType.InteractiveToken;
+                        td.Principal.RunLevel = TaskRunLevel.Highest;
+                        ts.RootFolder.RegisterTaskDefinition(StartupTaskName, td);
                     }
-                }
-                catch (Exception ex)
-                {
-                    log.Error("app_sett.CheckBox9.CheckedChanged_1: " + ex.Message);
                 }
             }
             else
             {
-                try
+                using (TaskService ts = new TaskService())
                 {
-                    RegistryKey regVersion =
-                        Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run");
-                    if (regVersion?.GetValue("AxTools") != null)
-                    {
-                        regVersion.DeleteValue("AxTools");
-                        regVersion.Close();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.Error("app_sett.CheckBox9.CheckedChanged_2: " + ex.Message);
+                    ts.RootFolder.DeleteTask(StartupTaskName);
                 }
             }
         }

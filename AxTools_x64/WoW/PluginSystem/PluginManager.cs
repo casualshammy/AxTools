@@ -194,17 +194,17 @@ namespace AxTools.WoW.PluginSystem
                     Directory.CreateDirectory(Path.Combine(AppFolders.TempDir, "plugins_update"));
                 using (WebClient webClient = new WebClient())
                 {
-                    foreach (string pluginName in new DirectoryInfo(AppFolders.PluginsDir).GetDirectories().Select(l => l.Name))
+                    foreach (string pluginName in new DirectoryInfo(Settings2.Instance.PluginSourceFolder).GetDirectories().Select(l => l.Name))
                     {
                         try
                         {
                             log.Info($"UpdatePluginsFromWeb: updating '{pluginName}'");
                             var fileName = Path.Combine(AppFolders.TempDir, $"plugins_update\\{pluginName}.zip");
                             webClient.DownloadFile($"https://axio.name/axtools/plugins/{pluginName}.zip", fileName);
-                            Directory.Delete(Path.Combine(AppFolders.PluginsDir, pluginName), true);
+                            Directory.Delete(Path.Combine(Settings2.Instance.PluginSourceFolder, pluginName), true);
                             using (Ionic.Zip.ZipFile zip = new Ionic.Zip.ZipFile(fileName, Encoding.UTF8))
                             {
-                                zip.ExtractAll(AppFolders.PluginsDir, Ionic.Zip.ExtractExistingFileAction.OverwriteSilently);
+                                zip.ExtractAll(Settings2.Instance.PluginSourceFolder, Ionic.Zip.ExtractExistingFileAction.OverwriteSilently);
                             }
                             log.Info($"UpdatePluginsFromWeb: '{pluginName}' is updated");
                         }
@@ -228,7 +228,7 @@ namespace AxTools.WoW.PluginSystem
             Assembly.LoadFile(Path.Combine(Application.StartupPath, "NLua.dll"));
             Assembly.LoadFile(Path.Combine(Application.StartupPath, "ICSharpCode.TextEditor.dll"));
 
-            var directories = Directory.GetDirectories(AppFolders.PluginsDir);
+            var directories = Directory.GetDirectories(Settings2.Instance.PluginSourceFolder);
             foreach (string directory in directories)
             {
                 try

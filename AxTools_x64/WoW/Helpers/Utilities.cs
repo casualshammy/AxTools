@@ -181,6 +181,11 @@ namespace AxTools.WoW.Helpers
             return $"{AppFolders.PluginsSettingsDir}\\{plugin.Name}";
         }
 
+        public static string GetPluginSourceFolder(this IPlugin3 plugin)
+        {
+            return $"{Settings2.Instance.PluginSourceFolder}\\{plugin.Name}";
+        }
+
         public static IntPtr WoWWindowHandle(GameInterface info)
         {
             return info.wowProcess.MainWindowHandle;

@@ -57,6 +57,8 @@ namespace AxTools
                             DeleteTempFolder();
                             Legacy();
                             InstallRootCertificate();
+                            log.Info("Adjusting process priorities...");
+                            Utils.SetProcessPrioritiesToNormal(Process.GetCurrentProcess().Id); // in case we'are starting from Task Scheduler priorities can be lower than normal
                             log.Info($"{typeof(WoWAntiKick)} is subscribing for {typeof(WoWProcessManager)}'s events");
                             WoWAntiKick.StartWaitForWoWProcesses();
                             log.Info($"Registered for: {Settings2.Instance.UserID}");
@@ -237,7 +239,7 @@ namespace AxTools
                         if (File.Exists(newFilePath))
                             File.Delete(newFilePath);
                         var rawConfig = File.ReadAllText(fileName, Encoding.UTF8);
-                        var config = rawConfig.Replace(Path.Combine(AppFolders.ResourcesDir, "alarm.wav").Replace(@"\", @"\\"), Path.Combine(AppFolders.PluginsDir, "Radar\\alarm.wav").Replace(@"\", @"\\"));
+                        var config = rawConfig.Replace(Path.Combine(AppFolders.ResourcesDir, "alarm.wav").Replace(@"\", @"\\"), Path.Combine(Settings2.Instance.PluginSourceFolder, "Radar\\alarm.wav").Replace(@"\", @"\\"));
                         File.WriteAllText(fileName, config, Encoding.UTF8);
                         File.Move(fileName, newFilePath);
                         legacyLog.Info($"{fileName} is moved to {newFilePath}");
@@ -280,7 +282,7 @@ namespace AxTools
                 }
             }
         }
-
+        
         #region Arguments
 
         private static void ProcessArgs()

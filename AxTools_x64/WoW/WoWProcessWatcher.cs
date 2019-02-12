@@ -15,16 +15,14 @@ namespace AxTools.WoW
         /// <summary>
         ///     List of all <see cref="WowProcess"/> running on computer
         /// </summary>
-        internal static ConcurrentDictionary<int, WowProcess> Processes = new ConcurrentDictionary<int, WowProcess>();
+        internal static readonly ConcurrentDictionary<int, WowProcess> Processes = new ConcurrentDictionary<int, WowProcess>();
 
         internal static event Action WoWProcessStartedOrClosed;
 
         internal static event Action<int> WoWProcessClosed;
 
         internal static event Action<WowProcess> WoWProcessReadyForInteraction;
-
-        private static readonly object _listLock = new object();
-
+        
         private static readonly Log2 log = new Log2(nameof(WoWProcessManager));
 
         internal static void StartWatcher()
@@ -143,6 +141,7 @@ namespace AxTools.WoW
                         }
                         try
                         {
+                            Utils.SetProcessPrioritiesToNormal(process.ProcessID); // in case we'are starting from Task Scheduler priorities can be lower than normal
                             process.Memory = new MemoryManager(Process.GetProcessById(process.ProcessID));
                             log.Info($"{process} Memory manager initialized, base address 0x{process.Memory.ImageBase.ToInt64():X}");
                             if (!process.IsValidBuild)

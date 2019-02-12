@@ -264,5 +264,22 @@ namespace AxTools.Helpers
             }
             return builder.ToString();
         }
+
+        internal static void SetProcessPrioritiesToNormal(int processId)
+        {
+            Process process = Process.GetProcessById(processId);
+            if (process != null)
+            {
+                IntPtr normalMemoryPriority = new IntPtr(5);
+                int processMemoryPriority = 0x27;
+                NativeMethods.NtSetInformationProcess(process.Handle, processMemoryPriority, ref normalMemoryPriority, 0x4);
+                IntPtr normalIoPriority = new IntPtr(2);
+                int processIoPriority = 0x21;
+                NativeMethods.NtSetInformationProcess(process.Handle, processIoPriority, ref normalIoPriority, 0x4);
+                process.PriorityClass = ProcessPriorityClass.Normal;
+                process.Dispose();
+            }
+        }
+
     }
 }

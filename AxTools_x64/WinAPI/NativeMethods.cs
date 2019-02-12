@@ -65,5 +65,9 @@ namespace AxTools.WinAPI
 
         [DllImport("iphlpapi.dll", SetLastError = true)]
         internal static extern uint GetExtendedTcpTable(IntPtr pTcpTable, ref int dwOutBufLen, bool sort, int ipVersion, TCP_TABLE_CLASS tblClass, int reserved);
+
+        [DllImport("ntdll.dll", SetLastError = true)]
+        internal static extern int NtSetInformationProcess(IntPtr processHandle, int processInformationClass, ref IntPtr processInformation, uint processInformationLength);
+
     }
 }

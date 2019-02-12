@@ -192,6 +192,22 @@ namespace AxTools.Helpers
             PluginHotkeysChanged?.Invoke();
         }
 
+        [JsonProperty(Order = 71, PropertyName = nameof(PluginSourceFolder))]
+        internal string PluginSourceFolder
+        {
+            get
+            {
+                if (!Directory.Exists(pluginSourceFolder))
+                {
+                    Directory.CreateDirectory(pluginSourceFolder);
+                }
+                return pluginSourceFolder;
+            }
+            set => pluginSourceFolder = value;
+        }
+
+        private string pluginSourceFolder = Application.StartupPath + "\\plugins";
+
         [JsonProperty(Order = 73, PropertyName = nameof(PluginHotkeys))]
         internal Dictionary<string, KeyExt> PluginHotkeys = new Dictionary<string, KeyExt>();
 

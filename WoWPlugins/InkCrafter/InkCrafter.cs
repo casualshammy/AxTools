@@ -23,7 +23,7 @@ namespace InkCrafter
 
         private Image trayIcon;
 
-        public Image TrayIcon => trayIcon ?? (trayIcon = new Bitmap(Application.StartupPath + "\\plugins\\InkCrafter\\inv_inscription_ink_starlight.jpg"));
+        public Image TrayIcon => trayIcon ?? (trayIcon = new Bitmap($"{this.GetPluginSourceFolder()}\\inv_inscription_ink_starlight.jpg"));
 
         public string WowIcon => "Interface\\\\Icons\\\\inv_inscription_ink_starlight";
 
