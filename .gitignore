@@ -10,3 +10,5 @@
 */bin/*
 */obj/*
 packages/*
+*.cache
+*TemporaryGeneratedFile*

@@ -164,30 +164,23 @@ namespace AxTools.Forms
 
         private async void AfterInitializingAsync()
         {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            PluginManagerEx.LoadPluginsAsync();                         // start loading plug-ins
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            foreach (IPlugin3 plugin in PluginManagerEx.LoadedPlugins.ToArray())
+                PluginManagerExOnPluginLoaded(plugin);
             Location = settings.MainWindowLocation;                     // should do it here...
             OnActivated(EventArgs.Empty);                               // ...and calling OnActivated is necessary
             var startupOverlay = new WaitingOverlay(this, "Load WoW accounts...", settings.StyleColor).Show(); // form is visible, placing overlay
             WoWAccounts_CollectionChanged(null, null);                  // initial load wow accounts
-            // searching for wow client
-            startupOverlay.Label = "Looking for WoW client...";
-            await Task.Run((Action)CheckWoWDirectoryIsValid);
-            // check if it's time to update plug-ins
-            CheckIfPluginsAreOutdated();
-            startupOverlay.Label = "Starting add-ons backup service...";
-            AddonsBackup.StartService();                                // start backup service
-            startupOverlay.Label = "Starting pinger...";
-            Pinger.Enabled = settings.PingerServerID != 0;              // set pinger
+            startupOverlay.Label = "Looking for WoW client...";         
+            await Program.WoWPathSearchTask;                            // searching for wow client
+            CheckIfPluginsAreOutdated();                                // check if it's time to update plug-ins
+            AddonsBackup_IsRunningChanged(AddonsBackup.IsRunning);      // is case something is already backing up
+            PingerOnStateChanged(Pinger.Enabled);                       // setting controls related to pinger
             startupOverlay.Label = "Starting WoW process manager...";
-            await Task.Run((Action)WoWProcessManager.StartWatcher);     // start WoW spy
+            await Program.StartWoWProcessManagerTask;                   // start WoW spy
             startupOverlay.Label = "Setting tray animation...";
             TrayIconAnimation.Initialize(notifyIconMain);               // initialize tray animation
             startupOverlay.Close();                                     // close startup overlay
             Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
-            UpdaterService.Start();                                     // start updater service
-            UACLevelWarning();
             log.Info("All start-up routines are finished");             // situation normal :)
         }
 
@@ -219,22 +212,7 @@ namespace AxTools.Forms
                     break;
             }
         }
-
-        private void CheckWoWDirectoryIsValid()
-        {
-            if (string.IsNullOrWhiteSpace(settings.WoWDirectory) || !File.Exists(Path.Combine(settings.WoWDirectory, "Wow.exe")) || !File.Exists(Path.Combine(settings.WoWDirectory, "WoW.mfil")))
-            {
-                foreach (var drive in DriveInfo.GetDrives().Where(l => l.DriveType == DriveType.Fixed))
-                {
-                    var path = Utils.FindFiles(drive.Name, "Wow.exe", 5).Select(Path.GetDirectoryName).Intersect(Utils.FindFiles(drive.Name, "WoW.mfil", 5).Select(Path.GetDirectoryName)).FirstOrDefault();
-                    if (path != null)
-                    {
-                        settings.WoWDirectory = path;
-                    }
-                }
-            }
-        }
-
+        
         private void CheckIfPluginsAreOutdated()
         {
             if (settings.UpdatePlugins && (DateTime.UtcNow - settings.PluginsLastTimeUpdated).TotalDays > 7)
@@ -245,22 +223,7 @@ namespace AxTools.Forms
                         settings.PluginsLastTimeUpdated = DateTime.UtcNow - new TimeSpan(6, 0, 0, 0); // user will be notified after 24 hours
                 });
         }
-
-        private void UACLevelWarning()
-        {
-            if (!settings.UACLevelWarningSuppress)
-            {
-                TaskDialog td = new TaskDialog("AxTools doesn't support UAC policy level higher than the second ('Notify me only when apps try to make changes to my computer (don't dim my desktop))'.\r\n" +
-                    "Please make sure you have appropriate UAC policy level.", "AxTools")
-                {
-                    CommonButtons = TaskDialogButton.OK,
-                    CustomButtons = new CustomButton[] { new CustomButton(Result.Ignore, "Don't show again") }
-                };
-                if (td.Show(this).CommonButton == Result.Ignore)
-                    settings.UACLevelWarningSuppress = true;
-            }
-        }
-
+        
         #endregion MainFormEvents
 
         #region TrayContextMenu
@@ -640,19 +603,15 @@ namespace AxTools.Forms
         private void AddonsBackup_IsRunningChanged(bool isRunning)
         {
             BeginInvoke((MethodInvoker)delegate
-           {
-               linkBackup.Visible = !isRunning;
-               progressBarAddonsBackup.Value = 0;
-               progressBarAddonsBackup.Visible = isRunning;
-               if (isRunning)
-               {
-                   AddonsBackup.ProgressPercentageChanged += AddonsBackup_ProgressPercentageChanged;
-               }
-               else
-               {
-                   AddonsBackup.ProgressPercentageChanged -= AddonsBackup_ProgressPercentageChanged;
-               }
-           });
+            {
+                linkBackup.Visible = !isRunning;
+                progressBarAddonsBackup.Value = 0;
+                progressBarAddonsBackup.Visible = isRunning;
+                if (isRunning)
+                    AddonsBackup.ProgressPercentageChanged += AddonsBackup_ProgressPercentageChanged;
+                else
+                    AddonsBackup.ProgressPercentageChanged -= AddonsBackup_ProgressPercentageChanged;
+            });
         }
 
         private void AddonsBackup_ProgressPercentageChanged(int percent)

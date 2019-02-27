@@ -26,7 +26,7 @@ namespace AxTools.WoW.PluginSystem
         internal static bool UpdateIsActive { get; set; }
 
         internal static event Action<IPlugin3> PluginStateChanged;
-        internal static event Action PluginsLoaded;
+        internal static event Action AllPluginsLoaded;
         internal static event Action<IPlugin3> PluginLoaded;
         internal static event Action<IPlugin3> PluginUnloaded;
 
@@ -160,7 +160,7 @@ namespace AxTools.WoW.PluginSystem
                 {
                     HotkeyManager.AddKeys("Plugin_" + i.Key, i.Value);
                 }
-                PluginsLoaded?.Invoke();
+                AllPluginsLoaded?.Invoke();
             });
         }
 

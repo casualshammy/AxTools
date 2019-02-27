@@ -98,7 +98,7 @@ namespace AxTools.Updater
                     _updateFileURL = GetUpdateFileURL(UpdateFileDnsTxt);
                     log.Info("Update file URL: " + (_updateFileURL ?? "UNKNOWN"));
                 }
-                if (_updateFileURL != null)
+                if (_updateFileURL != null && MainWindow.Instance != null)
                 {
                     CheckForUpdates();
                 }

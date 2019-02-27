@@ -42,7 +42,7 @@ namespace AxTools.WoW
             }
             else
             {
-                logger.Error($"Cannot find instance for process with id:{obj}");
+                logger.Error($"{nameof(WoWProcessManager_WoWProcessClosed)}: cannot find instance for process with id:{obj}");
             }
         }
 

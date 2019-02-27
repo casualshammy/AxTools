@@ -22,10 +22,11 @@ namespace AxTools.Services
         private static readonly Log2 log = new Log2(nameof(AddonsBackup));
         private static readonly Settings2 _settings = Settings2.Instance;
         private static int _prevProcent = -1;
-        private static bool _isBackingUp;
         private static Timer _timer;
         private static bool _serviceIsStarted;
         private static readonly string[] FoldersToArchive = { "WTF", "Interface" };
+
+        internal static bool IsRunning { get; private set; }
 
         internal static event Action<bool> IsRunningChanged;
 
@@ -54,7 +55,7 @@ namespace AxTools.Services
 
         internal static void ManualBackup()
         {
-            if (_isBackingUp)
+            if (IsRunning)
             {
                 throw new Exception("Backup process is already started");
             }
@@ -63,7 +64,7 @@ namespace AxTools.Services
 
         internal static void DeployArchive(string path)
         {
-            _isBackingUp = true;
+            IsRunning = true;
             IsRunningChanged?.Invoke(true);
             try
             {
@@ -93,7 +94,7 @@ namespace AxTools.Services
                 Notify.TrayPopup("Deploying error", ex.Message, NotifyUserType.Error, true);
             }
             IsRunningChanged?.Invoke(false);
-            _isBackingUp = false;
+            IsRunning = false;
         }
 
         internal static string[] GetArchives()
@@ -105,7 +106,7 @@ namespace AxTools.Services
         private static void Timer_OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             TimeSpan pTimeSpan = DateTime.UtcNow - _settings.WoWAddonsBackupLastDate;
-            if (pTimeSpan.TotalHours >= _settings.WoWAddonsBackupMinimumTimeBetweenBackup && !_isBackingUp)
+            if (pTimeSpan.TotalHours >= _settings.WoWAddonsBackupMinimumTimeBetweenBackup && !IsRunning)
             {
                 if (_settings.WoWAddonsBackup_DoNotCreateBackupWhileWoWClientIsRunning && WoWProcessManager.Processes.Any())
                 {
@@ -143,7 +144,7 @@ namespace AxTools.Services
             Guid _wowLock = MainWindow.Instance.WoWLaunchLock.GetLock();
             try
             {
-                _isBackingUp = true;
+                IsRunning = true;
                 IsRunningChanged?.Invoke(true);
                 if (Directory.Exists(_settings.WoWDirectory + "\\WTF"))
                 {
@@ -166,7 +167,15 @@ namespace AxTools.Services
                         }
                         finally
                         {
-                            DeleteBrokenFiles();
+                            try
+                            {
+                                DeleteBrokenFiles();
+                                log.Info("Broken files are removed");
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Error("Can't delete broken files: " + ex.Message);
+                            }
                         }
                     }
                     else
@@ -180,13 +189,19 @@ namespace AxTools.Services
                     log.Info("WTF directory isn't found");
                     Notify.TrayPopup("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
                 }
+                log.Info("0");
                 IsRunningChanged?.Invoke(false);
-                _isBackingUp = false;
+                log.Info("1");
+                IsRunning = false;
+                log.Info("2");
             }
             finally
             {
+                log.Info("3");
                 Program.ShutdownLock.ReleaseLock(_lock);
+                log.Info("4");
                 MainWindow.Instance.WoWLaunchLock.ReleaseLock(_wowLock);
+                log.Info("5");
             }
         }
 
@@ -259,46 +274,52 @@ namespace AxTools.Services
             IVssBackupComponents backupComponents = vssImplementation.CreateVssBackupComponents();
             backupComponents.InitializeForBackup(null);
             vssLog.Info("VssBackupComponents is initialized");
-            backupComponents.GatherWriterMetadata();
-            backupComponents.SetContext(VssVolumeSnapshotAttributes.Persistent | VssVolumeSnapshotAttributes.NoAutoRelease);
-            backupComponents.SetBackupState(false, true, VssBackupType.Full, false);
-            vssLog.Info("VssBackupComponents is set up");
-            backupComponents.StartSnapshotSet();
-            Guid backupGuid1 = backupComponents.AddToSnapshotSet(new DirectoryInfo(_settings.WoWDirectory).Root.Name, Guid.Empty);
-            backupComponents.PrepareForBackup();
-            backupComponents.DoSnapshotSet();
-            vssLog.Info("Snapshot is taken");
-            backupComponents.ExposeSnapshot(backupGuid1, null, VssVolumeSnapshotAttributes.ExposedLocally, driveLetter);
-            // zipping
-            string zipPath = $"{_settings.WoWAddonsBackupPath}\\AddonsBackup_{DateTime.UtcNow:yyyyMMdd_HHmmss}.zip";
-            log.Info("Zipping to file: " + zipPath);
-            using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
+            Guid backupGuid1 = Guid.Empty;
+            try
             {
-                zip.CompressionLevel = (CompressionLevel)_settings.WoWAddonsBackupCompressionLevel;
-                foreach (string dirName in FoldersToArchive)
+                backupComponents.GatherWriterMetadata();
+                backupComponents.SetContext(VssVolumeSnapshotAttributes.Persistent | VssVolumeSnapshotAttributes.NoAutoRelease);
+                backupComponents.SetBackupState(false, true, VssBackupType.Full, false);
+                vssLog.Info("VssBackupComponents is set up");
+                backupComponents.StartSnapshotSet();
+                backupGuid1 = backupComponents.AddToSnapshotSet(new DirectoryInfo(_settings.WoWDirectory).Root.Name, Guid.Empty);
+                backupComponents.PrepareForBackup();
+                backupComponents.DoSnapshotSet();
+                vssLog.Info("Snapshot is taken");
+                backupComponents.ExposeSnapshot(backupGuid1, null, VssVolumeSnapshotAttributes.ExposedLocally, driveLetter);
+                // zipping
+                string zipPath = $"{_settings.WoWAddonsBackupPath}\\AddonsBackup_{DateTime.UtcNow:yyyyMMdd_HHmmss}.zip";
+                log.Info("Zipping to file: " + zipPath);
+                using (ZipFile zip = new ZipFile(zipPath, Encoding.UTF8))
                 {
-                    var entry = zip.AddDirectory(_settings.WoWDirectory.Replace(new DirectoryInfo(_settings.WoWDirectory).Root.Name, $"{driveLetter}\\") + "\\" + dirName, "\\" + dirName);
+                    zip.CompressionLevel = (CompressionLevel)_settings.WoWAddonsBackupCompressionLevel;
+                    foreach (string dirName in FoldersToArchive)
+                    {
+                        zip.AddDirectory(_settings.WoWDirectory.Replace(new DirectoryInfo(_settings.WoWDirectory).Root.Name, $"{driveLetter}\\") + "\\" + dirName, "\\" + dirName);
+                    }
+                    zip.SaveProgress += AddonsBackup_SaveProgress;
+                    var processPriority = Process.GetCurrentProcess().PriorityClass;
+                    Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
+                    zip.Save();
+                    Process.GetCurrentProcess().PriorityClass = processPriority;
+                    zip.SaveProgress -= AddonsBackup_SaveProgress;
                 }
-                zip.SaveProgress += AddonsBackup_SaveProgress;
-                var processPriority = Process.GetCurrentProcess().PriorityClass;
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
-                zip.Save();
-                Process.GetCurrentProcess().PriorityClass = processPriority;
-                zip.SaveProgress -= AddonsBackup_SaveProgress;
             }
-            VssSnapshotProperties existingSnapshot = backupComponents.QuerySnapshots().FirstOrDefault(l => l.SnapshotId == backupGuid1);
-            if (existingSnapshot == default(VssSnapshotProperties))
+            finally
             {
-                vssLog.Error($"Can't delete snapshot {backupGuid1}");
-                throw new IOException($"Can't delete snapshot {backupGuid1}");
+                VssSnapshotProperties existingSnapshot = backupComponents.QuerySnapshots().FirstOrDefault(l => l.SnapshotId == backupGuid1);
+                if (existingSnapshot == default(VssSnapshotProperties))
+                {
+                    vssLog.Error($"Can't delete snapshot {backupGuid1}");
+                }
+                else
+                {
+                    backupComponents.DeleteSnapshot(existingSnapshot.SnapshotId, true);
+                    backupComponents.Dispose();
+                    vssLog.Info($"Snapshot is deleted ({existingSnapshot.SnapshotId})");
+                }
+                GC.Collect();
             }
-            else
-            {
-                backupComponents.DeleteSnapshot(existingSnapshot.SnapshotId, true);
-                backupComponents.Dispose();
-                vssLog.Info($"Snapshot is deleted ({existingSnapshot.SnapshotId})");
-            }
-            GC.Collect();
         }
 
         private static void Unzip(string path)

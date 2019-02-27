@@ -92,18 +92,26 @@ namespace AxTools.WoW
         
         private static void GetWoWProcesses()
         {
-            foreach (Process i in Process.GetProcesses())
+            try
             {
-                switch (i.ProcessName.ToLower())
+                foreach (Process i in Process.GetProcesses())
                 {
-                    case "wow":
-                        WowProcess process = new WowProcess(i.Id);
-                        Processes.TryAdd(i.Id, process);
-                        log.Info($"{process} Process added");
-                        Task.Factory.StartNew(OnWowProcessStartup, process);
-                        break;
+                    switch (i.ProcessName.ToLower())
+                    {
+                        case "wow":
+                            WowProcess process = new WowProcess(i.Id);
+                            Processes.TryAdd(i.Id, process);
+                            log.Info($"{process} Process added");
+                            Task.Factory.StartNew(OnWowProcessStartup, process);
+                            break;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                log.Error($"{nameof(GetWoWProcesses)} error: {ex.Message}");
+            }
+            
         }
 
         private static void OnWowProcessStartup(object wowProcess)
@@ -162,7 +170,9 @@ namespace AxTools.WoW
             }
             catch (Exception ex)
             {
-                log.Error("General error: " + ex.Message);
+                Processes.TryRemove((wowProcess as WowProcess).ProcessID, out WowProcess pWowProcess);
+                pWowProcess?.Dispose();
+                log.Error($"{(wowProcess as WowProcess)}: {nameof(OnWowProcessStartup)}: general error: " + ex.Message);
             }
         }
 
