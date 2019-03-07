@@ -29,6 +29,7 @@ namespace AxTools.Forms
     {
         internal static MainWindow Instance { get; private set; }
         internal MultiLock WoWLaunchLock { get; private set; }
+        internal bool Loaded { get; private set; }
         private bool isClosing;
         private readonly Settings2 settings = Settings2.Instance;
         private static readonly Log2 log = new Log2(nameof(MainWindow));
@@ -180,6 +181,7 @@ namespace AxTools.Forms
             startupOverlay.Label = "Setting tray animation...";
             TrayIconAnimation.Initialize(notifyIconMain);               // initialize tray animation
             startupOverlay.Close();                                     // close startup overlay
+            Loaded = true;
             Changes.ShowChangesIfNeeded();                              // show changes overview dialog if needed
             log.Info("All start-up routines are finished");             // situation normal :)
         }

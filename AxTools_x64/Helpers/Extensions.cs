@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AxTools.Forms;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -73,16 +74,9 @@ namespace AxTools.Helpers
             form.Activate();
         }
 
-        public static void PostInvoke(this Control control, Action action)
+        public static void PostInvoke(this object control, Action action)
         {
-            if (control.InvokeRequired)
-            {
-                control.BeginInvoke(new MethodInvoker(action));
-            }
-            else
-            {
-                action();
-            }
+            MainWindow.Instance.BeginInvoke(new MethodInvoker(action));
         }
 
         public static IEnumerable<ToolStripItem> GetAllToolStripItems(this ToolStripItemCollection collection)

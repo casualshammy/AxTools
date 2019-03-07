@@ -67,7 +67,7 @@ namespace AxTools.Helpers
             {
                 taskDialog.CommonIcon = TaskDialogIcon.Information;
             }
-            form.Invoke((MethodInvoker)(() =>
+            form.BeginInvoke((MethodInvoker)(() =>
             {
                 form.Activate();
                 taskDialog.Show(form);

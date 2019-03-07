@@ -162,7 +162,7 @@ namespace AxTools.Services
                         }
                         catch (Exception ex)
                         {
-                            log.Error("Backup error: " + ex.Message);
+                            log.Error($"Backup error ({ex.GetType()}): {ex.Message}");
                             Notify.TrayPopup("Backup error", ex.Message, NotifyUserType.Error, true);
                         }
                         finally
@@ -189,19 +189,13 @@ namespace AxTools.Services
                     log.Info("WTF directory isn't found");
                     Notify.TrayPopup("Backup error", "\"WTF\" folder isn't found", NotifyUserType.Error, true);
                 }
-                log.Info("0");
                 IsRunningChanged?.Invoke(false);
-                log.Info("1");
                 IsRunning = false;
-                log.Info("2");
             }
             finally
             {
-                log.Info("3");
                 Program.ShutdownLock.ReleaseLock(_lock);
-                log.Info("4");
                 MainWindow.Instance.WoWLaunchLock.ReleaseLock(_wowLock);
-                log.Info("5");
             }
         }
 

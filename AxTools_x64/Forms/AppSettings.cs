@@ -330,7 +330,7 @@ namespace AxTools.Forms
                         }
                         finally
                         {
-                            Invoke(new Action(waitingOverlay.Close));
+                            BeginInvoke(new Action(waitingOverlay.Close));
                         }
                     });
                 }

@@ -1,4 +1,5 @@
-﻿using AxTools.Helpers;
+﻿using AxTools.Forms;
+using AxTools.Helpers;
 using AxTools.WoW.Helpers;
 using KeyboardWatcher;
 using Newtonsoft.Json;
@@ -252,7 +253,16 @@ namespace AxTools.WoW.PluginSystem
                         var type = dll.GetTypes().FirstOrDefault(k => k.IsClass && typeof(IPlugin3).IsAssignableFrom(k));
                         if (type != default(Type))
                         {
-                            var temp = (IPlugin3)Activator.CreateInstance(type);
+                            IPlugin3 temp = null;
+                            if (typeof(Control).IsAssignableFrom(type))
+                            {
+                                log.Info($"Plug-in from directory <{directory}> creates control(s) in it's constructor!");
+                                MainWindow.Instance.Invoke((MethodInvoker)delegate { temp = (IPlugin3)Activator.CreateInstance(type); });
+                            }  
+                            else
+                            {
+                                temp = (IPlugin3)Activator.CreateInstance(type);
+                            }
                             if (_pluginContainers.Select(l => l.Plugin).All(l => l.Name != temp.Name))
                             {
                                 if (!string.IsNullOrWhiteSpace(temp.Name))
