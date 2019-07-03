@@ -1,8 +1,8 @@
 import os, shutil
 from subprocess import call
 
-pluginsFolder = r"D:\sync\private\Projects\AxTools\WoWPlugins"
-outputFolder = "D:\\sync\\private\\Projects\\AxTools\\_webservice\\plugins"
+pluginsFolder = r"F:\sync\private\Projects\AxTools\WoWPlugins"
+outputFolder = "F:\\sync\\private\\Projects\\AxTools\\_webservice\\plugins"
 
 def main():
     for entry in os.listdir(outputFolder):

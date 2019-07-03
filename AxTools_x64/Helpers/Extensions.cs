@@ -74,7 +74,7 @@ namespace AxTools.Helpers
             form.Activate();
         }
 
-        public static void PostInvoke(this object control, Action action)
+        public static void ExecuteInUIThread(this Action action)
         {
             MainWindow.Instance.BeginInvoke(new MethodInvoker(action));
         }

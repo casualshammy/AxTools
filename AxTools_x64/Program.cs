@@ -72,7 +72,6 @@ namespace AxTools
                             log.Info("Starting add-ons backup service..."); Task.Run((Action)AddonsBackup.StartService);
                             log.Info("Starting pinger..."); Task.Run(delegate { Pinger.Enabled = Settings2.Instance.PingerServerID != 0; });
                             log.Info("Starting updater service..."); Task.Run((Action)UpdaterService.Start);
-                            log.Info("Showing UAC warning..."); Task.Run((Action)UACLevelWarning);
                             log.Info($"Constructing MainWindow, app version: {Globals.AppVersion}"); Application.Run(new MainWindow());
                             log.Info("MainWindow is closed, waiting for ShutdownLock..."); ShutdownLock.WaitForLocks();
                             log.Info($"Invoking 'Exit' handlers ({Exit?.GetInvocationList().Length})..."); Exit?.Invoke();
@@ -305,22 +304,7 @@ namespace AxTools
                 }
             }
         }
-
-        private static void UACLevelWarning()
-        {
-            if (!Settings2.Instance.UACLevelWarningSuppress)
-            {
-                TaskDialog td = new TaskDialog("AxTools doesn't support UAC policy level higher than the second ('Notify me only when apps try to make changes to my computer (don't dim my desktop))'.\r\n" +
-                    "Please make sure you have appropriate UAC policy level.", "AxTools")
-                {
-                    CommonButtons = TaskDialogButton.OK,
-                    CustomButtons = new CustomButton[] { new CustomButton(Result.Ignore, "Don't show again") }
-                };
-                if (td.Show().CommonButton == Result.Ignore)
-                    Settings2.Instance.UACLevelWarningSuppress = true;
-            }
-        }
-
+        
         #region Arguments
 
         private static void ProcessArgs()

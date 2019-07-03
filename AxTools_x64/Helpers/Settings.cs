@@ -128,9 +128,6 @@ namespace AxTools.Helpers
         [JsonProperty(Order = 5, PropertyName = nameof(SendLogToDeveloperOnShutdown))]
         internal bool SendLogToDeveloperOnShutdown = true;
 
-        [JsonProperty(Order = 6, PropertyName = nameof(UACLevelWarningSuppress))]
-        internal bool UACLevelWarningSuppress = false;
-
         #endregion General
 
         #region WoW

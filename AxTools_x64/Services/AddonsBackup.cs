@@ -59,7 +59,7 @@ namespace AxTools.Services
             {
                 throw new Exception("Backup process is already started");
             }
-            MakeNewArchive();
+            MakeNewArchive(false);
         }
 
         internal static void DeployArchive(string path)
@@ -135,10 +135,10 @@ namespace AxTools.Services
         private static void StartBackupOnSchedule()
         {
             _settings.WoWAddonsBackupLastDate = DateTime.UtcNow;
-            Task.Factory.StartNew(MakeNewArchive);
+            Task.Factory.StartNew(delegate { MakeNewArchive(true); });
         }
 
-        private static void MakeNewArchive()
+        private static void MakeNewArchive(bool scheduledBackup)
         {
             Guid _lock = Program.ShutdownLock.GetLock();
             Guid _wowLock = MainWindow.Instance.WoWLaunchLock.GetLock();
@@ -160,6 +160,14 @@ namespace AxTools.Services
                             Zip();
                             log.Info("Backup is successfully created");
                         }
+                        catch (DirectoryNotFoundException directoryNotFoundEx)
+                        {
+                            log.Info($"Directory not found: {directoryNotFoundEx.Message}, let's wait for ten minutes...");
+                            if (!scheduledBackup)
+                                Notify.TrayPopup("Backup error: directory not found", directoryNotFoundEx.Message, NotifyUserType.Error, true);
+                            else
+                                _settings.WoWAddonsBackupLastDate = DateTime.UtcNow - TimeSpan.FromHours(_settings.WoWAddonsBackupMinimumTimeBetweenBackup - 1); // wait for one hour
+                        }
                         catch (Exception ex)
                         {
                             log.Error($"Backup error ({ex.GetType()}): {ex.Message}");
@@ -171,6 +179,10 @@ namespace AxTools.Services
                             {
                                 DeleteBrokenFiles();
                                 log.Info("Broken files are removed");
+                            }
+                            catch (DirectoryNotFoundException directoryNotFoundEx)
+                            {
+                                log.Info($"Can't delete broken files because {directoryNotFoundEx.Message}");
                             }
                             catch (Exception ex)
                             {
