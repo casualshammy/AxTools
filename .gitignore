@@ -12,3 +12,8 @@
 packages/*
 *.cache
 *TemporaryGeneratedFile*
+/AxTools_x64/*.bat
+/AxTools_x64/_makeRelease2_plugins.py
+/AxTools_x64/_makeRelease2_update-file-version.py
+/_webservice/log-reporter/make_log.php
+/_webservice/upd/updater.php
