@@ -68,8 +68,8 @@ namespace AxTools
                             log.Info($"Registered for: {Settings2.Instance.UserID}");
                             log.Info("Starting to load plugins..."); PluginManagerEx.LoadPluginsAsync();
                             log.Info("Starting WoW process manager..."); StartWoWProcessManagerTask = Task.Run((Action)WoWProcessManager.StartWatcher);
-                            log.Info("Looking for WoW client..."); WoWPathSearchTask = Task.Run((Action)CheckWoWDirectoryIsValid);
-                            log.Info("Starting add-ons backup service..."); Task.Run((Action)AddonsBackup.StartService);
+                            log.Info("Looking for WoW client..."); WoWPathSearchTask = Task.Run(delegate { }); // CheckWoWDirectoryIsValid
+                            // log.Info("Starting add-ons backup service..."); Task.Run((Action)AddonsBackup.StartService);
                             log.Info("Starting pinger..."); Task.Run(delegate { Pinger.Enabled = Settings2.Instance.PingerServerID != 0; });
                             log.Info("Starting updater service..."); Task.Run((Action)UpdaterService.Start);
                             log.Info($"Constructing MainWindow, app version: {Globals.AppVersion}"); Application.Run(new MainWindow());

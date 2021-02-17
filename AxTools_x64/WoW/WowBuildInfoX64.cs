@@ -8,7 +8,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AxTools.Helpers;
-using FMemoryPattern;
+using FMemory;
+using FMemory.PatternHelpers;
 using Newtonsoft.Json;
 
 namespace AxTools.WoW
@@ -46,25 +47,25 @@ namespace AxTools.WoW
 
 		private static readonly MemoryPattern[] patterns =
 		{
-			MemoryPattern.FromTextstyle(nameof(BlackMarketNumItems),    "8B 15 ?? ?? ?? ?? 33 C0 F2 4C 0F 2C C0 85 D2 74 xx 4C 8B 0D xx xx xx xx 49 8B C9 44 39 01 74",             new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(BlackMarketItems),       "8B 15 xx xx xx xx 33 C0 F2 4C 0F 2C C0 85 D2 74 xx 4C 8B 0D ?? ?? ?? ?? 49 8B C9 44 39 01 74",             new LeaModifier(LeaType.CmpMinusOne)),
+			MemoryPattern.FromTextstyle(nameof(BlackMarketNumItems),    "8B 15 ?? ?? ?? ?? 33 C0 F2 4C 0F 2C C0 85 D2 74 xx 4C 8B 0D xx xx xx xx 49 8B C9 44 39 01 74",             new LeaModifier(LeaType.E8)),
+			MemoryPattern.FromTextstyle(nameof(BlackMarketItems),       "8B 15 xx xx xx xx 33 C0 F2 4C 0F 2C C0 85 D2 74 xx 4C 8B 0D ?? ?? ?? ?? 49 8B C9 44 39 01 74",             new LeaModifier(LeaType.E8)),
 			MemoryPattern.FromTextstyle(nameof(LastHardwareAction),     "48 83 EC 28 2B 0D ?? ?? ?? ?? 8D 81 20 6C FB FF 85 C0 78 xx 8D 81 C0 88 E4 FF 85 C0 78 xx E8",             new LeaModifier(LeaType.E8)),
-			MemoryPattern.FromTextstyle(nameof(TickCount),              "0F 57 C0 8B C1 89 0D ?? ?? ?? ?? C7 05 xx xx xx xx 00 00 00 00 F3 48 0F 2A C0 F3 0F 59 05 xx xx xx xx",    new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(MouseoverGUID),          "E8 xx xx xx xx 0F 10 xx xx 0F 11 05 ?? ?? ?? ?? E8 xx xx xx xx 0F BE D0",                                  new LeaModifier(LeaType.CmpMinusOne)),
+			MemoryPattern.FromTextstyle(nameof(TickCount),              "0F 57 C0 8B C1 89 0D ?? ?? ?? ?? C7 05 xx xx xx xx 00 00 00 00 F3 48 0F 2A C0 F3 0F 59 05 xx xx xx xx",    new LeaModifier(LeaType.E8)),
+			MemoryPattern.FromTextstyle(nameof(MouseoverGUID),          "E8 xx xx xx xx 0F 10 xx xx 0F 11 05 ?? ?? ?? ?? E8 xx xx xx xx 0F BE D0",                                  new LeaModifier(LeaType.E8)),
 			MemoryPattern.FromTextstyle(nameof(ChatIsOpened),           "83 3D ?? ?? ?? ?? 00 48 8B CB 7E xx 48 8B D0 EB xx 33 D2 E8 xx xx xx xx E8",                               new LeaModifier(LeaType.Cmp)),
-			MemoryPattern.FromTextstyle(nameof(FocusedWidget),          "48 8B CB E8 xx xx xx xx 33 C9 48 39 0D ?? ?? ?? ??",                                                       new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(ObjectManager),          "57 41 56 41 57 48 83 EC 30 4C 8B 05 ?? ?? ?? ??",                                                          new LeaModifier(LeaType.CmpMinusOne)),
+			MemoryPattern.FromTextstyle(nameof(FocusedWidget),          "48 8B CB E8 xx xx xx xx 33 C9 48 39 0D ?? ?? ?? ??",                                                       new LeaModifier(LeaType.E8)),
+			MemoryPattern.FromTextstyle(nameof(ObjectManager),          "57 41 56 41 57 48 83 EC 30 4C 8B 05 ?? ?? ?? ??",                                                          new LeaModifier(LeaType.E8)),
 			MemoryPattern.FromTextstyle(nameof(GlueState),              "80 3D xx xx xx xx 00 75 19 80 3D ?? ?? ?? ?? 00 74 10 80 7B 20 00 74 0A 48 83 C4 20 5B",                   new LeaModifier(LeaType.Cmp)),
-			MemoryPattern.FromTextstyle(nameof(GameState),              "48 83 EC 58 0F B6 05 ?? ?? ?? ?? A8 10 74 44 0F B6 C8 0F BA F1 04",                                        new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(KnownSpellsCount),       "8B C2 C3 44 8B 0D ?? ?? ?? ?? 33 D2 45 85 C9 74 23 4C 8B 15 xx xx xx xx",                                  new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(KnownSpells),            "8B C2 C3 44 8B 0D xx xx xx xx 33 D2 45 85 C9 74 23 4C 8B 15 ?? ?? ?? ??",                                  new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(UIFrameBase),            "E8 xx xx xx xx 48 8B CD 4C 89 35 ?? ?? ?? ?? E8",                                                          new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(PlayerZoneID),           "E8 xx xx xx xx 48 85 C0 0F 44 1D ?? ?? ?? ?? 8B C3",                                                       new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(PlayerIsLooting),        "8B D7 48 8D 0D ?? ?? ?? ?? E8 xx xx xx xx 80 38 00 74",                                                    new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(PlayerGUID),             "48 8D 05 ?? ?? ?? ?? 41 B8 03 00 00 00 0F 1F 00",                                                          new LeaModifier(LeaType.CmpMinusOne)),
+			MemoryPattern.FromTextstyle(nameof(GameState),              "48 83 EC 58 0F B6 05 ?? ?? ?? ?? A8 10 74 44 0F B6 C8 0F BA F1 04",                                        new LeaModifier(LeaType.E8)),
+			MemoryPattern.FromTextstyle(nameof(KnownSpellsCount),       "8B C2 C3 44 8B 0D ?? ?? ?? ?? 33 D2 45 85 C9 74 23 4C 8B 15 xx xx xx xx",                                  new LeaModifier(LeaType.E8)),
+			MemoryPattern.FromTextstyle(nameof(KnownSpells),            "8B C2 C3 44 8B 0D xx xx xx xx 33 D2 45 85 C9 74 23 4C 8B 15 ?? ?? ?? ??",                                  new LeaModifier(LeaType.E8)),
+			MemoryPattern.FromTextstyle(nameof(UIFrameBase),            "E8 xx xx xx xx 48 8B CD 4C 89 35 ?? ?? ?? ?? E8",                                                          new LeaModifier(LeaType.E8)),
+			MemoryPattern.FromTextstyle(nameof(PlayerZoneID),           "E8 xx xx xx xx 48 85 C0 0F 44 1D ?? ?? ?? ?? 8B C3",                                                       new LeaModifier(LeaType.E8)),
+			MemoryPattern.FromTextstyle(nameof(PlayerIsLooting),        "8B D7 48 8D 0D ?? ?? ?? ?? E8 xx xx xx xx 80 38 00 74",                                                    new LeaModifier(LeaType.E8)),
+			MemoryPattern.FromTextstyle(nameof(PlayerGUID),             "48 8D 05 ?? ?? ?? ?? 41 B8 03 00 00 00 0F 1F 00",                                                          new LeaModifier(LeaType.E8)),
 			MemoryPattern.FromTextstyle(nameof(NotLoadingScreen),       "48 83 EC 28 80 3D ?? ?? ?? ?? 00 0F 84 xx xx xx xx 83 3D xx xx xx xx 00 48",                               new LeaModifier(LeaType.Cmp)),
-			MemoryPattern.FromTextstyle(nameof(IsChatAFK),              "39 1D ?? ?? ?? ?? 74 xx 33 D2 49 8B CF E8",                                                                new LeaModifier(LeaType.CmpMinusOne)),
-			MemoryPattern.FromTextstyle(nameof(ChatBuffer),             "48 69 D8 B8 0C 00 00 48 8D 05 ?? ?? ?? ?? 48 03 D8 48 8D 8B E6 00 00 00",                                  new LeaModifier(LeaType.CmpMinusOne)),
+			MemoryPattern.FromTextstyle(nameof(IsChatAFK),              "39 1D ?? ?? ?? ?? 74 xx 33 D2 49 8B CF E8",                                                                new LeaModifier(LeaType.E8)),
+			MemoryPattern.FromTextstyle(nameof(ChatBuffer),             "48 69 D8 B8 0C 00 00 48 8D 05 ?? ?? ?? ?? 48 03 D8 48 8D 8B E6 00 00 00",                                  new LeaModifier(LeaType.E8)),
 		};
 
 		private static bool TryGetSavedOffsets(byte[] hash)

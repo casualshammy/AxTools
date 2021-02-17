@@ -1,5 +1,5 @@
 ﻿using AxTools.WinAPI.TCPTable;
-using FMemory;
+using FMemory.Helpers;
 using System;
 using System.Runtime.InteropServices;
 using System.Security;

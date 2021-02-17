@@ -146,7 +146,7 @@ namespace Components.Forms
                 foreach (PopupNotification popup in popups)
                 {
                     x = Screen.PrimaryScreen.WorkingArea.Width - popup.Width;
-                    popup.SetDesktopLocation(x, y);
+                    popup.PostInvoke(() => popup.SetDesktopLocation(x, y));
                     y += popup.Height + 10;
                 }
             }
@@ -157,7 +157,7 @@ namespace Components.Forms
                 foreach (PopupNotification popup in popups)
                 {
                     x = Screen.PrimaryScreen.WorkingArea.Width - popup.Width;
-                    popup.SetDesktopLocation(x, y);
+                    popup.PostInvoke(() => popup.SetDesktopLocation(x, y));
                     y -= popup.Height - 10;
                 }
             }
