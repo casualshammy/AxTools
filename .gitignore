@@ -4,7 +4,6 @@
 /AxTools.sln.DotSettings.user
 *.DotSettings
 *.user
-*.dll
 *.exe
 *.zip
 */bin/*
