@@ -16,7 +16,7 @@ Show exact time of each lot.
 ### LuaConsole
 Powerful tool for executing user-defined Lua scripts. For example, user can write a profile for fully automated AH bot, or auto-kill explosive orbs in M+, or whatever.
 
-Another plugins: auto-kicker of casts, auto-pickup flags on battlegrounds, auto-follower and so on! Of course, user can write plugins by yourself.
+*Another plugins: cast kicker, auto-pickup flags on battlegrounds, auto-follower and so on! Of course, user can write plugins by yourself.*
 
 ## Another tools
 AxTools contains another useful tools:
