@@ -7,8 +7,13 @@ Platform provides access to various actions (moving, scanning for objects/NPCs, 
 ### Radar
 Displays players/NPCs/objects. User can define the list of objects/NPC he wants to track. Tracked objects/NPC can be auto-interacted.
 
+![Radar (Options)](https://github.com/casualshammy/AxTools/raw/master/_github/AxTools-Radar-Options.jpg)
+![Radar](https://github.com/casualshammy/AxTools/raw/master/_github/AxTools-Radar.jpg)
+
 ### Fishing
 Simple fishing bot. Supports lures and some achivements.
+
+![Fishing](https://github.com/casualshammy/AxTools/raw/master/_github/AxTools-Fishing.jpg)
 
 ### Black Market Tracker
 Show exact time of each lot.
