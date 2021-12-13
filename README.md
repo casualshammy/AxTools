@@ -39,4 +39,4 @@ AxTools contains another useful tools:
   - anti-afk
 
 ## Distribution
-This repository contains outdated, not functional version of AxTools. If you would like to receive the newest version, feel free to contact me by mail: axio@axio.name
+This repository contains outdated, not functional version of AxTools.
